@@ -29,10 +29,10 @@ end
 FONTS = {
 	{ filename = "fonts/talkingfont"..font_posfix..".zip", alias = "talkingfont" },
 	{ filename = "fonts/talkingfont.zip", alias = "talkingfont_wathgrithr" },
-	{ filename = "fonts/talkingfont"..font_posfix..".zip", alias = "stint-ucr" },
-	{ filename = "fonts/talkingfont"..font_posfix..".zip", alias = "stint-small" },
-	{ filename = "fonts/talkingfont_wathgrithr"..font_posfix..".zip", alias = "opensans" },
+	{ filename = "fonts/stint-ucr50"..font_posfix..".zip", alias = "stint-ucr" },
+	{ filename = "fonts/stint-ucr50"..font_posfix..".zip", alias = "stint-small" },
+	{ filename = "fonts/buttonfont"..font_posfix..".zip", alias = "opensans" },
 	{ filename = "fonts/talkingfont"..font_posfix..".zip", alias = "bp50" },
 	{ filename = "fonts/talkingfont"..font_posfix..".zip", alias = "bp100" },	
-	{ filename = "fonts/talkingfont_wathgrithr"..font_posfix..".zip", alias = "buttonfont" },	
+	{ filename = "fonts/buttonfont"..font_posfix..".zip", alias = "buttonfont" },	
 }

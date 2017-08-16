@@ -160,11 +160,6 @@ function ModsScreen:GenerateRandomPicks(num, numrange)
 end
 
 function ModsScreen:OnStatsQueried( result, isSuccessful, resultCode )	
-
-	if TheFrontEnd.screenstack[#TheFrontEnd.screenstack] ~= self then
-		return
-	end
-
 	if not result or not isSuccessful or string.len(result) <= 1 then return end
 
 	local status, jsonresult = pcall( function() return json.decode(result) end )
@@ -349,11 +344,8 @@ end
 
 
 function ModsScreen:StartWorkshopUpdate()
-	if TheSim:UpdateWorkshopMods( function() self:WorkshopUpdateComplete() end ) then
-		self.updatetask = scheduler:ExecutePeriodic(0, self.ShowWorkshopStatus, nil, 0, "workshopupdate", self )
-	else
-		self:WorkshopUpdateComplete()
-	end
+
+        self:WorkshopUpdateComplete()
 end
 
 function ModsScreen:WorkshopUpdateComplete(status, message) --bool, string

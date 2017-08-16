@@ -213,7 +213,6 @@ PREFABFILES = {
   "nightmare_timepiece",
   "nightsword",
   "nitre",
-  "note",
   "onemanband",
   "paired_maxwelllight",
   "panflute",
