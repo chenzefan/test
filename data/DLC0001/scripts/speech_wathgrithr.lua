@@ -732,7 +732,7 @@ return {
 		MARSH_PLANT = "Pond foliage.",
 		MARSH_TREE =
 		{
-			BURNING = "It's abaze!",
+			BURNING = "It's ablaze!",
 			BURNT = "Burnt.",
 			CHOPPED = "My battleaxe always wins.",
 			GENERIC = "A warrior tree.",

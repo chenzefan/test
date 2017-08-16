@@ -285,7 +285,6 @@ function PenguinSpawner:EstablishColony(loc)
             newFlock.ice.spawner = self
 
             local numboulders = math.random(3,7)
-            print(numboulders)
             local sectorsize = 360 / numboulders
             local numattempts = 50
             while numboulders > 0 and numattempts > 0 do
@@ -396,6 +395,7 @@ function PenguinSpawner:OnLoad(data)
     self.colonies = self.colonies or {}
     if data.colonies then
         for i,v in ipairs(data.colonies) do
+            print("spawn ice")
             local ice = SpawnPrefab("penguin_ice")
             -- dprint(i,ice,"+++++++ pos=",v[1],v[2],v[3])
             if ice then

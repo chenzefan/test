@@ -704,19 +704,18 @@ function CustomizationScreen:SavePreset()
 	for i,v in ipairs(options) do
 		local value = overrides[options[i].name] or options[i].default
 		value = (self.options.tweak[options[i].group] and self.options.tweak[options[i].group][options[i].name]) and self.options.tweak[options[i].group][options[i].name] or value
-		if value ~= options[i].default then
-			local pos = nil
-			for m,n in ipairs(presetoverrides) do
-				if n[1] == options[i].name then
-					pos = m
-					break
-				end
+
+		local pos = nil
+		for m,n in ipairs(presetoverrides) do
+			if n[1] == options[i].name then
+				pos = m
+				break
 			end
-			if not pos then
-				table.insert(presetoverrides, {options[i].name, value})
-			else
-				presetoverrides[pos] = {options[i].name, value}
-			end
+		end
+		if not pos then
+			table.insert(presetoverrides, {options[i].name, value})
+		else
+			presetoverrides[pos] = {options[i].name, value}
 		end
 	end
 

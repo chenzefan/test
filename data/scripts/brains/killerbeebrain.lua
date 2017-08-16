@@ -36,7 +36,7 @@ function KillerBeeBrain:OnStart()
 end
 
 function KillerBeeBrain:OnInitializationComplete()
-    self.inst.components.knownlocations:RememberLocation("home", Point(self.inst.Transform:GetWorldPosition()))
+    self.inst.components.knownlocations:RememberLocation("home", Point(self.inst.Transform:GetWorldPosition()), true)
 end
 
 return KillerBeeBrain

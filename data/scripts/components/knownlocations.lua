@@ -41,8 +41,8 @@ function KnownLocations:OnLoad(data)
     end
 end
 
-function KnownLocations:RememberLocation(name, pos, overwrite)
-    if not self.locations[name] or overwrite then
+function KnownLocations:RememberLocation(name, pos, dont_overwrite)
+    if not self.locations[name] or not dont_overwrite then
         self.locations[name] = pos
     end
 end

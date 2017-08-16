@@ -284,10 +284,10 @@ local function fn()
 
     inst:AddComponent("knownlocations")
     inst.components.knownlocations:RememberLocation("rookery", Vector3(0,0,0))
-    inst.components.knownlocations:RememberLocation("home", Vector3(0,0,0))
+    -- inst.components.knownlocations:RememberLocation("home", Vector3(0,0,0))
     inst:DoTaskInTime(1*FRAMES, function()
                             if inst:IsValid() then  -- yes it can die in one frame
-                                inst.components.knownlocations:RememberLocation("home", Vector3(inst.Transform:GetWorldPosition()) )
+                                inst.components.knownlocations:RememberLocation("home", Vector3(inst.Transform:GetWorldPosition()), true)
                             end
                         end)
 

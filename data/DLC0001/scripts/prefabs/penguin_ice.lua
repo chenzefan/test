@@ -24,6 +24,8 @@ local function OnFaderEnd(inst,val)
     else
         inst.faded = true
         inst.AnimState:SetErosionParams( 1.0, 0.1, 1.0 )
+        inst.persists = false
+        inst:Remove()
     end
 end
 
@@ -96,6 +98,8 @@ local function OnEntityWake(inst)
     if not GetSeasonManager():IsWinter() then
         inst.faded = true
         inst.AnimState:SetErosionParams( 1.0, 0.1, 1.0 )
+        inst.persists = false
+        inst:Remove()
         return
     end
     local snow_cover = GetSeasonManager():GetSnowPercent()
@@ -125,13 +129,13 @@ local function OnEntitySleep(inst)
     if not GetSeasonManager():IsWinter() then
         inst.faded = true
         inst.AnimState:SetErosionParams( 1.0, 0.1, 1.0 )
+        inst.persists = false
+        inst:Remove()
     end
 end
 
 local function fn(Sim)
 	local inst = CreateEntity()
-
-	inst.persists = false           -- penguin spawner administers the ice fields
 
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
@@ -181,6 +185,8 @@ local function fn(Sim)
 
 	inst:ListenForEvent( "daytime", SnowCover, GetWorld() )
 	inst:ListenForEvent("snowcoverchange", SnowCover, GetWorld())
+
+    inst.persists = true
 
     return inst
 end

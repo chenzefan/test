@@ -73,6 +73,7 @@ function CraftSlot:Clear()
     end
     
     self.fgimage:Hide()
+    self.bgimage:SetTexture(self.atlas, "craft_slot.tex")
     --self:HideRecipe()
 end
 

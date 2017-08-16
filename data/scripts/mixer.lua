@@ -137,38 +137,70 @@ end
 
 local top_val = 25000
 local bottom_val = 0
+local low_pass_category_suffix = "_low"
+local high_pass_category_suffix = "_high"
 
 function Mixer:UpdateFilters(dt)
     -- First update the filters
     for k,v in pairs(self.lowpassfilters) do
-        if v.totaltime > 0 and v.currenttime < v.totaltime then
+        if v and v.totaltime and v.currenttime and v.totaltime > 0 and v.currenttime < v.totaltime then
             v.currenttime = v.currenttime + dt
             v.freq = easing.linear(v.currenttime, v.startfreq, v.endfreq - v.startfreq, v.totaltime)
-            TheSim:SetLowPassFilter(k, v.freq)
+            TheSim:SetLowPassFilter(k..low_pass_category_suffix, v.freq)    
+        end
+        -- Clamp
+        if v.currenttime and v.totaltime and v.totaltime > 0 and v.currenttime >= v.totaltime and v.freq and v.endfreq and v.freq ~= v.endfreq then
+            v.freq = v.endfreq
+            TheSim:SetLowPassFilter(k..low_pass_category_suffix, v.freq)    
         end
     end
     for k,v in pairs(self.highpassfilters) do
-        if v.totaltime > 0 and v.currenttime < v.totaltime then
+        if v and v.totaltime and v.currenttime and v.totaltime > 0 and v.currenttime < v.totaltime then
             v.currenttime = v.currenttime + dt
             v.freq = easing.linear(v.currenttime, v.startfreq, v.endfreq - v.startfreq, v.totaltime)
-            TheSim:SetHighPassFilter(k, v.freq)
+            TheSim:SetHighPassFilter(k..high_pass_category_suffix, v.freq)
+        end
+        -- Clamp
+        if v.currenttime and v.totaltime and v.totaltime > 0 and v.currenttime >= v.totaltime and v.freq and v.endfreq and v.freq ~= v.endfreq then
+            v.freq = v.endfreq
+            TheSim:SetHighPassFilter(k..high_pass_category_suffix, v.freq)
         end
     end
 
-    -- Then check if any need to be cleared
+    -- Then clear high/low as appropriate
     for k,v in pairs(self.lowpassfilters) do
-        if v.freq and v.freq >= top_val then
-            self.lowpassfilters[k] = nil
-            if not self.highpassfilters[k] then
+        if v and v.freq and v.freq >= top_val and v.totaltime and v.currenttime and v.totaltime > 0 and v.currenttime > v.totaltime then
+            self.lowpassfilters[k] = {}
+        end
+    end
+    for k,v in pairs(self.highpassfilters) do
+        if v and v.freq and v.freq <= bottom_val and v.totaltime and v.currenttime and v.totaltime > 0 and v.currenttime > v.totaltime then
+            self.highpassfilters[k] = {}
+        end
+    end
+
+    -- Finally, actually clear the DSP if it's not engaged by high or low filter
+    for k,v in pairs(self.lowpassfilters) do
+        local x = self.highpassfilters[k]
+        if (self.lowpassfilters[k] == nil or #self.lowpassfilters[k] == 0) and (self.highpassfilters[k] == nil or #self.highpassfilters[k] == 0) then
+            -- Failsafe check for in-progress DSP changes
+            if not ((v.freq and v.freq < top_val) or (v.totaltime and v.currenttime and v.currenttime < v.totaltime)) and
+               not (x and ((x.freq and x.freq > bottom_val) or (x.totaltime and x.currenttime and x.currenttime < x.totaltime))) then
                 TheSim:ClearDSP(k)
+                self.lowpassfilters[k] = nil
+                self.highpassfilters[k] = nil
             end
         end
     end
     for k,v in pairs(self.highpassfilters) do
-        if v.freq and v.freq <= bottom_val then
-            self.highpassfilters[k] = nil
-            if not self.lowpassfilters[k] then
+        local x = self.lowpassfilters[k]
+        if (v == nil or #v == 0) and (x == nil or #x == 0) then
+            -- Failsafe check for in-progress DSP changes
+            if not ((v.freq and v.freq > bottom_val) or (v.totaltime and v.currenttime and v.currenttime < v.totaltime)) and
+               not (x and ((x.freq and x.freq < top_val) or (x.totaltime and x.currenttime and x.currenttime < x.totaltime))) then
                 TheSim:ClearDSP(k)
+                self.lowpassfilters[k] = nil
+                self.highpassfilters[k] = nil
             end
         end
     end
@@ -180,7 +212,7 @@ function Mixer:SetLowPassFilter(category, cutoff, timetotake)
 	timetotake = timetotake or 3
 	
 	local startfreq = top_val
-	if self.lowpassfilters[category] then
+	if self.lowpassfilters[category] and self.lowpassfilters[category].freq then
 		startfreq = self.lowpassfilters[category].freq
 	end
 	
@@ -189,7 +221,7 @@ function Mixer:SetLowPassFilter(category, cutoff, timetotake)
 	
 	if timetotake <= 0 then
 		freq_entry.freq = cutoff
-		TheSim:SetLowPassFilter(category, cutoff)
+		TheSim:SetLowPassFilter(category..low_pass_category_suffix, cutoff)
 	end
 end
 
@@ -197,7 +229,7 @@ function Mixer:SetHighPassFilter(category, cutoff, timetotake)
     timetotake = timetotake or 3
     
     local startfreq = bottom_val
-    if self.highpassfilters[category] then
+    if self.highpassfilters[category] and self.highpassfilters[category].freq then
         startfreq = self.highpassfilters[category].freq
     end
     
@@ -206,7 +238,7 @@ function Mixer:SetHighPassFilter(category, cutoff, timetotake)
     
     if timetotake <= 0 then
         freq_entry.freq = cutoff
-        TheSim:SetHighPassFilter(category, cutoff)
+        TheSim:SetHighPassFilter(category..high_pass_category_suffix, cutoff)
     end 
 end
 

@@ -107,7 +107,7 @@ function SpiderBrain:OnStart()
 end
 
 function SpiderBrain:OnInitializationComplete()
-    self.inst.components.knownlocations:RememberLocation("home", Point(self.inst.Transform:GetWorldPosition()))
+    self.inst.components.knownlocations:RememberLocation("home", Point(self.inst.Transform:GetWorldPosition()), true)
 
 end
 

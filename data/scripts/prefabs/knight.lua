@@ -148,7 +148,7 @@ local function fn()
     inst:AddComponent("inspectable")
     inst:AddComponent("knownlocations")
     
-    inst:DoTaskInTime(1*FRAMES, function() inst.components.knownlocations:RememberLocation("home", Vector3(inst.Transform:GetWorldPosition()) ) end)
+    inst:DoTaskInTime(1*FRAMES, function() inst.components.knownlocations:RememberLocation("home", Vector3(inst.Transform:GetWorldPosition()), true) end)
 
     inst:AddComponent("follower")
 

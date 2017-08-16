@@ -287,7 +287,8 @@ function ModConfigurationScreen:RefreshOptions()
 			local w = 220
 			local spinner = opt:AddChild(Spinner( spin_options, w, spin_height))
 			spinner:SetTextColour(0,0,0,1)
-			local default_value = options[idx].value ~= nil and options[idx].value or options[idx].default
+			local default_value = options[idx].value
+			if default_value == nil then default_value = options[idx].default end
 			
 			spinner.OnChanged =
 				function( _, data )

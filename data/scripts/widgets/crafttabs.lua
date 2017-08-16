@@ -128,8 +128,7 @@ local CraftTabs = Class(Widget, function(self, owner, top_root)
 	self.openhint:SetRegionSize(300, 45, 0)
 	self.openhint:SetHAlign(ANCHOR_LEFT)
 
-    self.hint_update_check = HINT_UPDATE_INTERVAL
-    
+    self.hint_update_check = HINT_UPDATE_INTERVAL    
 end)
 
 

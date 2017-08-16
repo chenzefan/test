@@ -347,7 +347,7 @@ end
 function ModIndex:UpdateConfigurationOptions(config_options, savedata)
 	for i,v in pairs(savedata) do
 		for j,k in pairs(config_options) do
-			if v.name == k.name and v.saved then
+			if v.name == k.name and v.saved ~= nil then
 				k.saved = v.saved
 			end
 		end
