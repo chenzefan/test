@@ -1868,7 +1868,12 @@ STRINGS.UI =
         CANT_LOAD_ROG = "Reign of Giants is not installed. Unable to load",
 
         CONSOLE_EDITION_TEXT = "Console Edition",
-        ROG_UPSELL = "Buy Reign of Giants"
+        ROG_UPSELL = "Buy Reign of Giants",
+        
+        CONTROLLER_DETECTED_HEADER = "Controller Detected",
+        CONTROLLER_DETECTED_BODY = "Do you want to use the controller to play Don't Starve?\n\nYou will not be asked again, but you can change this setting in the controls screen if you change your mind.",
+        ENABLECONTROLLER = "Enable Controller",
+        DISABLECONTROLLER = "Disable Controller",
     },
     
     HUD =

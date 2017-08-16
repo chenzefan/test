@@ -30,6 +30,7 @@ PlayerProfile = Class(function(self)
         self.persistdata.wathgrithrfont = true
         self.persistdata.screenshake = true
         self.persistdata.warneddifficultyrog = false
+        self.persistdata.controller_popup = false
 	end
 
     self.dirty = true
@@ -58,6 +59,7 @@ function PlayerProfile:Reset()
         self.persistdata.wathgrithrfont = true
         self.persistdata.screenshake = true
         self.persistdata.warneddifficultyrog = false
+        self.persistdata.controller_popup = false
 	end
 	
     --self.persistdata.starts = 0 -- save starts?
@@ -85,6 +87,7 @@ function PlayerProfile:SoftReset()
         self.persistdata.wathgrithrfont = true
         self.persistdata.screenshake = true
         self.persistdata.warneddifficultyrog = false
+        self.persistdata.controller_popup = false
 	end
     -- and apply these values
     local str = json.encode(self.persistdata)
@@ -617,5 +620,29 @@ function PlayerProfile:ShowedDisplayAdjustmentPopup()
     self.persistdata.saw_display_adjustment_popup = true
 	self.dirty = true
 end
+
+function PlayerProfile:SawControllerPopup()
+    local sawPopup
+ 	if USE_SETTINGS_FILE then
+		sawPopup = TheSim:GetSetting("misc", "controller_popup") 
+		if nil == sawPopup then
+		    sawPopup = false
+		end
+	else
+		sawPopup = self:GetValueOrDefault(self.persistdata.controller_popup, false)
+	end
+	
+	return sawPopup
+end
+
+function PlayerProfile:ShowedControllerPopup()
+ 	if USE_SETTINGS_FILE then
+		TheSim:SetSetting("misc", "controller_popup", tostring(true)) 
+	else
+		self:SetValue("controller_popup", true)
+		self.dirty = true
+	end
+end
+
 
 return PlayerProfile

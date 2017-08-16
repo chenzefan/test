@@ -110,22 +110,29 @@ function MainScreen:DoInit( )
 	end)
 
 	--on Steam and does not own DST beta SKU or not on Steam
-    if ((PLATFORM == "WIN32_STEAM" or PLATFORM == "LINUX_STEAM" or PLATFORM == "OSX_STEAM") and not TheSim:GetUserHasLicenseForApp(DONT_STARVE_TOGETHER_APPID)) 
-    	or (PLATFORM ~= "WIN32_STEAM" and PLATFORM ~= "LINUX_STEAM" and PLATFORM ~= "OSX_STEAM" and PLATFORM ~= "PS4") then
+    -- if ((PLATFORM == "WIN32_STEAM" or PLATFORM == "LINUX_STEAM" or PLATFORM == "OSX_STEAM") and not TheSim:GetUserHasLicenseForApp(DONT_STARVE_TOGETHER_APPID)) 
+    -- 	or (PLATFORM ~= "WIN32_STEAM" and PLATFORM ~= "LINUX_STEAM" and PLATFORM ~= "OSX_STEAM" and PLATFORM ~= "PS4") then
 
-	    self.beta_reg = self.left_col:AddChild(BetaRegistration())
-	    self.beta_reg:SetScale(.73)
-	    self.beta_reg:SetPosition(0, -195, 0)
+	   --  self.beta_reg = self.left_col:AddChild(BetaRegistration())
+	   --  self.beta_reg:SetScale(.73)
+	   --  self.beta_reg:SetPosition(0, -195, 0)
 
-   	else --owns DST beta SKU and on Steam
+   	-- else --owns DST beta SKU and on Steam
 
-   		self.wilson = self.left_col:AddChild(UIAnim())
-	    self.wilson:GetAnimState():SetBank("corner_dude")
-	    self.wilson:GetAnimState():SetBuild("corner_dude")
-	    self.wilson:GetAnimState():PlayAnimation("idle", true)
-	    self.wilson:SetPosition(0,-370,0)
+   	-- 	self.wilson = self.left_col:AddChild(UIAnim())
+	   --  self.wilson:GetAnimState():SetBank("corner_dude")
+	   --  self.wilson:GetAnimState():SetBuild("corner_dude")
+	   --  self.wilson:GetAnimState():PlayAnimation("idle", true)
+	   --  self.wilson:SetPosition(0,-370,0)
 
-   	end
+   	-- end
+
+   	-- Chester upsell for now: later, uncomment the above and turn the beta upsell back on
+	self.chester_upsell = self.left_col:AddChild(ImageButton("images/fepanels_DSTbeta.xml", "beefaloplushie_menu_button.tex", "beefaloplushie_menu_mouseover.tex"))
+    self.chester_upsell:SetPosition(0, -185, 0)
+    self.chester_upsell:SetOnClick( function() 
+		VisitURL("http://klei.limitedrun.com/categories/dont-starve")
+	end)
 
 
 	--RIGHT COLUMN
@@ -511,8 +518,8 @@ function MainScreen:MainMenu()
 end
 
 function MainScreen:OnBecomeActive()
-    MainScreen._base.OnBecomeActive(self)
-    
+    MainScreen._base.OnBecomeActive(self)    
+	self.menu:SetFocus()
 end
 
 

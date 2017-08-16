@@ -1,6 +1,7 @@
 local PopupDialogScreen = require "screens/popupdialog"
 local ScriptErrorScreen = require "screens/scripterrorscreen"
-
+local BigPopupDialogScreen = require "screens/bigpopupdialog"
+require "scheduler"
 
 function SavePersistentString(name, data, encode, callback)
 	
@@ -648,8 +649,81 @@ function Start()
 
 	---The screen manager
 	TheFrontEnd = FrontEnd()	
-	require ("gamelogic")
+	require ("gamelogic")	
+	
+    CheckControllers()
+end
 
+
+function CheckControllers()
+    local isConnected = TheInput:ControllerConnected()
+    local sawPopup = Profile:SawControllerPopup() 
+    if isConnected and not sawPopup then
+            
+        -- store previous controller enabled state so we can revert to it, then enable all controllers
+        local controllers = {}
+        local numControllers = TheInputProxy:GetInputDeviceCount()        
+        for i = 1, (numControllers - 1) do
+            local enabled = TheInputProxy:IsInputDeviceEnabled(i)
+            table.insert(controllers, enabled)
+        end
+        
+        -- enable all controllers so they can be used in the popup if desired
+        Input:EnableAllControllers()
+        
+        local function enableControllers()          
+            -- set all connected controllers as enabled in the player profile
+            for i = 1, (numControllers - 1) do
+                if TheInputProxy:IsInputDeviceConnected(i) then
+                    local guid, data, enabled = TheInputProxy:SaveControls(i)                    
+                    if not(nil == guid) and not(nil == data) then
+                        Profile:SetControls(guid, data, enabled)
+                    end
+                end
+            end
+            
+            Profile:ShowedControllerPopup()
+            TheFrontEnd:PopScreen() -- pop after updating settings otherwise this dialog might show again!
+            Profile:Save()
+            scheduler:ExecuteInTime(0.05, function() Check_Mods() end)
+        end
+                
+        local function disableControllers()                    
+            Input:DisableAllControllers()
+            Profile:ShowedControllerPopup()
+            TheFrontEnd:PopScreen() -- pop after updating settings otherwise this dialog might show again!
+            Profile:Save()
+            scheduler:ExecuteInTime(0.05, function() Check_Mods() end)            
+        end
+                
+        local function revertControllers()                     
+            -- restore controller enabled/disabled to previous state
+            for i = 1, (numControllers - 1) do
+                TheInputProxy:EnableInputDevice(i, controllers[i])
+            end
+            
+            Profile:ShowedControllerPopup()
+            TheFrontEnd:PopScreen() -- pop after updating settings otherwise this dialog might show again!
+            Profile:Save()
+            scheduler:ExecuteInTime(0.05, function() Check_Mods() end)            
+        end
+        
+        local popup = BigPopupDialogScreen(STRINGS.UI.MAINSCREEN.CONTROLLER_DETECTED_HEADER, STRINGS.UI.MAINSCREEN.CONTROLLER_DETECTED_BODY,
+            {
+                {text=STRINGS.UI.MAINSCREEN.ENABLECONTROLLER, cb = enableControllers},
+                {text=STRINGS.UI.MAINSCREEN.DISABLECONTROLLER, cb = disableControllers}  
+            }
+        )
+        for i,v in pairs(popup.menu.items) do
+        	v.text:SetSize(33)
+        end
+        TheFrontEnd:PushScreen(popup)    
+    else
+        Check_Mods()
+    end
+end
+
+function Check_Mods()
     if MODS_ENABLED then
         --after starting everything up, give the mods additional environment variables
         ModManager:SetPostEnv(GetPlayer())

@@ -33,6 +33,14 @@ function Input:DisableAllControllers()
     end
 end
 
+function Input:EnableAllControllers()
+    for i = 1, TheInputProxy:GetInputDeviceCount() -1 do
+        if TheInputProxy:IsInputDeviceConnected(i) then
+            TheInputProxy:EnableInputDevice(i, true)
+        end
+    end
+end
+
 function Input:EnableMouse(enable)
     self.mouse_enabled = enable
 end
@@ -58,6 +66,23 @@ function Input:ControllerAttached()
         for i = 1, TheInputProxy:GetInputDeviceCount() -1 do
             if i > 0 and TheInputProxy:IsInputDeviceEnabled(i) and TheInputProxy:IsInputDeviceConnected(i) then
                 --print ("DEVICE", i, "of", TheInputProxy:GetInputDeviceCount(), "IS ENABLED")
+                return true
+            end
+        end
+        return false
+	end
+end
+
+function Input:ControllerConnected()
+	if PLATFORM == "PS4" then
+		return true	
+	elseif PLATFORM == "NACL" then
+		return false
+	else
+		--need to take enabled into account
+        for i = 1, TheInputProxy:GetInputDeviceCount() -1 do
+            if i > 0 and TheInputProxy:IsInputDeviceConnected(i) then
+                --print ("DEVICE", i, "of", TheInputProxy:GetInputDeviceCount(), "IS CONNECTED")
                 return true
             end
         end

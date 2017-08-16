@@ -83,47 +83,54 @@ function MainScreen:DoInit( )
 	-- UPSELLS (mixed loc)
 
 	--on Steam and does not own DST beta SKU or not on Steam
-    if ((PLATFORM == "WIN32_STEAM" or PLATFORM == "LINUX_STEAM" or PLATFORM == "OSX_STEAM") and not TheSim:GetUserHasLicenseForApp(DONT_STARVE_TOGETHER_APPID)) 
-    	or (PLATFORM ~= "WIN32_STEAM" and PLATFORM ~= "LINUX_STEAM" and PLATFORM ~= "OSX_STEAM" and PLATFORM ~= "PS4") then
+    -- if ((PLATFORM == "WIN32_STEAM" or PLATFORM == "LINUX_STEAM" or PLATFORM == "OSX_STEAM") and not TheSim:GetUserHasLicenseForApp(DONT_STARVE_TOGETHER_APPID)) 
+    -- 	or (PLATFORM ~= "WIN32_STEAM" and PLATFORM ~= "LINUX_STEAM" and PLATFORM ~= "OSX_STEAM" and PLATFORM ~= "PS4") then
 
     	self.RoGUpgrade = self.right_col:AddChild(RoGUpgrade())
 	    self.RoGUpgrade:SetScale(.7)
 	    self.RoGUpgrade:SetPosition(0, 215, 0)
 
-	    self.beta_reg = self.left_col:AddChild(BetaRegistration())
-	    self.beta_reg:SetScale(.76)
-	    self.beta_reg:SetPosition(0, -185, 0)
+	    -- self.beta_reg = self.left_col:AddChild(BetaRegistration())
+	    -- self.beta_reg:SetScale(.76)
+	    -- self.beta_reg:SetPosition(0, -185, 0)
 
-   	else --owns DST beta SKU and on Steam
-
-   		self.RoGUpgrade = self.left_col:AddChild(RoGUpgrade())
-	    self.RoGUpgrade:SetScale(.9)
-	    self.RoGUpgrade:SetPosition(0, -185, 0)
-
-   		local function KickOffScreecherMod()
-			KnownModIndex:Enable("screecher")
-			KnownModIndex:Save()
-			TheSim:Quit()
-		end
-
-	    self.screecher = self.right_col:AddChild(ImageButton("images/fepanels.xml", "DS_Scary_button.tex", "DS_Scary_button-rollover.tex"))
-	    self.screecher:SetPosition(0, 225, 0)
-		self.screecher:SetScale(.6)
-		self.screecher:SetOnClick( function() 
-			if PLATFORM == "NACL" then
-				TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.MAINSCREEN.SCREECHER_NACL_DIALOG_TITLE, STRINGS.UI.MAINSCREEN.SCREECHER_NACL_DIALOG_TEXT,
-				{
-					{text=STRINGS.UI.MODSSCREEN.CANCEL, cb = function() TheFrontEnd:PopScreen() end},
-					{text=STRINGS.UI.MAINSCREEN.SCREECHER_NACL_OKAY, cb = function() VisitURL("http://www.dontstarvegame.com/chrome-version-retired") end },
-				}))
-			else
-				TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.MAINSCREEN.SCREECHER_DIALOG_TITLE, STRINGS.UI.MAINSCREEN.SCREECHER_DIALOG_TEXT,
-				{
-					{text=STRINGS.UI.MODSSCREEN.CANCEL, cb = function() TheFrontEnd:PopScreen() end},
-					{text=STRINGS.UI.MODSSCREEN.RESTART, cb = function() KickOffScreecherMod() end },
-				}))
-			end
+	    -- Chester upsell for now: later, uncomment the above and turn the beta upsell back on
+		self.chester_upsell = self.left_col:AddChild(ImageButton("images/fepanels_DSTbeta.xml", "beefaloplushie_menu_button.tex", "beefaloplushie_menu_mouseover.tex"))
+	    self.chester_upsell:SetPosition(0, -185, 0)
+	    self.chester_upsell:SetOnClick( function() 
+			VisitURL("http://klei.limitedrun.com/categories/dont-starve")
 		end)
+
+  --  	else --owns DST beta SKU and on Steam
+
+  --  		self.RoGUpgrade = self.left_col:AddChild(RoGUpgrade())
+	 --    self.RoGUpgrade:SetScale(.9)
+	 --    self.RoGUpgrade:SetPosition(0, -185, 0)
+
+  --  		local function KickOffScreecherMod()
+		-- 	KnownModIndex:Enable("screecher")
+		-- 	KnownModIndex:Save()
+		-- 	TheSim:Quit()
+		-- end
+
+	 --    self.screecher = self.right_col:AddChild(ImageButton("images/fepanels.xml", "DS_Scary_button.tex", "DS_Scary_button-rollover.tex"))
+	 --    self.screecher:SetPosition(0, 225, 0)
+		-- self.screecher:SetScale(.6)
+		-- self.screecher:SetOnClick( function() 
+		-- 	if PLATFORM == "NACL" then
+		-- 		TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.MAINSCREEN.SCREECHER_NACL_DIALOG_TITLE, STRINGS.UI.MAINSCREEN.SCREECHER_NACL_DIALOG_TEXT,
+		-- 		{
+		-- 			{text=STRINGS.UI.MODSSCREEN.CANCEL, cb = function() TheFrontEnd:PopScreen() end},
+		-- 			{text=STRINGS.UI.MAINSCREEN.SCREECHER_NACL_OKAY, cb = function() VisitURL("http://www.dontstarvegame.com/chrome-version-retired") end },
+		-- 		}))
+		-- 	else
+		-- 		TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.MAINSCREEN.SCREECHER_DIALOG_TITLE, STRINGS.UI.MAINSCREEN.SCREECHER_DIALOG_TEXT,
+		-- 		{
+		-- 			{text=STRINGS.UI.MODSSCREEN.CANCEL, cb = function() TheFrontEnd:PopScreen() end},
+		-- 			{text=STRINGS.UI.MODSSCREEN.RESTART, cb = function() KickOffScreecherMod() end },
+		-- 		}))
+		-- 	end
+		-- end)
 
    		-- self.wilson = self.left_col:AddChild(UIAnim())
 	    -- self.wilson:GetAnimState():SetBank("corner_dude")
@@ -131,7 +138,7 @@ function MainScreen:DoInit( )
 	    -- self.wilson:GetAnimState():PlayAnimation("idle", true)
 	    -- self.wilson:SetPosition(0,-370,0)
 
-   	end
+   	-- end
 
 
 	--RIGHT COLUMN
@@ -517,8 +524,8 @@ function MainScreen:MainMenu()
 end
 
 function MainScreen:OnBecomeActive()
-    MainScreen._base.OnBecomeActive(self)
-    
+    MainScreen._base.OnBecomeActive(self)    
+	self.menu:SetFocus()
 end
 
 
@@ -539,6 +546,7 @@ function MainScreen:OnUpdate(dt)
         TheFrontEnd:GetSound():PlaySound("dontstarve/music/music_FE","FEMusic")
         self.music_playing = true
     end	
+    
 	self.timetonewanim = self.timetonewanim and self.timetonewanim - dt or 5 +math.random()*5
 	if self.timetonewanim < 0 and self.wilson then
 		self.wilson:GetAnimState():PushAnimation(weighted_random_choice(anims))		
