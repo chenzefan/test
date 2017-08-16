@@ -1,22 +1,22 @@
 Starting up
-Don't Starve: 69878
-Build Date: 2012-11-29_19-44-34
-THREAD - started 'GAClient' (6180)
+Don't Starve: 70495
+Build Date: 2012-12-11_23-09-06
+THREAD - started 'GAClient' (4744)
 HttpClient::ClientThread::Main()
 cGame::InitializeOnMainThread
+WindowManager::Initialize
+WM_SIZE
+WindowManager::SetFullscreen(0, 800, 600, 60)
+SystemEvent::Resize {800, 600}
+WindowManager::Resize [0]  {800, 600}
 cDontStarveGame::DoGameSpecificInitialize()
 cGame::StartPlaying
 LOADING LUA
 DoLuaFile data/scripts/main.lua
 DoLuaFile loading buffer data/scripts/main.lua
-c:\jenkins\workspace\jobs\DontStarve_Release_Make_Steam_Package\workspace\data\scripts\main.lua(101,1)	running main.lua
+c:\jenkins\workspace\jobs\DontStarve_Release_Make_Steam_Package\workspace\data\scripts\main.lua(105,1)	running main.lua
 
 LOADING LUA SUCCESS
-c:\jenkins\workspace\jobs\DontStarve_Release_Make_Steam_Package\workspace\data\scripts\mixer.lua(76,1)	Set	set_sfx	1
-c:\jenkins\workspace\jobs\DontStarve_Release_Make_Steam_Package\workspace\data\scripts\mixer.lua(76,1)	Set	set_ambience	0.5
-c:\jenkins\workspace\jobs\DontStarve_Release_Make_Steam_Package\workspace\data\scripts\mixer.lua(76,1)	Set	set_music	1
 Reset() returning
- SAVE SUCCESS: profile
- SAVE SUCCESS: profile
-c:\jenkins\workspace\jobs\DontStarve_Release_Make_Steam_Package\workspace\data\scripts\screens\mainscreen.lua(117,1)	EmailSignup
+HttpClient::ClientThread::Main() complete
 Shutting down
