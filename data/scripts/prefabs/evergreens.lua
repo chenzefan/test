@@ -339,25 +339,29 @@ local function chop_down_tree(inst, chopper)
                         if target and not target:HasTag("stump") and not target:HasTag("burnt") and
                             target.components.growable and target.components.growable.stage <= 3 then
     						local target = target
-    						local leif = SpawnPrefab(builds[target.build].leif)
-    						local scale = target.leifscale
-    						local r,g,b,a = target.AnimState:GetMultColour()
-    						leif.AnimState:SetMultColour(r,g,b,a)
-    						
-    						--we should serialize this?
-    						leif.components.locomotor.walkspeed = leif.components.locomotor.walkspeed*scale
-    						leif.components.combat.defaultdamage = leif.components.combat.defaultdamage*scale
-    						leif.components.health.maxhealth = leif.components.health.maxhealth*scale
-    						leif.components.health.currenthealth = leif.components.health.currenthealth*scale
-    						leif.components.combat.hitrange = leif.components.combat.hitrange*scale
-    						leif.components.combat.attackrange = leif.components.combat.attackrange*scale
-    						
-    						leif.Transform:SetScale(scale,scale,scale) 
-    						leif.components.combat:SuggestTarget(chopper)
-    						leif.sg:GoToState("spawn")
-    						target:Remove()
-    						
-    						leif.Transform:SetPosition(target.Transform:GetWorldPosition())
+    						if builds[target.build] and builds[target.build].leif then
+                                local leif = SpawnPrefab(builds[target.build].leif)
+                                if leif then
+            						local scale = target.leifscale
+            						local r,g,b,a = target.AnimState:GetMultColour()
+            						leif.AnimState:SetMultColour(r,g,b,a)
+            						
+            						--we should serialize this?
+            						leif.components.locomotor.walkspeed = leif.components.locomotor.walkspeed*scale
+            						leif.components.combat.defaultdamage = leif.components.combat.defaultdamage*scale
+            						leif.components.health.maxhealth = leif.components.health.maxhealth*scale
+            						leif.components.health.currenthealth = leif.components.health.currenthealth*scale
+            						leif.components.combat.hitrange = leif.components.combat.hitrange*scale
+            						leif.components.combat.attackrange = leif.components.combat.attackrange*scale
+            						
+            						leif.Transform:SetScale(scale,scale,scale) 
+            						leif.components.combat:SuggestTarget(chopper)
+            						leif.sg:GoToState("spawn")
+            						target:Remove()
+            						
+            						leif.Transform:SetPosition(target.Transform:GetWorldPosition())
+                                end
+                            end
                         end
 					end)
 				end

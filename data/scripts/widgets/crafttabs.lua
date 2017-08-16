@@ -284,13 +284,13 @@ function CraftTabs:DoUpdateRecipes()
 		
 
 		for k,v in pairs(tabs_to_highlight) do    
-			if v > 0 then
+			if v > 0 and (not self.tabs_to_highlight or v ~= self.tabs_to_highlight[k]) then
 				k:Highlight(v)
 			end 
 		end
 
-		for k,v in pairs(tabs_to_alt_highlight) do    
-			if v > 0 then
+		for k,v in pairs(tabs_to_alt_highlight) do
+			if v > 0 and tabs_to_highlight[k] <= 0 then
 				k:UnHighlight(true)
 				k:AlternateHighlight(v)
 			end 
@@ -317,6 +317,8 @@ function CraftTabs:DoUpdateRecipes()
 		if self.crafting and self.crafting.shown then
 			self.crafting:UpdateRecipes()
 		end
+
+		self.tabs_to_highlight = tabs_to_highlight
 	end
 end
 

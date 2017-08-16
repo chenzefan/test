@@ -204,6 +204,20 @@ function NewGameScreen:Start()
 			self.customoptions = self.prevcustomoptions
 		end
 
+		-- Clean up the tweak table since we don't want "default" overrides
+		if self.customoptions and self.customoptions.faketweak and self.customoptions.tweak and #self.customoptions.faketweak > 0 then
+			for i,v in pairs(self.customoptions.faketweak) do
+				for m,n in pairs(self.customoptions.tweak) do
+					for j,k in pairs(n) do
+						if v == j and k == "default" then -- Found the fake tweak setting for "default", now remove it from the table
+							self.customoptions.tweak[m][j] = nil
+							break
+						end
+					end
+				end
+			end
+		end
+
 		self.root:Disable()
 		TheFrontEnd:Fade(false, 1, function() SaveGameIndex:StartSurvivalMode(self.saveslot, self.character, self.customoptions, onsaved, GetEnabledDLCs()) end )
 	end

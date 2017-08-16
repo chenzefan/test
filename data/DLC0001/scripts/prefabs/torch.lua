@@ -103,7 +103,9 @@ local function fn(Sim)
     
 
     inst.components.fueled:SetUpdateFn( function()
-        if GetSeasonManager():IsRaining() then
+        if GetSeasonManager():IsRaining() and not 
+                (inst.components.inventoryitem and inst.components.inventoryitem.owner and 
+                inst.components.inventoryitem.owner.components.moisture and inst.components.inventoryitem.owner.components.moisture.sheltered) then
             inst.components.fueled.rate = 1 + TUNING.TORCH_RAIN_RATE*GetSeasonManager():GetPrecipitationRate()
         else
             inst.components.fueled.rate = 1

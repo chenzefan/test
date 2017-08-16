@@ -85,8 +85,23 @@ end)
 
 function GetHintTextForRecipe(recipe)
     local validmachines = {}
+    local adjusted_level = deepcopy(recipe.level)
+    local player = GetPlayer()
+
     for k,v in pairs(TUNING.PROTOTYPER_TREES) do
-        local canbuild = CanPrototypeRecipe(recipe.level, v)
+
+        -- Adjust level for bonus so that the hint gives the right message
+        if player and player.components.builder then
+            if player.components.builder.science_bonus and (k == "SCIENCEMACHINE" or k == "ALCHEMYMACHINE") then
+                adjusted_level["SCIENCE"] = adjusted_level["SCIENCE"] - player.components.builder.science_bonus
+            elseif player.components.builder.magic_bonus and (k == "PRESTIHATITATOR" or k == "SHADOWMANIPULATOR") then
+                adjusted_level["MAGIC"] = adjusted_level["MAGIC"] - player.components.builder.magic_bonus
+            elseif player.components.builder.ancient_bonus and (k == "ANCIENTALTAR_LOW" or k == "ANCIENTALTAR_HIGH") then
+                adjusted_level["ANCIENT"] = adjusted_level["ANCIENT"] - player.components.builder.ancient_bonus
+            end
+        end
+
+        local canbuild = CanPrototypeRecipe(adjusted_level, v)
         if canbuild then
             table.insert(validmachines, {TREE = tostring(k), SCORE = 0})
             --return tostring(k)
@@ -99,11 +114,20 @@ function GetHintTextForRecipe(recipe)
             return validmachines[1].TREE
         end
 
-        --There's more than one machine that gives the valid tech level! We have to find the "lowest" one.
+        --There's more than one machine that gives the valid tech level! We have to find the "lowest" one (taking bonus into account).
         for k,v in pairs(validmachines) do
-            for rk,rv in pairs(recipe.level) do
+            for rk,rv in pairs(adjusted_level) do
                 if TUNING.PROTOTYPER_TREES[v.TREE][rk] == rv then
                     v.SCORE = v.SCORE + 1
+                    if player and player.components.builder then
+                        if player.components.builder.science_bonus and (v.TREE == "SCIENCEMACHINE" or v.TREE == "ALCHEMYMACHINE") then
+                            v.SCORE = v.SCORE + player.components.builder.science_bonus
+                        elseif player.components.builder.magic_bonus and (v.TREE == "PRESTIHATITATOR" or v.TREE == "SHADOWMANIPULATOR") then
+                            v.SCORE = v.SCORE + player.components.builder.magic_bonus
+                        elseif player.components.builder.ancient_bonus and (v.TREE == "ANCIENTALTAR_LOW" or v.TREE == "ANCIENTALTAR_HIGH") then
+                            v.SCORE = v.SCORE + player.components.builder.ancient_bonus
+                        end
+                    end
                 end
             end
         end
