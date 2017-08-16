@@ -1,0 +1,22 @@
+Starting up
+Don't Starve: 69878
+Build Date: 2012-11-29_19-44-34
+THREAD - started 'GAClient' (6180)
+HttpClient::ClientThread::Main()
+cGame::InitializeOnMainThread
+cDontStarveGame::DoGameSpecificInitialize()
+cGame::StartPlaying
+LOADING LUA
+DoLuaFile data/scripts/main.lua
+DoLuaFile loading buffer data/scripts/main.lua
+c:\jenkins\workspace\jobs\DontStarve_Release_Make_Steam_Package\workspace\data\scripts\main.lua(101,1)	running main.lua
+
+LOADING LUA SUCCESS
+c:\jenkins\workspace\jobs\DontStarve_Release_Make_Steam_Package\workspace\data\scripts\mixer.lua(76,1)	Set	set_sfx	1
+c:\jenkins\workspace\jobs\DontStarve_Release_Make_Steam_Package\workspace\data\scripts\mixer.lua(76,1)	Set	set_ambience	0.5
+c:\jenkins\workspace\jobs\DontStarve_Release_Make_Steam_Package\workspace\data\scripts\mixer.lua(76,1)	Set	set_music	1
+Reset() returning
+ SAVE SUCCESS: profile
+ SAVE SUCCESS: profile
+c:\jenkins\workspace\jobs\DontStarve_Release_Make_Steam_Package\workspace\data\scripts\screens\mainscreen.lua(117,1)	EmailSignup
+Shutting down
