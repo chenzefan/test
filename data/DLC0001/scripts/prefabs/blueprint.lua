@@ -10,7 +10,7 @@ local function onload(inst, data)
 		if data.recipetouse then
 			inst.recipetouse = data.recipetouse
 			inst.components.teacher:SetRecipe(inst.recipetouse)
-	    	inst.components.named:SetName(STRINGS.NAMES[string.upper(inst.recipetouse)].." Blueprint")
+	    	inst.components.named:SetName(STRINGS.NAMES[string.upper(inst.recipetouse)].."À¶ Í¼")
 	    end
 	end
 end
@@ -73,7 +73,7 @@ local function MakeAnyBlueprint()
 		end
 
 		inst.components.teacher:SetRecipe(inst.recipetouse)
-		inst.components.named:SetName(STRINGS.NAMES[string.upper(inst.recipetouse)].." Blueprint")
+		inst.components.named:SetName(STRINGS.NAMES[string.upper(inst.recipetouse)].."À¶ Í¼")
 	end
 	
     return inst
@@ -97,7 +97,7 @@ local function MakeAnySpecificBlueprint(specific_item)
 			    inst.recipetouse = r.name
 			end
 		    inst.components.teacher:SetRecipe(inst.recipetouse)
-		    inst.components.named:SetName(STRINGS.NAMES[string.upper(inst.recipetouse)].." Blueprint")
+		    inst.components.named:SetName(STRINGS.NAMES[string.upper(inst.recipetouse)].."À¶ Í¼")
 		end
 	    return inst
 	end
@@ -121,7 +121,7 @@ local function MakeSpecificBlueprint(recipetab)
 			    inst.recipetouse = r.name
 			end
 			inst.components.teacher:SetRecipe(inst.recipetouse)
-			inst.components.named:SetName(STRINGS.NAMES[string.upper(inst.recipetouse)].." Blueprint")
+			inst.components.named:SetName(STRINGS.NAMES[string.upper(inst.recipetouse)].."À¶ Í¼")
 		end
 	    return inst
 	end

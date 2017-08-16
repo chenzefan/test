@@ -16,7 +16,7 @@ STRINGS=
 
     CHARACTER_NAMES =
     {
-        wilson = "威 尔 逊 · P · 西 格 波 利",
+        wilson = "威 尔 逊 · 帕 西 瓦 尔 · 西 格 波 利",
         willow = "薇 洛",
         wendy = "温 蒂",
         wolfgang = "沃 尔 夫 冈",
@@ -42,8 +42,8 @@ STRINGS=
         wickerbottom = "\"嘘 ！ 图 书 馆 里 不 准 说 话 ！\"",
         waxwell = "\"自 由 ！\"",
         wes = "……",
-        wathgrithr = "\"另 一 个 展 现 绝 佳 演 技 的 舞 台 ！\"",
-        webber = "\"我 们 可 以 克 服 一 切 逆 境 ！\"",
+        wathgrithr = "\"一 个 展 现 绝 佳 演 技 的 舞 台 ！\"",
+        webber = "\"我 们 可 以 做 到 一 切 ！\"",
     },
 
     CHARACTER_TITLES =
@@ -55,7 +55,7 @@ STRINGS=
         wolfgang = "大 力 士",
         wx78 = "没 有 灵 魂 的 机 器 人",
         wickerbottom = "图 书 管 理 员",
-        wes = "哑 剧 演 员",
+        wes = "默 剧 演 员",
         waxwell = "傀 儡 师",
         wathgrithr = "女 武 神 扮 演 者",
         webber = "没 有 被 蜘 蛛 消 化 的",
@@ -156,7 +156,7 @@ STRINGS=
             TURRET = "安 置",
         },
         
-        PLAY = "演 奏",
+        PLAY = "奏 响",
         NET = "捕 捉",
         CATCH = "捕 捉",
         FISH = "垂 钓",
@@ -277,7 +277,7 @@ STRINGS=
         SPIDER_HIDER="洞 穴 蜘 蛛",
         SPIDER_SPITTER="喷 吐 虫",
         SEWING_KIT = "缝 纫 工 具 包",
-        RED_MUSHROOM = "红 色 灌 木 丛",
+        RED_MUSHROOM = "红 色 蘑 菇 丛",
         RED_CAP = "红 菇 头",
         RED_CAP_COOKED = "煮 熟 的 红 蘑 菇",
         GREEN_MUSHROOM = "绿 蘑 菇",
@@ -298,7 +298,7 @@ STRINGS=
         CARROT_SEEDS = "胡 萝 卜 种 子",
         PUMPKIN_SEEDS = "南 瓜 种 子",
         DRAGONFRUIT_SEEDS = "火 龙 果 种 子",
-        POMEGRANATE_SEEDS = "石 榴",
+        POMEGRANATE_SEEDS = "石 榴 种 子",
         CORN_SEEDS = "玉 米 种 子",
         DURIAN_SEEDS = "榴 莲 种 子",
         EGGPLANT_SEEDS = "茄 子 种 子",
@@ -308,9 +308,9 @@ STRINGS=
         PIGGUARD = "猪 王 侍 卫",
         NITRE = "硝 石",
         GUNPOWDER = "火 药",
-        BIRD_EGG = "鸡 蛋",
-        BIRD_EGG_COOKED = "熟 鸡 蛋",
-        ROTTENEGG = "腐 烂 的 鸡 蛋",
+        BIRD_EGG = "蛋",
+        BIRD_EGG_COOKED = "熟 蛋",
+        ROTTENEGG = "腐 烂 的 蛋",
         
         WINTEROMETER = "温 度 指 示 计",
         RAINOMETER = "湿 度 计",
@@ -698,8 +698,8 @@ STRINGS=
 
         ICESTAFF = "冰 魔 杖",
         FIRESTAFF = "火 魔 杖",
-        TELESTAFF = "传 送 · 法 杖",
-        TELEBASE = "传 送 · 节 点",
+        TELESTAFF = "传 送 法 杖",
+        TELEBASE = "传 送 节 点",
         GEMSOCKET = "宝 石 看 台",
         ORANGESTAFF = "移 动 法 杖",
         GREENSTAFF = "毁 灭 权 杖",
@@ -736,7 +736,7 @@ STRINGS=
         TREASURECHEST_TRAP = "宝 箱 陷 阱",
         MEATRACK = "晒 肉 架",
         BANDAGE = "蜂 蜜 药 膏",
-        HEALINGSALVE = "治 疗 药 粉",
+        HEALINGSALVE = "消 毒 药 粉",
         CANE = "加 速 手 杖",
         LIGHTNING = "闪 电",
         LIGHTNING_ROD = "避 雷 针",
@@ -838,8 +838,8 @@ STRINGS=
         BEARGER_FUR = "厚 厚 的 毛",
         BIGFOOT = "巨 大 的 脚",
 
-        SPEAR_WATHGRITHR = "战 争 之 矛",
-        WATHGRITHRHAT = "战 争 之 盔",
+        SPEAR_WATHGRITHR = "薇 斯 哥 德 尔 之 矛",
+        WATHGRITHRHAT = "薇 斯 哥 德 尔 之 盔",
 
         MOOSE1 = "慕 斯 鹅",
         MOOSE2 = "肚 斯 鹿",
@@ -864,7 +864,7 @@ STRINGS=
 
         CACTUS = "仙 人 球",
         CACTUS_MEAT = "仙 人 球 肉",
-        CACTUSFLOWER = "仙 人 掌 花",
+        CACTUS_FLOWER = "仙 人 掌 花",
         LIGHTNINGGOAT = "伏 特 羊",
         GOATMILK = "电 牛 奶",
         BUZZARD = "秃 鹫",
@@ -887,7 +887,7 @@ STRINGS=
         BONESHARD = "骨 头 碎 片",
 
         FERTILIZER = "一 大 桶 便 便 肥 料",
-        FIRESUPPRESSOR = "制 冷 机",
+        FIRESUPPRESSOR = "火 焰 抑 制 器",
         CACTUS_MEAT_COOKED = "烤 仙 人 掌 片",
         ACORN_COOKED = "浆 烤 橡 果",
         WEBBERSKULL = "维 伯 的 头 骨",
@@ -895,7 +895,7 @@ STRINGS=
         WATERMELON = "西 瓜",
         WATERMELON_COOKED = "岩 烤 西 瓜",
         WATERMELONHAT = "清 爽 西 瓜 帽",        
-        CATCOONHAT = "小 熊 猫 毛 防 雨 帽",
+        CATCOONHAT = "小 熊 猫 毛 帽",
         CATCOON = "小 熊 猫",
         COONTAIL = "小 熊 的 尾 巴",
         CATCOONDEN = "空 心 树 桩",
@@ -907,7 +907,7 @@ STRINGS=
         ARMORDRAGONFLY = "红 鳞 甲",
         STAFF_TORNADO = "气 象 魔 杖",
         TORNADO = "龙 卷 风",
-        EYEBRELLAHAT = "眼 伞",
+        EYEBRELLAHAT = "眼 伞 帽",
         FEATHERFAN = "豪 华 羽 毛 扇",
 
     },
@@ -927,7 +927,7 @@ STRINGS=
     RECIPE_DESC=
     {
 
-        BOOK_BIRDS = "包 括 1000 个 物 种 ： 习 性 ， 栖 息 地 和 呼 唤",
+        BOOK_BIRDS = "包 括 1000 物 种 ： 习 性 ， 栖 息 地 和 呼 唤",
         BOOK_TENTACLES = "让 我 们 了 解 一 下 我 们 地 下 的 朋 友 ！",
         BOOK_GARDENING = "照 料 喂 养 植 物",
         BOOK_SLEEP = "抚 慰 的 故 事 带 入 梦 境 。",
@@ -1023,7 +1023,7 @@ STRINGS=
         TRAP_TEETH_MAXWELL = "突 然 出 现 ， 扎 划 踩 在 上 面 的 任 何 家 伙",
         EARMUFFSHAT = "一 点 朦 胧 的 温 暖",
         WINTERHAT = "让 你 的 头 部 保 持 温 暖",
-        BUSHHAT = "很 好 的 藏 身 处！",
+        BUSHHAT = "很 好 的 藏 身 处 ！",
         BOOMERANG = "来 自 南 方 大 陆",
         ICEBOX = "减 缓 食 物 腐 败",
         ONEMANBAND = "最 疯 狂 的 音 乐 家 也 能 吸 引 追 随 者",

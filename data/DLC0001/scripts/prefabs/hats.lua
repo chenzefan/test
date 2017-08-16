@@ -645,8 +645,9 @@ function MakeHat(name)
     end
 
     local function mole_onequip(inst, owner)
-        --opentop_onequip(inst, owner)
 		onequip(inst, owner)
+        if owner ~= GetPlayer() then return end
+        --opentop_onequip(inst, owner)
         if GetClock() and GetWorld() and GetWorld().components.colourcubemanager then
             GetClock():SetNightVision(true)
             if GetClock():IsDay() and not GetWorld():IsCave() then
@@ -659,6 +660,7 @@ function MakeHat(name)
 
     local function mole_onunequip(inst, owner)
         onunequip(inst, owner)
+        if owner ~= GetPlayer() then return end
         if GetClock() then
             GetClock():SetNightVision(false)
         end
@@ -668,7 +670,7 @@ function MakeHat(name)
     end
 
     local function mole_perish(inst)
-        if inst.components.equippable and inst.components.equippable:IsEquipped() then
+        if inst.components.inventoryitem:GetGrandOwner() == GetPlayer() and inst.components.equippable and inst.components.equippable:IsEquipped() then
             if GetClock() then
                 GetClock():SetNightVision(false)
             end
@@ -690,17 +692,17 @@ function MakeHat(name)
         inst.components.fueled:SetDepletedFn( mole_perish )
 
         inst:ListenForEvent("daytime", function(it)
-            if inst.components.equippable and inst.components.equippable:IsEquipped() and not GetWorld():IsCave() then
+            if inst.components.equippable and inst.components.equippable:IsEquipped() and inst.components.inventoryitem:GetGrandOwner() == GetPlayer() and not GetWorld():IsCave() then
                 GetWorld().components.colourcubemanager:SetOverrideColourCube("images/colour_cubes/mole_vision_off_cc.tex", 2)
             end
         end, GetWorld())
         inst:ListenForEvent("dusktime", function(it)
-            if inst.components.equippable and inst.components.equippable:IsEquipped() then
+            if inst.components.equippable and inst.components.equippable:IsEquipped() and inst.components.inventoryitem:GetGrandOwner() == GetPlayer() then
                 GetWorld().components.colourcubemanager:SetOverrideColourCube("images/colour_cubes/mole_vision_on_cc.tex", 2)
             end
         end, GetWorld())
         inst:ListenForEvent("nighttime", function(it)
-            if inst.components.equippable and inst.components.equippable:IsEquipped() then
+            if inst.components.equippable and inst.components.equippable:IsEquipped() and inst.components.inventoryitem:GetGrandOwner() == GetPlayer() then
                 GetWorld().components.colourcubemanager:SetOverrideColourCube("images/colour_cubes/mole_vision_on_cc.tex", 2)
             end
         end, GetWorld())

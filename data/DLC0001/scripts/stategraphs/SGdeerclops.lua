@@ -29,7 +29,6 @@ local function SpawnIceFx(inst, target)
     for i = 1, numFX do
         inst:DoTaskInTime(math.random() * 0.25, function(inst)
             local prefab = "icespike_fx_"..math.random(1,4)
-            print(prefab)
             local fx = SpawnPrefab(prefab)
             if fx then
                 local x = GetRandomWithVariance(0, 3)

@@ -3,7 +3,7 @@ require "behaviours/wander"
 require "behaviours/faceentity"
 require "behaviours/panic"
 require "behaviours/runaway"
-
+require "behaviours/leash"
 
 local MIN_FOLLOW_DIST = 0
 local MAX_FOLLOW_DIST = 8

@@ -88,60 +88,57 @@ return {
 	},
 	DESCRIBE =
 	{
-		WORMLIGHT = "魔 幻 发 光 浆 果 ",
-		WORM =
-		{
-	        GLOMMER = "有 知 觉 版 本 的 石 昆 虫",
-			GLOMMERGLAND = "特 别 坚 硬 的 花",
-			GLOMMERWINGS = "特 别 坚 硬 的 翅 膀",
-			GLOMMERFUEL = "无 法 确 定 泥 的 来 源",
-   	        BELL = "叮 叮 叮",
-   	        STATUEGLOMMER = 
-   	        {	
-   	        	GENERIC = "石 昆 虫 ",
-   	        	EMPTY = "砸 坏 的 石 昆 虫",
-  	    	},
-  			WEBBERSKULL = "分 析 显 示 成 分 为 50 % 蜘 蛛 50 % 人",
-  			MOLE =
-  			{
-  				UNDERGROUND = "检 测 到 小 型 地 质 活 动",
-  				ABOVEGROUND = "检 测 到 震 源 中 心",
-  			},
-  			MOLEHILL = "小 型 挖 掘 机 的 住 所",
-  			MOLEHAT = "挖 掘 机 有 特 殊 的 视 觉",
-  			NIGHTSTICK = "选 择 武 器",
-  			RABBITHOUSE=
-  			{
-  				GENERIC = "这 是 一 个 大 胡 萝 卜",
-  				BURNT = "这 是 一 个 烤 大 胡 萝 卜",
-  			},
-  			TURF_DECIDUOUS = "地 上 部 分",
-  			TURF_SANDY = "地 上 部 分",
-  			TURF_BADLANDS = "地 上 部 分",
-  			BEARGER = "冬 眠 迫 在 眉 睫",
-  			BEARGERVEST = "非 常 繁 茂 的 背 心",
-  			ICEPACK = "内 部 温 度 稳 定",
-  			BEARGER_FUR = "最 大 程 度 的 厚 皮 毛",
-  			BIGFOOT = "超 级 大 的 脚 。 高 度 危 险 等 级",
-  			BONESHARD = "结 构 支 撑 系 统 组 件",
-  			BUZZARD = "垃 圾 回 收 器 的 生 命 形 式",
-  			CACTUS = 
-  			{
-  				GENERIC = "存 在 保 护 屏 障 。 谨 慎 行 事",
-  				PICKED = "现 在 没 有 营 养 丰 富 的 物 质",
-  			},
-  			CACTUS_MEAT_COOKED = "保 护 屏 障 移 除",
-  			CACTUS_MEAT = "保 护 屏 障 依 然 存 在",
-  			CACTUSFLOWER = "保 护 屏 障 的 原 因",
-  			COLDFIRE =
-  			{
-  				EMBERS = "警 告 ： 火 焰 等 级 达 到 临 界 值",
-  				GENERIC = "一 个 临 时 性 的 营 地",
-  				HIGH = "警 告 ： 火 焰 强 烈",
-  				LOW = "警 告 ： 火 焰 等 级 低",
-  				NORMAL = "倒 过 来 的 火 。 奇 怪",
-  				OUT = "未 检 测 到 火",
-  			},
+        GLOMMER = "有 知 觉 版 本 的 石 昆 虫",
+		GLOMMERGLAND = "特 别 坚 硬 的 花",
+		GLOMMERWINGS = "特 别 坚 硬 的 翅 膀",
+		GLOMMERFUEL = "无 法 确 定 泥 的 来 源",
+        BELL = "叮 叮 叮",
+        STATUEGLOMMER = 
+        {	
+   	      	GENERIC = "石 昆 虫 ",
+   	       	EMPTY = "砸 坏 的 石 昆 虫",
+  	    },
+  		WEBBERSKULL = "分 析 显 示 成 分 为 50 % 蜘 蛛 50 % 人",
+  		MOLE =
+  		{
+  			UNDERGROUND = "检 测 到 小 型 地 质 活 动",
+  			ABOVEGROUND = "检 测 到 震 源 中 心",
+  		},
+  		MOLEHILL = "小 型 挖 掘 机 的 住 所",
+  		MOLEHAT = "挖 掘 机 有 特 殊 的 视 觉",
+  		NIGHTSTICK = "选 择 武 器",
+  		RABBITHOUSE=
+  		{
+  			GENERIC = "这 是 一 个 大 胡 萝 卜",
+  			BURNT = "这 是 一 个 烤 大 胡 萝 卜",
+  		},
+  		TURF_DECIDUOUS = "地 上 部 分",
+  		TURF_SANDY = "地 上 部 分",
+  		TURF_BADLANDS = "地 上 部 分",
+  		BEARGER = "冬 眠 迫 在 眉 睫",
+  		BEARGERVEST = "非 常 繁 茂 的 背 心",
+  		ICEPACK = "内 部 温 度 稳 定",
+  		BEARGER_FUR = "最 大 程 度 的 厚 皮 毛",
+  		BIGFOOT = "超 级 大 的 脚 。 高 度 危 险 等 级",
+  		BONESHARD = "结 构 支 撑 系 统 组 件",
+  		BUZZARD = "垃 圾 回 收 器 的 生 命 形 式",
+  		CACTUS = 
+  		{
+  			GENERIC = "存 在 保 护 屏 障 。 谨 慎 行 事",
+  			PICKED = "现 在 没 有 营 养 丰 富 的 物 质",
+  		},
+  		CACTUS_MEAT_COOKED = "保 护 屏 障 移 除",
+  		CACTUS_MEAT = "保 护 屏 障 依 然 存 在",
+  		CACTUSFLOWER = "保 护 屏 障 的 原 因",
+  		COLDFIRE =
+  		{
+  		EMBERS = "警 告 ： 火 焰 等 级 达 到 临 界 值",
+  			GENERIC = "一 个 临 时 性 的 营 地",
+  			HIGH = "警 告 ： 火 焰 强 烈",
+  			LOW = "警 告 ： 火 焰 等 级 低",
+  			NORMAL = "倒 过 来 的 火 。 奇 怪",
+  			OUT = "未 检 测 到 火",
+  		},
   			CATCOON = "爪 子 伸 出",
   			CATCOONDEN = 
   			{
@@ -151,184 +148,186 @@ return {
   			CATCOONHAT = "皮 质 头 部 覆 盖 物",
   			COOKPOT =
   			{
-  				COOKING_LONG = "需 要 更 多 时 间",
-  				COOKING_SHORT = "它 几 乎 完 成",
-  				DONE = "风 干 完 成",
-  				EMPTY = "我 可 以 优 化 肉 与 蔬 菜 以 更 强 大 的 形 式 存 在",
-  				BURNT = "发 生 故 障",
-  			},
-  			EYEBRELLAHAT =	"眼 睛 材 料 的 弹 性 惊 人",
-  			ARMORDRAGONFLY = "红 鳞 甲 功 能 类 似 于 微 型 防 火 服",
-  			DRAGON_SCALES = "主 体 镀 层 经 火 焰 处 理",
-  			DRAGONFLYCHEST = "能 经 受 极 高 的 温 度",
-  			DECIDUOUSTREE = 
-  			{
-  				BURNING = "很 快 就 会 烧 光",
-  				BURNT = "我 赢 了 。 很 好",
-  				CHOPPED = "被 高 估 的 自 然 世 界",
-  				GENERIC = "目 标 锁 定",
-  				POISON = "怪 物 抬 头 了",
-  			},
-  			ACORN_COOKED = "这 棵 树 死 了 并 变 成 了 营 养 素",
-  			BIRCHNUTDRAKE = "自 然 界 的 另 一 个 恐 怖 事 情",
-  			FARMPLOT =
-  			{
-  				GENERIC = "尚 不 活 跃",
-  				GROWING = "低 效 生 命",
-  				NEEDSFERTILIZER = "资 源 枯 竭",
-  				BURNT = "永 远 失 效",
-  			},
-  			COLDFIREPIT =
-  			{
-  				EMBERS = "警 告 ： 火 焰 等 级 达 到 临 界",
-  				GENERIC = "冷 与 光",
-  				HIGH = "警 告 ： 火 焰 等 级 超 过 设 计 值",
-  				LOW = "警 告 ： 火 焰 等 级 低",
-  				NORMAL = "吸 热 火 焰 运 行 正 常",
-  				OUT = "需 要 重 新 启 动",
-     		},
-  			FIRESUPPRESSOR = 
-  			{	
-  				ON = "嗡 嗡 的 朋 友",
-  				OFF = "安 静 的 朋 友",
-  				LOWFUEL = "朋 友 极 度 需 要 食 物",
-  			},
-  			ICEHAT = "帽 子 似 乎 对 我 的 功 能 很 危 险",
-  			LIGHTNINGGOAT = 
-  			{
-  				GENERIC = "它 也 有 机 械 心 脏 ？",
-  				CHARGED = "电 力 过 载",
-  			},
-  			LIGHTNINGGOATHORN = "这 个 很 好 的 箱 子",
-  			GOATMILK = "激 动 地 看 着 牛 奶",
-  			MEATRACK =
-  			{
-  				DONE = "我 有 新 了 的 蛋 白 质",
-  				DRYING = "晒 肉 架 需 要 些 时 间 风 干",
-  				DRYINGINRAIN = "晒 肉 架 无 法 在 雨 中 变 干",
-  				GENERIC = "我 应 该 挂 满 晒 肉 架",
-  				BURNT = "晒 肉 架 变 得 太 脆 了",
-  			},
-  			MERMHEAD = 
-  			{
-  				GENERIC = "鱼 人 看 上 去 比 平 时 更 愚 蠢",
-  				BURNT = "火 的 考 验",
-  			},
-  			MERMHOUSE = 
-  			{
-  				GENERIC = "过 时 的 房 子",
-  				BURNT = "破 旧 的 房 子",
-  			},
-  			FLOWERSALAD = "富 含 膳 食 纤 维 素",
-  	        ICECREAM = "甜 酸 奶",
-  	        WATERMELONICLE = "西 瓜 开 启 了 冰 冻 模 式",
-  	        TRAILMIX = "高 营 养 价 值",
-  	        HOTCHILI = "辛 辣 等 级 非 常 高",
-  	        GUACAMOLE = "方 法 怀 疑",
-  			MOOSE = "分 析 结 果 不 确 定",
-  			MOOSEEGG = "探 测 器 无 法 穿 透 外 壳",
-  			MOSSLING = "后 代 不 确 定",
-  			FEATHERFAN = "优秀的冷却系统",
-  			GOOSE_FEATHER = "奇 怪 生 命 形 式 的 羽 毛",
-  			STAFF_TORNADO = "危 险 的 强 烈 飓 风",
-  			PIGHEAD = 
-  			{	
-  				GENERIC = "那 头 猪 发 现 自 己 失 去 了 头 部 组 件 时 可 能 会 感 到 无 聊",
-  				BURNT = "头 部 组 建 过 期",
-  			},
-  			PIGHOUSE =
-  			{
-  				FULL = "被 占 用",
-  				GENERIC = "就 像 是 所 有 猪 的 形 状",
-  				LIGHTSOUT = "居 住 者 在 必 要 的 睡 眠",
-  				BURNT = "空 的",
-  			},
-  			FERTILIZER = "一 桶 动 物 排 泄 物",
-    		RAINOMETER = 
-    		{	
-  				GENERIC = "欢 迎 光 临 。 兄 弟",
-  				BURNT = "你 消 失 了 。 兄 弟",
-  			},
-  			RAINCOAT = "一 块 不 完 美 电 路 的 完 美 保 护",
-  			RAINHAT = "将 水 隔 绝 免 受 伤 害",
-  			RESEARCHLAB = 
-  			{	
-  				GENERIC = "妈 妈 ？",
-  				BURNT = "妈 妈 ， 不 ！",
-  			},
-  			RESEARCHLAB2 = 
-  			{
-  				GENERIC = "你 好 ， 朋 友",
-  				BURNT = "再 见 ， 朋 友",
-  			},
-  			RESEARCHLAB3 = 
-  			{
-  				GENERIC = "也 许 太 强 大 了",
-  				BURNT = "它 失 去 了 动 力",
-  			},
-  			RESEARCHLAB4 = 
-  			{
-  				GENERIC = "额 外 的 电 力 我 有 …… 更 多 的 动 力 ！",
-  				BURNT = "我 失 去 了 我 的 额 外 动 力",
-  			},
-  			RESURRECTIONSTATUE = 
-  			{
-  				GENERIC = "那 是 谁 ？",
-  				BURNT = "神 秘 男 子 死 了",
-  			},
-  			ROCK_ICE = 
-  			{
-  				GENERIC = "我 不 喜 欢 这 带 水 的 岩 石",
-  				MELTED = "含 水 岩 石 是 无 用 的 配 置",
-  			},
-  			ROCK_ICE_MELTED = "含 水 岩 石 是 无 用 的 配 置",
-  			ICE = "至 少 是 固 态 水",
-  	        REFLECTIVEVEST = "防 止 内 部 系 统 达 到 危 险 温 度",
-  			HAWAIIANSHIRT = "机 器 人 要 休 闲 每 一 天",
-  			TENT = 
-  			{
-  				GENERIC = "我 可 以 在 这 里 重 新 启 动",
-  				BURNT = "恶 劣 的 重 启 环 境",
-  			},
-  			SIESTAHUT = 
-  			{
-  				GENERIC = "我 可 以 在 这 里 休 眠",
-  				BURNT = "不 理 想 的 休 眠 条 件",
-  			},
-  			TRANSISTOR = "早 上 好 ， 妹 妹",
-  			TREASURECHEST = 
-  			{
-  				GENERIC = "外 置 存 储 单 元",
-  				BURNT = "存 储 大 小 降 低 为 零",
-  			},
-  			TUMBLEWEED = "它 包 含 着 很 多 东 西",
-  			GRASS_UMBRELLA = "中 等 强 度 的 保 护 伞",
-  			UNIMPLEMENTED = "警 告 ： 未 实 现",
-  			WALL_HAY = 
-  			{	
-    			GENERIC = "这 好 像 是 最 理 想 的",
-  				BURNT = "最 少 的 优 化",
-  			},
-  			WALL_WOOD = 
-  			{
-  				GENERIC = "我 有 些 安 心",
-  				BURNT = "我 不 放 心",
-  			},
-  			WARG = "它 吃 了 太 大 的 东 西",
-  			WATERMELON = "球 形 果 汁",
-  			WATERMELON_COOKED = "热 果 汁",
-  			WATERMELONHAT = "帽 子 似 乎 不 符 合 我 的 设 计",
-  			WINTEROMETER = 
-  			{
-  				GENERIC = "你 好 。 朋 友",
-  				BURNT = "再 见 。 朋 友",
-  			},
-  			LIVINGTREE = "大 自 然 是 一 个 令 人 惊 奇 的 地 方",
-  	     	ICESTAFF = "这 是 我 的 冷 冻 棒",
-
-		    PLANT = "这 株 植 物 看 起 来 很 可 疑 ",
-		    DIRT = "警 告 。 发 现 生 命 体 ",
-		    WORM = "威 胁 迫 在 眉 睫 ",
+  			COOKING_LONG = "需 要 更 多 时 间",
+  			COOKING_SHORT = "它 几 乎 完 成",
+  			DONE = "风 干 完 成",
+  			EMPTY = "我 可 以 优 化 肉 与 蔬 菜 以 更 强 大 的 形 式 存 在",
+  			BURNT = "发 生 故 障",
+  		},
+  		EYEBRELLAHAT =	"眼 睛 材 料 的 弹 性 惊 人",
+  		ARMORDRAGONFLY = "红 鳞 甲 功 能 类 似 于 微 型 防 火 服",
+  		DRAGON_SCALES = "主 体 镀 层 经 火 焰 处 理",
+  		DRAGONFLYCHEST = "能 经 受 极 高 的 温 度",
+  		DECIDUOUSTREE = 
+  		{
+  			BURNING = "很 快 就 会 烧 光",
+  			BURNT = "我 赢 了 。 很 好",
+  			CHOPPED = "被 高 估 的 自 然 世 界",
+  			GENERIC = "目 标 锁 定",
+  			POISON = "怪 物 抬 头 了",
+  		},
+  		ACORN_COOKED = "这 棵 树 死 了 并 变 成 了 营 养 素",
+  		BIRCHNUTDRAKE = "自 然 界 的 另 一 个 恐 怖 事 情",
+  		FARMPLOT =
+  		{
+  			GENERIC = "尚 不 活 跃",
+  			GROWING = "低 效 生 命",
+  			NEEDSFERTILIZER = "资 源 枯 竭",
+  			BURNT = "永 远 失 效",
+  		},
+  		COLDFIREPIT =
+  		{
+  			EMBERS = "警 告 ： 火 焰 等 级 达 到 临 界",
+  			GENERIC = "冷 与 光",
+  			HIGH = "警 告 ： 火 焰 等 级 超 过 设 计 值",
+  		LOW = "警 告 ： 火 焰 等 级 低",
+  			NORMAL = "吸 热 火 焰 运 行 正 常",
+  			OUT = "需 要 重 新 启 动",
+    		},
+  		FIRESUPPRESSOR = 
+  		{	
+  			ON = "嗡 嗡 的 朋 友",
+  			OFF = "安 静 的 朋 友",
+  			LOWFUEL = "朋 友 极 度 需 要 食 物",
+  		},
+  		ICEHAT = "帽 子 似 乎 对 我 的 功 能 很 危 险",
+  		LIGHTNINGGOAT = 
+  		{
+  			GENERIC = "它 也 有 机 械 心 脏 ？",
+  			CHARGED = "电 力 过 载",
+  		},
+  		LIGHTNINGGOATHORN = "这 个 很 好 的 箱 子",
+  		GOATMILK = "激 动 地 看 着 牛 奶",
+  		MEATRACK =
+  		{
+  			DONE = "我 有 新 了 的 蛋 白 质",
+  			DRYING = "晒 肉 架 需 要 些 时 间 风 干",
+  			DRYINGINRAIN = "晒 肉 架 无 法 在 雨 中 变 干",
+  			GENERIC = "我 应 该 挂 满 晒 肉 架",
+  			BURNT = "晒 肉 架 变 得 太 脆 了",
+  		},
+  		MERMHEAD = 
+  		{
+  			GENERIC = "鱼 人 看 上 去 比 平 时 更 愚 蠢",
+  			BURNT = "火 的 考 验",
+  		},
+  		MERMHOUSE = 
+  		{
+  			GENERIC = "过 时 的 房 子",
+  			BURNT = "破 旧 的 房 子",
+  		},
+  		FLOWERSALAD = "富 含 膳 食 纤 维 素",
+  	    ICECREAM = "甜 酸 奶",
+  	    WATERMELONICLE = "西 瓜 开 启 了 冰 冻 模 式",
+  	    TRAILMIX = "高 营 养 价 值",
+  	    HOTCHILI = "辛 辣 等 级 非 常 高",
+  	    GUACAMOLE = "方 法 怀 疑",
+  		MOOSE = "分 析 结 果 不 确 定",
+  		MOOSEEGG = "探 测 器 无 法 穿 透 外 壳",
+  		MOSSLING = "后 代 不 确 定",
+  		FEATHERFAN = "优秀的冷却系统",
+  		GOOSE_FEATHER = "奇 怪 生 命 形 式 的 羽 毛",
+  		STAFF_TORNADO = "危 险 的 强 烈 飓 风",
+  		PIGHEAD = 
+  		{	
+  			GENERIC = "那 头 猪 发 现 自 己 失 去 了 头 部 组 件 时 可 能 会 感 到 无 聊",
+  			BURNT = "头 部 组 建 过 期",
+  		},
+  		PIGHOUSE =
+  		{
+  			FULL = "被 占 用",
+  			GENERIC = "就 像 是 所 有 猪 的 形 状",
+  			LIGHTSOUT = "居 住 者 在 必 要 的 睡 眠",
+  			BURNT = "空 的",
+  		},
+  		FERTILIZER = "一 桶 动 物 排 泄 物",
+    	RAINOMETER = 
+    	{	
+  			GENERIC = "欢 迎 光 临 。 兄 弟",
+  			BURNT = "你 消 失 了 。 兄 弟",
+  		},
+  		RAINCOAT = "一 块 不 完 美 电 路 的 完 美 保 护",
+  		RAINHAT = "将 水 隔 绝 免 受 伤 害",
+  		RESEARCHLAB = 
+  		{	
+  			GENERIC = "妈 妈 ？",
+  			BURNT = "妈 妈 ， 不 ！",
+  		},
+  		RESEARCHLAB2 = 
+  		{
+  			GENERIC = "你 好 ， 朋 友",
+  			BURNT = "再 见 ， 朋 友",
+  		},
+  		RESEARCHLAB3 = 
+  		{
+  			GENERIC = "也 许 太 强 大 了",
+  			BURNT = "它 失 去 了 动 力",
+  		},
+  		RESEARCHLAB4 = 
+  		{
+  			GENERIC = "额 外 的 电 力 我 有 …… 更 多 的 动 力 ！",
+  			BURNT = "我 失 去 了 我 的 额 外 动 力",
+  		},
+  		RESURRECTIONSTATUE = 
+  		{
+  			GENERIC = "那 是 谁 ？",
+  			BURNT = "神 秘 男 子 死 了",
+  		},
+  		ROCK_ICE = 
+  		{
+  			GENERIC = "我 不 喜 欢 这 带 水 的 岩 石",
+  			MELTED = "含 水 岩 石 是 无 用 的 配 置",
+  		},
+  		ROCK_ICE_MELTED = "含 水 岩 石 是 无 用 的 配 置",
+  		ICE = "至 少 是 固 态 水",
+  	    REFLECTIVEVEST = "防 止 内 部 系 统 达 到 危 险 温 度",
+  		HAWAIIANSHIRT = "机 器 人 要 休 闲 每 一 天",
+  		TENT = 
+  		{
+			GENERIC = "我 可 以 在 这 里 重 新 启 动",
+  			BURNT = "恶 劣 的 重 启 环 境",
+  		},
+  		SIESTAHUT = 
+  		{
+  			GENERIC = "我 可 以 在 这 里 休 眠",
+  			BURNT = "不 理 想 的 休 眠 条 件",
+  		},
+  		TRANSISTOR = "早 上 好 ， 妹 妹",
+  		TREASURECHEST = 
+  		{
+  			GENERIC = "外 置 存 储 单 元",
+  			BURNT = "存 储 大 小 降 低 为 零",
+  		},
+  		TUMBLEWEED = "它 包 含 着 很 多 东 西",
+  		GRASS_UMBRELLA = "中 等 强 度 的 保 护 伞",
+  		UNIMPLEMENTED = "警 告 ： 未 实 现",
+  		WALL_HAY = 
+  		{	
+			GENERIC = "这 好 像 是 最 理 想 的",
+  			BURNT = "最 少 的 优 化",
+  		},
+  		WALL_WOOD = 
+  		{
+  			GENERIC = "我 有 些 安 心",
+  			BURNT = "我 不 放 心",
+  		},
+  		WARG = "它 吃 了 太 大 的 东 西",
+  		WATERMELON = "球 形 果 汁",
+  		WATERMELON_COOKED = "热 果 汁",
+  		WATERMELONHAT = "帽 子 似 乎 不 符 合 我 的 设 计",
+  		WINTEROMETER = 
+  		{
+  			GENERIC = "你 好 。 朋 友",
+  			BURNT = "再 见 。 朋 友",
+  		},
+  		LIVINGTREE = "大 自 然 是 一 个 令 人 惊 奇 的 地 方",
+  	    ICESTAFF = "这 是 我 的 冷 冻 棒",
+		WORMLIGHT = "魔 法 浆 果",
+		WORM =
+		{
+			PLANT = "这 株 植 物 看 起 来 很 可 疑 ",
+			DIRT = "警 告 。 发 现 生 命 体 ",
+			WORM = "威 胁 迫 在 眉 睫 ",
 		},
 		EEL = "我 从 它 家 里 拿 的 这 个 。过 程 很 有 意 思 ！ ",
 		EEL_COOKED = "火 焰 能 够 浓 缩 能 量 ",
@@ -361,7 +360,6 @@ return {
 			GEMS = "这 东 西 需 要 电 池 ",
 		},
 		STAFFLIGHT = "那 样 的 力 量 ！ ！ ",
-
        	ANCIENT_ALTAR =
         {
         	WORKING = "错 误 ： 逻 辑 关 系 被 盗 用 ",
@@ -1053,8 +1051,8 @@ return {
 		WALL_STONE_ITEM = "石 质 防 御 工 事 ",
 		WALL_RUINS = "很 旧 ， 但 是 依 然 能 用 ",
 		WALL_RUINS_ITEM = "小 型 碎 石 机 防 御 ",
-		WALL_WOOD_ITEM = "木 质 防 御 工 事 ",
-		WALRUS = "我 不 喜 欢 他 的 样 子 ",
+		WALL_WOOD_ITEM = "木 质 防 御 工 事",
+		WALRUS = "我 不 喜 欢 他 的 样 子",
 		WALRUSHAT = "闻 起 来 像 哺 乳 动 物 ",
 		WALRUS_CAMP =
 		{

@@ -1,4 +1,5 @@
 require "behaviours/wander"
+require "behaviours/leash"
 
 local TornadoBrain = Class(Brain, function(self, inst)
     Brain._ctor(self, inst)

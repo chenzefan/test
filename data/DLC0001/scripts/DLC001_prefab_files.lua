@@ -57,6 +57,7 @@ local PREFABFILES = {
   "deciduoustrees",
   "deciduous_root",
   "deerclops",
+  "deerclops_eyeball",
   "devtool",
   "DLC0001",
   "dragonfly",
