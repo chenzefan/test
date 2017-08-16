@@ -9,10 +9,19 @@ local cave_prefabs =
 	"cavelight",
 	"flower_cave",
 	"stalagmite",
+	"stalagmite_tall",
 	"bat",
 	"mushtree_tall",
+	"mushtree_medium",
+	"mushtree_small",
+	"cave_banana_tree",
 	"spiderhole",
 	"ground_chunks_breaking",
+    "tentacle_pillar",
+    "tentacle_pillar_arm",
+    "batcave",
+    "rockyherd",
+    "cave_fern",
 }
 
 local assets =
@@ -42,11 +51,10 @@ local function fn(Sim)
 	waves:SetWaveSize( 2048, 512 )--]]
 
 
-	print ("CAVE REVERB!")
 	inst.components.ambientsoundmixer:SetReverbPreset("cave")
 
     return inst
 end
 
-return Prefab( "cave", fn, assets, cave_prefabs)
+return Prefab( "cave", fn, assets, cave_prefabs) 
 

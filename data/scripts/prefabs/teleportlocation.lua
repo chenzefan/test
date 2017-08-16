@@ -7,4 +7,4 @@ local function fn()
 	return inst
 end
 
-return Prefab("common/teleportlocation", fn)
+return Prefab("common/teleportlocation", fn) 

@@ -37,4 +37,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/inventory/boards", fn, assets)
+return Prefab( "common/inventory/boards", fn, assets) 

@@ -98,7 +98,7 @@ local function fn(Sim)
 
 	local inst = CreateEntity()
 
-
+	
 	inst:AddTag( "ground" )
 	inst:AddTag( "NOCLICK" )
     inst.entity:SetCanSleep(false)
@@ -119,9 +119,9 @@ local function fn(Sim)
 		local handle =
 			MapLayerManager:CreateRenderLayer(
 				tile_type, --embedded map array value
-				GroundAtlas( layer_name ),
-				GroundImage( layer_name ),
-				props.noise_texture
+				resolvefilepath(GroundAtlas( layer_name )),
+				resolvefilepath(GroundImage( layer_name )),
+				resolvefilepath(props.noise_texture)
 			)
 
 		map:AddRenderLayer( handle )
@@ -132,12 +132,20 @@ local function fn(Sim)
 
 	for i, data in ipairs( groundtiles.creep ) do
 		local tile_type, props = unpack( data )
-		local handle = MapLayerManager:CreateRenderLayer( tile_type, GroundAtlas( props.name ), GroundImage( props.name ), props.noise_texture )
+		local handle = MapLayerManager:CreateRenderLayer( 
+				tile_type,
+				resolvefilepath(GroundAtlas( props.name )),
+				resolvefilepath(GroundImage( props.name )),
+				resolvefilepath(props.noise_texture ) )
 		groundcreep:AddRenderLayer( handle )
 	end
 
 	local underground_layer = groundtiles.underground[1][2]
-	local underground_handle = MapLayerManager:CreateRenderLayer( GROUND.UNDERGROUND, GroundAtlas( underground_layer.name ), GroundImage( underground_layer.name ), underground_layer.noise_texture )
+	local underground_handle = MapLayerManager:CreateRenderLayer( 
+				GROUND.UNDERGROUND,
+				resolvefilepath(GroundAtlas( underground_layer.name )),
+				resolvefilepath(GroundImage( underground_layer.name )),
+				resolvefilepath(underground_layer.noise_texture) )
 	map:SetUndergroundRenderLayer( underground_handle )
 	
     map:SetImpassableType( GROUND.IMPASSABLE )
@@ -147,11 +155,11 @@ local function fn(Sim)
 	
 	inst:AddComponent("groundcreep")
 	inst:AddComponent("ambientsoundmixer")
-
+	inst:AddComponent("age")
 
 	inst.IsCave = function() return inst:HasTag("cave") end
     return inst
 end
 
-return Prefab( "world", fn, assets, common_prefabs)
+return Prefab( "world", fn, assets, common_prefabs) 
 

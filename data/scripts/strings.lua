@@ -155,6 +155,7 @@ STRINGS=
         TURNON = "Turn On",
         TURNOFF = "Turn Off",
         USEITEM = "Use",
+        TAKEITEM = "Take Item",
     },
 
 	LMB = "\255",--"ÿ",
@@ -167,7 +168,10 @@ STRINGS=
     {
 		DEFAULT = "INVENTORY ITEM",
 		
+        COMPASS = "Compass",
         MUSHTREE_TALL = "Mushtree",
+        MUSHTREE_MEDIUM = "Red Mushtree",
+        MUSHTREE_SMALL = "Green Mushtree",
         SPIDER_HIDER="Cave Spider",
         SPIDER_SPITTER="Spitter",
 		SEWING_KIT = "Sewing Kit",
@@ -266,6 +270,8 @@ STRINGS=
 		MONSTERMEAT = "Monster Meat",
 		COOKEDMONSTERMEAT = "Cooked Monster Meat",
 		MONSTERMEAT_DRIED = "Monster Jerky",
+        PLANTMEAT = "Leafy Meat",
+        PLANTMEAT_COOKED = "Cooked Leafy Meat",
 		TRAP = "Trap",
 		LOG = "Log",
 		HAMBAT = "Ham Bat",
@@ -365,8 +371,11 @@ STRINGS=
         ARMORMARBLE = "Marble Suit",
         ARMOR_SANITY = "Night Armour",
         SPEAR = "Spear",
-        TENTACLESPIKE = "Tentacle spike",
+        TENTACLESPIKE = "Tentacle Spike",
         TENTACLE = "Tentacle",
+        TENTACLE_PILLAR = "Big Tentacle",
+        TENTACLE_PILLAR_ARM = "Baby Tentacle",
+        TENTACLE_GARDEN = "Big Tentacle",
         ROPE = "Rope",
         RESURRECTIONSTATUE = "Meat Effigy",
         RESURRECTIONSTONE = "Touch Stone",
@@ -601,13 +610,39 @@ STRINGS=
         STALAGMITE_FULL = "Stalagmite",
         STALAGMITE_MED = "Stalagmite",
         STALAGMITE_LOW = "Stalagmite",
+        STALAGMITE_TALL = "Stalagmite",
+        STALAGMITE_TALL_FULL = "Stalagmite",
+        STALAGMITE_TALL_MED = "Stalagmite",
+        STALAGMITE_TALL_LOW = "Stalagmite",
         SPIDERHOLE = "Spilagmite",
-
-
+        EYEPLANT = "Eye Plant",
+        LUREPLANT = "Meat Bulb",
+        LUREPLANTBULB = "Fleshy Bulb",
+        BATBAT = "Bat Bat",
+        BATCAVE = "Bat Cave",
+        CAVE_FERN = "Fern",
+        FOLIAGE = "Foliage",
+        CAVE_BANANA_TREE = "Cave Banana Tree",
+        CAVE_BANANA = "Cave Banana",
+        CAVE_BANANA_COOKED = "Cooked Banana",
+        ROCKY = "Rock Lobster",
 	},
 
+    DIRECTIONS=
+    {
+        N = "North",
+        S = "South",
+        E = "East",
+        W = "West",
+        NE = "Northeast",
+        SE = "Southeast",
+        NW = "Northwest",
+        SW = "Southwest",
+    },
+    
     RECIPE_DESC=
     {
+        COMPASS = "Points the way north",
 		GUNPOWDER = "A handful of gunpowder",
         TORCH = "Portable light source",
         TRAP = "Capture small creatures",
@@ -678,7 +713,7 @@ STRINGS=
         TRAP_TEETH = "Pops up and bites whoever steps on it",
         TRAP_TEETH_MAXWELL = "Pops up and bites whoever steps on it",
 		EARMUFFSHAT = "A fuzzy little bit of warmth",
-        WINTERHAT = "There must be some magic in it...",
+        WINTERHAT = "Keeps yer noggin warm",
         BUSHHAT = "Good for hiding!",
         BOOMERANG = "It comes from a land down under.",
         ICEBOX = "Slows food spoilage.",
@@ -706,6 +741,7 @@ STRINGS=
 		CANE = "Help with walking.",
 		DIVININGROD = "There must be some kind of way out of here...", 
         LANTERN = "Refuelable, bright, portable!",
+        BATBAT = "All this science is so... draining.",
 
     },
 
@@ -1212,6 +1248,7 @@ STRINGS.UI =
             "Kelly Graham",
             "Allan Cortez",
             "Aaron Bouthillier",
+            "David Forsey",
         },
 
         ALTGAMES = 
@@ -1376,11 +1413,13 @@ STRINGS.UI =
 		NEXTUPDATEDAYS = "Next Update: %d days",
 		
 		MOTDTITLE = "Don't Starve News",
-		MOTD = "Treat your ears to some dapper melodies with the Don't Starve soundtrack!",
+		
+		MOTD = "Treat your ears to some dapper melodies with the UPDATED Don't Starve soundtrack!",
 		MOTDBUTTON = "More Info",
 		EXIT = "Exit",
         LOGOUT = "Log Out",
         CREDITS = "Credits",
+        UPDATENAME = "It's Not a Rock!",
 	},
 	
 	HUD=
@@ -1400,7 +1439,7 @@ STRINGS.UI =
 		ROTLEFT = "Rotate Left\n(Q)",
 		ROTRIGHT = "Rotate Right\n(E)",
 		PAUSE = "Pause\n(ESC)",
-        CAVEWARNING = "CAVE AREA PRE-ALPHA IS INCOMPLETE",
+        CAVEWARNING = "CAVES ARE A WORK-IN-PROGRESS",
 	},
 	
 	OPTIONS=
@@ -1418,6 +1457,8 @@ STRINGS.UI =
 		DISPLAY = "Display:",
 		RESOLUTION = "Resolution:",
 		REFRESHRATE = "Refresh Rate:",
+		SMALLTEXTURES = "Small Textures:",
+		NETBOOKMODE = "Netbook Mode:",
 		ENABLED = "Enabled",
 		DISABLED = "Disabled",
 	},
@@ -1455,7 +1496,7 @@ STRINGS.UI =
 		PRESETLEVELS = {
 				"Default", 
 				"Default Plus",             -- Bootstrap the start
-				"Let's Go Caving!", 	
+				"Lights Out", 	
 				"Soggy", 					-- Too much water - swamp etc
 				"Eternal Summer", 			-- Less water, no swamp etc
 				"Winter you'll do next?", 	-- Winter focus
@@ -1467,7 +1508,7 @@ STRINGS.UI =
 		PRESETLEVELDESC = {
 			"The standard Don't Starve experience",
 			"A quicker start in a harsher world.",
-			"There's a world going on underground.",
+			"A dark twist on the standard Don't Starve experience.",
 			"The standard Don't Starve Experience 4",
 			"The standard Don't Starve Experience 5",
 			"The standard Don't Starve Experience 6",
@@ -1531,6 +1572,14 @@ STRINGS.UI =
     {
         TITLE="Caves are a Work-in-Progress",
         BODY="We are still working on the caves. More content and tuning will be added in future updates. Do you want to continue?",
+        RESET = "Regen",
+        YES="Yes",
+        NO="No",
+    },
+    RESETCAVE=
+    {
+        TITLE="Regen this cave?",
+        BODY="Are you sure you want to make a new cave here?",
         YES="Yes",
         NO="No",
     },

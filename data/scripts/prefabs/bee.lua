@@ -211,4 +211,4 @@ local function killerbee()
 end 
 
 return Prefab( "forest/monsters/bee", workerbee, assets, prefabs),
-       Prefab( "forest/monsters/killerbee", killerbee, assets, prefabs)
+       Prefab( "forest/monsters/killerbee", killerbee, assets, prefabs) 

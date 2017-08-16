@@ -8,4 +8,4 @@ local function fn()
 	return inst
 end
 
-return Prefab("cave/objects/teamleader", fn)
+return Prefab("cave/objects/teamleader", fn) 

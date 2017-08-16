@@ -51,7 +51,7 @@ local function TeleportatoPart(name, frame)
     return Prefab( "common/inventory/" .. name, makefn(name, frame), makeassetlist())
 end
 
-return 	TeleportatoPart( "teleportato_ring", "ring"),
+return TeleportatoPart( "teleportato_ring", "ring"),
 		TeleportatoPart( "teleportato_box", "lever"),
 		TeleportatoPart( "teleportato_crank", "support"), 
-		TeleportatoPart( "teleportato_potato", "potato")
+		TeleportatoPart( "teleportato_potato", "potato") 

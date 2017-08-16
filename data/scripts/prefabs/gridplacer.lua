@@ -19,7 +19,7 @@ local function fn(Sim)
 	return inst
 end
 	
-return	Prefab( "common/gridplacer", fn, assets)
+return Prefab( "common/gridplacer", fn, assets) 
  
 
 

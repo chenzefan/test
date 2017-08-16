@@ -99,5 +99,5 @@ local function fish(name, build)
         Prefab( "common/inventory/"..name.."_cooked", cooked, assets)
 end
 
-return  fish("fish", "fish01")
+return fish("fish", "fish01") 
 

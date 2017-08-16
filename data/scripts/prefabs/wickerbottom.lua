@@ -14,4 +14,4 @@ local fn = function(inst)
 end
 
 
-return MakePlayerCharacter("wickerbottom", nil, assets, fn)
+return MakePlayerCharacter("wickerbottom", nil, assets, fn) 

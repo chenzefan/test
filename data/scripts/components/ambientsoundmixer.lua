@@ -35,6 +35,7 @@ local AmbientSoundMixer = Class(function(self, inst)
 		[GROUND.UNDERROCK] = {sound = "dontstarve/cave/caveAMB"},
 		[GROUND.MUD] = {sound = "dontstarve/cave/caveAMB"},
 		[GROUND.UNDERGROUND] = {sound = "dontstarve/cave/caveAMB"},
+		["ABYSS"] = {sound = "dontstarve/cave/pitAMB"},
 		["VOID"] = {sound = "dontstarve/chess/void", wintersound = "dontstarve/chess/void", rainsound="dontstarve/chess/void"},
 	}
 

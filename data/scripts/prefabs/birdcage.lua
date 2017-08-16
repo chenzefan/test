@@ -40,7 +40,7 @@ end
 
 local function OnGetItemFromPlayer(inst, giver, item)
 
-	if inst.components.sleeper:IsAsleep() then
+	if inst.components.sleeper and inst.components.sleeper:IsAsleep() then
 		inst.components.sleeper:WakeUp()
 	end
 
@@ -84,7 +84,9 @@ local function DoIdle(inst)
 	local r = math.random()
 	if r < .5 then
         inst.AnimState:PlayAnimation("caw")
-        inst.SoundEmitter:PlaySound(inst.chirpsound)
+        if inst.chirpsound then
+			inst.SoundEmitter:PlaySound(inst.chirpsound)
+		end
 	elseif r < .6 then
         inst.AnimState:PlayAnimation("flap")
         inst.SoundEmitter:PlaySound("dontstarve/birds/wingflap_cage")
@@ -105,7 +107,25 @@ local function StartIdling(inst)
     inst.idletask = inst:DoPeriodicTask(6, DoIdle)
 end
 
+local function ShouldSleep(inst)
+	if inst.components.occupiable:IsOccupied() then
+	   return GetClock():IsNight()
+	else
+		return false
+	end
+end
+
+local function ShouldWake(inst)
+    return GetClock():IsDay()
+end
+
+
 local function onoccupied(inst, bird)
+
+    inst:AddComponent("sleeper")
+    inst.components.sleeper:SetSleepTest(ShouldSleep)
+    inst.components.sleeper:SetWakeTest(ShouldWake)
+
 	inst.components.trader:Enable()
 	for k,v in pairs(bird_symbols) do
 		inst.AnimState:OverrideSymbol(v, bird.prefab .. "_build", v)
@@ -117,6 +137,8 @@ local function onoccupied(inst, bird)
 end
 
 local function onemptied(inst, bird)
+	inst:RemoveComponent("sleeper")
+	
 	StopIdling(inst)
 	inst.components.trader:Disable()
 	for k,v in pairs(bird_symbols) do
@@ -167,30 +189,20 @@ local function onbuilt(inst)
 	inst.AnimState:PushAnimation("idle")
 end
 
-
-
-local function ShouldSleep(inst)
+local function GoToSleep(inst)
 	if inst.components.occupiable:IsOccupied() then
-	   return GetClock():IsNight()
-	else
-		return false
+		StopIdling(inst)
+		inst.AnimState:PlayAnimation("sleep_pre")
+		inst.AnimState:PushAnimation("sleep_loop", true)
 	end
 end
 
-local function ShouldWake(inst)
-    return GetClock():IsDay()
-end
-
-local function GoToSleep(inst)
-	StopIdling(inst)
-	inst.AnimState:PlayAnimation("sleep_pre")
-	inst.AnimState:PushAnimation("sleep_loop", true)
-end
-
 local function WakeUp(inst)
-	inst.AnimState:PlayAnimation("sleep_pst")
-	inst.AnimState:PushAnimation("idle_bird", true)
-	StartIdling(inst)
+	if inst.components.occupiable:IsOccupied() then
+		inst.AnimState:PlayAnimation("sleep_pst")
+		inst.AnimState:PushAnimation("idle_bird", true)
+		StartIdling(inst)
+	end
 end
 
 
@@ -213,11 +225,7 @@ local function fn(Sim)
     
     inst:AddComponent("lootdropper")
 
-    inst:AddComponent("sleeper")
-    inst.components.sleeper:SetSleepTest(ShouldSleep)
-    inst.components.sleeper:SetWakeTest(ShouldWake)
-    inst:ListenForEvent("gotosleep", function(inst) GoToSleep(inst) end)
-    inst:ListenForEvent("onwakeup", function(inst) WakeUp(inst) end)
+
     
     inst:AddComponent("occupiable")
     inst.components.occupiable.occupytestfn = testfn
@@ -237,9 +245,13 @@ local function fn(Sim)
 	inst.components.trader:Disable()
 	MakeSnowCovered(inst, .01)	
 	inst:ListenForEvent( "onbuilt", onbuilt)
+	
+    inst:ListenForEvent("gotosleep", function(inst) GoToSleep(inst) end)
+    inst:ListenForEvent("onwakeup", function(inst) WakeUp(inst) end)
+	
     return inst
 end
 
-return	Prefab( "common/birdcage", fn, assets, prefabs),
+return Prefab( "common/birdcage", fn, assets, prefabs),
 		MakePlacer("common/birdcage_placer", "birdcage", "bird_cage", "idle") 
 

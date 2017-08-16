@@ -34,7 +34,8 @@ local assets =
 	Asset("SHADER", "data/shaders/debug_tri.ksh"),
 	Asset("SHADER", "data/shaders/font.ksh"),
 	Asset("SHADER", "data/shaders/ground.ksh"),
-	Asset("SHADER", "data/shaders/ceiling.ksh"),
+    Asset("SHADER", "data/shaders/ceiling.ksh"),
+    Asset("SHADER", "data/shaders/triplanar.ksh"),
 	Asset("SHADER", "data/shaders/lighting.ksh"),
 	Asset("SHADER", "data/shaders/minimap.ksh"),
 	Asset("SHADER", "data/shaders/minimapfs.ksh"),
@@ -53,7 +54,7 @@ local assets =
     --common UI elements that we will always need
 
     --background
-    Asset("IMAGE", "data/images/bg_red.tex"),
+    Asset("IMAGE", "data/images/bg_plain.tex"),
 
     --buttons
     Asset("IMAGE", "data/images/button.tex"),
@@ -108,5 +109,5 @@ local function fn(Sim)
     return nil
 end
 
-return Prefab( "common/global", fn, assets )
+return Prefab( "common/global", fn, assets ) 
 

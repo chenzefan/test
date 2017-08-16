@@ -51,4 +51,4 @@ end
 
 return Prefab("forest/objects/horizontal_maxwelllight", horizontal),
 Prefab("forest/objects/vertical_maxwelllight", vertical),
-Prefab("forest/objects/quad_maxwelllight", quad)
+Prefab("forest/objects/quad_maxwelllight", quad) 

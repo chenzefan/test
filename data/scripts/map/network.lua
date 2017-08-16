@@ -427,7 +427,10 @@ function Graph:AddNodeByNode(node)
 	assert(self.nodes[node.id])
 	--print(self.id..":Graph:AddNodeByNode ", self.id, node.id, node.data.value, node.colour.r, node.colour.g, node.colour.b, node.colour.a)
 
-	WorldSim:AddChild(self.id, node.id, INV_GROUND_VALUES[node.data.value], node.colour.r, node.colour.g, node.colour.b, node.colour.a, node.data.type)
+	WorldSim:AddChild(self.id, node.id, node.data.value, 
+						node.colour.r, node.colour.g, node.colour.b, node.colour.a, 
+						node.data.type, node.data.internal_type or NODE_INTERNAL_CONNECTION_TYPE.EdgeSite)
+
 	if node.data.tags ~= nil and #node.data.tags >0 then
 		--WorldSim:SetSiteFlags(node.id, node.data.tags[1])
 	end

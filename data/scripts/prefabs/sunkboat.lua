@@ -18,4 +18,4 @@ local function fn()
     return inst
 end
    
-return Prefab("forest/objects/sunkboat", fn, assets)
+return Prefab("forest/objects/sunkboat", fn, assets) 

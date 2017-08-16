@@ -16,4 +16,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/objects/portal_home", fn, assets)
+return Prefab( "common/objects/portal_home", fn, assets) 

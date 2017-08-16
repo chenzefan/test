@@ -63,9 +63,16 @@ return {
 	},
 	DESCRIBE =
 	{
+
+		CAVE_BANANA = "Like ashes in my mouth.",
+		CAVE_BANANA_COOKED = "Even worse than raw.",
+		CAVE_BANANA_TREE = "It looks like a banana, but I'm not buying it.",
+		ROCKY = "I banished these guys down here for a reason.",
+		
 		HOUNDSTOOTH="It could be used for fashion.",
 		ARMORSNURTLESHELL="That is not dapper at all.",
 		BAT="Ugh. Ugly beasts.",
+		BATBAT = "Violence has never felt better.",
 		BATWING="I'm not eating that.",
 		BATWING_COOKED="I'm still not eating that.",
 		BEDROLL_FURRY="At least they're good for something.",
@@ -78,6 +85,8 @@ return {
 		LIGHTBULB="It will run out eventually.",
 		MANRABBIT_TAIL="Silly rabbit.",
 		MUSHTREE_TALL="It smells of rot and failure.",
+		MUSHTREE_MEDIUM="Where's Waldo?",
+		MUSHTREE_SMALL="Ugh, it smells bad.",
 		RABBITHOUSE="Oh, isn't that clever.",
 		SLURTLE="I don't remember those...",
 		SLURTLE_SHELLPIECES="They don't fit back together.",
@@ -92,6 +101,10 @@ return {
 		STALAGMITE_FULL="Rocks. How dull.",
 		STALAGMITE_LOW="Rocks. How dull.",
 		STALAGMITE_MED="Rocks. How dull.",
+		STALAGMITE_TALL="Stalagmite. How dull.",
+		STALAGMITE_TALL_FULL="Stalagmite. How dull.",
+		STALAGMITE_TALL_LOW="Stalagmite. How dull.",
+		STALAGMITE_TALL_MED="Stalagmite. How dull.",
 		TURF_FUNGUS="Turf.",
 		TURF_MUD="Turf.",
 		TURF_SINKHOLE="Turf.",
@@ -212,6 +225,7 @@ return {
 		CARROT_COOKED = "A little more refined, at least.",
 		CARROT_PLANTED = "How mundane.",
 		CARROT_SEEDS = "This labour is beneath me.",
+		CAVE_FERN = "I'd like to step on it.",
 		CHARCOAL = "Nothing will steal my carbon!",
 		CHESTER = "Annoying little monster. Has his uses, though.",
 		CHESTER_EYEBONE =
@@ -294,6 +308,7 @@ return {
 			CHOPPED = "I put it out of it's misery.",
 			GENERIC = "It looks sickly.",
 		},
+		EYEPLANT = "The Meat Bulb's pawns.",
 		FARMPLOT =
 		{
 			GENERIC = "Do I look like a farmer?",
@@ -330,6 +345,7 @@ return {
 		FLOWER = "I am filled with the irrational urge to stomp upon it.",
 		FLOWERHAT = "Definitely not my style.",
 		FLOWER_EVIL = "I like that flower.",
+		FOLIAGE = "A meal fit for a pesant.",
 		FOOTBALLHAT = "Now I am ready for the scrimmage.",
 		FROG =
 		{
@@ -417,6 +433,8 @@ return {
 			BURNING = "Well. That was fun while it lasted.",
 			GENERIC = "It's a piece of wood. What more is there to say?",
 		},
+		LUREPLANT = "A vicious plant.",
+		LUREPLANTBULB = "Perhaps I can use this to my advantange.",
 		MALE_PUPPET = "Better him than me.",
 		MANDRAKE =
 		{
@@ -509,6 +527,8 @@ return {
 		PIGTORCH = "Great. Now they have fire.",
 		PINECONE = "A more outdoorsy type might be able to make something of this.",
 		PITCHFORK = "The tool of choice for perfectionists.",
+		PLANTMEAT = "A feeble attempt to trick the weaker minded.",
+		PLANTMEAT_COOKED = "The heat has made this a suitable meal.",
 		PLANT_NORMAL =
 		{
 			GENERIC = "That is a generic plant.",
@@ -659,6 +679,9 @@ return {
 		TENTACLE = "I'm glad the rest of it is still down there.",
 		TENTACLESPIKE = "Ugh. This is so revolting.",
 		TENTACLESPOTS = "This is how they reproduce.",
+		TENTACLE_PILLAR = "How deep does this go?",
+		TENTACLE_GARDEN = "This one is odd.",
+        TENTACLE_PILLAR_ARM = "Babies?",
 		TOPHAT = "Some fine haberdashery.",
 		TORCH = "It keeps Charlie at bay.",
 		TRAP = "Only the dumbest animals will fall for this.",

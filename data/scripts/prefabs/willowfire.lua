@@ -14,6 +14,6 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/willowfire", fn)
+return Prefab( "common/willowfire", fn) 
 
 

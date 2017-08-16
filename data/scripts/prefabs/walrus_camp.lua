@@ -409,4 +409,4 @@ local function create(Sim)
     return inst
 end
 
-return Prefab( "common/objects/walrus_camp", create, assets, prefabs)
+return Prefab( "common/objects/walrus_camp", create, assets, prefabs) 

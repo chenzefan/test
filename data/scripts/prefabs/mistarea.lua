@@ -13,4 +13,4 @@ local function fn()
 end
 
 
-return Prefab("common/forest/mistarea", fn)
+return Prefab("common/forest/mistarea", fn) 

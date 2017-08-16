@@ -41,5 +41,5 @@ local function makebasalt()
     return fn
 end
    
-return Prefab("forest/objects/sinkhole", makebasalt(), assets)
+return Prefab("forest/objects/sinkhole", makebasalt(), assets) 
 

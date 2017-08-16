@@ -28,6 +28,7 @@ local function TransitionToNextLevel(inst, wilson)
 				local function onsaved()
 					local params = json.encode{reset_action="loadslot", save_slot = SaveGameIndex:GetCurrentSaveSlot(), maxwell=inst.maxwell}
 					TheSim:SetInstanceParameters(params)
+					SendAccumulatedProfileStats()
 					TheSim:Reset()
 				end
 				if inst.teleportpos then
@@ -296,5 +297,5 @@ local function fn(Sim)
 	return inst
 end
 
-return Prefab( "common/objects/teleportato_base", fn, assets, prefabs )
+return Prefab( "common/objects/teleportato_base", fn, assets, prefabs ) 
 

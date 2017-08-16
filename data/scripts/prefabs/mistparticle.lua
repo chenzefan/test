@@ -11,20 +11,22 @@ local assets =
 
 local max_scale = 10
 
-if EnvelopeManager then
-	EnvelopeManager:AddColourEnvelope(
-		colour_envelope_name,
-		{	{ 0,	{ 1, 1, 1, 0 } },
-			{ 0.1,	{ 1, 1, 1, 0.12 } },
-			{ 0.75,	{ 1, 1, 1, 0.12 } },
-			{ 1,	{ 1, 1, 1, 0 } },
-		} )
+local function InitEnvelopes()
+	if EnvelopeManager then
+		EnvelopeManager:AddColourEnvelope(
+			colour_envelope_name,
+			{	{ 0,	{ 1, 1, 1, 0 } },
+				{ 0.1,	{ 1, 1, 1, 0.12 } },
+				{ 0.75,	{ 1, 1, 1, 0.12 } },
+				{ 1,	{ 1, 1, 1, 0 } },
+			} )
 
-	EnvelopeManager:AddVector2Envelope(
-		scale_envelope_name,
-		{	{ 0,	{ 6, 6 } },
-			{ 1,	{ max_scale, max_scale } },
-		} )
+		EnvelopeManager:AddVector2Envelope(
+			scale_envelope_name,
+			{	{ 0,	{ 6, 6 } },
+				{ 1,	{ max_scale, max_scale } },
+			} )
+	end
 end
 
 local max_lifetime = 31
@@ -36,6 +38,8 @@ local function fn(Sim)
 	
 	inst.persists = false
 	-----------------------------------------------------	
+	InitEnvelopes()
+
 	local emitter = inst.entity:AddParticleEmitter()
 	
 	local config = {texture = texture, shader = shader,
@@ -65,5 +69,5 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/fx/mist", fn, assets)
+return Prefab( "common/fx/mist", fn, assets) 
  

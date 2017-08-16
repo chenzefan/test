@@ -162,4 +162,4 @@ end
 
 
 return Prefab( "common/objects/resurrectionstatue", fn, assets),
-		MakePlacer( "common/resurrectionstatue_placer", "wilsonstatue", "wilsonstatue", "idle" )
+		MakePlacer( "common/resurrectionstatue_placer", "wilsonstatue", "wilsonstatue", "idle" ) 

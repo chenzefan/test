@@ -102,8 +102,8 @@ function LoadGameScreen:MakeSaveTile(slotnum)
 	--widget.portrait:SetVRegPoint(ANCHOR_MIDDLE)
    	--widget.portrait:SetHRegPoint(ANCHOR_MIDDLE)
 	widget.portrait:SetClickable(false)	
-	if character then	
-		widget.portrait:SetTexture("data/images/saveslot_portraits/"..character..".tex")
+	if character and mode then	
+		widget.portrait:SetTexture("images/saveslot_portraits/"..character..".tex")
 	else
 		widget.portraitbg:Hide()
 	end

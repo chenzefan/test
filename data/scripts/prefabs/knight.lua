@@ -132,4 +132,4 @@ local function fn()
     return inst
 end
 
-return Prefab("chessboard/knight", fn, assets, prefabs)
+return Prefab("chessboard/knight", fn, assets, prefabs) 

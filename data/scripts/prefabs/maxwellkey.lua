@@ -26,4 +26,4 @@ local function fn()
 	return inst
 end
 
-return Prefab("common/inventory/maxwellkey", fn, assets)
+return Prefab("common/inventory/maxwellkey", fn, assets) 

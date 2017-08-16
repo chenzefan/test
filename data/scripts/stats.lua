@@ -1,4 +1,4 @@
-STATS_ENABLE = false
+STATS_ENABLE = true
 -- NOTE: There is also a call to 'anon/start' in dontstarve/main.cpp which has to be un/commented
 
 --- non-user-facing Tracking stats  ---
@@ -42,28 +42,87 @@ function SendTrackingStats()
     end
 end
 
+
+function BuildContextTable()
+	local sendstats = {}
+
+	sendstats.user = TheSim:GetUserID()
+	if sendstats.user == nil then
+		if BRANCH == "release" then
+			sendstats.user = "unknown"
+		else
+			sendstats.user = "testing"
+		end
+	end
+	if BRANCH ~= "release" then
+		sendstats.user = sendstats.user
+	end
+
+	sendstats.branch = BRANCH
+
+	sendstats.build = APP_VERSION
+
+	if GetSeasonManager() then
+		sendstats.season = GetSeasonManager():GetSeasonString()
+	end
+
+	if GetClock() then
+		sendstats.day = GetClock().numcycles
+	end
+
+	if GetWorld() then
+		local level_type = GetWorld().topology.level_type or "UNKNOWN"
+		local level_id = GetWorld().level_id or "UNKNOWN"
+		sendstats.level = level_type ..":".. level_id
+	end
+
+	return sendstats
+end
+
+
 --- GAME Stats and details to be sent to server on game complete ---
 ProfileStats = {}
 
 function GetProfileStats(wipe)
+	if GetTableSize(ProfileStats) == 0 then
+		return json.encode( {} )
+	end
+
 	wipe = wipe or false
 	local jsonstats = ''
-	if GetTableSize(ProfileStats) then
-    	jsonstats = json.encode({
-    						stats = ProfileStats
-    						})
-    else
-    	jsonstats = json.encode({})
-    end
+	local sendstats = BuildContextTable()
+
+	sendstats.stats = ProfileStats
+
+	jsonstats = json.encode( sendstats )
+
 	if wipe then
 		ProfileStats = {}
     end
     return jsonstats
 end
 
-function ProfileStatsSet(item, value)
-    ProfileStats[item] = value
+
+function RecordDeathStats(killed_by, time_of_day, sanity, hunger, will_resurrect)
+	if not STATS_ENABLE then
+		return
+	end
+
+	local sendstats = BuildContextTable()
+	sendstats.death = {
+		killed_by=killed_by,
+		time_of_day=time_of_day,
+		sanity=sanity,
+		hunger=hunger,
+		will_resurrect=will_resurrect,
+	}
+
+	local jsonstats = json.encode( sendstats )
+	print("Sending death stats...\n")
+	print(jsonstats)
+	TheSim:SendProfileStats( jsonstats )
 end
+
 
 -- value is optional, 1 if nil
 function ProfileStatsAdd(item, value)
@@ -91,11 +150,18 @@ function ProfileStatsAddItemChunk(item, chunk)
     end
 end
 
+function ProfileStatsSet(item, value)
+	ProfileStats[item] = value
+end
+
 function SendAccumulatedProfileStats()
 	if not STATS_ENABLE then
 		return
 	end
-	TheSim:SendProfileStats( GetProfileStats(true) )
+	local stats = GetProfileStats(true)
+	--print("Sending stats...\n")
+	--print(stats)
+	TheSim:SendProfileStats( stats )
 end
 
 --Periodically upload and refresh the player stats, so we always
@@ -115,10 +181,7 @@ function AccumulatedStatsHeartbeat(dt)
 end
 
 function SubmitCompletedLevel()
-	if not STATS_ENABLE then
-		return
-	end
-	TheSim:SubmitCompletedLevel(GetProfileStats(true))
+	SendAccumulatedProfileStats()
 end
 
 function SubmitStartStats(playercharacter)
@@ -126,28 +189,7 @@ function SubmitStartStats(playercharacter)
 		return
 	end
 	
-	local query
-	if PLATFORM == "NACL" then
-		query = "/inst/get"
-	else
-		query = "/anon/new"
-	end
-
-	if STATS_ENABLE == true then
-		TheSim:QueryServer( query, 
-				function( result , isSuccessful )
-					-- callback ignored on Windows, don't do anything important here
-					Print(VERBOSITY.DEBUG, 'DoInitGame TheSim:QueryServer', query, isSuccessful, result)
-				end, 
-				"POST",
-				json.encode({
-								name= "Test name",
-								size= "small",
-								character= playercharacter
-							}) 
-				)
-	end
-
+	-- At the moment there are no special start stats.
 end
 
 function SubmitExitStats()
@@ -156,25 +198,8 @@ function SubmitExitStats()
 		return
 	end
 
-	local query
-	if PLATFORM == "NACL" then
-		query = "/inst/exit"
-	else
-		query = "/anon/exit"
-	end
-	
-	
-	Print(VERBOSITY.DEBUG, 'About to send stats and exit!')
-
-	TheSim:QueryServer( query, 
-			function( result , isSuccessful )
-				Print(VERBOSITY.DEBUG, 'DoInitGame TheSim:QueryServer', query, isSuccessful, result)
-				Shutdown() -- doesn't matter if it succeeded or not, we're shutting down!
-			end, 
-			"POST",
-			GetProfileStats(true),
-			3 -- timeout in seconds
-			)
+	-- At the moment there are no special exit stats.
+	Shutdown()
 end
 
 function SubmitQuitStats()
@@ -182,20 +207,6 @@ function SubmitQuitStats()
 		return
 	end
 
-	local query
-	if PLATFORM == "NACL" then
-		return
-	else
-		query = "/anon/quit"
-	end
-	
-	TheSim:QueryServer( query, 
-			function( result , isSuccessful )
-				Print(VERBOSITY.DEBUG, 'DoInitGame TheSim:QueryServer', query, isSuccessful, result)
-			end, 
-			"POST",
-			nil,
-			3 -- timeout in seconds
-			)
+	-- At the moment there are no special quit stats.
 end
 

@@ -99,6 +99,6 @@ local function rock_flintless_fn(Sim)
 	return inst
 end
 
-return  Prefab("forest/objects/rocks/rock1", rock1_fn, rock1_assets, prefabs),
+return Prefab("forest/objects/rocks/rock1", rock1_fn, rock1_assets, prefabs),
         Prefab("forest/objects/rocks/rock2", rock2_fn, rock2_assets, prefabs),
-        Prefab("forest/objects/rocks/rock_flintless", rock_flintless_fn, rock_flintless_assets, prefabs)
+        Prefab("forest/objects/rocks/rock_flintless", rock_flintless_fn, rock_flintless_assets, prefabs) 

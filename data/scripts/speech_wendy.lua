@@ -40,9 +40,15 @@ return {
 	},
 	DESCRIBE =
 	{
+		CAVE_BANANA = "The peels look dangerous.",
+		CAVE_BANANA_COOKED = "Warmed banana mush is so much better.",
+		CAVE_BANANA_TREE = "Poor plant, locked away from the sun.",
+		ROCKY = "What terrible sights they have seen.",
+
 		HOUNDSTOOTH="Pulled out by the root.",
 		ARMORSNURTLESHELL="Now I can hide from my problems.",
 		BAT="A creature of the night.",
+		BATBAT = "An enchanted weapon. How exciting!",
 		BATWING="If only I could fly away.",
 		BATWING_COOKED="The once held such great potential.",
 		BEDROLL_FURRY="I will wrap myself in the fuzzy skins of the fallen.",
@@ -54,7 +60,9 @@ return {
 		LANTERN="Light the way darkly.",
 		LIGHTBULB="It's slowly burning out.",
 		MANRABBIT_TAIL="It contains his fuzzy wuzzy essence.",
-		MUSHTREE_TALL="Even the trees down here are strange.",
+		MUSHTREE_TALL  ="Even the trees down here are strange.",
+		MUSHTREE_MEDIUM="It looks like a rotting hat.",
+		MUSHTREE_SMALL ="Do little gnomes live in these?",
 		RABBITHOUSE="It is not as edible as it looks.",
 		SLURTLE="It is mindlessly chasing after rocks.",
 		SLURTLE_SHELLPIECES="Pieces of broken slurtle dreams.",
@@ -69,6 +77,10 @@ return {
 		STALAGMITE_FULL="The earth gives up its bounty.",
 		STALAGMITE_LOW="The earth gives up its bounty.",
 		STALAGMITE_MED="The earth gives up its bounty.",
+		STALAGMITE_TALL="The earth reaches up.",
+		STALAGMITE_TALL_FULL="The earth reaches up.",
+		STALAGMITE_TALL_LOW="The earth reaches up.",
+		STALAGMITE_TALL_MED="The earth reaches up.",
 		TURF_FUNGUS="Some ground.",
 		TURF_MUD="Some ground.",
 		TURF_SINKHOLE="Some ground.",
@@ -167,6 +179,7 @@ return {
 		},
 		CANE = "I can get nowhere faster.",
 		CARROT = "It's a carrot.",
+		CAVE_FERN = "A touch of colour in the darkness.",
 		CHARCOAL = "It is cold and dead, like my heart.",
 		CHESTER = "A fuzzy ball of emptiness.",
 		CHESTER_EYEBONE =
@@ -211,6 +224,7 @@ return {
 			CHOPPED = "Everything dies.",
 			GENERIC = "It's cycle of life is ending.",
 		},
+		EYEPLANT = "They follow their master's every wish.",
 		FARMPLOT =
 		{
 			GENERIC = "What seeds shall I sow?",
@@ -237,6 +251,7 @@ return {
 		FLOWER = "They are bright and cheery. Yuck.",
 		FLOWERHAT = "But I am in mourning...",
 		FLOWER_EVIL = "At least they're better than the other flowers.",
+		FOLIAGE = "Lead me to the Aarnivalkea.",
 		FROG =
 		{
 			DEAD = "Life is small and short.",
@@ -302,6 +317,8 @@ return {
 		LITTLE_WALRUS = "The cycle of violence continues.",
 		LIVINGLOG = "It is forever silently screaming.",
 		LOG = "If trees could talk, they would scream at the sight of this.",
+		LUREPLANT = "It consumes all.",
+		LUREPLANTBULB = "Life goes on.",
 		MALE_PUPPET = "I wonder what he did.",
 		MANDRAKE =
 		{
@@ -390,6 +407,8 @@ return {
 		    PLANTED = "A tree will grow soon.",
 		},
 		PITCHFORK = "What a devilish tool!",
+		PLANTMEAT = "It has a foul smell.",
+		PLANTMEAT_COOKED = "It's only slightly more appealing.",
 		PLANT_NORMAL =
 		{
 			GENERIC = "An edible plant.",
@@ -510,7 +529,12 @@ return {
 		TELEPORTATO_POTATO = "What a hideous creation!",
 		TELEPORTATO_RING = "It has no sharp edges.",
 		TENT = "Sleep is but a preview of death.",
+		TENTACLE = "Long and thin and dangerous!",
 		TENTACLESPOTS = "These are better left unmentioned.",
+		TENTACLESPIKE = "Sharp, slimy and dangerous.",
+        TENTACLE_PILLAR = "So this is what goes on down below.",
+        TENTACLE_PILLAR_ARM = "Babies!",
+        TENTACLE_GARDEN = "This one is different.",
 		TOPHAT = "I shall cover my head.",
 		TORCH = "A tiny bulwark against the night.",
 		TRAP = "Simple grass has become deadly.",

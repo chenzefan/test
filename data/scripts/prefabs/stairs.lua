@@ -14,5 +14,5 @@ local function makestairs()
     return fn
 end
    
-return Prefab("forest/objects/cave_stairs", makestairs(), assets)
+return Prefab("forest/objects/cave_stairs", makestairs(), assets) 
 

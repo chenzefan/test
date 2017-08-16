@@ -197,4 +197,4 @@ local function create_little()
 end
 
 return Prefab( "forest/animals/walrus", create, assets, prefabs), 
-    Prefab( "forest/animals/little_walrus", create_little, assets)
+    Prefab( "forest/animals/little_walrus", create_little, assets) 

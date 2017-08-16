@@ -90,6 +90,25 @@ local function FindFoodAction(inst)
     if target then
         return BufferedAction(inst, target, ACTIONS.EAT)
     end
+
+    if not target and (not time_since_eat or time_since_eat > TUNING.PIG_MIN_POOP_PERIOD*2) then
+        target = FindEntity(inst, SEE_FOOD_DIST, function(item) 
+                if not item.components.shelf then return false end
+                if not item.components.shelf.itemonshelf or not item.components.shelf.cantakeitem then return false end
+                if noveggie and item.components.shelf.itemonshelf.components.edible and item.components.shelf.itemonshelf.components.edible.foodtype ~= "MEAT" then
+                    return false
+                end
+                if not item:IsOnValidGround() then
+                    return false
+                end
+                return inst.components.eater:CanEat(item.components.shelf.itemonshelf) 
+            end)
+    end
+
+    if target then
+        return BufferedAction(inst, target, ACTIONS.TAKEITEM)
+    end
+
 end
 
 

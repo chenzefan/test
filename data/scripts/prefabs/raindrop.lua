@@ -18,5 +18,5 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/fx/raindrop", fn, assets )
+return Prefab( "common/fx/raindrop", fn, assets ) 
  

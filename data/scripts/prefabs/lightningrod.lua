@@ -128,4 +128,4 @@ local function fn(Sim)
 end
 
 return Prefab( "common/objects/lightning_rod", fn, assets),
-	   MakePlacer("common/lightning_rod_placer", "lightning_rod", "lightning_rod", "idle") 
+	   MakePlacer("common/lightning_rod_placer", "lightning_rod", "lightning_rod", "idle")  

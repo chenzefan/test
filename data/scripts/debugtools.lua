@@ -1,3 +1,5 @@
+table.inspect = require("inspect")   -- add table pretty printer that understands recursive tables
+
 local getinfo = debug.getinfo
 local max = math.max
 local concat = table.concat
@@ -64,7 +66,7 @@ end
 
 function dumptable(obj, indent, recurse_levels)
 	indent = indent or 1
-	recurse_levels = recurse_levels or 10
+	local i_recurse_levels = recurse_levels or 10
     if obj then
 		local dent = ""
 		if indent then
@@ -75,9 +77,9 @@ function dumptable(obj, indent, recurse_levels)
     		return
     	end
         for k,v in pairs(obj) do
-            if type(v) == "table" and recurse_levels>0 then
+            if type(v) == "table" and i_recurse_levels>0 then
                 print(dent.."K: ",k)
-                dumptable(v, indent+1, recurse_levels-1)
+                dumptable(v, indent+1, i_recurse_levels-1)
             else
                 print(dent.."K: ",k," V: ",v)
             end
@@ -120,4 +122,132 @@ function tabletoliststring(obj, fn)
 	end
 	s = s.." ]"
 	return s
+end
+
+
+-- Fast way to disable all debug prints
+
+global("CWD")
+local dir = CWD or ""
+dir = string.gsub(dir, "\\", "/")
+
+local oldprint = print  -- only works properly if this file included before the original print is redefined in scheduler.lua
+local userName = ""
+
+function dprint(...)
+    global("CHEATS_ENABLE_DPRINT")
+    global("DPRINT_PRINT_SOURCELINE")
+    global("DPRINT_USERNAME")
+
+    if not (CHEATS_ENABLED and CHEATS_ENABLE_DPRINT) then
+        return
+    end
+
+    if DPRINT_USERNAME then
+        if type(TheSim.GetUsersName) == "function" then 
+            userName = TheSim:GetUsersName()
+        end
+        if userName ~= DPRINT_USERNAME then
+            return
+        end
+    end
+
+    if DPRINT_PRINT_SOURCELINE then
+        local info = debug.getinfo(2, "Sl")
+        local source = info.source
+        if info.source and string.sub(info.source,1,1)=="@" then
+            source = source:sub(2)
+        end
+        local defline = string.format("%s(%d,1)", tostring(source), info.currentline)
+        oldprint(defline, ...)
+    else
+        oldprint(...)
+    end
+end
+
+-- Add debug hook to any object:  Author DForsey
+-- Usage:  
+--      EnableDebugOnEntity(thing)              turns on all debug printing for this thing (same as calling with (thing,"all") )
+--      EnableDebugOnEntity(thing,false)        turns off all debug printing for this thing, resets all items and/or priority
+--      EnableDebugOnEntity(thing,number)       turns on debug printing for requests with priority<number
+--      EnableDebugOnEntity(thing,"string")     turns on debug printing only for requests tagged with "string"
+--      EnableDebugOnEntity(thing,"off")        turns off debug printing, but doesn't reset the tag list or priority
+--      EnableDebugOnEntity(thing,"on")         turns on debug printing without affecting priority or tag list
+--      EnableDebugOnEntity(thing,"all")        all Dbg calls will print
+--
+--      Dbg(thing,true,...)                     prints arg list if debug print is enabled for this thing
+--      Dbg(thing,number,...)                   prints arg list with the given priority level
+--      Dbg(thing,"string",...)                 prints arg list if "string" has been tagged for this thing
+--
+
+function Dbg(thing,level,...)
+    if not thing._DEBUG_List or not thing._DEBUG_List.on or not CHEATS_ENABLED then return end
+
+    thing._DEBUG_List.priority = thing._DEBUG_List.priority or 0
+
+    if type(level) == "string" and thing._DEBUG_List[level] then
+        oldprint(...)
+    elseif type(level) == "number" and thing._DEBUG_List.priority < level then
+        oldprint(...)
+    elseif thing._DEBUG_List["all"] then
+        oldprint(...)
+    end
+end
+
+function EnableDebugOnEntity(thing,items)
+
+    if type(thing) ~= "table" then return end
+
+    thing._DEBUG_List = thing._DEBUG_List or {on=true}
+
+    if items == false then
+        thing._DEBUG_List = {on=false}
+        return
+    elseif items == "on" then
+        thing._DEBUG_List = {on=true}
+    elseif items == "off" then
+        thing._DEBUG_List = {on=false}
+    end
+
+    if type(items) == string then
+        thing._DEBUG_List[items] = true
+        thing._DEBUG_List.on = true
+    elseif type(items) == "number" then
+        thing._DEBUG_List.priority = items
+    else
+        thing._DEBUG_List["all"] = true
+        thing._DEBUG_List.on = true
+    end
+end
+
+function ddump(obj, indent, recurse_levels)
+	indent = indent or 1
+	local i_recurse_levels = recurse_levels or 3
+    if obj then
+		local dent = ""
+		if indent then
+			for i=1,indent do dent = dent.." " end
+		end
+    	if type(obj)==type("") then
+    		dprint(obj)
+    		return
+    	end
+        for k,v in pairs(obj) do
+            if type(v) == "table" and i_recurse_levels>0 then
+                dprint(dent.."K: ",k)
+                ddump(v, indent+1, i_recurse_levels-1)
+            else
+                dprint(dent.."K: ",k," V: ",v)
+            end
+        end
+    end
+end
+
+function dtable( tab, depth )
+    if type(tab) ~= "table" then
+        dprint(tab)
+    elseif table.inspect then
+        depth = depth or 1
+        dprint(table.inspect(tab,depth))
+    end
 end

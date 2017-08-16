@@ -121,4 +121,4 @@ local function fn()
 	return inst
 end
 
-return Prefab("forest/objects/resurrectionstone", fn, assets, prefabs)
+return Prefab("forest/objects/resurrectionstone", fn, assets, prefabs) 

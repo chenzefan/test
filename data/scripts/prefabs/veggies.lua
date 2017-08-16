@@ -24,6 +24,9 @@ local RARE = .5
 VEGGIES = 
 {
 	
+	cave_banana = MakeVegStats(0,	TUNING.CALORIES_SMALL,	TUNING.HEALING_TINY,	TUNING.PERISH_MED, 0,		
+									TUNING.CALORIES_SMALL,	TUNING.HEALING_SMALL,	TUNING.PERISH_FAST, 0),
+
 	carrot = MakeVegStats(COMMON,	TUNING.CALORIES_SMALL,	TUNING.HEALING_TINY,	TUNING.PERISH_MED, 0,		
 									TUNING.CALORIES_SMALL,	TUNING.HEALING_SMALL,	TUNING.PERISH_FAST, 0),
 
@@ -79,9 +82,6 @@ local function MakeVeggie(name, has_seeds)
 	if has_seeds then
 		table.insert(prefabs, name.."_seeds")
 	end
-
-
-
 
 	local function fn_seeds()
 		local inst = CreateEntity()
@@ -226,7 +226,7 @@ end
 
 local prefs = {}
 for veggiename,veggiedata in pairs(VEGGIES) do
-	local veg, cooked, seeds = MakeVeggie(veggiename, veggiename ~= "berries")
+	local veg, cooked, seeds = MakeVeggie(veggiename, veggiename ~= "berries" and veggiename ~= "cave_banana")
 	table.insert(prefs, veg)
 	table.insert(prefs, cooked)
 	if seeds then
@@ -234,4 +234,4 @@ for veggiename,veggiedata in pairs(VEGGIES) do
 	end
 end
 
-return unpack(prefs)
+return unpack(prefs) 

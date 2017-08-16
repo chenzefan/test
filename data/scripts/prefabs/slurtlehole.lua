@@ -106,7 +106,9 @@ local function fn()
     		inst.components.childspawner:StartSpawning()
     		inst:DoTaskInTime(15, 
     			function()
-    				inst.components.childspawner:StopSpawning()
+					if inst.components.childspawner then
+    					inst.components.childspawner:StopSpawning()
+    				end
     			end)
 		end 
         end, GetWorld())
@@ -128,4 +130,4 @@ local function fn()
 	return inst
 end
 
-return Prefab( "cave/objects/slurtlehole", fn, assets, prefabs)
+return Prefab( "cave/objects/slurtlehole", fn, assets, prefabs) 

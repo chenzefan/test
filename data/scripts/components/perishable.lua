@@ -10,8 +10,15 @@ local Perishable = Class(function(self, inst)
     self.onperishreplacement = nil
 end)
 
+
+
 local function Update(inst, dt)
     if inst.components.perishable then
+		
+		if inst.components.perishable.updatetask then
+			inst.components.perishable.updatetask:Cancel()
+		end
+		
 		inst.components.perishable.updatetask = nil
 		
 		
@@ -115,6 +122,11 @@ function Perishable:GetDebugString()
 	else
 		return "perished"
 	end
+end
+
+
+function Perishable:LongUpdate(dt)
+	Update(self.inst, dt)
 end
 
 function Perishable:StartPerishing()

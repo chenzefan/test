@@ -188,15 +188,38 @@ end
 -- look in package loaders to find the file from the root directories
 -- this will look first in the mods and then in the data directory
 function resolvefilepath( filepath )
-    for path in string.gmatch(package.path, "([^;]+)") do
+	if PLATFORM == "NACL" then
+		-- on nacl we can NOT seek files which don't exist, and we don't have mods, so only try the data directory
+		if string.find(filepath, "^data/") then
+			return filepath -- it's already absolute, so just send it back
+		else
+			return "data/"..filepath  -- if it's a "relative" path, make it absolute
+		end
+	end
+
+	-- on PC platforms, search all the possible paths
+
+	-- mod folders don't have "data" in them, so we strip that off if necessary. It will
+	-- be added back on as one of the search paths.
+	local filepath = string.gsub(filepath, "^data/", "")
+
+	local searchpaths = package.path
+    for path in string.gmatch(searchpaths, "([^;]+)") do
         local filename = string.gsub(path, "scripts\\%?%.lua", filepath)
         filename = string.gsub(filename, "\\", "/")
-        --print("looking for: "..filename.." ("..filepath..")")
-        if not kleifileexists or kleifileexists(filename) then
-            --print("found it! "..filename)
+		--print("looking for: "..filename.." ("..filepath..")")
+		if not kleifileexists or kleifileexists(filename) then
+			--print("found it! "..filename)
             return filename
         end
     end
+	-- as a last resort see if the file is an already correct path (incase this asset has already been processed)
+	if not kleifileexists or kleifileexists(filepath) then
+		--print("found it! "..filepath)
+		return filepath
+	end
+
+	assert(false, "Could not find an asset matching "..filepath.." in any of the search paths.")
     return nil
 end
 
@@ -416,7 +439,7 @@ function fastdump(value)
 				if t == "number" then
 					table.insert(items, string.format("%s", tostring(v)))
 				elseif t == "string" then
-					table.insert(items, string.format("%q", v))
+					table.insert(items, string.format("[%q]", v))
 				elseif t == "boolean" then
 					table.insert(items, string.format("%s", tostring(v)))
 				elseif type(v) == "table" then

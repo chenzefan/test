@@ -189,4 +189,4 @@ local function createbush(bushname)
 		end
 	return Prefab( "common/objects/"..bushname, fn, assets, prefabs)	
 end  
-return createbush("berrybush"), createbush("berrybush2")
+return createbush("berrybush"), createbush("berrybush2") 

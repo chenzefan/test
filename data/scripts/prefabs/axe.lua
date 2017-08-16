@@ -83,5 +83,5 @@ local function golden(Sim)
 end
 
 return Prefab( "common/inventory/axe", fn, assets),
-	   Prefab( "common/inventory/goldenaxe", golden, assets)
+	   Prefab( "common/inventory/goldenaxe", golden, assets) 
 

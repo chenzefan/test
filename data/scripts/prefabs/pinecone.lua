@@ -141,6 +141,6 @@ local function fn(Sim)
 end
 
 return Prefab( "common/inventory/pinecone", fn, assets),
-	   MakePlacer( "common/pinecone_placer", "pinecone", "pinecone", "idle_planted" )
+	   MakePlacer( "common/pinecone_placer", "pinecone", "pinecone", "idle_planted" ) 
 
 

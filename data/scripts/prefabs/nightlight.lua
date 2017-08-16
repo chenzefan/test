@@ -112,4 +112,4 @@ local function fn(Sim)
 end
 
 return Prefab( "common/objects/nightlight", fn, assets, prefabs),
-		MakePlacer( "common/nightlight_placer", "nightmare_torch", "nightmare_torch", "idle" )
+		MakePlacer( "common/nightlight_placer", "nightmare_torch", "nightmare_torch", "idle" ) 

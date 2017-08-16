@@ -38,4 +38,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/spoiled_food", fn, assets)
+return Prefab( "common/spoiled_food", fn, assets) 

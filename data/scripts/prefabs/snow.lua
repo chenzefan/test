@@ -13,20 +13,22 @@ local function IntColour( r, g, b, a )
 	return { r / 255.0, g / 255.0, b / 255.0, a / 255.0 }
 end
 
-if EnvelopeManager then
-	EnvelopeManager:AddColourEnvelope(
-		colour_envelope_name,
-		{	{ 0,	IntColour( 255, 255, 255, 200 ) },
-			{ 1,	IntColour( 255, 255, 255, 200 ) },
-		} )
+local function InitEnvelope()
+	if EnvelopeManager then
+		EnvelopeManager:AddColourEnvelope(
+			colour_envelope_name,
+			{	{ 0,	IntColour( 255, 255, 255, 200 ) },
+				{ 1,	IntColour( 255, 255, 255, 200 ) },
+			} )
 
-	local max_scale = 1
-	EnvelopeManager:AddVector2Envelope(
-		scale_envelope_name,
-		{
-			{ 0,	{ max_scale, max_scale } },
-			{ 1,	{ max_scale, max_scale } },
-		} )
+		local max_scale = 1
+		EnvelopeManager:AddVector2Envelope(
+			scale_envelope_name,
+			{
+				{ 0,	{ max_scale, max_scale } },
+				{ 1,	{ max_scale, max_scale } },
+			} )
+	end
 end
 
 local max_lifetime = 7
@@ -37,6 +39,8 @@ local function fn(Sim)
 	local trans = inst.entity:AddTransform()
 	local emitter = inst.entity:AddParticleEmitter()
 	inst:AddTag("FX")
+
+	InitEnvelope()
 
 	emitter:SetRenderResources( texture, shader )
 	emitter:SetMaxNumParticles( 4800 )
@@ -53,7 +57,7 @@ local function fn(Sim)
 	local rng = math.random
 	local tick_time = TheSim:GetTickTime()
 
-	local desired_particles_per_second = 300
+	local desired_particles_per_second = 0--300
 	inst.particles_per_tick = desired_particles_per_second * tick_time
 
 	local emitter = inst.ParticleEmitter
@@ -89,5 +93,5 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/fx/snow", fn, assets)
+return Prefab( "common/fx/snow", fn, assets) 
  

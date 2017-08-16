@@ -31,5 +31,5 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/inventory/cutreeds", fn, assets)
+return Prefab( "common/inventory/cutreeds", fn, assets) 
 

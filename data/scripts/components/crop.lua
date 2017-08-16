@@ -60,7 +60,6 @@ function Crop:Fertilize(fertilizer)
 end
 
 function Crop:DoGrow(dt)
-
     local clock = GetClock()
     local season = GetSeasonManager()
     
@@ -81,9 +80,8 @@ function Crop:DoGrow(dt)
 
     end
 
-    
-    
-    if clock:IsDay() then
+    local in_light = TheSim:GetLightAtPoint(self.inst.Transform:GetWorldPosition()) > TUNING.DARK_CUTOFF
+    if in_light then
         self.growthpercent = self.growthpercent + dt*self.rate*temp_rate
     end
 
@@ -108,7 +106,6 @@ function Crop:GetDebugString()
 end
 
 function Crop:Resume()
-    
     if not self.matured then
     
 		if self.task then
@@ -172,6 +169,10 @@ function Crop:CollectSceneActions(doer, actions)
         table.insert(actions, ACTIONS.HARVEST)
     end
 
+end
+
+function Crop:LongUpdate(dt)
+	self:DoGrow(dt)		
 end
 
 

@@ -48,7 +48,7 @@ NewGameScreen = Class(Screen, function(self, slotnum)
 	self.portrait:SetVRegPoint(ANCHOR_MIDDLE)
    	self.portrait:SetHRegPoint(ANCHOR_MIDDLE)
 	self.portrait:SetClickable(false)		
-	self.portrait:SetTexture("data/images/saveslot_portraits/"..self.character..".tex")
+	self.portrait:SetTexture("images/saveslot_portraits/"..self.character..".tex")
 	self.portrait:SetPosition(0, 100, 0)
     
     local menuitems = 
@@ -99,7 +99,7 @@ function NewGameScreen:ChangeCharacter(  )
 		if character then
 
 			self.character = character
-			self.portrait:SetTexture("data/images/saveslot_portraits/"..self.character..".tex")
+			self.portrait:SetTexture("images/saveslot_portraits/"..self.character..".tex")
 		end
 	end
 	TheFrontEnd:PushScreen(CharacterSelectScreen(Profile, onSet, false, self.character))

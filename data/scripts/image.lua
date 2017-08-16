@@ -6,8 +6,7 @@ Image = Class(Widget, function(self, tex)
     self.inst.entity:AddImageWidget()
     
     if tex then
-		self.texture = tex
-        self.inst.ImageWidget:SetTexture(tex)
+		self:SetTexture(tex)
     end
 end)
 
@@ -16,16 +15,16 @@ function Image:SetAlphaRange(min, max)
 end
 
 function Image:SetTexture(tex)
-	self.texture = tex
-    self.inst.ImageWidget:SetTexture(tex)
+	self.texture = resolvefilepath(tex)
+    self.inst.ImageWidget:SetTexture(self.texture)
 end
 
 function Image:SetMouseOverTexture(tex)
-    self.mouseovertex = tex
+    self.mouseovertex = resolvefilepath(tex)
 end
 
 function Image:SetDisabledTexture(tex)
-	self.disabledtex = tex
+	self.disabledtex = resolvefilepath(tex)
 end
 
 function Image:SetSize(w,h)

@@ -127,8 +127,10 @@ OptionsScreen = Class(Screen, function(self, in_game)
 		musicvolume = TheMixer:GetLevel( "set_music" ) * 10,
 		ambientvolume = TheMixer:GetLevel( "set_ambience" ) * 10,
 		bloom = graphicsOptions:IsBloomEnabled(),
+		smalltextures = graphicsOptions:IsSmallTexturesMode(),
 		distortion = graphicsOptions:IsDistortionEnabled(),
 		hudSize = Profile:GetHUDSize(),
+		netbookmode = TheSim:IsNetbookMode()
 	}
 
 	--[[if PLATFORM == "WIN32_STEAM" and not self.in_game then
@@ -147,7 +149,8 @@ OptionsScreen = Class(Screen, function(self, in_game)
 	self.working = deepcopy( self.options )
 	
 	
-    self.bg = self:AddChild(Image("data/images/bg_red.tex"))
+	self.bg = self:AddChild(Image("data/images/bg_plain.tex"))
+    self.bg:SetTint(BGCOLOURS.RED[1],BGCOLOURS.RED[2],BGCOLOURS.RED[3], 1)
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
     self.bg:SetHRegPoint(ANCHOR_MIDDLE)
     self.bg:SetVAnchor(ANCHOR_MIDDLE)
@@ -263,6 +266,8 @@ function OptionsScreen:Apply( force )
 	local gopts = TheFrontEnd:GetGraphicsOptions()
 	gopts:SetBloomEnabled( self.working.bloom )
 	gopts:SetDistortionEnabled( self.working.distortion )
+	gopts:SetSmallTexturesMode( self.working.smalltextures )
+	TheSim:SetNetbookMode(self.working.netbookmode)
 end
 
 function OptionsScreen:Close()
@@ -340,7 +345,7 @@ function OptionsScreen:UpdateMenu()
 	local menu_spacing = 60
 	local bottom_offset = 60
 	self.menu = self.root:AddChild( MakeMenu( Vector3(0, menu_spacing, 0), menu_items) )
-	self.menu:SetPosition(220 , -200 ,0)
+	self.menu:SetPosition(220 , -250 ,0)
 end
 
 function OptionsScreen:DoInit()
@@ -393,7 +398,24 @@ function OptionsScreen:DoInit()
 				this.working.mode_idx = data.idx
 				this:UpdateRefreshRatesSpinner()
 				self:UpdateMenu()
-			end						
+			end			
+			
+		self.netbookModeSpinner = self.root:AddChild(Spinner( enableDisableOptions, 150, spinnerHeight, spinnerFont, spinner_images ))
+		self.netbookModeSpinner.OnChanged =
+			function( _, data )
+				this.working.netbookmode = data
+				--this:Apply()
+				self:UpdateMenu()
+			end
+			
+		self.smallTexturesSpinner = self.root:AddChild(Spinner( enableDisableOptions, 150, spinnerHeight, spinnerFont, spinner_images ))
+		self.smallTexturesSpinner.OnChanged =
+			function( _, data )
+				this.working.smalltextures = data
+				--this:Apply()
+				self:UpdateMenu()
+			end
+						
 	end
 	
 
@@ -404,6 +426,7 @@ function OptionsScreen:DoInit()
 			--this:Apply()
 			self:UpdateMenu()
 		end
+
 		
 	self.distortionSpinner = self.root:AddChild(Spinner( enableDisableOptions, 150, spinnerHeight, spinnerFont, spinner_images ))
 	self.distortionSpinner.OnChanged =
@@ -455,11 +478,13 @@ function OptionsScreen:DoInit()
 		table.insert( left_spinners, { STRINGS.UI.OPTIONS.DISPLAY, self.displaySpinner } )
 		table.insert( left_spinners, { STRINGS.UI.OPTIONS.RESOLUTION, self.resolutionSpinner } )
 		table.insert( left_spinners, { STRINGS.UI.OPTIONS.REFRESHRATE, self.refreshRateSpinner } )
+		table.insert( left_spinners, { STRINGS.UI.OPTIONS.SMALLTEXTURES, self.smallTexturesSpinner } )
 		
 		table.insert( right_spinners, { "FX:", self.fxVolume } )
 		table.insert( right_spinners, { "Music:", self.musicVolume } )
 		table.insert( right_spinners, { "Ambient:", self.ambientVolume } )
 		table.insert( right_spinners, { "HUD size:", self.hudSize} )
+		table.insert( right_spinners, { STRINGS.UI.OPTIONS.NETBOOKMODE, self.netbookModeSpinner} )
 
 	else
 		table.insert( left_spinners, { "Bloom:", self.bloomSpinner } )
@@ -470,8 +495,11 @@ function OptionsScreen:DoInit()
 		table.insert( left_spinners, { "HUD size:", self.hudSize} )
 	end
 
-	local gfx_group = self:AddSpinners( left_spinners, Vector3(-500,150,0) )
+	local sc = .9
+	local gfx_group = self:AddSpinners( left_spinners, Vector3(-450,150,0) )
+	gfx_group:SetScale(sc,sc,sc)
 	local sound_group = self:AddSpinners( right_spinners, Vector3(-50,150,0) )
+	sound_group:SetScale(sc,sc,sc)
 end
 
 local function EnabledOptionsIndex( enabled )
@@ -496,6 +524,8 @@ function OptionsScreen:InitializeSpinners()
 	--]]
 	
 	self.bloomSpinner:SetSelectedIndex( EnabledOptionsIndex( self.working.bloom ) )
+	self.smallTexturesSpinner:SetSelectedIndex( EnabledOptionsIndex( self.working.smalltextures ) )
+	self.netbookModeSpinner:SetSelectedIndex( EnabledOptionsIndex( self.working.netbookmode ) )
 	self.distortionSpinner:SetSelectedIndex( EnabledOptionsIndex( self.working.distortion ) )
 
 	local spinners = { fxvolume = self.fxVolume, musicvolume = self.musicVolume, ambientvolume = self.ambientVolume }

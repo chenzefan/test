@@ -167,4 +167,4 @@ end
 
 return Prefab( "common/inventory/blowdart_sleep", sleep, assets, prefabs),
        Prefab( "common/inventory/blowdart_fire", fire, assets, prefabs),
-       Prefab( "common/inventory/blowdart_pipe", pipe, assets, prefabs)
+       Prefab( "common/inventory/blowdart_pipe", pipe, assets, prefabs) 

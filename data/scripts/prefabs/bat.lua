@@ -186,4 +186,4 @@ local function fn()
     return inst
 end
 
-return Prefab("cave/bat", fn, assets, prefabs)
+return Prefab("cave/bat", fn, assets, prefabs) 

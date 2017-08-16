@@ -2,7 +2,6 @@
 ---------             SAMPLE TASKS                   --------------------------------------
 ------------------------------------------------------------------------------------------
 require("map/task")
-require("map/map")
 require("map/lockandkey")
 require("map/terrain")
 
@@ -29,7 +28,7 @@ local everything_sample2 = {
 		room_choices={
 			["Forest"] = 1, 
 		 }, 
-		room_bg=GROUND_VALUES[GROUND.GRASS],
+		room_bg=GROUND.GRASS,
 		background_room="BGGrass",
 		colour={r=0,g=1,b=0,a=1}
 	}), 
@@ -64,7 +63,7 @@ local everything_sample = {
 			["Clearing"] = 1,
 			["BurntForest"] = 1,
 		}, 
-		room_bg=GROUND_VALUES[GROUND.GRASS],
+		room_bg=GROUND.GRASS,
 		background_room="BGGrass",
 		colour={r=0,g=1,b=0,a=1}
 	}), 
@@ -82,7 +81,7 @@ local samples = {
 			["Plain"] = 1 + math.random(SIZE_VARIATION), 
 			["Clearing"] = 1,
 		}, 
-		room_bg=GROUND_VALUES[GROUND.GRASS],
+		room_bg=GROUND.GRASS,
 		background_room="BGGrass",
 		colour={r=0,g=1,b=0,a=1}
 	}), 
@@ -97,7 +96,7 @@ local samples = {
 			["Plain"] = 1 + math.random(SIZE_VARIATION), 
 			["Clearing"] = 1,
 		}, 
-		room_bg=GROUND_VALUES[GROUND.GRASS],
+		room_bg=GROUND.GRASS,
 		background_room="BGGrass",
 		colour={r=0,g=1,b=0,a=1}
 	}), 
@@ -112,7 +111,7 @@ local samples = {
 			["Plain"] = 1 + math.random(SIZE_VARIATION), 
 			["Clearing"] = 1,
 		}, 
-		room_bg=GROUND_VALUES[GROUND.GRASS],
+		room_bg=GROUND.GRASS,
 		background_room="BGGrass",
 		colour={r=0,g=1,b=0,a=1}
 	}), 
@@ -128,7 +127,7 @@ local samples = {
 			["EvilFlowerPatch"] = 1 + math.random(SIZE_VARIATION), 
 			["Clearing"] = 2,
 		}, 
-		room_bg=GROUND_VALUES[GROUND.GRASS],
+		room_bg=GROUND.GRASS,
 		background_room="BGGrass",
 		colour={r=0,g=1,b=0,a=1}
 	}), 
@@ -143,7 +142,7 @@ local samples = {
 			["FlowerPatch"] = 1 + math.random(SIZE_VARIATION), 
 			["Clearing"] = 2,
 		}, 
-		room_bg=GROUND_VALUES[GROUND.GRASS],
+		room_bg=GROUND.GRASS,
 		background_room="BGGrass",
 		colour={r=0,g=1,b=0,a=1}
 	}), 
@@ -158,7 +157,7 @@ local samples = {
 		room_choices={
 			["Clearing"] = 2, -- have to have at least a few rooms for tagging
 		}, 
-		room_bg=GROUND_VALUES[GROUND.FOREST],
+		room_bg=GROUND.FOREST,
 		background_room="Clearing",
 		colour={r=0,g=1,b=0,a=1}
 	}), 
@@ -171,7 +170,7 @@ local samples = {
 		room_choices={
 			["Clearing"] = 2, -- have to have at least a few rooms for tagging
 		}, 
-		room_bg=GROUND_VALUES[GROUND.FOREST],
+		room_bg=GROUND.FOREST,
 		background_room="Clearing",
 		colour={r=0,g=1,b=0,a=1}
 	}), 
@@ -189,7 +188,7 @@ local samples = {
 			["BGGrass"] = 2,
 			["BGRocky"] = 2,
 		}, 
-		room_bg=GROUND_VALUES[GROUND.SAVANNA],
+		room_bg=GROUND.SAVANNA,
 		background_room="BGSavanna",
 		colour={r=0,g=1,b=0,a=1}
 	}), 
@@ -206,7 +205,7 @@ local samples = {
 			["BGGrass"] = 2,
 			["BGRocky"] = 2,
 		}, 
-		room_bg=GROUND_VALUES[GROUND.SAVANNA],
+		room_bg=GROUND.SAVANNA,
 		background_room="BGSavanna",
 		colour={r=0,g=1,b=0,a=1}
 	}), 
@@ -222,7 +221,7 @@ local samples = {
 		room_choices={
 			["BGRocky"] = 2,
 		}, 
-		room_bg=GROUND_VALUES[GROUND.ROCKY],
+		room_bg=GROUND.ROCKY,
 		background_room="BGRocky",
 		colour={r=0,g=1,b=0,a=1}
 	}), 
@@ -237,7 +236,7 @@ local samples = {
 		room_choices={
 			["BGRocky"] = 2,
 		}, 
-		room_bg=GROUND_VALUES[GROUND.ROCKY],
+		room_bg=GROUND.ROCKY,
 		background_room="BGRocky",
 		colour={r=0,g=1,b=0,a=1}
 	}), 
@@ -252,7 +251,7 @@ local samples = {
 			["Forest"] = 1 + math.random(SIZE_VARIATION), 
 			["DeepForest"] = 2,
 		}, 
-		room_bg=GROUND_VALUES[GROUND.ROCKY],
+		room_bg=GROUND.ROCKY,
 		background_room="BGRocky",
 		colour={r=0,g=1,b=0,a=1}
 	}), 
@@ -266,7 +265,7 @@ local samples = {
 			["Forest"] = 1 + math.random(SIZE_VARIATION), 
 			["DeepForest"] = 2,
 		}, 
-		room_bg=GROUND_VALUES[GROUND.ROCKY],
+		room_bg=GROUND.ROCKY,
 		background_room="BGRocky",
 		colour={r=0,g=1,b=0,a=1}
 	}), 
@@ -285,7 +284,7 @@ local samples = {
 			["Forest"] = math.random(SIZE_VARIATION), 
 			["Clearing"] = math.random(SIZE_VARIATION)
 		},
-		room_bg=GROUND_VALUES[GROUND.ROCKY],
+		room_bg=GROUND.ROCKY,
 		background_room="BGNoise",
 		colour={r=0,g=0,b=1,a=1}
 	}), 
@@ -302,7 +301,7 @@ local samples = {
 			["Forest"] = math.random(SIZE_VARIATION), 
 			["Clearing"] = math.random(SIZE_VARIATION)
 		},
-		room_bg=GROUND_VALUES[GROUND.ROCKY],
+		room_bg=GROUND.ROCKY,
 		background_room="BGNoise",
 		colour={r=0,g=0,b=1,a=1}
 	}), 
@@ -321,7 +320,7 @@ local samples = {
 			["DeepForest"] = 1+math.random(SIZE_VARIATION), 
 			["Clearing"] = 1
 		}, 
-		room_bg=GROUND_VALUES[GROUND.FOREST],
+		room_bg=GROUND.FOREST,
 		background_room="BGDeepForest",
 		colour={r=1,g=0,b=0,a=1}
 	}), 
@@ -338,7 +337,7 @@ local samples = {
 			["DeepForest"] = 1+math.random(SIZE_VARIATION), 
 			["Clearing"] = 1
 		}, 
-		room_bg=GROUND_VALUES[GROUND.FOREST],
+		room_bg=GROUND.FOREST,
 		background_room="BGDeepForest",
 		colour={r=1,g=0,b=0,a=1}
 	}), 
@@ -359,7 +358,7 @@ local samples = {
 			["DeepForest"] = math.random(SIZE_VARIATION), 
 			["Clearing"] = 1
 		}, 
-		room_bg=GROUND_VALUES[GROUND.FOREST],
+		room_bg=GROUND.FOREST,
 		background_room="BGForest",
 		colour={r=1,g=0,b=0,a=1}
 	}), 
@@ -376,7 +375,7 @@ local samples = {
 			["DeepForest"] = math.random(SIZE_VARIATION), 
 			["Clearing"] = 1
 		}, 
-		room_bg=GROUND_VALUES[GROUND.FOREST],
+		room_bg=GROUND.FOREST,
 		background_room="BGForest",
 		colour={r=1,g=0,b=0,a=1}
 	}), 
@@ -391,7 +390,7 @@ local samples = {
 			["Clearing"] = 1 + math.random(SIZE_VARIATION), 
 			["DeepForest"] = 1, 
 		}, 
-		room_bg=GROUND_VALUES[GROUND.SAVANNA],
+		room_bg=GROUND.SAVANNA,
 		background_room="BGSavanna",
 		colour={r=1,g=0,b=0,a=1}
 	}), 
@@ -406,7 +405,7 @@ local samples = {
 			["Clearing"] = 1 + math.random(SIZE_VARIATION), 
 			["DeepForest"] = 1, 
 		}, 
-		room_bg=GROUND_VALUES[GROUND.GRASS],
+		room_bg=GROUND.GRASS,
 		background_room="BGForest",
 		colour={r=1,g=0,b=0,a=1}
 	}), 
@@ -423,7 +422,7 @@ local samples = {
 			["CrappyDeepForest"] = 1,
 			["SpiderForest"] = 3,
 		}, 
-		room_bg=GROUND_VALUES[GROUND.FOREST],
+		room_bg=GROUND.FOREST,
 		background_room="BGCrappyForest",
 		colour={r=1,g=1,b=0,a=1}
 	}), 
@@ -438,7 +437,7 @@ local samples = {
 		room_choices={
 			["DeepForest"] = 3 + math.random(SIZE_VARIATION), 
 		}, 
-		room_bg=GROUND_VALUES[GROUND.FOREST],
+		room_bg=GROUND.FOREST,
 		background_room="BGForest",
 		colour={r=1,g=1,b=0,a=1}
 	}), 
@@ -454,7 +453,7 @@ local samples = {
 			["CrappyDeepForest"] = 1,
 			["SpiderForest"] = 3,
 		}, 
-		room_bg=GROUND_VALUES[GROUND.FOREST],
+		room_bg=GROUND.FOREST,
 		background_room="BGCrappyForest",
 		colour={r=1,g=1,b=0,a=1}
 	}), 
@@ -469,7 +468,7 @@ local samples = {
 		room_choices={
 			["DeepForest"] = 3 + math.random(SIZE_VARIATION), 
 		}, 
-		room_bg=GROUND_VALUES[GROUND.FOREST],
+		room_bg=GROUND.FOREST,
 		background_room="BGForest",
 		colour={r=1,g=1,b=0,a=1}
 	}), 
@@ -488,7 +487,7 @@ local samples = {
 		room_choices={
 			["Plain"] = 1 + math.random(SIZE_VARIATION), 
 		}, 
-		room_bg=GROUND_VALUES[GROUND.SAVANNA],
+		room_bg=GROUND.SAVANNA,
 		background_room="BGSavanna",
 		colour={r=0,g=1,b=1,a=1}
 	}), 
@@ -503,7 +502,7 @@ local samples = {
 		room_choices={
 			["Plain"] = 1 + math.random(SIZE_VARIATION), 
 		}, 
-		room_bg=GROUND_VALUES[GROUND.SAVANNA],
+		room_bg=GROUND.SAVANNA,
 		background_room="BGSavanna",
 		colour={r=0,g=1,b=1,a=1}
 	}), 
@@ -519,7 +518,7 @@ local samples = {
 			["Plain"] = 1 + math.random(SIZE_VARIATION), 
 			["Clearing"] = 2,
 		}, 
-		room_bg=GROUND_VALUES[GROUND.SAVANNA],
+		room_bg=GROUND.SAVANNA,
 		background_room="BGSavanna",
 		colour={r=0,g=1,b=1,a=1}
 	}), 
@@ -534,7 +533,7 @@ local samples = {
 			["Plain"] = 1 + math.random(SIZE_VARIATION), 
 			["Clearing"] = 2,
 		}, 
-		room_bg=GROUND_VALUES[GROUND.SAVANNA],
+		room_bg=GROUND.SAVANNA,
 		background_room="BGSavanna",
 		colour={r=0,g=1,b=1,a=1}
 	}), 
@@ -551,7 +550,7 @@ local samples = {
 		room_choices={
 			["Plain"] = 1 + math.random(SIZE_VARIATION), 
 			}, 
-		room_bg=GROUND_VALUES[GROUND.FOREST],
+		room_bg=GROUND.FOREST,
 		background_room="BGRocky",
 		colour={r=0,g=1,b=1,a=1}
 	}), 
@@ -564,7 +563,7 @@ local samples = {
 		room_choices={
 			["Plain"] = 1 + math.random(SIZE_VARIATION), 
 			}, 
-		room_bg=GROUND_VALUES[GROUND.FOREST],
+		room_bg=GROUND.FOREST,
 		background_room="BGRocky",
 		colour={r=0,g=1,b=1,a=1}
 	}), 
@@ -582,7 +581,7 @@ local samples = {
 			["Marsh"] = 3+math.random(SIZE_VARIATION), 
 			["DeepForest"] = 2+math.random(SIZE_VARIATION), 
 		}, 
-		room_bg=GROUND_VALUES[GROUND.MARSH],
+		room_bg=GROUND.MARSH,
 		background_room="BGMarsh",
 		colour={r=1,g=0,b=0,a=1}
 	}), 
@@ -598,7 +597,7 @@ local samples = {
 			["Forest"] = math.random(SIZE_VARIATION), 
 			["DeepForest"] = 1+math.random(SIZE_VARIATION),
 		},
-		room_bg=GROUND_VALUES[GROUND.MARSH],
+		room_bg=GROUND.MARSH,
 		background_room="BGMarsh",
 		colour={r=.05,g=.05,b=.05,a=1}
 	}), 
@@ -616,7 +615,7 @@ local samples = {
 			["DeepForest"] = 1+math.random(SIZE_VARIATION),
 			["SlightlyMermySwamp"]=1,
 		},
-		room_bg=GROUND_VALUES[GROUND.MARSH],
+		room_bg=GROUND.MARSH,
 		background_room="BGMarsh",
 		colour={r=.05,g=.05,b=.05,a=1}
 	}), 
@@ -632,7 +631,7 @@ local samples = {
 			["DeepForest"] = 1+math.random(SIZE_VARIATION),
 			["SlightlyMermySwamp"]=1,
 		},
-		room_bg=GROUND_VALUES[GROUND.MARSH],
+		room_bg=GROUND.MARSH,
 		background_room="BGMarsh",
 		colour={r=.05,g=.05,b=.05,a=1}
 	}), 
@@ -646,7 +645,7 @@ local samples = {
 		room_choices={
 			["SpiderMarsh"] = 2+math.random(SIZE_VARIATION), 
 		},
-		room_bg=GROUND_VALUES[GROUND.MARSH],
+		room_bg=GROUND.MARSH,
 		background_room="BGMarsh",
 		colour={r=.05,g=.05,b=.05,a=1}
 	}), 
@@ -661,7 +660,7 @@ local samples = {
 			["Marsh"] = 2+math.random(SIZE_VARIATION), 
 			["SlightlyMermySwamp"]=1,
 		},
-		room_bg=GROUND_VALUES[GROUND.MARSH],
+		room_bg=GROUND.MARSH,
 		background_room="BGMarsh",
 		colour={r=.05,g=.5,b=.5,a=1}
 	}), 
@@ -676,7 +675,7 @@ local samples = {
 			["SpiderMarsh"] = 2+math.random(SIZE_VARIATION), 
 			["Forest"] = 2,
 		},
-		room_bg=GROUND_VALUES[GROUND.MARSH],
+		room_bg=GROUND.MARSH,
 		background_room="BGMarsh",
 		colour={r=.5,g=.05,b=.05,a=1}
 	}), 
@@ -692,7 +691,7 @@ local samples = {
 			["SpiderMarsh"] = 2+math.random(SIZE_VARIATION), 
 			["CrappyForest"] = 2,
 		},
-		room_bg=GROUND_VALUES[GROUND.MARSH],
+		room_bg=GROUND.MARSH,
 		background_room="BGMarsh",
 		colour={r=.05,g=.5,b=.05,a=1}
 	}), 
@@ -707,7 +706,7 @@ local samples = {
 			["Marsh"] = 1+math.random(SIZE_VARIATION), 
 			["SlightlyMermySwamp"] = 1+math.random(SIZE_VARIATION), 
 		},
-		room_bg=GROUND_VALUES[GROUND.MARSH],
+		room_bg=GROUND.MARSH,
 		background_room="BGMarsh",
 		colour={r=.05,g=.05,b=.5,a=1}
 	}), 
@@ -723,7 +722,7 @@ local samples = {
 		},
 		room_choices={
 		},
-		room_bg=GROUND_VALUES[GROUND.ROCKY],
+		room_bg=GROUND.ROCKY,
 		background_room="BGRocky",
 		colour={r=.5,g=.3,b=.05,a=1}
 	}), 
@@ -738,7 +737,7 @@ local samples = {
 		},
 		room_choices={
 		},
-		room_bg=GROUND_VALUES[GROUND.ROCKY],
+		room_bg=GROUND.ROCKY,
 		background_room="BGChessRocky",
 		colour={r=.8,g=.08,b=.05,a=1}
 	}), 
@@ -753,7 +752,7 @@ local samples = {
 			["SpiderMarsh"] = 2+math.random(SIZE_VARIATION), 
 			["Forest"] = 2,
 		},
-		room_bg=GROUND_VALUES[GROUND.MARSH],
+		room_bg=GROUND.MARSH,
 		background_room="BGMarsh",
 		colour={r=.15,g=.05,b=.7,a=1}
 	}), 
@@ -766,7 +765,7 @@ local samples = {
 			--["Forest"] = 1, 
 			--["Nothing"] = 1+math.random(SIZE_VARIATION)
 		--},  
-		--room_bg=GROUND_VALUES[GROUND.IMPASSABLE],
+		--room_bg=GROUND.IMPASSABLE,
 		--colour={r=.05,g=.05,b=.05,a=1}
 	--}),
  	Task("Sanity-Blocked Spider Queendom", {
@@ -780,7 +779,7 @@ local samples = {
 		room_choices={
 			["CrappyDeepForest"] = 2,
 		}, 
-		room_bg=GROUND_VALUES[GROUND.FOREST],
+		room_bg=GROUND.FOREST,
 		background_room="SpiderForest",
 		colour={r=1,g=1,b=0,a=1}
 	}), 
@@ -795,7 +794,7 @@ local samples = {
 		room_choices={
 			["CrappyDeepForest"] = 2,
 		}, 
-		room_bg=GROUND_VALUES[GROUND.FOREST],
+		room_bg=GROUND.FOREST,
 		background_room="SpiderForest",
 		colour={r=1,g=1,b=0.2,a=1}
 	}), 
@@ -814,7 +813,7 @@ local samples = {
 			["DeepForest"] = 1 + math.random(SIZE_VARIATION), 
 			["Forest"] = math.random(SIZE_VARIATION), 
 		},
-		room_bg=GROUND_VALUES[GROUND.FOREST],
+		room_bg=GROUND.FOREST,
 		background_room="BGForest",
 		colour={r=1,g=0,b=1,a=1}
 	}), 
@@ -830,7 +829,7 @@ local samples = {
 			["DeepForest"] = 1 + math.random(SIZE_VARIATION), 
 			["Forest"] = math.random(SIZE_VARIATION), 
 		},
-		room_bg=GROUND_VALUES[GROUND.FOREST],
+		room_bg=GROUND.FOREST,
 		background_room="BGForest",
 		colour={r=1,g=0,b=1,a=1}
 	}), 
@@ -843,7 +842,7 @@ local samples = {
 		room_choices={
 			["Clearing"] = 2
 		},  
-		room_bg=GROUND_VALUES[GROUND.FOREST],
+		room_bg=GROUND.FOREST,
 		background_room="BGCrappyForest",
 		colour={r=.05,g=.5,b=.05,a=1}
 	}), 
@@ -862,7 +861,7 @@ local samples = {
 			["DeepForest"] = 1,
 			["Clearing"] = 1,
 		},  
-		room_bg=GROUND_VALUES[GROUND.ROCKY],
+		room_bg=GROUND.ROCKY,
 		background_room="BGRocky",
 		colour={r=.05,g=.8,b=.05,a=1}
 	}), 
@@ -879,7 +878,7 @@ local samples = {
 			["DeepForest"] = 1,
 			["Clearing"] = 1,
 		},  
-		room_bg=GROUND_VALUES[GROUND.FOREST],
+		room_bg=GROUND.FOREST,
 		background_room="BGForest",
 		colour={r=.05,g=.5,b=.15,a=1}
 	}), 
@@ -896,7 +895,7 @@ local samples = {
 			["DeepForest"] = 1,
 			["Clearing"] = 1,
 		},  
-		room_bg=GROUND_VALUES[GROUND.FOREST],
+		room_bg=GROUND.FOREST,
 		background_room="BGForest",
 		colour={r=.05,g=.5,b=.15,a=1}
 	}), 
@@ -912,7 +911,7 @@ local samples = {
 			["DeepForest"] = 1,
 			["Clearing"] = 1,
 		},  
-		room_bg=GROUND_VALUES[GROUND.FOREST],
+		room_bg=GROUND.FOREST,
 		background_room="BGForest",
 		colour={r=.15,g=.5,b=.05,a=1}
 	}), 
@@ -930,7 +929,7 @@ local samples = {
 			["CrappyDeepForest"] = math.random(SIZE_VARIATION), 
 			["Clearing"] = 1
 		},  
-		room_bg=GROUND_VALUES[GROUND.ROCKY],
+		room_bg=GROUND.ROCKY,
 		background_room="BGRocky",
 		colour={r=.15,g=.5,b=.15,a=1}
 	}), 
@@ -946,7 +945,7 @@ local samples = {
 			["CrappyDeepForest"] = math.random(SIZE_VARIATION), 
 			["Clearing"] = 1
 		},  
-		room_bg=GROUND_VALUES[GROUND.ROCKY],
+		room_bg=GROUND.ROCKY,
 		background_room="BGRocky",
 		colour={r=.25,g=.4,b=.06,a=1}
 	}), 
@@ -963,7 +962,7 @@ local samples = {
 			["Forest"] = math.random(SIZE_VARIATION), 
 			["FlowerPatch"] = math.random(SIZE_VARIATION), 
 		},  
-		room_bg=GROUND_VALUES[GROUND.GRASS],
+		room_bg=GROUND.GRASS,
 		background_room="BGGrass",
 		colour={r=0,g=1,b=0.3,a=1}
 	}), 
@@ -978,7 +977,7 @@ local samples = {
 			["Forest"] = math.random(SIZE_VARIATION), 
 			["FlowerPatch"] = math.random(SIZE_VARIATION), 
 		},  
-		room_bg=GROUND_VALUES[GROUND.GRASS],
+		room_bg=GROUND.GRASS,
 		background_room="BGGrass",
 		colour={r=0,g=1,b=0.3,a=1}
 	}), 
@@ -994,7 +993,7 @@ local samples = {
 			["Forest"] = math.random(SIZE_VARIATION), 
 			["FlowerPatch"] = math.random(SIZE_VARIATION), 
 		},  
-		room_bg=GROUND_VALUES[GROUND.GRASS],
+		room_bg=GROUND.GRASS,
 		background_room="BGGrass",
 		colour={r=1,g=0.1,b=0.1,a=1}
 	}), 
@@ -1008,7 +1007,7 @@ local samples = {
 			["Rocky"] = math.random(SIZE_VARIATION), 
 			["FlowerPatch"] = math.random(SIZE_VARIATION), 
 		},  
-		room_bg=GROUND_VALUES[GROUND.GRASS],
+		room_bg=GROUND.GRASS,
 		background_room="BGGrassBurnt",
 		colour={r=1,g=1,b=0.5,a=1}
 	}),
@@ -1022,7 +1021,7 @@ local samples = {
 			["Rocky"] = math.random(SIZE_VARIATION), 
 			["FlowerPatch"] = math.random(SIZE_VARIATION), 
 		},  
-		room_bg=GROUND_VALUES[GROUND.GRASS],
+		room_bg=GROUND.GRASS,
 		background_room="BGGrass",
 		colour={r=1,g=1,b=0.5,a=1}
 	}),
@@ -1037,7 +1036,7 @@ local samples = {
 			["BurntForest"] = math.random(SIZE_VARIATION), 
 			["BurntClearing"] = math.random(SIZE_VARIATION), 
 		},  
-		room_bg=GROUND_VALUES[GROUND.GRASS],
+		room_bg=GROUND.GRASS,
 		background_room="BGGrassBurnt",
 		colour={r=1,g=1,b=0.5,a=1}
 	}),
@@ -1058,7 +1057,7 @@ local samples = {
 			["DeepForest"] = 1,
 			["BGRocky"] = 1,
 		},  
-		room_bg=GROUND_VALUES[GROUND.GRASS],
+		room_bg=GROUND.GRASS,
 		background_room="BGGrass",
 		colour={r=.05,g=.5,b=.05,a=1}
 	}), 
@@ -1082,7 +1081,7 @@ local samples = {
 		room_choices={
 			["SpiderMarsh"] = 2+math.random(2), 
 		},  
-		room_bg=GROUND_VALUES[GROUND.MARSH],
+		room_bg=GROUND.MARSH,
 		background_room="BGMarsh",
 		colour={r=.05,g=.5,b=.05,a=1}
 	}), 
@@ -1097,7 +1096,7 @@ local samples = {
 		},
 		room_choices={
 		},  
-		room_bg=GROUND_VALUES[GROUND.MARSH],
+		room_bg=GROUND.MARSH,
 		background_room="BGChessRocky",
 		colour={r=.05,g=.5,b=.05,a=1},
 	}),
@@ -1111,7 +1110,7 @@ local samples = {
 			--["Forest"] = 1, 
 			--["Nothing"] = 1+math.random(SIZE_VARIATION)
 		--},  
-		--room_bg=GROUND_VALUES[GROUND.IMPASSABLE],
+		--room_bg=GROUND.IMPASSABLE,
 		--colour={r=.05,g=.05,b=.05,a=1}
 	--}), 
 		--{ fn = GeneratePerlinXY, args = { sz=sz, noise_scale=noise_scale, offx=offx, offy=offy }})
@@ -1124,7 +1123,7 @@ local samples = {
 		room_choices={
 			["SpiderMarsh"] = 2+math.random(SIZE_VARIATION), 
 		},
-		room_bg=GROUND_VALUES[GROUND.MARSH],
+		room_bg=GROUND.MARSH,
 		background_room="BGMarsh",
 		colour={r=.05,g=.05,b=.05,a=1}
 	}), 
@@ -1137,7 +1136,7 @@ local samples = {
 		room_choices={
 			["SpiderMarsh"] = 2+math.random(SIZE_VARIATION), 
 		},
-		room_bg=GROUND_VALUES[GROUND.MARSH],
+		room_bg=GROUND.MARSH,
 		background_room="BGMarsh",
 		colour={r=.05,g=.05,b=.05,a=1}
 	}), 
@@ -1150,7 +1149,7 @@ local samples = {
 		room_choices={
 			["SpiderMarsh"] = 2+math.random(SIZE_VARIATION), 
 		},
-		room_bg=GROUND_VALUES[GROUND.MARSH],
+		room_bg=GROUND.MARSH,
 		background_room="BGMarsh",
 		colour={r=.05,g=.05,b=.05,a=1}
 	}), 
@@ -1163,7 +1162,7 @@ local samples = {
 		},
 		room_choices={
 		},
-		room_bg=GROUND_VALUES[GROUND.IMPASSABLE],
+		room_bg=GROUND.IMPASSABLE,
 		background_room="BGImpassable",
 		colour={r=.05,g=.05,b=.05,a=1}
 	}), 
@@ -1178,7 +1177,7 @@ local samples = {
 		room_choices={
 			["SpiderMarsh"] = 1+math.random(2), 
 		},
-		room_bg=GROUND_VALUES[GROUND.DIRT],
+		room_bg=GROUND.DIRT,
 		background_room="BGMarsh",
 		colour={r=math.random(),g=math.random(),b=math.random(),a=math.random()},
 	}),
@@ -1190,7 +1189,7 @@ local samples = {
 		room_choices={
 			["SpiderForest"] = 1+math.random(2), 
 		},
-		room_bg=GROUND_VALUES[GROUND.DIRT],
+		room_bg=GROUND.DIRT,
 		background_room="BGBadlands",
 		colour={r=math.random(),g=math.random(),b=math.random(),a=math.random()},
 	}),
@@ -1205,7 +1204,7 @@ local samples = {
 		-- room_choices={
 		-- 	["DeepForest"] = 1+math.random(2), 
 		-- },
-		room_bg=GROUND_VALUES[GROUND.DIRT],
+		room_bg=GROUND.DIRT,
 		background_room="BGDeepForest",
 		colour={r=math.random(),g=math.random(),b=math.random(),a=math.random()},
 	}),
@@ -1220,7 +1219,7 @@ local samples = {
 		-- room_choices={
 		-- 	["BeefalowPlain"] = 1+math.random(2), 
 		-- },
-		room_bg=GROUND_VALUES[GROUND.DIRT],
+		room_bg=GROUND.DIRT,
 		background_room="BGSavanna",
 		colour={r=math.random(),g=math.random(),b=math.random(),a=math.random()},
 	}),
@@ -1232,7 +1231,7 @@ local samples = {
 		room_choices={
 			["Rocky"] = 1+math.random(2), 
 		},
-		room_bg=GROUND_VALUES[GROUND.DIRT],
+		room_bg=GROUND.DIRT,
 		background_room="BGRocky",
 		colour={r=math.random(),g=math.random(),b=math.random(),a=math.random()},
 	}),
@@ -1244,7 +1243,7 @@ local samples = {
 		room_choices={
 			["SlightlyMermySwamp"] = 1+math.random(2), 
 		},
-		room_bg=GROUND_VALUES[GROUND.DIRT],
+		room_bg=GROUND.DIRT,
 		background_room="BGMarsh",
 		colour={r=math.random(),g=math.random(),b=math.random(),a=math.random()},
 	}),
@@ -1258,32 +1257,40 @@ local samples = {
 	Task("CavesStart", {
 		locks=LOCKS.NONE,
 		keys_given=KEYS.LIGHT,
-		room_choices={
-			["BGCaveRoom"] = 1,
+		room_choices_special={
+			["MistyCavern"] = 2+math.random(2),
+			["PitCave"] = 3+math.random(2),
+			["RockLobsterPlains"] = 1,
 		},
-		room_bg=GROUND_VALUES[GROUND.SINKHOLE],
-		background_room="BGSinkholeRoom",
+		room_choices={
+			["BGCaveRoom"] = 4+math.random(2),
+		},
+		room_bg=GROUND.SINKHOLE,
+		background_room="BGCaveRoom",
 		colour={r=1,g=0.7,b=1,a=1},
 	}),
 	Task("CavesAlternateStart", {
 		locks=LOCKS.NONE,
 		keys_given=KEYS.LIGHT,
 		room_choices_special={
-			["SinkholeRoom"] = 4,
+			["SinkholeRoom"] = 3+math.random(2),
+			["MistyCavern"] = 1,
+			["RockLobsterPlains"] = 1+math.random(2),
 		},
-		room_bg=GROUND_VALUES[GROUND.SINKHOLE],
-		background_room="BGSinkholeRoom",
+		room_bg=GROUND.SINKHOLE,
+		background_room="BGCaveRoom",
 		colour={r=1,g=0.5,b=1,a=1},
 	}),
 
 	Task("BatCaves", {
 		locks=LOCKS.LIGHT,
 		keys_given=KEYS.CAVE,
+		entrance_room = "BatCaveRoomAntichamber",
 		room_choices_special={
-			["CaveRoom"] = 3,
-			["BatCaveRoom"] = 1,
+			["CaveRoom"] = 2+math.random(2),
+			["BatCaveRoom"] = 4+math.random(2),
 		},
-		room_bg=GROUND_VALUES[GROUND.CAVE],
+		room_bg=GROUND.CAVE,
 		background_room="BGCaveRoom",
 		colour={r=1,g=0.6,b=1,a=1},
 	}),
@@ -1291,10 +1298,10 @@ local samples = {
 		locks=LOCKS.LIGHT,
 		keys_given=KEYS.FUNGUS,
 		room_choices_special={
-			["FungusRoom"] = 3,
-			["BatCaveRoom"] = 1,
+			["FungusRoom"] = 2+math.random(2),
+			["BatCaveRoom"] = 1+math.random(2),
 		},
-		room_bg=GROUND_VALUES[GROUND.FUNGUS],
+		room_bg=GROUND.FUNGUS,
 		background_room="BGFungusRoom",
 		colour={r=1,g=0,b=0.5,a=1},
 	}),
@@ -1302,10 +1309,10 @@ local samples = {
 		locks=LOCKS.LIGHT,
 		keys_given=KEYS.NONE,
 		room_choices_special={
-			["PitRoom"] = 1,
-			["TentacleCaveRoom"] = 1,
+			["PitRoom"] = 1+math.random(2),
+			["TentacleCave"] = 1+math.random(4),
 		},
-		room_bg=GROUND_VALUES[GROUND.MARSH],
+		room_bg=GROUND.MARSH,
 		background_room="BGFungusRoom",
 		colour={r=0.5,g=0,b=1,a=1},
 	}),
@@ -1314,12 +1321,10 @@ local samples = {
 		locks=LOCKS.LIGHT,
 		keys_given=KEYS.CAVE,
 		room_choices_special={
-			["BatCaveRoom"] = 1,
+			["BatCaveRoom"] = 3+math.random(4),
+			["PitRoom"] = 10+math.random(7),
 		},
-		room_choices={
-			["BGFungusRoom"] = 7,
-		},
-		room_bg=GROUND_VALUES[GROUND.WALL_ROCKY],
+		room_bg=GROUND.WALL_ROCKY,
 		background_room="BGFungusRoom",
 		colour={r=0.6,g=0,b=1,a=1},
 	}),
@@ -1327,13 +1332,13 @@ local samples = {
 		locks=LOCKS.LIGHT,
 		keys_given=KEYS.CAVE,
 		room_choices_special={
-			["RabitFungusRoom"] = 1,
+			["RabitFungusRoom"] = 1+math.random(2),
 			["Stairs"] = 1,
 		},
 		room_choices={
-			["BGCaveRoom"] = 3,
+			["BGCaveRoom"] = 2+math.random(2),
 		},
-		room_bg=GROUND_VALUES[GROUND.WALL_ROCKY],
+		room_bg=GROUND.WALL_ROCKY,
 		background_room="BGCaveRoom",
 		colour={r=0.8,g=0,b=1,a=1},
 	}),
@@ -1343,7 +1348,7 @@ local samples = {
 		room_choices_special={
 			["BatCaveRoom"] = 1,
 		},
-		room_bg=GROUND_VALUES[GROUND.CAVE],
+		room_bg=GROUND.CAVE,
 		background_room="BGCaveRoom",
 		colour={r=1,g=1,b=1,a=1},
 	}),
@@ -1352,9 +1357,11 @@ local samples = {
 		locks={LOCKS.CAVE, LOCKS.FUNGUS},
 		keys_given=KEYS.NONE,
 		room_choices_special={
-			["NoisyFungus"] = 3,
+			["NoisyFungus"] = 3+math.random(2),
+			["RabitFungusRoom"] = 1+math.random(2),
+			["RockLobsterPlains"] = 1+math.random(2),
 		},
-		room_bg=GROUND_VALUES[GROUND.FUNGUS_NOISE],
+		room_bg=GROUND.FUNGUS_NOISE,
 		background_room="BGNoisyFungus",
 		colour={r=1,g=0,b=0.6,a=1},
 	}),
@@ -1362,10 +1369,63 @@ local samples = {
 		locks={LOCKS.LIGHT, LOCKS.FUNGUS},
 		keys_given=KEYS.NONE,
 		room_choices_special={
-			["NoisyCave"] = 3,
+			["NoisyCave"] = 3+math.random(2),
+			["RockLobsterPlains"] = 1,
 		},
-		room_bg=GROUND_VALUES[GROUND.CAVE_NOISE],
+		room_bg=GROUND.CAVE_NOISE,
 		background_room="BGNoisyCave",
+		colour={r=1,g=0,b=0.7,a=1},
+	}),
+
+------------------------------------------------------------
+-- CAVE "BASE" TASKS - TEMP POINTS OF INTEREST
+------------------------------------------------------------
+
+	Task("CaveBase",
+	{
+		locks={LOCKS.CAVE},
+		keys_given=KEYS.NONE,
+		room_choices_special={
+			["CaveBase"] = 1,
+		},
+		room_bg=GROUND.CAVE,
+		background_room="BGNoisyCave",
+		colour={r=1,g=0,b=0.7,a=1},
+	}),
+
+	Task("MushBase",
+	{
+		locks={LOCKS.FUNGUS},
+		keys_given=KEYS.NONE,
+		room_choices_special={
+			["MushBase"] = 1,
+		},
+		room_bg=GROUND.FUNGUS,
+		background_room="BGFungusRoom",
+		colour={r=1,g=0,b=0.6,a=1},
+	}),
+
+	Task("SinkBase",
+	{
+		locks={LOCKS.LIGHT},
+		keys_given=KEYS.NONE,
+		room_choices_special={
+			["SinkBase"] = 1,
+		},
+		room_bg=GROUND.SINKHOLE,
+		background_room="BGSinkholeRoom",
+		colour={r=1,g=0,b=0.7,a=1},
+	}),
+
+	Task("RabbitTown",
+	{
+		locks={LOCKS.LIGHT},
+		keys_given=KEYS.NONE,
+		room_choices_special={
+			["RabbitTown"] = 1,
+		},
+		room_bg=GROUND.SINKHOLE,
+		background_room="BGSinkholeRoom",
 		colour={r=1,g=0,b=0.7,a=1},
 	}),
 
@@ -1378,7 +1438,7 @@ local samples = {
 		room_choices={
 			["BGCaveRoom"] = 1,
 		},
-		room_bg=GROUND_VALUES[GROUND.SINKHOLE],
+		room_bg=GROUND.SINKHOLE,
 		background_room="BGSinkholeRoom",
 		colour={r=1,g=0.7,b=1,a=1},
 	}),
@@ -1390,7 +1450,7 @@ local samples = {
 			["CaveRoom"] = 3,
 			["BatCaveRoom"] = 1,
 		},
-		room_bg=GROUND_VALUES[GROUND.CAVE],
+		room_bg=GROUND.CAVE,
 		background_room="BGCaveRoom",
 		colour={r=1,g=0.6,b=1,a=1},
 	}),

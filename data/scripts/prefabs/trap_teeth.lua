@@ -108,5 +108,5 @@ local function MakeTeethTrapMaxwell()
 end
 
 return Prefab( "common/inventory/trap_teeth", MakeTeethTrapNormal, assets),
-	   Prefab( "common/inventory/trap_teeth_maxwell", MakeTeethTrapMaxwell, assets)
+	   Prefab( "common/inventory/trap_teeth_maxwell", MakeTeethTrapMaxwell, assets) 
 

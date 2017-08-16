@@ -169,7 +169,7 @@ CommonStates.AddWalkStates(states,
         TimeEvent(17*FRAMES, function(inst) inst:PushEvent("wingdown")  end ),
     },
 
-}, true, walkanims)
+},  walkanims, true)
 
 
 CommonStates.AddSleepStates(states,

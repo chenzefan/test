@@ -54,4 +54,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/inventory/sweatervest", fn, assets)
+return Prefab( "common/inventory/sweatervest", fn, assets) 

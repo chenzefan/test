@@ -71,4 +71,4 @@ local function spotlight()
 end
 
 return Prefab( "common/objects/maxwelllight", spotlight, assets, prefabs),
-Prefab("common/objects/maxwelllight_area", arealight, assets, prefabs)
+Prefab("common/objects/maxwelllight_area", arealight, assets, prefabs) 

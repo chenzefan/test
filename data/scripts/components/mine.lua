@@ -4,6 +4,7 @@ local function MineTest(inst)
         local target = FindEntity(inst, mine.radius, function(dude)
             return (dude:HasTag("character") or dude:HasTag("monster") or dude:HasTag("animal") )
                    and not dude:HasTag(mine.alignment)
+                   and dude.components.combat
                    and dude.components.combat:CanBeAttacked(inst)
                    and not (dude.components.health and dude.components.health:IsDead() )
                    and not dude:HasTag("flying")

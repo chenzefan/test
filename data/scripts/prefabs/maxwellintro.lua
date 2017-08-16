@@ -3,6 +3,7 @@ require "fonthelper"
 local assets =
 {
 	Asset("ANIM", "data/anim/maxwell_basic.zip"),
+	Asset("ANIM", "data/anim/max_fx.zip"),
 	Asset("SOUND", "data/sound/maxwell.fsb"),
 }
 
@@ -333,6 +334,8 @@ local function fn(Sim)
     anim:SetBank("maxwell")
     anim:SetBuild("maxwell_build")
 
+    inst:AddTag("notarget")
+
     inst.entity:AddLabel()
     inst.Label:SetFontSize(28)
     inst.Label:SetFont(TALKINGFONT)
@@ -367,4 +370,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab("common/characters/maxwellintro", fn, assets, prefabs)
+return Prefab("common/characters/maxwellintro", fn, assets, prefabs) 

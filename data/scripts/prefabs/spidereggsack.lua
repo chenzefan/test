@@ -49,5 +49,5 @@ local function fn(Sim)
 end
 
 return Prefab( "common/inventory/spidereggsack", fn, assets),
-	   MakePlacer( "common/spidereggsack_placer", "spider_cocoon", "spider_cocoon", "cocoon_small" )
+	   MakePlacer( "common/spidereggsack_placer", "spider_cocoon", "spider_cocoon", "cocoon_small" ) 
 

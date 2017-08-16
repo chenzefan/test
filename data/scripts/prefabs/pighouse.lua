@@ -192,4 +192,4 @@ local function fn(Sim)
 end
 
 return Prefab( "common/objects/pighouse", fn, assets, prefabs ),
-	   MakePlacer("common/pighouse_placer", "pig_house", "pig_house", "idle") 
+	   MakePlacer("common/pighouse_placer", "pig_house", "pig_house", "idle")  

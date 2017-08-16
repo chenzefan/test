@@ -128,5 +128,5 @@ local function fn(Sim)
 	return inst
 end
 
-return Prefab( "forest/monsters/houndmound", fn, assets, prefabs )
+return Prefab( "forest/monsters/houndmound", fn, assets, prefabs ) 
 

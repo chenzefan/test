@@ -54,4 +54,4 @@ for k,v in pairs(STRINGS.CHARACTER_NAMES) do
 		table.insert(prefabs, Prefab("characters/puppet_"..name, createpuppet(name), createassets(name))) 
 	end
 end
-return unpack(prefabs)
+return unpack(prefabs) 

@@ -30,7 +30,7 @@ end
 
 
 local ingredients = {}
-local fruits = {"pomegranate", "dragonfruit"}
+local fruits = {"pomegranate", "dragonfruit", "cave_banana"}
 AddIngredients(ingredients, {fruit=1}, fruits, true)
 
 AddIngredients(ingredients, {fruit=.5}, {"berries"}, true)
@@ -46,10 +46,10 @@ AddIngredients(ingredients, {veggie=.5}, mushrooms, true)
 
 AddIngredients(ingredients, {meat=1}, {"meat"}, true, true)
 AddIngredients(ingredients, {meat=1, monster=1}, {"monstermeat"}, true, true)
-AddIngredients(ingredients, {meat=.5}, {"fish", "froglegs", "drumstick"}, true)
+AddIngredients(ingredients, {meat=.5}, {"froglegs", "drumstick"}, true)
 AddIngredients(ingredients, {meat=.5}, {"smallmeat"}, true, true)
 
-AddIngredients(ingredients, {fish=1}, {"fish"}, true)
+AddIngredients(ingredients, {meat=.5,fish=1}, {"fish"}, true)
 
 AddIngredients(ingredients, {veggie=1, magic=1}, {"mandrake"}, true)
 AddIngredients(ingredients, {egg=1}, {"egg"}, true)

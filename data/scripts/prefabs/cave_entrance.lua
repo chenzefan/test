@@ -5,7 +5,8 @@ local assets=
 
 local prefabs = 
 {
-	"bat"
+	"bat",
+	"exitcavelight"
 }
 
 local function GetVerb(inst)
@@ -26,11 +27,24 @@ local function OnActivate(inst)
 	--do portal presentation 
 	--save and do restart
 	SetHUDPause(true)
+
+	local function doresetcave()
+
+		SaveGameIndex:ResetCave(inst.cavenum, function() SetHUDPause(false) inst.components.activatable.inactive = true  end)
+	end
+
+	local function resetcaveconfirm()
+		TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.RESETCAVE.TITLE, STRINGS.UI.RESETCAVE.BODY, 
+			{{text=STRINGS.UI.RESETCAVE.YES, cb = doresetcave },
+			 {text=STRINGS.UI.RESETCAVE.NO, cb = function() SetHUDPause(false) inst.components.activatable.inactive = true end}  }))
+	end
+	
 	local function startadventure()
 		
 		local function onsaved()
 		    local params = json.encode{reset_action="loadslot", save_slot = SaveGameIndex:GetCurrentSaveSlot()}
 		    TheSim:SetInstanceParameters(params)
+			SendAccumulatedProfileStats()
 		    TheSim:Reset()
 		end
 
@@ -48,9 +62,17 @@ local function OnActivate(inst)
 		end
 	end
 
-	TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.ENTERCAVE.TITLE, STRINGS.UI.ENTERCAVE.BODY, 
-			{{text=STRINGS.UI.ENTERCAVE.YES, cb = startadventure},
-			 {text=STRINGS.UI.ENTERCAVE.NO, cb = function() SetHUDPause(false) inst.components.activatable.inactive = true end}  }))
+
+	local options = {
+		{text=STRINGS.UI.ENTERCAVE.YES, cb = startadventure},
+		{text=STRINGS.UI.ENTERCAVE.NO, cb = function() SetHUDPause(false) inst.components.activatable.inactive = true end}  
+	}
+
+	if inst.cavenum then
+		table.insert(options, {text=STRINGS.UI.ENTERCAVE.RESET, cb = resetcaveconfirm})
+	end
+
+	TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.ENTERCAVE.TITLE, STRINGS.UI.ENTERCAVE.BODY, options))
 end
 
 local Open = nil
@@ -166,4 +188,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/cave_entrance", fn, assets, prefabs)
+return Prefab( "common/cave_entrance", fn, assets, prefabs) 

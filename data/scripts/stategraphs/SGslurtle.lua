@@ -15,6 +15,8 @@ local events=
     CommonHandlers.OnAttack(),
     CommonHandlers.OnAttacked(),
     CommonHandlers.OnDeath(),
+    EventHandler("entershield", function(inst) inst.sg:GoToState("shield") end),
+    EventHandler("exitshield", function(inst) inst.sg:GoToState("shield_end") end),
 }
 
 local states =
@@ -218,7 +220,7 @@ CommonStates.AddWalkStates(states,
                 inst.Physics:Stop()
             end ),
 	},
-}, true)
+}, nil, true)
 
 
 local function hitanim(inst)

@@ -83,31 +83,46 @@ CommonHandlers.OnLocomote = function(can_run, can_walk)
 
 end
 
-CommonStates.AddIdle = function(states, funny_idle_state)
+CommonStates.AddIdle = function(states, funny_idle_state, anim_override, timeline)
     
     table.insert(states, State {
         name = "idle",
         tags = {"idle", "canrotate"},
-        
+        timeline = timeline,
         onenter = function(inst, pushanim)
             inst.components.locomotor:StopMoving()
+            local anim = "idle_loop"
+            if anim_override then
+                if type(anim_override) == "function" then
+                    anim = anim_override(inst)
+                else
+                    anim = anim_override
+                end
+            end
+               
             if pushanim then
                 if type(pushanim) == "string" then
                     inst.AnimState:PlayAnimation(pushanim)
                 end
-                inst.AnimState:PushAnimation("idle_loop", true)
+                inst.AnimState:PushAnimation(anim, true)
             else
-                inst.AnimState:PlayAnimation("idle_loop", true)
+                inst.AnimState:PlayAnimation(anim, true)
             end
             
-            if funny_idle_state then
-                inst.sg:SetTimeout(2 + 2*math.random())
-            end
+
         end,
         
-        ontimeout= function(inst)
-            inst.sg:GoToState(funny_idle_state)
-        end,
+       events=
+        {
+            EventHandler("animover", function(inst) 
+                if funny_idle_state and math.random() < .1 then
+                    inst.sg:GoToState(funny_idle_state)                
+                else
+                    inst.sg:GoToState("idle")                                    
+                end
+            end),
+        }, 
+
     })
 end
 
@@ -174,14 +189,23 @@ CommonStates.AddShortAction = function( states, name, anim, timeout )
     })
 end
 
-CommonStates.AddRunStates = function(states, timelines, anims)
+
+local function get_loco_state(inst, override, default)
+    local anim = default
+    if override then
+        anim = type(override) == "function" and override(inst) or override
+    end
+    return anim
+end
+
+CommonStates.AddRunStates = function(states, timelines, anims, softstop)
    local startrun = State{
             name = "run_start",
             tags = {"moving", "running", "canrotate"},
             
             onenter = function(inst) 
                 inst.components.locomotor:RunForward()
-                inst.AnimState:PlayAnimation(anims and anims.startrun or "run_pre")
+                inst.AnimState:PlayAnimation(get_loco_state(inst, anims and anims.startrun, "run_pre"))
             end,
 
             events=
@@ -191,6 +215,7 @@ CommonStates.AddRunStates = function(states, timelines, anims)
             
         }
     
+
     local run = State{
             
             name = "run",
@@ -198,7 +223,7 @@ CommonStates.AddRunStates = function(states, timelines, anims)
             
             onenter = function(inst) 
                 inst.components.locomotor:RunForward()
-                inst.AnimState:PlayAnimation(anims and anims.run or "run_loop")
+                inst.AnimState:PlayAnimation(get_loco_state(inst, anims and anims.run, "run_loop"))
             end,
             
             events=
@@ -216,7 +241,14 @@ CommonStates.AddRunStates = function(states, timelines, anims)
             
             onenter = function(inst) 
                 inst.components.locomotor:StopMoving()
-                inst.AnimState:PlayAnimation(anims and anims.stoprun or "run_pst")
+
+                local should_softstop = (type(softstop) == "function" and softstop(inst)) or softstop
+
+                if should_softstop then
+                    inst.AnimState:PushAnimation(get_loco_state(inst, anims and anims.stoprun, "run_pst"))
+                else
+                    inst.AnimState:PlayAnimation(get_loco_state(inst, anims and anims.stoprun, "run_pst"))
+                end
             end,
             
             events=
@@ -241,15 +273,15 @@ CommonStates.AddSimpleRunStates = function(states, anim, timelines)
 end
 
 
-CommonStates.AddWalkStates = function(states, timelines, softstop, anims)
+CommonStates.AddWalkStates = function(states, timelines, anims, softstop)
     
     local startwalk = State{
             name = "walk_start",
             tags = {"moving", "canrotate"},
-            
+
             onenter = function(inst) 
                 inst.components.locomotor:WalkForward()
-                inst.AnimState:PlayAnimation(anims and anims.startwalk or "walk_pre")
+                inst.AnimState:PlayAnimation(get_loco_state(inst, anims and anims.startwalk, "walk_pre"))
             end,
 
             events =
@@ -265,7 +297,7 @@ CommonStates.AddWalkStates = function(states, timelines, softstop, anims)
             
             onenter = function(inst) 
                 inst.components.locomotor:WalkForward()
-                inst.AnimState:PlayAnimation(anims and anims.walk or "walk_loop")
+                inst.AnimState:PlayAnimation(get_loco_state(inst, anims and anims.walk, "walk_loop"))
             end,
             events=
             {   
@@ -281,10 +313,12 @@ CommonStates.AddWalkStates = function(states, timelines, softstop, anims)
             onenter = function(inst) 
                 inst.components.locomotor:StopMoving()
                 
-                if softstop then
-					inst.AnimState:PushAnimation(anims and anims.stopwalk or "walk_pst")
+                local should_softstop = (type(softstop) == "function" and softstop(inst)) or softstop
+
+                if should_softstop then
+                    inst.AnimState:PushAnimation(get_loco_state(inst, anims and anims.stopwalk, "walk_pst"))
 				else
-					inst.AnimState:PlayAnimation(anims and anims.stopwalk or "walk_pst")
+                    inst.AnimState:PlayAnimation(get_loco_state(inst, anims and anims.stopwalk, "walk_pst"))
 				end
             end,
 
@@ -306,7 +340,7 @@ CommonStates.AddWalkStates = function(states, timelines, softstop, anims)
 end
 
 CommonStates.AddSimpleWalkStates = function(states, anim, timelines)
-    CommonStates.AddWalkStates(states, timelines, true, { startwalk = anim, walk = anim, stopwalk = anim } )
+    CommonStates.AddWalkStates(states, timelines, { startwalk = anim, walk = anim, stopwalk = anim }, true )
 end
 
 CommonStates.AddSleepStates = function(states, timelines, fns)

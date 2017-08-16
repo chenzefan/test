@@ -49,9 +49,9 @@ local function Phonograph(name, frame, description)
     return Prefab( "common/objects/treasure/" .. name,makefn(name, frame, description), makeassetlist())
 end
 
-return 	Phonograph( "phonograph_gears", "gears", "This looks like it might be useful to make something fun."),
+return Phonograph( "phonograph_gears", "gears", "This looks like it might be useful to make something fun."),
 		Phonograph( "phonograph_box", "box", "Mysteriouser and mysteriouser... maybe I should keep it for later."),
 		Phonograph( "phonograph_crank", "crank", "I wonder what this is for? Probably part of some nefarious doomsday device."),
 		Phonograph( "phonograph_cone", "cone", "Its either a fnny shaped trumpet or a hearing aid for a person signignificantly hard of hearing."),
-		Phonograph( "phonograph_complete", "complete", "A fully assempled phonograph! Good times ahead!")
+		Phonograph( "phonograph_complete", "complete", "A fully assempled phonograph! Good times ahead!") 
 

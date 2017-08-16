@@ -158,6 +158,8 @@ local function MakePlayerCharacter(name, customprefabs, customassets, customfn, 
         inst:AddComponent("playercontroller")
         
         inst:AddComponent("sanitymonsterspawner")
+
+        inst:AddComponent("autosaver")
         ------
         
         inst:AddComponent("health")
@@ -179,7 +181,6 @@ local function MakePlayerCharacter(name, customprefabs, customassets, customfn, 
         -------
         
         inst:AddComponent("kramped")
-        inst:AddComponent("hunter")
         inst:AddComponent("talker")
         inst:AddComponent("trader")
         inst:AddComponent("wisecracker")
@@ -205,6 +206,7 @@ local function MakePlayerCharacter(name, customprefabs, customassets, customfn, 
         inst:AddComponent("playeractionpicker")
         inst:AddComponent("leader")
 		inst:AddComponent("frostybreather")
+		inst:AddComponent("age")
         
         inst:AddComponent("grue")
         inst.components.grue:SetSounds("dontstarve/charlie/warn","dontstarve/charlie/attack")
@@ -287,6 +289,8 @@ local function MakePlayerCharacter(name, customprefabs, customassets, customfn, 
             inst.components.talker:Say(GetActionFailString(inst.prefab, data.action.action.id, data.reason))
         end)
 
+
+
         if customfn then
             customfn(inst)
         end
@@ -294,7 +298,7 @@ local function MakePlayerCharacter(name, customprefabs, customassets, customfn, 
         return inst
     end
     
-    return Prefab( "characters/"..name, fn, assets, prefabs)
+    return Prefab( "characters/"..name, fn, assets, prefabs) 
 end
 
 

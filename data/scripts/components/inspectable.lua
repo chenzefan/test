@@ -24,8 +24,8 @@ function Inspectable:CollectInventoryActions(doer, actions)
     end
 end
 
-function Inspectable:GetStatus()
-    local status = self.getstatus and self.getstatus(self.inst)
+function Inspectable:GetStatus(viewer)
+    local status = self.getstatus and self.getstatus(self.inst, viewer)
     if not status then
         if self.inst.components.health and self.inst.components.health:IsDead() then
             status = "DEAD"
@@ -49,7 +49,7 @@ end
 function Inspectable:GetDescription(viewer)
     local desc = self.description
     if desc == nil then
-        desc = GetDescription(string.upper(viewer.prefab), string.upper(self.nameoverride or self.inst.prefab), self:GetStatus() )
+        desc = GetDescription(string.upper(viewer.prefab), string.upper(self.nameoverride or self.inst.prefab), self:GetStatus(viewer) )
     end
 
     if TheSim:GetLightAtPoint(self.inst.Transform:GetWorldPosition()) < TUNING.DARK_CUTOFF then

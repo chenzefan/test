@@ -13,7 +13,8 @@ ScriptErrorScreen = Class(Screen, function(self, title, text, buttons, texthalig
 	local w, h = self.blackoverlay:GetSize()
 
 	--throw up the background
-    self.bg = self:AddChild(Image("data/images/bg_red.tex"))
+	self.bg = self:AddChild(Image("data/images/bg_plain.tex"))
+    self.bg:SetTint(BGCOLOURS.RED[1],BGCOLOURS.RED[2],BGCOLOURS.RED[3], 1)
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
     self.bg:SetHRegPoint(ANCHOR_MIDDLE)
     self.bg:SetVAnchor(ANCHOR_MIDDLE)

@@ -41,4 +41,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/cavelight", fn, assets)
+return Prefab( "common/cavelight", fn, assets) 

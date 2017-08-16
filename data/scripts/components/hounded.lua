@@ -283,4 +283,21 @@ function Hounded:ReleaseHound(dt)
 end
 
 
+function Hounded:LongUpdate(dt)
+	--I don't think we want to make hounds accumulate here...
+	
+	--don't actually spawn lots and lots of hounds all at once... just make the next hound attack queue up for next real update
+	if self.spawnmode == "never" then
+		return
+	end
+	
+	if self.timetoattack > 30 then
+		self.timetoattack = math.max(30, self.timetoattack - dt)
+	end
+
+end
+
+
 return Hounded
+
+

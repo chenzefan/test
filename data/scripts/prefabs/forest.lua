@@ -63,6 +63,7 @@ local forest_prefabs =
 	"maxwellendgame",
 	"maxwelllight",
 	"maxwelllock",
+	"maxwellphonograph",
 	"puppet_wilson",
 	"puppet_willow",
 	"puppet_wendy",
@@ -74,6 +75,8 @@ local forest_prefabs =
 	"marbletree",
 	"statueharp",
 	"statuemaxwell",
+	"eyeplant",
+	"lureplant",
 }
 
 local function fn(Sim)
@@ -95,15 +98,18 @@ local function fn(Sim)
     inst:AddComponent("butterflyspawner")
 	inst:AddComponent("hounded")
 	inst:AddComponent("basehassler")
-
+	inst:AddComponent("hunter")
+	
     inst.components.butterflyspawner:SetButterfly("butterfly")
 
 	inst:AddComponent("frograin")
+
+	inst:AddComponent("lureplantspawner")
 
 	inst:AddComponent("colourcubemanager")
 	inst.Map:SetOverlayTexture( "data/levels/textures/snow.tex" )
     return inst
 end
 
-return Prefab( "forest", fn, assets, forest_prefabs)
+return Prefab( "forest", fn, assets, forest_prefabs) 
 

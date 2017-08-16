@@ -37,4 +37,4 @@ local function fn()
 	return inst
 end
 
-return Prefab("forest/objects/maxwellhead_trigger", fn, assets, prefabs)
+return Prefab("forest/objects/maxwellhead_trigger", fn, assets, prefabs) 

@@ -380,6 +380,7 @@ function addprintlogger( fn )
     table.insert(print_loggers, fn)
 end
 
+global("CWD")  
 local dir = CWD or ""
 dir = string.gsub(dir, "\\", "/")
 local oldprint = print

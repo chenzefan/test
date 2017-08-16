@@ -52,9 +52,15 @@ return {
 	DESCRIBE =
 	{
 
+        CAVE_BANANA = "Is tasty!",
+        CAVE_BANANA_COOKED = "Is warm and tasty!",
+        CAVE_BANANA_TREE = "Hello, upside-down tree.",
+        ROCKY = "He is mighty! Like me!",
+
 		HOUNDSTOOTH="Puppy tooth!",
 		ARMORSNURTLESHELL="Is sticky inside.",
 		BAT="Flying mousey!",
+		BATBAT = "This club makes me feel funny.",
 		BATWING="Is all hairy and gross",
 		BATWING_COOKED="Crispy!",
 		BEDROLL_FURRY="So comfy!",
@@ -66,7 +72,9 @@ return {
 		LANTERN="It keeps me safe from dark.",
 		LIGHTBULB="Is food?",
 		MANRABBIT_TAIL="Puffy!",
-		MUSHTREE_TALL="Big mushtree is big.",
+		MUSHTREE_TALL  ="Big mushtree is big.",
+		MUSHTREE_MEDIUM="Mushy bush.",
+		MUSHTREE_SMALL ="Mushy shrub.",
 		RABBITHOUSE="I hear nomming inside.",
 		SLURTLE="Ha! You are slow!",
 		SLURTLE_SHELLPIECES="Is broken.",
@@ -81,6 +89,10 @@ return {
 		STALAGMITE_FULL="Is pointy.",
 		STALAGMITE_LOW="Is pointy.",
 		STALAGMITE_MED="Is pointy.",
+		STALAGMITE_TALL="Rock reaching for the roof.",
+		STALAGMITE_TALL_FULL="Rock reaching for the roof.",
+		STALAGMITE_TALL_LOW="Rock reaching for the roof.",
+		STALAGMITE_TALL_MED="Rock reaching for the roof.",
 		TURF_FUNGUS="Step stones.",
 		TURF_MUD="Step stones.",
 		TURF_SINKHOLE="Step stones.",
@@ -179,6 +191,7 @@ return {
 		},
 		CANE = "I can walk AND hit things!",
 		CARROT = "Is food. I guess.",
+		CAVE_FERN = "Pretty plant!",
 		CHARCOAL = "Is like holding tiny dead tree.",
 		CHESTER = "Strange box with legs.",
 		CHESTER_EYEBONE =
@@ -227,6 +240,7 @@ return {
 			CHOPPED = "Ha! I have prevailed!",
 			GENERIC = "Cheer up, tree!",
 		},
+		EYEPLANT = "They are not what they seem.",
 		FARMPLOT =
 		{
 			GENERIC = "I will grow mighty crops here!",
@@ -253,6 +267,7 @@ return {
 		FLOWER = "They are very pretty.",
 		FLOWERHAT = "Is so pretty!",
 		FLOWER_EVIL = "Is not potato.",
+		FOLIAGE = "I killed the pretty plant.",
 		FROG =
 		{
 			DEAD = "Is delicacy in my country.",
@@ -321,6 +336,8 @@ return {
 		LITTLE_WALRUS = "You think you are mightier than old man?",
 		LIVINGLOG = "Creepy face log!",
 		LOG = "Is thick like my arm.",
+		LUREPLANT = "You cannot fool Wolfgang!",
+		LUREPLANTBULB = "Ah ha! Who is tricky now?",
 		MALE_PUPPET = "Scary chair scare him!",
 		MANDRAKE =
 		{
@@ -409,6 +426,8 @@ return {
 		    PLANTED = "It will be tree soon.",
 		},
 		PITCHFORK = "Reminds me of childhood.",
+		PLANTMEAT = "What is this? Meat for baby man?",
+		PLANTMEAT_COOKED = "Is slightly better now.",
 		PLANT_NORMAL =
 		{
 			GENERIC = "Leafy!",
@@ -529,7 +548,12 @@ return {
 		TELEPORTATO_POTATO = "Ha ha! Ha ha! What ugly potato!",
 		TELEPORTATO_RING = "I will bend into perfect circle!",
 		TENT = "It is time for a mighty nap.",
+		TENTACLE = "Skinny monster!",
 		TENTACLESPOTS = "Yuck! Slimy!",
+        TENTACLESPIKE = "Perfect for sticking!",
+		TENTACLE_PILLAR = "Time to pole dance!",
+		TENTACLE_PILLAR = "Lots of little friends!",
+		TENTACLE_GARDEN = "Hmmmm, suspicious!",
 		TOPHAT = "Is good hat!",
 		TORCH = "I attack night with fire stick.",
 		TRAP = "No trap can hold me!",

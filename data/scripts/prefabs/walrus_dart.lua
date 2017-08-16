@@ -33,4 +33,4 @@ local function fn()
     return inst
 end
 
-return Prefab( "common/inventory/walrus_dart", fn, assets)
+return Prefab( "common/inventory/walrus_dart", fn, assets) 

@@ -32,6 +32,7 @@ local function fn(Sim)
     inst:AddComponent("edible")
     inst.components.edible.foodtype = "ELEMENTAL"
     inst.components.edible.hungervalue = 1
+    inst:AddComponent("tradable")
     
     inst:AddComponent("stackable")
 	inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM
@@ -49,4 +50,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/inventory/rocks", fn, assets)
+return Prefab( "common/inventory/rocks", fn, assets) 

@@ -25,16 +25,6 @@ end
 function Screen:OnCreate()
 end
 
-function Screen:LogView()
-	--[[
-
-	This is causing issues on some platforms...
-	if self.log ~= nil then
-		TheSim:LogView("Screen", self.name)
-	end
-	--]]
-end	
-
 function Screen:OnDestroy()
 	self:Kill()
 end

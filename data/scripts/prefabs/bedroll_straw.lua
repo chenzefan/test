@@ -21,6 +21,7 @@ local function onsleep(inst, sleeper)
 	inst:DoTaskInTime(1.2, function() 
 		TheFrontEnd:Fade(true,1) 
 		
+		sleeper.sg:GoToState("wakeup")	
 		if sleeper.components.hunger then
 			-- Check SGwilson, state "bedroll", if you change this value
 			sleeper.components.hunger:DoDelta(-TUNING.CALORIES_HUGE)
@@ -30,7 +31,11 @@ local function onsleep(inst, sleeper)
 			sleeper.components.sanity:DoDelta(TUNING.SANITY_LARGE)
 		end
 		
-		sleeper.sg:GoToState("wakeup")	
+		if sleeper.components.tempature then
+			sleeper.components.tempature:SetTemperature(15)
+		end
+		
+		
 		GetClock():MakeNextDay()
 	end)
 end
@@ -68,4 +73,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/inventory/bedroll_straw", fn, assets)
+return Prefab( "common/inventory/bedroll_straw", fn, assets) 

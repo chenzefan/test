@@ -46,10 +46,9 @@ end
 function Leader:RemoveFollower(follower)
     if follower and self.followers[follower] then
         follower:PushEvent("stopfollowing", {leader = self.inst} )
-        follower.components.follower.leader = nil
-        follower.components.follower:DestroyLoyalty()
         self.followers[follower] = nil
         self.numfollowers = self.numfollowers - 1
+        follower.components.follower:SetLeader(nil)
     end
 end
 

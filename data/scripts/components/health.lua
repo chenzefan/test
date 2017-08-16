@@ -1,6 +1,7 @@
 local Health = Class(function(self, inst)
     self.inst = inst
     self.maxhealth = 100
+    self.minhealth = 0
     self.currenthealth = self.maxhealth
     self.invincible = false
     
@@ -16,12 +17,13 @@ end)
 
 function Health:SetInvincible(val)
     self.invincible = val
+    self.inst:PushEvent("invincibletoggle", {invincible = val})
 end
 
-function Health:OnSave()
+function Health:OnSave()    
     return 
     {
-		health = self.currenthealth ~= self.maxhealth and self.currenthealth or nil,
+		health = self.currenthealth,
 		penalty = self.penalty > 0 and self.penalty or nil
 	}
 end
@@ -150,6 +152,10 @@ function Health:SetMaxHealth(amount)
     self.currenthealth = amount
 end
 
+function Health:SetMinHealth(amount)
+    self.minhealth = amount
+end
+
 function Health:IsHurt()
     return self.currenthealth < (self.maxhealth - self.penalty*TUNING.EFFIGY_HEALTH_PENALTY)
 end
@@ -202,6 +208,10 @@ function Health:SetVal(val, cause)
         self.currenthealth = self.maxhealth - self.penalty*TUNING.EFFIGY_HEALTH_PENALTY
     end
 
+    if self.minhealth and self.currenthealth < self.minhealth then
+        self.currenthealth = self.minhealth
+        self.inst:PushEvent("minhealth", {cause=cause})
+    end
     if self.currenthealth < 0 then
         self.currenthealth = 0
     end
@@ -225,7 +235,9 @@ function Health:DoDelta(amount, overtime, cause)
         return
     end
     
-    amount = amount - (amount * self.absorb)
+    if amount < 0 then
+        amount = amount - (amount * self.absorb)
+    end
 
     local old_percent = self:GetPercent()
     self:SetVal(self.currenthealth + amount, cause)

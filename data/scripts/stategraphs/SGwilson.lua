@@ -114,6 +114,8 @@ local actionhandlers =
 			end
 		
 		end),
+
+    ActionHandler(ACTIONS.TAKEITEM, "dolongaction" ),
     
     ActionHandler(ACTIONS.BUILD, "dolongaction"),
     ActionHandler(ACTIONS.SHAVE, "shave"),
@@ -186,12 +188,21 @@ local events=
         end 
     end),
     
+
+  EventHandler("blocked", function(inst, data)
+        if not inst.components.health:IsDead() then
+            if inst.sg:HasStateTag("shell") then
+                inst.sg:GoToState("shell_hit")
+            end
+        end
+    end),
+
     EventHandler("attacked", function(inst, data)
 		if not inst.components.health:IsDead() then
 			if data.attacker and data.attacker:HasTag("hit_panic") then
 				--todo: go to panic state
 			else
-                if inst.sg.currentstate.name == "shell_idle" or inst.sg.currentstate.name == "shell_enter" then
+                if inst.sg:HasStateTag("shell") then
                     inst.sg:GoToState("shell_hit")
                 else
 				    inst.sg:GoToState("hit")
@@ -239,19 +250,19 @@ local events=
         inst.sg:GoToState("death")
         inst.SoundEmitter:PlaySound("dontstarve/wilson/death")    
         
-		local sound_name = inst.prefab == "waxwell" and "maxwell" or inst.prefab
+		local sound_name = inst.soundsname or inst.prefab
         if inst.prefab ~= "wes" then
 			inst.SoundEmitter:PlaySound("dontstarve/characters/"..sound_name.."/death_voice")    
 		end
         
     end),
 
-    EventHandler("ontalk", function(inst)
+    EventHandler("ontalk", function(inst, data)
         if inst.sg:HasStateTag("idle") then
             if inst.prefab == "wes" then
 				inst.sg:GoToState("mime")
             else
-				inst.sg:GoToState("talk")
+				inst.sg:GoToState("talk", data.noanim)
 			end
         end
         
@@ -309,7 +320,6 @@ local states=
         onenter = function(inst)
             inst.components.playercontroller:Enable(false)
             inst.AnimState:PlayAnimation("wakeup")
-            TheSim:LogMetric("Level","Wakup","wilson","novalue")
         end,
         
         onexit = function(inst)
@@ -454,7 +464,6 @@ local states=
             inst.components.locomotor:Stop()
             inst.AnimState:Hide("swap_arm_carry")
             inst.AnimState:PlayAnimation("death")
-            TheSim:LogMetric("Level","Death","wilson","novalue")
         end,
     },
 
@@ -753,12 +762,18 @@ local states=
 
     State{
         name = "shell_enter",
-        tags = {"idle", "hiding"},
+        tags = {"idle", "hiding", "shell"},
         onenter = function(inst)            
             inst.components.locomotor:Stop()
             inst.AnimState:PlayAnimation("hideshell")
-            --inst.SoundEmitter:PlaySound("dontstarve/movement/foley/hidebush")
+            
         end,
+        timeline =
+        {
+            TimeEvent(6*FRAMES, function(inst)
+                inst.SoundEmitter:PlaySound("dontstarve/movement/foley/hideshell")    
+            end),
+        },        
         
         onexit = function(inst)
 
@@ -772,7 +787,7 @@ local states=
 
     State{
         name = "shell_idle",
-        tags = {"idle", "hiding"},
+        tags = {"idle", "hiding", "shell"},
         onenter = function(inst)
             inst.components.locomotor:Stop()
             inst.AnimState:PlayAnimation("hideshell_idle", true)
@@ -785,15 +800,15 @@ local states=
 
     State{
         name = "shell_hit",
-        tags = {"busy", "hiding"},
+        tags = {"busy", "hiding", "shell"},
         
         onenter = function(inst)
             inst:InterruptBufferedAction()
             inst.SoundEmitter:PlaySound("dontstarve/wilson/hit")        
             inst.AnimState:PlayAnimation("hitshell")
-            local sound_name = inst.prefab == "waxwell" and "maxwell" or inst.prefab
-            local sound_event = "dontstarve/characters/"..sound_name.."/hurt"
-            inst.SoundEmitter:PlaySound(sound_event)
+            --local sound_name = inst.soundsname or inst.prefab
+            --local sound_event = "dontstarve/characters/"..sound_name.."/hurt"
+            --inst.SoundEmitter:PlaySound(sound_event)
             inst.components.locomotor:Stop()         
         end,
         
@@ -1179,11 +1194,13 @@ local states=
         name = "talk",
         tags = {"idle", "talking"},
         
-        onenter = function(inst)
+        onenter = function(inst, noanim)
             inst.components.locomotor:Stop()
-            inst.AnimState:PlayAnimation("dial_loop", true)
+            if not noanim then
+                inst.AnimState:PlayAnimation("dial_loop", true)
+            end
             
-            local sound_name = inst.prefab == "waxwell" and "maxwell" or inst.prefab
+            local sound_name = inst.soundsname or inst.prefab
             inst.SoundEmitter:PlaySound("dontstarve/characters/"..sound_name.."/talk_LP", "talk")
             inst.sg:SetTimeout(1.5 + math.random()*.5)
         end,
@@ -1851,6 +1868,7 @@ local states=
         onenter = function(inst)
             inst.components.playercontroller:Enable(false)
             inst.components.locomotor:Stop()
+            inst.components.health:SetInvincible(true)
 			if GetClock():IsDay() then
 				inst.sg:GoToState("idle")
 				inst.components.talker:Say(GetString(inst.prefab, "ANNOUNCE_NODAYSLEEP"))
@@ -1882,6 +1900,7 @@ local states=
         end,
         
         onexit = function(inst)
+            inst.components.health:SetInvincible(false)
             inst.components.playercontroller:Enable(true)
         	inst.AnimState:ClearOverrideSymbol("bedroll")          
         end,
@@ -1920,7 +1939,7 @@ local states=
             inst:InterruptBufferedAction()
             inst.SoundEmitter:PlaySound("dontstarve/wilson/hit")        
             inst.AnimState:PlayAnimation("hit")
-            local sound_name = inst.prefab == "waxwell" and "maxwell" or inst.prefab
+            local sound_name = inst.soundsname or inst.prefab
 			local sound_event = "dontstarve/characters/"..sound_name.."/hurt"
             inst.SoundEmitter:PlaySound(sound_event)
             inst.components.locomotor:Stop()            

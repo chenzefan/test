@@ -413,6 +413,19 @@ function Inventory:GiveItem( inst, slot, screen_src_pos )
     end
 
     local can_use_suggested_slot = false
+
+    if not slot and inst.prevslot and not inst.prevcontainer then
+        slot = inst.prevslot
+    end
+
+    if not slot and inst.prevslot and inst.prevcontainer then
+        if inst.prevcontainer.components.inventoryitem.owner == self.inst and inst.prevcontainer:IsOpen() and inst.prevcontainer:GetItemInSlot(inst.prevslot) == nil then
+            inst.prevcontainer:GiveItem(inst, inst.prevslot)
+            --self:RemoveItem(inst)
+            return
+        end
+    end
+
     if slot then
         local olditem = self:GetItemInSlot(slot)
         can_use_suggested_slot = slot ~= nil and slot <= self.maxslots and ( olditem == nil or (olditem and olditem.components.stackable and olditem.prefab == inst.prefab)) and self:CanTakeItemInSlot(inst,slot)
@@ -507,6 +520,16 @@ function Inventory:Equip(item, old_to_active)
         return
     end
 
+    -----
+    item.prevslot = self:GetItemSlot(item) 
+
+    if item.prevslot == nil and item.components.inventoryitem.owner.components.container and item.components.inventoryitem.owner.components.inventoryitem then
+        item.prevcontainer = item.components.inventoryitem.owner.components.container
+        item.prevslot = item.components.inventoryitem.owner.components.container:GetItemSlot(item)
+    end
+    -----
+
+
     if item.components.inventoryitem then
         item = item.components.inventoryitem:RemoveFromOwner(item.components.equippable.equipstack) or item
     else
@@ -532,7 +555,6 @@ function Inventory:Equip(item, old_to_active)
         if olditem then
             self:Unequip(eslot)
             olditem.components.equippable:ToPocket()
-            
             if olditem.components.inventoryitem and not olditem.components.inventoryitem.cangoincontainer and not self.ignorescangoincontainer then
 				olditem.components.inventoryitem:OnRemoved()
 				self:DropItem(olditem)
@@ -704,8 +726,7 @@ function Inventory:DropEverything(ondeath)
 		if not ondeath or not v.components.inventoryitem.keepondeath then
 			self:DropItem(v, true, true)
 		end
-    end
-    
+    end    
 end
 
 

@@ -41,5 +41,5 @@ local function Shop(name, frame, description)
     return Prefab( "common/objects/shop/" .. name .. "_shop", makefn(name, frame, description), makeassetlist())
 end
 
-return  Shop( "basic", "idle", "This fancy place looks like he is open for business")
+return Shop( "basic", "idle", "This fancy place looks like he is open for business") 
 

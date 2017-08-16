@@ -21,4 +21,4 @@ local fn = function(inst)
 end
 
 
-return MakePlayerCharacter("wes", prefabs, assets, fn)
+return MakePlayerCharacter("wes", prefabs, assets, fn) 

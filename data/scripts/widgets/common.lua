@@ -140,7 +140,7 @@ function HandleContainerUIClick(character, inventory, container, slot_number)
 					container_item.components.stackable:SetStackSize(container_item.components.stackable.stacksize + 1)
 					
 					if active_item.components.perishable then
-						container_item.components.perishable:Dilute(1, container_item.components.perishable.perishremainingtime)
+						container_item.components.perishable:Dilute(1, active_item.components.perishable.perishremainingtime)
 					end
 					
 					

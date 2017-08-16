@@ -242,5 +242,5 @@ end
 return --Prefab( "common/objects/farmplot",  plot(1), assets, prefabs ),
        Prefab( "common/objects/slow_farmplot", plot(2), assets, prefabs ),
        Prefab( "common/objects/fast_farmplot", plot(3), assets, prefabs ),
-	   MakePlacer( "common/farmplot_placer", "farmplot", "farmplot", "full" )
+	   MakePlacer( "common/farmplot_placer", "farmplot", "farmplot", "full" ) 
 

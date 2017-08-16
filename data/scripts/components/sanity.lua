@@ -180,4 +180,8 @@ function Sanity:Recalc(dt)
 	self:DoDelta(self.rate*dt, true)
 end
 
+function Sanity:LongUpdate(dt)
+	self:OnUpdate(dt)
+end
+
 return Sanity

@@ -88,5 +88,5 @@ end
 
 
 return Prefab( "common/inventory/pickaxe", fn, assets),
-		Prefab( "common/inventory/goldenpickaxe", golden, assets)
+		Prefab( "common/inventory/goldenpickaxe", golden, assets) 
 

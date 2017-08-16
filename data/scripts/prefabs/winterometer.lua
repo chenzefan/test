@@ -76,6 +76,6 @@ local function fn(Sim)
 	return inst
 end
 return Prefab( "common/objects/winterometer", fn, assets),
-	   MakePlacer("common/winterometer_placer", "winter_meter", "winter_meter", "idle" )
+	   MakePlacer("common/winterometer_placer", "winter_meter", "winter_meter", "idle" ) 
 
 

@@ -88,5 +88,5 @@ end
 
 
 return Prefab( "common/inventory/shovel", fn, assets),
-	   Prefab( "common/inventory/goldenshovel", golden, assets)
+	   Prefab( "common/inventory/goldenshovel", golden, assets) 
 

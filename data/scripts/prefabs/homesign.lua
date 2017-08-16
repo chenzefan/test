@@ -48,4 +48,4 @@ local function fn(Sim)
 end
 
 return Prefab( "common/objects/homesign", fn, assets),
-		MakePlacer( "common/homesign_placer", "sign_home", "sign_home", "idle" )
+		MakePlacer( "common/homesign_placer", "sign_home", "sign_home", "idle" ) 

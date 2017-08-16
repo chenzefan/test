@@ -91,4 +91,4 @@ local function create_winter()
 end
 
 return Prefab( "common/inventory/trunkvest_summer", create_summer, assets),
-		Prefab( "common/inventory/trunkvest_winter", create_winter, assets)
+		Prefab( "common/inventory/trunkvest_winter", create_winter, assets) 

@@ -18,8 +18,8 @@ Inv = Class(Widget, function(self, owner)
     local num_slots = self.owner.components.inventory:GetNumSlots()
     local num_equip = self.owner.components.inventory:GetNumEquipSlots()
 
-    local equip_slots = {EQUIPSLOTS.HANDS, EQUIPSLOTS.BODY, EQUIPSLOTS.HEAD,}
-    local bgs = {"data/images/equip_slot.tex", "data/images/equip_slot_body.tex", "data/images/equip_slot_head.tex"}
+    local equip_slots = {EQUIPSLOTS.HANDS, EQUIPSLOTS.BODY, EQUIPSLOTS.HEAD}
+    local bgs = {"images/equip_slot.tex", "images/equip_slot_body.tex", "images/equip_slot_head.tex"}
 
     self.inv = {}
     self.equip = {}

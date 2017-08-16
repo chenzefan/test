@@ -148,5 +148,5 @@ local function fn(Sim)
 end
 
 
-return Prefab( "forest/monsters/spiderqueen", fn, assets, prefabs)
+return Prefab( "forest/monsters/spiderqueen", fn, assets, prefabs) 
     

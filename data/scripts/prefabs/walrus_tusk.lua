@@ -28,4 +28,4 @@ local function create()
     return inst
 end
 
-return Prefab( "common/inventory/walrus_tusk", create, assets)
+return Prefab( "common/inventory/walrus_tusk", create, assets) 

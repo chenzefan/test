@@ -43,4 +43,4 @@ local function fire()
 end
 
 return Prefab( "common/inventory/ice_projectile", ice, assets), 
-       Prefab("common/inventory/fire_projectile", fire, assets)
+       Prefab("common/inventory/fire_projectile", fire, assets) 

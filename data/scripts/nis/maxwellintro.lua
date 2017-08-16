@@ -28,6 +28,7 @@ local maxwell_intro_nis =
         dat.maxwell.AnimState:PushAnimation("idle", true)
         Sleep(.3)
         dat.maxwell.SoundEmitter:PlaySound("dontstarve/maxwell/disappear")
+        PlayFX(dat.maxwell.Transform:GetWorldPosition(), "max_fx", "max_fx", "anim")        
         Sleep(.7)
         nis.skippable = true
         Sleep(1.5)
@@ -51,7 +52,11 @@ local maxwell_intro_nis =
         
         nis.skippable = false
         --make maxwell disappear, and wake up wilson
-        dat.maxwell:DoTaskInTime(.4, function() dat.maxwell.SoundEmitter:PlaySound("dontstarve/maxwell/disappear") end)
+        dat.maxwell:DoTaskInTime(.4, function() 
+                dat.maxwell.SoundEmitter:PlaySound("dontstarve/maxwell/disappear") 
+                PlayFX(dat.maxwell.Transform:GetWorldPosition(), "max_fx", "max_fx", "anim")
+        end)
+
         dat.maxwell.AnimState:PushAnimation("disappear", false)
         dat.wilson.sg:GoToState("wakeup")
         dat.maxwell:ListenForEvent("animqueueover", function(inst) inst:Remove() end)

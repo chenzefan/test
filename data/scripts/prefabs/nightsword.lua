@@ -60,4 +60,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/inventory/nightsword", fn, assets)
+return Prefab( "common/inventory/nightsword", fn, assets) 

@@ -38,6 +38,8 @@ local events=
     EventHandler("death", function(inst) inst.sg:GoToState("death") end),
     CommonHandlers.OnSleep(),
     CommonHandlers.OnFreeze(),
+    EventHandler("entershield", function(inst) inst.sg:GoToState("shield") end),
+    EventHandler("exitshield", function(inst) inst.sg:GoToState("shield_end") end),
     
     
     EventHandler("locomote", function(inst) 

@@ -1,6 +1,7 @@
-Line = Class(function(self, message, duration)
+Line = Class(function(self, message, duration, noanim)
     self.message = message
     self.duration = duration
+    self.noanim = noanim
 end)
 
 
@@ -27,7 +28,7 @@ local function sayfn(inst, script)
         if line.message then
             inst.Label:Enable(true)
             inst.Label:SetText(line.message)
-            inst:PushEvent("ontalk")
+            inst:PushEvent("ontalk", {noanim = line.noanim})
         else
             inst.Label:Enable(false)
         end
@@ -49,7 +50,7 @@ function Talker:ShutUp()
 end
 
 
-function Talker:Say(script, time)
+function Talker:Say(script, time, noanim)
     if self.inst.components.health and  self.inst.components.health:IsDead() then
         return
     end
@@ -68,7 +69,7 @@ function Talker:Say(script, time)
     
     local lines = nil
     if type(script) == "string" then
-        lines = {Line(script, time or 2.5)}
+        lines = {Line(script, time or 2.5, noanim)}
     else
         lines = script
     end

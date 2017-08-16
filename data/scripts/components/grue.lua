@@ -3,7 +3,6 @@ local Grue = Class(function(self, inst)
     self.soundevent = nil
     self.warndelay = 1
     
-    
     inst:ListenForEvent("enterdark", 
         function(inst, data) 
             self:Start()
@@ -12,9 +11,25 @@ local Grue = Class(function(self, inst)
     inst:ListenForEvent("enterlight", 
         function(inst, data) 
             self:Stop()
-        end)    
+        end)
+
+    inst:ListenForEvent("invincibletoggle",
+        function(inst, data) 
+            if self:CheckForStart() then
+                self:Start()
+            end
+        end)
+
+    self.inst:DoTaskInTime(0, function()   
+        if self:CheckForStart() then
+            self:Start()
+        end
+    end)
 end)
 
+function Grue:CheckForStart()
+    return not self.inst.components.health:IsInvincible() and not self.inst.LightWatcher:IsInLight() and not self.inst.components.health:IsDead()
+end
 
 function Grue:Start()
     self.inst:StartUpdatingComponent(self) 
@@ -33,7 +48,7 @@ function Grue:Stop()
 end
 
 function Grue:OnUpdate(dt)
-    if self.inst.components.health:IsDead() or self.inst.components.health.invincible == true then
+    if self.inst.components.health:IsDead() or self.inst.components.health:IsInvincible() then
         self:Stop()
         return
     end

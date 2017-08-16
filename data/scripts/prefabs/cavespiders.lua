@@ -101,16 +101,18 @@ local function MakeWeapon(inst)
     if inst.components.inventory then
         local weapon = CreateEntity()
         weapon.entity:AddTransform()
+        MakeInventoryPhysics(weapon)
         weapon:AddComponent("weapon")
         weapon.components.weapon:SetDamage(TUNING.SPIDER_SPITTER_DAMAGE_RANGED)
         weapon.components.weapon:SetRange(inst.components.combat.attackrange, inst.components.combat.attackrange+4)
         weapon.components.weapon:SetProjectile("spider_web_spit")
         weapon:AddComponent("inventoryitem")
         weapon.persists = false
-        weapon.components.inventoryitem:SetOnDroppedFn(WeaponDropped)
+        weapon.components.inventoryitem:SetOnDroppedFn(function() WeaponDropped(weapon) end)
         weapon:AddComponent("equippable")
         inst.weapon = weapon
-        --inst.components.inventory:Equip(weapon)
+        inst.components.inventory:Equip(inst.weapon)
+        inst.components.inventory:Unequip(EQUIPSLOTS.HANDS)
     end
 end
 
@@ -259,4 +261,4 @@ local function create_spitter()
 end
 
 return Prefab("cave/monsters/spider_hider", create_hider, hiderassets, prefabs),
-Prefab("cave/monsters/spider_spitter", create_spitter, spitterassets, prefabs)
+Prefab("cave/monsters/spider_spitter", create_spitter, spitterassets, prefabs) 

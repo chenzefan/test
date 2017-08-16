@@ -96,4 +96,4 @@ end
 
 return Prefab( "common/inventory/trunk_summer", create_summer, assets, prefabs),
         Prefab( "common/inventory/trunk_winter", create_winter, assets, prefabs),
-        Prefab( "common/inventory/trunk_cooked", create_cooked, assets)
+        Prefab( "common/inventory/trunk_cooked", create_cooked, assets) 

@@ -41,5 +41,5 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/objects/flies", fn, assets)
+return Prefab( "common/objects/flies", fn, assets) 
 

@@ -5,7 +5,8 @@ require "widgets/inventoryslot"
 
 CRAFTING_CONSTANTS = 
 {
-    CRAFT_POS = 145
+    CRAFT_POS = 145,
+	TABBAR_HEIGHT = 750,
 }
 
 local num_slots = 7
@@ -421,7 +422,7 @@ function RecipePopup:SetRecipe(recipe, owner)
         
             local has, num_found = owner.components.inventory:Has(v.type, v.amount)
             
-            local im = "data/inventoryimages/"..v.type..".tex"
+            local im = resolvefilepath("inventoryimages/"..v.type..".tex")
             local ing = self.contents:AddChild(IngredientUI(im, v.amount, num_found, has, STRINGS.NAMES[string.upper(v.type)], owner))
             ing:SetPosition(Vector3(offset, 80, 0))
             offset = offset + (w+ div)
@@ -595,7 +596,6 @@ CraftTabs = Class(Widget, function(self, owner)
     
     
     self.tabs = self:AddChild(TabGroup())
-    self.tabs.spacing = 75
     self.tabs:SetPosition(-16,0,0)
 
     self.tabs.onopen = function() self.owner.SoundEmitter:PlaySound("dontstarve/HUD/craft_open") end
@@ -610,6 +610,7 @@ CraftTabs = Class(Widget, function(self, owner)
     end
     table.sort(tabnames, function(a,b) return a.sort < b.sort end)
     
+    self.tabs.spacing = CRAFTING_CONSTANTS.TABBAR_HEIGHT/#tabnames
     
     self.tabbyfilter = {}
     for k,v in ipairs(tabnames) do

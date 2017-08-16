@@ -8,6 +8,7 @@ local assets =
     Asset("IMAGE", "data/images/map_button.tex"),
     Asset("IMAGE", "data/images/pause.tex"),
     Asset("IMAGE", "data/images/map.tex"),
+    Asset("IMAGE", "data/images/blood_over.tex"),
 
     Asset("IMAGE", "data/images/clock_hand.tex"),    
     Asset("IMAGE", "data/images/clock_NIGHT.tex"),    
@@ -34,7 +35,6 @@ local assets =
     
     Asset("ANIM", "data/anim/saving.zip"),
     Asset("ANIM", "data/anim/vig.zip"),
-    Asset("ANIM", "data/anim/blood_over.zip"),
     Asset("ANIM", "data/anim/fire_over.zip"),
     Asset("IMAGE", "data/images/ice_over.tex"),
     Asset("ANIM", "data/anim/clouds_ol.zip"),   
@@ -90,4 +90,4 @@ local function fn(Sim)
     return CreateEntity()
 end
 
-return Prefab( "UI/interface/hud", fn, assets, prefabs)
+return Prefab( "UI/interface/hud", fn, assets, prefabs) 

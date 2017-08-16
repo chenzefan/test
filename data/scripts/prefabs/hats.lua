@@ -468,7 +468,7 @@ function MakeHat(name)
     return Prefab( "common/inventory/"..prefabname, fn or simple, assets, prefabs)
 end
 
-return  MakeHat("straw"),
+return MakeHat("straw"),
         MakeHat("top"),
         MakeHat("beefalo"),
         MakeHat("feather"),
@@ -481,4 +481,4 @@ return  MakeHat("straw"),
         MakeHat("bush"),
         MakeHat("flower"),
         MakeHat("walrus"),
-        MakeHat("slurtle")
+        MakeHat("slurtle") 

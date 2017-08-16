@@ -42,4 +42,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/inventory/twigs", fn, assets)
+return Prefab( "common/inventory/twigs", fn, assets) 

@@ -39,6 +39,10 @@ end
 
 
 require("mods")
+
+ModManager:LoadMods()
+
+
 require("simutil")
 require("strict")
 require("json")
@@ -63,10 +67,6 @@ local basedir = "./"
 local last_tick_seen = -1
 
 
-local PendingUpdateFns = {}
-function CallOnNextUpdate(fn)
-    PendingUpdateFns[fn] = true
-end
 
 
 
@@ -298,7 +298,7 @@ local function GetAreasForChoice(area, level)
 
 	for i, task_name in ipairs(level.tasks) do
 		local task = tasks.GetTaskByName(task_name, tasks.sampletasks)
-		if area == "Any" or area == "Rare" or  area == INV_GROUND_VALUES[task.room_bg] then
+		if area == "Any" or area == "Rare" or  area == task.room_bg then
 			table.insert(areas, task_name)
 		end
 	end
@@ -408,7 +408,6 @@ function GenerateNew(debug, parameters)
     
     --print("Generate New map",debug, parameters.gen_type, parameters.level_type, parameters.current_level, parameters.world_gen_choices)
 	local Gen = require "map/forest_map"
-	require("map/map")
 	
 	require("map/levels")
 
@@ -507,8 +506,33 @@ function GenerateNew(debug, parameters)
 	savedata.map.hideminimap = hideminimap
 	savedata.map.teleportaction = teleportaction
 	savedata.map.teleportmaxwell = teleportmaxwell
+
+	--Record mod information
+	ModManager:SetModRecords(savedata.mods or {})
+	savedata.mods = ModManager:GetModRecords()
+        
 	
 	savedata.map.topology.override_triggers = level_area_triggers
+	
+	if APP_VERSION == nil then
+		APP_VERSION = "DEV_UNKNOWN"
+	end
+
+	if APP_BUILD_DATE == nil then
+		APP_BUILD_DATE = "DEV_UNKNOWN"
+	end
+
+	if APP_BUILD_TIME == nil then
+		APP_BUILD_TIME = "DEV_UNKNOWN"
+	end
+
+	savedata.meta = { 	
+						build_version = APP_VERSION, 
+						build_date = APP_BUILD_DATE,
+						build_time = APP_BUILD_TIME,
+						seed = SEED,
+					}
+
 	CheckMapSaveData(savedata)
 		
 	-- Clear out scaffolding :)

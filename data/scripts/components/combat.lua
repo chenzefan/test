@@ -171,7 +171,8 @@ function Combat:OnUpdate(dt)
         self.keeptargettimeout = self.keeptargettimeout - dt
         if self.keeptargettimeout < 0 then
             self.keeptargettimeout = 1
-            if not self.keeptargetfn(self.inst, self.target) then
+            if not self.keeptargetfn(self.inst, self.target) then    
+                self.inst:PushEvent("losttarget")            
                 self:SetTarget(nil)
             end
         end
@@ -181,7 +182,7 @@ end
 
 function Combat:SetTarget(target)
     local new = target ~= self.target
-    if new and (not target or self:IsValidTarget(target) ) then
+    if new and (not target or self:IsValidTarget(target) ) and not (target.sg and target.sg:HasStateTag("hiding") and target:HasTag("player")) then
         self.target = target
         self.inst:PushEvent("newcombattarget", {target=target})
         
@@ -305,6 +306,15 @@ function Combat:GetAttacked(attacker, damage, weapon)
         end
     end
     
+
+    if self.inst.SoundEmitter then
+        local hitsound = self:GetImpactSound(self.inst, weapon)
+        if hitsound then
+            self.inst.SoundEmitter:PlaySound(hitsound)
+            --print (hitsound)
+        end
+    end
+    
     if not blocked then
         self.inst:PushEvent("attacked", {attacker = attacker, damage = damage, weapon = weapon})
     
@@ -316,12 +326,6 @@ function Combat:GetAttacked(attacker, damage, weapon)
             attacker:PushEvent("onhitother", {target = self.inst, damage = damage})
             if attacker.components.combat and attacker.components.combat.onhitotherfn then
                 attacker.components.combat.onhitotherfn(attacker, self.inst, damage)
-            end
-            if self.inst.SoundEmitter then
-                local hitsound = self:GetImpactSound(self.inst, weapon)
-                if hitsound then
-                    self.inst.SoundEmitter:PlaySound(hitsound)
-                end
             end
         end
     else
@@ -381,6 +385,8 @@ function Combat:GetImpactSound(target, weapon)
         hitsound = hitsound.."vegetable_"
     elseif target:HasTag("shell") then
         hitsound = hitsound.."shell_"
+    elseif target:HasTag("rocky") then
+        hitsound = hitsound.."stone_"
     else
         hitsound = hitsound.."flesh_"
     end

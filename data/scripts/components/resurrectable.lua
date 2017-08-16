@@ -32,6 +32,8 @@ function Resurrectable:CanResurrect()
 	if res then
 		return true
 	end
+
+	return false
 end
 
 function Resurrectable:DoResurrect()
@@ -49,6 +51,8 @@ function Resurrectable:DoResurrect()
 		res.components.resurrector:Resurrect(self.inst)
 		return true
 	end
+
+	return false
 end
 
 return Resurrectable

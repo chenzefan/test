@@ -117,4 +117,4 @@ local function BeeMine(name, alignment, skin, spawnprefab, inventory)
 end
 
 return BeeMine("beemine", "player", "bee_mine", "bee", true),
-	   BeeMine("beemine_maxwell", "nobody", "bee_mine_maxwell", "mosquito", false)
+	   BeeMine("beemine_maxwell", "nobody", "bee_mine_maxwell", "mosquito", false) 

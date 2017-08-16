@@ -1,7 +1,3 @@
-local PendingUpdateFns = {}
-function CallOnNextUpdate(fn)
-    PendingUpdateFns[fn] = true
-end
 
 local wall_update_fns = {}
 function AddWallUpdateFn(fn)
@@ -60,6 +56,12 @@ function PostUpdate(dt)
 end
 
 
+local StaticComponentLongUpdates = {}
+function RegisterStaticComponentLongUpdate(classname, fn)
+	StaticComponentLongUpdates[classname] = fn
+end
+
+
 local StaticComponentUpdates = {}
 function RegisterStaticComponentUpdate(classname, fn)
 	StaticComponentUpdates[classname] = fn
@@ -77,12 +79,6 @@ function Update( dt )
     end
 	
     
-    for k,v in pairs(PendingUpdateFns) do
-        print ("doing pending update fn")
-        k(dt)
-        PendingUpdateFns[k] = nil
-    end
-
     local tick = TheSim:GetTick()
     if tick > last_tick_seen then
     	TheSim:ProfilerPush("scheduler")
@@ -130,4 +126,44 @@ function Update( dt )
     last_tick_seen = tick
     
 	TheSim:ProfilerPop()        
+end
+
+
+--this is for advancing the sim long periods of time (to skip nights, come back from caves, etc)
+function LongUpdate(dt, ignore_player)
+
+	local function doupdate(dt)
+		for k,v in pairs(StaticComponentLongUpdates) do
+			v(dt)
+		end
+
+		local player = GetPlayer()
+		for k,v in pairs(Ents) do
+			local should_ignore = ignore_player and (player == v or (v.components.inventoryitem and v.components.inventoryitem:GetGrandOwner() == player))
+
+			if not should_ignore then
+				v:LongUpdate(dt)	
+			end
+			
+		end	
+	end
+
+	
+	doupdate(dt)
+	--[[
+	local longest_dt = TUNING.SEG_TIME*4
+	local num_full_updates = math.floor(dt / longest_dt)
+	local leftover_dt = dt - num_full_updates*longest_dt
+	print (string.format("Advancing time with %d updates", num_full_updates + (leftover_dt > 0 and 1 or 0)))
+	
+	
+	for k = 1, num_full_updates do
+		doupdate(longest_dt)
+	end
+	if leftover_dt > 0 then
+		doupdate(leftover_dt)
+	end
+	
+	scollectgarbage("collect")
+--]]
 end

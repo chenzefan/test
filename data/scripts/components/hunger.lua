@@ -10,7 +10,7 @@ local Hunger = Class(function(self, inst)
     
     self.period = 1
     
-    self.task = self.inst:DoPeriodicTask(self.period, function() self:DoDec() end)
+    self.task = self.inst:DoPeriodicTask(self.period, function() self:DoDec(self.period) end)
 	self.inst:ListenForEvent("respawn", function(inst) self:OnRespawn() end)
 	
 end)
@@ -31,10 +31,11 @@ function Hunger:OnLoad(data)
         self.current = data.hunger
         self:DoDelta(0)
     end
-    
 end
 
-
+function Hunger:LongUpdate(dt)
+	self:DoDec(dt, true)
+end
 
 function Hunger:Pause()
     self.burning = false
@@ -98,15 +99,17 @@ function Hunger:SetPercent(p)
 
 end
 
-function Hunger:DoDec()
+function Hunger:DoDec(dt, ignore_damage)
 	
     local old = self.current
     
     if self.burning then
         if self.current <= 0 then
-            self.inst.components.health:DoDelta(-self.hurtrate*self.period, true, "hunger") --  ich haber hunger
+			if not ignore_damage then
+				self.inst.components.health:DoDelta(-self.hurtrate*dt, true, "hunger") --  ich haber hunger
+			end
         else
-            self:DoDelta(-self.hungerrate*self.period, true)
+            self:DoDelta(-self.hungerrate*dt, true)
         end
     end
     

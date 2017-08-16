@@ -138,7 +138,7 @@ function Hunter:StartDirt()
 
     self:RemoveDirt()
 
-    local pt = Vector3(self.inst.Transform:GetWorldPosition())
+    local pt = Vector3(GetPlayer().Transform:GetWorldPosition())
 
     self.numtrackstospawn = math.random(MIN_TRACKS, MAX_TRACKS)
     self.trackspawned = 0
@@ -160,12 +160,12 @@ end
 function Hunter:OnUpdate()
     trace("Hunter:OnUpdate")
 
-    local mypos = Point(self.inst.Transform:GetWorldPosition())
+    local mypos = Point(GetPlayer().Transform:GetWorldPosition())
 
     if not self.lastdirt then
         local distance = 0
         if not self.lastkillpos then
-            self.lastkillpos = Point(self.inst.Transform:GetWorldPosition())
+            self.lastkillpos = Point(GetPlayer().Transform:GetWorldPosition())
         end
 
         distance = math.sqrt( distsq( mypos, self.lastkillpos ) )
@@ -197,7 +197,7 @@ function Hunter:ResetHunt()
 
     --self.lastkillpos = nil
     self:StartCooldown(HUNT_RESET_COOLDOWN)
-    self.inst:PushEvent("huntlosttrail")
+    GetPlayer():PushEvent("huntlosttrail")
 
 end
 
@@ -220,7 +220,7 @@ function Hunter:OnDirtInvestigated(pt)
             elseif self.trackspawned == self.numtrackstospawn then
                 if self:SpawnHuntedBeast() then
                     trace("...you found the last track, now find the beast!")
-                    self.inst:PushEvent("huntbeastnearby")
+                    GetPlayer():PushEvent("huntbeastnearby")
                     self:StopHunt()
                 else
                     print("SpawnHuntedBeast FAILED! RESETTING")
@@ -237,7 +237,7 @@ end
 function Hunter:OnBeastDeath(spawned)
     trace("Hunter:OnBeastDeath")
     self:StartCooldown()
-    self.lastkillpos = Point(self.inst.Transform:GetWorldPosition())
+    self.lastkillpos = Point(GetPlayer().Transform:GetWorldPosition())
 end
 
 function Hunter:GetRunAngle(pt, angle, radius)
@@ -276,7 +276,7 @@ end
 
 function Hunter:SpawnHuntedBeast()
     trace("Hunter:SpawnHuntedBeast")
-    local pt = Vector3(self.inst.Transform:GetWorldPosition())
+    local pt = Vector3(GetPlayer().Transform:GetWorldPosition())
         
     local spawn_pt = self:GetSpawnPoint(pt, TUNING.KOALEFANT_SPAWN_DIST)
     if spawn_pt then
@@ -298,7 +298,7 @@ end
 
 function Hunter:SpawnDirt()
     trace("Hunter:SpawnDirt")
-    local pt = Vector3(self.inst.Transform:GetWorldPosition())
+    local pt = Vector3(GetPlayer().Transform:GetWorldPosition())
 
     local spawn_pt = self:GetSpawnPoint(pt, TUNING.KOALEFANT_SPAWN_DIST)
     if spawn_pt then
@@ -392,7 +392,7 @@ function Hunter:StartCooldown(cooldown)
     self:StopHunt()
     self:StopCooldown()
 
-    if self.inst.components.health:IsDead() then
+    if GetPlayer() and GetPlayer().components.health:IsDead() then
         return
     end
 
@@ -405,7 +405,8 @@ end
 
 function Hunter:GetDebugString()
 	local str = ""
-	str = str.." Cooldown: ".. (self.cooldowntime and string.format("%2.2f", self.cooldowntime) or "-")
+	
+	str = str.." Cooldown: ".. (self.cooldowntime and string.format("%2.2f", math.max(1, self.cooldowntime - GetTime())) or "-")
 	if not self.lastdirt then
 		str = str.." No last dirt."
 		str = str.." Distance: ".. (self.distance and string.format("%2.2f", self.distance) or "-")

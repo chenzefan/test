@@ -105,4 +105,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/inventory/birdtrap", fn, assets)
+return Prefab( "common/inventory/birdtrap", fn, assets) 

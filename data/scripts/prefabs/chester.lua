@@ -168,4 +168,4 @@ local function create_chester()
     return inst
 end
 
-return Prefab( "common/chester", create_chester, assets, prefabs)
+return Prefab( "common/chester", create_chester, assets, prefabs) 

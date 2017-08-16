@@ -211,7 +211,7 @@ function FindWalkableOffset(position, start_angle, radius, attempts, check_los, 
 		local run_point = position+offset
 		local ground = GetWorld()
 		local tile = ground.Map:GetTileAtPoint(run_point.x, run_point.y, run_point.z)
-		if tile == GROUND.IMPASSABLE then
+		if tile == GROUND.IMPASSABLE or tile >= GROUND.UNDERGROUND then
 			--print("\tfailed, unwalkable ground.")
 			return false
 		end

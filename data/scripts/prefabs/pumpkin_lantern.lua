@@ -129,5 +129,5 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/objects/pumpkin_lantern", fn, assets, prefabs)
+return Prefab( "common/objects/pumpkin_lantern", fn, assets, prefabs) 
 

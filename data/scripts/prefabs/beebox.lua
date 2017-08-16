@@ -191,5 +191,5 @@ local function fn(Sim)
 end
 
 return Prefab( "common/objects/beebox", fn, assets, prefabs ),
-	   MakePlacer( "common/beebox_placer", "bee_box", "bee_box", "idle" )
+	   MakePlacer( "common/beebox_placer", "bee_box", "bee_box", "idle" ) 
 

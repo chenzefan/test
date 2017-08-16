@@ -100,4 +100,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "marsh/monsters/tentacle", fn, assets, prefabs)
+return Prefab( "marsh/monsters/tentacle", fn, assets, prefabs) 

@@ -42,4 +42,4 @@ local function fn(Sim)
     return inst
 end
 
-return	Prefab( "common/lockedwes", fn, assets)
+return Prefab( "common/lockedwes", fn, assets) 

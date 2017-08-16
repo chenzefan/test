@@ -61,17 +61,21 @@ function MainScreen:OnKeyUp( key )
 			local level_num = key - KEY_1 + 1
 			
 			local function onstart()
-	    		TheSim:SetInstanceParameters(json.encode{reset_action="loadslot", save_slot = 1})
-	    		TheSim:Reset()
+				TheSim:SetInstanceParameters(json.encode{reset_action="loadslot", save_slot = 1})
+				TheSim:Reset()
 			end
 			SaveGameIndex:FakeAdventure(onstart, 1, level_num)    		
 		elseif key == KEY_0 then
-	    		local function onstart()
-	    			TheSim:SetInstanceParameters(json.encode{reset_action="loadslot", save_slot = 1})
-	    			TheSim:Reset()
-	    		end
-	    		SaveGameIndex:DeleteSlot(1, function() SaveGameIndex:EnterCave(onstart, 1, 1) end)
-	    	end
+			local function onstart()
+				TheSim:SetInstanceParameters(json.encode{reset_action="loadslot", save_slot = 1})
+				TheSim:Reset()
+			end
+			SaveGameIndex:DeleteSlot(1, function() SaveGameIndex:EnterCave(onstart, 1, 1) end)
+		elseif key == KEY_MINUS then
+			TheSim:SetInstanceParameters(json.encode{reset_action="test", save_slot = 1})
+			TheSim:Reset()
+		end
+			
 	    	
 	elseif key == KEY_ESCAPE then
 		self:MainMenu()
@@ -168,6 +172,8 @@ local function GetDaysToUpdate()
 			os.time{year=2013, day=18, month=4, hour=13} - klei_tz,
 			os.time{year=2013, day=21, month=5, hour=13} - klei_tz,
 			os.time{year=2013, day=11, month=6, hour=13} - klei_tz,
+			os.time{year=2013, day=2, month=7, hour=13} - klei_tz,
+			os.time{year=2013, day=23, month=7, hour=13} - klei_tz,
 		}
     table.sort(update_times)
     
@@ -245,7 +251,9 @@ function MainScreen:DoInit( )
 		TheSim:RequestPlayerID()
 	end
 
-    self.bg = self:AddChild(Image("data/images/bg_red.tex"))
+	self.bg = self:AddChild(Image("data/images/bg_plain.tex"))
+    self.bg:SetTint(BGCOLOURS.RED[1],BGCOLOURS.RED[2],BGCOLOURS.RED[3], 1)
+
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
     self.bg:SetHRegPoint(ANCHOR_MIDDLE)
     self.bg:SetVAnchor(ANCHOR_MIDDLE)
@@ -280,6 +288,15 @@ function MainScreen:DoInit( )
     self.shield = self.fixed_root:AddChild(Image("data/images/panel_shield.tex"))
     self.shield:SetVRegPoint(ANCHOR_MIDDLE)
     self.shield:SetHRegPoint(ANCHOR_MIDDLE)
+
+    self.banner = self.shield:AddChild(Image("data/images/update_banner.tex"))
+    self.banner:SetVRegPoint(ANCHOR_MIDDLE)
+    self.banner:SetHRegPoint(ANCHOR_MIDDLE)
+    self.banner:SetPosition(0, -210, 0)
+    self.updatename = self.banner:AddChild(Text(BUTTONFONT, 30))
+    self.updatename:SetPosition(0,8,0)
+    self.updatename:SetString(STRINGS.UI.MAINSCREEN.UPDATENAME)
+    self.updatename:SetColour(0,0,0,1)
 
 	--bottom left node - days until update indicator and sign up button    
 	self.bottom_left_stuff = self.fixed_root:AddChild(Widget("bl"))
@@ -329,7 +346,7 @@ function MainScreen:DoInit( )
 	self.motd.button = self.motd:AddChild(AnimButton("button"))
     self.motd.button:SetPosition(0, -100, 0)
     self.motd.button:SetText(STRINGS.UI.MAINSCREEN.MOTDBUTTON)
-    self.motd.button.text:SetColour(0,0,0,1)
+    self.motd.button.text:SetColour(0,0,0,1) 
     self.motd.button:SetOnClick( function() VisitURL("http://bit.ly/ds-soundtrack") end )
     self.motd.button:SetFont(BUTTONFONT)
     self.motd.button:SetTextSize(40)    
@@ -419,7 +436,6 @@ end
 
 local function DoGenerateDEMOWorld()
 	local saveslot = 1
-	SubmitCompletedLevel() -- close off any open games on the server
 
 	local function onComplete(savedata )
 		local function onsaved()

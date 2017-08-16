@@ -26,4 +26,4 @@ local function fn()
 end
 
 
-return Prefab("common/inventory/slurtle_shellpieces", fn, assets)
+return Prefab("common/inventory/slurtle_shellpieces", fn, assets) 

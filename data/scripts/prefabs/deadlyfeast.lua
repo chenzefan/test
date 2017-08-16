@@ -31,4 +31,4 @@ local function fn()
 	return inst
 end
 
-return Prefab("common/inventory/deadlyfeast", fn, assets)
+return Prefab("common/inventory/deadlyfeast", fn, assets) 

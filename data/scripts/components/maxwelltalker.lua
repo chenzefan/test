@@ -18,9 +18,11 @@ function MaxwellTalker:OnCancel()
 		    if self.inst.speech.disappearanim then
                 if SaveGameIndex:GetCurrentMode(Settings.save_slot) == "adventure" then
 	                self.inst.SoundEmitter:PlaySound("dontstarve/maxwell/disappear_adventure")
+	                PlayFX(Point(self.inst.Transform:GetWorldPosition()), "max_fx", "max_fx", "anim")
 		        else
 	                self.inst:DoTaskInTime(.4, function()
                         self.inst.SoundEmitter:PlaySound("dontstarve/maxwell/disappear")
+                        PlayFX(Point(self.inst.Transform:GetWorldPosition()), "max_fx", "max_fx", "anim")
 	                end)
 		        end
 		        self.inst.AnimState:PlayAnimation(self.inst.speech.disappearanim, false)
@@ -99,6 +101,7 @@ function MaxwellTalker:DoTalk()
 			else
 			    Sleep(0.4)
 	            self.inst.SoundEmitter:PlaySound("dontstarve/maxwell/disappear")
+	            PlayFX(Point(self.inst.Transform:GetWorldPosition()), "max_fx", "max_fx", "anim")
 			    Sleep(1)
 			end
 		end
@@ -143,8 +146,10 @@ function MaxwellTalker:DoTalk()
 		if self.inst.speech.disappearanim then
             if SaveGameIndex:GetCurrentMode(Settings.save_slot) == "adventure" then
 			    self.inst.SoundEmitter:PlaySound("dontstarve/maxwell/disappear_adventure")
+			    PlayFX(Point(self.inst.Transform:GetWorldPosition()), "max_fx", "max_fx", "anim")
 			else
 	            self.inst.SoundEmitter:PlaySound("dontstarve/maxwell/disappear")
+	            PlayFX(Point(self.inst.Transform:GetWorldPosition()), "max_fx", "max_fx", "anim")
 			end
 			self.inst.AnimState:PlayAnimation(self.inst.speech.disappearanim, false) --plays the disappear animation and removes from scene
 			self.inst:ListenForEvent("animqueueover", function()  self.inst:Remove() end)

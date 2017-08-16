@@ -11,19 +11,14 @@ end
 function UpdateGamePurchasedState( complete_callback )
 	--print( "UpdateGamePurchaseState called" )
 	if PLATFORM == "NACL" then
-		TheSim:QueryServer( "/user/purchases",
+		TheSim:QueryServer( GAME_SERVER.."/user/purchases",
 			function( result, isSuccessful )
-				--print( "Purchases : ", result )
-				--print('UpdateGamePurchasedState TheSim:QueryServer /user/purchases', isSuccessful, result)
 			 	if isSuccessful and string.len(result) > 1 then 
 					Purchases = TrackedAssert("TheSim:QueryServer /user/purchases",  json.decode, result)
-					--print( "UpdateGamePurchaseState result received" )
 				end
 				if( complete_callback ) then
-					--print( "UpdateGamePurchaseState trigger callback." )
 					complete_callback( IsGamePurchased() )
 				end
-				--print( "UpdateGamePurchaseState TheSim:QueryServer complete." )
 			end,
 			"GET" )
 	else

@@ -34,7 +34,15 @@ local quakelevels =
 		quaketime = function() return math.random(15, 20) + 5 end, 
 		debrispersecond = function() return math.random(9, 10) end, 
 		nextquake =  function() return TUNING.TOTAL_DAY_TIME * 0.5 + math.random() * TUNING.TOTAL_DAY_TIME end
-	}
+	},
+
+	tentacleQuake=
+    { -- quake during tentacle pillar death throes
+		prequake = -3,                                                           --the warning before the quake
+		quaketime = function() return GetRandomWithVariance(3,.5) end, 	        --how long the quake lasts
+		debrispersecond = function() return GetRandomWithVariance(20,.5) end, 	--how much debris falls every second
+		nextquake = function() return TUNING.TOTAL_DAY_TIME * 100 end, 	        --how long until the next quake
+	},
 }
 
 local Quaker = Class(function(self,inst)
@@ -83,12 +91,20 @@ local debris =
 
 function Quaker:OnSave()
 	if not self.noserial then
+        if self.quakeold then
+            self.quakelevel = self.quakeold
+            self.quakeold = nil
+            self.prequake = self.quakelevel.prequake
+            self.quaketime = self.quakelevel.quaketime()
+            self.debrispersecond = self.quakelevel.debrispersecond()
+            self.nextquake = self.quakelevel.nextquake()
+        end
 		return
 		{
 			prequake = self.prequake,
 			quaketime = self.quaketime,
 			debrispersecond = self.debrispersecond,
-			nextquake = self.nextquake
+			nextquake = self.nextquake,
 		}
 	end
 	self.noserial = false
@@ -127,6 +143,7 @@ end
 
 function Quaker:SetQuakeLevel(level)
  	self.quakelevel = quakelevels[level]
+    self.levelname = level
 	self:SetNextQuake()
 end
 
@@ -138,7 +155,7 @@ function Quaker:GetSpawnPoint(pt)
 	local result_offset = FindValidPositionByFan(theta, radius, 12, function(offset)
 		local ground = GetWorld()
         local spawn_point = pt + offset
-        if not (ground.Map and ground.Map:GetTileAtPoint(spawn_point.x, spawn_point.y, spawn_point.z) == GROUND.IMPASSABLE) then
+        if not (ground.Map and ground.Map:GetTileAtPoint(spawn_point.x, spawn_point.y, spawn_point.z) == GROUND.IMPASSABLE or ground.Map:GetTileAtPoint(spawn_point.x, spawn_point.y, spawn_point.z) > GROUND.UNDERGROUND ) then
 			return true
         end
 		return false
@@ -168,6 +185,14 @@ function Quaker:StartQuake()
 end
 
 function Quaker:EndQuake()
+    if self.quakeold then
+ 	    self.quakelevel = self.quakeold
+ 	    self.quakeold = nil
+        self.prequake = self.quakelevel.prequake
+        self.quaketime = self.quakelevel.quaketime()
+        self.debrispersecond = self.quakelevel.debrispersecond()
+        self.nextquake = self.quakelevel.nextquake()
+    end
 	self.quake = false
 	self.inst:PushEvent("endquake")
 	self.emittingsound = false
@@ -175,8 +200,23 @@ function Quaker:EndQuake()
 	self:SetNextQuake()
 end
 
-function Quaker:ForceQuake()
+-- Immediately start the current or a specified quake
+-- If a new quake type is forced, save current quake type and restore it once quake has finished
+function Quaker:ForceQuake(level)
+
+	if self.quake then return false end  
+
+    if level and quakelevels[level] then
+ 	    self.quakeold = self.quakelevel
+ 	    self.quakelevel = quakelevels[level]
+        self.prequake = self.quakelevel.prequake
+        self.quaketime = self.quakelevel.quaketime()
+        self.debrispersecond = self.quakelevel.debrispersecond()
+        self.nextquake = self.quakelevel.nextquake()
+    end
 	self.nextquake = self.prequake
+
+    return true
 end
 
 local function Lerp(a,b,t)
@@ -318,10 +358,12 @@ function Quaker:OnUpdate( dt )
 				if self.timetospawn <= 0 then				
 					local char_pos = Vector3(maincharacter.Transform:GetWorldPosition())
 					local spawn_point = self:GetSpawnPoint(char_pos)								
-					local db = self:SpawnDebris(spawn_point)	
-					start_grounddetection(db)
-					if self.spawntime then
-						self.timetospawn = self:GetTimeForNextDebris()
+					if spawn_point then
+						local db = self:SpawnDebris(spawn_point)	
+						start_grounddetection(db)
+						if self.spawntime then
+							self.timetospawn = self:GetTimeForNextDebris()
+						end
 					end
 				end
 			end

@@ -64,4 +64,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/inventory/armor_sanity", fn, assets)
+return Prefab( "common/inventory/armor_sanity", fn, assets) 

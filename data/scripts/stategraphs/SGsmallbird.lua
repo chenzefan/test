@@ -263,7 +263,7 @@ CommonStates.AddWalkStates(states, {
         TimeEvent(1*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/smallbird/wings") end),
         --TimeEvent(13*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/smallbird/footstep") end),
     }
-}, true)
+}, nil, true)
 
 CommonStates.AddSleepStates(states,
 {

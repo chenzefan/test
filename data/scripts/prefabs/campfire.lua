@@ -154,4 +154,4 @@ local function fn(Sim)
 end
 
 return Prefab( "common/objects/campfire", fn, assets, prefabs),
-		MakePlacer( "common/campfire_placer", "campfire", "campfire", "preview" )
+		MakePlacer( "common/campfire_placer", "campfire", "campfire", "preview" ) 

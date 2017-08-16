@@ -59,6 +59,12 @@ function EntityScript:GetSaveRecord()
     
     if self.Transform then
         local x, y, z = self.Transform:GetWorldPosition()
+        
+        --Qnan hunting
+        x = x ~= x and 0 or x
+        y = y ~= y and 0 or y
+        z = z ~= z and 0 or z
+
         record.x = math.floor(x*10)/10
         record.z = math.floor(z*10)/10
         --y is often 0 in our game, so be selective.
@@ -248,6 +254,12 @@ function EntityScript:RemoveComponent(name)
     end
 end
 
+function EntityScript:GetDisplayName()
+    if self.displaynamefn then
+        return (self.displaynamefn(self))
+    end
+    return self.name
+end
 
 function EntityScript:SetPrefabName(name)
     self.prefab = name
@@ -651,9 +663,9 @@ function EntityScript:CancelAllPendingTasks()
 	end
 end
 
-function EntityScript:DoPeriodicTask(time, fn, initialdelay)
+function EntityScript:DoPeriodicTask(time, fn, initialdelay, ...)
     
-    local per = scheduler:ExecutePeriodic(time, fn, nil, initialdelay, self)
+    local per = scheduler:ExecutePeriodic(time, fn, nil, initialdelay, self, ...)
 
     if not self.pendingtasks then
 		self.pendingtasks = {}
@@ -1049,4 +1061,18 @@ end
 
 function EntityScript:SetInherentSceneAction(action)
 	self.inherentsceneaction = action
+end
+
+function EntityScript:LongUpdate(dt)
+
+	if self.OnLongUpdate then
+		self:OnLongUpdate(dt)
+	end
+
+	for k,v in pairs(self.components) do
+		if v.LongUpdate then
+			v:LongUpdate(dt)
+		end
+	end
+
 end

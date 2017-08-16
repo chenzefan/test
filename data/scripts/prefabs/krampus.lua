@@ -87,4 +87,4 @@ local function fn(Sim)
 end
 
 
-return Prefab( "monsters/krampus", fn, assets, prefabs)
+return Prefab( "monsters/krampus", fn, assets, prefabs) 

@@ -252,4 +252,4 @@ end
 
 
 return Prefab( "forest/monsters/spider", create_spider, assets, prefabs),
-    Prefab( "forest/monsters/spider_warrior", create_warrior, warrior_assets)
+    Prefab( "forest/monsters/spider_warrior", create_warrior, warrior_assets) 

@@ -102,6 +102,10 @@ function Clock:SetNormEraTime(percent)
 	self.timeLeftInEra = (1-percent)*self.totalEraTime
 end
 
+function Clock:GetTimeInEra()
+    return self.totalEraTime - self.timeLeftInEra 
+end
+
 function Clock:GetNormEraTime()
     local ret = self.totalEraTime > 0 and (1 - self.timeLeftInEra / self.totalEraTime) or 1
     return ret
@@ -187,12 +191,16 @@ function Clock:GetPrevPhase()
 end
 
 function Clock:MakeNextDay()
-	self.numcycles = self.numcycles +1
-    self.inst:PushEvent("daycomplete", {day= self.numcycles})
-    self:StartDay()
+	local time_left = TUNING.TOTAL_DAY_TIME * (1 - self:GetNormTime())
+	LongUpdate(time_left + TUNING.SEG_TIME*.5)
+	
+	--self.numcycles = self.numcycles +1
+    --self.inst:PushEvent("daycomplete", {day= self.numcycles})
+    --self:StartDay()
 end
 
 function Clock:NextPhase()
+
     if self:CurrentPhaseIsAlways() then
         self.numcycles = self.numcycles +1
         self.inst:PushEvent("daycomplete", {day= self.numcycles})
@@ -258,6 +266,24 @@ function Clock:DoLightningLighting()
     self.lightningtime = 0
 end
 
+
+function Clock:LongUpdate(dt)
+	self:OnUpdate(dt)
+	
+	--fix the colour
+	self.lerptimeleft = 0
+	if self:IsDay() then
+		self.currentColour = self.dayColour
+	elseif self:IsDusk() then
+		self.currentColour = self.duskColour
+	else
+		self.currentColour = self.nightColour
+	end
+	
+	local p = GetSeasonManager() and GetSeasonManager():GetWeatherLightPercent() or 1
+	TheSim:SetAmbientColour( p*self.currentColour.x, p*self.currentColour.y, p*self.currentColour.z )
+end
+
 function Clock:OnUpdate(dt)
 	
 	self.timeLeftInEra = self.timeLeftInEra - dt
@@ -267,7 +293,14 @@ function Clock:OnUpdate(dt)
 	end
     
     if self.timeLeftInEra <= 0 then
+        local time_left_over = -self.timeLeftInEra
         self:NextPhase()
+        
+        if time_left_over > 0 then
+			self:OnUpdate(time_left_over)
+			return
+        end
+        
     end
     
     if self.lerptimeleft > 0 then

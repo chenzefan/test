@@ -13,7 +13,8 @@ CharacterSelectScreen = Class(Screen, function(self, profile, cb, no_backbutton,
     
     self.currentcharacter = nil
 
-    self.bg = self:AddChild(Image("data/images/bg_red.tex"))
+    self.bg = self:AddChild(Image("data/images/bg_plain.tex"))
+    self.bg:SetTint(BGCOLOURS.RED[1],BGCOLOURS.RED[2],BGCOLOURS.RED[3], 1)
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
     self.bg:SetHRegPoint(ANCHOR_MIDDLE)
     self.bg:SetVAnchor(ANCHOR_MIDDLE)
@@ -91,33 +92,46 @@ CharacterSelectScreen = Class(Screen, function(self, profile, cb, no_backbutton,
 		self.backbutton:SetPosition( 820 - 100+ adjust, 80, 0)
     end
     
-    self.characters = CHARACTERLIST
+	self.characters = JoinArrays(CHARACTERLIST, MODCHARACTERLIST)
+
+	self.portrait_bgs = {}
 
     self.portraits = {}
     
+	self.portrait_frames = {}
+
     for k = 1,3 do
 		local ypos = 720-300+35
 		local xbase = 640
 		local width = 190
 		local xpos = xbase + (k-1) * width
+
+		local portrait_bg = self.fixed_root:AddChild(UIAnim())
+		portrait_bg:GetAnimState():SetBuild("portrait_frame")
+		portrait_bg:GetAnimState():SetBank("portrait_frame")
+		portrait_bg:GetAnimState():PlayAnimation("idle")
 		
-		local portrait = self.fixed_root:AddChild(UIAnim())
-		portrait:GetAnimState():SetBuild("portrait_frame")
-		portrait:GetAnimState():SetBank("portrait_frame")
-		portrait:GetAnimState():PlayAnimation("idle")
-		portrait:SetLeftMouseDown(function() self:OnClickPortait(k) end)
-		portrait:SetLeftMouseDown(function() self:OnClickPortait(k) end)
+		portrait_bg:SetPosition(xpos, ypos, 0)
 		
-		portrait:SetMouseOver(function() if self.portrait_idx ~= k then portrait:GetAnimState():PlayAnimation("mouseover") end end)
-		portrait:SetMouseOut(function() if self.portrait_idx ~= k then portrait:GetAnimState():PlayAnimation("idle") end end)
-		
-		portrait:SetPosition(xpos, ypos, 0)
-		
-		--local portrait = self.fixed_root:AddChild(Image())
-		--portrait:SetPosition(xpos,ypos-10,0)
 		--portrait:SetVRegPoint(ANCHOR_BOTTOM)
-		--portrait:SetClickable(false)
+		table.insert(self.portrait_bgs, portrait_bg)
+
+		ypos = ypos + 80
+
+		local portrait = self.fixed_root:AddChild(Image())
+		portrait:SetPosition(xpos, ypos, 0)
+
 		table.insert(self.portraits, portrait)
+
+		local portrait_frame = self.fixed_root:AddChild(Image("images/selectscreen_portraits/frame.tex"))
+		portrait_frame:SetMouseOverTexture("images/selectscreen_portraits/frame_mouse_over.tex")
+		portrait_frame:SetPosition(xpos, ypos, 0)
+
+		portrait_frame:SetLeftMouseDown(function() self:OnClickPortait(k) end)
+		
+		portrait_frame:SetMouseOver(function() if self.portrait_idx ~= k then portrait_bg:GetAnimState():PlayAnimation("mouseover") end end)
+		portrait_frame:SetMouseOut(function() if self.portrait_idx ~= k then portrait_bg:GetAnimState():PlayAnimation("idle") end end)
+		table.insert(self.portrait_frames, portrait_frame)
     end
 
 	self.rightbutton = self.fixed_root:AddChild(AnimButton("scroll_arrow"))
@@ -184,12 +198,12 @@ function CharacterSelectScreen:SetOffset(offset)
 	for k = 1,3 do
 		local character = self:GetCharacterForPortrait(k)
 		
-		self.portraits[k]:GetAnimState():PlayAnimation(k == self.portrait_idx and "selected" or "idle", true)
-		
+		self.portrait_bgs[k]:GetAnimState():PlayAnimation(k == self.portrait_idx and "selected" or "idle", true)
+
 		if not self.profile:IsCharacterUnlocked(character) then
-			self.portraits[k]:GetAnimState():OverrideSymbol("swap_char", "portrait_frame_silhouettes", character)
+			self.portraits[k]:SetTexture("images/selectscreen_portraits/"..character.."_silho.tex")
 		else
-			self.portraits[k]:GetAnimState():OverrideSymbol("swap_char", "portrait_frame_characters", character)
+			self.portraits[k]:SetTexture("images/selectscreen_portraits/"..character..".tex")
 		end
 	end	
 end
@@ -198,23 +212,23 @@ function CharacterSelectScreen:SelectPortrait(portrait)
 	local character = self:GetCharacterForPortrait(portrait)
 
 	self.portrait_idx = portrait
-	for k,v in pairs(self.portraits) do
+	for k,v in pairs(self.portrait_bgs) do
 		v:GetAnimState():PlayAnimation("idle")
 	end
 
-	if self.portraits[portrait] then
-		self.portraits[portrait]:GetAnimState():PlayAnimation("selected", true)
+	if self.portrait_bgs[portrait] then
+		self.portrait_bgs[portrait]:GetAnimState():PlayAnimation("selected", true)
 	end
 
 	if character and self.profile:IsCharacterUnlocked(character) then
-		self.heroportait:SetTexture("data/bigportraits/"..character..".tex")
+		self.heroportait:SetTexture("bigportraits/"..character..".tex")
 		self.currentcharacter = character
 		self.charactername:SetString(STRINGS.CHARACTER_TITLES[character] or "")
 		self.characterquote:SetString(STRINGS.CHARACTER_QUOTES[character] or "")
 		self.characterdetails:SetString(STRINGS.CHARACTER_DESCRIPTIONS[character] or "")
 		self.startbutton:Enable()
 	else
-		self.heroportait:SetTexture("data/bigportraits/locked.tex")		
+		self.heroportait:SetTexture("bigportraits/locked.tex")
 		self.charactername:SetString(STRINGS.CHARACTER_NAMES.unknown)
 		self.characterquote:SetString("")
 		self.characterdetails:SetString("")

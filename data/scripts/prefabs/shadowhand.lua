@@ -129,6 +129,8 @@ end
 
 local function create_hand()
 	local inst = CreateEntity()
+	inst:AddTag("shadowhand")
+	
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
 	inst.entity:AddSoundEmitter()
@@ -208,4 +210,4 @@ local function create_arm()
 end
 
 return Prefab("common/shadowhand", create_hand, assets, prefabs),
-       Prefab("common/shadowhand_arm", create_arm, assets)
+       Prefab("common/shadowhand_arm", create_arm, assets) 

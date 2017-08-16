@@ -5,6 +5,7 @@ FrontEnd = Class(function(self, name)
 	self.screenstack = {}
 	
 	self.screenroot = Widget("screenroot")
+	self.overlayroot = Widget("overlayroot")
 	
     self.blackoverlay = Image("data/images/square.tex")
     self.blackoverlay:SetVRegPoint(ANCHOR_MIDDLE)
@@ -14,6 +15,7 @@ FrontEnd = Class(function(self, name)
     self.blackoverlay:SetScaleMode(SCALEMODE_FILLSCREEN)
 	self.blackoverlay:SetClickable(false)
 	self.blackoverlay:Hide()
+	self.overlayroot:AddChild(self.blackoverlay)
 	
     
     self.title = Text(TITLEFONT, 100)
@@ -21,12 +23,16 @@ FrontEnd = Class(function(self, name)
     self.title:Hide()
     self.title:SetVAnchor(ANCHOR_MIDDLE)
     self.title:SetHAnchor(ANCHOR_MIDDLE)
+	self.overlayroot:AddChild(self.title)
 	
     self.subtitle = Text(TITLEFONT, 70)
     self.subtitle:SetPosition(0, 70, 0)
     self.subtitle:Hide()
     self.subtitle:SetVAnchor(ANCHOR_MIDDLE)
     self.subtitle:SetHAnchor(ANCHOR_MIDDLE)
+	self.overlayroot:AddChild(self.subtitle)
+
+	self.errorroot = Widget("errorroot")
 
 	self.gameinterface = CreateEntity()
 	self.gameinterface.entity:AddSoundEmitter()
@@ -150,8 +156,6 @@ function FrontEnd:PushScreen(screen)
 		
 		screen:OnGainFocus()
 		--self:Fade(true, 2)
-		
-		screen:LogView()
 	end
 end
 
@@ -213,10 +217,6 @@ function FrontEnd:PopScreen(screen)
 		self.screenstack[#self.screenstack]:OnGainFocus()
 		--self:Fade(true, 1)
 		
-		-- IF the previous screen was unlogged then we dont need to tell anyone we are beng viewed (ie popup)
-		if old_head.log ~= nil then
-			self.screenstack[#self.screenstack]:LogView()
-		end
 	end
 end
 
@@ -274,7 +274,8 @@ end
 function FrontEnd:DisplayError(screen)
 	if self.displayingerror == false then
 	    print("SCRIPT ERROR! Showing error screen")
-		self:PushScreen(screen)
+		self.errorroot:AddChild(screen)
+		screen:OnGainFocus()
 		self.displayingerror = true
 	end
 end

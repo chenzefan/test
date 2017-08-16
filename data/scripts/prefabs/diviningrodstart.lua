@@ -51,6 +51,7 @@ local function fn(Sim)
 	inst.entity:AddSoundEmitter()
 	
 	inst:AddTag("diviningrod")
+	inst:AddTag("irreplaceable")
     
     anim:SetBank("diviningrod")
     anim:SetBuild("diviningrod")
@@ -69,5 +70,5 @@ local function fn(Sim)
 end
 
 
-return Prefab( "common/diviningrodstart", fn, assets)
+return Prefab( "common/diviningrodstart", fn, assets) 
 

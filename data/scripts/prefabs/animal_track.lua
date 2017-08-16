@@ -62,4 +62,4 @@ local function create(sim)
     return inst
 end
 
-return Prefab( "forest/objects/animal_track", create, assets)
+return Prefab( "forest/objects/animal_track", create, assets) 

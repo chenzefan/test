@@ -161,4 +161,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "marsh/objects/marsh_tree", fn, assets)
+return Prefab( "marsh/objects/marsh_tree", fn, assets) 

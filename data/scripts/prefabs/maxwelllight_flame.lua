@@ -44,4 +44,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/fx/maxwelllight_flame", fn, assets)
+return Prefab( "common/fx/maxwelllight_flame", fn, assets) 

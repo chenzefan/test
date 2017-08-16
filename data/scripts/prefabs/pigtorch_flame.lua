@@ -34,4 +34,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/fx/pigtorch_flame", fn, assets)
+return Prefab( "common/fx/pigtorch_flame", fn, assets) 

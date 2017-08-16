@@ -19,4 +19,4 @@ local function fn()
     return inst
 end
 
-return Prefab("common/fx/impact", fn, assets)
+return Prefab("common/fx/impact", fn, assets) 

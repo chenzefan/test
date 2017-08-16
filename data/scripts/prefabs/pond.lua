@@ -170,4 +170,4 @@ local function pondfrog()
 end
 
 return Prefab( "marsh/objects/pond", pondfrog, assets, prefabs),
-	   Prefab("marsh/objects/pond_mos", pondmos, assets, prefabs)
+	   Prefab("marsh/objects/pond_mos", pondmos, assets, prefabs) 

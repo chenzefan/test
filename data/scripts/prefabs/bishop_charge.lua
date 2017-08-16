@@ -36,4 +36,4 @@ local function fn()
     return inst
 end
 
-return Prefab( "common/inventory/bishop_charge", fn, assets)
+return Prefab( "common/inventory/bishop_charge", fn, assets) 

@@ -7,8 +7,8 @@ Prefab = Class( function(self, name, fn, assets, deps)
     self.name = string.sub(name, string.find(name, "[^/]*$"))
     self.desc = ""
     self.fn = fn
-    self.assets = assets
-    self.deps = deps
+    self.assets = assets or {}
+    self.deps = deps or {}
 end)
 
 function Prefab:__tostring()

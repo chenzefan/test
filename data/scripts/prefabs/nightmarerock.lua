@@ -223,4 +223,4 @@ local function sanityrock()
 end
 
 return Prefab("forest/objects/rocks/insanityrock", insanityrock, assets, prefabs),
-       Prefab("forest/objects/rocks/sanityrock", sanityrock, assets, prefabs)
+       Prefab("forest/objects/rocks/sanityrock", sanityrock, assets, prefabs) 

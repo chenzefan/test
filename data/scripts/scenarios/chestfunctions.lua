@@ -1,4 +1,22 @@
-local function AddChestItems(chest, loot)
+local function PickLootItems(number, loot)
+	local refinedloot = {}
+
+	for i = 1, number do
+		local num = math.random(#loot)
+		table.insert(refinedloot, loot[num])
+		table.remove(loot, num)
+	end
+
+	return refinedloot
+end
+
+
+local function AddChestItems(chest, loot, num)
+	local numloot = num or chest.components.container.numslots
+	if #loot >  numloot then
+		loot = PickLootItems(numloot, loot)
+	end
+
 	for k, itemtype in ipairs(loot) do
 		local count = itemtype.count or 1
 		for i = 1, count do

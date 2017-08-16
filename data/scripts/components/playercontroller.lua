@@ -58,17 +58,33 @@ end)
 
 function PlayerController:RotLeft()
 	local rotamount = GetWorld():IsCave() and 22.5 or 45
-	if not IsHUDPaused() and TheCamera:CanControl() then  
-		TheCamera:SetHeadingTarget(TheCamera:GetHeadingTarget() + rotamount) 
-		UpdateCameraHeadings() 
+	if TheCamera:CanControl() then  
+		
+		if IsHUDPaused() then
+			if GetPlayer().HUD:IsMapShowing() then
+				TheCamera:SetHeadingTarget(TheCamera:GetHeadingTarget() + rotamount) 
+				TheCamera:Snap()
+			end
+		else
+			TheCamera:SetHeadingTarget(TheCamera:GetHeadingTarget() + rotamount) 
+			UpdateCameraHeadings() 
+		end
 	end
 end
 
 function PlayerController:RotRight()
 	local rotamount = GetWorld():IsCave() and 22.5 or 45
-	if not IsHUDPaused() and TheCamera:CanControl() then  
-		TheCamera:SetHeadingTarget(TheCamera:GetHeadingTarget() - rotamount) 
-		UpdateCameraHeadings() 
+	if TheCamera:CanControl() then  
+		
+		if IsHUDPaused() then
+			if GetPlayer().HUD:IsMapShowing() then
+				TheCamera:SetHeadingTarget(TheCamera:GetHeadingTarget() - rotamount) 
+				TheCamera:Snap()
+			end
+		else
+			TheCamera:SetHeadingTarget(TheCamera:GetHeadingTarget() - rotamount) 
+			UpdateCameraHeadings() 
+		end
 	end
 end
 

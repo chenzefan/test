@@ -378,6 +378,7 @@ function Controls:Update(dt)
 	end
 end
 
+
 function Controls:ToggleMap()
     local minimap = self.owner.HUD.minimap
     if minimap then
@@ -429,7 +430,7 @@ PlayerHud = Class(Screen, function(self)
     self.vig:SetScaleMode(SCALEMODE_FIXEDPROPORTIONAL)
     self.vig:SetClickable(false)
     
-    self.bloodover = BloodOver()
+    self.bloodover = self:AddChild(BloodOver())
     
     self.minimap = SpawnPrefab( "minimap" )
     self.root = self:AddChild(Widget("root"))
@@ -519,7 +520,6 @@ function PlayerHud:SetMainCharacter(maincharacter)
 		self.inst:ListenForEvent("attacked", function(inst, data) return self.bloodover:Flash() end, self.owner)
 		self.inst:ListenForEvent("startstarving", function(inst, data) self.bloodover:TurnOn() end, self.owner)
 		self.inst:ListenForEvent("stopstarving", function(inst, data) self.bloodover:TurnOff() end, self.owner)
-		self.inst:ListenForEvent("ontriggersave", function(inst, data) self.controls.saving:OnSave(2) end, self.owner)
 		self.inst:ListenForEvent("gosane", function(inst, data) self:GoSane() end, self.owner)
 		self.inst:ListenForEvent("goinsane", function(inst, data) self:GoInsane() end, self.owner)
 		
@@ -536,10 +536,18 @@ function PlayerHud:SetMainCharacter(maincharacter)
 	end
 end
 
+function PlayerHud:IsMapShowing()
+    return self.minimap and self.minimap.MiniMap:IsVisible()
+end
+
 function PlayerHud:OnUpdate(dt)
     if self.owner then
 		if self.controls then
 			self.controls:Update(dt)
+		end
+
+		if self.bloodover then
+			self.bloodover:Update(dt)
 		end
 		
 		if Profile and self.vig then

@@ -20,4 +20,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/spawnpoint", fn, assets)
+return Prefab( "common/spawnpoint", fn, assets) 

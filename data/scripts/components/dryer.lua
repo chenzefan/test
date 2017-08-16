@@ -163,4 +163,25 @@ function Dryer:Harvest( harvester )
 end
 
 
+function Dryer:LongUpdate(dt)
+	if self:IsDrying() then
+		if self.task then
+			self.task:Cancel()
+			self.task = nil
+		end
+
+		local time_to_wait = self.targettime - GetTime() - dt
+		if time_to_wait <= 0 then
+			self.targettime = GetTime()
+			DoDry(self.inst)
+		else
+			self.targettime = GetTime() + time_to_wait
+			self.task = self.inst:DoTaskInTime(time_to_wait, DoDry)
+		end
+
+
+	end
+end
+
+
 return Dryer

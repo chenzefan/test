@@ -8,6 +8,8 @@ local actionhandlers =
     ActionHandler(ACTIONS.PICKUP, "pickup"),
     ActionHandler(ACTIONS.EQUIP, "pickup"),
     ActionHandler(ACTIONS.ADDFUEL, "pickup"),
+    ActionHandler(ACTIONS.TAKEITEM, "pickup"),
+
 }
 
 

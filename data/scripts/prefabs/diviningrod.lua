@@ -163,5 +163,5 @@ local function fn(Sim)
 end
 
 
-return Prefab( "common/inventory/diviningrod", fn, assets)
+return Prefab( "common/inventory/diviningrod", fn, assets) 
 

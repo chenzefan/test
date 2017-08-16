@@ -47,13 +47,13 @@ SlotDetailsScreen = Class(Screen, function(self, slotnum)
     self.text:SetHAlign(ANCHOR_LEFT)
 
 
-	self.portraitbg = self.root:AddChild(Image("data/images/saveslot_portraits/background.tex"))
+	self.portraitbg = self.root:AddChild(Image("images/saveslot_portraits/background.tex"))
 	self.portraitbg:SetPosition(-120, 135, 0)	
 	self.portraitbg:SetClickable(false)	
 
 	self.portrait = self.root:AddChild(Image())
 	self.portrait:SetClickable(false)		
-	self.portrait:SetTexture("data/images/saveslot_portraits/"..character..".tex")
+	self.portrait:SetTexture("images/saveslot_portraits/"..character..".tex")
 	self.portrait:SetPosition(-120, 135, 0)
     
 

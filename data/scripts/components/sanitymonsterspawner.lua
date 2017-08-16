@@ -22,6 +22,8 @@ end)
 
 
 function SanityMonsterSpawner:OnSave()
+    if self.noserial then return end
+    
     local refs = {}
     local data = {
 		monsters={},
@@ -65,13 +67,18 @@ function SanityMonsterSpawner:OnMonsterRemoved(monster)
 	end
 end
 
+function SanityMonsterSpawner:OnProgress()
+	self.noserial = true
+end
+
+
 
 function SanityMonsterSpawner:LoadPostPass(newents, savedata)
     local num = 0
     if savedata.monsters then
         for k,v in pairs(savedata.monsters) do
             local child = newents[v]
-            if child then
+            if child and child.entity:HasTag("shadowcreature") then
 				num = num + 1
 				child = child.entity
 				table.insert(self.monsters, child)
@@ -83,7 +90,7 @@ function SanityMonsterSpawner:LoadPostPass(newents, savedata)
     if savedata.shadowhands then
         for k,v in pairs(savedata.shadowhands) do
             local child = newents[v]
-            if child then
+            if child and child.entity:HasTag("shadowhand") then
 				child = child.entity
 				table.insert(self.shadowhands, child)
 				child:ListenForEvent( "onremove", function() self:ShadowHandRemoved( child ) end, child )	
@@ -442,6 +449,10 @@ function SanityMonsterSpawner:OnUpdate(dt)
 	self:UpdateCreepyHands(dt)
 	self:UpdateWatchers(dt)
 	self:UpdateSkitters(dt)
+end
+
+function SanityMonsterSpawner:LongUpdate(dt)
+	self:OnUpdate(dt)
 end
 
 return SanityMonsterSpawner

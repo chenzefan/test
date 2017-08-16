@@ -30,7 +30,7 @@ function Tune(overrides)
 	TUNING =
 	{
 		DEMO_TIME = total_day_time * 2 + day_time*.2,
-		
+		AUTOSAVE_INTERVAL = total_day_time,
 	    SEG_TIME = seg_time,
 	    TOTAL_DAY_TIME = total_day_time,
 		DAY_SEGS_DEFAULT = day_segs,
@@ -70,6 +70,7 @@ function Tune(overrides)
 	    ICESTAFF_USES = 20,
 	    FIRESTAFF_USES = 20,
 	    HAMBAT_USES = 100,
+	    BATBAT_USES = 75,
 	
 	    
 	    FISHING_MINWAIT = 2,
@@ -79,6 +80,10 @@ function Tune(overrides)
 	    
 	    UNARMED_DAMAGE = 10,
 	    NIGHTSWORD_DAMAGE = wilson_attack*2,
+	    -------
+	    BATBAT_DAMAGE = wilson_attack * 1.25,
+	    BATBAT_DRAIN = wilson_attack * 0.2,
+		-------
 	    SPIKE_DAMAGE = wilson_attack*1.5,
 		HAMBAT_DAMAGE = wilson_attack,
 	    SPEAR_DAMAGE = wilson_attack,
@@ -229,11 +234,13 @@ function Tune(overrides)
 	    
 	    PINECONE_GROWTIME = {base=0.75*day_time, random=0.25*day_time},
 	    
-	    MUSHTREE_CHOPS_TALL = 10,
-	    
 	    EVERGREEN_CHOPS_SMALL = 5,
 	    EVERGREEN_CHOPS_NORMAL = 10,
 	    EVERGREEN_CHOPS_TALL = 15,
+	
+	    MUSHTREE_CHOPS_SMALL = 10,
+	    MUSHTREE_CHOPS_MEDIUM = 10,
+	    MUSHTREE_CHOPS_TALL = 15,
 	    
 	    ROCKS_MINE = 6,
 	    MARBLEPILLAR_MINE = 10,
@@ -388,6 +395,27 @@ function Tune(overrides)
 	    TENTACLE_ATTACK_DIST = 4,
 	    TENTACLE_STOPATTACK_DIST = 6,
 	    TENTACLE_HEALTH = 500,
+
+	    TENTACLE_PILLAR_HEALTH = 500,
+        TENTACLE_PILLAR_ARMS = 12,   -- max spawned at a time
+        TENTACLE_PILLAR_ARMS_TOTAL = 25,  -- max simultaneous arms
+	    TENTACLE_PILLAR_ARM_DAMAGE = 5,
+	    TENTACLE_PILLAR_ARM_ATTACK_PERIOD = 3,
+	    TENTACLE_PILLAR_ARM_ATTACK_DIST = 3,
+	    TENTACLE_PILLAR_ARM_STOPATTACK_DIST = 5,
+	    TENTACLE_PILLAR_ARM_HEALTH = 20,
+	    TENTACLE_PILLAR_ARM_EMERGE_TIME = 200,
+	    
+	    EYEPLANT_DAMAGE = 20,
+	    EYEPLANT_HEALTH = 30,
+	    EYEPLANT_ATTACK_PERIOD = 1,
+	    EYEPLANT_ATTACK_DIST = 2.5,
+	    EYEPLANT_STOPATTACK_DIST = 4,
+	    
+	    LUREPLANT_HIBERNATE_TIME = total_day_time * 2,
+	    LUREPLANT_GROWTHCHANCE = 0.02,
+	    LUREPLANT_SPAWNTIME = total_day_time * 9,
+	    LUREPLANT_SPAWNTIME_VARIANCE = total_day_time * 2,
 	    
 	    TALLBIRD_HEALTH = 400,
 	    TALLBIRD_DAMAGE = 50,
@@ -783,14 +811,32 @@ function Tune(overrides)
 		
 		RABBIT_CARROT_LOYALTY = seg_time*8,
 	    BUNNYMAN_DAMAGE = 40,
+	    BEARDLORD_DAMAGE = 60,
 	    BUNNYMAN_HEALTH = 200,
 	    BUNNYMAN_ATTACK_PERIOD = 2,
+	    BEARDLORD_ATTACK_PERIOD = 1,
 	    BUNNYMAN_RUN_SPEED = 6,
 	    BUNNYMAN_WALK_SPEED = 3,
 		BUNNYMAN_PANIC_THRESH = .333,
+		BEARDLORD_PANIC_THRESH = .25,
 		BUNNYMAN_HEALTH_REGEN_PERIOD = 5,
 		BUNNYMAN_HEALTH_REGEN_AMOUNT = (200/120)*5,
 		BUNNYMAN_SEE_MEAT_DIST = 8,
+
+		CAVE_BANANA_GROW_TIME = 4*total_day_time,
+		ROCKY_SPAWN_DELAY = 4*total_day_time,
+		ROCKY_SPAWN_VAR = 0,
+
+		ROCKY_DAMAGE = 75,	
+		ROCKY_HEALTH = 1500,
+		ROCKY_WALK_SPEED = 2,
+		ROCKY_MAX_SCALE = 1.2,
+		ROCKY_MIN_SCALE = .75,
+		ROCKY_GROW_RATE = (1.2-.75) / (total_day_time*40),
+		ROCKY_LOYALTY = seg_time*6,
+		ROCKY_ABSORB = 0.95,
+		ROCKY_REGEN_AMOUNT = 10,
+		ROCKY_REGEN_PERIOD = 1,
 	}
 end
 

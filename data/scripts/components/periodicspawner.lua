@@ -2,15 +2,8 @@
 local function DoSpawn(inst)
     local spawner = inst.components.periodicspawner
     if spawner then
-        if next(spawner.pendingspawns) ~= nil then
-            for k,v in pairs(spawner.pendingspawns) do
-                if spawner:TrySpawn(v) then
-                    spawner.pendingspawns[k] = nil
-                end
-            end
-        else
-            spawner:TrySpawn()
-        end
+		spawner.target_time = nil    
+		spawner:TrySpawn()
         spawner:Start()
     end
 end
@@ -28,7 +21,6 @@ local PeriodicSpawner = Class(function(self, inst)
     self.onspawn = nil
     self.spawntest = nil
     
-    self.pendingspawns = {}
     self.spawnoffscreen = false
 end)
 
@@ -61,11 +53,6 @@ end
 function PeriodicSpawner:SetSpawnTestFn(fn)
     self.spawntest = fn
 end
-
-function PeriodicSpawner:AddPendingSpawn(prefab)
-    table.insert(self.pendingspawns, prefab)
-end
-
 
 function PeriodicSpawner:TrySpawn(prefab)
     prefab = prefab or self.prefab
@@ -113,16 +100,34 @@ end
 
 function PeriodicSpawner:Start()
     local t = self.basetime + math.random()*self.randtime
-    
+    self.target_time = GetTime() + t
     self.task = self.inst:DoTaskInTime(t, DoSpawn)
 end
 
 
 function PeriodicSpawner:Stop()
+    self.target_time = nil
     if self.task then
         self.task:Cancel()
         self.task = nil
     end
+end
+
+function PeriodicSpawner:LongUpdate(dt)
+	if self.target_time then
+		if self.task then
+			self.task:Cancel()
+			self.task = nil
+		end
+		local time_to_wait = self.target_time - GetTime() - dt
+		
+		if time_to_wait <= 0 then
+			DoSpawn(self.inst)		
+		else
+			self.target_time = GetTime() + time_to_wait
+			self.task = self.inst:DoTaskInTime(time_to_wait, DoSpawn)
+		end
+	end
 end
 
 return PeriodicSpawner

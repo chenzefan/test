@@ -163,7 +163,7 @@ CommonStates.AddWalkStates(states, {
             inst.components.locomotor:WalkForward()
         end),
     }
-}, true)
+}, nil, true)
 
 CommonStates.AddSleepStates(states,
 {

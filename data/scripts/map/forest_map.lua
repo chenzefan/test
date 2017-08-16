@@ -166,7 +166,6 @@ local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choi
     local check_col = {}
     
 	require "map/storygen"	
-	require "prefabs/forest"
 	
   	local current_gen_params = deepcopy(world_gen_choices)
 	
@@ -267,7 +266,7 @@ local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choi
 	  			node.data.type ~= nil and 
 	  			string.find(k, "Room") ~= nil then
 
-	  			WorldSim:SetNodeType(k, 5)
+	  			WorldSim:SetNodeType(k, NODE_TYPE.Room)
 	  		end
 	  	end
   	end
@@ -281,7 +280,7 @@ local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choi
 	
 	local join_islands = string.upper(level_type) ~= "ADVENTURE"
 
-	WorldSim:ForceConnectivity(join_islands)
+	WorldSim:ForceConnectivity(join_islands, prefab == "cave" )
     
 	topology_save.root:SwapWormholesAndRoadsExtra(entities, map_width, map_height)
 	if topology_save.root.error == true then
@@ -296,20 +295,14 @@ local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choi
 			ROAD_PARAMETERS.MIN_EDGE_WIDTH, ROAD_PARAMETERS.MAX_EDGE_WIDTH )
 	
 		WorldSim:DrawRoads(join_islands) 
-	else
-		-- TEMP NASTY HACK
-	  	local nodes = topology_save.root:GetNodes(true)
-	  	for k,node in pairs(nodes) do
-	  		if node.data.type == "SinkholeRoom"  or node.data.type == "BGSinkhole" then
-	  			WorldSim:RunCA(k, 6, CA_SEED_MODE.SEED_CENTROID, 1)
-	  		elseif node.data.type == "CaveRoom" or node.data.type =="BGCave" then
-	  			WorldSim:RunCA(k, 6, CA_SEED_MODE.SEED_WALLS, 1)
-	  		elseif node.data.type == "FungusRoom" or node.data.type =="BGFungus" then
-	  			WorldSim:RunCA(k, 6, CA_SEED_MODE.SEED_RANDOM, 2)
-	  		end
-	  	end
-    end
-    
+	end
+		
+	-- Run Node specific functions here
+	local nodes = topology_save.root:GetNodes(true)
+	for k,node in pairs(nodes) do
+		node:SetTilesViaFunction(entities, map_width, map_height)
+	end
+
     print("Encoding...")
     
     save.map.topology = {}
@@ -371,8 +364,34 @@ local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choi
 
 	topology_save.root:GlobalPrePopulate(entities, map_width, map_height)
     topology_save.root:ConvertGround(SpawnFunctions, entities, map_width, map_height)
+
+
+	-- Caves can be easily disconnected
+ 	if prefab == "cave" then
+	   	local replace_count = WorldSim:DetectDisconnect()
+	    if replace_count >200 then
+	    	print("PANIC: Too many disconnected tiles...",replace_count)
+	    	return nil
+	    else
+	    	print("disconnected tiles...",replace_count)
+	    end
+	end
+
    	topology_save.root:PopulateVoronoi(SpawnFunctions, entities, map_width, map_height, current_gen_params)
 	topology_save.root:GlobalPostPopulate(entities, map_width, map_height)
+
+	for k,ents in pairs(entities) do
+		for i=#ents, 1, -1 do
+			local x = ents[i].x/TILE_SCALE + map_width/2.0 
+			local y = ents[i].z/TILE_SCALE + map_height/2.0 
+
+			local tiletype = WorldSim:GetVisualTileAtPosition(x,y)
+			local ground_OK = tiletype > GROUND.IMPASSABLE and tiletype < GROUND.UNDERGROUND
+			if ground_OK == false then
+				table.remove(entities[k], i)
+			end
+		end
+	end
 
     save.map.tiles, save.map.nav, save.map.adj = WorldSim:GetEncodedMap(join_islands)
 

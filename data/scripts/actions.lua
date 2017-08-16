@@ -68,6 +68,7 @@ ACTIONS=
     SEW = Action(),
     STEAL = Action(),
     USEITEM = Action(1, true),
+    TAKEITEM = Action(),
 }
 
 for k,v in pairs(ACTIONS) do
@@ -197,7 +198,8 @@ ACTIONS.LOOKAT.fn = function(act)
 	    local desc = targ.components.inspectable:GetDescription(act.doer)
 	    if desc then
 	        act.doer.components.locomotor:Stop()
-	        act.doer.components.talker:Say(desc)
+
+	        act.doer.components.talker:Say(desc, 2.5, targ.components.inspectable.noanim)
 	        return true
 	    end
 	end
@@ -638,7 +640,7 @@ ACTIONS.ACTIVATE.strfn = function(act)
 end
 
 ACTIONS.MURDER.fn = function(act)
-    local murdered = act.invobject
+    local murdered = act.invobject or act.target
     if murdered and murdered.components.health then
                 
         murdered.components.inventoryitem:RemoveFromOwner(true)
@@ -721,6 +723,13 @@ ACTIONS.USEITEM.fn = function(act)
         if act.invobject.components.useableitem:CanInteract() then
             act.invobject.components.useableitem:StartUsingItem()
         end
+    end
+end
+
+ACTIONS.TAKEITEM.fn = function(act)
+    if act.target and act.target.components.shelf and act.target.components.shelf.cantakeitem then
+        act.target.components.shelf:TakeItem(act.doer)
+        return true
     end
 end
 

@@ -75,5 +75,5 @@ local function cookedfn()
 	return inst
 end
 
-return  Prefab("common/inventory/froglegs", defaultfn, assets, prefabs),
-		Prefab("common/inventory/froglegs_cooked", cookedfn, assets)
+return Prefab("common/inventory/froglegs", defaultfn, assets, prefabs),
+		Prefab("common/inventory/froglegs_cooked", cookedfn, assets) 

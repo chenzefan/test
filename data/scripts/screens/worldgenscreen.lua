@@ -4,14 +4,16 @@ require "animbutton"
 require "image"
 require "uianim"
 
-local MIN_GEN_TIME = 6
+local MIN_GEN_TIME = 9.5
 
 WorldGenScreen = Class(Screen, function(self, profile, cb, world_gen_options)
 	Screen._ctor(self, "WorldGenScreen")
     self.profile = profile
 	self.log = true
 
-    self.bg = self:AddChild(Image("data/images/bg_red.tex"))
+	self.bg = self:AddChild(Image("data/images/bg_plain.tex"))
+    self.bg:SetTint(BGCOLOURS.RED[1],BGCOLOURS.RED[2],BGCOLOURS.RED[3], 1)
+
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
     self.bg:SetHRegPoint(ANCHOR_MIDDLE)
     self.bg:SetVAnchor(ANCHOR_MIDDLE)
@@ -52,7 +54,7 @@ WorldGenScreen = Class(Screen, function(self, profile, cb, world_gen_options)
     
     
     if world_gen_options.level_type == "cave" then
-		self.bg:SetTexture("data/images/bg_purple.tex")
+	    self.bg:SetTint(BGCOLOURS.PURPLE[1],BGCOLOURS.PURPLE[2],BGCOLOURS.PURPLE[3], 1)
 		self.worldanim:GetAnimState():SetBuild("generating_cave")
 		self.worldanim:GetAnimState():SetBank("generating_cave")
 	    self.worldgentext:SetString(STRINGS.UI.WORLDGEN.CAVETITLE)
@@ -117,7 +119,11 @@ WorldGenScreen = Class(Screen, function(self, profile, cb, world_gen_options)
     self.nounidx = 1
     self:ChangeFlavourText()
     
-	TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/worldGen", "worldgensound")    
+    if world_gen_options.level_type == "cave" then
+    	TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/caveGen", "worldgensound")    
+	else
+		TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/worldGen", "worldgensound")    
+	end
 end)
 
 function WorldGenScreen:OnLoseFocus()

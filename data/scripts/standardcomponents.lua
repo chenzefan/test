@@ -15,6 +15,10 @@ function DefaultBurnFn(inst)
     if inst.components.inventoryitem and not inst.components.inventoryitem:IsHeld() then
         inst:RemoveComponent("inventoryitem")
     end
+    
+    if not inst:HasTag("tree") then
+		inst.persists = false
+	end
 end
 
 function DefaultBurntFn(inst)

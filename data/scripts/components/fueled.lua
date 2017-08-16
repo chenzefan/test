@@ -196,5 +196,9 @@ function Fueled:StopConsuming()
     end
 end
 
+function Fueled:LongUpdate(dt)
+	self:DoUpdate(dt)
+end
 
 return Fueled
+

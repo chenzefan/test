@@ -190,4 +190,4 @@ local function makesnurtle()
 end
 
 return Prefab("cave/slurtle", makeslurtle, assets, prefabs),
-Prefab("cave/snurtle", makesnurtle, assets, prefabs)
+Prefab("cave/snurtle", makesnurtle, assets, prefabs) 

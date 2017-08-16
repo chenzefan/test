@@ -75,6 +75,5 @@ end
 
 
 
-return Prefab( "common/inventory/umbrella", fn, assets)--,
-	   --Prefab( "common/inventory/goldenpitchfork", golden, assets)
+return Prefab( "common/inventory/umbrella", fn, assets) 
 

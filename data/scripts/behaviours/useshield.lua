@@ -51,7 +51,8 @@ function UseShield:Visit()
 		if self:ShouldShield() or self.inst.sg:HasStateTag("shield") then
 			self.damagetaken = 0
 			self.projectileincoming = false
-		 	self.inst.sg:GoToState("shield")
+		 	self.inst:PushEvent("entershield")
+		 	--self.inst.sg:GoToState("shield")
 		 	self.status = RUNNING
 		else
 			self.status = FAILED
@@ -62,7 +63,8 @@ function UseShield:Visit()
 		if not self:TimeToEmerge() or self.inst.components.health.takingfiredamage then 
 			self.status = RUNNING
 		else
-			self.inst.sg:GoToState("shield_end")
+			self.inst:PushEvent("exitshield")
+			--self.inst.sg:GoToState("shield_end")
 			self.status = SUCCESS
 		end
 	end

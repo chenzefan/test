@@ -100,4 +100,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/objects/mound", fn, assets, prefabs )
+return Prefab( "common/objects/mound", fn, assets, prefabs ) 

@@ -150,4 +150,4 @@ local function fn(Sim)
 end
 
 return Prefab( "forest/common/butterfly", fn, assets, prefabs),
-       MakePlacer("common/butterfly_placer", "flowers", "flowers", "f1" )
+       MakePlacer("common/butterfly_placer", "flowers", "flowers", "f1" ) 

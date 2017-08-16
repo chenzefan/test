@@ -71,9 +71,27 @@ return {
 	},
 	DESCRIBE =
 	{
+		CAVE_BANANA = "It's mushy.",
+		CAVE_BANANA_COOKED = "Yum!",
+		CAVE_BANANA_TREE = "It's dubiously photosynthetical.",
+		ROCKY = "It has terrifying claws.",
+		
+		COMPASS =
+		{
+			GENERIC="I can't get a reading",
+			N = "North",
+			S = "South",
+			E = "East",
+			W = "West",
+			NE = "Northeast",
+			SE = "Southeast",
+			NW = "Northwest",
+			SW = "Southwest",
+		},
 		HOUNDSTOOTH="It's sharp!",
 		ARMORSNURTLESHELL="It sticks to my back.",
 		BAT="Ack! That's terrifying!",
+		BATBAT = "I wonder if I could fly with two of these.",
 		BATWING="I hate these things, even when they're dead.",
 		BATWING_COOKED="At least it's not coming back.",
 		BEDROLL_FURRY="It's so warm and comfy.",
@@ -85,7 +103,9 @@ return {
 		LANTERN="A more civilized light.",
 		LIGHTBULB="It's strangely tasty looking.",
 		MANRABBIT_TAIL="I just like holding it.",
-		MUSHTREE_TALL="That mushroom got too big for its own good.",
+		MUSHTREE_TALL  ="That mushroom got too big for its own good.",
+		MUSHTREE_MEDIUM="These used to grow in my bathroom.",
+		MUSHTREE_SMALL ="A magic mushroom?",
 		RABBITHOUSE="That's not a real carrot.",
 		SLURTLE="Ew. Just ew.",
 		SLURTLE_SHELLPIECES="A puzzle with no solution.",
@@ -100,6 +120,10 @@ return {
 		STALAGMITE_FULL="Looks like a rock to me.",
 		STALAGMITE_LOW="Looks like a rock to me.",
 		STALAGMITE_MED="Looks like a rock to me.",
+		STALAGMITE_TALL="Rocks, rocks, rocks, rocks...",
+		STALAGMITE_TALL_FULL="Rocks, rocks, rocks, rocks...",
+		STALAGMITE_TALL_LOW="Rocks, rocks, rocks, rocks...",
+		STALAGMITE_TALL_MED="Rocks, rocks, rocks, rocks...",
 		TURF_FUNGUS="Yet another ground type.",
 		TURF_MUD="Yet another ground type.",
 		TURF_SINKHOLE="Yet another ground type.",
@@ -135,6 +159,7 @@ return {
 		BACONEGGS = "I cooked it myself!",
 		BANDAGE = "Seems sterile enough.",
 		BASALT = "That's too strong to break through!",
+		BATBAT = "I bet I could fly if I held two of these.",
 		BEARDHAIR = "I made them with my face.",
 		BEDROLL_STRAW = "It smells like wet.",
 		BEE =
@@ -219,6 +244,7 @@ return {
 		CARROT_COOKED = "Mushy.",
 		CARROT_PLANTED = "The earth is making plantbabies.",
 		CARROT_SEEDS = "It's a seed.",
+		CAVE_FERN = "It's a fern.",
 		CHARCOAL = "It's small, dark and smells like burnt wood.",
 		CHESTER = "Otto von Chesterfield, Esq.",
 		CHESTER_EYEBONE =
@@ -301,6 +327,7 @@ return {
 			CHOPPED = "Take that, nature!",
 			GENERIC = "This sad tree has no cones.",
 		},
+		EYEPLANT = "I think I'm being watched.",
 		FARMPLOT =
 		{
 			GENERIC = "I should try planting some crops",
@@ -337,6 +364,7 @@ return {
 		FLOWER = "It's pretty but it smells like a common labourer.",
 		FLOWERHAT = "It smells like prettiness.",
 		FLOWER_EVIL = "Augh! It's so evil!",
+		FOLIAGE = "Some leafy greens.",
 		FOOTBALLHAT = "I don't like sports.",
 		FROG =
 		{
@@ -425,6 +453,8 @@ return {
 			BURNING = "That's some hot wood!",
 			GENERIC = "It's big, it's heavy, and it's wood.",
 		},
+		LUREPLANT = "It's so alluring.",
+		LUREPLANTBULB = "Now I can start my very own meat farm.",
 		MALE_PUPPET = "He's trapped!",
 		MANDRAKE =
 		{
@@ -522,6 +552,8 @@ return {
 		    PLANTED = "It'll be a tree soon!",
 		},
 		PITCHFORK = "Maxwell might be looking for this",
+		PLANTMEAT = "That doesn't look very appealing.",
+		PLANTMEAT_COOKED = "At least it's warm now.",
 		PLANT_NORMAL =
 		{
 			GENERIC = "Leafy!",
@@ -672,6 +704,9 @@ return {
 		TENTACLE = "That looks dangerous.",
 		TENTACLESPIKE = "It's pointy and slimy.",
 		TENTACLESPOTS = "I think these were its genitalia.",
+		TENTACLE_PILLAR = "A slimy pole.",
+		TENTACLE_PILLAR_ARM = "Little slippery arms.",
+		TENTACLE_GARDEN = "Yet another slimy pole.",
 		TOPHAT = "What a nice hat.",
 		TORCH = "Something to hold back the night.",
 		TRAP = "I wove it real tight.",

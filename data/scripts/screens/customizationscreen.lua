@@ -53,7 +53,9 @@ CustomizationScreen = Class(Screen, function(self, profile, cb, defaults)
 		}
 	end
 	
-    self.bg = self:AddChild(Image("data/images/bg_red.tex"))
+    self.bg = self:AddChild(Image("data/images/bg_plain.tex"))
+    self.bg:SetTint(BGCOLOURS.RED[1],BGCOLOURS.RED[2],BGCOLOURS.RED[3], 1)
+
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
     self.bg:SetHRegPoint(ANCHOR_MIDDLE)
     self.bg:SetVAnchor(ANCHOR_MIDDLE)

@@ -108,8 +108,6 @@ local function GetNoLeaderHomePos(inst)
     return GetHomePos(inst)
 end
 
-
-
 local BunnymanBrain = Class(Brain, function(self, inst)
     Brain._ctor(self, inst)
 end)
@@ -118,12 +116,6 @@ function BunnymanBrain:OnStart()
     --print(self.inst, "PigBrain:OnStart")
     local clock = GetClock()
 
-    local day = WhileNode( function() return clock and clock:IsDay() end, "IsDay",
-        PriorityNode{
-            DoAction(self.inst, GoHomeAction, "go home", true ),
-        },1)
-    
-    
     local root = 
         PriorityNode(
         {
@@ -137,7 +129,8 @@ function BunnymanBrain:OnStart()
             FaceEntity(self.inst, GetTraderFn, KeepTraderFn),            
             DoAction(self.inst, FindFoodAction ),
             Follow(self.inst, GetLeader, MIN_FOLLOW_DIST, TARGET_FOLLOW_DIST, MAX_FOLLOW_DIST),
-            day,
+            WhileNode( function() return not self.inst.beardlord and clock and clock:IsDay() end, "IsDay",
+                        DoAction(self.inst, GoHomeAction, "go home", true ), 1),
             Leash(self.inst, GetNoLeaderHomePos, LEASH_MAX_DIST, LEASH_RETURN_DIST),
             Wander(self.inst, GetNoLeaderHomePos, MAX_WANDER_DIST)
 

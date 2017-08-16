@@ -7,22 +7,22 @@ require "uianim"
 CreditsScreen = Class(Screen, function(self)
 	Screen._ctor(self, "CreditsScreen")
     
-    self.bgs = {
-        self:AddChild(Image("data/images/bg_red.tex")),
-        self:AddChild(Image("data/images/bg_purple.tex")),
-        self:AddChild(Image("data/images/bg_yellow.tex")),
-    }
 
-    self.bg_idx = 1
-    for i=1,#self.bgs do
-        self.bg = self.bgs[i]
-        self.bg:SetVRegPoint(ANCHOR_MIDDLE)
-        self.bg:SetHRegPoint(ANCHOR_MIDDLE)
-        self.bg:SetVAnchor(ANCHOR_MIDDLE)
-        self.bg:SetHAnchor(ANCHOR_MIDDLE)
-        self.bg:SetScaleMode(SCALEMODE_FILLSCREEN)
-        self.bg:Hide()
-    end
+    self.bg = self:AddChild(Image("data/images/bg_plain.tex"))
+    self.bg:SetVRegPoint(ANCHOR_MIDDLE)
+    self.bg:SetHRegPoint(ANCHOR_MIDDLE)
+    self.bg:SetVAnchor(ANCHOR_MIDDLE)
+    self.bg:SetHAnchor(ANCHOR_MIDDLE)
+    self.bg:SetScaleMode(SCALEMODE_FILLSCREEN)
+
+    self.bgcolors = 
+    {
+        BGCOLOURS.RED,
+        BGCOLOURS.YELLOW,
+        BGCOLOURS.PURPLE
+    }
+    self.bg:SetTint(self.bgcolors[1][1],self.bgcolors[1][2],self.bgcolors[1][3], 1)
+
 
     self.klei_img = self:AddChild(Image("data/images/klei_new_logo.tex"))
     self.klei_img:SetVAnchor(ANCHOR_MIDDLE)
@@ -176,10 +176,10 @@ function CreditsScreen:OnUpdate(dt)
 end
 
 function CreditsScreen:ChangeFlavourText()
-    TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/creditpage_flip", "flippage")    
-    self.bg:Hide()
-    self.bg = self.bgs[self.positions[self.pageidx].bg]
-    self.bg:Show()
+    TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/creditpage_flip", "flippage")   
+    local bgidx = self.positions[self.pageidx].bg
+
+    self.bg:SetTint(self.bgcolors[bgidx][1],self.bgcolors[bgidx][2],self.bgcolors[bgidx][3], 1)
 
     self.flavourtext:Hide()
     self.thankyoutext:Hide()

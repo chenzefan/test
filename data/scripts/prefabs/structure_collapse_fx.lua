@@ -38,5 +38,5 @@ local function fn_small(Sim)
     return inst
 end
 
-return	Prefab( "fx/collapse_big", fn_big, assets),
-		Prefab( "fx/collapse_small", fn_small, assets)
+return Prefab( "fx/collapse_big", fn_big, assets),
+		Prefab( "fx/collapse_small", fn_small, assets) 

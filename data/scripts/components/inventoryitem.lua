@@ -193,5 +193,14 @@ function InventoryItem:CollectUseActions(doer, target, actions)
     end
 end
 
+function InventoryItem:GetGrandOwner()
+	if self.owner then
+		if self.owner.components.inventoryitem then
+			return self.owner.components.inventoryitem:GetGrandOwner()
+		else
+			return self.owner
+		end
+	end
+end
 
 return InventoryItem

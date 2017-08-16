@@ -43,4 +43,4 @@ local fn = function(inst)
 end
 
 
-return MakePlayerCharacter("wilson", prefabs, assets, fn)
+return MakePlayerCharacter("wilson", prefabs, assets, fn) 

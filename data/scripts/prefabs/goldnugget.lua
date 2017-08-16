@@ -30,6 +30,7 @@ local function fn(Sim)
     inst:AddComponent("edible")
     inst.components.edible.foodtype = "ELEMENTAL"
     inst.components.edible.hungervalue = 2
+    inst:AddComponent("tradable")
     
     inst:AddComponent("inspectable")
     
@@ -40,4 +41,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/inventory/goldnugget", fn, assets)
+return Prefab( "common/inventory/goldnugget", fn, assets) 

@@ -7,19 +7,6 @@ local assets=
     Asset("SOUND", "data/sound/wilson.fsb"),
 }
 
-local function OnLoad(inst, data)
-    if inst.components.machine and inst.components.machine.ison then
-        inst.AnimState:PlayAnimation("idle_on")
-    else
-        inst.AnimState:PlayAnimation("idle_off")
-    end
-end
-
-local function Lerp(a,b,t)
-    t = 1.0-math.cos(t*PI/2)
-    return a + (b - a) * t
-end
-
 local function turnon(inst)
     if not inst.components.fueled:IsEmpty() then
         if not inst.components.machine.ison then
@@ -31,6 +18,8 @@ local function turnon(inst)
 
             if inst.components.equippable:IsEquipped() then
                 inst.components.inventoryitem.owner.AnimState:OverrideSymbol("swap_object", "swap_lantern", "swap_lantern_on")
+                inst.components.inventoryitem.owner.AnimState:Show("LANTERN_OVERLAY") 
+                
             end
             inst.components.machine.ison = true
 
@@ -52,6 +41,7 @@ local function turnoff(inst)
 
     if inst.components.equippable:IsEquipped() then
         inst.components.inventoryitem.owner.AnimState:OverrideSymbol("swap_object", "swap_lantern", "swap_lantern_off")
+        inst.components.inventoryitem.owner.AnimState:Hide("LANTERN_OVERLAY") 
     end
 
     inst.components.machine.ison = false
@@ -61,6 +51,23 @@ local function turnoff(inst)
 
     inst.components.inventoryitem:ChangeImageName("lantern")
 end
+
+local function OnLoad(inst, data)
+    if inst.components.machine and inst.components.machine.ison then
+        inst.AnimState:PlayAnimation("idle_on")
+        turnon(inst)
+    else
+        inst.AnimState:PlayAnimation("idle_off")
+        turnoff(inst)
+    end
+end
+
+local function Lerp(a,b,t)
+    t = 1.0-math.cos(t*PI/2)
+    return a + (b - a) * t
+end
+
+
 
 local function ondropped(inst)
     turnoff(inst)
@@ -78,10 +85,14 @@ end
 local function onequip(inst, owner) 
     owner.AnimState:Show("ARM_carry") 
     owner.AnimState:Hide("ARM_normal")
+    owner.AnimState:OverrideSymbol("lantern_overlay", "swap_lantern", "lantern_overlay")
+	
     if inst.components.fueled:IsEmpty() then
         owner.AnimState:OverrideSymbol("swap_object", "swap_lantern", "swap_lantern_off")
+		owner.AnimState:Hide("LANTERN_OVERLAY") 
     else
         owner.AnimState:OverrideSymbol("swap_object", "swap_lantern", "swap_lantern_on")
+		owner.AnimState:Show("LANTERN_OVERLAY") 
     end
     turnon(inst)
 end
@@ -89,6 +100,8 @@ end
 local function onunequip(inst, owner) 
     owner.AnimState:Hide("ARM_carry") 
     owner.AnimState:Show("ARM_normal")
+    owner.AnimState:ClearOverrideSymbol("lantern_overlay")
+	owner.AnimState:Hide("LANTERN_OVERLAY") 	
 end
 
 local function nofuel(inst)
@@ -108,9 +121,9 @@ end
 
 local function fuelupdate(inst)
     local fuelpercent = inst.components.fueled:GetPercent()
-    inst.Light:SetIntensity(Lerp(0.6, 0.7, fuelpercent))
-    inst.Light:SetRadius(Lerp(2, 5, fuelpercent))
-    inst.Light:SetFalloff(Lerp(0.5, 0.4, fuelpercent))
+    inst.Light:SetIntensity(Lerp(0.4, 0.6, fuelpercent))
+    inst.Light:SetRadius(Lerp(3, 5, fuelpercent))
+    inst.Light:SetFalloff(.9)
 end
 
 local function fn(Sim)
@@ -171,4 +184,4 @@ local function fn(Sim)
 end
 
 
-return Prefab( "common/inventory/lantern", fn, assets)
+return Prefab( "common/inventory/lantern", fn, assets) 

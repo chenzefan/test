@@ -334,5 +334,5 @@ end
 
 return Prefab( "forest/monsters/spiderden", MakeSpiderDenFn(1), assets, prefabs ),
        Prefab( "forest/monsters/spiderden_2", MakeSpiderDenFn(2), assets, prefabs ),
-       Prefab( "forest/monsters/spiderden_3", MakeSpiderDenFn(3), assets, prefabs )
+       Prefab( "forest/monsters/spiderden_3", MakeSpiderDenFn(3), assets, prefabs ) 
 

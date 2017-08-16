@@ -33,7 +33,7 @@ function HoverText:Update()
             str = lmb:GetActionString()
             
             if lmb.target and lmb.invobject == nil and lmb.target ~= lmb.doer then
-				local name = lmb.target.name or (lmb.target.components.named and lb.target.components.named.name)
+				local name = lmb.target:GetDisplayName() or (lmb.target.components.named and lb.target.components.named.name)
                 
                 
                 if name then

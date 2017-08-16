@@ -135,12 +135,26 @@ function SaveIndex:GetModeData(slot, mode)
 	return {}
 end
 
-
 function SaveIndex:GetSaveData(slot, mode, cb)
 	self.current_slot = slot
 	
 	TheSim:GetPersistentString(self:GetModeData(slot, mode).file, function(str)
 		local success, savedata = RunInSandbox(str)
+		
+		--[[
+		if not success then
+			local file = io.open("bin/badfile.lua", "w")
+			if file then
+				str = string.gsub(str, "},", "},\n")
+				file:write(str)
+				
+				file:close()
+			end
+		end--]]
+
+		assert(success, "Corrupt Save file")
+
+
 		cb(savedata)
 	end)
 end
@@ -169,6 +183,32 @@ function SaveIndex:DeleteSlot(slot, cb)
 
 	EraseFiles(onerased, files)
 end
+
+
+function SaveIndex:ResetCave(cavenum, cb)
+	
+	local slot = self.current_slot
+
+	if slot and cavenum and self.data.slots[slot] and self.data.slots[slot].modes.cave then
+		
+		local del_files = {}
+		for k,v in pairs(self.data.slots[slot].modes.cave.files) do
+			
+			local cave_num = string.match(v, "cave_(%d+)_")
+			if cave_num and tonumber(cave_num) == cavenum then
+				table.insert(del_files, v)
+			end
+		end
+		
+		EraseFiles(cb, del_files)
+	else
+		if cb then
+			cb()
+		end
+	end
+
+end
+
 
 function SaveIndex:EraseCaves(cb)
 	local function onerased()
@@ -318,6 +358,9 @@ function SaveIndex:OnFailCave(onsavedcb)
         playerdata.health = {health = TUNING.RESURRECT_HEALTH}
 		playerdata.hunger = {hunger = player.components.hunger.max*.66}
 		playerdata.sanity = {current = player.components.sanity.max*.5}
+        playerdata.leader = nil
+        playerdata.sanitymonsterspawner = nil
+		
    	end 
 
 	if self.data.slots[self.current_slot].modes.survival then
@@ -331,6 +374,9 @@ function SaveIndex:LeaveCave(onsavedcb)
     local player = GetPlayer()
     if player then
         playerdata = player:GetSaveRecord().data
+        playerdata.leader = nil
+        playerdata.sanitymonsterspawner = nil
+        
    	end 
 	self.data.slots[self.current_slot].modes.cave.playerdata = nil
 	self.data.slots[self.current_slot].current_mode = "survival"
@@ -350,6 +396,8 @@ function SaveIndex:EnterCave(onsavedcb, saveslot, cavenum, level)
     local player = GetPlayer()
     if player then
         playerdata = player:GetSaveRecord().data
+        playerdata.leader = nil
+        playerdata.sanitymonsterspawner = nil
    	end  
 
 	level = level or 1
@@ -526,7 +574,12 @@ function SaveIndex:GetSlotLevelIndexFromPlaylist(slot)
 end
 
 function SaveIndex:GetSlotCharacter(slot)
-	return self.data.slots[slot or self.current_slot].character
+	local character = self.data.slots[slot or self.current_slot].character
+	-- In case a file was saved with a mod character that has become disabled, fall back to wilson
+	if not table.contains(CHARACTERLIST, character) and not table.contains(MODCHARACTERLIST, character) then
+		character = "wilson"
+	end
+	return character
 end
 
 function SaveIndex:HasWorld(slot, mode)

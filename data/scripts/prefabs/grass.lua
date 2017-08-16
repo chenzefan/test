@@ -115,5 +115,5 @@ local function grass(name, stage)
     return Prefab("forest/objects/"..name, makefn(stage), assets, prefabs)
 end
 
-return  grass("grass", 0),
-		grass("depleted_grass", 1)
+return grass("grass", 0),
+		grass("depleted_grass", 1) 

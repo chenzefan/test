@@ -4,9 +4,9 @@ local assets =
 
     Asset("ANIM", "data/anim/credits.zip"),
     Asset("IMAGE", "data/images/klei_new_logo.tex"),   
-    Asset("IMAGE", "data/images/bg_purple.tex"),
-    Asset("IMAGE", "data/images/bg_yellow.tex"),
     Asset("IMAGE", "data/images/panel_shield.tex"),
+    Asset("IMAGE", "data/images/update_banner.tex"),
+
     Asset("IMAGE", "data/images/biobox.tex"),
 
     Asset("IMAGE", "data/images/nondefault_customization.tex"),
@@ -18,19 +18,11 @@ local assets =
     Asset("IMAGE", "data/images/special_button_over.tex"),
     
     
-    Asset("IMAGE", "data/bigportraits/wendy.tex"),
-    Asset("IMAGE", "data/bigportraits/willow.tex"),
-    Asset("IMAGE", "data/bigportraits/locked.tex"),
-    Asset("IMAGE", "data/bigportraits/wes.tex"),
-    Asset("IMAGE", "data/bigportraits/wilson.tex"),
-    Asset("IMAGE", "data/bigportraits/wolfgang.tex"),
-    Asset("IMAGE", "data/bigportraits/wickerbottom.tex"),
-    Asset("IMAGE", "data/bigportraits/wx78.tex"),
-    Asset("IMAGE", "data/bigportraits/waxwell.tex"),
-
-    Asset("ANIM", "data/anim/portrait_frame_characters.zip"),
-    Asset("ANIM", "data/anim/portrait_frame_silhouettes.zip"),
     Asset("ANIM", "data/anim/portrait_frame.zip"),
+	Asset("IMAGE", "data/images/selectscreen_portraits/frame.tex"),
+	Asset("IMAGE", "data/images/selectscreen_portraits/frame_mouse_over.tex"),
+	Asset("IMAGE", "data/bigportraits/locked.tex"),
+
     Asset("ANIM", "data/anim/scroll_arrow.zip"),
 
     Asset("ANIM", "data/anim/generating_world.zip"),
@@ -97,9 +89,18 @@ local assets =
 
 }
 
+-- Add all the characters by name
+for i,char in ipairs(CHARACTERLIST) do
+	table.insert(assets, Asset("IMAGE", "data/bigportraits/"..char..".tex"))
+	table.insert(assets, Asset("IMAGE", "data/images/selectscreen_portraits/"..char..".tex"))
+	table.insert(assets, Asset("IMAGE", "data/images/selectscreen_portraits/"..char.."_silho.tex"))
+end
+
+
+
 --we don't actually instantiate this prefab. It's used for controlling asset loading
 local function fn(Sim)
     return CreateEntity()
 end
 
-return Prefab( "UI/interface/frontend", fn, assets)
+return Prefab( "UI/interface/frontend", fn, assets) 

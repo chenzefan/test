@@ -85,6 +85,11 @@ function BaseHassler:GetDebugString()
 	end
 end
 
+
+function BaseHassler:LongUpdate(dt)
+	self:OnUpdate(dt)
+end
+
 function BaseHassler:OnUpdate(dt)
     if not self.timetoattack then
         self:CeaseAttacks()

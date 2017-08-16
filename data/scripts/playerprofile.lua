@@ -123,9 +123,13 @@ function PlayerProfile:IsCharacterUnlocked(character)
     
     if self.persistdata.unlocked_characters[character] then
         return true
-    else
-        return false
-    end
+	end
+
+	if not table.contains(CHARACTERLIST, character) then
+		return true -- mod character
+	end
+
+	return false
 end
 
 function PlayerProfile:UnlockCharacter(character)

@@ -53,7 +53,9 @@ local function EatFoodAction(inst)
     end
 
     if target then
-        return BufferedAction(inst,target,ACTIONS.PICKUP)
+        local ba = BufferedAction(inst,target,ACTIONS.PICKUP)
+        ba.distance = 1.5
+        return ba
     end
 end
 

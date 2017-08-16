@@ -103,7 +103,7 @@ local TUNING_OVERRIDES =
 												},
 											["default"]={
 													summer={day=10,dusk=2,night=4},
-													winter={day=6,dusk=4,night=5},
+													winter={day=6,dusk=5,night=5},
 												},
 											["longday"]={
 													summer={day=14,dusk=1,night=1},
@@ -294,7 +294,7 @@ local TUNING_OVERRIDES =
 											ambient.components.ambientsoundmixer:SetOverride(GROUND.FOREST, "SINKHOLE")
 											ambient.components.ambientsoundmixer:SetOverride(GROUND.CHECKER, "SINKHOLE")
 											ambient.components.ambientsoundmixer:SetOverride(GROUND.MARSH, "SINKHOLE")
-											ambient.components.ambientsoundmixer:SetOverride(GROUND.IMPASSABLE, "SINKHOLE")
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.IMPASSABLE, "ABYSS")
 										else
 											-- Clear out the cave sounds
 											ambient.components.ambientsoundmixer:SetOverride(GROUND.CAVE, "ROCKY")

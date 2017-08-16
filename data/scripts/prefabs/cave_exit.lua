@@ -31,6 +31,7 @@ local function OnActivate(inst)
 		local function onsaved()
 		    local params = json.encode{reset_action="loadslot", save_slot = SaveGameIndex:GetCurrentSaveSlot()}
 		    TheSim:SetInstanceParameters(params)
+			SendAccumulatedProfileStats()
 		    TheSim:Reset()
 		end
 
@@ -76,4 +77,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/cave_exit", fn, assets)
+return Prefab( "common/cave_exit", fn, assets) 

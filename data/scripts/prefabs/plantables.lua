@@ -3,7 +3,9 @@ require "prefabutil"
 
 local function test_ground(inst, pt)
 	local tiletype = GetGroundTypeAtPosition(pt)
-	local ground_OK = tiletype ~= GROUND.ROCKY and tiletype ~= GROUND.ROAD and tiletype ~= GROUND.IMPASSABLE
+	local ground_OK = tiletype ~= GROUND.ROCKY and tiletype ~= GROUND.ROAD and tiletype ~= GROUND.IMPASSABLE and
+						tiletype ~= GROUND.UNDERROCK and tiletype ~= GROUND.WOODFLOOR and 
+						tiletype ~= GROUND.CARPET and tiletype ~= GROUND.CHECKER and tiletype < GROUND.UNDERGROUND
 	
 	if ground_OK then
 	    local ents = TheSim:FindEntities(pt.x,pt.y,pt.z, 4) -- or we could include a flag to the search?
@@ -103,4 +105,4 @@ for k,v in pairs(plantables) do
 	table.insert(prefabs, MakePlacer( "common/dug_"..v.name.."_placer", v.bank or v.name, v.build or v.name, v.anim or "idle" ))
 end
 
-return unpack(prefabs)
+return unpack(prefabs) 

@@ -21,4 +21,4 @@ local function fn(Sim)
 return inst
 end
 
-return Prefab( "common/inventory/brokentool", fn, assets)
+return Prefab( "common/inventory/brokentool", fn, assets) 

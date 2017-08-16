@@ -28,24 +28,18 @@ Recipe("turf_woodfloor", {Ingredient("boards", 1)}, RECIPETABS.TOWN, 2)
 Recipe("turf_checkerfloor", {Ingredient("marble", 1)}, RECIPETABS.TOWN, 3)
 Recipe("turf_carpetfloor", {Ingredient("boards", 1), Ingredient("beefalowool", 1)}, RECIPETABS.TOWN, 3)
 
--- TEMP DEBG
-Recipe("turf_cave", {Ingredient("boards", 1), Ingredient("beefalowool", 1)}, RECIPETABS.TOWN, 3)
-Recipe("turf_fungus", {Ingredient("boards", 1), Ingredient("beefalowool", 1)}, RECIPETABS.TOWN, 3)
-Recipe("turf_sinkhole", {Ingredient("boards", 1), Ingredient("beefalowool", 1)}, RECIPETABS.TOWN, 3)
-Recipe("turf_underrock", {Ingredient("boards", 1), Ingredient("beefalowool", 1)}, RECIPETABS.TOWN, 3)
-Recipe("turf_mud", {Ingredient("boards", 1), Ingredient("beefalowool", 1)}, RECIPETABS.TOWN, 3)
-
 --FARM
 Recipe("slow_farmplot", {Ingredient("cutgrass", 8),Ingredient("poop", 4),Ingredient("log", 4)}, RECIPETABS.FARM,  1, "farmplot_placer")
 Recipe("fast_farmplot", {Ingredient("cutgrass", 10),Ingredient("poop", 6),Ingredient("rocks", 4)}, RECIPETABS.FARM,  2, "farmplot_placer")
 Recipe("beebox", {Ingredient("boards", 2),Ingredient("honeycomb", 1),Ingredient("bee", 4)}, RECIPETABS.FARM, 1, "beebox_placer")
 Recipe("meatrack", {Ingredient("twigs", 3),Ingredient("charcoal", 2), Ingredient("rope", 3)}, RECIPETABS.FARM, 1, "meatrack_placer")
 Recipe("cookpot", {Ingredient("cutstone", 3),Ingredient("charcoal", 6), Ingredient("twigs", 6)}, RECIPETABS.FARM,  1, "cookpot_placer")
-Recipe("icebox", {Ingredient("goldnugget", 2), Ingredient("gears", 1), Ingredient("boards", 1)}, RECIPETABS.FARM,  2, "icebox_placer")
+Recipe("icebox", {Ingredient("goldnugget", 2), Ingredient("gears", 1), Ingredient("boards", 1)}, RECIPETABS.FARM,  2, "icebox_placer", 1.5)
 
 --SURVIVAL
 Recipe("trap", {Ingredient("twigs", 2),Ingredient("cutgrass", 6)}, RECIPETABS.SURVIVAL, 0)
 Recipe("birdtrap", {Ingredient("twigs", 3),Ingredient("silk", 4)}, RECIPETABS.SURVIVAL, 1)
+Recipe("compass", {Ingredient("goldnugget", 1), Ingredient("papyrus", 1)}, RECIPETABS.SURVIVAL,  1)
 Recipe("backpack", {Ingredient("cutgrass", 4), Ingredient("twigs", 4)}, RECIPETABS.SURVIVAL, 1)
 Recipe("piggyback", {Ingredient("pigskin", 4), Ingredient("silk", 6), Ingredient("rope", 2)}, RECIPETABS.SURVIVAL, 2)
 Recipe("healingsalve", {Ingredient("ash", 2), Ingredient("rocks", 1), Ingredient("spidergland",1)}, RECIPETABS.SURVIVAL,  1)
@@ -93,6 +87,7 @@ Recipe("nightlight", {Ingredient("goldnugget", 8), Ingredient("nightmarefuel", 2
 Recipe("armor_sanity", {Ingredient("nightmarefuel", 5),Ingredient("papyrus", 3)}, RECIPETABS.MAGIC,  3)
 Recipe("nightsword", {Ingredient("nightmarefuel", 5),Ingredient("livinglog", 1)}, RECIPETABS.MAGIC,  3)
 Recipe("firestaff", {Ingredient("nightmarefuel", 2), Ingredient("spear", 1), Ingredient("redgem", 1)}, RECIPETABS.MAGIC, 3)
+Recipe("batbat", {Ingredient("batwing", 5), Ingredient("livinglog", 2), Ingredient("purplegem", 1)}, RECIPETABS.MAGIC, 3)
 
 --REFINE
 Recipe("rope", {Ingredient("cutgrass", 3)}, RECIPETABS.REFINE,  1)

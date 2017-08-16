@@ -48,7 +48,7 @@ for y = 2, 0, -1 do
 end
 
 local function itemtest(inst, item, slot)
-	return item.components.edible
+	return item.components.edible and item.components.perishable
 end
 
 		
@@ -94,6 +94,6 @@ local function fn(Sim)
     return inst
 end
 
-return	Prefab( "common/icebox", fn, assets),
+return Prefab( "common/icebox", fn, assets),
 		MakePlacer("common/icebox_placer", "icebox", "ice_box", "closed") 
 

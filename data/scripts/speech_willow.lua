@@ -45,9 +45,16 @@ return {
 	},
 	DESCRIBE =
 	{
+
+        CAVE_BANANA = "Bananas!",
+        CAVE_BANANA_COOKED = "Yum!",
+        CAVE_BANANA_TREE = "Looks burnable!",
+        ROCKY = "We don't have much in common.",
+
 		HOUNDSTOOTH="It's sharp. I like it!",
 		ARMORSNURTLESHELL="Less defense! More offense!",
 		BAT="Cute little guy!",
+		BATBAT = "I can hit my enemies with it.",
 		BATWING="Yuck!",
 		BATWING_COOKED="Yuck!",
 		BEDROLL_FURRY="It's too frilly.",
@@ -59,7 +66,9 @@ return {
 		LANTERN="Fire is not meant to be contained like this!",
 		LIGHTBULB="Bright!",
 		MANRABBIT_TAIL="I won that argument.",
-		MUSHTREE_TALL="Gross. It's all mushroomy.",
+		MUSHTREE_TALL="Gross. This tree is sick all over.",
+		MUSHTREE_MEDIUM="Gross. It smells like leprechaun butt",
+		MUSHTREE_SMALL="Gross. It's all mushroomy.",
 		RABBITHOUSE="Ugh. Stupid rabbits.",
 		SLURTLE="I want to blow it up!",
 		SLURTLE_SHELLPIECES="Heh. It broke.",
@@ -74,6 +83,10 @@ return {
 		STALAGMITE_FULL="Rocks are boring.",
 		STALAGMITE_LOW="Rocks are boring.",
 		STALAGMITE_MED="Rocks are boring.",
+		STALAGMITE_TALL="More boring rocks.",
+		STALAGMITE_TALL_FULL="More boring rocks.",
+		STALAGMITE_TALL_LOW="More boring rocks.",
+		STALAGMITE_TALL_MED="More boring rocks.",
 		TURF_FUNGUS="The ground is boring.",
 		TURF_MUD="The ground is boring.",
 		TURF_SINKHOLE="The ground is boring.",
@@ -172,6 +185,7 @@ return {
 		},
 		CANE = "I can walk more easily with this!",
 		CARROT = "Yuck. It's all vegetabley.",
+		CAVE_FERN = "Looks flammable.",
 		CHARCOAL = "Mmmm. Smells like fire.",
 		CHESTER = "He's so fuzzy!",
 		CHESTER_EYEBONE =
@@ -217,6 +231,7 @@ return {
 			CHOPPED = "One less tree in the world.",
 			GENERIC = "Die in a fire!",
 		},
+		EYEPLANT = "They spread like fire.",
 		FARMPLOT =
 		{
 			GENERIC = "Sigh. It's a pile of dirt.",
@@ -241,6 +256,7 @@ return {
 		},
 		FLOWER = "I don't have time to waste on flowers.",
 		FLOWER_EVIL = "Ugh, that smells terrible.",
+		FOLIAGE = "Fuel for the fire.",
 		FROG =
 		{
 			DEAD = "I showed him!",
@@ -306,6 +322,8 @@ return {
 			GENERIC = "All the lightning can come here!",
 		},
 		LITTLE_WALRUS = "He looks tasty.",
+		LUREPLANT = "I bet a quick fire would take care of this.",
+		LUREPLANTBULB = "It's mine now.",
 		MALE_PUPPET = "He looks scared half to death.",
 		MANDRAKE =
 		{
@@ -394,6 +412,8 @@ return {
 		    PLANTED = "You'll be a real tree soon.",
 		},
 		PITCHFORK = "Three times the pointiness.",
+		PLANTMEAT = "Eww, it's all slimy.",
+		PLANTMEAT_COOKED = "Fire makes everything better.",
 		PLANT_NORMAL =
 		{
 			GENERIC = "I'll eat it if I have to.",
@@ -508,7 +528,12 @@ return {
 		TELEPORTATO_POTATO = "Perhaps I could melt it into a more pleasing shape.",
 		TELEPORTATO_RING = "This is too precious to burn!",
 		TENT = "I got all the badges in Girl Scouts.",
+		TENTACLE = "Not at all cuddly.",
 		TENTACLESPOTS = "Ewwwww.",
+		TENTACLESPIKE = "It's pointy and slimy.",
+		TENTACLE_PILLAR = "It's quivering.",
+		TENTACLE_PILLAR_ARM = "Awwww, they want hugs!",
+		TENTACLE_GARDEN = "I hear little digging sounds.",
 		TORCH = "Fire is so pretty.",
 		TRAP = "It's a bit passive aggressive, but it'll work.",
 		TRAP_TEETH = "It would be better with fire.",

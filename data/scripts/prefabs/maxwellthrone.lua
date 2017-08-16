@@ -67,6 +67,7 @@ local function ZoomAndFade(inst)
 					SaveGameIndex:OnFailAdventure( function()
 						local params = json.encode{reset_action="loadslot", save_slot = SaveGameIndex:GetCurrentSaveSlot(), playeranim="wakeup", character="waxwell"}
 						TheSim:SetInstanceParameters(params)
+						SendAccumulatedProfileStats()
 						TheSim:Reset()
 					end)
 				end)
@@ -258,4 +259,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/characters/maxwellthrone", fn, assets, prefabs)
+return Prefab( "common/characters/maxwellthrone", fn, assets, prefabs) 

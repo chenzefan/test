@@ -100,9 +100,11 @@ local function createmachine(level, name, soundprefix, placementsounddelay)
 	return Prefab( "common/objects/"..name, fn, assets)
 end
 
-return createmachine(1, "researchlab", "lvl1", 0.15), createmachine(2, "researchlab2", "lvl2", 0.15), createmachine(3, "researchlab3", "lvl3", 0),
+return createmachine(1, "researchlab", "lvl1", 0.15),
+	createmachine(2, "researchlab2", "lvl2", 0.15),
+	createmachine(3, "researchlab3", "lvl3", 0),
 	MakePlacer( "common/researchlab_placer", "researchlab", "researchlab", "idle" ),
 	MakePlacer( "common/researchlab2_placer", "researchlab2", "researchlab2", "idle" ),
-	MakePlacer( "common/researchlab3_placer", "researchlab3", "researchlab3", "idle" )
+	MakePlacer( "common/researchlab3_placer", "researchlab3", "researchlab3", "idle" ) 
 
 

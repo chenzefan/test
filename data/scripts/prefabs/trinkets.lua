@@ -40,4 +40,4 @@ for k =1,NUM_TRINKETS do
     table.insert(ret, MakeTrinket(k))
 end
 
-return unpack(ret)
+return unpack(ret) 

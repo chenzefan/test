@@ -11,6 +11,12 @@ return
     },
     DESCRIBE=
     {
+
+        CAVE_BANANA = "All of them are genetically identical.",
+        CAVE_BANANA_COOKED = "Somewhat better.",
+        CAVE_BANANA_TREE = "The seeds must have fallen down a sinkhole.",
+        ROCKY = "Their carapace is made of rocks.",
+
         HOUNDSTOOTH="Made of calcium and brimstone.",
         ARMORSNURTLESHELL="It is quite capacious.",
         BAT="A flying mammal.",
@@ -25,7 +31,9 @@ return
         LANTERN="A refuelable light source.",
         LIGHTBULB="Is this animal or vegetable?",
         MANRABBIT_TAIL="They use their tails to balance.",
-        MUSHTREE_TALL="A tree with a fungal parasite.",
+        MUSHTREE_TALL  ="A tree with a fungal parasite.",
+        MUSHTREE_MEDIUM="A red variety of Mycena luxaeterna.",
+        MUSHTREE_SMALL ="My word! A huge Mycena silvaelucens.",
         RABBITHOUSE="Sadly, it is just painted to look like a carrot.",
         SLURTLE="A mineral-devouring gastropod.",
         SLURTLE_SHELLPIECES="Pieces of the broken.",
@@ -40,10 +48,22 @@ return
         STALAGMITE_FULL="A strange rock formation.",
         STALAGMITE_LOW="A strange rock formation.",
         STALAGMITE_MED="A strange rock formation.",
+		STALAGMITE_TALL="Another stalagmite.",
+		STALAGMITE_TALL_FULL="Another stalagmite.",
+		STALAGMITE_TALL_LOW="Another stalagmite.",
+		STALAGMITE_TALL_MED="Another stalagmite.",
         TURF_FUNGUS="The ground. You step on it.",
         TURF_MUD="The ground. You step on it.",
         TURF_SINKHOLE="The ground. You step on it.",
         TURF_UNDERROCK="The ground. You step on it.",
+        BATBAT = "Interesting. This weapon appears to be alive.",
+        LUREPLANT = "An invasive plant species.",
+        LUREPLANTBULB = "Now I can move the plant as I wish.",
+        EYEPLANT = "I believe they are controlled by the larger plant.",
+        PLANTMEAT = "The plant produced a meaty substance.",
+        PLANTMEAT_COOKED = "I feel better about eating this now.",
+        CAVE_FERN = "A lovely ornamental plant.",
+        FOLIAGE = "These may have some nutritional value.",
 
         POWCAKE = "The crowning achievement of the agricultural-industrial complex.",
         CAVE_ENTRANCE = 
@@ -92,6 +112,12 @@ return
         COOKEDMONSTERMEAT = "It's still a little bit poisonous.",
         MAXWELL = "What a rude gentleman.",
         TENT = "Sleeping in there is going to give me a stiff neck.",
+        TENTACLE = "A horror waiting in the mud.",
+        TENTACLESPIKE = "Never grab the pointy end.",
+        TENTACLESPOTS = "Hmmm, reproductive organs.",
+        TENTACLE_PILLAR = "There's more of it below than above!",
+        TENTACLE_PILLAR = "There's no end of them!",
+        TENTACLE_GARDEN = "I wonder how they breed?",
         BEEFALO =
         {
             GENERIC = "It looks almost like a Bos Taurus.",

@@ -48,8 +48,12 @@ function Temperature:IsFreezing()
 	return self.current < 0
 end
 
-function Temperature:OnUpdate(dt)
+function Temperature:OnUpdate(dt, applyhealthdelta)
 
+	if applyhealthdelta == nil then
+		applyhealthdelta = true
+	end
+	
 	if (self.inst.components.health and self.inst.components.health.invincible == true) or self.inst.is_teleporting == true then
 		return
 	end
@@ -130,7 +134,7 @@ function Temperature:OnUpdate(dt)
     self.current = math.max( math.min( self.current + self.rate*dt, self.maxtemp), self.mintemp)
 	self.inst:PushEvent("temperaturedelta", {last = last, new = self.current})
 	
-	if self.current < 0 and self.inst.components.health then
+	if applyhealthdelta and self.current < 0 and self.inst.components.health then
 		self.inst.components.health:DoDelta(-self.hurtrate*dt, true, "cold") 
 	end
 	

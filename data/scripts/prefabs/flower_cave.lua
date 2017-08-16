@@ -156,4 +156,4 @@ end
 
 return Prefab("cave/objects/flower_cave", single, assets, prefabs),
 Prefab("cave/objects/flower_cave_double", double, assets, prefabs),
-Prefab("cave/objects/flower_cave_triple", triple, assets, prefabs)
+Prefab("cave/objects/flower_cave_triple", triple, assets, prefabs) 

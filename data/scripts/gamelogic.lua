@@ -62,13 +62,13 @@ local function LoadAssets(fe)
 		TheSim:LoadPrefabs(fe_prefabs)
 		TheSim:UnloadPrefabs(be_prefabs)
 		TheSim:UnloadPrefabs(recipe_prefabs)
-		print ("done")
+		print ("LOAD FE: done")
 	else
 		print ("LOAD BE")
 		TheSim:UnloadPrefabs(fe_prefabs)
 		TheSim:LoadPrefabs(be_prefabs)
 		TheSim:LoadPrefabs(recipe_prefabs)
-		print ("done")
+		print ("LOAD BE: done")
 	end
 end
 
@@ -92,7 +92,6 @@ function CalculatePlayerRewards(wilson)
         
 	local all_rewards = Progression.GetRewardsForTotalXP(new_xp)
 	for k,v in pairs(all_rewards) do
-		TheSim:LogMetric("GameEvent","UnlockCharacter",v,"1") 
 		wilson.profile:UnlockCharacter(v)
 	end
 	wilson.profile:SetXP(new_xp)
@@ -114,7 +113,6 @@ local function HandleDeathCleanup(wilson, data)
 	    
 	    ProfileStatsSet("xp_gain", reward_xp)
 	    ProfileStatsSet("xp_total", new_xp)
-	    TheSim:LogMetric("GameStat","game_over",game_time,tostring(new_xp)) 
 	    SubmitCompletedLevel() --close off the instance
 
 	    wilson.components.health.invincible = true
@@ -173,11 +171,11 @@ local function OnPlayerDeath(wilson, data)
     
     local game_time = GetClock():ToMetricsString()
     
-    ProfileStatsAdd("killed_by_"..cause)
-    TheSim:LogMetric("GameStat","killed_by",cause,"1") 
+	RecordDeathStats(cause, GetClock():GetPhase(), wilson.components.sanity.current, wilson.components.hunger.current, will_resurrect)
+
+	ProfileStatsAdd("killed_by_"..cause)
     
     ProfileStatsAdd("deaths")
-    TheSim:LogMetric("GameStat","player_death",game_time,"1") 
 
     --local res = TheSim:FindFirstEntityWithTag("resurrector")
     
@@ -186,7 +184,6 @@ local function OnPlayerDeath(wilson, data)
             TheMixer:PopMix("death")
             if wilson.components.resurrectable:DoResurrect() then
 				ProfileStatsAdd("resurrections")
-				TheSim:LogMetric("GameStat","player_resurrect",game_time,"1") 
 			else
 				HandleDeathCleanup(wilson, data)
 			end
@@ -212,7 +209,6 @@ function SetUpPlayerCharacterCallbacks(wilson)
             ProfileStatsSet("time_played", playtime)
             SendTrackingStats()
             SendAccumulatedProfileStats()
-            TheSim:LogMetric("GameStat","player_quit",GetClock():ToMetricsString(),"1") 
             
 			TheSim:SetInstanceParameters()
 			TheSim:Reset()
@@ -222,18 +218,20 @@ function SetUpPlayerCharacterCallbacks(wilson)
         function(it, data) 
             if not wilson.components.health:IsDead() then
                 ProfileStatsAdd("nights_survived_iar")
+				SendAccumulatedProfileStats()
             end
         end, GetWorld()) 
         
-    wilson:ListenForEvent( "daytime", 
+    --[[wilson:ListenForEvent( "daytime", 
         function(it, data) 
             if not wilson.components.health:IsDead() and not wilson.is_teleporting then
-				print("Day has arrived...")
-				SaveGameIndex:SaveCurrent()
+				--print("Day has arrived...")
+				--SaveGameIndex:SaveCurrent()
             end
         end, GetWorld()) 
-    wilson:ListenForEvent("builditem", function(inst, data) TheSim:LogMetric("GameStat","build_item_"..data.item.prefab,GetClock():ToMetricsString(),"1") end)    
-    wilson:ListenForEvent("buildstructure", function(inst, data) TheSim:LogMetric("GameStat","build_structure_"..data.item.prefab,GetClock():ToMetricsString(),"1") end)
+	--]]
+    wilson:ListenForEvent("builditem", function(inst, data) ProfileStatsAdd("build_item_"..data.item.prefab) end)    
+    wilson:ListenForEvent("buildstructure", function(inst, data) ProfileStatsAdd("build_structure_"..data.item.prefab) end)
 end
 
 
@@ -242,7 +240,6 @@ local function StartGame(wilson)
 	TheFrontEnd:GetSound():KillSound("FEMusic") -- just in case...
 	
 	start_game_time = GetTime()
---    TheSim:LogView("InGame", "")
 	SetUpPlayerCharacterCallbacks(wilson)
 end
 
@@ -306,7 +303,7 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
             if GetCeiling() then
 	        	GetCeiling().MapCeiling:SetSize(savedata.map.width, savedata.map.height)
 	        	GetCeiling().MapCeiling:SetFromString(savedata.map.tiles)
-	        	GetCeiling().MapCeiling:Finalize()
+	        	GetCeiling().MapCeiling:Finalize(TheSim:GetSetting("graphics", "static_walls") == "true")
 	        end
 
             ground.Map:SetSize(savedata.map.width, savedata.map.height)
@@ -330,8 +327,9 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
              	print("No Nav Grid")
             end
 			
-
+            ground.hideminimap = savedata.map.hideminimap
 			ground.topology = savedata.map.topology
+			ground.meta = savedata.meta
 			assert(savedata.map.topology.ids, "[MALFORMED SAVE DATA] Map missing topology information. This save file is too old, and is missing neccessary information.")
 			
 			for i=#savedata.map.topology.ids,1, -1 do
@@ -380,7 +378,7 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
 				end
 				wilson.components.area_aware:RegisterArea({idx=i, type=node.type, poly=node.poly, story=story, story_depth=story_depth})
 								
-				if node.type == "Graveyard" then
+				if node.type == "Graveyard" or node.type == "MistyCavern" then
 					if node.area_emitter == nil then
 
 						local mist = SpawnPrefab( "mist" )
@@ -401,6 +399,9 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
 			if savedata.map.persistdata ~= nil then
 				ground:SetPersistData(savedata.map.persistdata)
 			end
+
+			-- A few other odds and ends from the save file which need to be read at runtime:
+			ground.level_id = savedata.map.level_id
 			
 			wilson.components.area_aware:StartCheckingPosition()
         end
@@ -462,6 +463,8 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
         for k,v in pairs(newents) do
             v.entity:LoadPostPass(newents, v.data)
         end
+        GetWorld():LoadPostPass(newents, savedata.map.persistdata)
+        
 
 		--Run scenario scripts
         for guid, ent in pairs(Ents) do
@@ -469,7 +472,29 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
 				ent.components.scenariorunner:Run()
 			end
 		end
+
+		--Record mod information
+		ModManager:SetModRecords(savedata.mods or {})
         
+        if SaveGameIndex:GetCurrentMode() ~= "adventure" and GetWorld().components.age and GetPlayer().components.age then
+			local player_age = GetPlayer().components.age:GetAge()
+			local world_age = GetWorld().components.age:GetAge()
+			
+			if world_age <= 0 then
+				GetWorld().components.age.saved_age = player_age
+			elseif player_age > world_age then
+				local catch_up = player_age - world_age 
+				print ("Catching up world", catch_up)
+				LongUpdate(catch_up, true)
+				
+				--this is a cheesy workaround for coming out of a cave at night, so you don't get immediately eaten
+				if SaveGameIndex:GetCurrentMode() == "survival" and not GetWorld().components.clock:IsDay() then
+					local light = SpawnPrefab("exitcavelight")
+					light.Transform:SetPosition(GetPlayer().Transform:GetWorldPosition())
+				end
+				
+			end
+        end
     
     else
         Print(VERBOSITY.ERROR, "[MALFORMED SAVE DATA] PopulateWorld complete" )
@@ -521,7 +546,7 @@ function DoInitGame(playercharacter, savedata, profile, next_world_playerdata, f
 	--print("DoInitGame",playercharacter, savedata, profile, next_world_playerdata, fast)
 	TheFrontEnd:ClearScreens()	
 	LoadAssets(false)
-
+	
 	assert(savedata.map, "Map missing from savedata on load")
 	assert(savedata.map.prefab, "Map prefab missing from savedata on load")
 	assert(savedata.map.tiles, "Map tiles missing from savedata on load")
@@ -635,7 +660,10 @@ function DoInitGame(playercharacter, savedata, profile, next_world_playerdata, f
 	    	OnStart()
 	    else
 			SetHUDPause(true)
-			if Settings.playeranim == "failadventure" then
+			if Settings.playeranim == "failcave" then
+				GetPlayer().sg:GoToState("wakeup")
+				GetClock():MakeNextDay()
+			elseif Settings.playeranim == "failadventure" then
 				GetPlayer().sg:GoToState("failadventure")
 				GetPlayer().HUD:Show()
 			elseif GetWorld():IsCave() then
@@ -731,7 +759,6 @@ local function DoLoadWorld(saveslot, playerdataoverride)
 end
 
 local function DoGenerateWorld(saveslot, type_override)
-	SubmitCompletedLevel() -- close off any open games on the server
 
 	local function onComplete(savedata )
 		local function onsaved()

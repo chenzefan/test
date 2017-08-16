@@ -356,4 +356,4 @@ local function fn()
 	return inst
 end
 
-return Prefab("characters/maxwellendgame", fn, assets)
+return Prefab("characters/maxwellendgame", fn, assets) 

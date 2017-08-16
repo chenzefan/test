@@ -1,13 +1,10 @@
 	
 local TERRAIN = 
 	{ 
-
-
-
 	-- Lots of Trees, rarely haunted
 		["BurntForest"] = {
 					colour={r=.090,g=.10,b=.010,a=.50},
-					value = GROUND_VALUES[GROUND.FOREST],
+					value = GROUND.FOREST,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 									distributepercent = 0.4,
@@ -21,7 +18,7 @@ local TERRAIN =
 						   },
 		["CrappyDeepForest"] = {
 					colour={r=0,g=.9,b=0,a=.50},
-					value = GROUND_VALUES[GROUND.FOREST],
+					value = GROUND.FOREST,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 					                distributepercent = .8,
@@ -40,7 +37,7 @@ local TERRAIN =
 					},
 		["DeepForest"] = {
 					colour={r=0,g=.9,b=0,a=.50},
-					value = GROUND_VALUES[GROUND.FOREST],
+					value = GROUND.FOREST,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 					                distributepercent = .8,
@@ -59,7 +56,7 @@ local TERRAIN =
 	-- Trees, very few rocks, very few rabbit holes
 		["Forest"] = {
 					colour={r=.5,g=0.6,b=.080,a=.10},
-					value = GROUND_VALUES[GROUND.FOREST],
+					value = GROUND.FOREST,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 					                distributepercent = .3,
@@ -79,7 +76,7 @@ local TERRAIN =
 					},
 		["CrappyForest"] = {
 					colour={r=.5,g=0.6,b=.080,a=.10},
-					value = GROUND_VALUES[GROUND.FOREST],
+					value = GROUND.FOREST,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 					                distributepercent = .3,
@@ -99,7 +96,7 @@ local TERRAIN =
 					},
 		["SpiderForest"] = {
 					colour={r=.80,g=0.34,b=.80,a=.50},
-					value = GROUND_VALUES[GROUND.FOREST],
+					value = GROUND.FOREST,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 					                distributepercent = .2,
@@ -122,7 +119,7 @@ local TERRAIN =
 					},
 		["BurntClearing"] = {
 					colour={r=.8,g=0.5,b=.7,a=.50},
-					value = GROUND_VALUES[GROUND.FOREST],
+					value = GROUND.FOREST,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 					                distributepercent = .1,
@@ -140,7 +137,7 @@ local TERRAIN =
 	-- Trees on the outside, empty in the middle
 		["Clearing"] = {
 					colour={r=.8,g=0.5,b=.6,a=.50},
-					value = GROUND_VALUES[GROUND.FOREST],
+					value = GROUND.FOREST,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 									countstaticlayouts={["MushroomRingLarge"]=function()  
@@ -167,7 +164,7 @@ local TERRAIN =
 	-- Trees on the outside, flowers in the middle
 		["FlowerPatch"] = {
 					colour={r=.5, g=1,b=.8,a=.50},
-					value = GROUND_VALUES[GROUND.GRASS],
+					value = GROUND.GRASS,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 					                distributepercent = .1,
@@ -181,7 +178,7 @@ local TERRAIN =
 					},
 		["EvilFlowerPatch"] = {
 					colour={r=.8,g=1,b=.4,a=.50},
-					value = GROUND_VALUES[GROUND.GRASS],
+					value = GROUND.GRASS,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 					                distributepercent = .1,
@@ -196,7 +193,7 @@ local TERRAIN =
 	-- Very few Trees, very few rocks, rabbit holes, some beefalow, some grass
 		["Plain"] = {
 					colour={r=.8,g=.4,b=.4,a=.50},
-					value = GROUND_VALUES[GROUND.SAVANNA],
+					value = GROUND.SAVANNA,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 					                distributepercent = .2,
@@ -211,7 +208,7 @@ local TERRAIN =
 					},
 	-- Rabbit holes, Beefalow hurds if bigger
 		["BarePlain"] = {					colour={r=.5,g=.5,b=.45,a=.50},
-					value = GROUND_VALUES[GROUND.SAVANNA],
+					value = GROUND.SAVANNA,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 					                distributepercent = .1,
@@ -226,7 +223,7 @@ local TERRAIN =
 	-- No trees, lots of rocks, rare tallbird nest, very rare spiderden
 		["Rocky"] = {
 					colour={r=.55,g=.75,b=.75,a=.50},
-					value = GROUND_VALUES[GROUND.DIRT],
+					value = GROUND.DIRT,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 					                distributepercent = .1,
@@ -243,7 +240,7 @@ local TERRAIN =
 	-- No trees, no rocks, very rare spiderden
 		["Marsh"] = {
 					colour={r=.45,g=.75,b=.45,a=.50},
-					value = GROUND_VALUES[GROUND.MARSH],
+					value = GROUND.MARSH,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 									countstaticlayouts={["MushroomRingMedium"]=function()  
@@ -268,7 +265,7 @@ local TERRAIN =
 					},
 		["SpiderMarsh"] = {
 					colour={r=.45,g=.75,b=.45,a=.50},
-					value = GROUND_VALUES[GROUND.MARSH],
+					value = GROUND.MARSH,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 					                distributepercent = .1,
@@ -294,7 +291,7 @@ local TERRAIN =
 					},
 		["SlightlyMermySwamp"] = {
 					colour={r=0.5,g=.18,b=.35,a=.50},
-					value = GROUND_VALUES[GROUND.MARSH],
+					value = GROUND.MARSH,
 					contents =  {
 
 									distributepercent = .1,
@@ -310,7 +307,7 @@ local TERRAIN =
 					 },
 		["Nothing"] = {
 					colour={r=.45,g=.45,b=.35,a=.50},
-					value = GROUND_VALUES[GROUND.IMPASSABLE],
+					value = GROUND.IMPASSABLE,
 					contents =  {
 					            }
 					},
@@ -319,7 +316,7 @@ local TERRAIN =
 	 --]]
 		["BGBadlands"] = {
 					colour={r=.76,g=.66,b=.1,a=.50},
-					value = GROUND_VALUES[GROUND.DIRT],
+					value = GROUND.DIRT,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 					                distributepercent = .1,
@@ -337,7 +334,7 @@ local TERRAIN =
 					},
 		["BGRocky"] = {
 					colour={r=.66,g=.66,b=.66,a=.50},
-					value = GROUND_VALUES[GROUND.ROCKY],
+					value = GROUND.ROCKY,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 					                distributepercent = .1,
@@ -352,7 +349,7 @@ local TERRAIN =
 					},
 		["BGNoise"] = {
 					colour={r=.66,g=.66,b=.66,a=.50},
-					value = GROUND_VALUES[GROUND.GROUND_NOISE],
+					value = GROUND.GROUND_NOISE,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 					                distributepercent = .15,
@@ -380,7 +377,7 @@ local TERRAIN =
 					},
 		["BGChessRocky"] = {
 					colour={r=.66,g=.66,b=.66,a=.50},
-					value = GROUND_VALUES[GROUND.ROCKY],
+					value = GROUND.ROCKY,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 									countstaticlayouts = {
@@ -400,7 +397,7 @@ local TERRAIN =
 					},
 		["BGDirt"] = {
 					colour={r=1.0,g=.8,b=.66,a=.50},
-					value = GROUND_VALUES[GROUND.DIRT],
+					value = GROUND.DIRT,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 					                distributepercent = .1,
@@ -413,7 +410,7 @@ local TERRAIN =
 					},
 		["BGSavanna"] = {
 					colour={r=.8,g=.8,b=.2,a=.50},
-					value = GROUND_VALUES[GROUND.SAVANNA],
+					value = GROUND.SAVANNA,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 					                distributepercent = .1,
@@ -428,7 +425,7 @@ local TERRAIN =
 					},
 		["BGGrassBurnt"] = {
 					colour={r=.5,g=.8,b=.5,a=.50},
-					value = GROUND_VALUES[GROUND.GRASS],
+					value = GROUND.GRASS,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 					                distributepercent = .275,
@@ -452,7 +449,7 @@ local TERRAIN =
 					},
 		["BGGrass"] = {
 					colour={r=.5,g=.8,b=.5,a=.50},
-					value = GROUND_VALUES[GROUND.GRASS],
+					value = GROUND.GRASS,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 					                distributepercent = .275,
@@ -477,7 +474,7 @@ local TERRAIN =
 					},
 		["BGCrappyForest"] = {
 					colour={r=.1,g=.8,b=.1,a=.50},
-					value = GROUND_VALUES[GROUND.FOREST],
+					value = GROUND.FOREST,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 					                distributepercent = .6,
@@ -500,7 +497,7 @@ local TERRAIN =
 					},
 		["BGForest"] = {
 					colour={r=.1,g=.8,b=.1,a=.50},
-					value = GROUND_VALUES[GROUND.FOREST],
+					value = GROUND.FOREST,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 					                distributepercent = .6,
@@ -524,7 +521,7 @@ local TERRAIN =
 					},
 		["BGDeepForest"] = {
 					colour={r=.1,g=.8,b=.1,a=.50},
-					value = GROUND_VALUES[GROUND.FOREST],
+					value = GROUND.FOREST,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 									countstaticlayouts={["MushroomRingSmall"]=function() 
@@ -557,7 +554,7 @@ local TERRAIN =
 					},
 		["BGMarsh"] = {
 					colour={r=.6,g=.2,b=.8,a=.50},
-					value = GROUND_VALUES[GROUND.MARSH],
+					value = GROUND.MARSH,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 									countstaticlayouts={["MushroomRingMedium"] = function()  
@@ -583,7 +580,7 @@ local TERRAIN =
 					},
 		["BGFungusRoom"] = {
 					colour={r=.36,g=.32,b=.38,a=.50},
-					value = GROUND_VALUES[GROUND.FUNGUS],
+					value = GROUND.FUNGUS,
 					--tags = {"ForceConnected"},
 					contents =  {
 									countstaticlayouts={["MushroomRingMedium"] = function()  
@@ -607,7 +604,7 @@ local TERRAIN =
 					},
 		["BGCaveRoom"] = {
 					colour={r=.25,g=.28,b=.25,a=.50},
-					value = GROUND_VALUES[GROUND.CAVE],
+					value = GROUND.CAVE,
 					--tags = {"ForceConnected"},
 					contents =  {
 					                distributepercent = .175,
@@ -616,7 +613,8 @@ local TERRAIN =
 										spiderhole=0.001,
 										flint=0.05,
 										fireflies=0.001,
-										stalagmite=0.05,
+										stalagmite=0.03,
+										stalagmite_tall=0.03,
 										--stalagmite_gold=0.02,
 					                    blue_mushroom = .005,
 					                    slurtlehole = 0.001,
@@ -625,7 +623,7 @@ local TERRAIN =
 					},
 		["BGSinkholeRoom"] = {
 					colour={r=.15,g=.18,b=.15,a=.50},
-					value = GROUND_VALUES[GROUND.SINKHOLE],
+					value = GROUND.SINKHOLE,
 					--tags = {"ForceConnected"},
 					contents =  {
 					                distributepercent = .175,
@@ -655,7 +653,7 @@ local TERRAIN =
 					},
 		["BGNoisyFungus"] =    {
 					colour={r=0.3,g=0.2,b=0.1,a=0.3},
-					value = GROUND_VALUES[GROUND.FUNGUS_NOISE], 
+					value = GROUND.FUNGUS_NOISE, 
 					--tags = {"ForceConnected"},
 					contents =  {
 					                distributepercent = .1,
@@ -671,12 +669,13 @@ local TERRAIN =
 					},
 		["BGNoisyCave"] =    {
 					colour={r=0.3,g=0.2,b=0.1,a=0.3},
-					value = GROUND_VALUES[GROUND.CAVE_NOISE], 
+					value = GROUND.CAVE_NOISE, 
 					contents =  {
 					                distributepercent = .1,
 					                distributeprefabs=
 					                {
-					                	stalagmite = 1,
+					                	stalagmite = 0.5,
+										stalagmite_tall=0.5,
 					                	--stalagmite_gold = 0.05,
 					                    spiderhole= 0.1,
 					                    slurtlehole = 0.01,
@@ -685,7 +684,12 @@ local TERRAIN =
 					},
 		["BGImpassable"] = {
 					colour={r=.6,g=.35,b=.8,a=.50},
-					value = GROUND_VALUES[GROUND.IMPASSABLE],
+					value = GROUND.IMPASSABLE,
+					contents =  { }
+					},
+		["BGImpassableRock"] = {
+					colour={r=.8,g=.8,b=.8,a=.90},
+					value = GROUND.ABYSS_NOISE,
 					contents =  { }
 					},
 	}

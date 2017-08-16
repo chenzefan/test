@@ -102,4 +102,4 @@ local function fn(Sim)
 end
 
 return Prefab( "common/objects/meatrack", fn, assets ),
-	   MakePlacer("common/meatrack_placer", "meat_rack", "meat_rack", "idle_empty") 
+	   MakePlacer("common/meatrack_placer", "meat_rack", "meat_rack", "idle_empty")  

@@ -28,4 +28,4 @@ local function fn()
 	return inst
 end
 
-return Prefab("forest/objects/horizontal_maxwelllight", fn)
+return Prefab("forest/objects/horizontal_maxwelllight", fn) 

@@ -144,6 +144,19 @@ function Burnable:Ignite()
     end
 end
 
+function Burnable:LongUpdate(dt)
+	
+	--kind of a coarse assumption...
+	if self.burning then
+		if self.task then
+			self.task:Cancel()
+			self.task = nil
+		end
+		DoneBurning(self.inst)
+	end
+	
+end
+
 function Burnable:Extinguish()
     if self.burning then
     

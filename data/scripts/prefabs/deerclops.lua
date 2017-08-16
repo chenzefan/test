@@ -139,7 +139,7 @@ local function fn(Sim)
     
     inst:AddComponent("combat")
     inst.components.combat:SetDefaultDamage(TUNING.DEERCLOPS_DAMAGE)
-    inst.components.combat.playerdamagepercent = .33
+    inst.components.combat.playerdamagepercent = .5
     inst.components.combat:SetRange(8)
     inst.components.combat:SetAreaDamage(6, 0.8)
     inst.components.combat.hiteffectsymbol = "deerclops_body"
@@ -177,4 +177,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/monsters/deerclops", fn, assets, prefabs)
+return Prefab( "common/monsters/deerclops", fn, assets, prefabs) 

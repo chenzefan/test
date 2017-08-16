@@ -6,7 +6,7 @@ local Growable = Class(function(self, inst)
     self.growonly = false
 end)
 
-local waiting_for_growth = {}
+--[[local waiting_for_growth = {}
 local function GrowableUpdate(dt)
 	local tick = TheSim:GetTick()
 	if waiting_for_growth[tick] then
@@ -18,6 +18,11 @@ local function GrowableUpdate(dt)
 		waiting_for_growth[tick] = nil
 	end	
 end
+
+local function GrowableLongUpdate(dt)
+	
+end
+--]]
 
 
 
@@ -32,8 +37,13 @@ function Growable:GetDebugString()
 	return "Not Growing"
 end
 
+local function ongrow(inst)
+	inst.components.growable:DoGrowth()
+end
 
 function Growable:StartGrowing(time)
+	--if true then return end
+
     if #self.stages == 0 then
         print "Growable component: Trying to grow without setting the stages table"
         return
@@ -51,14 +61,12 @@ function Growable:StartGrowing(time)
 		--print ("growing ", time, self.stage, timeToGrow)
 
         if timeToGrow then
-            self.targettime = GetTime() + timeToGrow
-            self.targettick = GetTickForTime(self.targettime)
-            if not waiting_for_growth[self.targettick] then
-				waiting_for_growth[self.targettick] = {[self.inst] = self.inst}
-            else
-				waiting_for_growth[self.targettick][self.inst] = self.inst
+			self.targettime = GetTime() + timeToGrow
+            if self.task then
+				self.task:Cancel()
+				self.task = nil
             end
-            
+            self.task = self.inst:DoTaskInTime(timeToGrow, ongrow)
         end
     end
 end
@@ -95,10 +103,17 @@ function Growable:StopGrowing()
     
 	self.targettime = nil
 	
-	if self.targettick and waiting_for_growth[self.targettick] then
+	--[[if self.targettick and waiting_for_growth[self.targettick] then
 		waiting_for_growth[self.targettick][self.inst] = nil
     end
-	self.targettick = nil
+    self.targettick = nil
+    --]]
+
+	if self.task then
+		self.task:Cancel()
+		self.task = nil
+	end
+	
 end
 
 function Growable:SetStage(stage)
@@ -143,9 +158,15 @@ function Growable:OnRemoveFromEntity()
 end
 
 
+function Growable:LongUpdate(dt)
+	if self.targettime then
+		local time_from_now = (self.targettime - dt) - GetTime()
+		time_from_now = math.max(0, time_from_now)
+		self:StartGrowing(time_from_now)
+	end
+end
 
-
-
-RegisterStaticComponentUpdate("growable", GrowableUpdate)
+--RegisterStaticComponentUpdate("growable", GrowableUpdate)
+--RegisterStaticComponentLongUpdate("growable", GrowableLongUpdate)
 
 return Growable

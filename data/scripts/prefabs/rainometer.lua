@@ -72,6 +72,6 @@ local function fn(Sim)
 	return inst
 end
 return Prefab( "common/objects/rainometer", fn, assets),
-	   MakePlacer("common/rainometer_placer", "rain_meter", "rain_meter", "idle" )
+	   MakePlacer("common/rainometer_placer", "rain_meter", "rain_meter", "idle" ) 
 
 

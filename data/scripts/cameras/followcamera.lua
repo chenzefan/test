@@ -132,7 +132,9 @@ local lerp = function(lower, upper, t)
    return lower*(1-t)+upper*t 
 end
 
-
+function FollowCamera:GetHeading()
+    return self.heading
+end
 function FollowCamera:GetHeadingTarget()
     return self.headingtarget
 end

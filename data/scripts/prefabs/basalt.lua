@@ -42,4 +42,4 @@ local function makebasalt(anims)
 end
    
 return Prefab("forest/objects/basalt", makebasalt({"block1", "block4", "block2"}), assets),
-       Prefab("forest/objects/basalt_pillar", makebasalt({"block3"}), assets)
+       Prefab("forest/objects/basalt_pillar", makebasalt({"block3"}), assets) 

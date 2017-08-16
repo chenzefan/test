@@ -58,4 +58,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/fx/fire", fn, assets)
+return Prefab( "common/fx/fire", fn, assets) 

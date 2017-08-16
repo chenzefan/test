@@ -240,6 +240,7 @@ local ExampleLayout =
 		["WinterStartMedium"] = StaticLayout.Get("map/static_layouts/winter_start_medium"),
 		["WinterStartHard"] = StaticLayout.Get("map/static_layouts/winter_start_hard"),
 		["PreSummerStart"] = StaticLayout.Get("map/static_layouts/presummer_start"),
+		["DarknessStart"] =StaticLayout.Get("map/static_layouts/total_darkness_start"),
 		
 --------------------------------------------------------------------------------
 -- Chess bits
@@ -526,6 +527,21 @@ local ExampleLayout =
 		["MaxPuzzle1"] = StaticLayout.Get("map/static_layouts/MAX_puzzle1"),
 		["MaxPuzzle2"] = StaticLayout.Get("map/static_layouts/MAX_puzzle2"),
 		["MaxPuzzle3"] = StaticLayout.Get("map/static_layouts/MAX_puzzle3"),
+
+
+
+--------------------------------------------------------------------------------
+-- CAVES 
+--------------------------------------------------------------------------------
+
+	["CaveBase"] = StaticLayout.Get("map/static_layouts/cave_base_1"),
+	["MushBase"] = StaticLayout.Get("map/static_layouts/cave_base_2"),
+	["SinkBase"] = StaticLayout.Get("map/static_layouts/cave_base_3"),
+	["RabbitTown"] = StaticLayout.Get("map/static_layouts/rabbittown"),
+	["CaveArtTest"] = StaticLayout.Get("map/static_layouts/cave_art_test_start"),
+
+
+
 	}
 
 	return {Layouts = ExampleLayout}

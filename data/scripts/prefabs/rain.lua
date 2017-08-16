@@ -18,20 +18,22 @@ local function IntColour( r, g, b, a )
 	return { r / 255.0, g / 255.0, b / 255.0, a / 255.0 }
 end
 
-if EnvelopeManager then
-	EnvelopeManager:AddColourEnvelope(
-		colour_envelope_name,
-		{	{ 0,	IntColour( 255, 255, 255, 200 ) },
-			{ 1,	IntColour( 255, 255, 255, 200 ) },
-		} )
+local function InitEnvelope()
+	if EnvelopeManager then
+		EnvelopeManager:AddColourEnvelope(
+			colour_envelope_name,
+			{	{ 0,	IntColour( 255, 255, 255, 200 ) },
+				{ 1,	IntColour( 255, 255, 255, 200 ) },
+			} )
 
-	local max_scale = 10
-	EnvelopeManager:AddVector2Envelope(
-		scale_envelope_name,
-		{
-			{ 0,	{ 0.1, max_scale } },
-			{ 1,	{ 0.1, max_scale } },
-		} )
+		local max_scale = 10
+		EnvelopeManager:AddVector2Envelope(
+			scale_envelope_name,
+			{
+				{ 0,	{ 0.1, max_scale } },
+				{ 1,	{ 0.1, max_scale } },
+			} )
+	end
 end
 
 local max_lifetime = 2
@@ -42,6 +44,8 @@ local function fn(Sim)
 	local trans = inst.entity:AddTransform()
 	local emitter = inst.entity:AddParticleEmitter()
 	inst:AddTag("FX")
+
+	InitEnvelope()
 
 	emitter:SetRenderResources( texture, shader )
 	emitter:SetRotationStatus( true )
@@ -58,8 +62,8 @@ local function fn(Sim)
 	local rng = math.random
 	local tick_time = TheSim:GetTickTime()
 
-	local desired_particles_per_second = 1000
-	local desired_splashes_per_second = 100
+	local desired_particles_per_second = 0--1000
+	local desired_splashes_per_second = 0--100
 
 	inst.particles_per_tick = desired_particles_per_second * tick_time
 	inst.splashes_per_tick = desired_splashes_per_second * tick_time
@@ -126,4 +130,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/fx/rain", fn, assets, prefabs )
+return Prefab( "common/fx/rain", fn, assets, prefabs ) 

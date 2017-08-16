@@ -20,6 +20,7 @@ end)
 function BeeBrain:OnStart()
 
     local clock = GetClock()
+    local seasonmanager = GetSeasonManager()
     
     local root =
         PriorityNode(
@@ -34,6 +35,9 @@ function BeeBrain:OnStart()
                 DoAction(self.inst, function() return beecommon.GoHomeAction(self.inst) end, "go home", true )),
             IfNode(function() return self.inst.components.pollinator:HasCollectedEnough() end, "IsFullOfPollen",
                 DoAction(self.inst, function() return beecommon.GoHomeAction(self.inst) end, "go home", true )),
+            IfNode(function() return seasonmanager and seasonmanager:IsWinter() end, "IsWinter",
+                DoAction(self.inst, function() return beecommon.GoHomeAction(self.inst) end, "go home", true )),
+
             FindFlower(self.inst),
             Wander(self.inst, function() return self.inst.components.knownlocations:GetLocation("home") end, beecommon.MAX_WANDER_DIST)            
         },1)

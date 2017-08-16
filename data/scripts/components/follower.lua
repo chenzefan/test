@@ -1,12 +1,12 @@
 local Follower = Class(function(self, inst)
     self.inst = inst
     self.leader = nil
-    self.targettick = nil
     self.targettime = nil
     self.maxfollowtime = nil
     self.canaccepttarget = true
 end)
 
+--[[
 local willStopFollowing = {}
 local function FollowerUpdate(dt)
 	local tick = TheSim:GetTick()
@@ -22,6 +22,7 @@ local function FollowerUpdate(dt)
 		willStopFollowing[tick] = nil
 	end	
 end
+--]]
 
 function Follower:GetDebugString()
     local str = "Following "..tostring(self.leader)
@@ -39,15 +40,15 @@ function Follower:SetLeader(inst)
         inst.components.leader:AddFollower(self.inst)
     end
     self.leader = inst
-end
-
-function Follower:DestroyLoyalty()
-    if self.targettick and willStopFollowing[self.targettick] then
-	    willStopFollowing[self.targettick][self.inst] = nil
-        self.targettick = nil
-        self.targettime = nil
+    
+    if inst == nil then
+		if self.task then
+			self.task:Cancel()
+			self.task = nil
+		end
     end
 end
+
 
 function Follower:GetLoyaltyPercent()
     if self.targettime and self.maxfollowtime then
@@ -57,22 +58,29 @@ function Follower:GetLoyaltyPercent()
     return 0
 end
 
+
+local function stopfollow(inst)
+	if inst:IsValid() and inst.components.follower then
+		inst:PushEvent("loseloyalty", {leader=inst.components.follower.leader})
+		inst.components.follower:SetLeader(nil)
+	end
+end
+
 function Follower:AddLoyaltyTime(time)
     
     local currentTime = GetTime()
     local timeLeft = self.targettime or 0
     timeLeft = math.max(0, timeLeft - currentTime)
     timeLeft = math.min(self.maxfollowtime or 0, timeLeft + time)
-    self:DestroyLoyalty()
     
     self.targettime = currentTime + timeLeft
-    self.targettick = GetTickForTime(self.targettime)
-    
-    if not willStopFollowing[self.targettick] then
-		willStopFollowing[self.targettick] = {[self.inst] = self.inst}
-    else
-		willStopFollowing[self.targettick][self.inst] = self.inst
-    end
+
+	if self.task then
+		self.task:Cancel()
+		self.task = nil
+	end
+	self.task = self.inst:DoTaskInTime(timeLeft, stopfollow)
+
 end
 
 function Follower:IsNearLeader(dist)
@@ -92,6 +100,23 @@ function Follower:OnLoad(data)
     end
 end
 
-RegisterStaticComponentUpdate("follower", FollowerUpdate)
+function Follower:LongUpdate(dt)
+	if self.leader and self.task and self.targettime then
+		
+		self.task:Cancel()
+		self.task = nil
+		
+		local time = GetTime()
+		local time_left = self.targettime - GetTime() - dt
+		if time_left < 0 then
+			self:SetLeader(nil)	
+		else
+			self.targettime = GetTime() + time_left
+			self.task = self.inst:DoTaskInTime(time_left, stopfollow)
+		end
+	end
+end
+
+--RegisterStaticComponentUpdate("follower", FollowerUpdate)
 
 return Follower

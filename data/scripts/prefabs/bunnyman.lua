@@ -31,7 +31,11 @@ end
 
 local function CalcSanityAura(inst, observer)
 
-	if inst.components.follower and inst.components.follower.leader == observer then
+	if inst.beardlord then
+        return -TUNING.SANITYAURA_MED
+    end
+    
+    if inst.components.follower and inst.components.follower.leader == observer then
 		return TUNING.SANITYAURA_SMALL
 	end
 	
@@ -143,36 +147,61 @@ local function battlecry(combatcmp, target)
 end
 
 
-local function SetNormalRabbit(inst)
-    local brain = require "brains/bunnymanbrain"
-    inst:SetBrain(brain)
-    inst:SetStateGraph("SGbunnyman")
-    
-    inst.components.sleeper:SetResistance(2)
-
-    inst.components.combat:SetDefaultDamage(TUNING.BUNNYMAN_DAMAGE)
-    inst.components.combat:SetAttackPeriod(TUNING.BUNNYMAN_ATTACK_PERIOD)
-    inst.components.combat:SetKeepTargetFunction(NormalKeepTargetFn)
-    inst.components.locomotor.runspeed = TUNING.BUNNYMAN_RUN_SPEED
-    inst.components.locomotor.walkspeed = TUNING.BUNNYMAN_WALK_SPEED
-    
-    inst.components.sleeper.nocturnal = true
-    
-    inst.components.lootdropper:SetLoot({"carrot","carrot"})
-    inst.components.lootdropper:AddRandomLoot("meat",3)
-    inst.components.lootdropper:AddRandomLoot("manrabbit_tail",1)
-    inst.components.lootdropper.numrandomloot = 1
-
-    inst.components.health:SetMaxHealth(TUNING.BUNNYMAN_HEALTH)
-    inst.components.combat:SetRetargetFunction(3, NormalRetargetFn)
-    inst.components.combat:SetTarget(nil)
-    
-    inst.components.trader:Enable()
-    inst.Label:Enable(true)
-    inst.components.talker:StopIgnoringAll()
+local function SetBeardlord(inst)
+	if not inst.beardlord then
+		inst.AnimState:SetBuild("manrabbit_beard_build")    
+		inst.beardlord = true
+        inst.components.combat:SetDefaultDamage(TUNING.BEARDLORD_DAMAGE)
+        inst.components.combat:SetAttackPeriod(TUNING.BEARDLORD_ATTACK_PERIOD)
+        inst.components.combat.panic_thresh = TUNING.BEARDLORD_PANIC_THRESH
+        inst.components.lootdropper:SetLoot({"beardhair", "beardhair", "monstermeat"})
+        inst.components.sleeper:SetSleepTest(function() return false end)
+        inst.components.sleeper:SetWakeTest(function() return true end)
+	end
 end
 
-local function common()
+local function SetNormalRabbit(inst)
+	if inst.beardlord or inst.beardlord == nil then
+		inst.beardlord = false
+		inst.AnimState:SetBuild("manrabbit_build")    
+        inst.components.combat:SetDefaultDamage(TUNING.BUNNYMAN_DAMAGE)
+        inst.components.combat:SetAttackPeriod(TUNING.BUNNYMAN_ATTACK_PERIOD)
+        inst.components.combat.panic_thresh = TUNING.BUNNYMAN_PANIC_THRESH
+
+        inst.components.lootdropper:SetLoot({"carrot","carrot"})
+        inst.components.lootdropper:AddRandomLoot("meat",3)
+        inst.components.lootdropper:AddRandomLoot("manrabbit_tail",1)
+        inst.components.lootdropper.numrandomloot = 1
+        inst.components.sleeper:SetDefaultTests()
+	end
+	
+end
+
+
+local function CheckTransformState(inst)
+	if not inst.components.health:IsDead() then
+		if GetPlayer().components.sanity:GetPercent() > TUNING.BEARDLING_SANITY then
+			SetNormalRabbit(inst)
+		else
+			SetBeardlord(inst)			
+		end
+	end
+end
+
+local function OnWake(inst)
+	CheckTransformState(inst)
+	inst.checktask = inst:DoPeriodicTask(10, CheckTransformState)
+end
+
+local function OnSleep(inst)
+	 if inst.checktask then
+	 	inst.checktask:Cancel()
+	 	inst.checktask = nil
+	 end
+end
+
+
+local function fn()
 	local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
@@ -186,7 +215,7 @@ local function common()
     inst.entity:AddLightWatcher()
 
     MakeCharacterPhysics(inst, 50, .5)
-    
+
     inst:AddComponent("locomotor") -- locomotor must be constructed before the stategraph
     inst.components.locomotor.runspeed = TUNING.PIG_RUN_SPEED --5
     inst.components.locomotor.walkspeed = TUNING.PIG_WALK_SPEED --3
@@ -277,15 +306,46 @@ local function common()
     inst:ListenForEvent("attacked", OnAttacked)    
     inst:ListenForEvent("newcombattarget", OnNewTarget)
     
+    
+	
+	--inst.components.werebeast:SetOnWereFn(SetBeardlord)
+	--inst.components.werebeast:SetOnNormaleFn(SetNormalRabbit)
+
+    CheckTransformState(inst)
+	inst.OnEntityWake = OnWake
+	inst.OnEntitySleep = OnSleep    
+    
+    
+    inst.components.sleeper:SetResistance(2)
+    inst.components.sleeper.nocturnal = true
+
+    inst.components.combat:SetDefaultDamage(TUNING.BUNNYMAN_DAMAGE)
+    inst.components.combat:SetAttackPeriod(TUNING.BUNNYMAN_ATTACK_PERIOD)
+    inst.components.combat:SetKeepTargetFunction(NormalKeepTargetFn)
+    inst.components.combat:SetRetargetFunction(3, NormalRetargetFn)
+
+    inst.components.locomotor.runspeed = TUNING.BUNNYMAN_RUN_SPEED
+    inst.components.locomotor.walkspeed = TUNING.BUNNYMAN_WALK_SPEED
+
+    inst.components.lootdropper:SetLoot({"carrot","carrot"})
+    inst.components.lootdropper:AddRandomLoot("meat",3)
+    inst.components.lootdropper:AddRandomLoot("manrabbit_tail",1)
+    inst.components.lootdropper.numrandomloot = 1
+
+    inst.components.health:SetMaxHealth(TUNING.BUNNYMAN_HEALTH)
+
+    
+    inst.components.trader:Enable()
+    --inst.Label:Enable(true)
+    --inst.components.talker:StopIgnoringAll()
+
+    local brain = require "brains/bunnymanbrain"
+    inst:SetBrain(brain)
+    inst:SetStateGraph("SGbunnyman")
+
+
     return inst
 end
 
-local function normal()
-    local inst = common()
-    inst.AnimState:SetBuild("manrabbit_build")
-    SetNormalRabbit(inst)
-    return inst
-end
 
-
-return Prefab( "common/characters/bunnyman", normal, assets, prefabs)
+return Prefab( "common/characters/bunnyman", fn, assets, prefabs) 

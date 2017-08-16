@@ -137,4 +137,4 @@ end
 for k,v in pairs(GetAllRecipes()) do
 	table.insert(prefabs, Prefab("common/inventory/"..string.lower(k).."_blueprint", MakeAnySpecificBlueprint(k), assets))
 end
-return unpack(prefabs)
+return unpack(prefabs) 

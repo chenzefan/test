@@ -17,6 +17,30 @@ local Pickable = Class(function(self, inst)
     self.pause_time = 0
 end)
 
+function Pickable:LongUpdate(dt)
+
+	if not self.paused and self.targettime then
+	
+		if self.task then 
+			self.task:Cancel()
+			self.task = nil
+		end
+	
+	    local time = GetTime()
+		if self.targettime > time + dt then
+	        --resechedule
+	        local time_to_pickable = self.targettime - time - dt
+			self.task = self.inst:DoTaskInTime(time_to_pickable, function() self:Regen() end, "regen")
+			self.targettime = time + time_to_pickable
+	        
+	        self.task = self.inst:DoTaskInTime(self.regentime, function() self:Regen() end, "regen")
+	    else
+			--become pickable right away
+			self:Regen()
+	    end
+	end
+end
+
 function Pickable:Resume()
 	if self.paused then
 		self.paused = false
@@ -279,7 +303,7 @@ function Pickable:Pick(picker)
         
         self.canbepicked = false
         
-        if self.regentime and (self.cycles_left == nil or self.cycles_left > 0) then
+        if not self.paused and self.regentime and (self.cycles_left == nil or self.cycles_left > 0) then
 			self.task = self.inst:DoTaskInTime(self.regentime, function() self:Regen() end, "regen")
 			self.targettime = GetTime() + self.regentime
 		end

@@ -19,6 +19,11 @@ local Sleeper = Class(function(self, inst)
         if data.target then self:StartTesting() end end)
 end)
 
+function Sleeper:SetDefaultTests()
+    self.sleeptestfn = DefaultSleepTest
+    self.waketestfn = DefaultWakeTest
+end
+
 function Sleeper:StopTesting()
     if self.testtask then
         self.testtask:Cancel()
@@ -86,7 +91,7 @@ end
 
 local function ShouldWakeUp(inst)
     local sleeper = inst.components.sleeper    
-    if sleeper.hibernate then
+    if sleeper and sleeper.hibernate then
         sleeper:StopTesting()
         return
     end

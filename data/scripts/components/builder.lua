@@ -150,7 +150,6 @@ function Builder:UnlockRecipe(recname)
 		self.inst.components.sanity:DoDelta(TUNING.SANITY_MED)
 	end
 	
-	TheSim:LogMetric("GameEvent","unlock_recipe", recname, "1") 
 	self:AddRecipe(recname)
 	self.inst:PushEvent("unlockrecipe", {recipe = recname})
 end

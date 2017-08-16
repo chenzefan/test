@@ -86,6 +86,7 @@ end
 --end
 
 
-return Prefab( "common/inventory/pitchfork", fn, assets)--,
-	   --Prefab( "common/inventory/goldenpitchfork", golden, assets)
+return Prefab( "common/inventory/pitchfork", fn, assets) --,
+	   --Prefab( "common/inventory/goldenpitchfork", golden, assets) 
+	   
 

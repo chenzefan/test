@@ -17,7 +17,7 @@ return {
       margin = 0,
       image = "../../../../tools/tiled/dont_starve/tiles.png",
       imagewidth = 512,
-      imageheight = 128,
+      imageheight = 256,
       properties = {},
       tiles = {}
     }
@@ -184,7 +184,7 @@ return {
           name = "Kevin",
           type = "gravestone",
           shape = "rectangle",
-          x = 256,
+          x = 224,
           y = 224,
           width = 0,
           height = 0,
@@ -224,7 +224,7 @@ return {
           name = "Wade",
           type = "gravestone",
           shape = "rectangle",
-          x = 176,
+          x = 160,
           y = 224,
           width = 0,
           height = 0,
@@ -250,7 +250,7 @@ return {
           name = "Jamie",
           type = "gravestone",
           shape = "rectangle",
-          x = 336,
+          x = 288,
           y = 224,
           width = 0,
           height = 0,
@@ -456,8 +456,8 @@ return {
           name = "",
           type = "flower_evil",
           shape = "rectangle",
-          x = 224,
-          y = 224,
+          x = 230,
+          y = 258,
           width = 0,
           height = 0,
           visible = true,
@@ -550,6 +550,19 @@ return {
           height = 0,
           visible = true,
           properties = {}
+        },
+        {
+          name = "David",
+          type = "gravestone",
+          shape = "rectangle",
+          x = 352,
+          y = 224,
+          width = 0,
+          height = 0,
+          visible = true,
+          properties = {
+            ["data.setepitaph"] = "David R Forsey"
+          }
         }
       }
     }

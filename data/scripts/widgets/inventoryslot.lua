@@ -204,9 +204,9 @@ function ItemTile:OnMouseOver()
 		local adjective = self.item:GetAdjective()
 		local str = nil
 		if adjective then
-			str = adjective .. " " .. self.item.name
+			str = adjective .. " " .. self.item:GetDisplayName()
 		else
-			str = self.item.name
+			str = self.item:GetDisplayName()
 		end
         
 		self.namedisp:SetHAlign(ANCHOR_LEFT)

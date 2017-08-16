@@ -182,4 +182,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/inventory/chester_eyebone", fn, assets)
+return Prefab( "common/inventory/chester_eyebone", fn, assets) 

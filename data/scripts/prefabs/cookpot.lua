@@ -203,4 +203,4 @@ end
 
 
 return Prefab( "common/cookpot", fn, assets, prefabs),
-		MakePlacer( "common/cookpot_placer", "cook_pot", "cook_pot", "idle_empty" )
+		MakePlacer( "common/cookpot_placer", "cook_pot", "cook_pot", "idle_empty" ) 

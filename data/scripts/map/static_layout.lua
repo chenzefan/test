@@ -40,6 +40,7 @@ local function ConvertStaticLayoutToLayout(layoutsrc, additionalProps)
 							GROUND.CAVE, GROUND.FUNGUS, GROUND.SINKHOLE,
 							GROUND.WALL_ROCKY, GROUND.WALL_DIRT, GROUND.WALL_MARSH, 
 							GROUND.WALL_CAVE, GROUND.WALL_FUNGUS, GROUND.WALL_SINKHOLE, 
+							GROUND.UNDERROCK, GROUND.MUD, GROUND.WALL_MUD,
 						}
 	layout.ground = {}
 	

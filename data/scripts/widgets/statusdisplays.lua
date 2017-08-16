@@ -446,12 +446,15 @@ SavingIndicator = Class(Widget, function(self, owner)
     self:SetPosition(100, 0,0)
 end)
 
-function SavingIndicator:OnSave(for_time)
-	self:Show()
-	self.anim:GetAnimState():PlayAnimation("save_pre")
-	self.inst:DoTaskInTime(.5, function() self.text:Show()end)  
-	self.anim:GetAnimState():PushAnimation("save_loop", true)
-	self.inst:DoTaskInTime(for_time, function() self.text:Hide() self.anim:GetAnimState():PlayAnimation("save_post") end)  
+function SavingIndicator:EndSave()
+    self.text:Hide() self.anim:GetAnimState():PlayAnimation("save_post")  
+end
+
+function SavingIndicator:StartSave()
+    self:Show()
+    self.anim:GetAnimState():PlayAnimation("save_pre")
+    self.inst:DoTaskInTime(.5, function() self.text:Show()end)  
+    self.anim:GetAnimState():PushAnimation("save_loop", true)
 end
 
 -------------------------------------------------------------------------------------------------------
@@ -461,59 +464,54 @@ BloodOver =  Class(Widget, function(self, owner)
 	self.owner = owner
 	Widget._ctor(self, "BloodOver")
 	
-	self.anim = self:AddChild(UIAnim())
 	self:SetClickable(false)
-    self.anim:GetAnimState():SetBank("blood_over")
-    self.anim:GetAnimState():SetBuild("blood_over")
-    self.anim:GetAnimState():PlayAnimation("anim", true)
-    self:SetHAnchor(ANCHOR_LEFT)
-    self:SetVAnchor(ANCHOR_TOP)
-    self:SetScaleMode(SCALEMODE_FIXEDPROPORTIONAL)
+
+    self.bg = self:AddChild(Image("data/images/blood_over.tex"))
+    self.bg:SetVRegPoint(ANCHOR_MIDDLE)
+    self.bg:SetHRegPoint(ANCHOR_MIDDLE)
+    self.bg:SetVAnchor(ANCHOR_MIDDLE)
+    self.bg:SetHAnchor(ANCHOR_MIDDLE)
+    self.bg:SetScaleMode(SCALEMODE_FILLSCREEN)
+
+    
     self:Hide()
+    self.base_level = 0
+    self.level = 0
+    self.k = 1
 end)
 
 
 function BloodOver:TurnOn()
-    self.on = true
-    if self.task then
-        KillThread(self.task)
-    end
-    self:Show()
-    self.anim:GetAnimState():SetMultColour(1,1,1,.5)
+    self.base_level = .5
+    self.k = 5
 end
 
 function BloodOver:TurnOff()
-    self:Hide()
-    self.on = false
+    self.base_level = 0    
+    self.k = 5
+end
+
+function BloodOver:Update(dt)
+
+    local delta = self.base_level - self.level
+
+    if math.abs(delta) < .025 then
+        self.level = self.base_level
+    else
+        self.level = self.level + delta*dt*self.k
+    end
+
+    if self.level > 0 then
+        self:Show()
+        self.bg:SetTint(1,1,1,self.level)
+    else
+        self:Hide()
+    end
 end
 
 function BloodOver:Flash()
-    if self.on then
-        return
-    end
-
-    if self.task then
-        KillThread(self.task)
-    end
-
-    self.task = self.inst:StartThread(
-    function()
-
-        self:Show()
-        local total_time = .75
-        local t = total_time
-        local dt = GetTickTime()
-        while true do
-            t = t - dt
-            if t <= 0 then
-                self:Hide()
-                return
-            end
-            self.anim:GetAnimState():SetMultColour(1,1,1,t/total_time)
-            Yield()
-        end
-    end)
-
+    self.level = 1
+    self.k = 1.33
 end
 
 
@@ -590,12 +588,6 @@ IceOver = Class(Widget, function(self, owner)
     self.alpha_min = 1
     self.alpha_min_target = 1
     
-    self.alphavalues = {
-		day		= 1.0,
-		dusk	= 0.6,
-		night	= 0.3,
-	}
-    
     self.inst:ListenForEvent("temperaturedelta", function(inst, data) self:OnIceChange() end, self.owner)
 end)
 
@@ -641,17 +633,6 @@ function IceOver:OnIceChange()
 end
 
 function IceOver:Update(dt)
-	local clock = GetClock()
-	
-	if clock ~= nil then
-		local lerp_factor = clock:LerpFactor()
-		local cur_alpha = self.alphavalues[ clock:GetPrevPhase() ]
-		local next_alpha = self.alphavalues[ clock:GetPhase() ]
-		
-		local new_alpha = ( 1 - lerp_factor ) * cur_alpha + lerp_factor * next_alpha
-		self.img:SetTint( 1, 1, 1, new_alpha )
-	end
-
 	local lspeed = dt*2
 	self.alpha_min = (1 - lspeed) * self.alpha_min + lspeed *self.alpha_min_target
 	self.img:SetAlphaRange(self.alpha_min,1)

@@ -96,4 +96,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/wormhole", fn, assets)
+return Prefab( "common/wormhole", fn, assets) 

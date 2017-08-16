@@ -264,4 +264,4 @@ local function cookedfn()
 end
 
 return Prefab( "common/mandrake", defaultfn, assets, prefabs),
-		Prefab("common/cookedmandrake", cookedfn, assets)
+		Prefab("common/cookedmandrake", cookedfn, assets) 

@@ -18,9 +18,9 @@ local function fn(Sim)
 		local handle =
 			MapLayerManager:CreateRenderLayer(
 				tile_type, --embedded map array value
-				GroundAtlas( layer_name ),
-				GroundImage( layer_name ),
-				props.noise_texture
+				resolvefilepath(GroundAtlas( layer_name )),
+				resolvefilepath(GroundImage( layer_name )),
+				resolvefilepath(props.noise_texture)
 			)
                      
 		map:AddRenderLayer( handle )
@@ -36,12 +36,11 @@ local function fn(Sim)
 		local handle =
 			MapLayerManager:CreateRenderLayer(
 				tile_type, --embedded map array value
-				GroundAtlas( layer_name ),
-				GroundImage( layer_name ),
-				props.noise_texture
+				resolvefilepath(GroundAtlas( layer_name )),
+				resolvefilepath(GroundImage( layer_name )),
+				resolvefilepath(props.noise_texture)
 			)
                      
-        print("Adding wall layer", layer_name, tile_type)
 		map:AddUndergroundRenderLayer( handle )
 	end
 
@@ -49,5 +48,5 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "caves/ceiling", fn, assets)
+return Prefab( "caves/ceiling", fn, assets) 
 

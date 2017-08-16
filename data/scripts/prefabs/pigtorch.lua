@@ -36,7 +36,6 @@ local function fn()
 	local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
-	local light = inst.entity:AddLight()
 	inst.entity:AddSoundEmitter()
 
 	MakeObstaclePhysics(inst, 0.33)
@@ -110,4 +109,4 @@ local function pigtorch_fuel()
 end
 
 return Prefab("forest/objects/pigtorch", fn, assets, prefabs),
-       Prefab("forest/object/pigtorch_fuel", pigtorch_fuel)
+       Prefab("forest/object/pigtorch_fuel", pigtorch_fuel) 

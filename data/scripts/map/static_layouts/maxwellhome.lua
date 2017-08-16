@@ -17,7 +17,7 @@ return {
       margin = 0,
       image = "../../../../tools/tiled/dont_starve/tiles.png",
       imagewidth = 512,
-      imageheight = 128,
+      imageheight = 256,
       properties = {},
       tiles = {}
     }
@@ -4212,6 +4212,19 @@ return {
           height = 0,
           visible = true,
           properties = {}
+        },
+        {
+          name = "",
+          type = "gravestone",
+          shape = "rectangle",
+          x = 1594,
+          y = 4017,
+          width = 0,
+          height = 0,
+          visible = true,
+          properties = {
+            ["data.setepitaph"] = "David R Forsey"
+          }
         }
       }
     }

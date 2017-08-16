@@ -105,8 +105,8 @@ local function chest(style)
 	return fn
 end
 
-return	Prefab( "common/treasurechest", chest("treasure_chest"), assets),
+return Prefab( "common/treasurechest", chest("treasure_chest"), assets),
 		MakePlacer("common/treasurechest_placer", "chest", "treasure_chest", "closed"),
 		Prefab( "common/pandoraschest", chest("pandoras_chest"), assets),
-		Prefab( "common/skullchest", chest("skull_chest"), assets)
+		Prefab( "common/skullchest", chest("skull_chest"), assets) 
 

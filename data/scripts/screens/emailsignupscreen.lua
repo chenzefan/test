@@ -74,7 +74,7 @@ function EmailSignupScreen:Save()
 	local birth_date = byear .. "-" .. bmonth .. "-" .. bday
 	print ("Birthday:", birth_date)
 	
-	local query = "/email/subscribe/" .. email
+	local query = GAME_SERVER.."/email/subscribe/" .. email
 
 	TheSim:QueryServer(
 		query,

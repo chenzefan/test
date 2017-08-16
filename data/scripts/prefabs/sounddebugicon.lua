@@ -26,4 +26,4 @@ local function fn()
     return inst
 end
 
-return Prefab("debug/sounddebugicon", fn, assets)
+return Prefab("debug/sounddebugicon", fn, assets) 

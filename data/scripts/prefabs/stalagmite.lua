@@ -88,4 +88,4 @@ end
 return Prefab("cave/objects/stalagmite_full", fullrock, stalagmite_assets, prefabs),
 Prefab("cave/objects/stalagmite_med", medrock, stalagmite_assets, prefabs),
 Prefab("cave/objects/stalagmite_low", lowrock, stalagmite_assets, prefabs),
-Prefab("cave/objects/stalagmite", fullrock, stalagmite_assets, prefabs)
+Prefab("cave/objects/stalagmite", fullrock, stalagmite_assets, prefabs) 

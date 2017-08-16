@@ -93,6 +93,8 @@ end
 
 function StateGraphWrangler:Update(current_tick)
     
+    Dbg(self,"Updatetick:",current_tick)
+
     local waiters = self.tickwaiters[current_tick]
     if waiters then
         for k,v in pairs(waiters) do
@@ -213,6 +215,8 @@ State = Class(
 )
 
 function State:HandleEvent(sg, eventname, data)
+    Dbg(sg,"events","State:HandleEvent: In state:",sg.currentstate.name," event:",eventname,": handler:",self.events[eventname].event)
+
     if not data or not data.state or data.state == self.name then
         local handler = self.events[eventname]
         if handler ~= nil then
@@ -295,6 +299,7 @@ function StateGraphInstance:PlayRandomAnim(anims, loop)
 end
 
 function StateGraphInstance:PushEvent(event, data)
+    Dbg(self,"events","SGI:PushEvent:",event)
     if data then
         data.state = self.currentstate.name
     else
@@ -335,8 +340,10 @@ function StateGraphInstance:HandleEvents()
     
     if self.inst:IsValid() then
 		for k, event in ipairs(self.bufferedevents) do
+            Dbg(self,"events","HandleEvent:NAME:",event.name," : ",event.data.state)
 			if not self.currentstate:HandleEvent(self, event.name, event.data) then
 				local handler = self.sg.events[event.name]
+                Dbg(self,"events","HandleEvent:",event.name,": handler:",handler)
 				if handler ~= nil then
 					handler.fn(self.inst, event.data)
 				end
@@ -344,6 +351,7 @@ function StateGraphInstance:HandleEvents()
 		end
 	end
 	
+    Dbg(self,"events","=================================EMPTY bufferedevents")
     self.bufferedevents = {}
 end
 
@@ -355,9 +363,17 @@ function StateGraphInstance:GoToState(statename, params)
     local state = self.sg.states[statename]
     assert(state ~= nil, "State not found: " ..tostring(self.sg.name).."."..tostring(statename) )
     
+    Dbg(self,"statechanges","GoToState:",statename," from:",self.currentstate.name)
+
     self.prevstate = self.currentstate
     if self.currentstate ~= nil and self.currentstate.onexit ~= nil then 
         self.currentstate.onexit(self.inst)
+    end
+
+    if self.inst == GetPlayer() and self.currentstate then
+        local dt = GetTime() - self.statestarttime
+        self.currentstate.totaltime = self.currentstate.totaltime and (self.currentstate.totaltime + dt) or dt  -- works even if currentstate.time is nil
+        -- dprint(self.currentstate.name," time in state= ", self.currentstate.totaltime)
     end
 
     self.statemem = {}
@@ -377,7 +393,6 @@ function StateGraphInstance:GoToState(statename, params)
     else
         self.timelineindex = nil
     end
-    
     
     if self.currentstate.onenter ~= nil then
         self.currentstate.onenter(self.inst, params)

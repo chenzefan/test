@@ -231,4 +231,4 @@ end
 
 return Prefab( "common/inventory/tallbirdegg", defaultfn, assets, prefabs),
 		Prefab( "common/inventory/tallbirdegg_cracked", crackedfn, assets),
-		Prefab( "common/inventory/tallbirdegg_cooked", cookedfn, assets)
+		Prefab( "common/inventory/tallbirdegg_cooked", cookedfn, assets) 

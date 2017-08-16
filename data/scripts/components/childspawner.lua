@@ -372,6 +372,12 @@ function ChildSpawner:AddChildrenInside(count)
     end
 end
 
+function ChildSpawner:LongUpdate(dt)
+	if self.spawning then
+		self:OnUpdate(dt)
+	end
+end
+
 
 return ChildSpawner
 

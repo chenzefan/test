@@ -1,4 +1,3 @@
-require("map/map")
 require("map/network")
 require("map/lockandkey")
 require("map/stack")
@@ -50,7 +49,7 @@ Story = Class(function(self, id, tasks, terrain, gen_params)
 	self.id = id
 	self.loop_blanks = 1
 	self.gen_params = gen_params
-	self.impassible_value = GROUND_VALUES[gen_params.impassible_value or GROUND.IMPASSABLE]
+	self.impassible_value = gen_params.impassible_value or GROUND.IMPASSABLE
 
 	self.tasks = {}
 	for k,task in pairs(tasks) do
@@ -409,7 +408,7 @@ function Story:GenerateNodesFromTasks()
 		start_node_data.data.terrain_contents = start_node_data.data.contents		
 	else
 		start_node_data.data = {
-								value = GROUND_VALUES[GROUND.GRASS],								
+								value = GROUND.GRASS,								
 								terrain_contents={
 									countprefabs = {
 										spawnpoint=1,
@@ -486,6 +485,7 @@ function Story:AddBGNodes(random_count)
 												type="background",
 												colour = new_room.colour,
 												value = new_room.value,
+												internal_type = new_room.internal_type,
 												tags = extra_tags,
 												terrain_contents = new_room.contents,
 												terrain_contents_extra = extra_contents,
@@ -511,7 +511,7 @@ function Story:AddBGNodes(random_count)
 end
 
 function Story:SeperateStoryByBlanks(startnode, endnode )	
-	local blank_node = Graph("LOOP_BLANK"..tostring(self.loop_blanks), {parent=self.rootNode, default_bg=GROUND_VALUES[GROUND.IMPASSABLE], colour = {r=0,g=0,b=0,a=1}, background="BGImpassable" })
+	local blank_node = Graph("LOOP_BLANK"..tostring(self.loop_blanks), {parent=self.rootNode, default_bg=GROUND.IMPASSABLE, colour = {r=0,g=0,b=0,a=1}, background="BGImpassable" })
 	WorldSim:AddChild(self.rootNode.id, "LOOP_BLANK"..tostring(self.loop_blanks), GROUND.IMPASSABLE, 0, 0, 0, 1, "blank")
 	local blank_subnode = blank_node:AddNode({
 											id="LOOP_BLANK_SUB "..tostring(self.loop_blanks), 
@@ -648,9 +648,9 @@ function Story:GenerateNodesFromTask(task, crossLinkFactor)
 
 	local task_node = Graph(task.id, {parent=self.rootNode, default_bg=task.room_bg, colour = task.colour, background=task.background_room, set_pieces=task.set_pieces})
 	task_node.substitutes = task.substitutes
-	--print ("Adding Voronoi Child", self.rootNode.id, task.id, task.room_bg, INV_GROUND_VALUES[task.room_bg], task.colour.r, task.colour.g, task.colour.b, task.colour.a )
+	--print ("Adding Voronoi Child", self.rootNode.id, task.id, task.room_bg, task.room_bg, task.colour.r, task.colour.g, task.colour.b, task.colour.a )
 
-	WorldSim:AddChild(self.rootNode.id, task.id, INV_GROUND_VALUES[task.room_bg], task.colour.r, task.colour.g, task.colour.b, task.colour.a)
+	WorldSim:AddChild(self.rootNode.id, task.id, task.room_bg, task.colour.r, task.colour.g, task.colour.b, task.colour.a)
 	
 	local newNode = nil
 	local prevNode = nil
@@ -672,7 +672,10 @@ function Story:GenerateNodesFromTask(task, crossLinkFactor)
 												type= next_room.entrance and "blocker" or next_room.type, 
 												colour = next_room.colour,
 												value = next_room.value,
+												internal_type = next_room.internal_type,
 												tags = extra_tags,
+												custom_tiles = next_room.custom_tiles,
+												custom_objects = next_room.custom_objects,
 												terrain_contents = next_room.contents,
 												terrain_contents_extra = extra_contents,
 												terrain_filter = self.terrain.filter,

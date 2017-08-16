@@ -252,4 +252,4 @@ end
 return Prefab( "monsters/hound", fndefault, assets, prefabs),
 		Prefab( "monsters/firehound", fnfire, assets, prefabs),
 		Prefab( "monsters/icehound", fncold, assets, prefabs),
-		Prefab( "monsters/houndfire", fnfiredrop, assets, prefabs)
+		Prefab( "monsters/houndfire", fnfiredrop, assets, prefabs) 

@@ -136,4 +136,4 @@ local function fn()
     return inst
 end
 
-return Prefab( "cave/objects/spiderhole", fn, assets, prefabs)
+return Prefab( "cave/objects/spiderhole", fn, assets, prefabs) 

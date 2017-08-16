@@ -137,6 +137,11 @@ CHARACTERLIST =
 	'wilson', 'willow', 'wolfgang', 'wendy', 'wx78', 'wickerbottom', 'wes', 'waxwell',
 }
 
+MODCHARACTERLIST = 
+{
+	-- this gets populated by mods
+}
+
 EQUIPSLOTS=
 {
     HANDS = "hands",
@@ -185,6 +190,7 @@ GROUND =
     MUD = 17,
 
     -- Noise
+	ABYSS_NOISE = 124,
 	GROUND_NOISE = 125,
 	CAVE_NOISE = 126,
 	FUNGUS_NOISE = 127,
@@ -197,12 +203,36 @@ GROUND =
 	WALL_CAVE = 154,
 	WALL_FUNGUS = 155,
 	WALL_SINKHOLE = 156,
+	WALL_MUD = 157,
+	WALL_TOP = 158,
 --	STILL_WATER_SHALLOW = 130,
 --	STILL_WATER_DEEP = 131,
 --	MOVING_WATER_SHALLOW = 132,
 --	MOVING_WATER_DEEP = 133,
 --	SALT_WATER_SHALLOW = 134,
 --	SALT_WATER_DEEP = 135,
+}
+
+-- See cell_data.h
+NODE_TYPE =
+{
+	Default = 0, 
+	Blank = 1, 
+	Background = 2, 
+	Random = 3, 
+	Blocker = 4, 
+	Room = 5,
+}
+
+-- See cell_data.h
+NODE_INTERNAL_CONNECTION_TYPE =
+{
+	EdgeCentroid = 0, 
+	EdgeSite = 1, 
+	EdgeEdgeDirect = 2, 
+	EdgeEdgeLeft = 3, 
+	EdgeEdgeRight = 4, 
+	EdgeData = 5,
 }
 
 CA_SEED_MODE =
@@ -310,6 +340,7 @@ LAYOUT =
 	CIRCLE_RANDOM = 2,
 	GRID = 3,
 	RECTANGLE_EDGE = 4,
+	CIRCLE_FILLED = 5,
 }
 
 LAYOUT_POSITION =
@@ -330,3 +361,9 @@ PLACE_MASK =
 	 IGNORE_IMPASSABLE_BARREN_RESERVED = 7,
 }
 
+BGCOLOURS =
+{
+	RED = {255/255, 89/255, 46/255},
+	PURPLE = {202/255, 48/255, 209/255},
+	YELLOW = {255/255, 196/255, 45/255},
+}

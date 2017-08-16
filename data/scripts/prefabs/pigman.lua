@@ -507,4 +507,4 @@ local function guard()
 end
 
 return Prefab( "common/characters/pigman", normal, assets, prefabs),
-       Prefab("common/character/pigguard", guard, assets, prefabs)
+       Prefab("common/character/pigguard", guard, assets, prefabs) 

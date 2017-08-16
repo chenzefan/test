@@ -115,4 +115,4 @@ local function fn()
 	return inst
 end
 
-return Prefab( "common/objects/teleportato_checkmate", fn, assets)
+return Prefab( "common/objects/teleportato_checkmate", fn, assets) 

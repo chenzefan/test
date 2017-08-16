@@ -410,4 +410,4 @@ local function create_teen_smallbird()
 end
 
 return Prefab( "common/smallbird", create_smallbird, assets, prefabs),
-	   Prefab( "common/teenbird", create_teen_smallbird, teen_assets)
+	   Prefab( "common/teenbird", create_teen_smallbird, teen_assets) 

@@ -19,21 +19,26 @@ local events=
     CommonHandlers.OnAttack(),
     CommonHandlers.OnAttacked(true),
     CommonHandlers.OnDeath(),
-    EventHandler("transformnormal", function(inst) if inst.components.health:GetPercent() > 0 then inst.sg:GoToState("transformNormal") end end),
     
 }
+
+local function beardit(inst, anim)
+    return inst.beardlord and "beard_"..anim or anim
+end
 
 local states=
 {
     State{
         name= "funnyidle",
-        tags = {"idle"},
+        tags = {"busy"},
         
         onenter = function(inst)
 			inst.Physics:Stop()
             
-            
-			if inst.components.health:GetPercent() < TUNING.BUNNYMAN_PANIC_THRESH then
+            if inst.beardlord then
+                inst.AnimState:PlayAnimation("beard_taunt")
+                inst.SoundEmitter:PlaySound("dontstarve/creatures/bunnyman/wererabbit_taunt")
+			elseif inst.components.health:GetPercent() < TUNING.BUNNYMAN_PANIC_THRESH then
 				inst.AnimState:PlayAnimation("idle_angry")
 				inst.SoundEmitter:PlaySound("dontstarve/creatures/bunnyman/angry_idle")
             elseif inst.components.follower.leader and inst.components.follower:GetLoyaltyPercent() < 0.05 then
@@ -67,6 +72,8 @@ local states=
             inst.components.highlight:SetAddColour(Vector3(82/255, 115/255, 124/255))
         end,
     },
+
+    
     
     State{
         name = "death",
@@ -104,10 +111,15 @@ local states=
         tags = {"attack", "busy"},
         
         onenter = function(inst)
-			inst.SoundEmitter:PlaySound("dontstarve/creatures/bunnyman/attack")        
+			if inst.beardlord then
+                inst.SoundEmitter:PlaySound("dontstarve/creatures/bunnyman/wererabbit_attack")
+            else
+                inst.SoundEmitter:PlaySound("dontstarve/creatures/bunnyman/attack")       
+            end
+
             inst.components.combat:StartAttack()
             inst.Physics:Stop()
-            inst.AnimState:PlayAnimation("atk")
+            inst.AnimState:PlayAnimation(beardit(inst,"atk"))
         end,
         
         timeline=
@@ -170,7 +182,14 @@ CommonStates.AddWalkStates(states,
 		TimeEvent(12*FRAMES, PlayFootstep ),
 		TimeEvent(12*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/bunnyman/hop") end),
 	},
-})
+},
+{
+    startwalk = function(inst) return beardit(inst,"walk_pre") end,
+    walk = function(inst) return beardit(inst,"walk_loop") end,
+    stopwalk = function(inst) return beardit(inst,"walk_pst") end,
+}, function(inst) return not inst.beardlord end
+)
+
 CommonStates.AddRunStates(states,
 {
 	runtimeline = {
@@ -179,7 +198,13 @@ CommonStates.AddRunStates(states,
 		TimeEvent(10*FRAMES, PlayFootstep ),
 		TimeEvent(10*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/bunnyman/hop") end),
 	},
-})
+},
+{
+    startrun = function(inst) return beardit(inst,"run_pre") end,
+    run = function(inst) return beardit(inst,"run_loop") end,
+    stoprun = function(inst) return beardit(inst,"run_pst") end,
+}, function(inst) return not inst.beardlord end
+)
 
 CommonStates.AddSleepStates(states,
 {
@@ -189,7 +214,12 @@ CommonStates.AddSleepStates(states,
 	},
 })
 
-CommonStates.AddIdle(states,"funnyidle")
+CommonStates.AddIdle(states,"funnyidle", function(inst) return beardit(inst,"idle_loop") end, 
+{
+    TimeEvent(0*FRAMES, function(inst) if inst.beardlord then inst.SoundEmitter:PlaySound("dontstarve/creatures/bunnyman/wererabbit_breathin") end end ),
+    TimeEvent(15*FRAMES, function(inst) if inst.beardlord then inst.SoundEmitter:PlaySound("dontstarve/creatures/bunnyman/wererabbit_idle") end end ),
+})
+
 CommonStates.AddSimpleState(states,"refuse", "pig_reject", {"busy"})
 CommonStates.AddFrozenStates(states)
 

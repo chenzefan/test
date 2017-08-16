@@ -77,5 +77,5 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/inventory/ash", fn, assets)
+return Prefab( "common/inventory/ash", fn, assets) 
 

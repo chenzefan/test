@@ -16,6 +16,24 @@ Node = Class(function(self, id, data)
     self.visited = false
     
     self.colour = data.colour or {r=255,g=255,b=0,a=55}
+
+
+    self.ents = nil
+    self.populateFn = nil
+    self.tileFn = nil
+    self.populated = false
+    self.children_populated = false
+
+
+    if self.data.custom_tiles ~= nil then
+ 		self:SetTilesFunction(self.data.custom_tiles)    	
+    	self.data.custom_tiles = nil
+    end
+    if self.data.custom_objects ~= nil then
+ 		self:SetPopulateFunction(self.data.custom_objects)    	
+    	self.data.custom_objects = nil
+    end
+
 end)
 
 function Node:SaveEncode(map)
@@ -113,7 +131,7 @@ end
 
 function Node:ConvertGround(spawnFn, entitiesOut, width, height, world_gen_choices)
 
-	--if self.data.value == GROUND_VALUES[GROUND.IMPASSABLE] then
+	--if self.data.value == GROUND.IMPASSABLE then
 		--return
 	--end
 	
@@ -146,16 +164,56 @@ function Node:ConvertGround(spawnFn, entitiesOut, width, height, world_gen_choic
 
 end
 
+function Node:SetPopulateFunction(custom_objects_data)
+	self.custom_objects_data = custom_objects_data
+	self.populated = false
+	-- Set tag to run here
+end
+
+function Node:SetTilesFunction(custom_tiles_data)
+	self.custom_tiles_data = custom_tiles_data
+	-- Set tag to run here
+end
+
+function Node:PopulateViaFunction()
+	if self.custom_objects_data == nil then		
+		return
+	end
+
+	--print(self.id.." SetTilesViaFunction() Populate function running...")
+	data.node = self
+	self.custom_objects_data.GeneratorFunction(self.id, self.custom_objects_data.data)
+
+	self.populated = true
+end
+
+function Node:SetTilesViaFunction(entities, width, height)
+	if self.custom_tiles_data == nil then		
+		return
+	end
+
+	self.custom_tiles_data.data.node = self
+	self.custom_tiles_data.data.width = width
+	self.custom_tiles_data.data.height = height
+	self.custom_tiles_data.GeneratorFunction(self.id, entities, self.custom_tiles_data.data)
+	self.populated = true
+end
+
 function Node:PopulateVoronoi(spawnFn, entitiesOut, width, height, world_gen_choices)
 
-	if self.data.value == GROUND_VALUES[GROUND.IMPASSABLE] then
+	if self.populated == true then
+		--table.insert(entitiesOut[prefab], save_data)
+		return
+	end
+
+	if self.data.value == GROUND.IMPASSABLE then
 		return
 	end
 	
 	if not self.data.terrain_contents or (self.data.terrain_contents.countprefabs == nil and self.data.terrain_contents.distributeprefabs == nil) then
 		return
 	end
-	
+
 	local prefab_list = {}
 	local generate_these = {}
 	local pos_needed = 0
@@ -249,6 +307,12 @@ end
 
 function Node:PopulateChildren(spawnFn, entitiesOut, width, height, backgroundRoom, perTerrain, world_gen_choices)
 	-- Fill in any background sites that we have generated
+
+	if self.children_populated == true then
+		return
+	end
+	self.children_populated = true
+
 	local prefab_list = {}
 	local children = WorldSim:GetChildrenForSite(self.id)
 

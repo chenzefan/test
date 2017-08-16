@@ -420,6 +420,9 @@ function SeasonManager:UpdateDynamicPrecip(dt)
 	--do delta atmo_moisture and toggle precip on or off 
 	if self.precip then
 		self.atmo_moisture = self.atmo_moisture - self.precip_rate*dt*RATE_SCALE
+		if self.atmo_moisture < 0 then
+			self.atmo_moisture = 0
+		end
 
 		if self.atmo_moisture < self.moisture_floor then
 			self:StopPrecip()
@@ -433,6 +436,7 @@ function SeasonManager:UpdateDynamicPrecip(dt)
 		self.precip_rate = 0
 		
 		if self.atmo_moisture >= self.moisture_limit then
+			self.atmo_moisture = self.moisture_limit
 			self:StartPrecip()
 		end
 	end
@@ -518,6 +522,7 @@ end
 
 function SeasonManager:OnUpdate( dt )
 	
+	--print ("time to pass:", dt)
 	if self.seasonmode == "caves" then return end
 
     if self.precip and self.preciptype == "rain" then
@@ -811,6 +816,10 @@ end
 
 function SeasonManager:GetSeason()
 	return self.current_season
+end
+
+function SeasonManager:LongUpdate(dt)
+	self:OnUpdate(dt)
 end
 
 return SeasonManager

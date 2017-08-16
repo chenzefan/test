@@ -16,21 +16,24 @@ local function IntColour( r, g, b, a )
 	return { r / 255.0, g / 255.0, b / 255.0, a / 255.0 }
 end
 
-if EnvelopeManager then
-	EnvelopeManager:AddColourEnvelope(
-		colour_envelope_name,
-		{	{ 0,	IntColour( 255, 255, 255, 0 ) },
-			{ 0.10,	IntColour( 255, 255, 255, 128 ) },
-			{ 0.3,	IntColour( 255, 255, 255, 64 ) },
-			{ 1,	IntColour( 255, 255, 255, 0 ) },
-		} )
 
-	EnvelopeManager:AddVector2Envelope(
-		scale_envelope_name,
-		{
-			{ 0,	{ min_scale, min_scale } },
-			{ 1,	{ max_scale, max_scale } },
-		} )
+local function InitEnvelopes()
+	if EnvelopeManager then
+		EnvelopeManager:AddColourEnvelope(
+			colour_envelope_name,
+			{	{ 0,	IntColour( 255, 255, 255, 0 ) },
+				{ 0.10,	IntColour( 255, 255, 255, 128 ) },
+				{ 0.3,	IntColour( 255, 255, 255, 64 ) },
+				{ 1,	IntColour( 255, 255, 255, 0 ) },
+			} )
+
+		EnvelopeManager:AddVector2Envelope(
+			scale_envelope_name,
+			{
+				{ 0,	{ min_scale, min_scale } },
+				{ 1,	{ max_scale, max_scale } },
+			} )
+	end
 end
 
 local max_lifetime = 2.5
@@ -64,6 +67,8 @@ local function fn(Sim)
 	inst:AddTag("FX")
 	local trans = inst.entity:AddTransform()
 	local emitter = inst.entity:AddParticleEmitter()
+
+	InitEnvelopes()
 
 	emitter:SetRenderResources( texture, shader )
 	emitter:SetRotationStatus( true )
@@ -102,5 +107,5 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/fx/frostbreath", fn, assets)
+return Prefab( "common/fx/frostbreath", fn, assets) 
  

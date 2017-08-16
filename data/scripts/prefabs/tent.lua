@@ -141,4 +141,4 @@ local function fn(Sim)
 end
 
 return Prefab( "common/objects/tent", fn, assets),
-		MakePlacer( "common/tent_placer", "tent", "tent", "idle" )
+		MakePlacer( "common/tent_placer", "tent", "tent", "idle" ) 

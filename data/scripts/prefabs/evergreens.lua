@@ -241,7 +241,7 @@ local function chop_tree(inst, chopper, chops)
 	local ents = TheSim:FindEntities(pt.x,pt.y,pt.z, TUNING.LEIF_REAWAKEN_RADIUS, {"leif"})
 	for k,v in pairs(ents) do
 		if v.components.sleeper and v.components.sleeper:IsAsleep() then
-			v.components.sleeper:WakeUp()
+			v:DoTaskInTime(math.random(), function() v.components.sleeper:WakeUp() end)
 		end
 		v.components.combat:SuggestTarget(chopper)
 	end
@@ -501,7 +501,7 @@ local function tree(name, build, stage, data)
     return Prefab("forest/objects/trees/"..name, makefn(build, stage, data), assets, prefabs)
 end
 
-return  tree("evergreen", "normal", 0),
+return tree("evergreen", "normal", 0),
 		tree("evergreen_normal", "normal", 2),
         tree("evergreen_tall", "normal", 3),
         tree("evergreen_short", "normal", 1),
@@ -510,4 +510,4 @@ return  tree("evergreen", "normal", 0),
         tree("evergreen_sparse_tall", "sparse", 3),
         tree("evergreen_sparse_short", "sparse", 1),
         tree("evergreen_burnt", "normal", 0, "burnt"),
-        tree("evergreen_stump", "normal", 0, "stump")
+        tree("evergreen_stump", "normal", 0, "stump") 

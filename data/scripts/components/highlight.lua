@@ -84,7 +84,7 @@ end
 function Highlight:Highlight()
     self.mouseover = true
     
-    if self.inst:HasTag("player") or TheSim:GetLightAtPoint(self.inst.Transform:GetWorldPosition()) > TUNING.DARK_CUTOFF then
+    if self.inst:IsValid() and self.inst:HasTag("player") or TheSim:GetLightAtPoint(self.inst.Transform:GetWorldPosition()) > TUNING.DARK_CUTOFF then
         local m = .2
 		self.highlight_add_colour = Vector3(m,m,m)
     end

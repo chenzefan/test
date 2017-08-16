@@ -34,6 +34,7 @@ local function fn(Sim)
 
     inst:AddComponent("edible")
     inst.components.edible.foodtype = "ELEMENTAL"
+    inst:AddComponent("tradable")
     inst.components.edible.hungervalue = 5
     
     inst:AddComponent("stackable")
@@ -47,4 +48,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/inventory/purplegem", fn, assets)
+return Prefab( "common/inventory/purplegem", fn, assets) 

@@ -70,4 +70,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/objects/gravestone", fn, assets, prefabs )
+return Prefab( "common/objects/gravestone", fn, assets, prefabs ) 

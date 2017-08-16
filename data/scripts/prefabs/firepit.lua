@@ -132,4 +132,4 @@ local function fn(Sim)
 end
 
 return Prefab( "common/objects/firepit", fn, assets, prefabs),
-		MakePlacer( "common/firepit_placer", "firepit", "firepit", "preview" )
+		MakePlacer( "common/firepit_placer", "firepit", "firepit", "preview" ) 

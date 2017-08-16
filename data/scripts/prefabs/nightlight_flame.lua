@@ -36,4 +36,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/fx/nightlight_flame", fn, assets)
+return Prefab( "common/fx/nightlight_flame", fn, assets) 

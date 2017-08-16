@@ -35,4 +35,4 @@ return item("farmrock", "farm_decor", "farm_decor", "1"),
 	   item("signleft", "farm_decor", "farm_decor", "4"),
 	   item("fencepost", "farm_decor", "farm_decor", "5"),
 	   item("fencepostright", "farm_decor", "farm_decor", "9"),
-	   item("signright", "farm_decor", "farm_decor", "10")
+	   item("signright", "farm_decor", "farm_decor", "10") 

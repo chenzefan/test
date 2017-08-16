@@ -1,0 +1,58 @@
+Wed May 15 00:03:58 2013 UTC - Module file name: E:\Steam\gameoverlayrenderer.dll
+Wed May 15 00:03:58 2013 UTC - GameID = 219740
+Wed May 15 00:03:58 2013 UTC - System page size: 4096
+Wed May 15 00:03:58 2013 UTC - Hooking SetCursorPos, GetCursorPos, ShowCursor, and SetCursor
+Wed May 15 00:03:58 2013 UTC - Hooking GetRawInputBuffer calls
+Wed May 15 00:03:58 2013 UTC - Game is using D3D9 or D3D9Ex, preparing to hook.
+Wed May 15 00:03:58 2013 UTC - Modules at GameOverlayRenderer.dll attach
+Wed May 15 00:03:58 2013 UTC - 01: dontstarve_steam.exe
+Wed May 15 00:03:58 2013 UTC - 02: ntdll.dll
+Wed May 15 00:03:58 2013 UTC - 03: kernel32.dll
+Wed May 15 00:03:58 2013 UTC - 04: KERNELBASE.dll
+Wed May 15 00:03:58 2013 UTC - 05: libGLESv2.dll
+Wed May 15 00:03:58 2013 UTC - 06: d3d9.dll
+Wed May 15 00:03:58 2013 UTC - 07: msvcrt.dll
+Wed May 15 00:03:58 2013 UTC - 08: sechost.dll
+Wed May 15 00:03:58 2013 UTC - 09: RPCRT4.dll
+Wed May 15 00:03:58 2013 UTC - 10: SspiCli.dll
+Wed May 15 00:03:58 2013 UTC - 11: CRYPTBASE.dll
+Wed May 15 00:03:58 2013 UTC - 12: USER32.dll
+Wed May 15 00:03:58 2013 UTC - 13: GDI32.dll
+Wed May 15 00:03:58 2013 UTC - 14: LPK.dll
+Wed May 15 00:03:58 2013 UTC - 15: USP10.dll
+Wed May 15 00:03:58 2013 UTC - 16: ADVAPI32.dll
+Wed May 15 00:03:58 2013 UTC - 17: VERSION.dll
+Wed May 15 00:03:58 2013 UTC - 18: d3d8thk.dll
+Wed May 15 00:03:58 2013 UTC - 19: dwmapi.dll
+Wed May 15 00:03:58 2013 UTC - 20: MSVCP90.dll
+Wed May 15 00:03:58 2013 UTC - 21: MSVCR90.dll
+Wed May 15 00:03:58 2013 UTC - 22: libEGL.dll
+Wed May 15 00:03:58 2013 UTC - 23: WSOCK32.dll
+Wed May 15 00:03:58 2013 UTC - 24: WS2_32.dll
+Wed May 15 00:03:58 2013 UTC - 25: NSI.dll
+Wed May 15 00:03:58 2013 UTC - 26: WLDAP32.dll
+Wed May 15 00:03:58 2013 UTC - 27: fmodex.dll
+Wed May 15 00:03:58 2013 UTC - 28: WINMM.dll
+Wed May 15 00:03:58 2013 UTC - 29: MSACM32.dll
+Wed May 15 00:03:58 2013 UTC - 30: ole32.dll
+Wed May 15 00:03:58 2013 UTC - 31: fmod_event.dll
+Wed May 15 00:03:58 2013 UTC - 32: steam_api.dll
+Wed May 15 00:03:58 2013 UTC - 33: SHELL32.dll
+Wed May 15 00:03:58 2013 UTC - 34: SHLWAPI.dll
+Wed May 15 00:03:58 2013 UTC - 35: Steamclient.dll
+Wed May 15 00:03:58 2013 UTC - 36: WININET.dll
+Wed May 15 00:03:58 2013 UTC - 37: Normaliz.dll
+Wed May 15 00:03:58 2013 UTC - 38: iertutil.dll
+Wed May 15 00:03:58 2013 UTC - 39: urlmon.dll
+Wed May 15 00:03:58 2013 UTC - 40: OLEAUT32.dll
+Wed May 15 00:03:58 2013 UTC - 41: IMM32.DLL
+Wed May 15 00:03:58 2013 UTC - 42: MSCTF.dll
+Wed May 15 00:03:58 2013 UTC - 43: gameoverlayrenderer.dll
+Wed May 15 00:03:58 2013 UTC - ----------------------------
+Wed May 15 00:03:58 2013 UTC - Found GetModuleHandleEx
+Wed May 15 00:03:59 2013 UTC - hookDirect3DCreate9Ex called
+Wed May 15 00:03:59 2013 UTC - IWrapIDirect3D9Ex::CreateDevice hook called (type: 1, behavior flags: 852!)
+Wed May 15 00:04:12 2013 UTC - Trying to setup input hook...
+Wed May 15 00:04:12 2013 UTC - Set input hook...
+Wed May 15 00:04:16 2013 UTC - GameOverlayRenderer.dll detaching
+Wed May 15 00:04:16 2013 UTC - Detaching input hook...

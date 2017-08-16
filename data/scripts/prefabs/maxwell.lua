@@ -3,7 +3,8 @@ require "fonthelper"
 local assets =
 {
 	Asset("ANIM", "data/anim/maxwell_build.zip"),
-	Asset("ANIM", "data/anim/maxwell_basic.zip"),
+    Asset("ANIM", "data/anim/max_fx.zip"),
+    Asset("ANIM", "data/anim/maxwell_basic.zip"),
 	Asset("ANIM", "data/anim/maxwell_adventure.zip"),
 	Asset("SOUND", "data/sound/maxwell.fsb"),
 }
@@ -40,4 +41,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/characters/maxwell", fn, assets)
+return Prefab( "common/characters/maxwell", fn, assets) 

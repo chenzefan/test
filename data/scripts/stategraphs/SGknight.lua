@@ -82,7 +82,7 @@ CommonStates.AddWalkStates(states,
                 inst.Physics:Stop()
             end ),
 	},
-}, true)
+}, nil,true)
 
 CommonStates.AddSleepStates(states,
 {

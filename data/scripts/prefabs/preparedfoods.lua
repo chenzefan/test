@@ -21,6 +21,8 @@ local function MakePreparedFood(data)
 		inst.AnimState:SetBank("food")
 		inst.AnimState:PlayAnimation(data.name, false)
 	    
+	    inst:AddTag("preparedfood")
+
 		inst:AddComponent("edible")
 		inst.components.edible.healthvalue = data.health
 		inst.components.edible.hungervalue = data.hunger
@@ -65,4 +67,4 @@ for k,v in pairs(foods) do
 	table.insert(prefs, MakePreparedFood(v))
 end
 
-return unpack(prefs)
+return unpack(prefs) 

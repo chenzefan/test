@@ -56,4 +56,4 @@ local function fn()
     return inst
 end
 
-return Prefab( "common/inventory/spider_web_spit", fn, assets, prefabs)
+return Prefab( "common/inventory/spider_web_spit", fn, assets, prefabs) 

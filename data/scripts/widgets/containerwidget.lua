@@ -13,19 +13,24 @@ ContainerWidget = Class(Widget, function(self, owner)
     self:SetPosition(0, 0, 0)
     self.slotsperrow = 3
     
-    self.bg = self:AddChild(UIAnim())
+    self.bganim = self:AddChild(UIAnim())
+	self.bgimage = self:AddChild(Image())
     self.isopen = false
 end)
 
 function ContainerWidget:Open(container, doer)
     self:Close()
+
+	if container.components.container.widgetbgimage then
+		self.bgimage:SetTexture( container.components.container.widgetbgimage )
+	end
     
     if container.components.container.widgetanimbank then
-		self.bg:GetAnimState():SetBank(container.components.container.widgetanimbank)
+		self.bganim:GetAnimState():SetBank(container.components.container.widgetanimbank)
 	end
     
     if container.components.container.widgetanimbuild then
-		self.bg:GetAnimState():SetBuild(container.components.container.widgetanimbuild)
+		self.bganim:GetAnimState():SetBuild(container.components.container.widgetanimbuild)
     end
     
     
@@ -56,7 +61,11 @@ function ContainerWidget:Open(container, doer)
     self.isopen = true
     self:Show()
     
-    self.bg:GetAnimState():PlayAnimation("open")
+	if self.bgimage.texture then
+		self.bgimage:Show()
+	else
+		self.bganim:GetAnimState():PlayAnimation("open")
+	end
 	    
     self.onitemlosefn = function(inst, data) self:OnItemLose(data) end
     self.inst:ListenForEvent("itemlose", self.onitemlosefn, container)
@@ -210,7 +219,11 @@ function ContainerWidget:Close()
 	    
 		self.container = nil
 		self.inv = {}
-		self.bg:GetAnimState():PlayAnimation("close")
+		if self.bgimage.texture then
+			self.bgimage:Hide()
+		else
+			self.bganim:GetAnimState():PlayAnimation("close")
+		end
 		
 		self.isopen = false
 		

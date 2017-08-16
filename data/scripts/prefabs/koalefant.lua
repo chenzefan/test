@@ -140,4 +140,4 @@ local function create_winter(sim)
 end
 
 return Prefab( "forest/animals/koalefant_summer", create_summer, assets, prefabs),
-	   Prefab( "forest/animals/koalefant_winter", create_winter, assets, prefabs)
+	   Prefab( "forest/animals/koalefant_winter", create_winter, assets, prefabs) 
