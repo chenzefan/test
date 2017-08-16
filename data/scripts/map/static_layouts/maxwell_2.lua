@@ -17,7 +17,7 @@ return {
       margin = 0,
       image = "../../../../tools/tiled/dont_starve/tiles.png",
       imagewidth = 512,
-      imageheight = 128,
+      imageheight = 256,
       properties = {},
       tiles = {}
     }
@@ -106,8 +106,8 @@ return {
           name = "",
           type = "knight",
           shape = "rectangle",
-          x = 416,
-          y = 544,
+          x = 480,
+          y = 480,
           width = 0,
           height = 0,
           visible = true,
@@ -216,13 +216,24 @@ return {
           name = "",
           type = "knight",
           shape = "rectangle",
-          x = 128,
-          y = 416,
+          x = 48,
+          y = 544,
           width = 0,
           height = 0,
           visible = true,
           properties = {}
-        }
+        },
+        {
+          name = "",
+          type = "rook",
+          shape = "rectangle",
+          x = 384,
+          y = 192,
+          width = 0,
+          height = 0,
+          visible = true,
+          properties = {}
+        },
       }
     }
   }

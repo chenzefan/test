@@ -1,6 +1,6 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/splash_spiderweb.zip"),
+	Asset("ANIM", "anim/splash_spiderweb.zip"),
 }
 
 local function fn()

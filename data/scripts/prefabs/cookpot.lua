@@ -4,8 +4,8 @@ local cooking = require("cooking")
 
 local assets=
 {
-	Asset("ANIM", "data/anim/cook_pot.zip"),
-    Asset("IMAGE", "data/inventoryimages/cookpot.tex"),
+	Asset("ANIM", "anim/cook_pot.zip"),
+	Asset("ANIM", "anim/cook_pot_food.zip"),
 }
 
 local prefabs = {}

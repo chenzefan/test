@@ -1,9 +1,9 @@
 local function createassets(name)
 	local assets = 
 	{
-		Asset("ANIM", "data/anim/"..name..".zip"),
-        Asset("ANIM", "data/anim/player_basic.zip"),
-        Asset("ANIM", "data/anim/player_throne.zip")
+		Asset("ANIM", "anim/"..name..".zip"),
+        Asset("ANIM", "anim/player_basic.zip"),
+        Asset("ANIM", "anim/player_throne.zip")
 	}
 	return assets
 end

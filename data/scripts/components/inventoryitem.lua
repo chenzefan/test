@@ -123,13 +123,13 @@ end
 
 -- If this function retrns true then it has destroyed itself and you shouldnt give it to the player
 function InventoryItem:OnPickup(pickupguy)
-    if self.isnew then
+    if self.isnew and self.inst.prefab and pickupguy == GetPlayer() then
         ProfileStatsAdd("collect_"..self.inst.prefab)
         self.isnew = false
     end
 
     self.inst.Transform:SetPosition(0,0,0)
-    self.inst:PushEvent("onpickup", {})
+    self.inst:PushEvent("onpickup", {owner = pickupguy})
     if self.onpickupfn and type(self.onpickupfn) == "function" then
         return self.onpickupfn(self.inst, pickupguy)
     end
@@ -150,10 +150,14 @@ end
 
 function InventoryItem:GetImage()
     if self.imagename then        
-        return resolvefilepath("inventoryimages/"..self.imagename..".tex")
+        return self.imagename..".tex"
     else       
-        return resolvefilepath("inventoryimages/".. self.inst.prefab..".tex")
+        return self.inst.prefab..".tex"
     end
+end
+
+function InventoryItem:GetAtlas()
+	return self.atlasname or "images/inventoryimages.xml"
 end
 
 function InventoryItem:RemoveFromOwner(wholestack)

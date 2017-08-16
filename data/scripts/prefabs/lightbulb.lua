@@ -1,7 +1,6 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/bulb.zip"),
-    Asset("IMAGE", "data/inventoryimages/lightbulb.tex"),
+	Asset("ANIM", "anim/bulb.zip"),
 }
 
 local function fn(Sim)
@@ -47,7 +46,7 @@ local function fn(Sim)
     light:SetRadius(0.5)
     light:SetColour(237/255, 237/255, 209/255)
     light:Enable(true)
-    inst.AnimState:SetBloomEffectHandle( "data/shaders/anim.ksh" )
+    inst.AnimState:SetBloomEffectHandle( "shaders/anim.ksh" )
 
     inst.components.inventoryitem:SetOnDroppedFn(function() inst.Light:Enable(true) end)
     inst.components.inventoryitem:SetOnPickupFn(function() inst.Light:Enable(false) end)

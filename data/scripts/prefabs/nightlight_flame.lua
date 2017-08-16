@@ -1,8 +1,8 @@
 local assets =
 {
-	--Asset("ANIM", "data/anim/fire_large_character.zip"),
-	Asset("ANIM", "data/anim/campfire_fire.zip"),
-	Asset("SOUND", "data/sound/common.fsb"),
+	--Asset("ANIM", "anim/fire_large_character.zip"),
+	Asset("ANIM", "anim/campfire_fire.zip"),
+	Asset("SOUND", "sound/common.fsb"),
 }
 
 local firelevels = 
@@ -23,7 +23,7 @@ local function fn(Sim)
 
     anim:SetBank("campfire_fire")
     anim:SetBuild("campfire_fire")
-    anim:SetBloomEffectHandle( "data/shaders/anim.ksh" )
+    anim:SetBloomEffectHandle( "shaders/anim.ksh" )
     inst.AnimState:SetRayTestOnBB(true)
     inst.AnimState:SetMultColour(0/255, 0/255, 0/255, .6)
     

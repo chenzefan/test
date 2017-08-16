@@ -91,7 +91,7 @@ function BirdSpawner:DangerNearby(pt)
     return next(ents) ~= nil
 end
 
-function BirdSpawner:SpawnBird(spawn_point)
+function BirdSpawner:SpawnBird(spawn_point, ignore_bait)
     local prefab = self:PickBird(spawn_point)
 	if prefab then
 	    local bird = SpawnPrefab(prefab)
@@ -103,7 +103,7 @@ function BirdSpawner:SpawnBird(spawn_point)
 	        spawn_point.y = 15
 	    end
 	    --see if there's bait nearby that we might spawn into
-	    if bird.components.eater then
+	    if bird.components.eater and not ignore_bait then
 	        local bait = TheSim:FindEntities(spawn_point.x, 0, spawn_point.z, 15)
 	        for k,v in pairs(bait) do
 		        if bird.components.eater:CanEat(v)

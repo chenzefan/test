@@ -90,9 +90,19 @@ function LootDropper:GenerateLoot()
 	end
 	
 	local recipe = GetRecipe(self.inst.prefab)
+
 	if recipe then
+
+		
+		
+		local percent = 1
+
+		if self.inst.components.finiteuses then
+			percent = self.inst.components.finiteuses:GetPercent()
+		end
+
 		for k,v in ipairs(recipe.ingredients) do
-			local amt = math.ceil( v.amount * TUNING.HAMMER_LOOT_PERCENT)
+			local amt = math.ceil( (v.amount * TUNING.HAMMER_LOOT_PERCENT) * percent)
 			for n = 1, amt do
 				table.insert(loots, v.type)
 			end
@@ -127,8 +137,15 @@ function LootDropper:SpawnLootPrefab(lootprefab, pt)
 					function() 
 						if not (loot.components.inventoryitem and loot.components.inventoryitem:IsHeld()) then
 							if not loot:IsOnValidGround() then
-						        PlayFX(loot:GetPosition(), "splash", "splash_ocean", "idle")
-								loot:Remove()
+								local fx = SpawnPrefab("splash_ocean")
+							    local pos = loot:GetPosition()
+    							fx.Transform:SetPosition(pos.x, pos.y, pos.z)
+						        --PlayFX(loot:GetPosition(), "splash", "splash_ocean", "idle")
+								if loot:HasTag("irreplaceable") then
+									loot.Transform:SetPosition(GetPlayer().Transform:GetWorldPosition())
+								else
+									loot:Remove()
+								end
 							end
 						end
 					end)

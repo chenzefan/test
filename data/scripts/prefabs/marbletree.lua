@@ -2,7 +2,7 @@ local NUM_TREES = 4
 
 assets = 
 {
-	Asset("ANIM", "data/anim/marble_trees.zip"),
+	Asset("ANIM", "anim/marble_trees.zip"),
 }
 
 local prefabs =

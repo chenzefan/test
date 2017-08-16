@@ -2,8 +2,7 @@ require "prefabutil"
 
 local assets =
 {
-	Asset("ANIM", "data/anim/tent.zip"),
-    Asset("IMAGE", "data/inventoryimages/tent.tex"),
+	Asset("ANIM", "anim/tent.zip"),
 }
 
 
@@ -81,8 +80,17 @@ local function onsleep(inst, sleeper)
 		end
 		
 		if sleeper.components.hunger then
-			sleeper.components.hunger:DoDelta(-TUNING.CALORIES_HUGE)
+			sleeper.components.hunger:DoDelta(-TUNING.CALORIES_HUGE, false, true)
 		end
+		
+		if sleeper.components.health then
+			sleeper.components.health:DoDelta(TUNING.HEALING_HUGE, false, "tent", true)
+		end
+		
+		if sleeper.components.tempature then
+			sleeper.components.tempature:SetTemperature(sleeper.components.tempature.maxtemp)
+		end
+		
 		
 		inst.components.finiteuses:Use()
 		GetClock():MakeNextDay()

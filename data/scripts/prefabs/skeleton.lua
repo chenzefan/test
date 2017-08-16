@@ -1,6 +1,6 @@
 local assets = 
 {
-	Asset("ANIM", "data/anim/skeletons.zip"),
+	Asset("ANIM", "anim/skeletons.zip"),
 }
 
 local animstates = {1, 3, 4, 5, 6} --not going to use the spear skeleton until anim to take spear is made
@@ -32,6 +32,7 @@ local function fn()
 	anim:PlayAnimation("idle"..inst.animnum)
 
 	inst:AddComponent("inspectable")
+	inst.components.inspectable:RecordViews()
 	inst.OnLoad = onload
 	inst.OnSave = onsave
 	return inst

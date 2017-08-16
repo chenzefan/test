@@ -4,13 +4,13 @@ require "spinner"
 --
 -- For example, OnChanged gets called by Changed, the base function. Both get passed the newly selected item.
 
-NumericSpinner = Class(Spinner, function( self, min, max, width, height, textinfo, textures, arrow_scale, editable )
+NumericSpinner = Class(Spinner, function( self, min, max, width, height, textinfo, atlas, textures, arrow_scale, editable )
 	-- min/max need to be set before calling base class ctor as it calls SetSelectedIndex, which results in them being used
 	-- aka. never call "virtual" functions during construction
 	self.min = min
 	self.max = max
-    Spinner._ctor( self, {}, width, height, textinfo, textures, arrow_scale, editable )
-    
+	
+    Spinner._ctor( self, {}, width, height, textinfo, atlas, textures, arrow_scale, editable )
 end)
 
 function NumericSpinner:GetSelected()

@@ -1,12 +1,9 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/pickaxe.zip"),
-	Asset("ANIM", "data/anim/goldenpickaxe.zip"),
-	Asset("ANIM", "data/anim/swap_pickaxe.zip"),
-	Asset("ANIM", "data/anim/swap_goldenpickaxe.zip"),
-    
-    Asset("IMAGE", "data/inventoryimages/pickaxe.tex"),
-    Asset("IMAGE", "data/inventoryimages/goldenpickaxe.tex"),
+	Asset("ANIM", "anim/pickaxe.zip"),
+	Asset("ANIM", "anim/goldenpickaxe.zip"),
+	Asset("ANIM", "anim/swap_pickaxe.zip"),
+	Asset("ANIM", "anim/swap_goldenpickaxe.zip"),
 }
 
 local function onfinished(inst)
@@ -78,6 +75,7 @@ end
 local function golden(Sim)
 	local inst = fn(Sim)
 	inst.AnimState:SetBuild("goldenpickaxe")
+	inst.AnimState:SetBank("goldenpickaxe")
     inst.components.finiteuses:SetConsumption(ACTIONS.MINE, 1 / TUNING.GOLDENTOOLFACTOR)
     inst.components.weapon.attackwear = 1 / TUNING.GOLDENTOOLFACTOR
     

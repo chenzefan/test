@@ -1,11 +1,7 @@
-require "fonthelper"
-
 local assets =
 {
-	Asset("ANIM", "data/anim/mandrake.zip"),
-	Asset("SOUND", "data/sound/mandrake.fsb"),
-    Asset("IMAGE", "data/inventoryimages/mandrake.tex"),
-    Asset("IMAGE", "data/inventoryimages/cookedmandrake.tex"),
+	Asset("ANIM", "anim/mandrake.zip"),
+	Asset("SOUND", "sound/mandrake.fsb"),
 }
 
 local prefabs =

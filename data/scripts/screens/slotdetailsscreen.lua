@@ -23,7 +23,7 @@ SlotDetailsScreen = Class(Screen, function(self, slotnum)
     self.root:SetPosition(0,0,0)
     self.root:SetScaleMode(SCALEMODE_PROPORTIONAL)
 	
-    self.bg = self.root:AddChild(Image("data/images/panel_saveslots.tex"))
+    self.bg = self.root:AddChild(Image("images/fepanels.xml", "panel_saveslots.tex"))
     
 	--[[self.cancelbutton = self.root:AddChild(AnimButton("button"))
 	self.cancelbutton:SetScale(.8,.8,.8)
@@ -47,13 +47,14 @@ SlotDetailsScreen = Class(Screen, function(self, slotnum)
     self.text:SetHAlign(ANCHOR_LEFT)
 
 
-	self.portraitbg = self.root:AddChild(Image("images/saveslot_portraits/background.tex"))
+	self.portraitbg = self.root:AddChild(Image("images/saveslot_portraits.xml", "background.tex"))
 	self.portraitbg:SetPosition(-120, 135, 0)	
 	self.portraitbg:SetClickable(false)	
 
 	self.portrait = self.root:AddChild(Image())
 	self.portrait:SetClickable(false)		
-	self.portrait:SetTexture("images/saveslot_portraits/"..character..".tex")
+	local atlas = (table.contains(MODCHARACTERLIST, character) and "images/saveslot_portraits/"..character..".xml") or "images/saveslot_portraits.xml"
+	self.portrait:SetTexture(atlas, character..".tex")
 	self.portrait:SetPosition(-120, 135, 0)
     
 
@@ -140,7 +141,6 @@ function SlotDetailsScreen:Continue()
 
 	self.root:Disable()
 	TheFrontEnd:Fade(false, 1, function() 
-		TheSim:SetInstanceParameters(json.encode{reset_action="loadslot", save_slot = self.saveslot})
-		TheSim:Reset()
+		StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = self.saveslot})
 	 end)
 end

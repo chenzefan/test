@@ -3,11 +3,11 @@ local trace = function() end
 
 local assets=
 {
-	Asset("ANIM", "data/anim/hound_basic.zip"),
-	Asset("ANIM", "data/anim/hound.zip"),
-	Asset("ANIM", "data/anim/hound_red.zip"),
-	Asset("ANIM", "data/anim/hound_ice.zip"),
-	Asset("SOUND", "data/sound/hound.fsb"),
+	Asset("ANIM", "anim/hound_basic.zip"),
+	Asset("ANIM", "anim/hound.zip"),
+	Asset("ANIM", "anim/hound_red.zip"),
+	Asset("ANIM", "anim/hound_ice.zip"),
+	Asset("SOUND", "sound/hound.fsb"),
 }
 
 local prefabs =

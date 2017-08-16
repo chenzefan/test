@@ -13,7 +13,7 @@ CharacterSelectScreen = Class(Screen, function(self, profile, cb, no_backbutton,
     
     self.currentcharacter = nil
 
-    self.bg = self:AddChild(Image("data/images/bg_plain.tex"))
+    self.bg = self:AddChild(Image("images/ui.xml", "bg_plain.tex"))
     self.bg:SetTint(BGCOLOURS.RED[1],BGCOLOURS.RED[2],BGCOLOURS.RED[3], 1)
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
     self.bg:SetHRegPoint(ANCHOR_MIDDLE)
@@ -35,7 +35,7 @@ CharacterSelectScreen = Class(Screen, function(self, profile, cb, no_backbutton,
     
     local adjust = 16
     
-    self.biobox = self.fixed_root:AddChild(Image("data/images/biobox.tex"))
+    self.biobox = self.fixed_root:AddChild(Image("images/fepanels.xml", "biobox.tex"))
     self.biobox:SetPosition(822 + adjust,RESOLUTION_Y-489+30,0)
     
     self.charactername = self.fixed_root:AddChild(Text(TITLEFONT, 60))
@@ -123,8 +123,8 @@ CharacterSelectScreen = Class(Screen, function(self, profile, cb, no_backbutton,
 
 		table.insert(self.portraits, portrait)
 
-		local portrait_frame = self.fixed_root:AddChild(Image("images/selectscreen_portraits/frame.tex"))
-		portrait_frame:SetMouseOverTexture("images/selectscreen_portraits/frame_mouse_over.tex")
+		local portrait_frame = self.fixed_root:AddChild(Image("images/selectscreen_portraits.xml", "frame.tex"))
+		portrait_frame:SetMouseOverTexture("images/selectscreen_portraits.xml", "frame_mouse_over.tex")
 		portrait_frame:SetPosition(xpos, ypos, 0)
 
 		portrait_frame:SetLeftMouseDown(function() self:OnClickPortait(k) end)
@@ -200,10 +200,13 @@ function CharacterSelectScreen:SetOffset(offset)
 		
 		self.portrait_bgs[k]:GetAnimState():PlayAnimation(k == self.portrait_idx and "selected" or "idle", true)
 
+		local atlas = (table.contains(MODCHARACTERLIST, character) and "images/selectscreen_portraits/"..character..".xml") or "images/selectscreen_portraits.xml"
+		local atlas_silho = (table.contains(MODCHARACTERLIST, character) and "images/selectscreen_portraits/"..character.."_silho.xml") or "images/selectscreen_portraits.xml"
+
 		if not self.profile:IsCharacterUnlocked(character) then
-			self.portraits[k]:SetTexture("images/selectscreen_portraits/"..character.."_silho.tex")
+			self.portraits[k]:SetTexture( atlas_silho, character.."_silho.tex")
 		else
-			self.portraits[k]:SetTexture("images/selectscreen_portraits/"..character..".tex")
+			self.portraits[k]:SetTexture( atlas, character..".tex")
 		end
 	end	
 end
@@ -221,14 +224,14 @@ function CharacterSelectScreen:SelectPortrait(portrait)
 	end
 
 	if character and self.profile:IsCharacterUnlocked(character) then
-		self.heroportait:SetTexture("bigportraits/"..character..".tex")
+		self.heroportait:SetTexture("bigportraits/"..character..".xml", character..".tex")
 		self.currentcharacter = character
 		self.charactername:SetString(STRINGS.CHARACTER_TITLES[character] or "")
 		self.characterquote:SetString(STRINGS.CHARACTER_QUOTES[character] or "")
 		self.characterdetails:SetString(STRINGS.CHARACTER_DESCRIPTIONS[character] or "")
 		self.startbutton:Enable()
 	else
-		self.heroportait:SetTexture("bigportraits/locked.tex")
+		self.heroportait:SetTexture("bigportraits/locked.xml", "locked.tex")
 		self.charactername:SetString(STRINGS.CHARACTER_NAMES.unknown)
 		self.characterquote:SetString("")
 		self.characterdetails:SetString("")

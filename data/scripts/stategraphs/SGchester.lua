@@ -69,8 +69,13 @@ local states=
         events =
         {
             EventHandler("animover", function(inst) 
+
+                local fx = SpawnPrefab("die_fx")
+                fx.Transform:SetPosition(inst:GetPosition())
+
+                inst:Remove()
+
 				--PlayFX(Vector3(inst.Transform:GetWorldPosition()), "die_fx", "die", "small", "dontstarve/common/deathpoof", nil, Vector3(90/255, 66/255, 41/255))        
-				--inst:Remove()
 			end ),
         },        
     },

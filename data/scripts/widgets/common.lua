@@ -6,7 +6,7 @@ function HandleContainerUIClick(character, inventory, container, slot_number)
     local container_item = container:GetItemInSlot(slot_number)
     local active_item = inventory:GetActiveItem()
     
-	local inspect_mod = TheInput:IsKeyDown(KEY_SHIFT)
+	local inspect_mod = TheInput:IsControlPressed(CONTROL_INSPECT)
     local stack_mod = TheInput:IsKeyDown(KEY_CTRL)
 
 
@@ -129,26 +129,14 @@ function HandleContainerUIClick(character, inventory, container, slot_number)
 	elseif container_item and active_item then
 		if can_take_active_item then
 			local same_prefab = container_item and active_item and container_item.prefab == active_item.prefab
-			local stacked = same_prefab and container_item.components.stackable and container.acceptsstacks
-			
+			local stacked = same_prefab and container_item.components.stackable and container.acceptsstacks			
 			if stacked then
-
 				if stack_mod and active_item.components.stackable.stacksize > 1 and not container_item.components.stackable:IsFull() then
-					
-					
-					active_item.components.stackable:SetStackSize(active_item.components.stackable.stacksize - 1)
-					container_item.components.stackable:SetStackSize(container_item.components.stackable.stacksize + 1)
-					
-					if active_item.components.perishable then
-						container_item.components.perishable:Dilute(1, active_item.components.perishable.perishremainingtime)
-					end
-					
-					
+					container_item.components.stackable:Put(active_item.components.stackable:Get())				
 				else
 					local leftovers = container_item.components.stackable:Put(active_item)
 					inventory:SetActiveItem(leftovers)
-				end
-				
+				end				
 			else
 				local cant_trade_stack = not container.acceptsstacks and (active_item.components.stackable and active_item.components.stackable:StackSize() > 1)
 				

@@ -5,8 +5,15 @@ local Weapon = Class(function(self, inst)
     self.attackrange = nil
     self.hitrange = nil
     self.onattack = nil
+    self.onprojectilelaunch = nil
     self.canattack = nil
     self.projectile = nil
+    self.modes = 
+    {
+    MODE1 = {damage = 0, ranged = false, attackrange = 0, hitrange = 0},
+    --etc.
+    }
+    self.variedmodefn = nil
 end)
 
 function Weapon:SetDamage(dmg)
@@ -22,12 +29,31 @@ function Weapon:SetOnAttack(fn)
     self.onattack = fn
 end
 
+function Weapon:SetOnProjectileLaunch(fn)
+    self.onprojectilelaunch = fn
+end
+
 function Weapon:SetCanAttack(fn)
     self.canattack = fn
 end
 
 function Weapon:SetProjectile(projectile)
     self.projectile = projectile
+end
+
+function Weapon:CanRangedAttack()
+    if self.variedmodefn then
+        --This is a pretty gross hack to let weapons work as melee or ranged, clean up later. 
+        --The "variedrangefn" must return a table 
+        --with the range and what mode of attack to use, either "R" or "M".
+        local mode = self.variedmodefn(self.inst)
+        if not mode.ranged then
+            --determined to use melee mode, return false.
+            return false
+        end
+    end
+
+    return self.projectile ~= nil
 end
 
 function Weapon:SetAttackCallback(fn)
@@ -46,10 +72,15 @@ end
 
 function Weapon:LaunchProjectile(attacker, target)
 	if self.projectile then
+
+        if self.onprojectilelaunch then
+            self.onprojectilelaunch(self.inst, attacker, target)
+        end
+
 	    local proj = SpawnPrefab(self.projectile)
 	    if proj and proj.components.projectile then
 	        proj.Transform:SetPosition(attacker.Transform:GetWorldPosition() )
-	        proj.components.projectile:Throw(self.inst, target)
+	        proj.components.projectile:Throw(self.inst, target, attacker)
 	    end
 	end
 end

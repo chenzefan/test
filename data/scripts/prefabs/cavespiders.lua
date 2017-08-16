@@ -1,21 +1,23 @@
 local hiderassets =
 {
-	Asset("ANIM", "data/anim/ds_spider_caves.zip"),
-	Asset("SOUND", "data/sound/spider.fsb"),
+	Asset("ANIM", "anim/ds_spider_basic.zip"),
+	Asset("ANIM", "anim/ds_spider_caves.zip"),
+	Asset("SOUND", "sound/spider.fsb"),
 }
 
 local spitterassets =
 {
-	Asset("ANIM", "data/anim/ds_spider2_caves.zip"),
-	Asset("SOUND", "data/sound/spider.fsb"),
+	Asset("ANIM", "anim/ds_spider_basic.zip"),
+	Asset("ANIM", "anim/ds_spider2_caves.zip"),
+	Asset("SOUND", "sound/spider.fsb"),
 }
 
 local prefabs =
 {
 	"spidergland",
-  "monstermeat",
-  "silk",
-  "spider_web_spit",
+	"monstermeat",
+	"silk",
+	"spider_web_spit",
 }
 
 local function Retarget(inst)
@@ -217,6 +219,7 @@ end
 local function create_hider()
     local inst = create_common()
     
+    inst.AnimState:SetBank("spider_hider")
     inst.AnimState:SetBuild("DS_spider_caves")
 
     --inst:AddTag("spider_warrior")
@@ -238,6 +241,7 @@ end
 local function create_spitter()
     local inst = create_common()
 
+	inst.AnimState:SetBank("spider_spitter")
     inst.AnimState:SetBuild("DS_spider2_caves")
 
     inst:AddTag("spider_spitter")

@@ -1,9 +1,7 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/armor_trunkvest_summer.zip"),
-    Asset("IMAGE", "data/inventoryimages/trunkvest_summer.tex"),
-	Asset("ANIM", "data/anim/armor_trunkvest_winter.zip"),
-    Asset("IMAGE", "data/inventoryimages/trunkvest_winter.tex"),
+	Asset("ANIM", "anim/armor_trunkvest_summer.zip"),
+	Asset("ANIM", "anim/armor_trunkvest_winter.zip"),
 }
 
 local function onperish(inst)

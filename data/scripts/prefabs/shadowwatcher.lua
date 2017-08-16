@@ -1,6 +1,6 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/shadow_creatures_ground.zip"),
+	Asset("ANIM", "anim/shadow_creatures_ground.zip"),
 }
 
 local function Disappear(inst)

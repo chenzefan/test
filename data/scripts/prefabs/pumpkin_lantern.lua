@@ -1,7 +1,6 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/pumpkin_lantern.zip"),
-	Asset("IMAGE", "data/inventoryimages/pumpkin_lantern.tex"),
+	Asset("ANIM", "anim/pumpkin_lantern.zip"),
 }
 
 local prefabs = 
@@ -91,6 +90,7 @@ local function fn(Sim)
     
     inst:AddComponent("combat")
     inst:AddComponent("health")
+    inst.components.health.canmurder = false
     inst:AddComponent("lootdropper")
     inst.components.health:SetMaxHealth(1)
     inst:ListenForEvent("death", ondeath)

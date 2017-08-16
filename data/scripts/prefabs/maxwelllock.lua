@@ -1,8 +1,8 @@
-local assets=
+local assets =
 {
-	Asset("ANIM", "data/anim/diviningrod.zip"),
-    Asset("SOUND", "data/sound/common.fsb"),
-    Asset("ANIM", "data/anim/diviningrod_maxwell.zip")
+	Asset("ANIM", "anim/diviningrod.zip"),
+    Asset("SOUND", "sound/common.fsb"),
+    Asset("ANIM", "anim/diviningrod_maxwell.zip")
 }
 
 local prefabs = 

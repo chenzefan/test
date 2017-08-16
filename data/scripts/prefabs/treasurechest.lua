@@ -2,13 +2,12 @@ require "prefabutil"
 
 local assets=
 {
-	Asset("ANIM", "data/anim/treasure_chest.zip"),
-	Asset("ANIM", "data/anim/ui_chest_3x2.zip"),
+	Asset("ANIM", "anim/treasure_chest.zip"),
+	Asset("ANIM", "anim/ui_chest_3x2.zip"),
 	
-    Asset("IMAGE", "data/inventoryimages/treasurechest.tex"),
 
-	Asset("ANIM", "data/anim/pandoras_chest.zip"),
-	Asset("ANIM", "data/anim/skull_chest.zip"),
+	Asset("ANIM", "anim/pandoras_chest.zip"),
+	Asset("ANIM", "anim/skull_chest.zip"),
 }
 
 local chests = {

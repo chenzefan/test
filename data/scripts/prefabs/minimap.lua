@@ -1,8 +1,7 @@
-local shader_filename = "data/shaders/minimap.ksh"
-local fs_shader = "data/shaders/minimapfs.ksh"
-local atlas_filename = "data/minimap/minimap_atlas.tex"
-local bg_filename = "data/images/map.tex"
-local atlas_info_filename = "data/minimap/minimap_data.xml"
+local shader_filename = "shaders/minimap.ksh"
+local fs_shader = "shaders/minimapfs.ksh"
+local atlas_filename = "minimap/minimap_atlas.tex"
+local atlas_info_filename = "minimap/minimap_data.xml"
 
 local MINIMAP_GROUND_PROPERTIES =
 {
@@ -26,6 +25,9 @@ local MINIMAP_GROUND_PROPERTIES =
 	{ GROUND.SINKHOLE, 	 { name = "map_edge",      noise_texture = "levels/textures/mini_sinkhole_noise.tex" } },
 	{ GROUND.UNDERROCK,  { name = "map_edge",      noise_texture = "levels/textures/mini_rock_noise.tex" } },
 	{ GROUND.MUD, 	 	 { name = "map_edge",      noise_texture = "levels/textures/mini_mud_noise.tex" } },
+	{ GROUND.BRICK, 	 { name = "map_edge",      noise_texture = "levels/textures/mini_carpet_noise.tex" } },
+	{ GROUND.TILES,  	 { name = "map_edge",      noise_texture = "levels/textures/mini_carpet_noise.tex" } },
+	{ GROUND.TRIM, 	 	 { name = "map_edge",      noise_texture = "levels/textures/mini_carpet_noise.tex" } },
 
 	-- { GROUND.WALL_CAVE,    { name = "map_edge",      noise_texture = "levels/textures/mini_cave_wall_noise.tex" } },
 	-- { GROUND.WALL_FUNGUS,  { name = "map_edge",      noise_texture = "levels/textures/mini_fungus_wall_noise.tex" } },
@@ -36,7 +38,9 @@ local assets =
 {
 	Asset( "ATLAS", atlas_info_filename ),
 	Asset( "IMAGE", atlas_filename ),
-	Asset( "IMAGE", bg_filename ),
+	
+	Asset( "ATLAS", "images/hud.xml" ),
+	Asset( "IMAGE", "images/hud.tex" ),
 
 	Asset( "SHADER", shader_filename ),
 	Asset( "SHADER", fs_shader ),
@@ -53,9 +57,9 @@ end
 local function AddAssets( layers )
 	for k, data in pairs( layers ) do
 		local tile_type, properties = unpack( data )
-		table.insert( assets, Asset( "IMAGE", "data/"..properties.noise_texture ) )
-		table.insert( assets, Asset( "IMAGE", "data/"..GroundImage( properties.name ) ) )
-		table.insert( assets, Asset( "FILE", "data/"..GroundAtlas( properties.name ) ) )
+		table.insert( assets, Asset( "IMAGE", ""..properties.noise_texture ) )
+		table.insert( assets, Asset( "IMAGE", ""..GroundImage( properties.name ) ) )
+		table.insert( assets, Asset( "FILE", ""..GroundAtlas( properties.name ) ) )
 	end
 end
 
@@ -66,6 +70,7 @@ local function fn(Sim)
 	local uitrans = inst.entity:AddUITransform()
 	local minimap = inst.entity:AddMiniMap()
     inst:AddTag("minimap")
+    inst.entity:SetCanSleep(false)
 
 	minimap:SetEffects( shader_filename, fs_shader )
 	minimap:SetAtlasInfo( atlas_info_filename )

@@ -23,7 +23,11 @@ function Eater:SetInsectivore()
 end
 
 function Eater:SetBird()
-	self.foodprefs = {"SEEDS"}
+    self.foodprefs = {"SEEDS"}
+end
+
+function Eater:SetBeaver()
+    self.foodprefs = {"WOOD"}
 end
 
 function Eater:SetElemental()

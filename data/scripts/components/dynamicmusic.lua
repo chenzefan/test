@@ -2,6 +2,8 @@ local DynamicMusic = Class(function(self, inst)
     self.inst = inst
     self.inst:StartUpdatingComponent(self)
     
+    self.enabled = true
+
     self.is_busy = false
     self.busy_timeout = 0
     
@@ -19,15 +21,17 @@ local DynamicMusic = Class(function(self, inst)
     self.inst:ListenForEvent( "dropitem", function() self:OnContinueBusy() end )  
     
     self.inst:ListenForEvent( "attacked", function(inst, dat)
-        if dat.attacker
+        if self.enabled
+           and dat.attacker
            and dat.attacker ~= self.inst
            and not dat.attacker:HasTag("shadow") then
             self:OnStartDanger()
         end
     end )  
     self.inst:ListenForEvent( "doattack", function(inst, dat)
-		if dat.target
-		   and not dat.target:HasTag("prey")
+		if self.enabled
+            and dat.target
+		    and not dat.target:HasTag("prey")
 			and not dat.target:HasTag("bird")
 			and not dat.target:HasTag("wall")
 			and not dat.target:HasTag("butterfly")
@@ -43,7 +47,8 @@ local DynamicMusic = Class(function(self, inst)
   
     self.inst:ListenForEvent( "dusktime", function(it, data) 
             
-            if not self.playing_danger then
+            if self.enabled and 
+                not self.playing_danger then
                 self:StopPlayingBusy()
                 self.inst.SoundEmitter:PlaySound( "dontstarve/music/music_dusk_stinger")
             end
@@ -53,8 +58,8 @@ local DynamicMusic = Class(function(self, inst)
 
     self.inst:ListenForEvent( "daytime", function(it, data) 
     
-    
-            if data.day > 0 and not self.playing_danger then
+            if self.enabled and 
+                data.day > 0 and not self.playing_danger then
                 self:StopPlayingBusy()
                 self.inst.SoundEmitter:PlaySound( "dontstarve/music/music_dawn_stinger")
             end
@@ -73,12 +78,25 @@ local DynamicMusic = Class(function(self, inst)
 end)
 
 
+function DynamicMusic:Enable()
+    self.enabled = true
+
+end
+
+
+function DynamicMusic:Disable()
+    self.enabled = false
+    self:StopPlayingBusy()
+    self:StopPlayingDanger()
+end
+
 function DynamicMusic:StopPlayingBusy()
     self.inst.SoundEmitter:SetParameter( "busy", "intensity", 0 )
 end
 
 function DynamicMusic:OnStartBusy()
 	
+    if not self.enabled then return end
 
     local day = GetClock():IsDay()
     if day or GetWorld():IsCave() then
@@ -95,11 +113,23 @@ end
 
 
 function DynamicMusic:OnStartDanger()
+
+    if not self.enabled then return end
+    
     self.danger_timeout = 10
     if not self.playing_danger then
         local epic = GetClosestInstWithTag("epic", self.inst, 30)
+        local soundpath = nil
         
-        self.inst.SoundEmitter:PlaySound(epic and "dontstarve/music/music_epicfight" or "dontstarve/music/music_danger", "danger")
+        if epic then
+            soundpath = "dontstarve/music/music_epicfight"
+        elseif GetWorld():IsCave() then
+            soundpath = "dontstarve/music/music_danger_cave"
+        else
+            soundpath = "dontstarve/music/music_danger"
+        end
+
+        self.inst.SoundEmitter:PlaySound(soundpath, "danger")
         self:StopPlayingBusy()
         self.playing_danger = true
     end

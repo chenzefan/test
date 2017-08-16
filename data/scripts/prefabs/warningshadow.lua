@@ -1,6 +1,6 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/warning_shadow.zip"),
+	Asset("ANIM", "anim/warning_shadow.zip"),
 }
 
 local function fn()
@@ -12,6 +12,7 @@ local function fn()
     anim:SetBuild("warning_shadow")
     anim:PlayAnimation("idle")
     anim:SetFinalOffset(-1)
+    inst.persists = false
     inst:AddTag("fx")
     return inst
 end

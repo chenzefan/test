@@ -1,12 +1,6 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/heat_rock.zip"),
-    Asset("IMAGE", "data/inventoryimages/heatrock.tex"),
-    Asset("IMAGE", "data/inventoryimages/heat_rock1.tex"),
-    Asset("IMAGE", "data/inventoryimages/heat_rock2.tex"),
-    Asset("IMAGE", "data/inventoryimages/heat_rock3.tex"),
-    Asset("IMAGE", "data/inventoryimages/heat_rock4.tex"),
-    Asset("IMAGE", "data/inventoryimages/heat_rock5.tex"),
+	Asset("ANIM", "anim/heat_rock.zip"),
 }
 
 
@@ -42,7 +36,7 @@ local function UpdateImages(inst, range)
 	inst.AnimState:PlayAnimation(tostring(range), true)
 	inst.components.inventoryitem:ChangeImageName("heat_rock"..tostring(range))
 	if range == 5 then
-		inst.AnimState:SetBloomEffectHandle( "data/shaders/anim.ksh" )
+		inst.AnimState:SetBloomEffectHandle( "shaders/anim.ksh" )
 		inst.Light:Enable(true)
 	else
 		inst.AnimState:ClearBloomEffectHandle()

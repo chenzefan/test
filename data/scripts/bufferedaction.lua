@@ -11,7 +11,7 @@ BufferedAction = Class(function(self, doer, target, action, invobject, pos, reci
     self.interrupted = true
     self.recipe = recipe
     self.options = {}
-    self.distance = distance
+    self.distance = distance or action.distance 
 end)
 
 function BufferedAction:Do()
@@ -53,6 +53,14 @@ function BufferedAction:IsValid()
 end
 
 function BufferedAction:GetActionString()
+
+    if self.doer and self.doer.ActionStringOverride then
+        local str = self.doer.ActionStringOverride(self.doer, self)
+        if str then
+            return str
+        end
+    end
+
     local modifier = nil
     if self.action.strfn then
 		modifier = self.action.strfn(self)

@@ -1,12 +1,14 @@
 require "widget"
 
-Image = Class(Widget, function(self, tex)
+Image = Class(Widget, function(self, atlas, tex)
     Widget._ctor(self, "Image")
-   
+    
     self.inst.entity:AddImageWidget()
     
-    if tex then
-		self:SetTexture(tex)
+    assert( ( atlas == nil and tex == nil ) or ( atlas ~= nil and tex ~= nil ) )
+
+    if atlas and tex then
+		self:SetTexture(atlas, tex)
     end
 end)
 
@@ -14,17 +16,24 @@ function Image:SetAlphaRange(min, max)
 	self.inst.ImageWidget:SetAlphaRange(min, max)
 end
 
-function Image:SetTexture(tex)
-	self.texture = resolvefilepath(tex)
-    self.inst.ImageWidget:SetTexture(self.texture)
+function Image:SetTexture(atlas, tex)
+    assert( atlas ~= nil )
+    assert( tex ~= nil )
+
+	self.atlas = resolvefilepath(atlas)
+	self.texture = tex
+	--print(atlas, tex)
+    self.inst.ImageWidget:SetTexture(self.atlas, self.texture)
 end
 
-function Image:SetMouseOverTexture(tex)
-    self.mouseovertex = resolvefilepath(tex)
+function Image:SetMouseOverTexture(atlas, tex)
+	self.atlas = resolvefilepath(atlas)
+	self.mouseovertex = tex
 end
 
-function Image:SetDisabledTexture(tex)
-	self.disabledtex = resolvefilepath(tex)
+function Image:SetDisabledTexture(atlas, tex)
+	self.atlas = resolvefilepath(atlas)
+	self.disabledtex = tex
 end
 
 function Image:SetSize(w,h)
@@ -62,7 +71,7 @@ end
 function Image:OnMouseOver()
 	--print("Image:OnMouseOver", self)
 	if self.enabled and self.mouseovertex then
-		self.inst.ImageWidget:SetTexture(self.mouseovertex)
+		self.inst.ImageWidget:SetTexture(self.atlas, self.mouseovertex)
 	end
 	Widget.OnMouseOver( self )
 end
@@ -70,7 +79,7 @@ end
 function Image:OnMouseOut()
 	--print("Image:OnMouseOut", self)
 	if self.enabled and self.mouseovertex then
-		self.inst.ImageWidget:SetTexture(self.texture)
+		self.inst.ImageWidget:SetTexture(self.atlas, self.texture)
 	end
 	Widget.OnMouseOut( self )
 end
@@ -79,11 +88,14 @@ function Image:OnEnable()
     if self.mouse_over_self then
 		self:OnMouseOver()
 	else
-		self.inst.ImageWidget:SetTexture(self.texture)
+		self.inst.ImageWidget:SetTexture(self.atlas, self.texture)
 	end
 end
 
 function Image:OnDisable()
-	self.inst.ImageWidget:SetTexture(self.disabledtex)
+	self.inst.ImageWidget:SetTexture(self.atlas, self.disabledtex)
 end
 
+function Image:SetEffect(filename)
+	self.inst.ImageWidget:SetEffect(filename)
+end

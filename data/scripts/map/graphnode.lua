@@ -88,7 +88,8 @@ function Node:AddEntity(prefab, points_x, points_y, current_pos_idx, entitiesOut
 	local x = (points_x[current_pos_idx] - width/2.0)*TILE_SCALE
 	local y = (points_y[current_pos_idx] - height/2.0)*TILE_SCALE
 
-	if WorldSim:GetVisualTileAtPosition(points_x[current_pos_idx], points_y[current_pos_idx]) == GROUND.IMPASSABLE then
+	local tile = WorldSim:GetVisualTileAtPosition(points_x[current_pos_idx], points_y[current_pos_idx])
+	if  tile <= GROUND.IMPASSABLE or tile >= GROUND.UNDERGROUND then
 		return
 	end
 	

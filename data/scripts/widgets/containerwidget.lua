@@ -21,8 +21,8 @@ end)
 function ContainerWidget:Open(container, doer)
     self:Close()
 
-	if container.components.container.widgetbgimage then
-		self.bgimage:SetTexture( container.components.container.widgetbgimage )
+	if container.components.container.widgetbgatlas and container.components.container.widgetbgimage then
+		self.bgimage:SetTexture( container.components.container.widgetbgatlas, container.components.container.widgetbgimage )
 	end
     
     if container.components.container.widgetanimbank then
@@ -78,7 +78,7 @@ function ContainerWidget:Open(container, doer)
 	local n = 1
 	for k,v in ipairs(container.components.container.widgetslotpos) do
 	
-		local slot = InvSlot(n,"data/images/inv_slot.tex", self.owner, container.components.container)
+		local slot = InvSlot(n,"images/hud.xml", "inv_slot.tex", self.owner, container.components.container)
 		self.inv[n] = self:AddChild(slot)
 
 		slot:SetPosition(v)
@@ -138,15 +138,14 @@ function ContainerWidget:OnItemGet(data)
 
         if data.src_pos then
 			local dest_pos = self.inv[data.slot]:GetWorldPosition()
-			local im = Image(data.item.components.inventoryitem:GetImage())
+			local inventoryitem = data.item.components.inventoryitem
+			local im = Image(inventoryitem:GetAtlas(), inventoryitem:GetImage())
 			im:MoveTo(data.src_pos, dest_pos, .3, function() tile:Show() tile:ScaleTo(2, 1, .25) im:Kill() end)
         else
 			tile:Show() 
 			tile:ScaleTo(2, 1, .25)
         end
-        
 	end
-	
 	
 	if self.container and self.container.components.container.widgetbuttoninfo and self.container.components.container.widgetbuttoninfo.validfn then
 		if self.container.components.container.widgetbuttoninfo.validfn(self.container) then
@@ -155,8 +154,6 @@ function ContainerWidget:OnItemGet(data)
 			self.button:Disable()
 		end
 	end
-	
-	
 end
 
 function ContainerWidget:Update(dt)

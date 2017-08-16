@@ -4,9 +4,8 @@ function MakeWallType(data)
 
 	local assets =
 	{
-		Asset("ANIM", "data/anim/wall.zip"),
-		Asset("ANIM", "data/anim/wall_".. data.name..".zip"),
-		Asset("IMAGE", "data/inventoryimages/wall_"..data.name.."_item.tex"),
+		Asset("ANIM", "anim/wall.zip"),
+		Asset("ANIM", "anim/wall_".. data.name..".zip"),
 	}
 
 	local function ondeploywall(inst, pt, deployer)
@@ -101,8 +100,6 @@ function MakeWallType(data)
 		end
 
 		if old_percent > new_percent and new_percent > 0 then
-		
-			
 			inst.AnimState:PlayAnimation(anim_to_play.."_hit")		
 			inst.AnimState:PushAnimation(anim_to_play)		
 		else
@@ -125,8 +122,7 @@ function MakeWallType(data)
 
 		inst:AddComponent("stackable")
 		inst.components.stackable.maxsize = TUNING.STACK_SIZE_MEDITEM
-		inst.components.stackable.stacksize = data.stacksize
-		
+
 		inst:AddComponent("inspectable")
 		inst:AddComponent("inventoryitem")
 		
@@ -152,9 +148,6 @@ function MakeWallType(data)
 		return inst
 	end
 
-
-
-	
 	local function onhit(inst)
 		if data.destroysound then
 			inst.SoundEmitter:PlaySound(data.destroysound)		
@@ -192,7 +185,7 @@ function MakeWallType(data)
 
 		anim:SetBank("wall")
 		anim:SetBuild("wall_"..data.name)
-	    anim:PlayAnimation("half", false)
+	    anim:PlayAnimation("1_2", false)
 	    
 		inst:AddComponent("inspectable")
 		inst:AddComponent("lootdropper")
@@ -203,7 +196,11 @@ function MakeWallType(data)
 		
 		
 		inst:AddComponent("repairable")
-		inst.components.repairable.repairmaterial = data.name
+        if data.name == "ruins" then
+		    inst.components.repairable.repairmaterial = "stone"
+        else
+		    inst.components.repairable.repairmaterial = data.name
+        end
 		inst.components.repairable.onrepaired = onrepaired
 		
 		inst:AddComponent("combat")
@@ -250,8 +247,8 @@ function MakeWallType(data)
 
 
 	return Prefab( "common/wall_"..data.name, fn, assets),
-		   Prefab( "common/wall_"..data.name.."_item", itemfn, assets),
-		   MakePlacer("common/wall_"..data.name.."_placer", "wall", "wall_"..data.name, "half", false, false, true) 
+		   Prefab( "common/wall_"..data.name.."_item", itemfn, assets, {"wall_"..data.name, "wall_"..data.name.."_placer"}),
+		   MakePlacer("common/wall_"..data.name.."_placer", "wall", "wall_"..data.name, "1_2", false, false, true) 
 end
 
 
@@ -259,10 +256,14 @@ end
 local wallprefabs = {}
 
 --6 rock, 8 wood, 4 straw
+--NOTE: Stacksize is now set in the actual recipe for the item.
 local walldata = {
-			{name = "stone", tags={"stone"}, loot = "rocks", maxloots = 2, stacksize = 6, maxhealth=TUNING.STONEWALL_HEALTH, buildsound="dontstarve/common/place_structure_stone", destroysound="dontstarve/common/destroy_stone"},
-			{name = "wood", tags={"wood"}, loot = "log", maxloots = 2, stacksize = 8, maxhealth=TUNING.WOODWALL_HEALTH, flammable = true, buildsound="dontstarve/common/place_structure_wood", destroysound="dontstarve/common/destroy_wood"},
-			{name = "hay", tags={"grass"}, loot = "cutgrass", maxloots = 2, stacksize = 4, maxhealth=TUNING.HAYWALL_HEALTH, flammable = true, buildsound="dontstarve/common/place_structure_straw", destroysound="dontstarve/common/destroy_straw"}}
+			{name = "stone", tags={"stone"}, loot = "rocks", maxloots = 2, maxhealth=TUNING.STONEWALL_HEALTH, buildsound="dontstarve/common/place_structure_stone", destroysound="dontstarve/common/destroy_stone"},
+			{name = "wood", tags={"wood"}, loot = "log", maxloots = 2, maxhealth=TUNING.WOODWALL_HEALTH, flammable = true, buildsound="dontstarve/common/place_structure_wood", destroysound="dontstarve/common/destroy_wood"},
+			{name = "hay", tags={"grass"}, loot = "cutgrass", maxloots = 2, maxhealth=TUNING.HAYWALL_HEALTH, flammable = true, buildsound="dontstarve/common/place_structure_straw", destroysound="dontstarve/common/destroy_straw"},
+			{name = "ruins", tags={"stone"}, loot = "rocks", maxloots = 2, maxhealth=TUNING.STONEWALL_HEALTH, buildsound="dontstarve/common/place_structure_stone", destroysound="dontstarve/common/destroy_stone"},
+        }
+
 
 for k,v in pairs(walldata) do
 	local wall, item, placer = MakeWallType(v)

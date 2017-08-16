@@ -128,7 +128,7 @@ local function createbush(bushname)
 
 	local assets =
 	{
-		Asset("ANIM", "data/anim/"..bushname..".zip"),
+		Asset("ANIM", "anim/"..bushname..".zip"),
 	}
 
 	local prefabs =
@@ -150,7 +150,7 @@ local function createbush(bushname)
 
 		    MakeObstaclePhysics(inst, .1)
 		   
-		    anim:SetBank("berrybush")
+		    anim:SetBank(bushname)
 		    anim:SetBuild(bushname)
 		    anim:PlayAnimation("berriesmost", false)
 		    

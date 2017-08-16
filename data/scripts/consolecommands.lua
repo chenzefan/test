@@ -1,7 +1,7 @@
 
 
 local function Spawn(prefab)
-    TheSim:LoadPrefabs({prefab})
+    --TheSim:LoadPrefabs({prefab})
     return SpawnPrefab(prefab)
 end
 
@@ -19,9 +19,10 @@ function c_spawn(prefab, count)
 	local inst = nil
 	for i=1,count do
 		inst = Spawn(prefab)
-		inst.Transform:SetPosition(TheInput:GetMouseWorldPos():Get())
+		inst.Transform:SetPosition(TheInput:GetWorldPosition():Get())
 	end
 	SetDebugEntity(inst)
+    SuUsed("c_spawn_" .. prefab , true)
 	return inst
 end
 
@@ -40,11 +41,11 @@ function c_tile()
 	local s = ""
 
 	local ground = GetWorld()
-	local mx, my, mz = TheInput:GetMouseWorldPos():Get()
+	local mx, my, mz = TheInput:GetWorldPosition():Get()
 	local tx, ty = ground.Map:GetTileCoordsAtPoint(mx,my,mz)
 	s = s..string.format("world[%f,%f,%f] tile[%d,%d] ", mx,my,mz, tx,ty)
 
-	local tile = ground.Map:GetTileAtPoint(TheInput:GetMouseWorldPos():Get())
+	local tile = ground.Map:GetTileAtPoint(TheInput:GetWorldPosition():Get())
 	for k,v in pairs(GROUND) do
 		if v == tile then
 			s = s..string.format("ground[%s] ", k)
@@ -72,6 +73,7 @@ function c_doscenario(scenario)
 	inst:AddComponent("scenariorunner")
 	inst.components.scenariorunner:SetScript(scenario)
 	inst.components.scenariorunner:Run()
+    SuUsed("c_doscenario_"..scenario, true)
 end
 
 
@@ -92,12 +94,19 @@ function c_sel_health()
 end
 
 function c_sethealth(n)
+    SuUsed("c_sethealth", true)
 	GetPlayer().components.health:SetPercent(n)
 end
+function c_setminhealth(n)
+    SuUsed("c_minhealth", true)
+    GetPlayer().components.health:SetMinHealth(n)
+end
 function c_setsanity(n)
+    SuUsed("c_setsanity", true)
 	GetPlayer().components.sanity:SetPercent(n)
 end
 function c_sethunger(n)
+    SuUsed("c_sethunger", true)
 	GetPlayer().components.hunger:SetPercent(n)
 end
 
@@ -113,9 +122,24 @@ function c_give(prefab, count)
 			local inst = Spawn(prefab)
 			if inst then
 				MainCharacter.components.inventory:GiveItem(inst)
+                SuUsed("c_give_" .. inst.prefab)
 			end
 		end
 	end
+end
+
+function c_mat(recname)
+    local player = GetPlayer()
+    local recipe = GetRecipe(recname)
+    if player.components.inventory and recipe then
+      for ik, iv in pairs(recipe.ingredients) do
+            for i = 1, iv.amount do
+                local item = SpawnPrefab(iv.type)
+                player.components.inventory:GiveItem(item)
+                SuUsed("c_mat_" .. iv.type , true)
+            end
+        end
+    end
 end
 
 function c_pos(inst)
@@ -129,11 +153,13 @@ end
 function c_teleport(x, y, z, inst)
 	inst = inst or GetPlayer()
 	inst.Transform:SetPosition(x, y, z)
+    SuUsed("c_teleport", true)
 end
 
 function c_goto(dest, inst)
 	inst = inst or GetPlayer()
 	inst.Transform:SetPosition(dest.Transform:GetWorldPosition())
+    SuUsed("c_goto", true)
 end
 
 function c_inst(guid)
@@ -176,7 +202,8 @@ function c_findnext(prefab, radius, inst)
     local ents = TheSim:FindEntities(x,y,z, radius)
     for k,v in pairs(ents) do
         if v ~= inst and v.prefab == prefab then
-			if v.GUID > lastfound and (not foundlowestid or v.GUID < foundlowestid) then
+        	print(v.GUID,lastfound,foundlowestid )
+			if v.GUID > lastfound and (foundlowestid == nil or v.GUID < foundlowestid) then
 				found = v
 				foundlowestid = v.GUID
 			end
@@ -195,9 +222,12 @@ end
 
 local godmode = false
 function c_godmode()
-	godmode = not godmode
-	GetPlayer().components.health:SetInvincible(godmode)
-	print("God mode: ",godmode) 
+	if GetPlayer() then
+		godmode = not godmode
+		GetPlayer().components.health:SetInvincible(godmode)
+        SuUsed("c_godmode", true)
+		print("God mode: ",godmode) 
+	end
 end
 
 function c_find(prefab, radius, inst)

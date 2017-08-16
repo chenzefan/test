@@ -2,18 +2,27 @@ local Builder = Class(function(self, inst)
     self.inst = inst
     self.recipes = {}
     self.recipe_count = 0
-    self.current_tech_level = 0
+    self.accessible_tech_trees = TECH.NONE
     self.inst:StartUpdatingComponent(self)
-    self.current_machine = nil
+    self.current_prototyper = nil
     self.buffered_builds = {}
     self.bonus_tech_level = 0
+    self.science_bonus = 0
+    self.magic_bonus = 0
+    self.ancient_bonus = 0
+    self.custom_tabs = {}
+    self.ingredientmod = 1
     
 end)
 
 function Builder:ActivateCurrentResearchMachine()
-	if self.current_machine and self.current_machine.components.researchpointconverter then
-		self.current_machine.components.researchpointconverter:Activate()
+	if self.current_prototyper and self.current_prototyper.components.prototyper then
+		self.current_prototyper.components.prototyper:Activate()
 	end
+end
+
+function Builder:AddRecipeTab(tab)
+	table.insert(self.custom_tabs, tab)
 end
 
 function Builder:OnSave()
@@ -23,6 +32,7 @@ function Builder:OnSave()
 	}
 	
 	data.recipes = self.recipes
+
 	return data
 end
 
@@ -51,7 +61,7 @@ function Builder:BufferBuild(recipe)
 end
 
 function Builder:OnUpdate( dt )
-	self:EvaluateTechLevel()
+	self:EvaluateTechTrees()
 end
 
 
@@ -90,49 +100,65 @@ function Builder:CanBuildAtPoint(pt, recipe)
 	return true
 end
 
-function Builder:EvaluateTechLevel()
-	local x,y,z = self.inst.Transform:GetWorldPosition()
-	local ents = TheSim:FindEntities(x,y,z, TUNING.RESEARCH_MACHINE_DIST, {"researchmachine"})
-	
-	
-	local old_level = self.current_tech_level or 0
-	
-	local old_machine = self.current_machine	
-	self.current_machine = nil
-	
-	local machine_active = false
+function Builder:EvaluateTechTrees()
+	local pos = self.inst:GetPosition()
+	local ents = TheSim:FindEntities(pos.x, pos.y, pos.z, TUNING.RESEARCH_MACHINE_DIST, {"prototyper"})
+
+	local old_accessible_tech_trees = deepcopy(self.accessible_tech_trees or TECH.NONE)
+	local old_prototyper = self.current_prototyper
+	self.current_prototyper = nil
+
+	local prototyper_active = false
 	for k,v in pairs(ents) do
-		
-		if v.components.researchpointconverter then
+		if v.components.prototyper then
 			local distsq = self.inst:GetDistanceSqToInst(v)
-			if not machine_active and distsq < TUNING.RESEARCH_MACHINE_DIST*TUNING.RESEARCH_MACHINE_DIST then 
-				v.components.researchpointconverter:TurnOn()
-				self.current_tech_level = v.components.researchpointconverter.level
-				machine_active = true
-				self.current_machine = v
+			if not prototyper_active and distsq < TUNING.RESEARCH_MACHINE_DIST*TUNING.RESEARCH_MACHINE_DIST then
+				--activate the first machine in the list. This will be the one you're closest to.
+				v.components.prototyper:TurnOn()
+				self.accessible_tech_trees = v.components.prototyper:GetTechTrees()
+				prototyper_active = true
+				self.current_prototyper = v
 			else
-				v.components.researchpointconverter:TurnOff()
+				--you've already activated a machine. Turn all the other machines off.
+				v.components.prototyper:TurnOff()
 			end
-			
+		end
+	end
+
+	--add any character specific bonuses to your current tech levels.
+	if not prototyper_active  then
+		self.accessible_tech_trees.SCIENCE = self.science_bonus
+		self.accessible_tech_trees.MAGIC = self.magic_bonus
+		self.accessible_tech_trees.ANCIENT = self.ancient_bonus
+	else
+		self.accessible_tech_trees.SCIENCE = self.accessible_tech_trees.SCIENCE + self.science_bonus
+		self.accessible_tech_trees.MAGIC = self.accessible_tech_trees.MAGIC + self.magic_bonus
+		self.accessible_tech_trees.ANCIENT = self.accessible_tech_trees.ANCIENT + self.ancient_bonus
+	end
+
+	local trees_changed = false
+	
+	for k,v in pairs(old_accessible_tech_trees) do
+		if v ~= self.accessible_tech_trees[k] then 
+			trees_changed = true
+			break
+		end
+	end
+	if not trees_changed then
+		for k,v in pairs(self.accessible_tech_trees) do
+			if v ~= old_accessible_tech_trees[k] then 
+				trees_changed = true
+				break
+			end
 		end
 	end
 	
-	self.current_tech_level = self.current_tech_level + self.bonus_tech_level
+	if old_prototyper and old_prototyper.components.prototyper and old_prototyper.entity:IsValid() and old_prototyper ~= self.current_prototyper then
+		old_prototyper.components.prototyper:TurnOff()
+	end
 
-	if not machine_active then
-		self.current_tech_level = self.bonus_tech_level	
-	end
-	
-	local level_changed = self.current_tech_level ~= old_level
-	
-	
-	
-	if old_machine and old_machine.components.researchpointconverter and old_machine.entity:IsValid() and old_machine ~= self.current_machine then
-		old_machine.components.researchpointconverter:TurnOff()
-	end
-	
-	if level_changed then
-		self.inst:PushEvent("techlevelchange", {level = self.current_tech_level})
+	if trees_changed then
+		self.inst:PushEvent("techtreechange", {level = self.accessible_tech_trees})
 	end
 end
 
@@ -145,20 +171,25 @@ function Builder:AddRecipe(rec)
 end
 
 function Builder:UnlockRecipe(recname)
+	local recipe = GetRecipe(recname)
 
-	if self.inst.components.sanity then
-		self.inst.components.sanity:DoDelta(TUNING.SANITY_MED)
+	if not recipe.nounlock then
+	print("Unlocking: ", recname)
+		if self.inst.components.sanity then
+			self.inst.components.sanity:DoDelta(TUNING.SANITY_MED)
+		end
+		
+		self:AddRecipe(recname)
+		self.inst:PushEvent("unlockrecipe", {recipe = recname})
 	end
-	
-	self:AddRecipe(recname)
-	self.inst:PushEvent("unlockrecipe", {recipe = recname})
 end
 
 function Builder:RemoveIngredients(recname)
     local recipe = GetRecipe(recname)
     if recipe then
         for k, v in pairs(recipe.ingredients) do
-            self.inst.components.inventory:ConsumeByName(v.type, v.amount)
+        	local amt = math.max(1, RoundUp(v.amount * self.ingredientmod))
+            self.inst.components.inventory:ConsumeByName(v.type, amt)
         end
     end
 end
@@ -168,6 +199,7 @@ end
 
 function Builder:MakeRecipe(recipe, pt, onsuccess)
     if recipe then
+    	self.inst:PushEvent("makerecipe", {recipe = recipe})
 		pt = pt or Point(self.inst.Transform:GetWorldPosition())
 		if self:IsBuildBuffered(recipe.name) or self:CanBuild(recipe.name) then
 			self.inst.components.locomotor:Stop()
@@ -202,16 +234,43 @@ function Builder:DoBuild(recname, pt)
                     --self.inst.components.inventory:GiveItem(prod)
                     self.inst:PushEvent("builditem", {item=prod, recipe = recipe})
                     ProfileStatsAdd("build_"..prod.prefab)
+
+
                     if prod.components.equippable and not self.inst.components.inventory:GetEquippedItem(prod.components.equippable.equipslot) then
+                    	--The item is equippable. Equip it.
 						self.inst.components.inventory:Equip(prod)
+
+            			if recipe.numtogive > 1 then
+            				--Looks like the recipe gave more than one item! Spawn in the rest and give them to the player.
+							for i = 2, recipe.numtogive do
+								local addt_prod = SpawnPrefab(recipe.product)
+								self.inst.components.inventory:GiveItem(addt_prod, nil, TheInput:GetScreenPosition())
+							end
+	                    end
+
                     else
-						self.inst.components.inventory:GiveItem(prod, nil, TheInput:GetMouseScreenPos())
+
+	                    if recipe.numtogive > 1 and prod.components.stackable then
+	                    	--The item is stackable. Just increase the stack size of the original item.
+	                    	prod.components.stackable:SetStackSize(recipe.numtogive)
+							self.inst.components.inventory:GiveItem(prod, nil, TheInput:GetScreenPosition())
+	                    elseif recipe.numtogive > 1 and not prod.components.stackable then
+	                    	--We still need to give the player the original product that was spawned, so do that.
+							self.inst.components.inventory:GiveItem(prod, nil, TheInput:GetScreenPosition())
+							--Now spawn in the rest of the items and give them to the player.
+							for i = 2, recipe.numtogive do
+								local addt_prod = SpawnPrefab(recipe.product)
+								self.inst.components.inventory:GiveItem(addt_prod, nil, TheInput:GetScreenPosition())
+							end
+	                    else
+	                    	--Only the original item is being received.
+							self.inst.components.inventory:GiveItem(prod, nil, TheInput:GetScreenPosition())
+	                    end
                     end
-                    
+
 					if self.onBuild then
 						self.onBuild(self.inst, prod)
-					end
-					
+					end	
 					prod:OnBuilt(self.inst)
                     
                     return true
@@ -221,6 +280,7 @@ function Builder:DoBuild(recname, pt)
                 pt = pt or Point(self.inst.Transform:GetWorldPosition())
 				prod.Transform:SetPosition(pt.x,pt.y,pt.z)
                 self.inst:PushEvent("buildstructure", {item=prod, recipe = recipe})
+                print("onbuilt")
                 prod:PushEvent("onbuilt")
                 ProfileStatsAdd("build_"..prod.prefab)
                 
@@ -253,7 +313,8 @@ function Builder:CanBuild(recname)
     local recipe = GetRecipe(recname)
     if recipe then
         for ik, iv in pairs(recipe.ingredients) do
-            if not self.inst.components.inventory:Has(iv.type, iv.amount) then
+        	local amt = math.max(1, RoundUp(iv.amount * self.ingredientmod))
+            if not self.inst.components.inventory:Has(iv.type, amt) then
                 return false
             end
         end

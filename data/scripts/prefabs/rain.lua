@@ -1,5 +1,5 @@
-local texture = "data/fx/rain.tex"
-local shader = "data/shaders/particle.ksh"
+local texture = "fx/rain.tex"
+local shader = "shaders/particle.ksh"
 local colour_envelope_name = "raincolourenvelope"
 local scale_envelope_name = "rainscaleenvelope"
 

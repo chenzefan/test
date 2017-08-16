@@ -1,7 +1,25 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/plant_normal.zip"),
+	Asset("ANIM", "anim/plant_normal.zip"),
+
+	-- products for buildswap
+    Asset("ANIM", "anim/durian.zip"),
+    Asset("ANIM", "anim/eggplant.zip"),
+    Asset("ANIM", "anim/dragonfruit.zip"),
+    Asset("ANIM", "anim/pomegranate.zip"),
+    Asset("ANIM", "anim/corn.zip"),
+    Asset("ANIM", "anim/pumpkin.zip"),
+    Asset("ANIM", "anim/carrot.zip"),
+
 }
+
+require "prefabs/veggies"
+   
+local prefabs = {}
+
+for k,v in pairs(VEGGIES) do
+    table.insert(prefabs, k)
+end
 
 local function onmatured(inst)
 	inst.SoundEmitter:PlaySound("dontstarve/common/farm_harvestable")
@@ -35,4 +53,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/objects/plant_normal", fn, assets) 
+return Prefab( "common/objects/plant_normal", fn, assets, prefabs) 

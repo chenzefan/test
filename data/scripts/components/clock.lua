@@ -7,6 +7,7 @@ local Clock = Class(function(self, inst)
     self.inst = inst
     self.task = nil
     self.numcycles = 0
+    self.lmax = 1
 
     self.dayColour = Point(255/255, 230/255, 158/255)
     self.duskColour = Point(100/255, 100/255, 100/255)
@@ -261,9 +262,10 @@ function Clock:SetSegs(day, dusk, night)
 end
 
 
-function Clock:DoLightningLighting()
+function Clock:DoLightningLighting(maxlight)
     self.lightning = true
     self.lightningtime = 0
+    self.lmax = maxlight or 1
 end
 
 
@@ -319,11 +321,11 @@ function Clock:OnUpdate(dt)
         if self.lightningtime < (1/30)*1 then 
             TheSim:SetAmbientColour(0,0,0)
         elseif self.lightningtime < (1/30)*(1+2) then 
-            TheSim:SetAmbientColour(1,1,1)
+            TheSim:SetAmbientColour(self.lmax,self.lmax,self.lmax)
         elseif self.lightningtime < (1/30)*(1+2+1) then 
             TheSim:SetAmbientColour(0,0,0)
         elseif self.lightningtime < (1/30)*(1+2+1+4) then 
-            TheSim:SetAmbientColour(1,1,1)
+            TheSim:SetAmbientColour(self.lmax,self.lmax,self.lmax)
         else
             local col = nil
             if self:IsNight() then

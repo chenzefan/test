@@ -1,16 +1,8 @@
-require "fonthelper"
-
 local assets = 
 {
-	Asset("ANIM", "data/anim/maxwell_floatinghead.zip"),
-	Asset("SOUND", "data/sound/maxwell.fsb"),
+	Asset("ANIM", "anim/maxwell_floatinghead.zip"),
+	Asset("SOUND", "sound/maxwell.fsb"),
 }
-
-local FONTS = {
-	{ filename = "data/fonts/opensans50.zip", alias = DIALOGFONT },
-}
-
-AddFontAssets( assets, FONTS )
 
 local SPEECH =
 {
@@ -106,7 +98,7 @@ local function fn()
 	shadow:SetSize( 1.75, .75 )
     inst.Transform:SetTwoFaced()
 
-    anim:SetBank("maxwell")
+    anim:SetBank("maxwell_floatinghead")
     anim:SetBuild("maxwell_floatinghead")
     --anim:PlayAnimation("appear")
     anim:PlayAnimation("idle_loop", true)

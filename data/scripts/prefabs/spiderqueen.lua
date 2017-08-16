@@ -1,10 +1,10 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/spider_queen_build.zip"),
-	Asset("ANIM", "data/anim/spider_queen.zip"),
-	Asset("ANIM", "data/anim/spider_queen_2.zip"),
-	--Asset("ANIM", "data/anim/spider_queen_3.zip"),
-	--Asset("SOUND", "data/sound/spider.fsb"),
+	Asset("ANIM", "anim/spider_queen_build.zip"),
+	Asset("ANIM", "anim/spider_queen.zip"),
+	Asset("ANIM", "anim/spider_queen_2.zip"),
+	--Asset("ANIM", "anim/spider_queen_3.zip"),
+	--Asset("SOUND", "sound/spider.fsb"),
 }
 
 local prefabs =

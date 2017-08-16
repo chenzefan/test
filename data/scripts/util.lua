@@ -22,7 +22,8 @@ function DebugSpawn(prefab)
         TheSim:LoadPrefabs({prefab})
         local inst = SpawnPrefab(prefab)
         if inst then
-	        inst.Transform:SetPosition(TheInput:GetMouseWorldPos():Get())
+            SuUsed("c_spawn_" .. prefab , true)
+	        inst.Transform:SetPosition(TheInput:GetWorldPosition():Get())
 	    end
 	end
 end
@@ -189,19 +190,14 @@ end
 -- this will look first in the mods and then in the data directory
 function resolvefilepath( filepath )
 	if PLATFORM == "NACL" then
-		-- on nacl we can NOT seek files which don't exist, and we don't have mods, so only try the data directory
-		if string.find(filepath, "^data/") then
-			return filepath -- it's already absolute, so just send it back
-		else
-			return "data/"..filepath  -- if it's a "relative" path, make it absolute
-		end
+		return filepath -- it's already absolute, so just send it back
 	end
 
 	-- on PC platforms, search all the possible paths
 
 	-- mod folders don't have "data" in them, so we strip that off if necessary. It will
 	-- be added back on as one of the search paths.
-	local filepath = string.gsub(filepath, "^data/", "")
+	local filepath = string.gsub(filepath, "^/", "")
 
 	local searchpaths = package.path
     for path in string.gmatch(searchpaths, "([^;]+)") do
@@ -215,7 +211,7 @@ function resolvefilepath( filepath )
     end
 	-- as a last resort see if the file is an already correct path (incase this asset has already been processed)
 	if not kleifileexists or kleifileexists(filepath) then
-		--print("found it! "..filepath)
+		--print("found it in it's actual path! "..filepath)
 		return filepath
 	end
 
@@ -475,3 +471,187 @@ function fastdump(value)
 	printtable(value)
 	return table.concat(items)
 end
+
+--[[ Data Structures --]]
+
+-----------------------------------------------------------------
+-- Class RingBuffer (circular array)
+
+RingBuffer = Class(function(self, maxlen)
+    if type(maxlen) ~= "number" or maxlen < 1 then
+        maxlen = 10
+    end
+    self.buffer = {}
+    self.maxlen = maxlen or 10
+    self.entries = 0
+    self.pos = #self.buffer
+end)
+
+function RingBuffer:Clear()
+    self.buffer = {}
+    self.entries = 0
+    self.pos = #self.buffer
+end
+
+-- Add an element to the circular buffer
+function RingBuffer:Add(entry)
+    local indx = self.pos % self.maxlen + 1
+
+    self.entries = self.entries + 1
+    if self.entries > self.maxlen then
+        self.entries = self.maxlen
+    end
+    self.buffer[indx] = entry
+    self.pos = indx
+end
+
+-- Access from start of circular buffer
+function RingBuffer:Get(index)
+
+    if index > self.maxlen or index > self.entries or index < 1 then
+        return nil
+    end
+
+    local pos = (self.pos-self.entries) + index 
+    if pos < 1 then
+        pos = pos + self.entries
+    end
+
+    return self.buffer[pos]
+end
+
+function RingBuffer:GetBuffer()
+    local t = {}
+    for i=1, self.entries do
+        t[#t+1] = self:GetElementAt(i)
+    end
+    return t
+end
+
+function RingBuffer:Resize(newsize)
+    if type(newsize) ~= "number" or newsize < 1 then
+        newsize = 1
+    end
+
+    -- not dealing with making the buffer smaller
+    local nb = self:GetBuffer()
+
+    self.buffer = nb
+    self.maxlen = newsize
+    self.entries = #nb
+    self.pos = #nb
+
+end
+
+function table.setfield(Table,Name,Value)
+
+    -- Table (table, optional); default is _G
+    -- Name (string); name of the variable--e.g. A.B.C ensures the tables A
+    --   and A.B and sets A.B.C to <Value>.
+    --   Using single dots at the end inserts the value in the last position
+    --   of the array--e.g. A. ensures table A and sets A[table.getn(A)]
+    --   to <Value>.  Multiple dots are interpreted as a string--e.g. A..B.
+    --   ensures the table A..B.
+    -- Value (any)
+    -- Compatible with Lua 5.0 and 5.1
+
+    if type(Table) ~= 'table' then
+        Table,Name,Value = _G,Table,Name
+    end
+
+    local Concat,Key = false,''
+
+    string.gsub(Name,'([^%.]+)(%.*)',
+                    function(Word,Delimiter)
+                        if Delimiter == '.' then
+                            if Concat then
+                                Word = Key .. Word
+                                Concat,Key = false,''
+                            end
+                            if Table == _G then -- using strict.lua have to declare global before using it
+                                global(Word)
+                            end
+                            if type(Table[Word]) ~= 'table' then
+                                Table[Word] = {}
+                            end
+                            Table = Table[Word]
+                        else
+                            Key = Key .. Word .. Delimiter
+                            Concat = true
+                        end
+                    end
+                    )
+
+    if Key == '' then
+        Table[#Table+1] = Value
+    else
+        Table[Key] = Value
+    end
+
+end
+
+
+function table.getfield(Table,Name)
+    -- Access a value in a table using a string
+    -- table.getfield(A,"A.b.c.foo.bar")
+
+    if type(Table) ~= 'table' then
+        Table,Name = _G,Table
+    end
+
+    for w in string.gfind(Name, "[%w_]+") do
+        Table = Table[w]
+        if Table == nil then
+            return nil
+        end
+    end
+    return Table
+end
+
+function table.findfield(Table,Name)
+    local indx = ""
+
+    for i,v in pairs(Table) do
+        if i == Name then
+            return i
+        end
+        if type(v) == "table" then
+            indx = table.findfield(v,Name)
+            if indx then
+                return i .. "." .. indx
+            end
+        end
+    end
+    return nil
+end
+
+function table.findpath(Table,Names,indx)
+    local path = ""
+    indx = indx or 1
+    if type(Names) == "string" then
+        Names = {Names}
+    end
+
+    for i,v in pairs(Table) do
+        if i == Names[indx] then
+            if indx == #Names then
+                return i
+            elseif type(v) == "table" then
+                path = table.findpath(v,Names,indx+1)
+                if path then
+                    return i .. "." .. path
+                else
+                    return nil
+                end
+            end
+        end
+        if type(v) == "table" then
+            path = table.findpath(v,Names,indx)
+            if path then
+                return i .. "." .. path
+            end
+        end
+    end
+    return nil
+end
+

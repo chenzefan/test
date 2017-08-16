@@ -1,8 +1,12 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/gunpowder.zip"),
-    Asset("ANIM", "data/anim/explode.zip"),
-    Asset("IMAGE", "data/inventoryimages/gunpowder.tex"),
+	Asset("ANIM", "anim/gunpowder.zip"),
+    Asset("ANIM", "anim/explode.zip"),
+}
+
+local prefabs =
+{
+    "explode_small"
 }
 
 local function OnIgniteFn(inst)
@@ -13,8 +17,13 @@ local function OnExplodeFn(inst)
     local pos = Vector3(inst.Transform:GetWorldPosition())
     inst.SoundEmitter:KillSound("hiss")
     inst.SoundEmitter:PlaySound("dontstarve/common/blackpowder_explo")
-    local explode = PlayFX(pos,"explode", "explode", "small")
-    explode.AnimState:SetBloomEffectHandle( "data/shaders/anim.ksh" )
+
+    local explode = SpawnPrefab("explode_small")
+    local pos = inst:GetPosition()
+    explode.Transform:SetPosition(pos.x, pos.y, pos.z)
+
+    --local explode = PlayFX(pos,"explode", "explode", "small")
+    explode.AnimState:SetBloomEffectHandle( "shaders/anim.ksh" )
     explode.AnimState:SetLightOverride(1)
 end
 
@@ -47,5 +56,5 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/inventory/gunpowder", fn, assets) 
+return Prefab( "common/inventory/gunpowder", fn, assets, prefabs) 
 

@@ -75,7 +75,7 @@ function DefaultWakeTest(inst)
 end
 
 function Sleeper:SetNocturnal(b)
-    self.nocturnal = b
+    self.nocturnal = b or true
 end
 
 

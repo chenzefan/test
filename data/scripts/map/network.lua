@@ -462,6 +462,24 @@ function Graph:GetNode(id)
 	return self.nodes[id]
 end
 
+function Graph:GetNodeById(id)
+	--print(self.id,"Looking for ", id)
+	assert(id)
+	if self.nodes[id] ~= nil then
+		--print("Found",id)
+		return self.nodes[id]
+	end
+	for child_id,child in pairs(self.children) do
+		local childNode = child:GetNodeById(id)
+		if childNode ~= nil then
+			--print("Child Found",id)
+			return childNode
+		end
+	end	
+
+	return nil
+end
+
 function Graph:HasNode(id)
 	if self.nodes[id] ~= nil then
 		return true
@@ -631,10 +649,7 @@ function Graph:GetBackgroundRoom(roomName)
 end
 
 function Graph:GetRoomForName(roomName)
-	local backgroundRoom = terrain.special[roomName]
-	if backgroundRoom == nil then
-		backgroundRoom = terrain.base[roomName]
-	end
+	local backgroundRoom = terrain.rooms[roomName]
 	return backgroundRoom
 end
 

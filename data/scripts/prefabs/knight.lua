@@ -1,8 +1,8 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/knight.zip"),
-	Asset("ANIM", "data/anim/knight_build.zip"),
-	Asset("SOUND", "data/sound/chess.fsb"),
+	Asset("ANIM", "anim/knight.zip"),
+	Asset("ANIM", "anim/knight_build.zip"),
+	Asset("SOUND", "sound/chess.fsb"),
 }
 
 local prefabs =
@@ -71,6 +71,7 @@ end
 
 local function OnAttacked(inst, data)
     local attacker = data and data.attacker
+    if attacker and attacker:HasTag("chess") then return end
     inst.components.combat:SetTarget(attacker)
     inst.components.combat:ShareTarget(attacker, SHARE_TARGET_DIST, function(dude) return dude:HasTag("chess") end, MAX_TARGET_SHARES)
 end

@@ -1,8 +1,8 @@
 assets = 
 {
-	Asset("ANIM", "data/anim/phonograph.zip"),
-	Asset("SOUND", "data/sound/maxwell.fsb"),
-	Asset("SOUND", "data/sound/music.fsb")
+	Asset("ANIM", "anim/phonograph.zip"),
+	Asset("SOUND", "sound/maxwell.fsb"),
+	Asset("SOUND", "sound/music.fsb")
 }
 
 local function play(inst)

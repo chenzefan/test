@@ -1,12 +1,8 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/blow_dart.zip"),
-	Asset("ANIM", "data/anim/swap_blowdart.zip"),
-	Asset("ANIM", "data/anim/swap_blowdart_pipe.zip"),
-    
-    Asset("IMAGE", "data/inventoryimages/blowdart_sleep.tex"),
-    Asset("IMAGE", "data/inventoryimages/blowdart_fire.tex"),
-    Asset("IMAGE", "data/inventoryimages/blowdart_pipe.tex"),
+	Asset("ANIM", "anim/blow_dart.zip"),
+	Asset("ANIM", "anim/swap_blowdart.zip"),
+	Asset("ANIM", "anim/swap_blowdart_pipe.zip"),
 }
 
 local prefabs = 

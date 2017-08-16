@@ -57,20 +57,16 @@ local function MakeVeggie(name, has_seeds)
 
 	local assets=
 	{
-		Asset("ANIM", "data/anim/"..name..".zip"),
-		Asset("IMAGE", "data/inventoryimages/"..name..".tex"),
+		Asset("ANIM", "anim/"..name..".zip"),
 	}
 	local assets_cooked=
 	{
-		Asset("ANIM", "data/anim/"..name..".zip"),
-		Asset("IMAGE", "data/inventoryimages/"..name.."_cooked.tex"),
+		Asset("ANIM", "anim/"..name..".zip"),
 	}
 	
 	local assets_seeds =
 	{
-		Asset("ANIM", "data/anim/seeds.zip"),
-		Asset("IMAGE", "data/inventoryimages/"..name.."_seeds.tex"),
-		Asset("IMAGE", "data/inventoryimages/seeds_cooked.tex"),
+		Asset("ANIM", "anim/seeds.zip"),
 	}
 
 	local prefabs =

@@ -93,6 +93,10 @@ function AnimButton:SetText(msg)
     end
 end
 
+function AnimButton:GetText()
+    return self.text:GetString()
+end
+
 function AnimButton:OnMouseOver()
 	if self:IsEnabled() then
 		TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/click_mouseover")

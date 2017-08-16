@@ -1,4 +1,6 @@
 
+local SKIP_GEN_CHECKS = false
+
 local trees = {"evergreen_short", "evergreen_normal", "evergreen_tall"}
 local function tree()
     return "evergreen"--trees[math.random(#trees)]
@@ -82,6 +84,7 @@ local TRANSLATE_TO_PREFABS = {
 	["maxwelllight"] = {"maxwelllight"},
 	["maxwelllight_area"] = {"maxwelllight_area"},
 	["fireflies"] = {"fireflies"},
+	["cave_entrance"] = {"cave_entrance"},
 	}
 
 local customise = require("map/customise")
@@ -139,14 +142,8 @@ local function UpdateTerrainValues(world_gen_choices)
 	if world_gen_choices == nil or GetTableSize(world_gen_choices) == 0 then
 		return
 	end
-
-	for name,val in pairs(terrain.base) do
-		if val.contents.distributeprefabs ~= nil then
-			UpdatePercentage(val.contents.distributeprefabs, world_gen_choices)
-		end
-	end
 	
-	for name,val in pairs(terrain.special) do
+	for name,val in pairs(terrain.rooms) do
 		if val.contents.distributeprefabs ~= nil then
 			UpdatePercentage(val.contents.distributeprefabs, world_gen_choices)
 		end
@@ -285,15 +282,18 @@ local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choi
 	topology_save.root:SwapWormholesAndRoadsExtra(entities, map_width, map_height)
 	if topology_save.root.error == true then
 	    print ("ERROR: Node ", topology_save.root.error_string)
-	    return nil
+	    if SKIP_GEN_CHECKS == false then
+	    	return nil
+	    end
 	end
 	
 	if prefab ~= "cave" then
-    	WorldSim:SetRoadParameters(
+	    WorldSim:SetRoadParameters(
 			ROAD_PARAMETERS.NUM_SUBDIVISIONS_PER_SEGMENT,
 			ROAD_PARAMETERS.MIN_WIDTH, ROAD_PARAMETERS.MAX_WIDTH,
-			ROAD_PARAMETERS.MIN_EDGE_WIDTH, ROAD_PARAMETERS.MAX_EDGE_WIDTH )
-	
+			ROAD_PARAMETERS.MIN_EDGE_WIDTH, ROAD_PARAMETERS.MAX_EDGE_WIDTH,
+			ROAD_PARAMETERS.WIDTH_JITTER_SCALE )
+		
 		WorldSim:DrawRoads(join_islands) 
 	end
 		
@@ -319,7 +319,9 @@ local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choi
  	    	local area = WorldSim:GetSiteArea(save.map.topology.ids[idx])
 	    	if area < 8 then
 	    		print ("ERROR: Site "..save.map.topology.ids[idx].." area < 8: "..area)
-	    		return nil
+	    		if SKIP_GEN_CHECKS == false then
+	    			return nil
+	    		end
 	   		end
 	   	end
 	end
@@ -360,18 +362,101 @@ local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choi
 	local runtime_overrides = nil
     current_gen_params, runtime_overrides = TranslateWorldGenChoices(current_gen_params)
 
+    print("Checking Tags")
+
+   	if topology_save.GlobalTags["Labyrinth"] ~= nil and #topology_save.GlobalTags["Labyrinth"] >0 then
+   		local val = math.floor(math.random()*10.0-2.5)
+   		local mazetype = MAZE_TYPE.MAZE_GROWINGTREE_4WAY
+   		-- if math.random()> 0.9 then
+   			-- mazetype = MAZE_TYPE.MAZE_GROWINGTREE_4WAY_INV
+   		-- end
+
+   		WorldSim:RunMaze(mazetype, val, topology_save.GlobalTags["Labyrinth"])
+
+   		for i,node in ipairs(topology_save.GlobalTags["LabyrinthEntrance"]) do 
+	   		local entrance_node = topology_save.root:GetNodeById(node)
+
+	   		for id, edge in pairs(entrance_node.edges) do
+	   			--print("Drawing line for ", edge.node1.id, edge.node2.id, GROUND.BRICK)
+				WorldSim:DrawCellLine( edge.node1.id, edge.node2.id, NODE_INTERNAL_CONNECTION_TYPE.EdgeSite, GROUND.BRICK)
+	   		end
+   		end
+   	end
+
+   	if topology_save.GlobalTags["Maze"] ~= nil and #topology_save.GlobalTags["Maze"] >0 then
+  		local xs, ys, types = WorldSim:GetPointsForMetaMaze(topology_save.GlobalTags["Maze"])
+		
+		local obj_layout = require("map/object_layout")
+		
+		local add_fn = {fn=function(prefab, points_x, points_y, current_pos_idx, entitiesOut, width, height, prefab_list, prefab_data, rand_offset) 
+				WorldSim:ReserveTile(points_x[current_pos_idx], points_y[current_pos_idx])
+		
+				local x = (points_x[current_pos_idx] - width/2.0)*TILE_SCALE
+				local y = (points_y[current_pos_idx] - height/2.0)*TILE_SCALE
+				x = math.floor(x*100)/100.0
+				y = math.floor(y*100)/100.0
+				if entitiesOut[prefab] == nil then
+					entitiesOut[prefab] = {}
+				end
+				local save_data = {x=x, z=y}
+				if prefab_data then
+					
+					if prefab_data.data then
+						if type(prefab_data.data) == "function" then
+							save_data["data"] = prefab_data.data()
+						else
+							save_data["data"] = prefab_data.data
+						end
+					end
+					if prefab_data.id then
+						save_data["id"] = prefab_data.id
+					end
+					if prefab_data.scenario then
+						save_data["scenario"] = prefab_data.scenario
+					end
+				end
+				table.insert(entitiesOut[prefab], save_data)
+			end,
+			args={entitiesOut=entities, width=map_width, height=map_height, rand_offset = false, debug_prefab_list=nil}
+		}
+		
+		if xs ~= nil and #xs >0 then
+			local closest = Vector3(9999999999, 9999999999, 0)
+			local c_x, c_y = WorldSim:GetSiteCentroid(topology_save.GlobalTags["MazeEntrance"][1])
+			local centroid = Vector3(c_x, c_y, 0)
+			for idx = 1,#xs do
+				local current = Vector3(xs[idx], ys[idx], 0)
+
+				local diff = centroid - current
+				local best = centroid - closest
+
+				if diff:Length() < best:Length() then
+					closest = current
+				end 
+
+				if types[idx] ~= 0 then			
+					obj_layout.Place({xs[idx], ys[idx]}, MAZE_CELL_EXITS_INV[types[idx]], add_fn)
+				else
+					print("ERROR Type:",types[idx], MAZE_CELL_EXITS_INV[types[idx]])
+				end
+			end
+			obj_layout.Place({closest.x, closest.y}, "FOUR_WAY", add_fn)
+		end
+   	end
+
     print("Populating voronoi...")
 
 	topology_save.root:GlobalPrePopulate(entities, map_width, map_height)
     topology_save.root:ConvertGround(SpawnFunctions, entities, map_width, map_height)
-
 
 	-- Caves can be easily disconnected
  	if prefab == "cave" then
 	   	local replace_count = WorldSim:DetectDisconnect()
 	    if replace_count >200 then
 	    	print("PANIC: Too many disconnected tiles...",replace_count)
-	    	return nil
+	    	if SKIP_GEN_CHECKS == false then
+	    		return nil
+	    	end
 	    else
 	    	print("disconnected tiles...",replace_count)
 	    end
@@ -400,17 +485,14 @@ local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choi
 	if level_type ~= "adventure" then
 		table.insert(double_check, "adventure_portal")
 	end
---   	local points_x, points_y, points_type = WorldSim:GetPointsForSite("START")
---   	if points_x == nil or #points_x == 0 then
---   		print("PANIC: missing start space! ")
---   		return nil
---   	end
    	
    	if prefab == "forest" then	   	
 	   	for i,k in ipairs(double_check) do
 	   		if entities[k] == nil then
 	   			print("PANIC: missing teleportato part! ",k)
-				return nil
+				if SKIP_GEN_CHECKS == false then
+					return nil
+				end
 			end			
 		end
 	end
@@ -420,7 +502,6 @@ local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choi
 		save.map.topology.overrides = {}
 	end
    	save.map.topology.overrides.original = world_gen_choices
-   	--dumptable(save.map.topology.overrides)
    	
    	if current_gen_params ~= nil then
 	   	-- Filter out any etities over our overrides
@@ -449,9 +530,13 @@ local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choi
     save.map.width, save.map.height = map_width, map_height
 
     save.playerinfo = {}
-	if save.ents.spawnpoint == nil then
+	if save.ents.spawnpoint == nil or #save.ents.spawnpoint == 0 then
     	print("PANIC: No start location!")
-    	return nil
+    	if SKIP_GEN_CHECKS == false then
+    		return nil
+    	else
+    		save.ents.spawnpoint={{x=0,y=0,z=0}}
+    	end
     end
     
    	save.playerinfo.x = save.ents.spawnpoint[1].x

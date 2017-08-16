@@ -1,7 +1,6 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/flower_petals_evil.zip"),
-    Asset("IMAGE", "data/inventoryimages/petals_evil.tex"),
+	Asset("ANIM", "anim/flower_petals_evil.zip"),
 }
 
 local function oneaten(inst, eater)

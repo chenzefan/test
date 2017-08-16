@@ -28,7 +28,7 @@ function SaveIndex:GetSaveGameName(type, slot)
 
 	if type == "cave" then
 		local cavenum = self:GetCurrentCaveNum(slot)
-		local levelnum = self:GetCurrentCaveLevel(slot)
+		local levelnum = self:GetCurrentCaveLevel(slot, cavenum)
 		savename = type .. "_" .. tostring(cavenum) .. "_" .. tostring(levelnum) .. "_" .. tostring(slot)
 	else
 		savename = type.."_"..tostring(slot)
@@ -93,6 +93,9 @@ function SaveIndex:VerifyFiles(completion_callback)
 			for k, v in pairs(v.modes) do
 				table.insert(files, v.file)
 			end
+		end
+		if not v.save_id then
+			v.save_id = self:GenerateSaveID(k)
 		end
 
 		CheckFiles(function(status) 
@@ -330,6 +333,7 @@ function SaveIndex:StartSurvivalMode(saveslot, character, customoptions, onsaved
 --	local data = self:GetModeData(saveslot, "survival")
 	self.data.slots[self.current_slot].character = character
 	self.data.slots[self.current_slot].current_mode = "survival"
+	self.data.slots[self.current_slot].save_id = self:GenerateSaveID(self.current_slot)
 
 	self.data.slots[self.current_slot].modes = 
 	{
@@ -342,8 +346,22 @@ function SaveIndex:StartSurvivalMode(saveslot, character, customoptions, onsaved
 	}
  	
  	self:Save(onsavedcb)
+
+    local starts = Profile:GetValue("starts") or 0
+    Profile:SetValue("starts", starts+1)
+    Profile:Save()
+
 end
 
+function SaveIndex:GenerateSaveID(slot)
+	local now = os.time()
+	return TheSim:GetUserID() .."-".. tostring(now) .."-".. tostring(slot)
+end
+
+function SaveIndex:GetSaveID(slot)
+	slot = slot or self.current_slot
+	return self.data.slots[slot].save_id
+end
 
 function SaveIndex:OnFailCave(onsavedcb)
 	self.data.slots[self.current_slot].modes.cave.playerdata = nil
@@ -403,7 +421,6 @@ function SaveIndex:EnterCave(onsavedcb, saveslot, cavenum, level)
 	level = level or 1
 	cavenum = cavenum or 1
 
---	local data = self:GetModeData(saveslot, "survival")
 	self.data.slots[self.current_slot].current_mode = "cave"
 	
 	if not self.data.slots[self.current_slot].modes.cave then
@@ -412,7 +429,9 @@ function SaveIndex:EnterCave(onsavedcb, saveslot, cavenum, level)
 
 	self.data.slots[self.current_slot].modes.cave.files = self.data.slots[self.current_slot].modes.cave.files or {}
 	self.data.slots[self.current_slot].modes.cave.current_level = self.data.slots[self.current_slot].modes.cave.current_level or {}
+	self.data.slots[self.current_slot].modes.cave.world = level or 1
 
+	self.data.slots[self.current_slot].modes.cave.current_level[cavenum] = level
 	self.data.slots[self.current_slot].modes.cave.current_cave = cavenum
 	
 	local savename = self:GetSaveGameName("cave", self.current_slot)
@@ -428,8 +447,6 @@ function SaveIndex:EnterCave(onsavedcb, saveslot, cavenum, level)
 	if not found then 
 		table.insert(self.data.slots[self.current_slot].modes.cave.files, savename)
 	end
-
-	self.data.slots[self.current_slot].modes.cave.current_level[cavenum] = level
 	
 	self.data.slots[self.current_slot].modes.cave.file = savename
 
@@ -467,7 +484,7 @@ function SaveIndex:StartAdventure(cb)
 end
 
 function SaveIndex:BuildAdventurePlaylist()
-	require("map/levels")
+	local levels = require("map/levels")
 
 	local playlist = {}
 
@@ -633,3 +650,19 @@ function SaveIndex:AddCave(slot, cb)
 	self:Save(cb)
 end
 
+
+-- Global for saving game on Android focus lost event
+function OnFocusLost()
+	--check that we are in gameplay, not main menu
+	if inGamePlay then
+		SetHUDPause(true)
+		SaveGameIndex:SaveCurrent()
+	end
+end
+
+function OnFocusGained()
+	--check that we are in gameplay, not main menu
+	if inGamePlay then
+		SetHUDPause(false)
+	end
+end

@@ -19,4 +19,8 @@ function KnownLocations:GetLocation(name)
     return self.locations[name] 
 end
 
+function KnownLocations:ForgetLocation(name)
+    self.locations[name] = nil
+end
+
 return KnownLocations

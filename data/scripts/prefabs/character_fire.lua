@@ -1,7 +1,7 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/fire_large_character.zip"),
-	Asset("SOUND", "data/sound/common.fsb"),
+	Asset("ANIM", "anim/fire_large_character.zip"),
+	Asset("SOUND", "sound/common.fsb"),
 }
 
 
@@ -28,7 +28,7 @@ local function fn(Sim)
 
     anim:SetBank("fire_large_character")
     anim:SetBuild("fire_large_character")
-    anim:SetBloomEffectHandle( "data/shaders/anim.ksh" )
+    anim:SetBloomEffectHandle( "shaders/anim.ksh" )
     inst.AnimState:SetRayTestOnBB(true)
     
     inst:AddTag("fx")

@@ -4,9 +4,9 @@ local trace = function() end
 
 local assets =
 {
-    Asset("ANIM", "data/anim/walrus_house.zip"),
-    Asset("ANIM", "data/anim/igloo_track.zip"),
-    Asset("SOUND", "data/sound/pig.fsb"), -- light on/off sounds
+    Asset("ANIM", "anim/walrus_house.zip"),
+    Asset("ANIM", "anim/igloo_track.zip"),
+    Asset("SOUND", "sound/pig.fsb"), -- light on/off sounds
 }
 
 local prefabs =

@@ -1,6 +1,6 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/structure_collapse_fx.zip"),
+	Asset("ANIM", "anim/structure_collapse_fx.zip"),
 }
 
 local function kill(inst)

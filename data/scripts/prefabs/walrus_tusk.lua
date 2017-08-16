@@ -1,7 +1,6 @@
 local assets=
 {
-    Asset("ANIM", "data/anim/walrus_tusk.zip"),
-    Asset("IMAGE", "data/inventoryimages/walrus_tusk.tex"),
+    Asset("ANIM", "anim/walrus_tusk.zip"),
 }
 
 local function create()

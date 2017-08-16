@@ -228,6 +228,22 @@ function SanityMonsterSpawner:UpdateMonsters(dt)
 
 	if self.popchangetimer and self.popchangetimer > 0 then
 		self.popchangetimer = self.popchangetimer - dt
+	elseif self.inst.components.sanity.inducedinsanity then
+		self.popchangetimer = 5
+		local maxpop = 5
+		local inc_chance = 0.7
+		local dec_chance = 0.4
+
+		--figure out our new target
+		if self.currenttargetpop > maxpop then
+			self.currenttargetpop = self.currenttargetpop - 1
+		else
+			if inc_chance > 0 and math.random() < inc_chance then
+				self.currenttargetpop = self.currenttargetpop + 1
+			elseif dec_chance > 0 and math.random() < dec_chance then
+				self.currenttargetpop = self.currenttargetpop - 1
+			end
+		end
 	else
 		self.popchangetimer = 10 + math.random()*10
 		

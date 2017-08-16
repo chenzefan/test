@@ -1,7 +1,6 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/fireflies.zip"),
-	Asset("IMAGE", "data/inventoryimages/fireflies.tex"),
+	Asset("ANIM", "anim/fireflies.zip"),
 }
 
 local INTENSITY = .5
@@ -74,7 +73,7 @@ local function fn(Sim)
     light:SetColour(180/255, 195/255, 150/255)
     light:Enable(false)
     
-    inst.AnimState:SetBloomEffectHandle( "data/shaders/anim.ksh" )
+    inst.AnimState:SetBloomEffectHandle( "shaders/anim.ksh" )
     
     inst.AnimState:SetBank("fireflies")
     inst.AnimState:SetBuild("fireflies")

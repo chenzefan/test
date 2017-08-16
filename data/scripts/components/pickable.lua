@@ -41,6 +41,16 @@ function Pickable:LongUpdate(dt)
 	end
 end
 
+function Pickable:FinishGrowing()
+	if not self.canbepicked then
+		if self.task then
+			self.task:Cancel()
+			self.task = nil	
+			self:Regen()
+		end
+	end
+end
+
 function Pickable:Resume()
 	if self.paused then
 		self.paused = false
@@ -78,7 +88,10 @@ end
 function Pickable:GetDebugString()
 	local time = GetTime()
 
-	if self.paused then
+	if self.caninteractwith then
+		local str = "caninteractwith"
+		return str
+	elseif self.paused then
 		local str = "paused"
 		if self.pause_time then
 			str = str.. string.format(" %2.2f", self.pause_time)
@@ -144,6 +157,7 @@ function Pickable:OnSave()
 		picked = not self.canbepicked and true or nil, 
 		transplanted = self.transplanted and true or nil,
 		paused = self.paused and true or nil,
+		caninteractwith = self.caninteractwith and true or nil,
 		--pause_time = self.pause_time 
 	}
 
@@ -189,6 +203,10 @@ function Pickable:OnLoad(data)
 		end
 	end
     
+    if data.caninteractwith then
+    	self.caninteractwith = data.caninteractwith
+    end
+
     if data.paused then
 		self.paused = true
 		self.pause_time = data.pause_time
@@ -308,6 +326,7 @@ function Pickable:Pick(picker)
 			self.targettime = GetTime() + self.regentime
 		end
         
+        self.inst:PushEvent("picked", {picker = picker, loot = loot})
     end
 end
 

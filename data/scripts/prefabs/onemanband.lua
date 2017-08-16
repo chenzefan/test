@@ -1,9 +1,8 @@
 local assets =
 {
 	--naming convention inconsistent
-	Asset("ANIM", "data/anim/armor_onemanband.zip"),
-	Asset("ANIM", "data/anim/swap_one_man_band.zip"),
-    Asset("IMAGE", "data/inventoryimages/onemanband.tex"),
+	Asset("ANIM", "anim/armor_onemanband.zip"),
+	Asset("ANIM", "anim/swap_one_man_band.zip"),
 }
 
 local function band_disable(inst)

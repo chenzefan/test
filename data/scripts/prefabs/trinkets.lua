@@ -1,13 +1,11 @@
 local function MakeTrinket(num)
     
     local name = "trinket_"..tostring(num)
-    local texture = "data/inventoryimages/"..name..".tex"
     local prefabname = "common/inventory/"..name
     
     local assets=
     {
-        Asset("ANIM", "data/anim/trinkets.zip"),
-        Asset("IMAGE", texture),
+        Asset("ANIM", "anim/trinkets.zip"),
     }
     
     local function fn(Sim)

@@ -102,6 +102,7 @@ local Controls = Class(Widget, function(self, owner)
 	self.sidepanel = self.topright_root:AddChild(Widget("sidepanel"))
 	self.sidepanel:SetScale(1,1,1)
 	self.sidepanel:SetPosition(-80, -60, 0)
+
     self.status = self.sidepanel:AddChild(Status(self.owner))
     self.status:SetPosition(0,-110,0)
     --self.status:SetScale(.9,.9,.9)
@@ -129,7 +130,9 @@ local Controls = Class(Widget, function(self, owner)
 	btn:SetMouseOut( function() btn:ScaleTo(MAPSCALE,MAPSCALE,MAPSCALE) end )
 	
 	btn:SetTooltip(STRINGS.UI.HUD.MAP)
-	btn:SetImage( "data/images/map_button.tex" )
+	
+	local hud_atlas = resolvefilepath("images/hud.xml")
+	btn:SetImage(hud_atlas, "map_button.tex")
 
 
 	self.pauseBtn = self.maproot:AddChild(Button())
@@ -153,7 +156,7 @@ local Controls = Class(Widget, function(self, owner)
 		
 	self.pauseBtn:SetTooltip(STRINGS.UI.HUD.PAUSE)
 		
-	self.pauseBtn:SetImage( "data/images/pause.tex" )	
+	self.pauseBtn:SetImage( hud_atlas, "pause.tex" )	
 	self.pauseBtn:SetScale(.33,.33,.33)
 	self.pauseBtn:SetPosition( Point( 0,-50,0 ) )
         
@@ -174,8 +177,8 @@ local Controls = Class(Widget, function(self, owner)
 
 
 	self.rotleft = self.maproot:AddChild(Button())
-	self.rotleft:SetImage( "data/images/turnarrow_icon.tex" )
-	--self.rotleft:SetMouseOverImage( "data/images/turnarrow_icon_over.tex" )
+	self.rotleft:SetImage( hud_atlas, "turnarrow_icon.tex" )
+	--self.rotleft:SetMouseOverImage( "images/hud.xml", "turnarrow_icon_over.tex" )
 	
 	self.rotleft:SetMouseOver( function() self.rotleft:SetScale( -.8, .8, .8 ) end )
 	self.rotleft:SetMouseOut( function() self.rotleft:SetScale( -.7, .7, .7 ) end )	
@@ -186,8 +189,8 @@ local Controls = Class(Widget, function(self, owner)
     self.rotleft:SetTooltip(STRINGS.UI.HUD.ROTLEFT)
 
 	self.rotright = self.maproot:AddChild(Button())
-	self.rotright:SetImage( "data/images/turnarrow_icon.tex" )
-	--self.rotright:SetMouseOverImage( "data/images/turnarrow_icon_over.tex" )
+	self.rotright:SetImage( hud_atlas, "turnarrow_icon.tex" )
+	--self.rotright:SetMouseOverImage( "images/hud.xml", turnarrow_icon_over.tex" )
 	
 	self.rotright:SetMouseOver( function() self.rotright:SetScale( .8, .8, .8 ) end )
 	self.rotright:SetMouseOut( function() self.rotright:SetScale( .7, .7, .7 ) end )	
@@ -197,9 +200,6 @@ local Controls = Class(Widget, function(self, owner)
     self.rotright:SetScale(.7,.7,.7)
 	self.rotright:SetTooltip(STRINGS.UI.HUD.ROTRIGHT)
 
-    
-    
-	
 	self.containerroot = self:AddChild(Widget(""))
     self.containerroot:SetHAnchor(ANCHOR_MIDDLE)
     self.containerroot:SetVAnchor(ANCHOR_MIDDLE)
@@ -286,7 +286,7 @@ function Controls:SetHUDSize( size )
 	self.mousefollow:SetScale(scale,scale,scale)
 end
 
-function Controls:OnKeyDown( key )
+function Controls:OnKeyUp( key )
 	if self.owner and self.owner.components.playercontroller and self.owner.components.playercontroller.enabled then
 		if key >= KEY_0 and key <= KEY_9 then
 			local num = 1
@@ -301,7 +301,10 @@ function Controls:OnKeyDown( key )
 		elseif key == KEY_EQUALS then
 			self.inv:UseSlot(12)
 	    elseif key == KEY_TAB then
-		    self:ToggleMap()
+		    if not GetPlayer():HasTag("beaver") then
+				print ("toggle map!")
+				self:ToggleMap()
+			end
 	    elseif key == KEY_TILDE and PLATFORM ~= "NACL" and TheSim:GetSetting("MISC", "ENABLECONSOLE") == "true" then
 	    	TheFrontEnd:PushScreen(ConsoleScreen())
 	    	self.consoletext:Show()
@@ -387,7 +390,7 @@ function Controls:ToggleMap()
             self.containerroot:Hide()
             self.containerroot_side:Hide()
             self.owner.SoundEmitter:PlaySound("dontstarve/HUD/map_open")
-            SetHUDPause(true)
+            SetHUDPause(true,"minimap")
 			self.minimap:Show()
 			self.minimap:Update()
             self.minimapBtn:Show()
@@ -421,6 +424,7 @@ end
 PlayerHud = Class(Screen, function(self)
 	Screen._ctor(self, "HUD")
     
+    
     self.vig = self:AddChild(UIAnim())
     self.vig:GetAnimState():SetBuild("vig")
     self.vig:GetAnimState():SetBank("vig")
@@ -433,6 +437,7 @@ PlayerHud = Class(Screen, function(self)
     self.bloodover = self:AddChild(BloodOver())
     
     self.minimap = SpawnPrefab( "minimap" )
+    self.under_root = self:AddChild(Widget("under_root"))
     self.root = self:AddChild(Widget("root"))
 end)
 
@@ -506,12 +511,6 @@ function PlayerHud:SetMainCharacter(maincharacter)
 		maincharacter.HUD = self
 		self.owner = maincharacter
 		
-		
-		--FIXME: THIS IS A HACK TO GET AROUND AN ISSUE WHEN SHADER CONSTANTS AREN'T BEING SET PROPERLY WHEN YOU HAVE TEXT ON DIFFERENT RENDER LAYERS
-		self.garbagetext = self.root:AddChild(Text(TITLEFONT, 40))
-		self.garbagetext:SetString(" ")
-
-
 		self.controls = self.root:AddChild(Controls(self.owner))
 		self.controls.inv:Refresh()
 		--self.inst.entity:SetParent(self.inst.entity)
@@ -560,7 +559,6 @@ function PlayerHud:OnUpdate(dt)
 	end
 end
 
-
 function PlayerHud:OnKeyUp( key )
 	if key == KEY_ESCAPE then
 		if not IsHUDPaused() then
@@ -572,7 +570,7 @@ end
 function PlayerHud:OnKeyDown( key )
 	local focused = self:GetActiveFocusWidget()
 	if self.controls then
-		self.controls:OnKeyDown( key )
+		self.controls:OnKeyUp( key )
 	end
 end
 

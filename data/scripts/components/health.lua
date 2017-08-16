@@ -12,6 +12,8 @@ local Health = Class(function(self, inst)
 	self.nofadeout = false
 	self.penalty = 0
     self.absorb = 0
+
+    self.canmurder = true
 	
 end)
 
@@ -64,6 +66,7 @@ function Health:DoFireDamage(amount, doer)
 			self.takingfiredamagestarttime = GetTime()
 			self.inst:StartUpdatingComponent(self)
 			self.inst:PushEvent("startfiredamage")
+            ProfileStatsAdd("onfire")
 		end
 		
 		local time = GetTime()
@@ -84,6 +87,7 @@ function Health:OnUpdate(dt)
 		self.takingfiredamage = false
 		self.inst:StopUpdatingComponent(self)
 		self.inst:PushEvent("stopfiredamage")
+        ProfileStatsAdd("fireout")
 	end
 end
 
@@ -160,6 +164,10 @@ function Health:IsHurt()
     return self.currenthealth < (self.maxhealth - self.penalty*TUNING.EFFIGY_HEALTH_PENALTY)
 end
 
+function Health:GetMaxHealth()
+    return (self.maxhealth - self.penalty*TUNING.EFFIGY_HEALTH_PENALTY)
+end
+
 function Health:Kill()
     if self.currenthealth > 0 then
         self:DoDelta(-self.currenthealth)
@@ -193,6 +201,7 @@ end
 
 function Health:SetPercent(percent, cause)
     self:SetVal(self.maxhealth*percent, cause)
+    self:DoDelta(0)
 end
 
 function Health:OnProgress()
@@ -204,8 +213,8 @@ function Health:SetVal(val, cause)
     local old_percent = self:GetPercent()
 
     self.currenthealth = val
-    if self.currenthealth > self.maxhealth - self.penalty*TUNING.EFFIGY_HEALTH_PENALTY then
-        self.currenthealth = self.maxhealth - self.penalty*TUNING.EFFIGY_HEALTH_PENALTY
+    if self.currenthealth > self:GetMaxHealth() then
+        self.currenthealth = self:GetMaxHealth()
     end
 
     if self.minhealth and self.currenthealth < self.minhealth then
@@ -218,8 +227,10 @@ function Health:SetVal(val, cause)
 
     local new_percent = self:GetPercent()
     
-    if old_percent > 0 and new_percent <= 0 then
+    if old_percent > 0 and new_percent <= 0 or self:GetMaxHealth() <= 0 then
         self.inst:PushEvent("death", {cause=cause})
+
+        GetWorld():PushEvent("entity_death", {inst = self.inst, cause=cause} )
 
 		if not self.nofadeout then
 			self.inst:AddTag("NOCLICK")
@@ -229,9 +240,14 @@ function Health:SetVal(val, cause)
     end
 end
 
-function Health:DoDelta(amount, overtime, cause)
+function Health:DoDelta(amount, overtime, cause, ignore_invincible)
 
-    if self.invincible or self.inst.is_teleporting == true then
+    if self.redirect then
+        self.redirect(self.inst, amount, overtime, cause)
+        return
+    end
+
+    if not ignore_invincible and (self.invincible or self.inst.is_teleporting == true) then
         return
     end
     
@@ -244,6 +260,14 @@ function Health:DoDelta(amount, overtime, cause)
     local new_percent = self:GetPercent()
 
     self.inst:PushEvent("healthdelta", {oldpercent = old_percent, newpercent = self:GetPercent(), overtime=overtime, cause=cause})
+
+    if self.inst == GetPlayer() and cause and cause ~= "debug_key" then
+        if amount > 0 then
+            ProfileStatsAdd("healby_" .. cause, math.floor(amount))
+            FightStat_Heal(math.floor(amount))
+        end
+    end
+
     if self.ondelta then
 		self.ondelta(self.inst, old_percent, self:GetPercent())
     end
@@ -256,7 +280,9 @@ function Health:Respawn(health)
 end
 
 function Health:CollectInventoryActions(doer, actions)
-    table.insert(actions, ACTIONS.MURDER)
+    if self.canmurder then
+        table.insert(actions, ACTIONS.MURDER)
+    end
 end
 
 return Health

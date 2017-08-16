@@ -8,6 +8,7 @@ local cave_prefabs =
 	"warningshadow",
 	"cavelight",
 	"flower_cave",
+    "ancient_altar",
 	"stalagmite",
 	"stalagmite_tall",
 	"bat",
@@ -22,13 +23,19 @@ local cave_prefabs =
     "batcave",
     "rockyherd",
     "cave_fern",
+    "monkey",
+    "monkeybarrel",
+    "rock_light",
 }
 
 local assets =
 {
-    Asset("SOUND", "data/sound/cave_AMB.fsb"),
-    Asset("SOUND", "data/sound/cave_mem.fsb"),
-    Asset("IMAGE", "data/images/colour_cubes/caves_default.tex"),
+    Asset("SOUND", "sound/cave_AMB.fsb"),
+    Asset("SOUND", "sound/cave_mem.fsb"),
+    Asset("IMAGE", "images/colour_cubes/caves_default.tex"),
+
+	Asset("IMAGE", "images/colour_cubes/fungus_cc.tex"),
+	Asset("IMAGE", "images/colour_cubes/sinkhole_cc.tex"),
 }
 
 local function fn(Sim)
@@ -46,8 +53,8 @@ local function fn(Sim)
 	--local waves = inst.entity:AddWaveComponent()
 	--[[waves:SetRegionSize( 32, 16 )
 	waves:SetRegionNumWaves( 6 )
-	waves:SetWaveTexture( "data/images/wave.tex" )
-	waves:SetWaveEffect( "data/shaders/texture.ksh" )
+	waves:SetWaveTexture( "images/wave.tex" )
+	waves:SetWaveEffect( "shaders/texture.ksh" )
 	waves:SetWaveSize( 2048, 512 )--]]
 
 

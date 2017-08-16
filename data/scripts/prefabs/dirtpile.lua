@@ -3,8 +3,13 @@ local trace = function() end
 
 local assets=
 {
-    Asset("ANIM", "data/anim/koalefant_tracks.zip"),
-    Asset("ANIM", "data/anim/smoke_puff_small.zip"),
+    Asset("ANIM", "anim/koalefant_tracks.zip"),
+    Asset("ANIM", "anim/smoke_puff_small.zip"),
+}
+
+local prefabs =
+{
+    "small_puff"
 }
 
 local AUDIO_HINT_MIN = 10
@@ -20,7 +25,11 @@ local function OnInvestigated(inst, doer)
 	if GetWorld().components.hunter then
 		GetWorld().components.hunter:OnDirtInvestigated(pt)
 	end
-    PlayFX(Vector3(inst.Transform:GetWorldPosition()), "small_puff", "smoke_puff_small", "puff", "dontstarve/common/deathpoof", nil, Vector3(216/255, 154/255, 132/255))
+
+    local fx = SpawnPrefab("small_puff")
+    local pos = inst:GetPosition()
+    fx.Transform:SetPosition(pos.x, pos.y, pos.z)
+    --PlayFX(Vector3(inst.Transform:GetWorldPosition()), "small_puff", "smoke_puff_small", "puff", "dontstarve/common/deathpoof", nil, Vector3(216/255, 154/255, 132/255))
     inst:Remove()
 end
 
@@ -76,4 +85,4 @@ local function create(sim)
     return inst
 end
 
-return Prefab( "forest/objects/dirtpile", create, assets) 
+return Prefab( "forest/objects/dirtpile", create, assets, prefabs) 

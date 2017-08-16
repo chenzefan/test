@@ -1,6 +1,6 @@
 local assets = 
 {
-	Asset("ANIM", "data/anim/resurrection_stone.zip"),
+	Asset("ANIM", "anim/resurrection_stone.zip"),
 }
 
 local prefabs =
@@ -11,6 +11,7 @@ local prefabs =
 }
 local function OnActivate(inst)
 	inst.components.resurrector.active = true
+    ProfileStatsSet("resurrectionstone_activated", true)
 	inst.AnimState:PlayAnimation("activate")
 	inst.AnimState:PushAnimation("idle_activate", true)
 	inst.SoundEmitter:PlaySound("dontstarve/common/resurrectionstone_activate")
@@ -36,6 +37,7 @@ local function doresurrect(inst, dude)
     if inst.Physics then
 		MakeInventoryPhysics(inst) -- collides with world, but not character
     end
+    ProfileStatsSet("resurrectionstone_used", true)
 
 	GetClock():MakeNextDay()
     dude.Transform:SetPosition(inst.Transform:GetWorldPosition())
@@ -118,6 +120,7 @@ local function fn()
 	inst.components.activatable.OnActivate = OnActivate
 	inst.components.activatable.inactive = true
 	inst:AddComponent("inspectable")
+	inst.components.inspectable:RecordViews()
 	return inst
 end
 

@@ -2,8 +2,7 @@ local function MakePreparedFood(data)
 
 	local assets=
 	{
-		Asset("ANIM", "data/anim/cook_pot_food.zip"),
-		Asset("IMAGE", "data/inventoryimages/"..data.name..".tex"),
+		Asset("ANIM", "anim/cook_pot_food.zip"),
 	}
 	
 	local prefabs = 

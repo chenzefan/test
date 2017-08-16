@@ -54,12 +54,17 @@ function ControlMinions:Visit()
 			end
 		end
 
-		if not self.radius then self.status = FAILED end
+		if not self.radius then 
+			self.status = FAILED
+			return 
+		end
 
 		local pt = self.inst:GetPosition()
-		local ents = TheSim:FindEntities(pt.x, pt.y, pt.z, self.radius)	--find all entities within required radius
-
-		if #ents > 0 then
+		local ents = nil
+		if pt then
+			ents = TheSim:FindEntities(pt.x, pt.y, pt.z, self.radius)	--find all entities within required radius
+		end
+		if ents and #ents > 0 then
 			for k,v in pairs(ents) do
 				if self:CanActOn(v) then
 					local mn = self:GetClosestMinion(v, self.ms.minions)
@@ -76,7 +81,7 @@ function ControlMinions:Visit()
 					        local ba = BufferedAction(mn,v,ACTIONS.PICK)
 					        ba.distance = 4
 					        mn:PushBufferedAction(ba)
-            			elseif (v.components.inventoryitem and not v.components.container and not v.components.inventoryitem:IsHeld()) then
+            			elseif (v.components.inventoryitem and v.components.inventoryitem.cangoincontainer and not v.components.container and not v.components.inventoryitem:IsHeld()) then
             				--Pick up!
             				local ba = BufferedAction(mn,v,ACTIONS.PICKUP)
 					        ba.distance = 4

@@ -34,6 +34,25 @@ PHYSICS_TYPE_PHYSICS_CONTROLLED = 1
 
 --push priorities
 STATIC_PRIORITY = 10000
+        
+        
+-- Controls: Must match the Control enum in DontStarveInputHandler.h
+-- player action controls
+CONTROL_PRIMARY = 0
+CONTROL_SECONDARY = 1
+CONTROL_ATTACK = 2
+CONTROL_INSPECT = 3
+CONTROL_ACTION = 4
+-- view controls
+CONTROL_ZOOM_IN = 5
+CONTROL_ZOOM_OUT = 6
+CONTROL_ROTATE_LEFT = 7
+CONTROL_ROTATE_RIGHT = 8
+-- player movement controls
+CONTROL_MOVE_UP = 9
+CONTROL_MOVE_DOWN = 10
+CONTROL_MOVE_LEFT = 11
+CONTROL_MOVE_RIGHT = 12
 
 KEY_TAB = 9
 KEY_KP_PERIOD		= 266
@@ -49,8 +68,13 @@ KEY_SPACE = 32
 KEY_ENTER = 13
 KEY_ESCAPE = 27
 KEY_HOME = 278
+KEY_INSERT = 277
+KEY_DELETE = 127
+KEY_END    = 279
 KEY_PAUSE = 19
 KEY_PRINT = 316
+KEY_CAPSLOCK = 301
+KEY_SCROLLOCK = 302
 KEY_RSHIFT = 303 -- use KEY_SHIFT instead
 KEY_LSHIFT = 304 -- use KEY_SHIFT instead
 KEY_RCTRL = 305 -- use KEY_CTRL instead
@@ -124,17 +148,24 @@ KEY_7 = 55
 KEY_8 = 56
 KEY_9 = 57
 
+-- DO NOT use these for gameplay!
+MOUSEBUTTON_LEFT = 1000
+MOUSEBUTTON_RIGHT = 1001
+MOUSEBUTTON_MIDDLE = 1002
+MOUSEBUTTON_SCROLLUP = 1003
+MOUSEBUTTON_SCROLLDOWN = 1004
 
-MOUSEBUTTON_LEFT = 0
-MOUSEBUTTON_RIGHT = 1
-MOUSEBUTTON_MIDDLE = 2
-MOUSEBUTTON_SCROLLUP = 3
-MOUSEBUTTON_SCROLLDOWN = 4
+
+GESTURE_ZOOM_IN = 900
+GESTURE_ZOOM_OUT = 901
+GESTURE_ROTATE_LEFT = 902
+GESTURE_ROTATE_RIGHT = 903
+GESTURE_MAX = 904
 
 
 CHARACTERLIST =
 {
-	'wilson', 'willow', 'wolfgang', 'wendy', 'wx78', 'wickerbottom', 'wes', 'waxwell',
+	'wilson', 'willow', 'wolfgang', 'wendy', 'wx78', 'wickerbottom', 'woodie', 'wes', 'waxwell',
 }
 
 MODCHARACTERLIST = 
@@ -165,6 +196,8 @@ ITEMTAG=
 
 
 
+
+-- See map_painter.h
 GROUND =
 {
 	INVALID = -1,
@@ -188,6 +221,12 @@ GROUND =
 	SINKHOLE = 15,
     UNDERROCK = 16,
     MUD = 17,
+    BRICK = 18,
+    BRICK_GLOW = 19,
+    TILES = 20,
+    TILES_GLOW = 21,
+    TRIM = 22,
+    TRIM_GLOW = 23,
 
     -- Noise
 	ABYSS_NOISE = 124,
@@ -205,12 +244,30 @@ GROUND =
 	WALL_SINKHOLE = 156,
 	WALL_MUD = 157,
 	WALL_TOP = 158,
+	WALL_WOOD = 159,
+	WALL_HUNESTONE = 160,
+	WALL_HUNESTONE_GLOW = 161,
+	WALL_STONEEYE = 162,
+	WALL_STONEEYE_GLOW = 163,
+
 --	STILL_WATER_SHALLOW = 130,
 --	STILL_WATER_DEEP = 131,
 --	MOVING_WATER_SHALLOW = 132,
 --	MOVING_WATER_DEEP = 133,
 --	SALT_WATER_SHALLOW = 134,
 --	SALT_WATER_DEEP = 135,
+}
+
+TECH = {
+	NONE = { SCIENCE = 0, MAGIC = 0, ANCIENT = 0 },
+	SCIENCE_ONE = {SCIENCE = 1},
+	SCIENCE_TWO = {SCIENCE = 2},
+	SCIENCE_THREE = {SCIENCE = 3},
+	-- Magic starts at level 2 so it's not teased from the start.
+	MAGIC_TWO = {MAGIC = 2},
+	MAGIC_THREE = {MAGIC = 3},
+	ANCIENT_TWO = {ANCIENT = 2},
+	ANCIENT_THREE = {ANCIENT = 3},
 }
 
 -- See cell_data.h
@@ -243,6 +300,104 @@ CA_SEED_MODE =
 	SEED_WALLS = 3
 }
 
+-- See maze.h
+MAZE_TYPE =
+{
+	MAZE_DFS_4WAY_META = 0,
+	MAZE_DFS_4WAY = 1,
+	MAZE_DFS_8WAY = 2,
+	MAZE_GROWINGTREE_4WAY = 3,
+	MAZE_GROWINGTREE_8WAY = 4,
+	MAZE_GROWINGTREE_4WAY_INV = 5,
+}
+
+-- NORTH	1
+-- EAST		2
+-- SOUTH	4
+-- WEST		8
+--[[
+Meta maze def:
+5 room types:
+4 way,	3 way,	2 way,	1 way,	L shape
+	1,		4,		2,		4,		4
+	15 tiles needed
+--]]
+
+MAZE_CELL_EXITS =
+{
+	NO_EXITS = 		0, -- Dont place a cell here.
+	SINGLE_NORTH = 	1,
+	SINGLE_EAST = 	2,
+	L_NORTH = 		3,
+	SINGLE_SOUTH = 	4,
+	TUNNEL_NS = 	5,
+	L_EAST = 		6,
+	THREE_WAY_N = 	7,
+	SINGLE_WEST = 	8,
+	L_WEST = 		9,
+	TUNNEL_EW =		10,
+	THREE_WAY_W = 	11,
+	L_SOUTH = 		12,
+	THREE_WAY_S = 	13,
+	THREE_WAY_E = 	14,
+	FOUR_WAY = 		15,
+}
+
+MAZE_CELL_EXITS_INV =
+{
+	"SINGLE_NORTH",
+	"SINGLE_EAST",
+	"L_NORTH",
+	"SINGLE_SOUTH",
+	"TUNNEL_NS",
+	"L_EAST",
+	"THREE_WAY_N",
+	"SINGLE_WEST",
+	"L_WEST",
+	"TUNNEL_EW",
+	"THREE_WAY_W",
+	"L_SOUTH" ,
+	"THREE_WAY_S",
+	"THREE_WAY_E",
+	"FOUR_WAY",
+}
+
+LAYOUT =
+{
+	STATIC = 0,
+	CIRCLE_EDGE = 1,
+	CIRCLE_RANDOM = 2,
+	GRID = 3,
+	RECTANGLE_EDGE = 4,
+	CIRCLE_FILLED = 5,
+}
+
+LAYOUT_POSITION =
+{
+	RANDOM = 0,
+	CENTER = 1,
+}
+
+LAYOUT_ROTATION =
+{
+	NORTH = 0, 	-- 0 Degrees
+	EAST = 1, 	-- 90 Degrees
+	SOUTH = 2, 	-- 180 Degrees
+	WEST = 3, 	-- 270 Degrees
+}
+
+PLACE_MASK = 
+{
+	NORMAL = 0,
+	IGNORE_IMPASSABLE = 1,
+	IGNORE_BARREN = 2,
+	IGNORE_IMPASSABLE_BARREN = 3,
+	IGNORE_RESERVED = 4,
+	IGNORE_IMPASSABLE_RESERVED = 5,
+	IGNORE_BARREN_RESERVED = 6,
+	IGNORE_IMPASSABLE_BARREN_RESERVED = 7,
+}
+
 COLLISION =
 {
     GROUND = 32, -- See BpWorld.cpp (ground and cave walls)
@@ -273,16 +428,17 @@ ANIM_ORIENTATION =
 
 RECIPETABS=
 {
-    TOOLS = {str = STRINGS.TABS.TOOLS, sort=0, icon = "data/images/tab_tool.tex"},
-    LIGHT = {str = STRINGS.TABS.LIGHT, sort=1, icon = "data/images/tab_light.tex"},
-    SURVIVAL = {str = STRINGS.TABS.SURVIVAL, sort=2, icon = "data/images/tab_trap.tex"},
-    FARM = {str = STRINGS.TABS.FARM, sort=3, icon = "data/images/tab_farm.tex"},
-    SCIENCE = {str = STRINGS.TABS.SCIENCE, sort=4, icon = "data/images/tab_science.tex"},
-    WAR = {str = STRINGS.TABS.WAR, sort=5, icon = "data/images/tab_fight.tex"},
-    TOWN = {str = STRINGS.TABS.TOWN, sort=6, icon = "data/images/tab_build.tex"},
-    REFINE = {str = STRINGS.TABS.REFINE, sort=7, icon = "data/images/tab_refine.tex"},
-    MAGIC = {str = STRINGS.TABS.MAGIC, sort=8, icon = "data/images/tab_arcane.tex"},
-    DRESS = {str = STRINGS.TABS.DRESS, sort=9, icon = "data/images/tab_dress.tex"},
+    TOOLS = {str = STRINGS.TABS.TOOLS, sort=0, icon = "tab_tool.tex"},
+    LIGHT = {str = STRINGS.TABS.LIGHT, sort=1, icon = "tab_light.tex"},
+    SURVIVAL = {str = STRINGS.TABS.SURVIVAL, sort=2, icon = "tab_trap.tex"},
+    FARM = {str = STRINGS.TABS.FARM, sort=3, icon = "tab_farm.tex"},
+    SCIENCE = {str = STRINGS.TABS.SCIENCE, sort=4, icon = "tab_science.tex"},
+    WAR = {str = STRINGS.TABS.WAR, sort=5, icon = "tab_fight.tex"},
+    TOWN = {str = STRINGS.TABS.TOWN, sort=6, icon = "tab_build.tex"},
+    REFINE = {str = STRINGS.TABS.REFINE, sort=7, icon = "tab_refine.tex"},
+    MAGIC = {str = STRINGS.TABS.MAGIC, sort=8, icon = "tab_arcane.tex"},
+    DRESS = {str = STRINGS.TABS.DRESS, sort=9, icon = "tab_dress.tex"},
+    GEMOLOGY = {str = STRINGS.TABS.GEMOLOGY, sort = 10, icon = "tab_gemology.tex"},
 }
 
 
@@ -331,34 +487,7 @@ ROAD_PARAMETERS =
 	MAX_WIDTH = 3,
 	MIN_EDGE_WIDTH = 0.5,
 	MAX_EDGE_WIDTH = 1,
-}
-
-LAYOUT =
-{
-	STATIC = 0,
-	CIRCLE_EDGE = 1,
-	CIRCLE_RANDOM = 2,
-	GRID = 3,
-	RECTANGLE_EDGE = 4,
-	CIRCLE_FILLED = 5,
-}
-
-LAYOUT_POSITION =
-{
-	RANDOM = 0,
-	CENTER = 1,
-}
-
-PLACE_MASK = 
-{
-	NORMAL = 0,
-	IGNORE_IMPASSABLE = 1,
-	IGNORE_BARREN = 2,
-	 IGNORE_IMPASSABLE_BARREN = 3,
-	IGNORE_RESERVED = 4,
-	 IGNORE_IMPASSABLE_RESERVED = 5,
-	 IGNORE_BARREN_RESERVED = 6,
-	 IGNORE_IMPASSABLE_BARREN_RESERVED = 7,
+	WIDTH_JITTER_SCALE=1,
 }
 
 BGCOLOURS =
@@ -366,4 +495,27 @@ BGCOLOURS =
 	RED = {255/255, 89/255, 46/255},
 	PURPLE = {202/255, 48/255, 209/255},
 	YELLOW = {255/255, 196/255, 45/255},
+}
+
+ROAD_STRIPS = 
+{
+	CORNERS = 0,
+	ENDS = 1,
+	EDGES = 2,
+	CENTER = 3,
+}
+
+WRAP_MODE = 
+{
+	WRAP = 0,
+	CLAMP = 1,
+	MIRROR = 2,
+	CLAMP_TO_EDGE = 3,
+}
+
+RESET_ACTION =
+{
+	LOAD_FRONTEND = 0,
+	LOAD_SLOT = 1,
+	DO_DEMO = 2,
 }

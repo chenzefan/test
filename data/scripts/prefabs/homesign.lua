@@ -1,8 +1,7 @@
     
 local assets =
 {
-	Asset("ANIM", "data/anim/sign_home.zip"),
-    Asset("IMAGE", "data/inventoryimages/homesign.tex"),
+	Asset("ANIM", "anim/sign_home.zip"),
 }
 
 local function onhammered(inst, worker)

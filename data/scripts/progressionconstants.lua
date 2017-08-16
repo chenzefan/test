@@ -9,11 +9,12 @@ local XP_levels =
     XP_PER_DAY*32,  
     XP_PER_DAY*48,
     XP_PER_DAY*64,
-    --XP_PER_DAY*75,
+    XP_PER_DAY*80,
     --50000, --
     --100000, --
 }
-local Level_rewards = {'willow', 'wolfgang', 'wendy', 'wx78', 'wickerbottom', 'woodie'} --wes is unlocked via the statue, woodie isn't active yet
+
+local Level_rewards = {'willow', 'wolfgang', 'wendy', 'wx78', 'wickerbottom', 'woodie', 'wortox'} --wes is unlocked via the statue, woodie isn't active yet
 local Level_cap = #XP_levels
 
 local function GetLevelForXP(xp)

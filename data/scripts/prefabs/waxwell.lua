@@ -4,8 +4,8 @@ local MakePlayerCharacter = require "prefabs/player_common"
 
 local assets = 
 {
-    Asset("ANIM", "data/anim/waxwell.zip"),
-	Asset("SOUND", "data/sound/maxwell.fsb")    
+    Asset("ANIM", "anim/waxwell.zip"),
+	Asset("SOUND", "sound/maxwell.fsb")    
 }
 
 local prefabs = 

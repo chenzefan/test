@@ -1,8 +1,8 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/ghost.zip"),
-	Asset("ANIM", "data/anim/ghost_build.zip"),
-	Asset("SOUND", "data/sound/ghost.fsb"),
+	Asset("ANIM", "anim/ghost.zip"),
+	Asset("ANIM", "anim/ghost_build.zip"),
+	Asset("SOUND", "sound/ghost.fsb"),
 }
 
 local prefabs = 
@@ -16,7 +16,7 @@ local function fn(Sim)
 	local sound = inst.entity:AddSoundEmitter()
     local light = inst.entity:AddLight()
     inst.entity:AddPhysics()
-    anim:SetBloomEffectHandle( "data/shaders/anim.ksh" )
+    anim:SetBloomEffectHandle( "shaders/anim.ksh" )
     
     MakeGhostPhysics(inst, 1, .5)
     

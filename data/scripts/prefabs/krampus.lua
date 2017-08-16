@@ -1,8 +1,8 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/krampus_basic.zip"),
-	Asset("ANIM", "data/anim/krampus_build.zip"),
-	Asset("SOUND", "data/sound/krampus.fsb"),
+	Asset("ANIM", "anim/krampus_basic.zip"),
+	Asset("ANIM", "anim/krampus_build.zip"),
+	Asset("SOUND", "sound/krampus.fsb"),
 }
 
 local prefabs =
@@ -80,6 +80,7 @@ local function fn(Sim)
     inst.components.lootdropper:AddChanceLoot("krampus_sack", .01)
     
     inst:AddComponent("inspectable")
+	inst.components.inspectable:RecordViews()
     
     inst:ListenForEvent("attacked", OnAttacked)
 

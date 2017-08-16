@@ -102,7 +102,7 @@ function Follow:Visit()
             end
         end
         
-        self:Sleep(.5)
+        self:Sleep(.25)
     end
     
 end

@@ -1,8 +1,8 @@
-InvSlot = Class(Widget, function(self, num, bgim, owner, container)
+InvSlot = Class(Widget, function(self, num, atlas, bgim, owner, container)
     Widget._ctor(self, "InventorySlot"..tostring(num))
     self.owner = owner
 
-    self.bgimage = self:AddChild(Image(bgim))
+    self.bgimage = self:AddChild(Image(atlas, bgim))
 
     self.num = num
     self.tile = nil
@@ -48,14 +48,14 @@ function InvSlot:SetTile(tile)
     end
 end
 
-EquipSlot = Class(Widget, function(self, equipslot, bgim, owner)
+EquipSlot = Class(Widget, function(self, equipslot, atlas, bgim, owner)
     Widget._ctor(self, "EquipSlot"..tostring(equipslot))
     self.owner = owner
 
     self.equipslot = equipslot
     self.item = nil
 
-    self.bgimage = self:AddChild(Image(bgim))
+    self.bgimage = self:AddChild(Image(atlas, bgim))
     self.highlight = false
 
     self.inst:ListenForEvent("newactiveitem", function(inst, data)
@@ -115,9 +115,11 @@ ItemTile = Class(Widget, function(self, invitem, owner)
 		print("NO INVENTORY ITEM COMPONENT"..tostring(invitem.prefab), invitem, owner)
 		return
 	end
+	
+	local hud_atlas = resolvefilepath( "images/hud.xml" )
 
 	self.bg = self:AddChild(Image())
-	self.bg:SetTexture("data/images/inv_slot_spoiled.tex")
+	self.bg:SetTexture(hud_atlas, "inv_slot_spoiled.tex")
 	self.bg:Hide()
 	self.bg:SetClickable(false)
 	
@@ -129,7 +131,7 @@ ItemTile = Class(Widget, function(self, invitem, owner)
     self.spoilage:SetClickable(false)
 	
 	
-    self.image = self:AddChild(Image(invitem.components.inventoryitem:GetImage()))
+    self.image = self:AddChild(Image(invitem.components.inventoryitem:GetAtlas(), invitem.components.inventoryitem:GetImage()))
     self.image:SetClickable(false)
 
     local owner = self.item.components.inventoryitem.owner
@@ -143,7 +145,7 @@ ItemTile = Class(Widget, function(self, invitem, owner)
 	end
 
     self.inst:ListenForEvent("imagechange", function() 
-        self.image:SetTexture(invitem.components.inventoryitem:GetImage())
+        self.image:SetTexture(invitem.components.inventoryitem:GetAtlas(), invitem.components.inventoryitem:GetImage())
     end, invitem)
     
     self.inst:ListenForEvent("stacksizechange",
@@ -152,7 +154,7 @@ ItemTile = Class(Widget, function(self, invitem, owner)
                 
 					if data.src_pos then
 						local dest_pos = self:GetWorldPosition()
-						local im = Image(invitem.components.inventoryitem:GetImage())
+						local im = Image(invitem.components.inventoryitem:GetAtlas(), invitem.components.inventoryitem:GetImage())
 						im:MoveTo(data.src_pos, dest_pos, .3, function() 
 							self:SetQuantity(invitem.components.stackable:StackSize())
 							self:ScaleTo(2, 1, .25)

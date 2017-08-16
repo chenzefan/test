@@ -12,9 +12,10 @@ function UpdateGamePurchasedState( complete_callback )
 	--print( "UpdateGamePurchaseState called" )
 	if PLATFORM == "NACL" then
 		TheSim:QueryServer( GAME_SERVER.."/user/purchases",
-			function( result, isSuccessful )
+			function( result, isSuccessful, resultCode )
+				print( "UpdateGamePurchaseState callback", result, isSuccessful, resultCode )
 			 	if isSuccessful and string.len(result) > 1 then 
-					Purchases = TrackedAssert("TheSim:QueryServer /user/purchases",  json.decode, result)
+					Purchases = TrackedAssert("TheSim:QueryServer /user/purchases", json.decode, result)
 				end
 				if( complete_callback ) then
 					complete_callback( IsGamePurchased() )
@@ -45,7 +46,7 @@ function ShowUpsellScreen(shouldquit)
 		upsell_status = "SHOWING"
 		local trigger = json.encode{upsell={timedout=shouldquit}}
 		TheSim:SendUITrigger(trigger)
-		SetHUDPause(true)
+		SetHUDPause(true,"upsell")
 	end
 end
 

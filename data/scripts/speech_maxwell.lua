@@ -64,6 +64,26 @@ return {
 	DESCRIBE =
 	{
 
+
+		SLURPER = "Simple creatures. They exist only to sleep and feed.",
+		ORANGEAMULET = "Simple magic is often the best.",
+		YELLOWSTAFF = "With a bigger gem it would be so much more powerful.",
+		YELLOWGEM = "I can feel the magic in this.",
+		ORANGEGEM = "This will be quite powerful with some fuel.",
+		TELEBASE = 
+		{
+			VALID = "That should do the trick.",
+			GEMS = "The fuel needs more focus points.",
+		},
+		GEMSOCKET = 
+		{
+			VALID = "This one's ready.",
+			GEMS = "The fuel needs a focus.",
+		},
+		STAFFLIGHT = "That should chase the shadows away.",
+		RESEARCHLAB4 = "Quite a dapper machine.",
+
+        ANCIENT_ALTAR = "Where are their gods now?",
 		CAVE_BANANA = "Like ashes in my mouth.",
 		CAVE_BANANA_COOKED = "Even worse than raw.",
 		CAVE_BANANA_TREE = "It looks like a banana, but I'm not buying it.",
@@ -188,6 +208,7 @@ return {
 		BISHOP = "I'm especially proud of that piece.",
 		BLOWDART_FIRE = "Just make sure to breathe out.",
 		BLOWDART_SLEEP = "Call me Mr. Sandman.",
+		BLUEAMULET = "It's frosted over.",
 		BLUEGEM = "Blue brings ice.",
 		BLUEPRINT = "I know all about that. I just forgot.",
 		BLUE_CAP = "What could go wrong?",
@@ -227,6 +248,9 @@ return {
 		CARROT_SEEDS = "This labour is beneath me.",
 		CAVE_FERN = "I'd like to step on it.",
 		CHARCOAL = "Nothing will steal my carbon!",
+        CHESSJUNK1 = "Mechanical refuse.",
+        CHESSJUNK2 = "Mechanical refuse.",
+        CHESSJUNK3 = "Mechanical refuse.",
 		CHESTER = "Annoying little monster. Has his uses, though.",
 		CHESTER_EYEBONE =
 		{
@@ -478,6 +502,8 @@ return {
 		MERMHEAD = "The eyes follow you around.",
 		MERMHOUSE = "They copied the pigs, but they're even less intelligent.",
 		MINERHAT = "Eventually the firefly will starve.",
+		MONKEY = "I don't have time for you!",
+		MONKEYBARREL = "What a disgusting home.",
 		MONSTERLASAGNA = "My compliments to the chef!",
 		MONSTERMEAT = "How revolting.",
 		MONSTERMEAT_DRIED = "My teeth are getting too old for this.",
@@ -545,6 +571,7 @@ return {
 		PUMPKIN_COOKED = "A little more refined, at least.",
 		PUMPKIN_LANTERN = "Why hello, Mr. Crane.",
 		PUMPKIN_SEEDS = "This labour is beneath me.",
+		PURPLEAMULET = "It speaks with the shadow.",
 		PURPLEGEM = "Purple brings great power.",
 		RABBIT =
 		{
@@ -586,8 +613,16 @@ return {
 			HELD = "Quiet, you.",
 		},
 		ROBOT_PUPPET = "Better it than me.",
+		ROCK_LIGHT =
+		{
+			GENERIC = "A crusted over lava pit.",
+			OUT = "It looks harmless.",
+			LOW = "The fires are cooling",
+			NORMAL = "It's hot.",
+		},
 		ROCK = "It's a rock.",
 		ROCKS = "Hmmm. Now what do I do with them?",
+        ROOK = "A castle for my home.",
 		ROPE = "You'd think this would have more uses.",
 		ROTTENEGG = "Disgusting. Why am I carrying this around?",
 		SANITYROCK =
@@ -675,6 +710,7 @@ return {
 		TELEPORTATO_CRANK = "This is used to agitate the humours.",
 		TELEPORTATO_POTATO = "The gears in here are so small they turn the fabric of reality.",
 		TELEPORTATO_RING = "This is the quantum field guard band.",
+		TELESTAFF = "Power can do amazing things when it's funneled through the right channels.",
 		TENT = "That's a bit rustic for my taste.",
 		TENTACLE = "I'm glad the rest of it is still down there.",
 		TENTACLESPIKE = "Ugh. This is so revolting.",
@@ -727,6 +763,8 @@ return {
 		WALL_STONE_ITEM = "Pocket-sized wall pieces. Yup.",
 		WALL_WOOD = "Moderately tough, but flammable.",
 		WALL_WOOD_ITEM = "Pocket-sized wall pieces. Yup.",
+		WALL_RUINS = "This will keep the riff-raff out.",
+		WALL_RUINS_ITEM = "Pocket-sized wall pieces. Yup.",
 		WALRUS = "Don't you recognise me?",
 		WALRUSHAT = "Made in Scotland.",
 		WALRUS_CAMP =

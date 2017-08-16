@@ -11,7 +11,7 @@ WorldGenScreen = Class(Screen, function(self, profile, cb, world_gen_options)
     self.profile = profile
 	self.log = true
 
-	self.bg = self:AddChild(Image("data/images/bg_plain.tex"))
+	self.bg = self:AddChild(Image("images/ui.xml", "bg_plain.tex"))
     self.bg:SetTint(BGCOLOURS.RED[1],BGCOLOURS.RED[2],BGCOLOURS.RED[3], 1)
 
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
@@ -86,9 +86,9 @@ WorldGenScreen = Class(Screen, function(self, profile, cb, world_gen_options)
     			}
 	end
 	
+	gen_parameters.current_level = world_gen_options.level_world
 
 	if gen_parameters.level_type == "adventure" then
-		gen_parameters.current_level = world_gen_options.level_world
 		if gen_parameters.current_level == nil or gen_parameters.current_level < 1 then
 			gen_parameters.current_level = 1
 		end
@@ -101,8 +101,11 @@ WorldGenScreen = Class(Screen, function(self, profile, cb, world_gen_options)
 		gen_parameters.profiledata = { unlocked_characters = {} }
 	end
 	
+	local moddata = {}
+	moddata.modnames = ModManager:GetModNames()
+	moddata.index = KnownModIndex:CacheSaveData()
 
-    TheSim:GenerateNewWorld( json.encode(gen_parameters), function(worlddata) 
+    TheSim:GenerateNewWorld( json.encode(gen_parameters), json.encode(moddata), function(worlddata) 
     		self.worlddata = worlddata
 			self.done = true
 		end)
@@ -133,14 +136,17 @@ end
 
 function WorldGenScreen:OnUpdate(dt)
 	self.total_time = self.total_time + dt
-	if self.done and self.total_time > MIN_GEN_TIME and self.cb then
-		self.done = false
-		
-		TheFrontEnd:Fade(false, 1, function() 
+	if self.done then
+		if string.match(self.worlddata,"^error") then
+			self.done = false
 			self.cb(self.worlddata)
-			end)
-
-
+		elseif self.total_time > MIN_GEN_TIME and self.cb then
+			self.done = false
+			
+			TheFrontEnd:Fade(false, 1, function() 
+				self.cb(self.worlddata)
+				end)
+		end
 	end
 end
 

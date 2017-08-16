@@ -1,8 +1,7 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/trap.zip"),
-    Asset("IMAGE", "data/inventoryimages/trap.tex"),
-    Asset("SOUND", "data/sound/common.fsb"),
+	Asset("ANIM", "anim/trap.zip"),
+    Asset("SOUND", "sound/common.fsb"),
 }
 
 local sounds = 

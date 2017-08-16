@@ -4,8 +4,8 @@
 --      unset persistant flag
 local assets=
 {
-	Asset("ANIM", "data/anim/tentacle_arm.zip"),
-    Asset("SOUND", "data/sound/tentacle.fsb"),
+	Asset("ANIM", "anim/tentacle_arm.zip"),
+    Asset("SOUND", "sound/tentacle.fsb"),
 }
 
 local prefabs =
@@ -16,24 +16,18 @@ local prefabs =
 local function retargetfn(inst)
     return FindEntity(inst, TUNING.TENTACLE_PILLAR_ARM_ATTACK_DIST, function(guy) 
         if guy.components.combat and guy.components.health and not guy.components.health:IsDead() then
-            return (guy:HasTag("character") or guy:HasTag("monster") or guy:HasTag("animal")) and not guy:HasTag("prey") and not (guy.prefab == inst.prefab)
+            return (   guy:HasTag("character")
+                    or guy:HasTag("monster")
+                    or guy:HasTag("animal"))
+                    and not guy:HasTag("WORM_DANGER")
+                    and not guy:HasTag("prey")
+                    and not (guy.prefab == inst.prefab)
         end
     end)
 end
 
 local function onfar(inst)
     inst:PushEvent("retract")
-    Dbg(inst,true,"ON FAR - retract")
-    --[[ Very bad practice to directly set a state from outside the statemachine!
-    if not inst.sg:HasStateTag("idle")
-       and not inst.sg:HasStateTag("retract")
-       and not inst.sg:HasStateTag("emerge")
-       and not inst.components.health:IsDead() then
-
-        dprint("ON FAR to RETRACT:",inst.entity:GetGUID())
-        inst.sg:GoToState("retract")
-    end
-    --]]
 end
 
 local function onnear(inst)
@@ -58,6 +52,16 @@ local function shouldKeepTarget(inst, target)
     end
 end
 
+local function OnHit(inst, attacker, damage) 
+
+    if attacker.components.combat and attacker ~= GetPlayer() and math.random() > 0.5 then
+        -- Followers should stop hitting the pillar
+        attacker.components.combat:SetTarget(nil)
+        if inst.components.health.currenthealth and inst.components.health.currenthealth < 0 then
+            inst.components.health:DoDelta(damage*.6, false, attacker)
+        end
+    end
+end
 
 local function fn(Sim)
     local ARM_SCALE = 0.95
@@ -91,6 +95,7 @@ local function fn(Sim)
     inst.components.combat:SetAttackPeriod(TUNING.TENTACLE_PILLAR_ARM_ATTACK_PERIOD)
     inst.components.combat:SetRetargetFunction(GetRandomWithVariance(1, 0.5), retargetfn)
     inst.components.combat:SetKeepTargetFunction(shouldKeepTarget)
+    inst.components.combat:SetOnHit(OnHit)
     
     MakeLargeFreezableCharacter(inst)
     

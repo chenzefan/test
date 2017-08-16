@@ -1,22 +1,15 @@
-require "fonthelper"
-
 local assets =
 {
-	Asset("ANIM", "data/anim/maxwell_basic.zip"),
-	Asset("ANIM", "data/anim/max_fx.zip"),
-	Asset("SOUND", "data/sound/maxwell.fsb"),
-}
-
-local FONTS = {
-	{ filename = "data/fonts/opensans50.zip", alias = DIALOGFONT },
+	Asset("ANIM", "anim/maxwell_basic.zip"),
+	Asset("ANIM", "anim/maxwell_build.zip"),
+	Asset("ANIM", "anim/max_fx.zip"),
+	Asset("SOUND", "sound/maxwell.fsb"),
 }
 
 local prefabs = 
 {
-    "diviningrodstart",
+    "diviningrodstart"
 }
-
-AddFontAssets( assets, FONTS )
 
 local SPEECH =
 {
@@ -370,4 +363,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab("common/characters/maxwellintro", fn, assets, prefabs) 
+return Prefab("common/characters/maxwellintro", fn, assets, prefabs)

@@ -1,7 +1,6 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/armor_marble.zip"),
-    Asset("IMAGE", "data/inventoryimages/armormarble.tex"),
+	Asset("ANIM", "anim/armor_marble.zip"),
 }
 
 local function OnBlocked(owner) 

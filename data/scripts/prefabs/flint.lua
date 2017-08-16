@@ -1,7 +1,6 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/flint.zip"),
-    Asset("IMAGE", "data/inventoryimages/flint.tex"),
+	Asset("ANIM", "anim/flint.zip"),
 }
 
 

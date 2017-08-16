@@ -1,7 +1,6 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/armor_sweatervest.zip"),
-    Asset("IMAGE", "data/inventoryimages/sweatervest.tex"),
+	Asset("ANIM", "anim/armor_sweatervest.zip"),
 }
 
 local function onequip(inst, owner) 

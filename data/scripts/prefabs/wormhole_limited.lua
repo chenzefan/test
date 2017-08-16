@@ -1,8 +1,8 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/teleporter_worm.zip"),
-	Asset("ANIM", "data/anim/teleporter_sickworm_build.zip"),
-	Asset("SOUND", "data/sound/common.fsb"),
+	Asset("ANIM", "anim/teleporter_worm.zip"),
+	Asset("ANIM", "anim/teleporter_sickworm_build.zip"),
+	Asset("SOUND", "sound/common.fsb"),
 }
 
 local function onsave(inst, data)
@@ -46,6 +46,7 @@ end
 local function OnActivate(inst, doer)
 	if inst.components.teleporter.targetTeleporter and inst.usesleft > 0 then
 		if doer:HasTag("player") then
+            ProfileStatsSet("wormhole_ltd_used", true)
 			doer.components.health:SetInvincible(true)
 			doer.components.playercontroller:Enable(false)
 
@@ -87,6 +88,7 @@ local function onaccept(reciever, giver, item)
 		giver.components.inventory:DropItem(item)
 	end
 	if reciever and reciever.components.teleporter then
+        ProfileStatsSet("wormhole_ltd_accept_item", item.prefab)
 		reciever.components.teleporter:Activate(item)
 	end
 end
@@ -114,6 +116,7 @@ local function makewormhole(uses)
 		inst:AddComponent("inspectable")
 		inst.components.inspectable.getstatus = GetStatus
 		inst.components.inspectable.nameoverride = "WORMHOLE_LIMITED"
+	    inst.components.inspectable:RecordViews()
 
 		inst:AddComponent("playerprox")
 		inst.components.playerprox:SetDist(4,5)

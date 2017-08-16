@@ -1,7 +1,6 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/gold_nugget.zip"),
-	Asset("IMAGE", "data/inventoryimages/goldnugget.tex"),
+	Asset("ANIM", "anim/gold_nugget.zip"),
 }
 
 local function shine(inst)
@@ -21,7 +20,7 @@ local function fn(Sim)
 	inst.entity:AddPhysics()
     MakeInventoryPhysics(inst)
 
-	inst.AnimState:SetBloomEffectHandle( "data/shaders/anim.ksh" )    
+	inst.AnimState:SetBloomEffectHandle( "shaders/anim.ksh" )    
 	
     inst.AnimState:SetBank("goldnugget")
     inst.AnimState:SetBuild("gold_nugget")

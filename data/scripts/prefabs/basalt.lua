@@ -1,6 +1,6 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/blocker.zip"),
+	Asset("ANIM", "anim/blocker.zip"),
 }
 
 local function onsave(inst, data)

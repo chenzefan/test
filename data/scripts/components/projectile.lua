@@ -60,7 +60,7 @@ function Projectile:IsThrown()
     return self.target ~= nil
 end
 
-function Projectile:Throw(owner, target)
+function Projectile:Throw(owner, target, attacker)
     self.owner = owner
     self.target = target
     self.start = Vector3(owner.Transform:GetWorldPosition() )
@@ -69,7 +69,7 @@ function Projectile:Throw(owner, target)
     self.inst.Physics:SetMotorVel(self.speed,0,0)
     self.inst:StartUpdatingComponent(self)
     self.inst:PushEvent("onthrown", {thrower = owner, target = target})
-    target:PushEvent("hostileprojectile")
+    target:PushEvent("hostileprojectile",{thrower = owner, attacker = attacker, target = target})
     if self.onthrown then
         self.onthrown(self.inst, owner, target)
     end

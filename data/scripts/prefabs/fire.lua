@@ -1,7 +1,7 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/fire.zip"),
-	Asset("SOUND", "data/sound/common.fsb"),
+	Asset("ANIM", "anim/fire.zip"),
+	Asset("SOUND", "sound/common.fsb"),
 }
 local heats = { 30, 70, 120, 180, 220 }
 local function GetHeatFn(inst)
@@ -26,7 +26,7 @@ local function fn(Sim)
 	local sound = inst.entity:AddSoundEmitter()
 	local light = inst.entity:AddLight()
 
-	anim:SetBloomEffectHandle( "data/shaders/anim.ksh" )
+	anim:SetBloomEffectHandle( "shaders/anim.ksh" )
 	
     anim:SetBank("fire")
     anim:SetBuild("fire")

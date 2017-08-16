@@ -40,10 +40,49 @@ return {
 	},
 	DESCRIBE =
 	{
+
+		SLURPER = "Ah, to be so simple.",
+		ORANGEAMULET = "Temporary release from drudgery.",
+		YELLOWSTAFF = "The stick is as twisted as my soul.",
+		YELLOWGEM = "It reminds me of my mother.",
+		ORANGEGEM = "Such things used to bring me happiness.",
+		TELEBASE = 
+		{
+			VALID = "Energy flows through it.",
+			GEMS = "The focus is so lifeless.",
+		},
+		GEMSOCKET = 
+		{
+			VALID = "The gem has focused it.",
+			GEMS = "It looks so empty.",
+		},
+		STAFFLIGHT = "I can almost make out a tiny solar system.",
+		RESEARCHLAB4 = "This is but a step from madness.",
+		
+		ABIGAIL_FLOWER = 
+		{ 
+			GENERIC ="It's pretty.",
+			LONG = "It was my sister's flower. She's gone far away.",
+			MEDIUM = "I can sense Abigail's presence growing stronger.",
+			SOON = "Abigail is almost here!",
+			HAUNTED_POCKET = "Abigail is ready to play, but she needs some space.",
+			HAUNTED_GROUND = "I need to show Abigail how to play.",
+
+		},
+
+        ANCIENT_ALTAR = "It is full of the echos of the dead.",
+
 		CAVE_BANANA = "The peels look dangerous.",
 		CAVE_BANANA_COOKED = "Warmed banana mush is so much better.",
 		CAVE_BANANA_TREE = "Poor plant, locked away from the sun.",
 		ROCKY = "What terrible sights they have seen.",
+
+
+		BLUEAMULET = "A familiar chilling embrace.",
+		PURPLEAMULET = "It's oozing.",
+		TELESTAFF = "I could escape if it were more powerful.",
+		MONKEY = "Living without the burden of intelligence must be nice.",
+		MONKEYBARREL = "It's filthy.",
 
 		HOUNDSTOOTH="Pulled out by the root.",
 		ARMORSNURTLESHELL="Now I can hide from my problems.",
@@ -181,6 +220,9 @@ return {
 		CARROT = "It's a carrot.",
 		CAVE_FERN = "A touch of colour in the darkness.",
 		CHARCOAL = "It is cold and dead, like my heart.",
+        CHESSJUNK1 = "Cold, dead artifical life.",
+        CHESSJUNK2 = "Cold, dead artifical life.",
+        CHESSJUNK3 = "Cold, dead artifical life.",
 		CHESTER = "A fuzzy ball of emptiness.",
 		CHESTER_EYEBONE =
 		{
@@ -379,7 +421,7 @@ return {
 		PANDORASCHEST = "Life is a gamble.",
 		PANFLUTE = "Music is the window to my empty soul.",
 		PAPYRUS = "For documenting my pain.",
-		PENGUIN = "...",
+		PENGUIN = "All dressed up, but where to go?",
 		PETALS = "I have destroyed something beautiful.",
 		PETALS_EVIL = "They are painted with the colours of my soul.",
 		PICKAXE = "So that I may penetrate the earth itself.",
@@ -447,8 +489,16 @@ return {
 		RESURRECTIONSTATUE = "I'm just putting off the inevitable.",
 		RESURRECTIONSTONE = "A futile ward.",
 		ROBOT_PUPPET = "I wonder what it did.",
+		ROCK_LIGHT =
+		{
+			GENERIC = "A crusted over lava pit.",
+			OUT = "It looks harmless.",
+			LOW = "The shadows encroach.",
+			NORMAL = "The lava's on fire.",
+		},
 		ROCK = "Even that is not permanent.",
 		ROCKS = "Some small rocks.",
+        ROOK = "A Rook? Or is it a Castle?",
 		ROPE = "That would be the easy way out of this place.",
 		ROTTENEGG = "The way of all things.",
 		SANITYROCK =
@@ -552,6 +602,8 @@ return {
 		WALL_HAY_ITEM = "Their defensive value is questionable.",
 		WALL_STONE = "What will protect me from what's inside?",
 		WALL_STONE_ITEM = "These won't protect from the demons within.",
+		WALL_RUINS = "What will protect me from what's inside?",
+		WALL_RUINS_ITEM = "These won't protect from the demons within.",
 		WALL_WOOD = "Now I can delay the inevitable.",
 		WALL_WOOD_ITEM = "Bundled logs.",
 		WALRUS = "An old man, of the sea.",

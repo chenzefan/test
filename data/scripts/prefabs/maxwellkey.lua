@@ -1,7 +1,6 @@
 assets = 
 {
-	Asset("ANIM", "data/anim/purple_gem.zip"),
-    Asset("IMAGE", "data/inventoryimages/purplegem.tex"),
+	Asset("ANIM", "anim/purple_gem.zip"),
 }
 
 

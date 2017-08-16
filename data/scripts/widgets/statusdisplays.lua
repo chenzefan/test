@@ -1,81 +1,6 @@
 require "uianim"
 local easing = require "easing"
-
-local Badge = Class(Widget, function(self, anim, owner)
-    
-    Widget._ctor(self, "Badge")
-	self.owner = owner
-    
-    --self:SetHAnchor(ANCHOR_RIGHT)
-    --self:SetVAnchor(ANCHOR_TOP)
-    self.percent = 1
-    self:SetScale(1,1,1)
-    
-    
-    self.pulse = self:AddChild(UIAnim())
-    self.pulse:GetAnimState():SetBank("pulse")
-    self.pulse:GetAnimState():SetBuild("hunger_health_pulse")
-
-    self.warning = self:AddChild(UIAnim())
-    self.warning:GetAnimState():SetBank("pulse")
-    self.warning:GetAnimState():SetBuild("hunger_health_pulse")
-    self.warning:Hide()
-
-    self.anim = self:AddChild(UIAnim())
-    self.anim:GetAnimState():SetBank(anim)
-    self.anim:GetAnimState():SetBuild(anim)
-    self.anim:GetAnimState():PlayAnimation("anim")
-    
-    self.underNumber = self:AddChild(Widget("undernumber"))
-    
-    self.num = self:AddChild(Text(NUMBERFONT, 35))
-    self.num:SetHAlign(ANCHOR_MIDDLE)
-    self.num:SetPosition(5, 0, 0)
-    self.num:Hide()
-    
-    self.anim:SetMouseOver( function()
-        self.num:Show()
-    end)
-
-    self.anim:SetMouseOut( function()
-        self.num:Hide()
-    end)
-    
-end)
-
-function Badge:SetPercent(val, max)
-    val = val or self.percent
-    max = max or 100
-	
-    self.anim:GetAnimState():SetPercent("anim", 1 - val)
-    self.num:SetString(tostring(math.ceil(val*max)))
-            
-    self.percent = val
-end
-
-function Badge:PulseGreen()
-    self.pulse:GetAnimState():SetMultColour(0,1,0,1)
-	self.pulse:GetAnimState():PlayAnimation("pulse")
-end
-
-function Badge:PulseRed()
-    self.pulse:GetAnimState():SetMultColour(1,0,0,1)
-	self.pulse:GetAnimState():PlayAnimation("pulse")
-end
-
-function Badge:StopWarning()
-	if self.warning.shown then
-		self.warning:Hide()
-	end
-end
-
-function Badge:StartWarning()
-	if not self.warning.shown then
-		self.warning:Show()
-		self.warning:GetAnimState():SetMultColour(1,0,0,1)
-		self.warning:GetAnimState():PlayAnimation("pulse", true)
-	end
-end
+local Badge = require "widgets/badge"
 
 
 local HealthBadge = Class(Badge, function(self, owner)
@@ -96,12 +21,9 @@ function HealthBadge:SetPercent(val, max, penaltypercent)
 	self.topperanim:GetAnimState():SetPercent("anim", penaltypercent)
 end	
 
-
 local HungerBadge = Class(Badge, function(self, owner)
 	Badge._ctor(self, "hunger", owner)
 end)
-
-
 
 local SanityBadge = Class(Badge, function(self, owner)
 	Badge._ctor(self, "sanity", owner)
@@ -153,7 +75,7 @@ end
 Status = Class(Widget, function(self, owner)
     Widget._ctor(self, "Status")
     self.owner = owner
-	
+
     self.brain = self:AddChild(SanityBadge(owner))
     --self.brain:SetPosition(0,35,0)
     self.brain:SetPosition(0,-40,0)
@@ -276,12 +198,12 @@ UIClock = Class(Widget, function(self)
     
     
     
-    self.face = self:AddChild(Image("data/images/clock_NIGHT.tex"))
+    self.face = self:AddChild(Image("images/hud.xml", "clock_NIGHT.tex"))
     self.segs = {}
 	local segscale = .4
     local numsegs = 16
     for i = 1, numsegs do
-		local seg = self:AddChild(Image("data/images/clock_wedge.tex"))
+		local seg = self:AddChild(Image("images/hud.xml", "clock_wedge.tex"))
         seg:SetScale(segscale,segscale,segscale)
         seg:SetHRegPoint(ANCHOR_LEFT)
         seg:SetVRegPoint(ANCHOR_BOTTOM)
@@ -292,8 +214,8 @@ UIClock = Class(Widget, function(self)
     
 
     
-    self.rim = self:AddChild(Image("data/images/clock_rim.tex"))
-    self.hands = self:AddChild(Image("data/images/clock_hand.tex"))
+    self.rim = self:AddChild(Image("images/hud.xml", "clock_rim.tex"))
+    self.hands = self:AddChild(Image("images/hud.xml", "clock_hand.tex"))
     self.text = self:AddChild(Text(NUMBERFONT, 40/self.base_scale))
     --self.text:SetPosition(0,30/self.base_scale,0)
 
@@ -466,7 +388,7 @@ BloodOver =  Class(Widget, function(self, owner)
 	
 	self:SetClickable(false)
 
-    self.bg = self:AddChild(Image("data/images/blood_over.tex"))
+    self.bg = self:AddChild(Image("images/fx.xml", "blood_over.tex"))
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
     self.bg:SetHRegPoint(ANCHOR_MIDDLE)
     self.bg:SetVAnchor(ANCHOR_MIDDLE)
@@ -576,7 +498,9 @@ end
 IceOver = Class(Widget, function(self, owner)
     self.owner = owner
     Widget._ctor(self, "IceOver")
-	self.img = self:AddChild(Image("data/images/ice_over.tex"))
+	self.img = self:AddChild(Image("images/fx.xml", "ice_over.tex"))
+	self.img:SetEffect( "shaders/uifade.ksh" )
+	
     self:SetScaleMode(SCALEMODE_FIXEDPROPORTIONAL)
 	self:SetClickable(false)
 
@@ -653,9 +577,11 @@ DemoTimer = Class(Widget, function(self, owner)
     
     local font = UIFONT
     self.purchasebutton = self:AddChild(Button())
-    self.purchasebutton:SetImage("data/images/button.tex")
-    self.purchasebutton:SetMouseOverImage("data/images/button_over.tex")
-    self.purchasebutton:SetDisabledImage("data/images/button_disabled.tex")
+    
+    local ui_atlas = resolvefilepath( "images/ui.xml" )
+    self.purchasebutton:SetImage(ui_atlas, "button.tex")
+    self.purchasebutton:SetMouseOverImage(ui_atlas, "button_over.tex")
+    self.purchasebutton:SetDisabledImage(ui_atlas, "button_disabled.tex")
     self.purchasebutton:SetPosition(-60, 0, 0)
     self.purchasebutton:SetText(STRINGS.UI.HUD.BUYNOW)
     self.purchasebutton:SetOnClick( function() self:Purchase() end)

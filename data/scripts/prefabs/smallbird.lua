@@ -1,4 +1,3 @@
-require "fonthelper"
 local brain = require "brains/smallbirdbrain"
 
 local WAKE_TO_FOLLOW_DISTANCE = 10
@@ -6,8 +5,8 @@ local SLEEP_NEAR_LEADER_DISTANCE = 7
 
 local assets =
 {
-	Asset("ANIM", "data/anim/smallbird_basic.zip"),
-	--Asset("SOUND", "data/sound/smallbird.fsb"),
+	Asset("ANIM", "anim/smallbird_basic.zip"),
+	--Asset("SOUND", "sound/smallbird.fsb"),
 }
 
 local prefabs=
@@ -17,10 +16,10 @@ local prefabs=
 
 local teen_assets =
 {
-	Asset("ANIM", "data/anim/ds_tallbird_basic.zip"),
-	Asset("ANIM", "data/anim/tallbird_teen_basic.zip"),
-	Asset("ANIM", "data/anim/tallbird_teen_build.zip"),
-	--Asset("SOUND", "data/sound/smallbird.fsb"),
+	Asset("ANIM", "anim/ds_tallbird_basic.zip"),
+	Asset("ANIM", "anim/tallbird_teen_basic.zip"),
+	Asset("ANIM", "anim/tallbird_teen_build.zip"),
+	--Asset("SOUND", "sound/smallbird.fsb"),
 }
 
 local function GetStatus(inst)

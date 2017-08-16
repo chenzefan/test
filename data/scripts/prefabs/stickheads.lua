@@ -1,11 +1,11 @@
 local pig_assets =
 {
-	Asset("ANIM", "data/anim/pig_head.zip")
+	Asset("ANIM", "anim/pig_head.zip")
 }
 
 local merm_assets =
 {
-	Asset("ANIM", "data/anim/merm_head.zip")
+	Asset("ANIM", "anim/merm_head.zip")
 }
 
 local pig_prefabs =

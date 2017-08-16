@@ -39,15 +39,15 @@ local season_descriptions = {
 }
 
 local season_start_descriptions = {
-	{ text = STRINGS.UI.SANDBOXMENU.SUMMER, data = "summer"},-- 	image = "data/images/customisation/season_start_summer.tex" },
-	{ text = STRINGS.UI.SANDBOXMENU.WINTER, data = "winter"},-- 	image = "data/images/customisation/season_start_winter.tex" },
+	{ text = STRINGS.UI.SANDBOXMENU.SUMMER, data = "summer"},-- 	image = "season_start_summer.tex" },
+	{ text = STRINGS.UI.SANDBOXMENU.WINTER, data = "winter"},-- 	image = "season_start_winter.tex" },
 }
 
 local size_descriptions = {
-	{ text = STRINGS.UI.SANDBOXMENU.SLIDESMALL, data = "default"},-- 	image = "data/images/customisation/world_size_small.tex"}, 	--350x350
-	{ text = STRINGS.UI.SANDBOXMENU.SLIDESMEDIUM, data = "medium"},-- 	image = "data/images/customisation/world_size_medium.tex"},	--450x450
-	{ text = STRINGS.UI.SANDBOXMENU.SLIDESLARGE, data = "large"},-- 	image = "data/images/customisation/world_size_large.tex"},	--550x550
-	{ text = STRINGS.UI.SANDBOXMENU.SLIDESHUGE, data = "huge"},-- 		image = "data/images/customisation/world_size_huge.tex"},	--800x800
+	{ text = STRINGS.UI.SANDBOXMENU.SLIDESMALL, data = "default"},-- 	image = "world_size_small.tex"}, 	--350x350
+	{ text = STRINGS.UI.SANDBOXMENU.SLIDESMEDIUM, data = "medium"},-- 	image = "world_size_medium.tex"},	--450x450
+	{ text = STRINGS.UI.SANDBOXMENU.SLIDESLARGE, data = "large"},-- 	image = "world_size_large.tex"},	--550x550
+	{ text = STRINGS.UI.SANDBOXMENU.SLIDESHUGE, data = "huge"},-- 		image = "world_size_huge.tex"},	--800x800
 }
 
 local branching_descriptions = {
@@ -77,8 +77,8 @@ local preset_descriptions = {
 
 -- TODO: Read this from the tasks.lua
 local yesno_descriptions = {
-	{ text = STRINGS.UI.SANDBOXMENU.NO, data = "no" },
-	{ text = STRINGS.UI.SANDBOXMENU.YES, data = "yes" },
+	{ text = STRINGS.UI.SANDBOXMENU.YES, data = "default" },
+	{ text = STRINGS.UI.SANDBOXMENU.NO, data = "never" },
 }
 
 local GROUP = {
@@ -87,13 +87,13 @@ local GROUP = {
 						desc = freqency_descriptions,
 						enable = false,
 						items={
-							["spiders"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/spiders.tex"}, 
-							["tentacles"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/tentacles.tex"}, 
-							["hounds"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/hounds.tex"}, 
-							["liefs"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/liefs.tex"}, 
-							["deerclops"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/deerclops.tex"}, 
-							--["mactusk"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/mactusk.tex"}, 
-							--["merm"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/merm.tex"}, 
+							["spiders"] = {value = "default", enable = false, spinner = nil, image = "spiders.tex"}, 
+							["tentacles"] = {value = "default", enable = false, spinner = nil, image = "tentacles.tex"}, 
+							["hounds"] = {value = "default", enable = false, spinner = nil, image = "hounds.tex"}, 
+							["liefs"] = {value = "default", enable = false, spinner = nil, image = "liefs.tex"}, 
+							["deerclops"] = {value = "default", enable = false, spinner = nil, image = "deerclops.tex"}, 
+							--["mactusk"] = {value = "default", enable = false, spinner = nil, image = "mactusk.tex"}, 
+							--["merm"] = {value = "default", enable = false, spinner = nil, image = "merm.tex"}, 
 						}
 					},
 	["animals"] =  	{	-- These guys live and let live
@@ -101,14 +101,14 @@ local GROUP = {
 						desc = freqency_descriptions,
 						enable = false,
 						items={
-							["pigs"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/pigs.tex"}, 
-							["tallbirds"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/tallbirds.tex"}, 
-							["rabbits"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/rabbits.tex"}, 
-							["beefalo"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/beefalo.tex"}, 
-							["beefaloheat"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/beefaloheat.tex"}, 
-							["frogs"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/frogs.tex"}, 
-							["bees"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/bees.tex"}, 
-							["perd"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/perd.tex"}, 
+							["pigs"] = {value = "default", enable = false, spinner = nil, image = "pigs.tex"}, 
+							["tallbirds"] = {value = "default", enable = false, spinner = nil, image = "tallbirds.tex"}, 
+							["rabbits"] = {value = "default", enable = false, spinner = nil, image = "rabbits.tex"}, 
+							["beefalo"] = {value = "default", enable = false, spinner = nil, image = "beefalo.tex"}, 
+							["beefaloheat"] = {value = "default", enable = false, spinner = nil, image = "beefaloheat.tex"}, 
+							["frogs"] = {value = "default", enable = false, spinner = nil, image = "frogs.tex"}, 
+							["bees"] = {value = "default", enable = false, spinner = nil, image = "bees.tex"}, 
+							["perd"] = {value = "default", enable = false, spinner = nil, image = "perd.tex"}, 
 						}
 					},
 	["resources"] = {
@@ -116,11 +116,11 @@ local GROUP = {
 						desc = freqency_descriptions,
 						enable = false,
 						items={
-							["grass"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/grass.tex"}, 
-							["rock"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/rock.tex"}, 
-							["sapling"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/sapling.tex"}, 
-							["reeds"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/reeds.tex"}, 
-							["trees"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/trees.tex"}, 
+							["grass"] = {value = "default", enable = false, spinner = nil, image = "grass.tex"}, 
+							["rock"] = {value = "default", enable = false, spinner = nil, image = "rock.tex"}, 
+							["sapling"] = {value = "default", enable = false, spinner = nil, image = "sapling.tex"}, 
+							["reeds"] = {value = "default", enable = false, spinner = nil, image = "reeds.tex"}, 
+							["trees"] = {value = "default", enable = false, spinner = nil, image = "trees.tex"}, 
 						}
 					},
 	["unprepared"] ={
@@ -128,17 +128,17 @@ local GROUP = {
 						desc = freqency_descriptions,
 						enable = true,
 						items={
-							["carrot"] = {value = "default", enable = true, spinner = nil, image = "data/images/customisation/carrot.tex",
+							["carrot"] = {value = "default", enable = true, spinner = nil, image = "carrot.tex",
 --											images ={
---												"data/images/customisation/carrot_never.tex",
---												"data/images/customisation/carrot_rare.tex",
---												"data/images/customisation/carrot_default.tex",
---												"data/images/customisation/carrot_often.tex",
---												"data/images/customisation/carrot_always.tex",
+--												"carrot_never.tex",
+--												"carrot_rare.tex",
+--												"carrot_default.tex",
+--												"carrot_often.tex",
+--												"carrot_always.tex",
 --											}
 										}, 
-							["berrybush"] = {value = "default", enable = true, spinner = nil, image = "data/images/customisation/berrybush.tex"}, 
-							--["flowers"] = {value = "default", enable = true, spinner = nil, image = "data/images/customisation/flowers.tex"}, 
+							["berrybush"] = {value = "default", enable = true, spinner = nil, image = "berrybush.tex"}, 
+							--["flowers"] = {value = "default", enable = true, spinner = nil, image = "flowers.tex"}, 
 						}
 					},
 	["misc"] =		{
@@ -146,17 +146,18 @@ local GROUP = {
 						desc = nil,
 						enable = true,
 						items={
-							["day"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/day.tex", desc = day_descriptions}, 
-							["season"] = {value = "default", enable = true, spinner = nil, image = "data/images/customisation/season.tex", desc = season_descriptions}, 
-							["season_start"] = {value = "summer", enable = false, spinner = nil, image = "data/images/customisation/season_start.tex", desc = season_start_descriptions}, 
-							["weather"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/rain.tex", desc = freqency_descriptions}, 
-							["lightning"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/lightning.tex", desc = freqency_descriptions}, 
-							["world_size"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/world_size.tex", desc = size_descriptions}, 
-							["branching"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/world_branching.tex", desc = branching_descriptions}, 
-							["loop"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/world_loop.tex", desc = loop_descriptions}, 
---							["world_complexity"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/world_complexity.tex", desc = complexity_descriptions}, 
-							["boons"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/skeletons.tex", desc = freqency_descriptions}, 
-							["touchstone"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/resurrection.tex", desc = freqency_descriptions}, 
+							["day"] = {value = "default", enable = false, spinner = nil, image = "day.tex", desc = day_descriptions}, 
+							["season"] = {value = "default", enable = true, spinner = nil, image = "season.tex", desc = season_descriptions}, 
+							["season_start"] = {value = "summer", enable = false, spinner = nil, image = "season_start.tex", desc = season_start_descriptions}, 
+							["weather"] = {value = "default", enable = false, spinner = nil, image = "rain.tex", desc = freqency_descriptions}, 
+							["lightning"] = {value = "default", enable = false, spinner = nil, image = "lightning.tex", desc = freqency_descriptions}, 
+							["world_size"] = {value = "default", enable = false, spinner = nil, image = "world_size.tex", desc = size_descriptions}, 
+							["branching"] = {value = "default", enable = false, spinner = nil, image = "world_branching.tex", desc = branching_descriptions}, 
+							["loop"] = {value = "default", enable = false, spinner = nil, image = "world_loop.tex", desc = loop_descriptions}, 
+--							["world_complexity"] = {value = "default", enable = false, spinner = nil, image = "world_complexity.tex", desc = complexity_descriptions}, 
+							["boons"] = {value = "default", enable = false, spinner = nil, image = "skeletons.tex", desc = freqency_descriptions}, 
+							["touchstone"] = {value = "default", enable = false, spinner = nil, image = "resurrection.tex", desc = freqency_descriptions}, 
+							["cave_entrance"] = {value = "default", enable = false, spinner = nil, image = "caves.tex", desc = yesno_descriptions},
 						}
 					},
 }

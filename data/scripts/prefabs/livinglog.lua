@@ -1,13 +1,16 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/livinglog.zip"),
-    Asset("IMAGE", "data/inventoryimages/livinglog.tex"),
+	Asset("ANIM", "anim/livinglog.zip"),
 }
 
 local function FuelTaken(inst, taker)
     if taker and taker.SoundEmitter then
         taker.SoundEmitter:PlaySound("dontstarve/creatures/leif/livinglog_burn")
     end
+end
+
+local function oneaten(inst, eater)
+	inst.SoundEmitter:PlaySound("dontstarve/creatures/leif/livinglog_burn") 
 end
 
 local function fn(Sim)
@@ -28,6 +31,10 @@ local function fn(Sim)
     inst.components.fuel.fuelvalue = TUNING.MED_FUEL
     inst.components.fuel:SetOnTakenFn(FuelTaken)
     
+    inst:AddComponent("edible")
+    inst.components.edible.foodtype = "WOOD"
+    inst.components.edible.woodiness = 50
+	inst.components.edible:SetOnEatenFn(oneaten)
     
 	MakeSmallBurnable(inst, TUNING.MED_BURNTIME)
     MakeSmallPropagator(inst)

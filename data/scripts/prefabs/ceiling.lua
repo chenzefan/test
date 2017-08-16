@@ -5,7 +5,7 @@ local function fn(Sim)
 	local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
 	local map = inst.entity:AddMapCeiling()
-	map:SetBloomEffect("data/shaders/wall_bloom.ksh")
+	map:SetBloomEffect("shaders/wall_bloom.ksh")
 	
 	inst:AddTag( "ceiling" )
 	inst:AddTag( "NOCLICK" )

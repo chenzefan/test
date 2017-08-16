@@ -6,6 +6,12 @@ local Edible = Class(function(self, inst)
     self.foodtype = "GENERIC"
     self.oneaten = nil
     
+    self.stale_hunger = TUNING.STALE_FOOD_HUNGER
+    self.stale_health = TUNING.STALE_FOOD_HEALTH
+
+    self.spoiled_hunger = TUNING.SPOILED_FOOD_HUNGER
+    self.spoiled_health = TUNING.SPOILED_FOOD_HEALTH
+
 end)
 
 function Edible:GetSanity(eater)
@@ -31,9 +37,9 @@ function Edible:GetHunger(eater)
 	
 	if self.inst.components.perishable and not ignore_spoilage then
 		if self.inst.components.perishable:IsStale() then
-			multiplier = TUNING.STALE_FOOD_HUNGER --.5
+			multiplier = self.stale_hunger
 		elseif self.inst.components.perishable:IsSpoiled() then
-			multiplier = TUNING.SPOILED_FOOD_HUNGER --0
+			multiplier = self.spoiled_hunger
 		end
 	end
 	
@@ -47,9 +53,9 @@ function Edible:GetHealth(eater)
 	
 	if self.inst.components.perishable and not ignore_spoilage then
 		if self.inst.components.perishable:IsStale() then
-			multiplier = TUNING.STALE_FOOD_HEALTH --.5
+			multiplier = self.stale_health
 		elseif self.inst.components.perishable:IsSpoiled() then
-			multiplier = TUNING.SPOILED_FOOD_HEALTH --0
+			multiplier = self.spoiled_health
 		end
 	end
 	

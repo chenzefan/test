@@ -3,9 +3,7 @@ require "tuning"
 
 local assets =
 {
-	Asset("ANIM", "data/anim/farmplot.zip"),
-    Asset("IMAGE", "data/inventoryimages/slow_farmplot.tex"),
-    Asset("IMAGE", "data/inventoryimages/fast_farmplot.tex"),
+	Asset("ANIM", "anim/farmplot.zip"),
 }
 
 local prefabs = 

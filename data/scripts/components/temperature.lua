@@ -2,6 +2,7 @@ local easing = require("easing")
 
 local Temperature = Class(function(self, inst)
     self.inst = inst
+	self.settemp = nil
 	self.rate = 0
 	self.current = 30
 	self.maxtemp = 40
@@ -22,6 +23,17 @@ end
 function Temperature:OnSave()
 	return { current = self.current }
 			 
+end
+
+function Temperature:SetTemp(temp)
+	if temp then
+		self.settemp = temp
+		local old = self.current 
+		self.current = temp
+		self.inst:PushEvent("temperaturedelta", {last = old, new = self.current})		
+	else
+		self.settemp = nil
+	end
 end
 
 function Temperature:OnProgress()
@@ -49,6 +61,9 @@ function Temperature:IsFreezing()
 end
 
 function Temperature:OnUpdate(dt, applyhealthdelta)
+	
+	if self.settemp then return end
+
 
 	if applyhealthdelta == nil then
 		applyhealthdelta = true
@@ -71,7 +86,9 @@ function Temperature:OnUpdate(dt, applyhealthdelta)
 		for k,v in pairs (self.inst.components.inventory.equipslots) do
 			if v.components.heater then
 				local heat = v.components.heater:GetEquippedHeat()
-				if heat > self.current then
+				if heat > self.current and not v.components.heater.iscooler then
+					ambient_delta = ambient_delta + (heat - self.current)
+				elseif heat < self.current and v.components.heater.iscooler then
 					ambient_delta = ambient_delta + (heat - self.current)
 				end
 			end
@@ -83,7 +100,9 @@ function Temperature:OnUpdate(dt, applyhealthdelta)
 		for k,v in pairs(self.inst.components.inventory.itemslots) do
 			if v.components.heater then
 				local heat = v.components.heater:GetCarriedHeat()
-				if heat > self.current then
+				if heat > self.current and not v.components.heater.iscooler then
+					ambient_delta = ambient_delta + (heat - self.current)
+				elseif heat < self.current and v.components.heater.iscooler then
 					ambient_delta = ambient_delta + (heat - self.current)
 				end
 			end

@@ -1,6 +1,6 @@
 local assets =
 {
-    Asset("ANIM", "data/anim/spider_mound.zip")
+    Asset("ANIM", "anim/spider_mound.zip")
 }
 
 local prefabs =

@@ -1,6 +1,6 @@
 local assets =
 {
-	--Asset("ANIM", "data/anim/arrow_indicator.zip"),
+	--Asset("ANIM", "anim/arrow_indicator.zip"),
 }
 
     

@@ -1,7 +1,6 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/swap_bedroll_straw.zip"),
-    Asset("IMAGE", "data/inventoryimages/bedroll_straw.tex"),
+	Asset("ANIM", "anim/swap_bedroll_straw.zip"),
 }
 
 local function onsleep(inst, sleeper)
@@ -23,12 +22,11 @@ local function onsleep(inst, sleeper)
 		
 		sleeper.sg:GoToState("wakeup")	
 		if sleeper.components.hunger then
-			-- Check SGwilson, state "bedroll", if you change this value
-			sleeper.components.hunger:DoDelta(-TUNING.CALORIES_HUGE)
+			sleeper.components.hunger:DoDelta(-TUNING.CALORIES_HUGE, false, true)
 		end
 
 		if sleeper.components.sanity then
-			sleeper.components.sanity:DoDelta(TUNING.SANITY_LARGE)
+			sleeper.components.sanity:DoDelta(TUNING.SANITY_LARGE, false)
 		end
 		
 		if sleeper.components.tempature then

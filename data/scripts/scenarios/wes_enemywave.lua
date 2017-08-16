@@ -1,4 +1,4 @@
-enemytypes = {"knight", "bishop"}
+enemytypes = {"knight", "bishop", "rook"}
 local cantrigger = false
 
 local function OnEnemyKilled(inst, enemy, scenariorunner)

@@ -65,11 +65,11 @@ function EntityScript:GetSaveRecord()
         y = y ~= y and 0 or y
         z = z ~= z and 0 or z
 
-        record.x = math.floor(x*10)/10
-        record.z = math.floor(z*10)/10
+        record.x = math.floor(x*1000)/1000
+        record.z = math.floor(z*1000)/1000
         --y is often 0 in our game, so be selective.
         if y ~= 0 then
-            record.y = math.floor(y*10)/10
+            record.y = math.floor(y*1000)/1000
         end
     end
     
@@ -237,7 +237,7 @@ function EntityScript:AddComponent(name)
     
     local loadedcmp = cmp(self)
     self.components[name] = loadedcmp
-    local postinitfns = ModManager:GetComponentPostInitFns(name)
+    local postinitfns = ModManager:GetPostInitFns("ComponentPostInit", name)
 
     for k,fn in ipairs(postinitfns) do
         fn(loadedcmp,self)

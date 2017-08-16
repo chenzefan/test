@@ -1,21 +1,19 @@
 local mushassets=
 {
-	Asset("ANIM", "data/anim/mushrooms.zip"),
+	Asset("ANIM", "anim/mushrooms.zip"),
 }
 
 
 local cookedassets = 
 {
-	Asset("ANIM", "data/anim/mushrooms.zip"),
+	Asset("ANIM", "anim/mushrooms.zip"),
 }
 
 local function MakeMushroom(data)
 
     local capassets = 
     {
-		Asset("ANIM", "data/anim/mushrooms.zip"),
-        Asset("IMAGE", "data/inventoryimages/"..data.pickloot..".tex"),
-        Asset("IMAGE", "data/inventoryimages/"..data.pickloot.."_cooked.tex"),
+		Asset("ANIM", "anim/mushrooms.zip"),
     }
 
     local prefabs =

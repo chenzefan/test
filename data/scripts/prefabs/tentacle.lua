@@ -1,7 +1,7 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/tentacle.zip"),
-    Asset("SOUND", "data/sound/tentacle.fsb"),
+	Asset("ANIM", "anim/tentacle.zip"),
+    Asset("SOUND", "sound/tentacle.fsb"),
 }
 
 local prefabs =
@@ -20,22 +20,9 @@ local function retargetfn(inst)
 end
 
 
-local function onfar(inst)
-    if inst.sg:HasStateTag("taunt") and not inst.sg:HasStateTag("attack") and not inst.components.health:IsDead() then
-        inst.sg:GoToState("idle")
-    end
-end
-
-local function onnear(inst)
-    if inst.sg:HasStateTag("idle") and not inst.sg:HasStateTag("attack") and not inst.components.health:IsDead() then
-        inst.sg:GoToState("taunt")
-    end
-end
-
 local function shouldKeepTarget(inst, target)
     if target and target:IsValid() and target.components.health and not target.components.health:IsDead() then
         local distsq = target:GetDistanceSqToInst(inst)
-        
         return distsq < TUNING.TENTACLE_STOPATTACK_DIST*TUNING.TENTACLE_STOPATTACK_DIST
     else
         return false
@@ -67,23 +54,10 @@ local function fn(Sim)
     inst.components.combat:SetDefaultDamage(TUNING.TENTACLE_DAMAGE)
     inst.components.combat:SetAttackPeriod(TUNING.TENTACLE_ATTACK_PERIOD)
     inst.components.combat:SetRetargetFunction(GetRandomWithVariance(2, 0.5), retargetfn)
-
     inst.components.combat:SetKeepTargetFunction(shouldKeepTarget)
-    
-    inst:ListenForEvent("newcombattarget", function(inst, data)
-        if data.target and not inst.sg:HasStateTag("attack") and not inst.sg:HasStateTag("hit") and not inst.components.health:IsDead() then
-            inst.sg:GoToState("attack_pre")
-        end
-    end)
     
     MakeLargeFreezableCharacter(inst)
     
-    inst:AddComponent("playerprox")
-    inst.components.playerprox:SetDist(4, 6)
-    inst.components.playerprox:SetOnPlayerNear(onnear)
-    inst.components.playerprox:SetOnPlayerFar(onfar)
-    
-
 	inst:AddComponent("sanityaura")
     inst.components.sanityaura.aura = -TUNING.SANITYAURA_MED
     
@@ -93,7 +67,6 @@ local function fn(Sim)
     inst.components.lootdropper:SetLoot({"monstermeat", "monstermeat"})
     inst.components.lootdropper:AddChanceLoot("tentaclespike", 0.5)
     inst.components.lootdropper:AddChanceLoot("tentaclespots", 0.2)
-    
     
     inst:SetStateGraph("SGtentacle")
 

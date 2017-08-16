@@ -30,6 +30,7 @@ function Equippable:Equip(owner, slot)
     if self.onequipfn then
         self.onequipfn(self.inst, owner)
     end
+    self.inst:PushEvent("equipped", {owner=owner, slot=slot})
 
 end
 
@@ -47,6 +48,7 @@ function Equippable:Unequip(owner, slot)
         self.onunequipfn(self.inst, owner)
     end
     
+    self.inst:PushEvent("unequipped", {owner=owner, slot=slot})
 end
 
 function Equippable:GetWalkSpeedMult()

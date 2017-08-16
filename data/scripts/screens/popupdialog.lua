@@ -9,7 +9,7 @@ PopupDialogScreen = Class(Screen, function(self, title, text, buttons, timeout)
 	Screen._ctor(self, "PopupDialogScreen")
 
 	--darken everything behind the dialog
-    self.black = self:AddChild(Image("data/images/square.tex"))
+    self.black = self:AddChild(Image("images/global.xml", "square.tex"))
     self.black:SetVRegPoint(ANCHOR_MIDDLE)
     self.black:SetHRegPoint(ANCHOR_MIDDLE)
     self.black:SetVAnchor(ANCHOR_MIDDLE)
@@ -24,7 +24,7 @@ PopupDialogScreen = Class(Screen, function(self, title, text, buttons, timeout)
     self.proot:SetScaleMode(SCALEMODE_PROPORTIONAL)
 
 	--throw up the background
-    self.bg = self.proot:AddChild(Image("data/images/small_dialog.tex"))
+    self.bg = self.proot:AddChild(Image("images/globalpanels.xml", "small_dialog.tex"))
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
     self.bg:SetHRegPoint(ANCHOR_MIDDLE)
 	self.bg:SetScale(1.2,1.2,1.2)
@@ -102,4 +102,8 @@ function PopupDialogScreen:OnKeyUp( key )
 			TheFrontEnd:PopScreen(self) self.buttons[#self.buttons].cb()
 		end
 	end
+end
+
+function PopupDialogScreen:Close()
+	TheFrontEnd:PopScreen(self)
 end

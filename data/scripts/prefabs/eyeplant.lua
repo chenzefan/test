@@ -1,7 +1,7 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/eyeplant.zip"),
-    Asset("SOUND", "data/sound/plant.fsb"),
+	Asset("ANIM", "anim/eyeplant.zip"),
+    Asset("SOUND", "sound/plant.fsb"),
 }
 
 local function checkmaster(tar, inst)

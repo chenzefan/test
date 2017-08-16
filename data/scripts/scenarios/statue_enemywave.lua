@@ -1,4 +1,4 @@
-enemytypes = {"knight", "bishop"}
+enemytypes = {"knight", "bishop", "rook"}
 
 local function OnEnemyKilled(inst, enemy, scenariorunner)
     if enemy.scene_deathfn then

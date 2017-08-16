@@ -1,9 +1,7 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/bugnet.zip"),
-	Asset("ANIM", "data/anim/swap_bugnet.zip"),
-    
-    Asset("IMAGE", "data/inventoryimages/bugnet.tex"),
+	Asset("ANIM", "anim/bugnet.zip"),
+	Asset("ANIM", "anim/swap_bugnet.zip"),
 }
 
 

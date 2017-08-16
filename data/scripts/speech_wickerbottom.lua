@@ -12,17 +12,43 @@ return
     DESCRIBE=
     {
 
+        SLURPER = "A classic example of symbiosis.",
+        ORANGEAMULET = "The gem fades with each use.",
+        YELLOWSTAFF = "Luckily the star is a manageable size.",
+        YELLOWGEM = "Perhaps it is similar to Citrine.",
+        ORANGEGEM = "It looks like a Spessartite garnet.",
+        TELEBASE = 
+        {
+            VALID = "It looks to be ready.",
+            GEMS = "I don't think it's powered yet.",
+        },
+        GEMSOCKET = 
+        {
+            VALID = "What a strange effect.",
+            GEMS = "These hold gems.",
+        },
+        STAFFLIGHT = "Perhaps a larger staff would summon a larger star.",
+        RESEARCHLAB4 = "I think the hat collects energy from the air.",
+
+        ANCIENT_ALTAR = "A monument to some long dead god.",
+
         CAVE_BANANA = "All of them are genetically identical.",
         CAVE_BANANA_COOKED = "Somewhat better.",
         CAVE_BANANA_TREE = "The seeds must have fallen down a sinkhole.",
         ROCKY = "Their carapace is made of rocks.",
+
+        BLUEAMULET = "The gem appears to be sucking energy out anything it touches.",
+        PURPLEAMULET = "I can almost sense it beckoning to something.",
+        TELESTAFF = "The gem appears to focus the nightmare fuel.",
+        MONKEY = "They produce quite an odor.",
+        MONKEYBARREL = "This appears to be the home of several primates.",
 
         HOUNDSTOOTH="Made of calcium and brimstone.",
         ARMORSNURTLESHELL="It is quite capacious.",
         BAT="A flying mammal.",
         BATWING="Technically edible.",
         BATWING_COOKED="Technically edible.",
-        BEDROLL_FURRY="This passes for luxury here.",
+        BEDROLL_FURRY="I'm not sleeping on the ground.",
         BUNNYMAN="A sentient lagomorph.",
         FLOWER_CAVE="You could read by that light.",
         FLOWER_CAVE_DOUBLE="You could read by that light.",
@@ -91,9 +117,11 @@ return
 		
 		WALL_WOOD_ITEM = "Deployable pickets.",
 		WALL_STONE_ITEM = "I'm not sure why I can carry so many of these.",
+		WALL_RUINS_ITEM = "I'm not sure why I can carry so many of these.",
 		WALL_HAY_ITEM = "Hay bales.",
 		WALL_WOOD = "That offers some protection.",
 		WALL_STONE = "That is quite secure.",
+		WALL_RUINS = "That is quite secure.",
 		WALL_HAY = "I don't trust that wall.",
         ADVENTURE_PORTAL = "That violates some pretty fundamental physical laws.",
 		
@@ -111,7 +139,7 @@ return
         UMBRELLA = "A simple apparatus for keeping dry.",
         COOKEDMONSTERMEAT = "It's still a little bit poisonous.",
         MAXWELL = "What a rude gentleman.",
-        TENT = "Sleeping in there is going to give me a stiff neck.",
+        TENT = "Sleeping in there would give me a stiff neck.",
         TENTACLE = "A horror waiting in the mud.",
         TENTACLESPIKE = "Never grab the pointy end.",
         TENTACLESPOTS = "Hmmm, reproductive organs.",
@@ -174,6 +202,13 @@ return
             GENERIC = "It's some kind of Lagomorph. With horns.",
             HELD = "It is a cute widdle horned Lagomorph.",
         },
+		ROCK_LIGHT =
+		{
+			GENERIC = "A capped lava pit.",
+			OUT = "The lava remains underneath!",
+			LOW = "The lava is cooling",
+			NORMAL = "Lava's hot.",
+		},
         ROCK = "A large sedimentary rock.",
         PIGKING = "He appears to be the leader of the village.",
         WINTEROMETER = "Measure before you act.",
@@ -449,7 +484,7 @@ return
 		PANDORASCHEST = "An artifact which may contain other artifacts.",
 
 
-        BEDROLL_STRAW = "Crude bedding.",
+        BEDROLL_STRAW = "I'm not sleeping on the ground.",
         CHARCOAL = "It's mostly carbon and ash.",
         MARSH_PLANT = "A swamp-dwelling rhizome.",
         MARSH_BUSH = {
@@ -473,6 +508,10 @@ return
 			GENERIC = "The sleeping Megadrilacea Oraduos.",
 			OPEN = "Concentric rings of teeth for rapid ingestion.",
 		},
+
+        CHESSJUNK1 = "Clockwork junk",
+        CHESSJUNK2 = "Clockwork junk",
+        CHESSJUNK3 = "Clockwork junk",
 
         CHESTER = "A motile storage chest.",
         CHESTER_EYEBONE = {
@@ -523,14 +562,15 @@ return
         HOUND = "That hound is not domesticated.",
         FIREHOUND = "That hound is more dangerous than the others.",
         ICEHOUND = "What a strange, cold beast.",
-        PENGUIN = "...",
+        PENGUIN = "What a classy bird",
         DEERCLOPS_EYEBALL = "I feel a vague sense of accomplishment.",
         BASALT = "Material of great density!",
         HOUNDMOUND = "Those bones are foreboding.",
         MERM = "A piscean biped!",
         MERMHOUSE = "Obviously dilapidated.",
         KNIGHT = "An automatic equine.",
-        BISHOP = "A clockwork clergyman. ",
+        BISHOP = "A clockwork clergyman.",
+        ROOK = "A clockwork castle.",
 
         INSANITYROCK = {
             INACTIVE = "It appears to be a tiny pyramid.",

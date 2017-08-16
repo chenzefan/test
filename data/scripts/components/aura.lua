@@ -4,6 +4,7 @@ local Aura = Class(function(self, inst)
     self.tickperiod = 1
     self.active = false
     self.applying = false
+
 end)
 
 function Aura:GetDebugString()
@@ -39,7 +40,19 @@ function Aura:OnTick()
     local applied = false
 
     if self.inst.components.combat then
-        local hits = self.inst.components.combat:DoAreaAttack(self.inst, self.radius, nil, function(target) return not target:HasTag("noauradamage") end)
+        local hits = self.inst.components.combat:DoAreaAttack(self.inst, self.radius, nil, 
+            function(target) 
+                if target:HasTag("noauradamage") then return false end
+
+                if self.auratestfn then
+                    if not self.auratestfn(self.inst, target) then
+                        return false
+                    end
+                end
+
+
+                return true
+            end)
         --print("Aura:OnTick", hits)
         applied = hits > 0
     end

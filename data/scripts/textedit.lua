@@ -55,7 +55,7 @@ function TextEdit:OnGainFocus()
 	self.inst.TextWidget:ShowEditCursor(true)
 	TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/click_mouseover")
 	if self.focusimage then
-		self.focusimage:SetTexture(self.focusedtex)
+		self.focusimage:SetTexture(self.atlas, self.focusedtex)
 	end
 end
 
@@ -63,12 +63,13 @@ function TextEdit:OnLoseFocus()
 	--print("TextEdit:OnLoseFocus()")
 	self.inst.TextWidget:ShowEditCursor(false)
 	if self.focusimage then
-		self.focusimage:SetTexture(self.unfocusedtex)
+		self.focusimage:SetTexture(self.atlas, self.unfocusedtex)
 	end
 end
 
-function TextEdit:SetFocusedImage(widget, focused, unfocused)
+function TextEdit:SetFocusedImage(widget, atlas, focused, unfocused)
 	self.focusimage = widget
+	self.atlas = atlas
 	self.focusedtex = focused
 	self.unfocusedtex = unfocused
 end

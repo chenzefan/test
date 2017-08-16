@@ -1,53 +1,265 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/amulet.zip"),
-	Asset("ANIM", "data/anim/torso_amulet.zip"),
-    Asset("IMAGE", "data/inventoryimages/amulet.tex"),
+	Asset("ANIM", "anim/amulets.zip"),
+	Asset("ANIM", "anim/torso_amulets.zip"),
 }
 
+--[[ Each amulet has a seperate onequip and onunequip function so we can also
+add and remove event listeners, or start/stop update functions here. ]]
 
-local function onequip(inst, owner) 
-    owner.AnimState:OverrideSymbol("swap_body", "torso_amulet", "swap_body")
+---RED
+local function healowner(inst, owner)
+    if (owner.components.health and owner.components.health:IsHurt())
+    and (owner.components.hunger and owner.components.hunger.current > 5 )then
+        owner.components.health:DoDelta(TUNING.REDAMULET_CONVERSION,false,"redamulet")
+        owner.components.hunger:DoDelta(-TUNING.REDAMULET_CONVERSION)
+        inst.components.finiteuses:Use(1)
+    end
 end
 
-local function onunequip(inst, owner) 
+local function onequip_red(inst, owner) 
+    owner.AnimState:OverrideSymbol("swap_body", "torso_amulets", "redamulet")
+    inst.task = inst:DoPeriodicTask(30, function() healowner(inst, owner) end)
+end
+
+local function onunequip_red(inst, owner) 
     owner.AnimState:ClearOverrideSymbol("swap_body")
+    if inst.task then inst.task:Cancel() inst.task = nil end
 end
 
+---BLUE
+local function onequip_blue(inst, owner) 
+    owner.AnimState:OverrideSymbol("swap_body", "torso_amulets", "blueamulet")
 
-local function fn(Sim)
+    inst.freezefn = function(attacked, data)
+        if data.attacker.components.freezable then
+            data.attacker.components.freezable:AddColdness(0.67)
+            data.attacker.components.freezable:SpawnShatterFX()
+            inst.components.fueled:DoDelta(-(inst.components.fueled.maxfuel * 0.03))
+        end 
+    end
+
+    inst:ListenForEvent("attacked", inst.freezefn, owner)
+
+    if inst.components.fueled then
+        inst.components.fueled:StartConsuming()        
+    end
+
+end
+
+local function onunequip_blue(inst, owner) 
+    owner.AnimState:ClearOverrideSymbol("swap_body")
+
+    inst:RemoveEventCallback("attacked", inst.freezefn, owner)
+
+    if inst.components.fueled then
+        inst.components.fueled:StopConsuming()        
+    end
+end
+
+---PURPLE
+local function induceinsanity(val, owner)
+    if owner.components.sanity then
+        owner.components.sanity.inducedinsanity = val
+    end
+    if owner.components.sanitymonsterspawner then
+        --Ensure the popchangetimer fully ticks over by running max tick time twice.
+        owner.components.sanitymonsterspawner:UpdateMonsters(20)
+        owner.components.sanitymonsterspawner:UpdateMonsters(20)
+    end
+
+    local pt = owner:GetPosition()
+    local ents = TheSim:FindEntities(pt.x,pt.y,pt.z, 100)
+
+    for k,v in pairs(ents) do
+        if (v:HasTag("rabbit") or v:HasTag("manrabbit")) and v.CheckTransformState ~= nil then
+            v.CheckTransformState(v)
+        end
+    end
+
+end
+
+local function onequip_purple(inst, owner) 
+    owner.AnimState:OverrideSymbol("swap_body", "torso_amulets", "purpleamulet")
+    if inst.components.fueled then
+        inst.components.fueled:StartConsuming()        
+    end
+    induceinsanity(true, owner)
+end
+
+local function onunequip_purple(inst, owner) 
+    owner.AnimState:ClearOverrideSymbol("swap_body")
+    if inst.components.fueled then
+        inst.components.fueled:StopConsuming()        
+    end
+    induceinsanity(nil, owner)
+end
+
+---ORANGE
+local function SpawnEffect(inst)
+    local pt = inst:GetPosition()
+    local fx = SpawnPrefab("small_puff")
+    fx.Transform:SetPosition(pt.x, pt.y, pt.z)
+    fx.Transform:SetScale(0.5,0.5,0.5)
+end
+
+local function getitem(player, amulet, item)
+    --Amulet will only ever pick up items one at a time. Even from stacks.
+    SpawnEffect(item)
+    if item.components.stackable then
+        item = item.components.stackable:Get()
+    end
+    player.components.inventory:GiveItem(item)
+    amulet.components.finiteuses:Use(1)
+end
+
+local function pickup(inst, owner)
+    local pt = owner:GetPosition()
+    local ents = TheSim:FindEntities(pt.x, pt.y, pt.z, TUNING.ORANGEAMULET_RANGE)
+
+    for k,v in pairs(ents) do
+        if v.components.inventoryitem and v.components.inventoryitem.canbepickedup and v.components.inventoryitem.cangoincontainer and not
+            v.components.inventoryitem:IsHeld() then
+
+            if not owner.components.inventory:IsFull() then
+                --Your inventory isn't full, you can pick something up.
+                getitem(owner, inst, v)
+                return
+
+            elseif v.components.stackable then
+                --Your inventory is full, but the item you're trying to pick up stacks. Check for an exsisting stack.
+                --An acceptable stack should: Be of the same item type, not be full already and not be in the "active item" slot of inventory.
+                local stack = owner.components.inventory:FindItem(function(item) return (item.prefab == v.prefab and not item.components.stackable:IsFull()
+                    and item ~= owner.components.inventory.activeitem) end)
+                if stack then
+                    getitem(owner, inst, v)
+                    return
+                end
+            end
+        end
+    end
+    
+end
+
+local function onequip_orange(inst, owner) 
+    owner.AnimState:OverrideSymbol("swap_body", "torso_amulets", "orangeamulet")
+    inst.task = inst:DoPeriodicTask(TUNING.ORANGEAMULET_ICD, function() pickup(inst, owner) end)
+end
+
+local function onunequip_orange(inst, owner) 
+    owner.AnimState:ClearOverrideSymbol("swap_body")
+    if inst.task then inst.task:Cancel() inst.task = nil end
+end
+
+---COMMON FUNCTIONS
+
+local function onfinished(inst)
+    inst:Remove()
+end
+
+local function unimplementeditem(inst)
+    local player = GetPlayer()
+    player.components.talker:Say(GetString(player.prefab, "ANNOUNCE_UNIMPLEMENTED"))
+    if player.components.health.currenthealth > 1 then
+        player.components.health:DoDelta(-player.components.health.currenthealth * 0.5)
+    end
+
+    if inst.components.useableitem then
+        inst.components.useableitem:StopUsingItem()
+    end
+end
+
+local function commonfn()
 	local inst = CreateEntity()
     
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
-    MakeInventoryPhysics(inst)
+    MakeInventoryPhysics(inst)   
 
-    
-    inst.AnimState:SetBank("amulet")
-    inst.AnimState:SetBuild("amulet")
-    inst.AnimState:PlayAnimation("anim")
-    
-    inst:AddComponent("stackable")
+    inst.AnimState:SetBank("amulets")
+    inst.AnimState:SetBuild("amulets")
     
     inst:AddComponent("inspectable")
-	inst.AnimState:SetBloomEffectHandle( "data/shaders/anim.ksh" )    
 	
     inst:AddComponent("equippable")
     inst.components.equippable.equipslot = EQUIPSLOTS.BODY
-    inst.components.equippable:SetOnEquip( onequip )
-    inst.components.equippable:SetOnUnequip( onunequip )
     
     
 	inst:AddComponent("dapperness")
-	inst.components.dapperness.dapperness = TUNING.DAPPERNESS_SMALL
-    
+	inst.components.dapperness.dapperness = TUNING.DAPPERNESS_SMALL    
     
     
     inst:AddComponent("inventoryitem")
-    inst.components.inventoryitem.keepondeath = true
     inst.components.inventoryitem.foleysound = "dontstarve/movement/foley/jewlery"
     
     return inst
 end
 
-return Prefab( "common/inventory/amulet", fn, assets) 
+local function red(inst)
+    local inst = commonfn(inst)
+        inst.AnimState:PlayAnimation("redamulet")
+        inst.components.inventoryitem.keepondeath = true
+        inst.components.equippable:SetOnEquip( onequip_red )
+        inst.components.equippable:SetOnUnequip( onunequip_red )
+        inst:AddComponent("finiteuses")
+        inst.components.finiteuses:SetOnFinished( onfinished )
+        inst.components.finiteuses:SetMaxUses(TUNING.REDAMULET_USES)
+        inst.components.finiteuses:SetUses(TUNING.REDAMULET_USES)
+    return inst
+end
+
+local function blue(inst)
+    local inst = commonfn(inst)
+        inst.AnimState:PlayAnimation("blueamulet")
+        inst.components.equippable:SetOnEquip( onequip_blue )
+        inst.components.equippable:SetOnUnequip( onunequip_blue )
+        inst:AddComponent("heater")
+        inst.components.heater.iscooler = true
+        inst.components.heater.equippedheat = TUNING.BLUEGEM_COOLER
+
+        inst:AddComponent("fueled")
+        inst.components.fueled.fueltype = "MAGIC"
+        inst.components.fueled:InitializeFuelLevel(TUNING.BLUEAMULET_FUEL)
+        inst.components.fueled:SetDepletedFn(onfinished)
+    return inst
+end
+
+local function purple(inst)
+    local inst = commonfn(inst)
+
+        inst:AddComponent("fueled")
+        inst.components.fueled.fueltype = "MAGIC"
+        inst.components.fueled:InitializeFuelLevel(TUNING.PURPLEAMULET_FUEL)
+        inst.components.fueled:SetDepletedFn(onfinished)
+
+        inst.AnimState:PlayAnimation("purpleamulet")
+        inst.components.equippable:SetOnEquip( onequip_purple )
+        inst.components.equippable:SetOnUnequip( onunequip_purple )
+
+        inst.components.dapperness.dapperness = -TUNING.DAPPERNESS_MED    
+
+    return inst
+end
+
+local function orange(inst)
+    local inst = commonfn(inst)
+        inst.AnimState:PlayAnimation("orangeamulet")
+        -- inst.components.inspectable.nameoverride = "unimplemented"
+        -- inst:AddComponent("useableitem")
+        -- inst.components.useableitem:SetOnUseFn(unimplementeditem)
+        inst.components.equippable:SetOnEquip( onequip_orange )
+        inst.components.equippable:SetOnUnequip( onunequip_orange )
+
+        inst:AddComponent("finiteuses")
+        inst.components.finiteuses:SetOnFinished( onfinished )
+        inst.components.finiteuses:SetMaxUses(TUNING.ORANGEAMULET_USES)
+        inst.components.finiteuses:SetUses(TUNING.ORANGEAMULET_USES)
+
+    return inst
+end
+
+
+return Prefab( "common/inventory/amulet", red, assets),
+Prefab("common/inventory/blueamulet", blue, assets),
+Prefab("common/inventory/purpleamulet", purple, assets),
+Prefab("common/inventory/orangeamulet", orange, assets)

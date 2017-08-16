@@ -2,7 +2,6 @@ local groundtiles = require "worldtiledefs"
 
 local common_prefabs =
 {
-
 	"evergreen",
     "evergreen_normal",
     "evergreen_short",
@@ -34,6 +33,9 @@ local common_prefabs =
     "pigking",
     "mandrake",
     "chester",
+    "rook",
+    "bishop",
+    "knight",
     
     "goldnugget",
     "crow",
@@ -75,16 +77,30 @@ local common_prefabs =
 	"wormhole_limited_1",
     "diviningrod",
     "diviningrodbase",
-    
+    "splash_ocean",
+    "maxwell_smoke",
+    "chessjunk1",
+    "chessjunk2",
+    "chessjunk3",
 }
 
 local assets =
 {
-    Asset("SOUND", "data/sound/sanity.fsb"),
+    Asset("SOUND", "sound/sanity.fsb"),
+    Asset("SHADER", "shaders/uifade.ksh"),
 }
 
 for k,v in pairs(groundtiles.assets) do
 	table.insert(assets, v)
+end
+
+
+--[[ Stick your username in here and use dprint to only print output when you're running the game --]]
+if CHEATS_ENABLED and TheSim:GetUsersName() == "David Forsey" then
+    global("CHEATS_KEEP_SAVE")
+    global("CHEATS_ENABLE_DPRINT")
+    global("DPRINT_USERNAME")
+    DPRINT_USERNAME = TheSim:GetUsersName()
 end
 
 
@@ -95,17 +111,12 @@ function PlayCreatureSound(inst, sound, creature)
 end
 
 local function fn(Sim)
-
 	local inst = CreateEntity()
 
-	
 	inst:AddTag( "ground" )
 	inst:AddTag( "NOCLICK" )
     inst.entity:SetCanSleep(false)
     inst.persists = false
-
-
-
 
 	local trans = inst.entity:AddTransform()
 	local map = inst.entity:AddMap()
@@ -158,6 +169,7 @@ local function fn(Sim)
 	inst:AddComponent("age")
 
 	inst.IsCave = function() return inst:HasTag("cave") end
+
     return inst
 end
 

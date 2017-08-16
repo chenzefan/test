@@ -434,7 +434,6 @@ local ExampleLayout =
 							fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
 							layout_position = LAYOUT_POSITION.CENTER,
 						}),
-				
 		["MaxwellHome"] = StaticLayout.Get("map/static_layouts/maxwellhome", {
 							areas = 
 							{								
@@ -539,9 +538,20 @@ local ExampleLayout =
 	["SinkBase"] = StaticLayout.Get("map/static_layouts/cave_base_3"),
 	["RabbitTown"] = StaticLayout.Get("map/static_layouts/rabbittown"),
 	["CaveArtTest"] = StaticLayout.Get("map/static_layouts/cave_art_test_start"),
-
-
-
+	["RabbitCity"] = StaticLayout.Get("map/static_layouts/insane_rabbit_king",
+				{
+				start_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
+				fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
+				layout_position = LAYOUT_POSITION.RANDOM,
+			}
+		),
+	["TorchRabbitking"] = StaticLayout.Get("map/static_layouts/torch_rabbit_cave",
+				{
+				start_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
+				fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
+				layout_position = LAYOUT_POSITION.RANDOM,
+			}
+		),
 	}
 
 	return {Layouts = ExampleLayout}

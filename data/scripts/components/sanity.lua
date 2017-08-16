@@ -12,15 +12,26 @@ local Sanity = Class(function(self, inst)
 	self.sane = true
 	self.fxtime = 0
 	self.dapperness = 0
+	self.inducedinsanity = nil --Set to nil if not true. 
+	self.night_drain_mult = 1
+	self.neg_aura_mult = 1
 end)
 
 
 function Sanity:IsSane()
-	return self.sane
+	if self.inducedinsanity then
+		return not self.inducedinsanity
+	else
+		return self.sane
+	end
 end
 
 function Sanity:IsCrazy()
-	return not self.sane
+	if self.inducedinsanity then
+		return self.inducedinsanity
+	else
+		return not self.sane
+	end
 end
 
 
@@ -50,7 +61,11 @@ function Sanity:OnLoad(data)
 end
 
 function Sanity:GetPercent()
-    return self.current / self.max
+	if self.inducedinsanity then 
+		return 0
+	else
+	    return self.current / self.max
+	end
 end
 
 function Sanity:SetPercent(per)
@@ -74,6 +89,15 @@ end
 
 
 function Sanity:DoDelta(delta, overtime)
+
+    if self.redirect then
+        self.redirect(self.inst, delta, overtime)
+        return
+    end
+
+    if self.ignore then return end
+
+
     local old = self.current
     self.current = self.current + delta
     if self.current < 0 then 
@@ -87,12 +111,19 @@ function Sanity:DoDelta(delta, overtime)
     
     self.inst:PushEvent("sanitydelta", {oldpercent = oldpercent, newpercent = newpercent, overtime=overtime})
     
+    if self.inst == GetPlayer() then
+        if delta > 0 then
+            ProfileStatsAdd("sane+", math.floor(delta))
+        end
+    end
+
     if self.sane and oldpercent > TUNING.SANITY_BECOME_INSANE_THRESH and newpercent <= TUNING.SANITY_BECOME_INSANE_THRESH then
 		self.sane = false
 		if self.onInsane then
 			self.onInsane(self.inst)
 		end
 	    self.inst:PushEvent("goinsane", {})
+        ProfileStatsSet("went_insane", true)
 		
     elseif not self.sane and oldpercent < TUNING.SANITY_BECOME_SANE_THRESH and newpercent >= TUNING.SANITY_BECOME_SANE_THRESH then
 		self.sane = true
@@ -101,14 +132,12 @@ function Sanity:DoDelta(delta, overtime)
 			self.onSane(self.inst)
 		end
 	    self.inst:PushEvent("gosane", {})
+        ProfileStatsSet("went_sane", true)
 	end
 end
 
 
 function Sanity:OnUpdate(dt)
-	if self.inst.components.health.invincible == true or self.inst.is_teleporting == true then
-		return
-	end
 	
 	local speed = easing.outQuad( 1 - self:GetPercent(), 0, .2, 1) 
 	self.fxtime = self.fxtime + dt*speed
@@ -116,11 +145,15 @@ function Sanity:OnUpdate(dt)
 	PostProcessor:SetEffectTime(self.fxtime)
 	
 	local distortion_value = easing.outQuad( self:GetPercent(), 0, 1, 1) 
-	local colour_value = 1 - easing.outQuad( self:GetPercent(), 0, 1, 1) 
-	--print (self:GetPercent(), colour_value)
-	PostProcessor:SetColourCubeLerp( 1, colour_value )
+	--local colour_value = 1 - easing.outQuad( self:GetPercent(), 0, 1, 1) 
+	--PostProcessor:SetColourCubeLerp( 1, colour_value )
 	PostProcessor:SetDistortionFactor(distortion_value)
 	PostProcessor:SetDistortionRadii( 0.5, 0.685 )
+
+	if self.inst.components.health.invincible == true or self.inst.is_teleporting == true then
+		return
+	end
+	
 	self:Recalc(dt)	
 end
 
@@ -156,6 +189,8 @@ function Sanity:Recalc(dt)
 		else
 			light_delta = TUNING.SANITY_NIGHT_MID
 		end
+
+		light_delta = light_delta*self.night_drain_mult
 	end
 	
 	local aura_delta = 0
@@ -164,7 +199,12 @@ function Sanity:Recalc(dt)
     for k,v in pairs(ents) do 
 		if v.components.sanityaura and v ~= self.inst and not v:IsInLimbo() then
 			local distsq = self.inst:GetDistanceSqToInst(v)
-			aura_delta = aura_delta + v.components.sanityaura:GetAura(self.inst)/math.max(1, distsq)
+			local aura_val = v.components.sanityaura:GetAura(self.inst)/math.max(1, distsq)
+			if aura_val < 0 then
+				aura_val = aura_val * self.neg_aura_mult
+			end
+
+			aura_delta = aura_delta + aura_val
 		end
     end
 
@@ -176,6 +216,10 @@ function Sanity:Recalc(dt)
 
 	self.rate = (dapper_delta + light_delta + aura_delta + rain_delta)	
 	
+	if self.custom_rate_fn then
+		self.rate = self.rate + self.custom_rate_fn(self.inst)
+	end
+
 	--print (string.format("dapper: %2.2f light: %2.2f TOTAL: %2.2f", dapper_delta, light_delta, self.rate*dt))
 	self:DoDelta(self.rate*dt, true)
 end

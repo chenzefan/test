@@ -1,8 +1,8 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/grass.zip"),
-	Asset("ANIM", "data/anim/reeds.zip"),
-	Asset("SOUND", "data/sound/common.fsb"),
+	Asset("ANIM", "anim/grass.zip"),
+	Asset("ANIM", "anim/reeds.zip"),
+	Asset("SOUND", "sound/common.fsb"),
 }
 
 local prefabs =

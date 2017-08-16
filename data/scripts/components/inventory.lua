@@ -32,6 +32,43 @@ function Inventory:NumItems()
 	return num
 end
 
+function Inventory:GuaranteeItems(items)
+
+    self.inst:DoTaskInTime(0,function()
+        
+
+        for k,v in pairs(items) do
+            local item = v
+            
+            local equipped = false
+            for k,v in pairs (self.equipslots) do
+                if v and v.prefab == item then
+                    equipped = true
+                end
+            end
+
+            if equipped or self:Has(item, 1) then
+                for k,v in pairs(Ents) do
+                    if v.prefab == item and v.components.inventoryitem:GetGrandOwner() ~= GetPlayer() then
+                        v:Remove()
+                    end
+                end
+            else
+                for k,v in pairs(Ents) do
+                    if v.prefab == item then
+                        item = nil
+                        break
+                    end
+                end
+                if item then
+                    self:GiveItem(SpawnPrefab(item))
+                end
+            end
+        end
+    end)
+
+end
+
 
 function Inventory:OnSave()
     local data = {items= {}, equip = {}}
@@ -507,7 +544,7 @@ function Inventory:SetActiveItem(item)
         self.inst:PushEvent("newactiveitem", {item=item})
 
         if item and item.components.inventoryitem and item.components.inventoryitem.onactiveitemfn then
-            item.components.inventoryitem.onactiveitemfn(item)
+            item.components.inventoryitem.onactiveitemfn(item, self.inst)
         end
     else
         self:DropItem(item, true, true)
@@ -515,7 +552,6 @@ function Inventory:SetActiveItem(item)
 end
 
 function Inventory:Equip(item, old_to_active)
-    --print("Inventory:Equip", item)
     if not item or not item.components.equippable or not item:IsValid() then
         return
     end
@@ -573,6 +609,10 @@ function Inventory:Equip(item, old_to_active)
         item.components.equippable:Equip(self.inst)
         self.equipslots[eslot] = item
         self.inst:PushEvent("equip", {item=item, eslot=eslot})
+        if item.prefab then
+            ProfileStatsAdd("equip_"..item.prefab)
+            FightStat_Equip(item.prefab,eslot)
+        end
         return true
     end
 
@@ -709,7 +749,7 @@ function Inventory:ConsumeByName(item, amount)
     
 end
 
-function Inventory:DropEverything(ondeath)
+function Inventory:DropEverything(ondeath, keepequip)
     if self.activeitem then
 		self:DropItem(self.activeitem)
         self:SetActiveItem(nil)
@@ -722,13 +762,14 @@ function Inventory:DropEverything(ondeath)
         end
     end
     
-    for k,v in pairs(self.equipslots) do
-		if not ondeath or not v.components.inventoryitem.keepondeath then
-			self:DropItem(v, true, true)
-		end
-    end    
+    if not keepequip then
+        for k,v in pairs(self.equipslots) do
+    		if not ondeath or not v.components.inventoryitem.keepondeath then
+    			self:DropItem(v, true, true)
+    		end
+        end    
+    end
 end
-
 
 function Inventory:BurnNonpotatableInContainer(container)
 	for j = 1,container.numslots do

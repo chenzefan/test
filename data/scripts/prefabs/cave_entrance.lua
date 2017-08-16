@@ -1,6 +1,6 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/cave_entrance.zip"),
+	Asset("ANIM", "anim/cave_entrance.zip"),
 }
 
 local prefabs = 
@@ -23,8 +23,13 @@ local function ReturnChildren(inst)
 end
 
 local function OnActivate(inst)
+
+	if not IsGamePurchased() then return end
+
+    ProfileStatsSet("cave_entrance_used", true)
 	--do popup confirmation
-	--do portal presentation 
+	--do portal presentation
+	--increment the depth counter 
 	--save and do restart
 	SetHUDPause(true)
 
@@ -42,14 +47,15 @@ local function OnActivate(inst)
 	local function startadventure()
 		
 		local function onsaved()
-		    local params = json.encode{reset_action="loadslot", save_slot = SaveGameIndex:GetCurrentSaveSlot()}
-		    TheSim:SetInstanceParameters(params)
-			SendAccumulatedProfileStats()
-		    TheSim:Reset()
+		    StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = SaveGameIndex:GetCurrentSaveSlot()}, true)
 		end
 
 		local function doenter()
-			SaveGameIndex:SaveCurrent(function() SaveGameIndex:EnterCave(onsaved,nil, inst.cavenum) end)
+			local level = 1
+			if GetWorld().prefab == "cave" then
+				level = GetWorld().topology.level_number + 1
+			end
+			SaveGameIndex:SaveCurrent(function() SaveGameIndex:EnterCave(onsaved,nil, inst.cavenum, level) end)
 		end
 
 		SetHUDPause(false)
@@ -83,6 +89,7 @@ local function OnWork(inst, worker, workleft)
 	if workleft <= 0 then
 		inst.SoundEmitter:PlaySound("dontstarve/wilson/rock_break")
 		inst.components.lootdropper:DropLoot(pt)
+        ProfileStatsSet("cave_entrance_opened", true)
 		Open(inst)
 	end
 end
@@ -104,11 +111,14 @@ Open = function(inst)
 	inst:ListenForEvent("dusktime", inst.startspawningfn, GetWorld())
 	inst:ListenForEvent("daytime", inst.stopspawningfn, GetWorld())
 
-	inst:AddComponent("activatable")
-    inst.components.activatable.OnActivate = OnActivate
-    inst.components.activatable.inactive = true
-    inst.components.activatable.getverb = GetVerb
-	inst.components.activatable.quickaction = true
+	if IsGamePurchased() then
+		inst:AddComponent("activatable")
+	    inst.components.activatable.OnActivate = OnActivate
+	    inst.components.activatable.inactive = true
+	    inst.components.activatable.getverb = GetVerb
+		inst.components.activatable.quickaction = true
+	end
+
     inst.AnimState:PlayAnimation("idle_open", true)
     inst:RemoveComponent("workable")
     
@@ -137,7 +147,6 @@ local function Close(inst)
 	inst.components.workable:SetOnWorkCallback(OnWork)
 	inst:AddComponent("lootdropper")
 	inst.components.lootdropper:SetLoot({"rocks", "rocks", "flint", "flint", "flint"})
-
 
     inst.name = STRINGS.NAMES.CAVE_ENTRANCE_CLOSED
     inst.open = false
@@ -175,6 +184,7 @@ local function fn(Sim)
 
     inst:AddComponent("inspectable")
 	inst.components.inspectable.getstatus = GetStatus
+	inst.components.inspectable:RecordViews()
 
 	inst:AddComponent( "childspawner" )
 	inst.components.childspawner:SetRegenPeriod(60)

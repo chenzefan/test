@@ -1,6 +1,6 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/frozen_shatter.zip"),
+	Asset("ANIM", "anim/frozen_shatter.zip"),
 }
 
 local shatterlevels = 

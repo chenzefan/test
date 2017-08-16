@@ -1,7 +1,7 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/rocky.zip"),
-    Asset("SOUND", "data/sound/rocklobster.fsb"),
+	Asset("ANIM", "anim/rocky.zip"),
+    Asset("SOUND", "sound/rocklobster.fsb"),
 }
 
 local prefabs =
@@ -120,6 +120,8 @@ local function fn()
 	MakeCharacterPhysics(inst, 200, 1)
 
     inst:AddTag("rocky")
+    inst:AddTag("character")
+    inst:AddTag("animal")
 
     anim:SetBank("rocky")
 	anim:SetBuild("rocky")

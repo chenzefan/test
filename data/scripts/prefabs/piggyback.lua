@@ -1,8 +1,7 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/piggyback.zip"),
-	Asset("ANIM", "data/anim/swap_piggyback.zip"),
-    Asset("IMAGE", "data/inventoryimages/piggyback.tex"),
+	Asset("ANIM", "anim/piggyback.zip"),
+	Asset("ANIM", "anim/swap_piggyback.zip"),
 }
 
 local function onequip(inst, owner) 

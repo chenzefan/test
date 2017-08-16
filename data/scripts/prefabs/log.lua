@@ -1,7 +1,6 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/log.zip"),
-    Asset("IMAGE", "data/inventoryimages/log.tex"),
+	Asset("ANIM", "anim/log.zip"),
 }
 
 local function fn(Sim)
@@ -16,6 +15,11 @@ local function fn(Sim)
     inst.AnimState:PlayAnimation("idle")
     
     inst:AddComponent("stackable")
+    
+    inst:AddComponent("edible")
+    inst.components.edible.foodtype = "WOOD"
+    inst.components.edible.woodiness = 10
+
     
     inst:AddComponent("fuel")
     inst.components.fuel.fuelvalue = TUNING.MED_FUEL

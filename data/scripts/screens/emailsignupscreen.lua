@@ -10,6 +10,7 @@ require "textedit"
 
 require "screens/popupdialog"
 
+local UI_ATLAS = "images/ui.xml"
 local EMAIL_VALID_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.@!#$%&'*+-/=?^_`{|}~"
 local EMAIL_MAX_LENGTH = 254 -- http://tools.ietf.org/html/rfc5321#section-4.5.3.1
 local MIN_AGE = 3 -- ages less than this prompt error message, eg. if they didn't change the date at all
@@ -31,16 +32,53 @@ end
 
 function EmailSignupScreen:Accept()
 	if self:Save() then
-		self:Close()
+		-- wait for callback
+	end
+end
 
-		TheFrontEnd:PushScreen(
-			PopupDialogScreen( STRINGS.UI.EMAILSCREEN.SIGNUPSUCCESSTITLE, STRINGS.UI.EMAILSCREEN.SIGNUPSUCCESS,
-			  { { text = STRINGS.UI.EMAILSCREEN.OK, cb =
-					function()
-					end
-				} }
-			  )
-		)
+function EmailSignupScreen:OnSubmitCancel()
+	print('EmailSignupScreen:OnSubmitCancel()')
+	if self.submitscreen then
+		print('...closing submit screen')
+		self.submitscreen:Close()
+		self.submitscreen = nil
+	end
+end
+
+function EmailSignupScreen:OnPostComplete( result, isSuccessful, resultCode )
+	print('EmailSignupScreen:OnPostComplete()', isSuccessful, resultCode, result)
+
+	-- if we don't have a submitscreen then the user cancelled before we got the callback
+	if self.submitscreen then
+		print('...closing submit screen')
+		self.submitscreen:Close()
+		self.submitscreen = nil
+
+		-- isSuccessful only tells us that the server successfully returned some result
+		-- we still need to check if that result was an error or not
+		if isSuccessful and (resultCode == 200) then
+			self:Close()
+
+			TheFrontEnd:PushScreen(
+				PopupDialogScreen( STRINGS.UI.EMAILSCREEN.SIGNUPSUCCESSTITLE, STRINGS.UI.EMAILSCREEN.SIGNUPSUCCESS,
+				  { { text = STRINGS.UI.EMAILSCREEN.OK, cb =
+						function()
+						end
+					} }
+				  )
+			)
+		else
+			TheFrontEnd:PushScreen(
+				PopupDialogScreen( STRINGS.UI.EMAILSCREEN.SIGNUPFAILTITLE, STRINGS.UI.EMAILSCREEN.SIGNUPFAIL,
+				  { { text = STRINGS.UI.EMAILSCREEN.OK, cb =
+						function()
+						end
+					} }
+				  )
+			)
+		end
+	else
+		print('...no submit screen, user cancelled?')
 	end
 end
 
@@ -71,6 +109,11 @@ function EmailSignupScreen:Save()
 		return false
 	end
 	
+
+	self.submitscreen = PopupDialogScreen( STRINGS.UI.EMAILSCREEN.SIGNUPSUBMITTITLE, STRINGS.UI.EMAILSCREEN.SIGNUPSUBMIT,
+		  { { text = STRINGS.UI.EMAILSCREEN.CANCEL, cb = function(...) self:OnSubmitCancel(...) end } } )
+	TheFrontEnd:PushScreen(self.submitscreen)
+
 	local birth_date = byear .. "-" .. bmonth .. "-" .. bday
 	print ("Birthday:", birth_date)
 	
@@ -78,10 +121,7 @@ function EmailSignupScreen:Save()
 
 	TheSim:QueryServer(
 		query,
-		function( result, isSuccessful )
-			-- callback ignored on Windows, don't do anything important here
-			print('EmailSignupScreen:Save()', isSuccessful, result)
-		end,
+		function(...) self:OnPostComplete(...) end,
 		"POST",
 		json.encode({
 			birthday = birth_date,
@@ -115,7 +155,7 @@ end
 
 function EmailSignupScreen:Close()
 	TheInput:EnableDebugToggle(true)
-	TheFrontEnd:PopScreen()
+	TheFrontEnd:PopScreen(self)
 end
 
 local function MakeMenu(offset, menuitems)
@@ -155,7 +195,7 @@ function EmailSignupScreen:AddSpinners( data )
 			spinner.text:SetTextLengthLimit(maxlen)
 
 			spinner.text:SetLeftMouseDown( function() self:SetFocus( spinner ) end )
-			spinner.text:SetFocusedImage( spinner.bgimage, "data/images/textbox_short_over.tex", "data/images/textbox_short.tex" )
+			spinner.text:SetFocusedImage( spinner.bgimage, UI_ATLAS, "textbox_short_over.tex", "textbox_short.tex" )
 			spinner.text:SetCharacterFilter( "0123456789" )
 		end
 
@@ -171,7 +211,7 @@ function EmailSignupScreen:DoInit()
 	self.minYear = self.maxYear - 130
 
 	--darken everything behind the dialog
-    self.black = self:AddChild(Image("data/images/square.tex"))
+    self.black = self:AddChild(Image("images/global.xml", "square.tex"))
     self.black:SetVRegPoint(ANCHOR_MIDDLE)
     self.black:SetHRegPoint(ANCHOR_MIDDLE)
     self.black:SetVAnchor(ANCHOR_MIDDLE)
@@ -193,7 +233,7 @@ function EmailSignupScreen:DoInit()
 	
 
 	--throw up the background
-    self.bg = self.root:AddChild(Image("data/images/small_dialog.tex"))
+    self.bg = self.root:AddChild(Image("images/globalpanels.xml", "small_dialog.tex"))
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
     self.bg:SetHRegPoint(ANCHOR_MIDDLE)
 	self.bg:SetScale(1.6, 2, 1)    
@@ -251,7 +291,7 @@ function EmailSignupScreen:DoInit()
 
 
     self.edit_bg = self.root:AddChild( Image() )
-	self.edit_bg:SetTexture( "data/images/textbox_long.tex" )
+	self.edit_bg:SetTexture( "images/ui.xml", "textbox_long.tex" )
 	self.edit_bg:SetPosition( (edit_width * .5) - label_offset + space_between, height_offset, 0 )
 	self.edit_bg:ScaleToSize( edit_width + edit_bg_padding, label_height )
 
@@ -260,15 +300,15 @@ function EmailSignupScreen:DoInit()
 	self.email_edit:SetRegionSize( edit_width, label_height )
 	self.email_edit:SetHAlign(ANCHOR_LEFT)
 	self.email_edit:SetLeftMouseDown( function() self:SetFocus( self.email_edit ) end )
-	self.email_edit:SetFocusedImage( self.edit_bg, "data/images/textbox_long_over.tex", "data/images/textbox_long.tex" )
+	self.email_edit:SetFocusedImage( self.edit_bg, UI_ATLAS, "textbox_long_over.tex", "textbox_long.tex" )
 	self.email_edit:SetTextLengthLimit(EMAIL_MAX_LENGTH)
 	self.email_edit:SetCharacterFilter( EMAIL_VALID_CHARS )
 
 	local spinner_images = {
-		arrow_normal = "data/images/arrow_right.tex",
-		arrow_over = "data/images/arrow_right_over.tex",
-		arrow_disabled = "data/images/arrow_right_disabled.tex",
-		bgtexture = "data/images/textbox_short.tex",
+		arrow_normal = "arrow_right.tex",
+		arrow_over = "arrow_right_over.tex",
+		arrow_disabled = "arrow_right_disabled.tex",
+		bgtexture = "textbox_short.tex",
 	}
 
 	local text_font = BODYTEXTFONT
@@ -289,9 +329,9 @@ function EmailSignupScreen:DoInit()
 		{ text = STRINGS.UI.EMAILSCREEN.DEC},
 	}
 
-	self.monthSpinner = Spinner( months, 100, 50, { font = text_font, size = email_fontsize}, spinner_images, 0.5, false )
-	self.daySpinner = NumericSpinner( 1, 31, 50, 50, { font = text_font, size = email_fontsize }, spinner_images, 0.5, true )
-	self.yearSpinner = NumericSpinner( self.minYear, self.maxYear, 100, 50, { font = text_font, size = email_fontsize }, spinner_images, 0.5, true )
+	self.monthSpinner = Spinner( months, 100, 50, { font = text_font, size = email_fontsize}, UI_ATLAS, spinner_images, 0.5, false )
+	self.daySpinner = NumericSpinner( 1, 31, 50, 50, { font = text_font, size = email_fontsize }, UI_ATLAS, spinner_images, 0.5, true )
+	self.yearSpinner = NumericSpinner( self.minYear, self.maxYear, 100, 50, { font = text_font, size = email_fontsize }, UI_ATLAS, spinner_images, 0.5, true )
 
 	local spinners = {}
 

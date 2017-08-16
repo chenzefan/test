@@ -10,6 +10,7 @@ local creature ="set_sfx/creature"
 local player ="set_sfx/player"
 local HUD ="set_sfx/HUD"
 local sfx ="set_sfx/sfx"
+local slurp ="set_sfx/everything_else_muted"
 
 --function Mixer:AddNewMix(name, fadetime, priority, levels, reverb)
 
@@ -24,6 +25,7 @@ TheMixer:AddNewMix("normal", 2, 1,
 	[player] = 1,
 	[HUD] = 1,
 	[sfx] = 1,
+	[slurp] = 1,
 
 })
 
@@ -39,6 +41,7 @@ TheMixer:AddNewMix("high", 2, 3,
 	[player] = .7,
 	[HUD] = 1,
 	[sfx] = .7,
+	[slurp] = 1,
 })
 
 TheMixer:AddNewMix("start", 1, 0,
@@ -52,6 +55,7 @@ TheMixer:AddNewMix("start", 1, 0,
 	[player] = 1,
 	[HUD] = 1,
 	[sfx] = 1,
+	[slurp] = 1,
 
 })
 
@@ -66,6 +70,7 @@ TheMixer:AddNewMix("pause", 1, 4,
 	[player] = 0,
 	[HUD] = 1,
 	[sfx] = 0,
+	[slurp] = 0,
 })
 
 
@@ -75,9 +80,25 @@ TheMixer:AddNewMix("death", 1, 6,
 	[cloud] = .2,
 	[music] = 0,
 	[voice] = 1,
-	[movement] = 1,
-	[creature] = 1,
+	[movement] = .8,
+	[creature] = .8,
 	[player] = 1,
 	[HUD] = 1,
-	[sfx] = 1,
+	[sfx] = .8,
+	[slurp] = .8,
+})
+
+
+TheMixer:AddNewMix("slurp", 1, 1,
+{
+	[amb] = .2,
+	[cloud] = .2,
+	[music] = .5,
+	[voice] = .7,
+	[movement] = .7,
+	[creature] = .7,
+	[player] = .7,
+	[HUD] = 1,
+	[sfx] = .7,
+	[slurp] = 1,
 })

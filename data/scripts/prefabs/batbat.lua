@@ -1,8 +1,7 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/batbat.zip"),
-	Asset("ANIM", "data/anim/swap_batbat.zip"),    
-    Asset("IMAGE", "data/inventoryimages/batbat.tex"),
+	Asset("ANIM", "anim/batbat.zip"),
+	Asset("ANIM", "anim/swap_batbat.zip"),    
 }
 
 local function onfinished(inst)
@@ -22,7 +21,7 @@ end
 
 local function onattack(inst, owner, target)
     if owner.components.health and owner.components.health:GetPercent() < 1 and not target:HasTag("wall") then
-        owner.components.health:DoDelta(TUNING.BATBAT_DRAIN)
+        owner.components.health:DoDelta(TUNING.BATBAT_DRAIN,false,"batbat")
         owner.components.sanity:DoDelta(-TUNING.BATBAT_DRAIN * 0.5)
     end
 end

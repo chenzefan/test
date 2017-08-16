@@ -1,7 +1,6 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/compass.zip"),
-    Asset("IMAGE", "data/inventoryimages/compass.tex"),
+	Asset("ANIM", "anim/compass.zip"),
 }
 
 local function GetDirection()

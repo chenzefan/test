@@ -1,6 +1,6 @@
 local stalagmite_assets = 
 {
-	Asset("ANIM", "data/anim/rock_stalagmite.zip"),
+	Asset("ANIM", "anim/rock_stalagmite.zip"),
 }
 
 local prefabs =
@@ -9,6 +9,7 @@ local prefabs =
 	"nitre",
 	"flint",
 	"goldnugget",
+	"orangegem",
 }
 
 local function workcallback(inst, worker, workleft)
@@ -61,6 +62,8 @@ local function fullrock()
 	inst.components.lootdropper:SetLoot({"rocks", "rocks", "rocks", "goldnugget", "flint"})
 	inst.components.lootdropper:AddChanceLoot("goldnugget", 0.25)
 	inst.components.lootdropper:AddChanceLoot("flint", 0.6)
+	inst.components.lootdropper:AddChanceLoot("orangegem", 0.03)
+	
 	inst.AnimState:PlayAnimation("full")
 	return inst
 end

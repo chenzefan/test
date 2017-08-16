@@ -1,6 +1,6 @@
 local assets =
 {
-    Asset("ANIM", "data/anim/hound_base.zip"),
+    Asset("ANIM", "anim/hound_base.zip"),
 }
 
 local names = {"piece1","piece2","piece3","piece4"}

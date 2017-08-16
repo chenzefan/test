@@ -9,12 +9,22 @@ require "numericspinner"
 
 require "screens/popupdialog"
 
+local spinner_atlas = "images/ui.xml"
+
 local spinner_images = {
-	arrow_normal = "data/images/spin_arrow.tex",
-	arrow_over = "data/images/spin_arrow_over.tex",
-	arrow_disabled = "data/images/spin_arrow_disabled.tex",
-	bgtexture = "data/images/spinner.tex",
+	arrow_normal = "spin_arrow.tex",
+	arrow_over = "spin_arrow_over.tex",
+	arrow_disabled = "spin_arrow_disabled.tex",
+	bgtexture = "spinner.tex",
 }
+
+local short_spinner_images = {
+	arrow_normal = "spin_arrow.tex",
+	arrow_over = "spin_arrow_over.tex",
+	arrow_disabled = "spin_arrow_disabled.tex",
+	bgtexture = "spinner_short.tex",
+}
+
 
 local show_graphics = PLATFORM ~= "NACL"
 local text_font = UIFONT--NUMBERFONT
@@ -149,7 +159,7 @@ OptionsScreen = Class(Screen, function(self, in_game)
 	self.working = deepcopy( self.options )
 	
 	
-	self.bg = self:AddChild(Image("data/images/bg_plain.tex"))
+	self.bg = self:AddChild(Image("images/ui.xml", "bg_plain.tex"))
     self.bg:SetTint(BGCOLOURS.RED[1],BGCOLOURS.RED[2],BGCOLOURS.RED[3], 1)
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
     self.bg:SetHRegPoint(ANCHOR_MIDDLE)
@@ -163,7 +173,7 @@ OptionsScreen = Class(Screen, function(self, in_game)
     self.root:SetPosition(0,0,0)
     self.root:SetScaleMode(SCALEMODE_PROPORTIONAL)
     
-	local shield = self.root:AddChild( Image( "data/images/panel.tex" ) )
+	local shield = self.root:AddChild( Image( "images/globalpanels.xml", "panel.tex" ) )
 	shield:SetPosition( 0,0,0 )
 	shield:SetSize( 1000, 700 )		
 	
@@ -223,7 +233,7 @@ function OptionsScreen:ApplyAndConfirm( force )
 		if show_graphics then
 			local gOpts = TheFrontEnd:GetGraphicsOptions()
 			local w, h, hz = gOpts:GetDisplayMode( self.working.display, self.working.mode_idx )
-			local mode_idx = GetDisplayModeIdx( self.working.display, w, h, self.working.refreshrate)
+			local mode_idx = GetDisplayModeIdx( self.working.display, w, h, self.working.refreshrate) or 0
 			gOpts:SetDisplayMode( self.working.display, mode_idx, self.working.fullscreen )
 		end
 
@@ -258,10 +268,15 @@ function OptionsScreen:ApplyAndConfirm( force )
 	end
 end
 
-function OptionsScreen:Apply( force )
+
+function OptionsScreen:ApplyVolume()
 	TheMixer:SetLevel("set_sfx", self.working.fxvolume / 10 )
 	TheMixer:SetLevel("set_music", self.working.musicvolume / 10 )
 	TheMixer:SetLevel("set_ambience", self.working.ambientvolume / 10 )
+end
+
+function OptionsScreen:Apply( force )
+	self:ApplyVolume()
 	
 	local gopts = TheFrontEnd:GetGraphicsOptions()
 	gopts:SetBloomEnabled( self.working.bloom )
@@ -299,10 +314,9 @@ function OptionsScreen:AddSpinners( data, user_offset )
 
 	local offset = { 0, 0, 0 }
 
-	master_group:SetPosition( user_offset.x,user_offset.y, user_offset.z)
+	master_group:SetPosition( user_offset.x, user_offset.y, user_offset.z )
 	local label_width = 200
 	for idx, entry in ipairs( data ) do
-		
 		local text = entry[1]
 		local spinner = entry[2]
 		spinner:SetTextColour(0,0,0,1)
@@ -358,7 +372,7 @@ function OptionsScreen:DoInit()
 	if show_graphics then
 		local gOpts = TheFrontEnd:GetGraphicsOptions()
 	
-		self.fullscreenSpinner = self.root:AddChild(Spinner( enableDisableOptions, 150, spinnerHeight, spinnerFont, spinner_images ))
+		self.fullscreenSpinner = self.root:AddChild(Spinner( enableDisableOptions, 150, spinnerHeight, spinnerFont, spinner_atlas, spinner_images ))
 		
 		self.fullscreenSpinner.OnChanged =
 			function( _, data )
@@ -374,7 +388,7 @@ function OptionsScreen:DoInit()
 		end
 
 		local valid_displays = GetDisplays()
-		self.displaySpinner = self.root:AddChild(Spinner( valid_displays, 150, spinnerHeight, spinnerFont, spinner_images ))
+		self.displaySpinner = self.root:AddChild(Spinner( valid_displays, 150, spinnerHeight, spinnerFont, spinner_atlas, spinner_images ))
 		self.displaySpinner.OnChanged =
 			function( _, data )
 				this.working.display = data
@@ -384,7 +398,7 @@ function OptionsScreen:DoInit()
 			end
 		
 		local refresh_rates = GetRefreshRates( self.working.display, self.working.mode_idx )
-		self.refreshRateSpinner = self.root:AddChild(Spinner( refresh_rates, 150, spinnerHeight, spinnerFont, spinner_images ))
+		self.refreshRateSpinner = self.root:AddChild(Spinner( refresh_rates, 150, spinnerHeight, spinnerFont, spinner_atlas, spinner_images ))
 		self.refreshRateSpinner.OnChanged =
 			function( _, data )
 				this.working.refreshrate = data
@@ -392,7 +406,7 @@ function OptionsScreen:DoInit()
 			end
 
 		local modes = GetDisplayModes( self.working.display )
-		self.resolutionSpinner = self.root:AddChild(Spinner( modes, 150, spinnerHeight, spinnerFont, spinner_images ))
+		self.resolutionSpinner = self.root:AddChild(Spinner( modes, 150, spinnerHeight, spinnerFont, spinner_atlas, spinner_images ))
 		self.resolutionSpinner.OnChanged =
 			function( _, data )
 				this.working.mode_idx = data.idx
@@ -400,7 +414,7 @@ function OptionsScreen:DoInit()
 				self:UpdateMenu()
 			end			
 			
-		self.netbookModeSpinner = self.root:AddChild(Spinner( enableDisableOptions, 150, spinnerHeight, spinnerFont, spinner_images ))
+		self.netbookModeSpinner = self.root:AddChild(Spinner( enableDisableOptions, 150, spinnerHeight, spinnerFont, spinner_atlas, spinner_images ))
 		self.netbookModeSpinner.OnChanged =
 			function( _, data )
 				this.working.netbookmode = data
@@ -408,7 +422,7 @@ function OptionsScreen:DoInit()
 				self:UpdateMenu()
 			end
 			
-		self.smallTexturesSpinner = self.root:AddChild(Spinner( enableDisableOptions, 150, spinnerHeight, spinnerFont, spinner_images ))
+		self.smallTexturesSpinner = self.root:AddChild(Spinner( enableDisableOptions, 150, spinnerHeight, spinnerFont, spinner_atlas, spinner_images ))
 		self.smallTexturesSpinner.OnChanged =
 			function( _, data )
 				this.working.smalltextures = data
@@ -419,7 +433,7 @@ function OptionsScreen:DoInit()
 	end
 	
 
-	self.bloomSpinner = self.root:AddChild(Spinner( enableDisableOptions, 150, spinnerHeight, spinnerFont, spinner_images ))
+	self.bloomSpinner = self.root:AddChild(Spinner( enableDisableOptions, 150, spinnerHeight, spinnerFont, spinner_atlas, spinner_images ))
 	self.bloomSpinner.OnChanged =
 		function( _, data )
 			this.working.bloom = data
@@ -428,7 +442,7 @@ function OptionsScreen:DoInit()
 		end
 
 		
-	self.distortionSpinner = self.root:AddChild(Spinner( enableDisableOptions, 150, spinnerHeight, spinnerFont, spinner_images ))
+	self.distortionSpinner = self.root:AddChild(Spinner( enableDisableOptions, 150, spinnerHeight, spinnerFont, spinner_atlas, spinner_images ))
 	self.distortionSpinner.OnChanged =
 		function( _, data )
 			this.working.distortion = data
@@ -436,31 +450,31 @@ function OptionsScreen:DoInit()
 			self:UpdateMenu()
 		end
 
-	self.fxVolume = self.root:AddChild(NumericSpinner( 0, 10, 50, spinnerHeight, spinnerFont, spinner_images ))
+	self.fxVolume = self.root:AddChild(NumericSpinner( 0, 10, 50, spinnerHeight, spinnerFont, spinner_atlas, short_spinner_images ))
 	self.fxVolume.OnChanged =
 		function( _, data )
 			this.working.fxvolume = data
-			--this:Apply()
+			this:ApplyVolume()
 			self:UpdateMenu()
 		end
 
-	self.musicVolume = self.root:AddChild(NumericSpinner( 0, 10, 50, spinnerHeight, spinnerFont, spinner_images ))
+	self.musicVolume = self.root:AddChild(NumericSpinner( 0, 10, 50, spinnerHeight, spinnerFont, spinner_atlas, short_spinner_images ))
 	self.musicVolume.OnChanged =
 		function( _, data )
 			this.working.musicvolume = data
-			--this:Apply()
+			this:ApplyVolume()
 			self:UpdateMenu()
 		end
 
-	self.ambientVolume = self.root:AddChild(NumericSpinner( 0, 10, 50, spinnerHeight, spinnerFont, spinner_images ))
+	self.ambientVolume = self.root:AddChild(NumericSpinner( 0, 10, 50, spinnerHeight, spinnerFont, spinner_atlas, short_spinner_images ))
 	self.ambientVolume.OnChanged =
 		function( _, data )
 			this.working.ambientvolume = data
-			--this:Apply()
+			this:ApplyVolume()
 			self:UpdateMenu()
 		end
 		
-	self.hudSize = self.root:AddChild(NumericSpinner( 0, 10, 50, spinnerHeight, spinnerFont, spinner_images ))
+	self.hudSize = self.root:AddChild(NumericSpinner( 0, 10, 50, spinnerHeight, spinnerFont, spinner_atlas, short_spinner_images ))
 	self.hudSize.OnChanged =
 		function( _, data )
 			this.working.hudSize = data
@@ -472,8 +486,8 @@ function OptionsScreen:DoInit()
 	local right_spinners = {}
 	
 	if show_graphics then
-		table.insert( left_spinners , { STRINGS.UI.OPTIONS.BLOOM, self.bloomSpinner } )
-		table.insert( left_spinners , { STRINGS.UI.OPTIONS.DISTORTION, self.distortionSpinner } )
+		table.insert( left_spinners, { STRINGS.UI.OPTIONS.BLOOM, self.bloomSpinner } )
+		table.insert( left_spinners, { STRINGS.UI.OPTIONS.DISTORTION, self.distortionSpinner } )
 		table.insert( left_spinners, { STRINGS.UI.OPTIONS.FULLSCREEN, self.fullscreenSpinner } )
 		table.insert( left_spinners, { STRINGS.UI.OPTIONS.DISPLAY, self.displaySpinner } )
 		table.insert( left_spinners, { STRINGS.UI.OPTIONS.RESOLUTION, self.resolutionSpinner } )
@@ -498,6 +512,7 @@ function OptionsScreen:DoInit()
 	local sc = .9
 	local gfx_group = self:AddSpinners( left_spinners, Vector3(-450,150,0) )
 	gfx_group:SetScale(sc,sc,sc)
+	
 	local sound_group = self:AddSpinners( right_spinners, Vector3(-50,150,0) )
 	sound_group:SetScale(sc,sc,sc)
 end
@@ -516,6 +531,8 @@ function OptionsScreen:InitializeSpinners()
 		self:UpdateDisplaySpinner()
 		self:UpdateResolutionsSpinner()
 		self:UpdateRefreshRatesSpinner()
+		self.smallTexturesSpinner:SetSelectedIndex( EnabledOptionsIndex( self.working.smalltextures ) )
+		self.netbookModeSpinner:SetSelectedIndex( EnabledOptionsIndex( self.working.netbookmode ) )
 	end
 
 	--[[if PLATFORM == "WIN32_STEAM" and not self.in_game then
@@ -524,8 +541,6 @@ function OptionsScreen:InitializeSpinners()
 	--]]
 	
 	self.bloomSpinner:SetSelectedIndex( EnabledOptionsIndex( self.working.bloom ) )
-	self.smallTexturesSpinner:SetSelectedIndex( EnabledOptionsIndex( self.working.smalltextures ) )
-	self.netbookModeSpinner:SetSelectedIndex( EnabledOptionsIndex( self.working.netbookmode ) )
 	self.distortionSpinner:SetSelectedIndex( EnabledOptionsIndex( self.working.distortion ) )
 
 	local spinners = { fxvolume = self.fxVolume, musicvolume = self.musicVolume, ambientvolume = self.ambientVolume }

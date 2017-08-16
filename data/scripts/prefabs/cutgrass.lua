@@ -1,7 +1,6 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/cutgrass.zip"),
-    Asset("IMAGE", "data/inventoryimages/cutgrass.tex"),
+	Asset("ANIM", "anim/cutgrass.zip"),
 }
 
 local function fn(Sim)
@@ -16,6 +15,11 @@ local function fn(Sim)
     
     inst:AddComponent("stackable")
 	inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM
+
+    inst:AddComponent("edible")
+    inst.components.edible.foodtype = "WOOD"
+    inst.components.edible.woodiness = 1
+
 
     inst:AddComponent("inspectable")
 

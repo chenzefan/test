@@ -237,7 +237,7 @@ CommonStates.AddRunStates = function(states, timelines, anims, softstop)
     local stoprun = State{
         
             name = "run_stop",
-            tags = {},
+            tags = {"idle"},
             
             onenter = function(inst) 
                 inst.components.locomotor:StopMoving()

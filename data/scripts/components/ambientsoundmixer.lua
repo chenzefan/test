@@ -116,7 +116,11 @@ function AmbientSoundMixer:UpdateAmbientVolumes()
 	local is_winter = GetSeasonManager():IsWinter()
 	
 	local player = GetPlayer()
-	local sanity_level = player.components.sanity:GetPercent()
+	local sanity_level = 1
+	if player.components.sanity ~= nil then
+		sanity_level = player.components.sanity:GetPercent()
+	end
+
 	self.inst.SoundEmitter:SetParameter( "SANITY", "sanity", 1-sanity_level )
 	
 

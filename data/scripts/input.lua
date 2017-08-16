@@ -6,8 +6,11 @@ Input = Class(function(self)
     self.onkeydown = EventProcessor() -- specific key down, no parameters
     self.onmouseup = EventProcessor()
     self.onmousedown = EventProcessor()
-    self.onmousemove = EventProcessor()
+    
+    self.position = EventProcessor()
+    self.oncontrol = EventProcessor()
     self.ontextinput = EventProcessor()
+    self.ongesture = EventProcessor()
     
     self.hoverinst = nil
     self.mouseoversenabled = true
@@ -39,12 +42,35 @@ function Input:AddMouseButtonHandler( button, down, fn)
     end
 end
 
-function Input:AddMouseMoveHandler( fn )
-    return self.onmousemove:AddEventHandler("move", fn)
+function Input:AddMoveHandler( fn )
+    return self.position:AddEventHandler("move", fn)
 end
 
-function Input:OnMouseMove(x,y)
-    self.onmousemove:HandleEvent("move", x, y)
+function Input:AddControlHandler(control, fn)
+    return self.oncontrol:AddEventHandler(control, fn)
+end
+
+function Input:AddGeneralControlHandler(fn)
+    return self.oncontrol:AddEventHandler("oncontrol", fn)
+end
+
+function Input:AddControlMappingHandler(fn)
+    return self.oncontrol:AddEventHandler("onmap", fn)
+end
+
+function Input:AddGestureHandler( gesture, fn )
+    return self.ongesture:AddEventHandler(gesture, fn)
+end
+
+function Input:UpdatePosition(x,y)
+    --print("Input:UpdatePosition", x, y)
+    self.position:HandleEvent("move", x, y)
+end
+
+function Input:OnControl(control, value)
+    --print("Input:OnControl", control, value)
+    self.oncontrol:HandleEvent(control, value)
+    self.oncontrol:HandleEvent("oncontrol", control, value)
 end
 
 function Input:OnMouseButton(button, down, x,y)
@@ -78,19 +104,26 @@ function Input:OnText(text)
 	self.ontextinput:HandleEvent("text", text)
 end
 
+function Input:OnGesture(gesture)
+	self.ongesture:HandleEvent(gesture)
+end
+
+function Input:OnControlMapped(deviceId, controlId, inputId, hasChanged)
+    self.oncontrol:HandleEvent("onmap", deviceId, controlId, inputId, hasChanged)
+end
 
 function Input:OnFrameStart()
     self.hoverinst = nil
     self.hovervalid = false
 end
 
-function Input:GetMouseScreenPos()
-    local x, y = TheSim:GetMousePos()
+function Input:GetScreenPosition()
+    local x, y = TheSim:GetPosition()
     return Vector3(x,y,0)
 end
 
-function Input:GetMouseWorldPos()
-    local x,y,z = TheSim:ProjectScreenPos(TheSim:GetMousePos())
+function Input:GetWorldPosition()
+    local x,y,z = TheSim:ProjectScreenPos(TheSim:GetPosition())
     if x and y and z then
         return Vector3(x,y,z)
     end
@@ -141,15 +174,19 @@ function Input:IsKeyDown(key)
     return TheSim:IsKeyDown(key)
 end
 
-function Input:IsKeyUp(key)
-    return TheSim:IsKeyUp(key)
+function Input:IsControlPressed(control)
+    local value = TheSim:GetControl(control)
+    if 0 == value then
+        return false
+    else
+        return true
+    end
 end
-
 
 function Input:OnUpdate()
     if self.mouseoversenabled then
 
-        self.entitiesundermouse = TheSim:GetEntitiesAtScreenPoint(TheSim:GetMousePos())
+        self.entitiesundermouse = TheSim:GetEntitiesAtScreenPoint(TheSim:GetPosition())
         
         local inst = self.entitiesundermouse[1]
         if inst ~= self.hoverinst then
@@ -170,8 +207,12 @@ end
 
 TheInput = Input()
 
-function OnMouseMove(x, y)
-    TheInput:OnMouseMove(x,y)
+function OnPosition(x, y)
+    TheInput:UpdatePosition(x,y)
+end
+
+function OnControl(control, value)
+    TheInput:OnControl(control, value)
 end
 
 function OnMouseButton(button, is_up, x, y)
@@ -184,6 +225,14 @@ end
 
 function OnInputText(text)
 	TheInput:OnText(text)
+end
+
+function OnGesture(gesture)
+	TheInput:OnGesture(gesture)
+end
+
+function OnControlMapped(deviceId, controlId, inputId, hasChanged)
+    TheInput:OnControlMapped(deviceId, controlId, inputId, hasChanged)
 end
 
 return Input

@@ -417,8 +417,7 @@ function LocoMotor:OnUpdate(dt)
     --Print(VERBOSITY.DEBUG, "OnUpdate", self.inst.prefab)
     if self.dest then
         --Print(VERBOSITY.DEBUG, "    w dest")
-
-        if not self.dest:IsValid() then
+        if not self.dest:IsValid() or (self.bufferedaction and not self.bufferedaction:IsValid()) then
             self:Clear()
             return
         end

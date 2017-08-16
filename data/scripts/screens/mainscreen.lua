@@ -12,6 +12,8 @@ require "screens/optionsscreen"
 require "screens/emailsignupscreen"
 require "screens/loadgamescreen"
 require "screens/creditsscreen"
+require "screens/modsscreen"
+require "screens/controlsscreen"
 
 
 MainScreen = Class(Screen, function(self, profile)
@@ -41,41 +43,39 @@ function MainScreen:OnKeyUp( key )
 	if CHEATS_ENABLED then
 		if key == KEY_ENTER then
 			if TheInput:IsKeyDown(KEY_CTRL) then
-				SaveGameIndex:DeleteSlot(1,
-					function() 
-						TheSim:SetInstanceParameters(json.encode{reset_action="loadslot", save_slot = 1})
-						TheSim:Reset()
-					end)
+				SaveGameIndex:DeleteSlot(1)
 			elseif not SaveGameIndex:GetCurrentMode(1) then
 				local function onsaved()
-				    local params = json.encode{reset_action="loadslot", save_slot = 1}
-				    TheSim:SetInstanceParameters(params)
-				    TheSim:Reset()
+				    StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = 1})
 				end
 				SaveGameIndex:StartSurvivalMode(1, "wilson", {}, onsaved)
 			else
-    			TheSim:SetInstanceParameters(json.encode{reset_action="loadslot", save_slot = 1})
-    			TheSim:Reset()
+    			StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = 1})
     		end
 		elseif key >= KEY_1 and key <= KEY_7 then
 			local level_num = key - KEY_1 + 1
 			
 			local function onstart()
-				TheSim:SetInstanceParameters(json.encode{reset_action="loadslot", save_slot = 1})
-				TheSim:Reset()
+				StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = 1})
 			end
 			SaveGameIndex:FakeAdventure(onstart, 1, level_num)    		
 		elseif key == KEY_0 then
 			local function onstart()
-				TheSim:SetInstanceParameters(json.encode{reset_action="loadslot", save_slot = 1})
-				TheSim:Reset()
+				StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = 1})
 			end
 			SaveGameIndex:DeleteSlot(1, function() SaveGameIndex:EnterCave(onstart, 1, 1) end)
+		elseif key == KEY_9 then
+			local function onstart()
+				StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = 1})
+			end
+			SaveGameIndex:DeleteSlot(1, function() SaveGameIndex:EnterCave(onstart, 1, 1, 2) end)
 		elseif key == KEY_MINUS then
-			TheSim:SetInstanceParameters(json.encode{reset_action="test", save_slot = 1})
-			TheSim:Reset()
+			StartNextInstance({reset_action="test", save_slot = 1})
+		elseif key == KEY_M then
+			self:OnModsButton()
+	    elseif key == KEY_TILDE and PLATFORM ~= "NACL" and TheSim:GetSetting("MISC", "ENABLECONSOLE") == "true" then
+	    	TheFrontEnd:PushScreen(ConsoleScreen())
 		end
-			
 	    	
 	elseif key == KEY_ESCAPE then
 		self:MainMenu()
@@ -136,6 +136,10 @@ function MainScreen:Settings()
 	TheFrontEnd:PushScreen(OptionsScreen(false))
 end
 
+function MainScreen:OnControlsButton()
+	TheFrontEnd:PushScreen(ControlsScreen())
+end
+
 function MainScreen:EmailSignup()
 	TheFrontEnd:PushScreen(EmailSignupScreen())
 end
@@ -173,7 +177,8 @@ local function GetDaysToUpdate()
 			os.time{year=2013, day=21, month=5, hour=13} - klei_tz,
 			os.time{year=2013, day=11, month=6, hour=13} - klei_tz,
 			os.time{year=2013, day=2, month=7, hour=13} - klei_tz,
-			os.time{year=2013, day=23, month=7, hour=13} - klei_tz,
+			os.time{year=2013, day=26, month=7, hour=13} - klei_tz, -- modified for late release
+			os.time{year=2013, day=13, month=8, hour=13} - klei_tz,
 		}
     table.sort(update_times)
     
@@ -245,13 +250,16 @@ end
 
 function MainScreen:DoInit( )
 	
+	TheFrontEnd:GetGraphicsOptions():DisableStencil()
+	TheFrontEnd:GetGraphicsOptions():DisableLightMapComponent()
+	
 	TheFrontEnd:GetSound():PlaySound("dontstarve/music/music_FE","FEMusic")
 
 	if PLATFORM == "NACL" then	
 		TheSim:RequestPlayerID()
-	end
-
-	self.bg = self:AddChild(Image("data/images/bg_plain.tex"))
+	end	
+	
+	self.bg = self:AddChild(Image("images/ui.xml", "bg_plain.tex"))
     self.bg:SetTint(BGCOLOURS.RED[1],BGCOLOURS.RED[2],BGCOLOURS.RED[3], 1)
 
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
@@ -285,17 +293,23 @@ function MainScreen:DoInit( )
     self.hand2:SetScale(hand_scale,-hand_scale,hand_scale)
 --]]
     
-    self.shield = self.fixed_root:AddChild(Image("data/images/panel_shield.tex"))
+    self.shield = self.fixed_root:AddChild(Image("images/fepanels.xml", "panel_shield.tex"))
     self.shield:SetVRegPoint(ANCHOR_MIDDLE)
     self.shield:SetHRegPoint(ANCHOR_MIDDLE)
 
-    self.banner = self.shield:AddChild(Image("data/images/update_banner.tex"))
+    self.banner = self.shield:AddChild(Image("images/ui.xml", "update_banner.tex"))
     self.banner:SetVRegPoint(ANCHOR_MIDDLE)
     self.banner:SetHRegPoint(ANCHOR_MIDDLE)
     self.banner:SetPosition(0, -210, 0)
     self.updatename = self.banner:AddChild(Text(BUTTONFONT, 30))
     self.updatename:SetPosition(0,8,0)
-    self.updatename:SetString(STRINGS.UI.MAINSCREEN.UPDATENAME)
+    local suffix = ""
+    if BRANCH == "dev" then
+		suffix = " (internal)"
+    elseif BRANCH == "staging" then
+		suffix = " (preview)"
+    end
+    self.updatename:SetString(STRINGS.UI.MAINSCREEN.UPDATENAME .. suffix)
     self.updatename:SetColour(0,0,0,1)
 
 	--bottom left node - days until update indicator and sign up button    
@@ -323,13 +337,11 @@ function MainScreen:DoInit( )
 	self:UpdateDaysUntil()
 	
     
-    
-    
 	self.motd = self.fixed_root:AddChild(Widget("motd"))
 	self.motd:SetScale(.9,.9,.9)
 	self.motd:SetPosition(-RESOLUTION_X/2+left_buffer, RESOLUTION_Y/2-200, 0)
 	
-	self.motdbg = self.motd:AddChild( Image( "data/images/panel_allblack.tex" ) )
+	self.motdbg = self.motd:AddChild( Image( "images/globalpanels.xml", "panel.tex" ) )
 	self.motdbg:SetScale(.75*.9,.75,.75)
 	self.motd.motdtitle = self.motdbg:AddChild(Text(TITLEFONT, 50))
     self.motd.motdtitle:SetPosition(0, 130, 0)
@@ -386,8 +398,8 @@ function MainScreen:ShowMenu(menu_items)
 		end
 		
 		self.purchasebutton = self.fixed_root:AddChild(Button())
-		self.purchasebutton:SetImage("data/images/special_button.tex")
-		self.purchasebutton:SetMouseOverImage("data/images/special_button_over.tex")
+		self.purchasebutton:SetImage("images/ui.xml", "special_button.tex")
+		self.purchasebutton:SetMouseOverImage("images/ui.xml", "special_button_over.tex")
 		self.purchasebutton:SetScale(.5,.5,.5)
 		self.purchasebutton:SetPosition(RESOLUTION_X/2 -200 ,-RESOLUTION_Y/2 + bottom_offset + menu_spacing * (#menu_items) + 40,0)
 		self.purchasebutton.text:SetColour(0,0,0,1)
@@ -413,12 +425,22 @@ function MainScreen:DoOptionsMenu()
 	self:ShowMenu(menu_items)
 end
 
+function MainScreen:OnModsButton()
+	TheFrontEnd:PushScreen(ModsScreen(function(needs_reset)
+		if needs_reset then
+			TheSim:Reset()
+		end
+
+		TheFrontEnd:PopScreen()
+	end))
+end
+
 function MainScreen:ResetProfile()
-	TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.MAINSCREEN.RESETPROFILE, STRINGS.UI.MAINSCREEN.SURE, {{text=STRINGS.UI.MAINSCREEN.YES, cb = function() self.profile:Reset() end},{text=STRINGS.UI.MAINSCREEN.NO, cb = function() end}  }))
+	TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.MAINSCREEN.RESETPROFILE, STRINGS.UI.MAINSCREEN.SURE, {{text=STRINGS.UI.MAINSCREEN.YES, cb = function() self.profile:Reset() TheFrontEnd:PopScreen() end},{text=STRINGS.UI.MAINSCREEN.NO, cb = function() TheFrontEnd:PopScreen() end}  }))
 end
 
 function MainScreen:UnlockEverything()
-	TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.MAINSCREEN.UNLOCKEVERYTHING, STRINGS.UI.MAINSCREEN.SURE, {{text=STRINGS.UI.MAINSCREEN.YES, cb = function() self.profile:UnlockEverything() end},{text=STRINGS.UI.MAINSCREEN.NO, cb = function() end}  }))
+	TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.MAINSCREEN.UNLOCKEVERYTHING, STRINGS.UI.MAINSCREEN.SURE, {{text=STRINGS.UI.MAINSCREEN.YES, cb = function() self.profile:UnlockEverything() TheFrontEnd:PopScreen() end},{text=STRINGS.UI.MAINSCREEN.NO, cb = function() TheFrontEnd:PopScreen() end}  }))
 end
 
 function MainScreen:OnCreditsButton()
@@ -434,31 +456,9 @@ function MainScreen:CheatMenu()
 	self:ShowMenu(menu_items)
 end
 
-local function DoGenerateDEMOWorld()
-	local saveslot = 1
-
-	local function onComplete(savedata )
-		local function onsaved()
-			local success, world_table = RunInSandbox(savedata)
-			if success then
-				DoInitGame(SaveGameIndex:GetSlotCharacter(saveslot), world_table, Profile)
-			end
-		end
-
-		SaveGameIndex:OnGenerateNewWorld(saveslot, savedata, onsaved)
-	end
-
-	local function LoadWorldGenScreen()
-		local world_gen_options =
-		{
-			level_type = "survival",
-			custom_options ={character ="wilson", current_mode="survival"},
-			level_world = 1,
-		}
-		TheFrontEnd:PushScreen(WorldGenScreen(Profile, onComplete, world_gen_options))
-	end
-	
-	SaveGameIndex:StartSurvivalMode(1,"wilson", nil, LoadWorldGenScreen)
+function MainScreen:DoGenerateDEMOWorld()
+	self.menu:Disable()
+	StartNextInstance({reset_action=RESET_ACTION.DO_DEMO, save_slot = 1})
 end
 
 function MainScreen:MainMenu()
@@ -474,7 +474,7 @@ function MainScreen:MainMenu()
 			table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.RATE, cb=function() self:Rate() end})		
 		end
 	else
-		table.insert(menu_items, {text=STRINGS.UI.MAINSCREEN.PLAYDEMO, cb= function() DoGenerateDEMOWorld() end})
+		table.insert(menu_items, {text=STRINGS.UI.MAINSCREEN.PLAYDEMO, cb= function() self:DoGenerateDEMOWorld() end})
 		table.insert(menu_items, {text=STRINGS.UI.MAINSCREEN.ENTERPRODUCTKEY, cb= function() self:EnterKey() end})
 	end
 
@@ -484,6 +484,8 @@ function MainScreen:MainMenu()
 	else
 		table.insert(menu_items, {text=STRINGS.UI.MAINSCREEN.SETTINGS, cb= function() self:Settings() end})
 	end
+	
+	table.insert(menu_items, {text=STRINGS.UI.MAINSCREEN.CONTROLS, cb= function() self:OnControlsButton() end})
 	
 	if PLATFORM == "NACL" then
 		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.ACCOUNTINFO, cb= function() self:ProductKeys() end})
@@ -502,7 +504,12 @@ function MainScreen:MainMenu()
 		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.EXIT, cb= function() self:OnExitButton() end})
 	end
 
-	if CHEATS_ENABLED then
+	if PLATFORM ~= "NACL" then
+		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.MODS, cb= function() self:OnModsButton() end})
+	end
+
+
+	if BRANCH ~= "release" then
 		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.CHEATS, cb= function() self:CheatMenu() end})
 	end
 	

@@ -1,7 +1,6 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/beardhair.zip"),
-    Asset("IMAGE", "data/inventoryimages/beardhair.tex"),
+	Asset("ANIM", "anim/beardhair.zip"),
 }
 
 

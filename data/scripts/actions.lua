@@ -2,18 +2,20 @@ require "class"
 require "bufferedaction"
 require "screens/characterselectscreen"
 
-Action = Class(function(self, priority, instant, rmb) 
+Action = Class(function(self, priority, instant, rmb, distance) 
     self.priority = priority or 0
     self.fn = function() return false end
     self.strfn = nil
     self.testfn = nil
     self.instant = instant or false
     self.rmb = rmb or nil
+    self.distance = distance or nil
 end)
 
 ACTIONS=
 {
 	REPAIR = Action(),
+    READ = Action(),
     DROP = Action(-1),
     CHOP = Action(),
     ATTACK = Action(2, true),
@@ -69,6 +71,10 @@ ACTIONS=
     STEAL = Action(),
     USEITEM = Action(1, true),
     TAKEITEM = Action(),
+    MAKEBALLOON = Action(),
+    CASTSPELL = Action(0, false, true, 20),
+    BLINK = Action(10, false, true, 36),
+    COMBINESTACK = Action(),
 }
 
 for k,v in pairs(ACTIONS) do
@@ -96,9 +102,23 @@ ACTIONS.STEAL.fn = function(act)
     end
 end
 
+ACTIONS.MAKEBALLOON.fn = function(act)
+    if act.doer and act.invobject and act.invobject.components.balloonmaker then
+        if act.doer.components.sanity then
+            act.doer.components.sanity:DoDelta(-TUNING.SANITY_TINY)
+        end
+        local x,y,z = act.doer.Transform:GetWorldPosition()
+        local angle = TheCamera.headingtarget + math.random()*10*DEGREES-5*DEGREES
+        x = x + .5*math.cos(angle)
+        z = z + .5*math.sin(angle)
+        act.invobject.components.balloonmaker:MakeBalloon(x,y,z)
+    end
+    return true
+end
+
 ACTIONS.EQUIP.fn = function(act)
     if act.doer.components.inventory then
-    	return act.doer.components.inventory:Equip(act.invobject)
+        return act.doer.components.inventory:Equip(act.invobject)
     end
 end
 
@@ -205,6 +225,15 @@ ACTIONS.LOOKAT.fn = function(act)
 	end
 end
 
+
+ACTIONS.READ.fn = function(act)
+    local targ = act.target or act.invobject
+    if targ and targ.components.book and act.doer and act.doer.components.reader then
+        act.doer.components.reader:Read(targ)
+        return true
+    end
+end
+
 ACTIONS.TALKTO.fn = function(act)
     local targ = act.target or act.invobject
     if targ and targ.components.talkable then
@@ -259,7 +288,14 @@ end
 
 ACTIONS.CHOP.fn = function(act)
     if act.target.components.workable and act.target.components.workable.action == ACTIONS.CHOP then
-        act.target.components.workable:WorkedBy(act.doer)
+        local numworks = 1
+
+        if act.invobject and act.invobject.components.tool then
+            numworks = act.invobject.components.tool:GetEffectiveness(ACTIONS.CHOP)
+        elseif act.doer and act.doer.components.worker then
+            numworks = act.doer.components.worker:GetEffectiveness(ACTIONS.CHOP)
+        end
+        act.target.components.workable:WorkedBy(act.doer, numworks)
     end
     return true
 end
@@ -285,14 +321,28 @@ end
 
 ACTIONS.MINE.fn = function(act)
     if act.target.components.workable and act.target.components.workable.action == ACTIONS.MINE then
-        act.target.components.workable:WorkedBy(act.doer)
+        local numworks = 1
+
+        if act.invobject and act.invobject.components.tool then
+            numworks = act.invobject.components.tool:GetEffectiveness(ACTIONS.MINE)
+        elseif act.doer and act.doer.components.worker then
+            numworks = act.doer.components.worker:GetEffectiveness(ACTIONS.MINE)
+        end
+        act.target.components.workable:WorkedBy(act.doer, numworks)
     end
     return true
 end
 
 ACTIONS.HAMMER.fn = function(act)
     if act.target.components.workable and act.target.components.workable.action == ACTIONS.HAMMER then
-        act.target.components.workable:WorkedBy(act.doer)
+        local numworks = 1
+
+        if act.invobject and act.invobject.components.tool then
+            numworks = act.invobject.components.tool:GetEffectiveness(ACTIONS.HAMMER)
+        elseif act.doer and act.doer.components.worker then
+            numworks = act.doer.components.worker:GetEffectiveness(ACTIONS.HAMMER)
+        end
+        act.target.components.workable:WorkedBy(act.doer, numworks)
     end
     return true
 end
@@ -350,7 +400,14 @@ end
 
 ACTIONS.DIG.fn = function(act)
     if act.target.components.workable and act.target.components.workable.action == ACTIONS.DIG then
-        act.target.components.workable:WorkedBy(act.doer)
+        local numworks = 1
+
+        if act.invobject and act.invobject.components.tool then
+            numworks = act.invobject.components.tool:GetEffectiveness(ACTIONS.DIG)
+        elseif act.doer and act.doer.components.worker then
+            numworks = act.doer.components.worker:GetEffectiveness(ACTIONS.DIG)
+        end
+        act.target.components.workable:WorkedBy(act.doer, numworks)
     end
     return true
 end
@@ -366,6 +423,14 @@ ACTIONS.ATTACK.fn = function(act)
 	if act.target.components.combat then
 	    act.doer.components.combat:SetTarget(act.target)
 	    return true
+    end
+end
+
+ACTIONS.ATTACK.strfn = function(act)
+    local targ = act.target or act.invobject
+    
+    if targ and targ:HasTag("smashable") then
+        return "SMASHABLE"
     end
 end
 
@@ -727,10 +792,37 @@ ACTIONS.USEITEM.fn = function(act)
 end
 
 ACTIONS.TAKEITEM.fn = function(act)
+--Use this for taking a specific item as opposed to having an item be generated as it is in Pick/ Harvest
     if act.target and act.target.components.shelf and act.target.components.shelf.cantakeitem then
         act.target.components.shelf:TakeItem(act.doer)
         return true
     end
+end
+
+ACTIONS.CASTSPELL.fn = function(act)
+    --For use with magical staffs
+    local staff = act.invobject or act.doer.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
+
+    if staff and staff.components.spellcaster and staff.components.spellcaster:CanCast(act.doer, act.target, act.pos) then
+        staff.components.spellcaster:CastSpell(act.target, act.pos)
+        return true
+    end
+end
+
+
+ACTIONS.BLINK.fn = function(act)
+    if act.invobject and act.invobject.components.blinkstaff then
+        return act.invobject.components.blinkstaff:Blink(act.pos, act.doer)
+    end
+end
+
+ACTIONS.COMBINESTACK.fn = function(act)
+    local target = act.target
+    local invobj = act.invobject
+    if invobj and target and invobj.prefab == target.prefab and target.components.stackable and not target.components.stackable:IsFull() then
+        target.components.stackable:Put(invobj)
+        return true
+    end 
 end
 
 --[[ACTIONS.OPEN_SHOP.fn = function(act)

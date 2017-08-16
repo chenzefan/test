@@ -1,6 +1,6 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/blow_dart.zip"),
+	Asset("ANIM", "anim/blow_dart.zip"),
 }
 
 local function OnHit(inst, owner, target)

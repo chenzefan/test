@@ -1,8 +1,8 @@
 local assets = 
 {
-	Asset("ANIM", "data/anim/teleportato.zip"),
-	Asset("ANIM", "data/anim/teleportato_build.zip"),
-	Asset("ANIM", "data/anim/teleportato_adventure_build.zip"),
+	Asset("ANIM", "anim/teleportato.zip"),
+	Asset("ANIM", "anim/teleportato_build.zip"),
+	Asset("ANIM", "anim/teleportato_adventure_build.zip"),
 }
 
 local prefabs = {
@@ -26,10 +26,7 @@ local function TransitionToNextLevel(inst, wilson)
 		scheduler:ExecuteInTime(110*FRAMES+3, function() 
 			if inst.action == "restart" then
 				local function onsaved()
-					local params = json.encode{reset_action="loadslot", save_slot = SaveGameIndex:GetCurrentSaveSlot(), maxwell=inst.maxwell}
-					TheSim:SetInstanceParameters(params)
-					SendAccumulatedProfileStats()
-					TheSim:Reset()
+					StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = SaveGameIndex:GetCurrentSaveSlot(), maxwell=inst.maxwell}, true)
 				end
 				if inst.teleportpos then
 					GetPlayer().Transform:SetPosition(inst.teleportpos:Get() )
@@ -61,6 +58,7 @@ local function CheckNextLevelSure(inst, doer)
 				{text=STRINGS.UI.TELEPORTYES, cb = 	function() 
 				
 											print("Lets Go!")
+                                            ProfileStatsSet("teleportato_used", true)
 											TheSim:SetTimeScale(1) 
 											TheMixer:PopMix("pause") 
 											local wilson = GetPlayer()
@@ -109,6 +107,7 @@ end
 
 
 local function GetStatus(inst)
+    ProfileStatsSet("teleportato_inspected", true)
 	local partsCount = 0
 	for part,found in pairs(inst.collectedParts) do
 		if found == true then
@@ -138,6 +137,7 @@ local function ItemTradeTest(inst, item)
 end
 
 local function PowerUp(inst)
+    ProfileStatsSet("teleportato_powerup", true)
 	inst.AnimState:PlayAnimation("power_on", false)
 	inst.AnimState:PushAnimation("idle_on", true)
 
@@ -261,6 +261,7 @@ local function fn(Sim)
 	
 	inst:AddComponent("inspectable")	
 	inst.components.inspectable.getstatus = GetStatus
+	inst.components.inspectable:RecordViews()
 	
 	inst:AddComponent("activatable")	
 	inst.components.activatable.OnActivate = OnActivate

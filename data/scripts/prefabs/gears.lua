@@ -1,7 +1,6 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/gears.zip"),
-    Asset("IMAGE", "data/inventoryimages/gears.tex"),
+	Asset("ANIM", "anim/gears.zip"),
 }
 
 local function fn(Sim)
@@ -21,6 +20,16 @@ local function fn(Sim)
     inst:AddComponent("inspectable")  
     
     inst:AddComponent("inventoryitem")      
+    
+    inst:AddComponent("edible")
+    inst.components.edible.foodtype = "GEARS"
+    inst.components.edible.healthvalue = TUNING.HEALING_HUGE
+    inst.components.edible.hungervalue = TUNING.CALORIES_HUGE
+    inst.components.edible.sanityvalue = TUNING.SANITY_HUGE
+
+	inst:AddComponent("repairer")
+	inst.components.repairer.repairmaterial = "gears"
+	inst.components.repairer.value = TUNING.REPAIR_GEARS
     
     return inst
 end

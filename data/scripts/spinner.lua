@@ -5,7 +5,7 @@ require "widget"
 -- For example, OnChanged gets called by Changed, the base function. Both get passed the newly selected item.
 
 
-Spinner = Class(Widget, function( self, options, width, height, textinfo, textures, arrow_scale, editable )
+Spinner = Class(Widget, function( self, options, width, height, textinfo, atlas, textures, arrow_scale, editable )
     Widget._ctor(self, "SPINNER")
 
 	arrow_scale = arrow_scale or 1
@@ -15,20 +15,21 @@ Spinner = Class(Widget, function( self, options, width, height, textinfo, textur
 	self.selectedIndex = 1
 	self.textsize = {width = width, height = height}
 	self.textcolour = { 1, 1, 1, 1 }
-
+	
+	self.atlas = atlas
     self.leftimage = self:AddChild( Image() )
     self.rightimage = self:AddChild( Image() )
 
 	self.scaled_arrow_width = 0
 
-	if textures then
+	if atlas and textures then
 		self:SetArrowTexture( textures.arrow_normal )
 		self:SetArrowMouseOverTexture( textures.arrow_over )
 		self:SetArrowDisabledTexture( textures.arrow_disabled )
 
 		if textures.bgtexture then
 			self.bgimage = self:AddChild( Image() )
-			self.bgimage:SetTexture( textures.bgtexture )
+			self.bgimage:SetTexture( self.atlas, textures.bgtexture )
 			self.bgimage:ScaleToSize( self.textsize.width, self.textsize.height )
 		end
 
@@ -88,8 +89,8 @@ function Spinner:OnMouseOver()
 end
 
 function Spinner:SetArrowTexture(tex)
-    self.leftimage:SetTexture(tex)
-    self.rightimage:SetTexture(tex)
+    self.leftimage:SetTexture(self.atlas, tex)
+    self.rightimage:SetTexture(self.atlas, tex)
 end
 
 function Spinner:SetTextColour(r,g,b,a)
@@ -98,13 +99,13 @@ function Spinner:SetTextColour(r,g,b,a)
 end
 
 function Spinner:SetArrowMouseOverTexture(tex)
-    self.leftimage:SetMouseOverTexture(tex)
-    self.rightimage:SetMouseOverTexture(tex)
+    self.leftimage:SetMouseOverTexture(self.atlas, tex)
+    self.rightimage:SetMouseOverTexture(self.atlas, tex)
 end
 
 function Spinner:SetArrowDisabledTexture(tex)
-	self.leftimage:SetDisabledTexture(tex)
-	self.rightimage:SetDisabledTexture(tex)
+	self.leftimage:SetDisabledTexture(self.atlas, tex)
+	self.rightimage:SetDisabledTexture(self.atlas, tex)
 end
 
 function Spinner:Enable()

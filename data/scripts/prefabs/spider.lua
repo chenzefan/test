@@ -1,16 +1,16 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/ds_spider_basic.zip"),
-	Asset("ANIM", "data/anim/spider_build.zip"),
-	Asset("SOUND", "data/sound/spider.fsb"),
+	Asset("ANIM", "anim/ds_spider_basic.zip"),
+	Asset("ANIM", "anim/spider_build.zip"),
+	Asset("SOUND", "sound/spider.fsb"),
 }
 
 local warrior_assets =
 {
-	Asset("ANIM", "data/anim/ds_spider_basic.zip"),
-	Asset("ANIM", "data/anim/ds_spider_warrior.zip"),
-	Asset("ANIM", "data/anim/spider_warrior_build.zip"),
-	Asset("SOUND", "data/sound/spider.fsb"),
+	Asset("ANIM", "anim/ds_spider_basic.zip"),
+	Asset("ANIM", "anim/ds_spider_warrior.zip"),
+	Asset("ANIM", "anim/spider_warrior_build.zip"),
+	Asset("SOUND", "sound/spider.fsb"),
 }
     
     

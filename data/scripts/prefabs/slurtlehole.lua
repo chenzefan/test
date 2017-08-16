@@ -1,6 +1,6 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/slurtle_mound.zip"),
+	Asset("ANIM", "anim/slurtle_mound.zip"),
 }
 
 local prefabs =
@@ -8,7 +8,8 @@ local prefabs =
 	"slurtle",
 	"snurtle",
 	"slurtleslime",
-	"slurtle_shellpieces"
+	"slurtle_shellpieces",
+    "explode_small"
 }
 
 local function OnEntityWake(inst)
@@ -52,8 +53,10 @@ local function OnExplodeFn(inst)
     local pos = Vector3(inst.Transform:GetWorldPosition())
     inst.SoundEmitter:KillSound("hiss")
     inst.SoundEmitter:PlaySound("dontstarve/creatures/slurtle/mound_explode")
-    local explode = PlayFX(pos,"explode", "explode", "small")
-    explode.AnimState:SetBloomEffectHandle( "data/shaders/anim.ksh" )
+    local explode = SpawnPrefab("explode_small")
+    local pos = inst:GetPosition()
+    explode.Transform:SetPosition(pos.x, pos.y, pos.z)
+    explode.AnimState:SetBloomEffectHandle( "shaders/anim.ksh" )
     explode.AnimState:SetLightOverride(1)
 end
 

@@ -1,3 +1,5 @@
+require("mathutil")
+
 local distToStart = 45
 local distToStart_SQ = distToStart * distToStart
 local distToFinish = 35
@@ -7,12 +9,6 @@ local percentFromPlayer = 1
 
 local STARTING_CAMERA_OFFSET = 1.5
 local FINAL_CAMERA_OFFSET = 3
-
-local function Lerp(a,b,t)
-	--ease-in/out
-	t = 1.0-math.cos(t*PI/2)
-	return a + (b - a) * t
-end
 
 local function roundToNearest(numToRound, multiple)
 	local half = multiple/2

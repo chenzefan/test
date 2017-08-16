@@ -1,7 +1,6 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/papyrus.zip"),
-    Asset("IMAGE", "data/inventoryimages/papyrus.tex"),
+	Asset("ANIM", "anim/papyrus.zip"),
 }
 
 local function fn(Sim)

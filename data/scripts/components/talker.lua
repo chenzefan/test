@@ -46,6 +46,7 @@ function Talker:ShutUp()
     if self.task then
         scheduler:KillTask(self.task)
         self.inst.Label:Enable(false)
+        self.inst:PushEvent("donetalking")
     end
 end
 

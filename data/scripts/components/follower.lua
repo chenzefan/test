@@ -1,9 +1,19 @@
+local function onattacked(inst,data )
+	
+	if inst.components.follower.leader == data.attacker then
+		inst.components.follower:SetLeader(nil)
+	end
+
+end
+
 local Follower = Class(function(self, inst)
     self.inst = inst
     self.leader = nil
     self.targettime = nil
     self.maxfollowtime = nil
     self.canaccepttarget = true
+
+    self.inst:ListenForEvent("attacked", onattacked)
 end)
 
 --[[
@@ -81,6 +91,13 @@ function Follower:AddLoyaltyTime(time)
 	end
 	self.task = self.inst:DoTaskInTime(timeLeft, stopfollow)
 
+end
+
+function Follower:StopFollowing()
+	if self.inst:IsValid() then
+		self.inst:PushEvent("loseloyalty", {leader=self.inst.components.follower.leader})
+		self.inst.components.follower:SetLeader(nil)
+	end
 end
 
 function Follower:IsNearLeader(dist)

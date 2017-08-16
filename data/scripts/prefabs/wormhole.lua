@@ -1,8 +1,8 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/teleporter_worm.zip"),
-	Asset("ANIM", "data/anim/teleporter_worm_build.zip"),
-    Asset("SOUND", "data/sound/common.fsb"),
+	Asset("ANIM", "anim/teleporter_worm.zip"),
+	Asset("ANIM", "anim/teleporter_worm_build.zip"),
+    Asset("SOUND", "sound/common.fsb"),
 }
 
 
@@ -15,6 +15,7 @@ end
 local function OnActivate(inst, doer)
 	--print("OnActivated!")
 	if doer:HasTag("player") then
+        ProfileStatsSet("wormhole_used", true)
 		doer.components.health:SetInvincible(true)
 		doer.components.playercontroller:Enable(false)
 		
@@ -45,8 +46,6 @@ local function OnActivateOther(inst, other, doer)
 	other.sg:GoToState("open")
 end
 
-
-
 local function fn(Sim)
 	local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
@@ -66,6 +65,7 @@ local function fn(Sim)
     
     inst:AddComponent("inspectable")
 	inst.components.inspectable.getstatus = GetStatus
+	inst.components.inspectable:RecordViews()
 
 	inst:AddComponent("playerprox")
 	inst.components.playerprox:SetDist(4,5)

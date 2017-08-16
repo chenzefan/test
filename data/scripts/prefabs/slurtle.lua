@@ -1,8 +1,8 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/slurtle.zip"),
-    Asset("ANIM", "data/anim/slurtle_snaily.zip"),
-    Asset("SOUND", "data/sound/slurtle.fsb"),
+	Asset("ANIM", "anim/slurtle.zip"),
+    Asset("ANIM", "anim/slurtle_snaily.zip"),
+    Asset("SOUND", "sound/slurtle.fsb"),
 }
 
 local prefabs =
@@ -11,6 +11,7 @@ local prefabs =
     "slurtle_shellpieces",
     "slurtlehat",
     "armorsnurtleshell",
+    "explode_small"
 }
 
 local loot = 
@@ -54,8 +55,10 @@ local function OnExplodeFn(inst)
     local pos = Vector3(inst.Transform:GetWorldPosition())
     inst.SoundEmitter:KillSound("rattle")
     inst.SoundEmitter:PlaySound("dontstarve/creatures/slurtle/explode")
-    local explode = PlayFX(pos,"explode", "explode", "small")
-    explode.AnimState:SetBloomEffectHandle( "data/shaders/anim.ksh" )
+    local explode = SpawnPrefab("explode_small")
+    local pos = inst:GetPosition()
+    explode.Transform:SetPosition(pos.x, pos.y, pos.z)
+    explode.AnimState:SetBloomEffectHandle( "shaders/anim.ksh" )
     explode.AnimState:SetLightOverride(1)
 end
 
@@ -147,6 +150,7 @@ local function makeslurtle()
     inst.AnimState:SetBuild("slurtle")
 
     inst:AddTag("slurtle")
+    inst:AddTag("animal")
     local brain = require "brains/slurtlebrain"
     inst:SetBrain(brain)
 
@@ -171,8 +175,10 @@ local function makesnurtle()
     local inst = commonfn()
 
     inst.AnimState:SetBuild("slurtle_snaily")
+    inst.AnimState:SetBank("snurtle")
 
     inst:AddTag("snurtle")
+    inst:AddTag("animal")
     local brain = require "brains/slurtlesnailbrain"
     inst:SetBrain(brain)
 

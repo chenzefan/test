@@ -23,6 +23,7 @@ return {
 		[3] = "Oops!",
 		[4] = "I made a fire!",
 		[5] = "Burn!",
+		[6] = "I can't help myself!",
 	},
 	ANNOUNCE_PECKED = "No! Bad birdy!",
 	ANNOUNCE_TORCH_OUT = "My precious fire is gone!",
@@ -46,10 +47,38 @@ return {
 	DESCRIBE =
 	{
 
+		SLURPER = "Do they have little fires in their bellies?",
+		ORANGEAMULET = "It picks up my burning materials for me!",
+		YELLOWSTAFF = "It's magical.",
+		YELLOWGEM = "It sparkles.",
+		ORANGEGEM = "This one makes my fingers tingle.",
+		TELEBASE = 
+		{
+			VALID = "I can feel the magic!",
+			GEMS = "It needs something more.",
+		},
+		GEMSOCKET = 
+		{
+			VALID = "I wonder how they hover?",
+			GEMS = "It's so empty!",
+		},
+		STAFFLIGHT = "It's so beautiful!",
+		RESEARCHLAB4 = "I can use the hat like a cauldron!",
+
+        LIGHTER = "It's my lucky lighter!",
+
+        ANCIENT_ALTAR = "Oooo! An afterlife intercom.",
+
         CAVE_BANANA = "Bananas!",
         CAVE_BANANA_COOKED = "Yum!",
         CAVE_BANANA_TREE = "Looks burnable!",
         ROCKY = "We don't have much in common.",
+
+        BLUEAMULET = "Boo to this.",
+		PURPLEAMULET = "Has science gone too far?",
+		TELESTAFF = "It's quite a rush to use.",
+		MONKEY = "Joke's on you! I can burn this poo.",
+		MONKEYBARREL = "What a wonderfully flammable home.",
 
 		HOUNDSTOOTH="It's sharp. I like it!",
 		ARMORSNURTLESHELL="Less defense! More offense!",
@@ -187,6 +216,9 @@ return {
 		CARROT = "Yuck. It's all vegetabley.",
 		CAVE_FERN = "Looks flammable.",
 		CHARCOAL = "Mmmm. Smells like fire.",
+        CHESSJUNK1 = "Dead windup horsey",
+        CHESSJUNK2 = "Dead windup priest",
+        CHESSJUNK3 = "Dead windup castle",
 		CHESTER = "He's so fuzzy!",
 		CHESTER_EYEBONE =
 		{
@@ -384,7 +416,7 @@ return {
 		PANDORASCHEST = "Kind of tacky.",
 		PANFLUTE = "Music is boring.",
 		PAPYRUS = "I bet it'd burn!",
-		PENGUIN = "...",
+		PENGUIN = "Run away tiny dancers.",
 		PETALS = "Stupid flowers. They're almost useless.",
 		PETALS_EVIL = "Ew, they're sticky.",
 		PICKAXE = "It's very pointy.",
@@ -451,6 +483,15 @@ return {
 		RESURRECTIONSTATUE = "That's my insurance policy.",
 		RESURRECTIONSTONE = "I guess I should touch it?",
 		ROBOT_PUPPET = "It looks scared half to death.",
+		ROCK_LIGHT =
+		{
+			GENERIC = "A crusted over lava pit.",
+			OUT = "Aww, it's cooled off.",
+			LOW = "The lava is cooling.",
+			NORMAL = "A pool of fire!",
+		},
+		ROCKS = "Can make inuksuks with these?",
+        ROOK = "It's a castle!",
 		ROTTENEGG = "Ew! Why? Oh Why?!",
 		SANITYROCK =
 		{
@@ -549,6 +590,8 @@ return {
 		WALL_HAY_ITEM = "Hmmm. I wonder if these will burn.",
 		WALL_STONE = "Eh. I guess that's OK.",
 		WALL_STONE_ITEM = "These are surprisingly heavy.",
+		WALL_RUINS = "Eh. I guess that's OK.",
+		WALL_RUINS_ITEM = "These are surprisingly heavy.",
 		WALL_WOOD = "That could totally catch on fire.",
 		WALL_WOOD_ITEM = "I hate hiding.",
 		WALRUS = "Stop following me!",

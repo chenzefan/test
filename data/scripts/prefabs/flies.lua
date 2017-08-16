@@ -1,6 +1,6 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/flies.zip"),
+	Asset("ANIM", "anim/flies.zip"),
 }
 
 local function onnear(inst)

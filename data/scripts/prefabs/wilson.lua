@@ -4,8 +4,8 @@ local MakePlayerCharacter = require "prefabs/player_common"
 
 local assets = 
 {
-    Asset("ANIM", "data/anim/wilson.zip"),
-	Asset("ANIM", "data/anim/beard.zip"),
+    Asset("ANIM", "anim/wilson.zip"),
+	Asset("ANIM", "anim/beard.zip"),
 }
 
 local prefabs = 
@@ -41,6 +41,5 @@ local fn = function(inst)
     end)
     
 end
-
 
 return MakePlayerCharacter("wilson", prefabs, assets, fn) 

@@ -2,10 +2,9 @@ require "prefabutil"
 
 local assets=
 {
-	Asset("ANIM", "data/anim/ice_box.zip"),
-	Asset("ANIM", "data/anim/ui_chest_3x3.zip"),
+	Asset("ANIM", "anim/ice_box.zip"),
+	Asset("ANIM", "anim/ui_chest_3x3.zip"),
 	
-    Asset("IMAGE", "data/inventoryimages/icebox.tex"),
 }
 
 local function onopen(inst) 

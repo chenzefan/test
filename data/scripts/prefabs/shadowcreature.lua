@@ -27,7 +27,7 @@ end
 
 local function canbeattackedfn(inst, attacker)
 	return inst.components.combat.target ~= nil or
-		(attacker.components.sanity and not attacker.components.sanity:IsSane())
+		(attacker.components.sanity and attacker.components.sanity:IsCrazy())
 end
 
 local function OnAttacked(inst, data)
@@ -42,7 +42,7 @@ local function MakeShadowCreature(data)
     
     local assets=
     {
-	    Asset("ANIM", "data/anim/"..data.build..".zip"),
+	    Asset("ANIM", "anim/"..data.build..".zip"),
     }
     
     local sounds = 

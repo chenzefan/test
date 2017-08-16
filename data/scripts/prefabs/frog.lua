@@ -1,12 +1,13 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/frog.zip"),
-	Asset("SOUND", "data/sound/frog.fsb"),
+	Asset("ANIM", "anim/frog.zip"),
+	Asset("SOUND", "sound/frog.fsb"),
 }
 
 local prefabs =
 {
     "froglegs",
+    "splash",
 }
  
 
@@ -31,7 +32,11 @@ local function OnAttacked(inst, data)
 end
 
 local function OnGoingHome(inst)
-	local splash = PlayFX(Vector3(inst.Transform:GetWorldPosition() ), "splash", "splash", "splash")
+    local fx = SpawnPrefab("splash")
+    local pos = inst:GetPosition()
+    fx.Transform:SetPosition(pos.x, pos.y, pos.z)
+
+	--local splash = PlayFX(Vector3(inst.Transform:GetWorldPosition() ), "splash", "splash", "splash")
 	inst.SoundEmitter:PlaySound("dontstarve/frog/splash")
 end
 

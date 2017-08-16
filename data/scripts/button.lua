@@ -2,6 +2,7 @@ require "widget"
 
 Button = Class(Widget, function(self, name)
     Widget._ctor(self, name or "BUTTON")
+    self.atlas = nil
     self.image = self:AddChild(Image())
     self.text = self:AddChild(Text(DEFAULTFONT, 30))
     self.text:Hide()
@@ -10,7 +11,7 @@ Button = Class(Widget, function(self, name)
         function()
             if self:IsEnabled() then
 				if self.mouseovertex then
-					self.image:SetTexture(self.mouseovertex)
+					self.image:SetTexture(self.atlas, self.mouseovertex)
 				end
 	            
 			end
@@ -21,9 +22,9 @@ Button = Class(Widget, function(self, name)
         function()
             if self.normaltex then
 				if self:IsEnabled() or not self.disabledtex then
-					self.image:SetTexture(self.normaltex)
+					self.image:SetTexture(self.atlas, self.normaltex)
 				else
-					self.image:SetTexture(self.disabledtex)
+					self.image:SetTexture(self.atlas, self.disabledtex)
 				end
             end
             
@@ -61,14 +62,14 @@ function Button:Enable()
 	self._base.Enable(self)
 	
 	if not self.over then
-		self.image:SetTexture(self.normaltex)
+		self.image:SetTexture(self.atlas, self.normaltex)
 	end
 	--self.text:SetColour(1,1,1,1)
 end
 
 function Button:Disable()
 	self._base.Disable(self)
-	self.image:SetTexture(self.disabledtex)
+	self.image:SetTexture(self.atlas, self.disabledtex)
 	--self.text:SetColour(.7,.7,.7,1)
 	
 end
@@ -85,19 +86,22 @@ function Button:GetSize()
     return self.image:GetSize()
 end
 
-function Button:SetImage(tex)
+function Button:SetImage(atlas, tex)
+	self.atlas = atlas
     self.normaltex = tex
     
     if not self.mouseovertex or not self.over then
-		self.image:SetTexture(tex)
+		self.image:SetTexture(atlas, tex)
 	end
 end
 
-function Button:SetMouseOverImage(tex)
+function Button:SetMouseOverImage(atlas, tex)
+	self.atlas = atlas or self.atlas
     self.mouseovertex = tex
 end
 
-function Button:SetDisabledImage(tex)
+function Button:SetDisabledImage(atlas, tex)
+	self.atlas = atlas or self.atlas
     self.disabledtex = tex
 end
 

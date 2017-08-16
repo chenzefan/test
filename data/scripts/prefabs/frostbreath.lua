@@ -1,5 +1,5 @@
-local texture = "data/fx/frostbreath.tex"
-local shader = "data/shaders/particle.ksh"
+local texture = "fx/frostbreath.tex"
+local shader = "shaders/particle.ksh"
 local colour_envelope_name = "breathcolourenvelope"
 local scale_envelope_name = "breathscaleenvelope"
 

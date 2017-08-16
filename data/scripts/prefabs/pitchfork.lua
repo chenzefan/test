@@ -1,12 +1,9 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/pitchfork.zip"),
-	--Asset("ANIM", "data/anim/goldenpitchfork.zip"),
-	Asset("ANIM", "data/anim/swap_pitchfork.zip"),
-	--Asset("ANIM", "data/anim/swap_goldenpitchfork.zip"),
-    
-    Asset("IMAGE", "data/inventoryimages/pitchfork.tex"),
-    --Asset("IMAGE", "data/inventoryimages/goldenpitchfork.tex"),
+	Asset("ANIM", "anim/pitchfork.zip"),
+	--Asset("ANIM", "anim/goldenpitchfork.zip"),
+	Asset("ANIM", "anim/swap_pitchfork.zip"),
+	--Asset("ANIM", "anim/swap_goldenpitchfork.zip"),
 }
     
 local function onfinished(inst)

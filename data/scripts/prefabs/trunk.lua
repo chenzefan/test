@@ -1,9 +1,6 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/koalephant_trunk.zip"),
-    Asset("IMAGE", "data/inventoryimages/trunk_summer.tex"),
-    Asset("IMAGE", "data/inventoryimages/trunk_winter.tex"),
-    Asset("IMAGE", "data/inventoryimages/trunk_cooked.tex"),
+	Asset("ANIM", "anim/koalephant_trunk.zip"),
 }
 
 local prefabs =

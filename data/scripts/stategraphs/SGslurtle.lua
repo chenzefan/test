@@ -87,7 +87,7 @@ local states =
 
     State{
     	name = "shield",
-    	tags = {"busy"},
+    	tags = {"busy","hiding"},
 
     	onenter = function(inst)
             --If taking fire damage, spawn fire effect. 

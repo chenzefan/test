@@ -1,9 +1,7 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/trap_teeth.zip"),
-	Asset("ANIM", "data/anim/trap_teeth_maxwell.zip"),
-    Asset("IMAGE", "data/inventoryimages/trap_teeth.tex"),
-    --Asset("SOUND", "data/sound/common.fsb"),
+	Asset("ANIM", "anim/trap_teeth.zip"),
+	Asset("ANIM", "anim/trap_teeth_maxwell.zip"),
 }
 
 
@@ -31,6 +29,7 @@ local function OnExplode(inst, target)
     if target then
         inst.SoundEmitter:PlaySound("dontstarve/common/trap_teeth_trigger")
 	    target.components.combat:GetAttacked(inst, TUNING.TRAP_TEETH_DAMAGE)
+        FightStat_TrapSprung(inst,target,TUNING.TRAP_TEETH_DAMAGE)
     end
     if inst.components.finiteuses then
 	    inst.components.finiteuses:Use(1)

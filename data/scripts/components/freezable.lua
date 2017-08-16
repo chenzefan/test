@@ -49,7 +49,7 @@ function Freezable:SetResistance(resist)
     self.resistance = resist
 end
 
-function Freezable:SetDefaultWearOffTime(time)
+function Freezable:SetDefaultWearOffTime(wearofftime)
     self.wearofftime = wearofftime
 end
 

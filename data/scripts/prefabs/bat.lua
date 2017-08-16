@@ -1,7 +1,7 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/bat_basic.zip"),
-	Asset("SOUND", "data/sound/bat.fsb"),
+	Asset("ANIM", "anim/bat_basic.zip"),
+	Asset("SOUND", "sound/bat.fsb"),
 
 }
 
@@ -186,4 +186,4 @@ local function fn()
     return inst
 end
 
-return Prefab("cave/bat", fn, assets, prefabs) 
+return Prefab("cave/monsters/bat", fn, assets, prefabs) 

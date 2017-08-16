@@ -48,6 +48,9 @@ function HoverText:Update()
 					if lmb.target.components.stackable and lmb.target.components.stackable.stacksize > 1 then
 	                    str = str .. " x" .. tostring(lmb.target.components.stackable.stacksize)
 					end
+                    if lmb.target.components.inspectable.recordview and lmb.target.prefab then
+                        ProfileStatsSet(lmb.target.prefab .. "_seen", true)
+                    end
 				end
             end
         end
@@ -74,7 +77,7 @@ function HoverText:Update()
     self.str = str
     self.secondarystr = secondarystr
     if changed then
-        local pos = TheInput:GetMouseScreenPos()
+        local pos = TheInput:GetScreenPosition()
         self:UpdatePosition(pos.x, pos.y)
     end
 end
@@ -114,8 +117,8 @@ end
 
 function HoverText:FollowMouseConstrained()
     if not self.followhandler then
-        self.followhandler = TheInput:AddMouseMoveHandler(function(x,y) self:UpdatePosition(x,y) end)
-        local pos = TheInput:GetMouseScreenPos()
+        self.followhandler = TheInput:AddMoveHandler(function(x,y) self:UpdatePosition(x,y) end)
+        local pos = TheInput:GetScreenPosition()
         self:UpdatePosition(pos.x, pos.y)
     end
 end

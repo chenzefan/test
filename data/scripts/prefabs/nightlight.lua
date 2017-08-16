@@ -1,7 +1,6 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/nightmare_torch.zip"),
-    Asset("IMAGE", "data/inventoryimages/nightlight.tex"),
+	Asset("ANIM", "anim/nightmare_torch.zip"),
 }
 
 local prefabs =

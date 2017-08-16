@@ -1,8 +1,7 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/umbrella.zip"),
-	Asset("ANIM", "data/anim/swap_umbrella.zip"),
-    Asset("IMAGE", "data/inventoryimages/umbrella.tex"),
+	Asset("ANIM", "anim/umbrella.zip"),
+	Asset("ANIM", "anim/swap_umbrella.zip"),
 }
   
 local function UpdateSound(inst)

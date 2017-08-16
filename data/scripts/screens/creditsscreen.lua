@@ -8,7 +8,7 @@ CreditsScreen = Class(Screen, function(self)
 	Screen._ctor(self, "CreditsScreen")
     
 
-    self.bg = self:AddChild(Image("data/images/bg_plain.tex"))
+    self.bg = self:AddChild(Image("images/ui.xml", "bg_plain.tex"))
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
     self.bg:SetHRegPoint(ANCHOR_MIDDLE)
     self.bg:SetVAnchor(ANCHOR_MIDDLE)
@@ -24,7 +24,7 @@ CreditsScreen = Class(Screen, function(self)
     self.bg:SetTint(self.bgcolors[1][1],self.bgcolors[1][2],self.bgcolors[1][3], 1)
 
 
-    self.klei_img = self:AddChild(Image("data/images/klei_new_logo.tex"))
+    self.klei_img = self:AddChild(Image("images/ui.xml", "klei_new_logo.tex"))
     self.klei_img:SetVAnchor(ANCHOR_MIDDLE)
     self.klei_img:SetHAnchor(ANCHOR_MIDDLE)
     self.klei_img:SetScaleMode(SCALEMODE_PROPORTIONAL)

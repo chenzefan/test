@@ -1,8 +1,7 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/twigs.zip"),
-	Asset("SOUND", "data/sound/common.fsb"),
-    Asset("IMAGE", "data/inventoryimages/twigs.tex"),
+	Asset("ANIM", "anim/twigs.zip"),
+	Asset("SOUND", "sound/common.fsb"),
 }
 
 local function fn(Sim)
@@ -23,6 +22,11 @@ local function fn(Sim)
     -----------------
     inst:AddComponent("fuel")
     inst.components.fuel.fuelvalue = TUNING.SMALL_FUEL
+
+
+    inst:AddComponent("edible")
+    inst.components.edible.foodtype = "WOOD"
+    inst.components.edible.woodiness = 5
 
     ---------------------        
 	MakeSmallBurnable(inst, TUNING.SMALL_BURNTIME)

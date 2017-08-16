@@ -2,7 +2,7 @@ local function DoTest(inst)
     local playerprox = inst.components.playerprox
     if playerprox then
         local player = GetPlayer()
-        if player and inst then
+        if player and inst and not player:HasTag("notarget") then
             local close = nil
             local distsq = player:GetDistanceSqToInst(inst)
             if playerprox.isclose then

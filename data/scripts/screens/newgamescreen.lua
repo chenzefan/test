@@ -19,7 +19,7 @@ NewGameScreen = Class(Screen, function(self, slotnum)
     self.root:SetHAnchor(ANCHOR_MIDDLE)
     self.root:SetPosition(0,0,0)
     self.root:SetScaleMode(SCALEMODE_PROPORTIONAL)
-    self.bg = self.root:AddChild(Image("data/images/panel_saveslots.tex"))
+    self.bg = self.root:AddChild(Image("images/fepanels.xml", "panel_saveslots.tex"))
     
 	--[[self.cancelbutton = self.root:AddChild(AnimButton("button"))
 	self.cancelbutton:SetScale(.8,.8,.8)
@@ -39,7 +39,7 @@ NewGameScreen = Class(Screen, function(self, slotnum)
     self.title:SetVAlign(ANCHOR_MIDDLE)
 
 
-	self.portraitbg = self.root:AddChild(Image("data/images/saveslot_portraits/background.tex"))
+	self.portraitbg = self.root:AddChild(Image("images/saveslot_portraits.xml", "background.tex"))
 	self.portraitbg:SetPosition(0,100,0)	
 	self.portraitbg:SetClickable(false)	
 
@@ -48,7 +48,8 @@ NewGameScreen = Class(Screen, function(self, slotnum)
 	self.portrait:SetVRegPoint(ANCHOR_MIDDLE)
    	self.portrait:SetHRegPoint(ANCHOR_MIDDLE)
 	self.portrait:SetClickable(false)		
-	self.portrait:SetTexture("images/saveslot_portraits/"..self.character..".tex")
+	local atlas = (table.contains(MODCHARACTERLIST, self.character) and "images/saveslot_portraits/"..self.character..".xml") or "images/saveslot_portraits.xml"
+	self.portrait:SetTexture(atlas, self.character..".tex")
 	self.portrait:SetPosition(0, 100, 0)
     
     local menuitems = 
@@ -99,7 +100,9 @@ function NewGameScreen:ChangeCharacter(  )
 		if character then
 
 			self.character = character
-			self.portrait:SetTexture("images/saveslot_portraits/"..self.character..".tex")
+
+			local atlas = (table.contains(MODCHARACTERLIST, character) and "images/saveslot_portraits/"..character..".xml") or "images/saveslot_portraits.xml"
+			self.portrait:SetTexture(atlas, self.character..".tex")
 		end
 	end
 	TheFrontEnd:PushScreen(CharacterSelectScreen(Profile, onSet, false, self.character))
@@ -109,9 +112,7 @@ end
 
 function NewGameScreen:Start()
 	local function onsaved()
-	    local params = json.encode{reset_action="loadslot", save_slot = self.saveslot}
-	    TheSim:SetInstanceParameters(params)
-	    TheSim:Reset()
+	    StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = self.saveslot})
 	end
 
 	self.root:Disable()

@@ -1,10 +1,10 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/bulb_plant_single.zip"),
-	Asset("ANIM", "data/anim/bulb_plant_double.zip"),
-	Asset("ANIM", "data/anim/bulb_plant_triple.zip"),
-	Asset("ANIM", "data/anim/bulb_plant_springy.zip"),
-	Asset("SOUND", "data/sound/common.fsb"),
+	Asset("ANIM", "anim/bulb_plant_single.zip"),
+	Asset("ANIM", "anim/bulb_plant_double.zip"),
+	Asset("ANIM", "anim/bulb_plant_triple.zip"),
+	Asset("ANIM", "anim/bulb_plant_springy.zip"),
+	Asset("SOUND", "sound/common.fsb"),
 }
 
 
@@ -49,7 +49,7 @@ local function commonfn()
 	local anim = inst.entity:AddAnimState()
     local sound = inst.entity:AddSoundEmitter()
         
-	--inst.AnimState:SetBloomEffectHandle( "data/shaders/anim.ksh" )
+	--inst.AnimState:SetBloomEffectHandle( "shaders/anim.ksh" )
 
     local minimap = inst.entity:AddMiniMapEntity()
 	minimap:SetIcon("bulb_plant.png")

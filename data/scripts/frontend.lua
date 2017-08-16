@@ -7,7 +7,7 @@ FrontEnd = Class(function(self, name)
 	self.screenroot = Widget("screenroot")
 	self.overlayroot = Widget("overlayroot")
 	
-    self.blackoverlay = Image("data/images/square.tex")
+    self.blackoverlay = Image("images/global.xml", "square.tex")
     self.blackoverlay:SetVRegPoint(ANCHOR_MIDDLE)
     self.blackoverlay:SetHRegPoint(ANCHOR_MIDDLE)
     self.blackoverlay:SetVAnchor(ANCHOR_MIDDLE)
@@ -37,10 +37,9 @@ FrontEnd = Class(function(self, name)
 	self.gameinterface = CreateEntity()
 	self.gameinterface.entity:AddSoundEmitter()
 	self.gameinterface.entity:AddGraphicsOptions()
-	
-	TheInput:AddKeyUpHandler(KEY_BACKSPACE, function() self:OnKeyBackspace() end )
-	TheInput:AddKeyUpHandler(KEY_PAUSE, function() self:OnKeyPause() end )
 
+	TheInput:AddKeyUpHandler(KEY_BACKSPACE, function() self:OnKeyBackspace() end )
+	
 	TheInput:AddKeyHandler(function(key, down) self:OnKey(key, down) end )
 	TheInput:AddTextInputHandler(function(text) self:OnTextInput(text) end )
 
@@ -57,24 +56,6 @@ end
 function FrontEnd:HideTitle()
 	self.title:Hide()
 	self.subtitle:Hide()
-end
-
-function FrontEnd:OnKeyPause()
-	print("Toggle pause")
-	
-	TheSim:ToggleDebugPause()
-	TheSim:ToggleDebugCamera()
-	
-	if TheSim:IsDebugPaused() then
-		TheSim:SetDebugRenderEnabled(true)
-		if TheCamera.targetpos then
-			TheSim:SetDebugCameraTarget(TheCamera.targetpos.x, TheCamera.targetpos.y, TheCamera.targetpos.z)
-		end
-		
-		if TheCamera.headingtarget then
-			TheSim:SetDebugCameraRotation(-TheCamera.headingtarget-90)	
-		end
-	end
 end
 
 function FrontEnd:SendScreenEvent(type, message)
@@ -235,21 +216,6 @@ function FrontEnd:ShowScreen(screen, cb)
 	end
 end
 
-function FrontEnd:OnKeyBackspace()
-	--print("FrontEnd:OnKeyBackspace()")
-	if TheInput:IsDebugToggleEnabled() then
-		if TheInput:IsKeyDown(KEY_SHIFT) then
-			TheSim:ToggleDebugCamera()
-		else
-			if TheInput:IsKeyDown(KEY_CTRL) then
-				TheSim:SetDebugPhysicsRenderEnabled(not TheSim:GetDebugPhysicsRenderEnabled())
-			else
-				TheSim:SetDebugRenderEnabled(not TheSim:GetDebugRenderEnabled())
-			end
-		end
-	end
-end
-
 function FrontEnd:OnKey(key, down)
 	--print("FrontEnd:OnKey()", key, down)
 	local screen = self:GetActiveScreen()
@@ -268,6 +234,21 @@ function FrontEnd:OnTextInput(text)
 	local screen = self:GetActiveScreen()
     if screen then
 		screen.inst:PushEvent("textinput", text)
+	end
+end
+
+function FrontEnd:OnKeyBackspace()
+	--print("FrontEnd:OnKeyBackspace()")
+	if TheInput:IsDebugToggleEnabled() then
+		if TheInput:IsKeyDown(KEY_SHIFT) then
+			TheSim:ToggleDebugCamera()
+		else
+			if TheInput:IsKeyDown(KEY_CTRL) then
+				TheSim:SetDebugPhysicsRenderEnabled(not TheSim:GetDebugPhysicsRenderEnabled())
+			else
+				TheSim:SetDebugRenderEnabled(not TheSim:GetDebugRenderEnabled())
+			end
+		end
 	end
 end
 

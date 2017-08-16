@@ -58,9 +58,9 @@ function Stackable:Get(num)
         return instance
 	end
 	
-	return self.inst
-	
+	return self.inst	
 end
+
 
 function Stackable:IsFull()
     return self.stacksize >= self.maxsize
@@ -68,16 +68,15 @@ end
 
 function Stackable:Put(item, source_pos)
 	assert(item ~= self, "cant stack on self" )
-	
+	local ret
     if item.prefab == self.inst.prefab then
         
         local num_to_add = item.components.stackable.stacksize
         local newtotal = self.stacksize + num_to_add
         
         local oldsize = self.stacksize
-        self.stacksize = math.min(self.maxsize, newtotal)
-        self.inst:PushEvent("stacksizechange", {stacksize = self.stacksize, oldstacksize=oldsize, src_pos = source_pos})
-        local numberadded = self.stacksize - oldsize       
+        local newsize = math.min(self.maxsize, newtotal)        
+        local numberadded = newsize - oldsize
         if self.maxsize >= newtotal then
             if self.inst.components.perishable then
                 self.inst.components.perishable:Dilute(numberadded, item.components.perishable.perishremainingtime)
@@ -89,8 +88,19 @@ function Stackable:Put(item, source_pos)
             end
             item.components.stackable.stacksize = newtotal - self.maxsize
             item:PushEvent("stacksizechange", {stacksize = item.components.stackable.stacksize, oldstacksize=num_to_add, src_pos = source_pos })
-            return item
-        end        
+            ret = item
+        end
+
+        self.stacksize = newsize
+        self.inst:PushEvent("stacksizechange", {stacksize = self.stacksize, oldstacksize=oldsize, src_pos = source_pos})
+    end
+    return ret
+end
+
+function Stackable:CollectUseActions(doer, target, actions)
+    if target and target.components.inventoryitem and not target.components.inventoryitem:IsHeld() and target.components.stackable
+    and not target.components.stackable:IsFull() and target.prefab == self.inst.prefab then
+        table.insert(actions, ACTIONS.COMBINESTACK)
     end
 end
 

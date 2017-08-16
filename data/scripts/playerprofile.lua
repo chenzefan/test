@@ -10,7 +10,9 @@ PlayerProfile = Class(function(self)
         unlocked_worldgen = {},
         unlocked_characters = {},        
         render_quality = RENDER_QUALITY.DEFAULT,
-        characterinthrone = "waxwell"
+        characterinthrone = "waxwell",
+        controls = {},
+        starts = 0,
     }
     
     self.dirty = true
@@ -24,37 +26,15 @@ function PlayerProfile:Reset()
 	self.persistdata.unlocked_worldgen = {}
 	self.persistdata.unlocked_characters = {}
 	self.persistdata.characterinthrone = "waxwell"
+    --self.persistdata.starts = 0 -- save starts?
 	self.dirty = true
 	self:Save()
 end
 
 function PlayerProfile:UnlockEverything()
-	
     self.persistdata.xp = 0
-	self.persistdata.unlocked_worldgen = { 
-			monsters = {spiders=true, tentacles=true, tallbirds=true,  hounds=true, liefs=true },
-			animals = {pigs=true, rabbits=true, beefalo=true, frogs=true, bees=true, perd=true },
-			resources = {grass=true, rock=true, sapling=true, reeds=true, trees=true},
-			unprepared = {carrot=true, berrybush=true},
-			misc = {day=true, season=true, season_start=true, world_size=true, world_complexity=true},
-			preset = {
-					["A Gentle Start"]=true, 
-					["Danger, Wilson Robinson!"]=true, 
-					["Swine and Spiders"]=true, 
-					["My Kingdom for a Log"]=true, 
-					["Battle of the Bulging Belly"]=true, 
-					["End Game"]=true, 
-				},
-		}
-		
-	require("map/tasks")
-	self.persistdata.unlocked_worldgen.tasks = {}
-	for i, task in pairs(tasks.sampletasks) do
-		self.persistdata.unlocked_worldgen.tasks[task.id] = true
-	end
-
 	self.persistdata.unlocked_characters = {}
-	local characters = {'willow', 'wendy', 'wolfgang', 'wilton', 'wx78', 'wickerbottom', 'wes', 'waxwell'}
+	local characters = {'willow', 'wendy', 'wolfgang', 'wilton', 'wx78', 'wickerbottom', 'wes', 'waxwell', 'woodie'}
 	for k,v in pairs(characters) do
 		self:UnlockCharacter(v)
 	end
@@ -247,6 +227,15 @@ function PlayerProfile:Set(str, callback)
 			TheFrontEnd:GetGraphicsOptions():SetBloomEnabled( bloom_enabled )
 			TheFrontEnd:GetGraphicsOptions():SetDistortionEnabled( distortion_enabled )
 		end
+		
+		-- old save data will not have the controls section so create it
+		if nil == self.persistdata.controls then
+		    self.persistdata.controls = {}
+		end
+		
+	    for idx,entry in pairs(self.persistdata.controls) do
+	        TheInputProxy:LoadControls(entry.guid, entry.data)
+	    end
 
 		self.dirty = false
 		if callback then
@@ -257,4 +246,33 @@ end
 
 function PlayerProfile:SetDirty(dirty)
 	self.dirty = dirty
+end
+
+function PlayerProfile:GetControls(guid)  
+    local controls = nil
+    for idx, entry in pairs(self.persistdata.controls) do
+        if entry.guid == guid then
+            controls = entry.data
+        end
+    end  
+    return controls
+end
+
+function PlayerProfile:SetControls(guid, data)  
+	
+	-- check if this device is already in the list and update if found
+	local found = false
+    for idx, entry in pairs(self.persistdata.controls) do
+        if entry.guid == guid then
+            entry.data = data
+            found = true
+        end
+    end  
+    
+    -- not an existing device so add it
+    if not found then
+        table.insert(self.persistdata.controls, {["guid"]=guid, ["data"]=data,})
+    end
+
+    self.dirty = true
 end

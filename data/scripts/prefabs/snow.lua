@@ -1,5 +1,5 @@
-local texture = "data/fx/snow.tex"
-local shader = "data/shaders/particle.ksh"
+local texture = "fx/snow.tex"
+local shader = "shaders/particle.ksh"
 local colour_envelope_name = "snowcolourenvelope"
 local scale_envelope_name = "snowscaleenvelope"
 

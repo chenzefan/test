@@ -17,7 +17,7 @@ DeathScreen = Class(Screen, function(self, days_survived, start_xp, escaped)
 
 
 
-    self.bg = self.root:AddChild(Image("data/images/death_BG.tex"))
+    self.bg = self.root:AddChild(Image("images/hud.xml", "death_BG.tex"))
     self.progbar = self.root:AddChild(UIAnim())
     
     self.progbar:GetAnimState():SetBank("progressbar")
@@ -61,7 +61,7 @@ DeathScreen = Class(Screen, function(self, days_survived, start_xp, escaped)
     self.menu:SetPosition(0, -195, 0)
 
 
-    self.portrait = self.root:AddChild(Image("data/images/saveslot_portraits/wilson.tex"))
+    self.portrait = self.root:AddChild(Image("images/saveslot_portraits.xml", "wilson.tex"))
     self.portrait:SetPosition(Vector3(250,-145, 0))
     self.portrait:SetScale(1.5,1.5,1.5)
     self.portrait:SetTint(0,0,0,1)
@@ -99,43 +99,39 @@ DeathScreen = Class(Screen, function(self, days_survived, start_xp, escaped)
         button:SetFont(BUTTONFONT)
         button:SetTextSize(40)
     end
-
-
-
     
     self:ShowResults(days_survived, start_xp)
 end)
 
+local function DoReload()
+    StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = SaveGameIndex:GetCurrentSaveSlot()})
+end
+
 function DeathScreen:OnRetry()
+
+    -- Record the start of a new game
+    local starts = Profile:GetValue("starts") or 0
+    Profile:SetValue("starts", starts+1)
+    Profile:Save()
+
     self.menu:Disable()
-    TheFrontEnd:Fade(false, 2, function()
-        local params = json.encode{reset_action="loadslot", save_slot = SaveGameIndex:GetCurrentSaveSlot()}
-        TheSim:SetInstanceParameters(params)
-        TheSim:Reset()
-    end)
+    TheFrontEnd:Fade(false, 2, DoReload)
 end
 
 function DeathScreen:OnContinue()
     self.menu:Disable()
-    TheFrontEnd:Fade(false, 2, function()
-        local params = json.encode{reset_action="loadslot", save_slot = SaveGameIndex:GetCurrentSaveSlot()}
-        TheSim:SetInstanceParameters(params)
-        TheSim:Reset()
-    end)
+    TheFrontEnd:Fade(false, 2, DoReload)
 end
 
 function DeathScreen:OnMenu(escaped)
 	
     self.menu:Disable()
     TheFrontEnd:Fade(false, 2, function()
-
         if escaped then
-            TheSim:SetInstanceParameters()
-            TheSim:Reset()
+            StartNextInstance()
         else
             SaveGameIndex:DeleteSlot(SaveGameIndex:GetCurrentSaveSlot(), function() 
-                TheSim:SetInstanceParameters()
-                TheSim:Reset()
+                StartNextInstance()
             end)
         end
     end)
@@ -159,8 +155,8 @@ function DeathScreen:SetStatus(xp, ignore_image)
         if reward then
             self.portrait:Show()
 
-			--print("data/images/saveslot_portraits/"..reward..".tex")
-            self.portrait:SetTexture("data/images/saveslot_portraits/"..reward..".tex")
+			--print("images/saveslot_portraits/"..reward..".tex")
+            self.portrait:SetTexture("images/saveslot_portraits.xml", reward..".tex")
         else
             self.portrait:Hide()
         end

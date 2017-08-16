@@ -9,6 +9,9 @@ function Inspectable:SetDescription(desc)
     self.description = desc
 end
 
+function Inspectable:RecordViews(state)
+    self.recordview = state or true
+end
 
 function Inspectable:CollectSceneActions(doer, actions)
     if not self.onlyforcedinspect then
@@ -42,6 +45,10 @@ function Inspectable:GetStatus(viewer)
         elseif self.inst.components.occupiable and self.inst.components.occupiable:IsOccupied() then
             status = "OCCUPIED"
         end
+    end
+    if self.recordview then
+        dprint("++++++++++++++++++STATUSVIEW")
+        ProfileStatsSet(self.inst.prefab .. "_examined", true)
     end
     return status
 end

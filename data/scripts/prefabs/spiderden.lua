@@ -9,8 +9,8 @@ local prefabs =
 
 local assets =
 {
-    Asset("ANIM", "data/anim/spider_cocoon.zip"),
-	Asset("SOUND", "data/sound/spider.fsb"),
+    Asset("ANIM", "anim/spider_cocoon.zip"),
+	Asset("SOUND", "sound/spider.fsb"),
 }
 
 

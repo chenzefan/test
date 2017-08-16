@@ -1,8 +1,10 @@
 require "widget"
 
-local Tab = Class(Widget, function(self, tabgroup, name, icon, imnorm, imselected, imhighlight, imoverlay, selectfn, deselectfn)
+local Tab = Class(Widget, function(self, tabgroup, name, atlas, icon_atlas, icon, imnorm, imselected, imhighlight, imoverlay, selectfn, deselectfn)
     Widget._ctor(self, "Tab")
     self.group = tabgroup
+    self.atlas = atlas
+    self.icon_atlas = icon_atlas
     self.selectfn = selectfn
     self.deselectfn = deselectfn
     self.imnormal = imnorm
@@ -14,17 +16,15 @@ local Tab = Class(Widget, function(self, tabgroup, name, icon, imnorm, imselecte
     self:SetTooltip(name)
 	self:SetScale(self.basescale,self.basescale,self.basescale)    
     
-    self.bg = self:AddChild(Image(imnorm))
+    self.bg = self:AddChild(Image(atlas, imnorm))
     local w, h = self.bg:GetSize()    
     
     self.bg:SetPosition(w/2,0,0)
-    self.icon = self:AddChild(Image(icon))
+    self.icon = self:AddChild(Image(icon_atlas, icon))
     self.icon:SetClickable(false)
-    
     self.icon:SetPosition(w/2,0,0)
     
-    
-    self.overlay = self:AddChild(Image(imoverlay))
+    self.overlay = self:AddChild(Image(atlas, imoverlay))
     self.overlay:SetPosition(w/2,0,0)
     self.overlay:Hide()
     self.overlay:SetClickable(false)
@@ -78,7 +78,7 @@ function Tab:Highlight(num)
         
         local applychange = function()
             if change_texture then
-                self.bg:SetTexture(self.imhighlight)
+                self.bg:SetTexture(self.atlas, self.imhighlight)
             end
                 
             if change_scale then
@@ -99,9 +99,8 @@ end
 
 
 function Tab:UnHighlight()
-
     if not self.selected then
-        self.bg:SetTexture(self.imnormal)
+        self.bg:SetTexture(self.atlas, self.imnormal)
     end
     
     if self.highlighted then
@@ -120,7 +119,7 @@ function Tab:Deselect()
         if self.deselectfn then
             self.deselectfn()
         end
-        self.bg:SetTexture(self.highlighted and self.imhighlight or self.imnormal)
+        self.bg:SetTexture(self.atlas, self.highlighted and self.imhighlight or self.imnormal)
         self.selected = false
     end
     
@@ -136,7 +135,7 @@ function Tab:Select()
             self.selectfn()
         end
         
-        self.bg:SetTexture(self.imselected)
+        self.bg:SetTexture(self.atlas, self.imselected)
         self.selected = true
         
     end
@@ -173,9 +172,9 @@ function TabGroup:ShowTab(tab)
 	end
 end
 
-function TabGroup:AddTab(name, icon, imnorm, imselected, imhighlight, imoverlay, highlightpos, onselect, ondeselect)
+function TabGroup:AddTab(name, atlas, icon_atlas, icon, imnorm, imselected, imhighlight, imoverlay, highlightpos, onselect, ondeselect)
 
-    local tab = self:AddChild(Tab(self, name, icon, imnorm, imselected, imhighlight, imoverlay, highlightpos, onselect, ondeselect))
+    local tab = self:AddChild(Tab(self, name, atlas, icon_atlas, icon, imnorm, imselected, imhighlight, imoverlay, highlightpos, onselect, ondeselect))
     table.insert(self.tabs, tab)
     
     local numtabs = #self.tabs

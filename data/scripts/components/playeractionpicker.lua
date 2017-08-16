@@ -118,15 +118,20 @@ function PlayerActionPicker:GetInventoryActions(useitem, right)
 end
 
 function PlayerActionPicker:ShouldForceInspect()
-    return TheInput:IsKeyDown(KEY_SHIFT)
+    return TheInput:IsControlPressed(CONTROL_INSPECT)
 end
 
 function PlayerActionPicker:ShouldForceAttack()
-    return TheInput:IsKeyDown(KEY_CTRL)
+    return TheInput:IsControlPressed(CONTROL_ATTACK)
 end
 
 function PlayerActionPicker:GetClickActions( target_ent, position )
+
+    if self.leftclickoverride then
+        return self.leftclickoverride(self.inst, target_ent, position)
+    end
     
+
     local actions = nil
     local useitem = self.inst.components.inventory:GetActiveItem()
     local equipitem = self.inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
@@ -201,6 +206,11 @@ function PlayerActionPicker:GetClickActions( target_ent, position )
 end
 
 function PlayerActionPicker:GetRightClickActions( target_ent, position )
+    
+    if self.rightclickoverride then
+        return self.rightclickoverride(self.inst, target_ent, position)
+    end
+
     local actions = nil
     local useitem = self.inst.components.inventory:GetActiveItem()
     local equipitem = self.inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
@@ -291,7 +301,7 @@ function PlayerActionPicker:DoGetMouseActions( )
             end
         end
         
-        local position = TheInput:GetMouseWorldPos()
+        local position = TheInput:GetWorldPosition()
         if (target and target:IsValid() and target.Transform and (target:HasTag("player") or TheSim:GetLightAtPoint(target.Transform:GetWorldPosition()) > TUNING.DARK_CUTOFF)) or TheSim:GetLightAtPoint(position.x,position.y,position.z) > TUNING.DARK_CUTOFF then
             local acts = self:GetClickActions(target, position)
             if acts and #acts > 0 then
@@ -299,16 +309,7 @@ function PlayerActionPicker:DoGetMouseActions( )
                 if self.inst.components.playercontroller.enabled then
                     highlightdude = acts[1].target
                 end
-                
                 action = acts[1]
-                --[[--Here Be Dragons: hack to force secondary action to be drop if needed, clean up later
-                for k, v in pairs(acts) do
-                    if (v.action == ACTIONS.DROP) and v ~= action then
-                        second_action = v
-                        second_action.options.wholestack = not TheInput:IsKeyDown(KEY_CTRL)
-                    end
-                end
-                --]]
             end
         end
 

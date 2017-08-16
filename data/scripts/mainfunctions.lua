@@ -19,7 +19,7 @@ function RegisterPrefabs(...)
 			assert(resolvedpath, "Could not find "..asset.file.." required by "..prefab.name)
 			asset.file = resolvedpath
 		end
-        prefab.modfns = ModManager:GetPrefabPostInitFns(prefab.name)
+        prefab.modfns = ModManager:GetPostInitFns("PrefabPostInit", prefab.name)
         Prefabs[prefab.name] = prefab
 
 		TheSim:RegisterPrefab(prefab.name, prefab.assets, prefab.deps)
@@ -59,9 +59,6 @@ function SpawnPrefabFromSim(name)
 
     if prefab then
         local inst = prefab.fn(TheSim)
-        for k,mod in pairs(prefab.modfns) do
-            mod(inst)
-        end
 
         if inst ~= nil then
 
@@ -70,6 +67,10 @@ function SpawnPrefabFromSim(name)
             end
 
             inst:SetPrefabName(inst.prefab or name)
+
+			for k,mod in pairs(prefab.modfns) do
+				mod(inst)
+			end
             
             return inst.entity:GetGUID()
         else
@@ -138,7 +139,6 @@ function CreateEntity()
     local scr = EntityScript(ent)
     Ents[guid] = scr
     NumEnts = NumEnts + 1
-    AwakeEnts[guid] = Ents[guid]
     return scr
 end
 
@@ -146,6 +146,9 @@ end
 local debug_entity = nil
 
 function OnRemoveEntity(entityguid)
+    
+    PhysicsCollisionCallbacks[entityguid] = nil
+
     local ent = Ents[entityguid]
     if ent then
     	
@@ -163,7 +166,6 @@ function OnRemoveEntity(entityguid)
             UpdatingEnts[entityguid] = nil
             num_updating_ents = num_updating_ents - 1
         end
-        AwakeEnts[entityguid] = nil
     end
 end
 
@@ -199,7 +201,7 @@ local Scripts = {}
 
 function LoadScript(filename)
     if not Scripts[filename] then
-        local scriptfn = loadfile("data/scripts/" .. filename)
+        local scriptfn = loadfile("scripts/" .. filename)
     	assert(type(scriptfn) == "function", scriptfn)
         Scripts[filename] = scriptfn()
     end
@@ -261,7 +263,6 @@ function SetDebugEntity(inst)
 end
 
 function OnEntitySleep(guid)
-    AwakeEnts[guid] = nil
     local inst = Ents[guid]
     if inst then
         
@@ -281,8 +282,8 @@ function OnEntitySleep(guid)
 		end
 
         for k,v in pairs(inst.components) do
+            
             if v.OnEntitySleep then
-				
                 v:OnEntitySleep()
             end
         end
@@ -291,7 +292,6 @@ function OnEntitySleep(guid)
 end
 
 function OnEntityWake(guid)
-    AwakeEnts[guid] = Ents[guid]
     local inst = Ents[guid]
     if inst then
     
@@ -338,7 +338,9 @@ function IsHUDPaused()
     return TheSim:GetTimeScale() <= 0
 end
 
-function SetHUDPause(val)
+global("PlayerPauseCheck")  -- function not defined when this file included
+
+function SetHUDPause(val,reason)
     if val ~= IsHUDPaused then
 		if val then
 			Print(VERBOSITY.INFO,"pause")
@@ -350,6 +352,9 @@ function SetHUDPause(val)
 			TheMixer:PopMix("pause")
 			--ShowHUD(true)
 		end
+        if PlayerPauseCheck then   -- probably don't need this check
+            PlayerPauseCheck(val,reason)  -- must be done after SetTimeScale
+        end
 	end
 end
 
@@ -458,6 +463,7 @@ function SaveGame(savename, callback)
     end
 
 	save.mods = ModManager:GetModRecords()
+    save.super = WasSuUsed()
     
     assert(save.map, "Map missing from savedata on save")
     assert(save.map.prefab, "Map prefab missing from savedata on save")
@@ -562,21 +568,33 @@ end
 
 exiting_game = false
 
+function StartNextInstance(in_params, send_stats)
+	local params = in_params or {}
+	params.last_reset_action = Settings.reset_action
+	local params = json.encode( params )
+	TheSim:SetInstanceParameters(params)
+	
+	if send_stats then
+		SendAccumulatedProfileStats()
+	end
+	
+	ModManager:UnloadPrefabs()
+	
+	TheSim:Reset()
+end
+
 function RequestShutdown()
 	if exiting_game then
 		return
 	end
 	exiting_game = true
 
-	
 	TheFrontEnd:PushScreen(
 		PopupDialogScreen( STRINGS.UI.QUITTINGTITLE, STRINGS.UI.QUITTING,
 		  {  }
 		  )
 	)
 	
-	UnloadFonts()
-
 	-----------------------------------------------------------------------------	
 	-- Anything below here may not run if we don't have stats that need updating
 	-----------------------------------------------------------------------------
@@ -593,17 +611,27 @@ end
 function Shutdown()
 	Print(VERBOSITY.DEBUG, 'Ending the sim now!')
 	SubmitQuitStats()
+	
+	UnloadFonts()
+	
+	for i,file in ipairs(PREFABFILES) do -- required from prefablist.lua
+		LoadPrefabFile("prefabs/"..file)
+	end	
+	
+	TheSim:UnloadPrefabs({"global"})
+	ModManager:UnloadPrefabs()
+		
 	TheSim:Quit()
 end
 
 function DisplayError(error)
 
-    SetHUDPause(true)
+    SetHUDPause(true,"DisplayError")
     if TheFrontEnd:IsDisplayingError() then
         return nil
     end
 
-    local modnames = ModManager:GetModNames()
+    local modnames = ModManager:GetEnabledModNames()
 
     if #modnames > 0 then
         local modnamesstr = ""
@@ -617,7 +645,7 @@ function DisplayError(error)
                 error,
                 {
                     {text=STRINGS.UI.MAINSCREEN.SCRIPTERRORQUIT, cb = function() TheSim:ForceAbort() end},
-                    {text=STRINGS.UI.MAINSCREEN.MODFORUMS, nopop=true, cb = function() VisitURL("http://forums.kleientertainment.com/forumdisplay.php?54-Don-t-Starve-Beta-Mods-amp-Tools") end }
+                    {text=STRINGS.UI.MAINSCREEN.MODFORUMS, nopop=true, cb = function() VisitURL("http://forums.kleientertainment.com/forumdisplay.php?63") end }
                 },
                 ANCHOR_LEFT,
                 STRINGS.UI.MAINSCREEN.SCRIPTERRORMODWARNING..modnamesstr,

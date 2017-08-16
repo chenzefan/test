@@ -9,24 +9,27 @@ require "textedit"
 
 require "screens/popupdialog"
 
-local VALID_CHARS = [[ abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,:[]\@!#$%&()'*+-/=?^_{|}~"]]
+local VALID_CHARS = [[ abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,:;[]\@!#$%&()'*+-/=?^_{|}~"]]
 local CONSOLE_HISTORY = {}
 
 ConsoleScreen = Class(Screen, function(self)
 	Screen._ctor(self, "ConsoleScreen")
 	self:DoInit()
+	self.first = true
 end)
 
-function ConsoleScreen:OnKeyDown( key )
+function ConsoleScreen:OnKeyUp( key )
+	if self.first then
+		self.first = false
+		return
+	end
 	if key == KEY_ESCAPE or key == KEY_TILDE or (key == KEY_L and TheInput:IsKeyDown(KEY_CTRL) ) then
 		self:Close()
 	elseif key == KEY_TAB then
 		self:AutoComplete()
 	elseif key == KEY_ENTER then
 		self:Run()
-		--if TheInput:IsKeyDown(KEY_CTRL) then
-			self:Close()
-		--end
+		self:Close()
 	elseif key == KEY_UP then
 		local len = #CONSOLE_HISTORY
 		if len > 0 then
@@ -54,12 +57,14 @@ function ConsoleScreen:OnKeyDown( key )
 		self.autocompleteObjName = ""
 		self.autocompleteObj = nil
 		self.autocompleteOffset = -1
-		Screen.OnKeyDown(self, key)
+		Screen.OnKeyUp(self, key)
 	end
 end
 
 function ConsoleScreen:Run()
 	local fnstr = self.console_edit:GetString()
+
+    SuUsedAdd("console_used")
 	
 	if fnstr ~= "" then
 		table.insert( CONSOLE_HISTORY, fnstr )
@@ -158,7 +163,7 @@ function ConsoleScreen:Close()
 end
 
 function ConsoleScreen:DoInit()
-	SetHUDPause(true)
+	SetHUDPause(true,"console")
 	TheInput:EnableDebugToggle(false)
 
 	local label_width = 200
@@ -188,7 +193,7 @@ function ConsoleScreen:DoInit()
 	self.root:SetPosition(0,120,0)
 	
     self.edit_bg = self.root:AddChild( Image() )
-	self.edit_bg:SetTexture( "data/images/textbox_long.tex" )
+	self.edit_bg:SetTexture( "images/ui.xml", "textbox_long.tex" )
 	self.edit_bg:SetPosition( 0,0,0)
 	self.edit_bg:ScaleToSize( edit_width + edit_bg_padding, label_height )
 
@@ -197,7 +202,7 @@ function ConsoleScreen:DoInit()
 	self.console_edit:SetRegionSize( edit_width, label_height )
 	self.console_edit:SetHAlign(ANCHOR_LEFT)
 	self.console_edit:SetLeftMouseDown( function() self:SetFocus( self.console_edit ) end )
-	self.console_edit:SetFocusedImage( self.edit_bg, "data/images/textbox_long_over.tex", "data/images/textbox_long.tex" )
+	self.console_edit:SetFocusedImage( self.edit_bg, "images/ui.xml", "textbox_long.tex" )
 	self.console_edit:SetCharacterFilter( VALID_CHARS )
 
 	self:PushFocusWidget(self.console_edit)

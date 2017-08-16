@@ -31,7 +31,8 @@ STRINGS=
 	{
 		wilson = "\"I will conquer it all with the power of my MIND!\"",
 		willow = "\"Things are so much prettier when they burn.\"",
-		wendy ="\"Abigail? Come back! I'm not done playing with you.\"",
+		woodie = "\"That's nice tree, eh?\"",
+        wendy ="\"Abigail? Come back! I'm not done playing with you.\"",
 		wolfgang = "\"I am mighty! No one is mightier!\"",
 		wx78 = "\"EMPATHY MODULE NOT RESPONDING\"",
 		wickerbottom = "\"Shhhh! No talking!\"",
@@ -44,7 +45,8 @@ STRINGS=
 		wilson = "The Gentleman Scientist",
 		willow = "The Firestarter",
 		wendy = "The Bereaved",
-		wolfgang = "The Strongman",
+		woodie = "The Lumberjack",
+        wolfgang = "The Strongman",
 		wx78 = "The Soulless Automaton",
 		wickerbottom = "The Librarian",
 		wes = "The Silent",
@@ -54,20 +56,24 @@ STRINGS=
 	CHARACTER_DESCRIPTIONS =
 	{
 		wilson = "*Grows a magnificent beard",
-		willow = "*Immune to fire damage\n*Starts fires in the dark",
-		wendy = "*Has visitors at night",
-		wolfgang = "*Higher health, bigger stomach\n*Hits harder",
-		wx78 = "*Can eat spoiling food with no penalty",
-		wickerbottom = "*Gets a bonus tech level",
-		wes = "*Can't talk\n*Has trouble staying alive",
+		willow = "*Immune to heat damage\n*Has a sweet lighter\n*Lights fires when nervous",
+		wendy = "*Haunted by her twin sister\n*Comfortable with darkness\n*Doesn't hit very hard",
+		wolfgang = "*Gets stronger with a full belly\n*Is afraid of the dark and monsters",
+		wx78 = "*Not a picky eater\n*Charged by lightning, damaged by rain\n*Can upgrade with gears",
+		wickerbottom = "*Knows many things\n*Self-publishes books\n*Can't sleep, hates spoilage",
+		wes = "*Can't talk\n*Has trouble staying alive\n*Practices balloonomancy",
 		waxwell = "*Is dapper\n*Is frail\n*Brings his own sword",
+        woodie = "*Has a lovely axe\n*Has a terrible secret",
 	},
 
 
     --ACTION MOUSEOVER TEXT
     ACTIONS=
     {
-		SEW = "Sew",
+        GNAW = "Gnaw",
+        READ = "Read",
+	    MAKEBALLOON = "Inflate",
+    	SEW = "Sew",
         GIVE = "Give",
         DROP = 
         {
@@ -90,7 +96,11 @@ STRINGS=
         LOOKAT = "Examine",
         TALKTO = "Talk to",
         MINE = "Mine",
-        ATTACK = "Attack",
+        ATTACK = 
+        {
+            GENERIC = "Attack",
+            SMASHABLE = "Smash",
+        },
         WALKTO = "Walk To",
         CHECKTRAP = "Check",
         BUILD = "Build",
@@ -156,6 +166,9 @@ STRINGS=
         TURNOFF = "Turn Off",
         USEITEM = "Use",
         TAKEITEM = "Take Item",
+        CASTSPELL = "Cast Spell", --"Cast Spell on"
+        BLINK = "Telepoof",
+        COMBINESTACK = "Combine Stack",
     },
 
 	LMB = "\255",--"ÿ",
@@ -166,8 +179,25 @@ STRINGS=
 
     NAMES =
     {
+
+
 		DEFAULT = "INVENTORY ITEM",
-		
+
+        LUCY = "Lucy the Axe",
+        BOOK_BIRDS = "Birds of the World",
+        BOOK_TENTACLES = "On Tentacles",
+        BOOK_GARDENING = "Applied Horticulture",
+        BOOK_SLEEP = "Sleepytime Stories",
+        BOOK_BRIMSTONE = "The End is Nigh!",
+
+        ANCIENT_ALTAR ="Ancient Altar",
+        CHESSJUNK1 = "Broken clockworks",
+        CHESSJUNK2 = "Broken clockworks",
+        CHESSJUNK3 = "Broken clockworks",
+        ABIGAIL_FLOWER = "Abigail's Flower",
+	    BALLOONS_EMPTY = "Pile o' Balloons",
+        BALLOON = "Balloon",	
+        LIGHTER = "Willow's Lighter",
         COMPASS = "Compass",
         MUSHTREE_TALL = "Mushtree",
         MUSHTREE_MEDIUM = "Red Mushtree",
@@ -215,6 +245,9 @@ STRINGS=
 		PIGGYBACK = "Piggyback",
 		REDGEM ="Red Gem",
         PURPLEGEM = "Purple Gem",
+        GREENGEM = "Green Gem",
+        ORANGEGEM = "Orange Gem",
+        YELLOWGEM = "Yellow Gem",
 		HOUNDSTOOTH = "Hound's Tooth",
 		SWEATERVEST = "Dapper Vest",
 		CARROT_COOKED = "Roasted Carrot",
@@ -292,9 +325,13 @@ STRINGS=
 		TRAP_TEETH = "Tooth Trap",
 		TRAP_TEETH_MAXWELL = "Maxwell's Tooth Trap",
 		KRAMPUS = "Krampus",
+		ROCK_LIGHT = "Lava Pit",
 		ROCKS = "Rocks",
         FLINT = "Flint",
-		AMULET = "Amulet",
+		AMULET = "Life Giving Amulet",
+        BLUEAMULET = "Chilled Amulet",
+        PURPLEAMULET = "Nightmare Amulet",
+        ORANGEAMULET = "The Lazy Forager", 
 		PICKAXE = "Pickaxe",
 		GOLDENPICKAXE = "Opulent Pickaxe",
 		SHOVEL = "Shovel",
@@ -385,6 +422,7 @@ STRINGS=
         RESEARCHLAB = "Science Machine",
         RESEARCHLAB2 = "Alchemy Engine",
         RESEARCHLAB3 = "Shadow Manipulator",
+        RESEARCHLAB4 = "Prestihatitator",
         PLANT_NORMAL = "Crop",
         RAZOR = "Razor",
         BEARDHAIR = "Beard Hair",
@@ -418,8 +456,9 @@ STRINGS=
         HONEY = "Honey",
         HONEYCOMB = "Honeycomb",
         BEEHIVE = "Beehive",
-        BEEBOX = "Bee box",
+        BEEBOX = "Bee Box",
         BEE = "Bee",
+        DEVTOOL = "Dev Tool",
         KILLERBEE = "Killer Bee",
         WASPHIVE = "Killer Bee Hive",
 		MOSQUITO = "Mosquito",
@@ -443,9 +482,9 @@ STRINGS=
         TALLBIRDEGG = "Tallbird Egg",
         TALLBIRDEGG_CRACKED = "Hatching Tallbird Egg",
         TALLBIRDEGG_COOKED = "Fried Tallbird Egg",
-        FEATHER_CROW = "Crow Feather",
-        FEATHER_ROBIN = "Redbird Feather",
-        FEATHER_ROBIN_WINTER = "Snowbird Feather",
+        FEATHER_CROW = "Jet Feather",
+        FEATHER_ROBIN = "Crimson Feather",
+        FEATHER_ROBIN_WINTER = "Azure Feather",
         BIRDTRAP = "Bird Trap",
         BLOWDART_SLEEP = "Sleep Dart",
         BLOWDART_FIRE = "Fire Dart",
@@ -523,10 +562,12 @@ STRINGS=
 		
 		WALL_WOOD_ITEM = "Wood Wall",
 		WALL_STONE_ITEM = "Stone Wall",
+		WALL_RUINS_ITEM = "Stone Wall",
 		WALL_HAY_ITEM = "Hay Wall",
 
 		WALL_WOOD = "Wood Wall",
 		WALL_STONE = "Stone Wall",
+		WALL_RUINS = "Stone Wall",
 		WALL_HAY = "Hay Wall",
         ANIMAL_TRACK = "Animal Track",
         DIRTPILE = "Suspicious Dirt Pile",
@@ -548,10 +589,16 @@ STRINGS=
         
         DEERCLOPS = "Deerclops",
         BLUEGEM = "Blue Gem",
+
         ICESTAFF = "Ice Staff",
         FIRESTAFF = "Fire Staff",
+        TELESTAFF = "Telelocator Staff",
+        TELEBASE = "Telelocator Focus",
+        GEMSOCKET = "Gem Stand",
+        YELLOWSTAFF = "Star Caller's Staff",
+
         ICEHOUND = "Blue Hound",
-        PENGUIN = "Penguin",
+        PENGUIN = "Pengull",
         DEERCLOPS_EYEBALL = "Deerclops Eyeball",
         GEARS = "Gears",
         NITRE = "Nitre",
@@ -571,6 +618,7 @@ STRINGS=
         MARBLE = "Marble",
         KNIGHT = "Clockwork Knight",
         BISHOP = "Clockwork Bishop",
+        ROOK = "Clockwork Castle",
         SUNKBOAT = "Sunken Boat",
         MAXWELLPHONOGRAPH = "Maxwell's Phonograph",
         MAXWELLTHRONE = "Nightmare Throne",
@@ -626,6 +674,11 @@ STRINGS=
         CAVE_BANANA = "Cave Banana",
         CAVE_BANANA_COOKED = "Cooked Banana",
         ROCKY = "Rock Lobster",
+        MONKEY = "Splumonkey",
+        MONKEYBARREL = "Barrel",
+        SLURPER = "Slurper",
+        RELIC = "Relic",
+        STAFFLIGHT = "Dwarf Star",
 	},
 
     DIRECTIONS=
@@ -642,6 +695,13 @@ STRINGS=
     
     RECIPE_DESC=
     {
+
+        BOOK_BIRDS = "Covers 1000 species: habits, habitats, and calls.",
+        BOOK_TENTACLES = "Let's learn about our subterranean friends!",
+        BOOK_GARDENING = "On the care and feeding of plants.",
+        BOOK_SLEEP = "Soothing tales to send you off to dreamland.",
+        BOOK_BRIMSTONE = "The world will end in fire and tribulation! Ia! Ia!",
+
         COMPASS = "Points the way north",
 		GUNPOWDER = "A handful of gunpowder",
         TORCH = "Portable light source",
@@ -685,6 +745,7 @@ STRINGS=
         UMBRELLA = "Mitigate the effects of atmospheric moisture.",
         RESEARCHLAB2 = "Unlock even more crafting recipes",
         RESEARCHLAB3 = "Is this even science anymore?",
+        RESEARCHLAB4 = "Amplify the inherent magical power of a hat.",
         RAZOR = "Shave off your dirty beatnick beard.",
         PAPYRUS = "For writing things",
         PANFLUTE = "Music to soothe savage beasts",
@@ -705,6 +766,9 @@ STRINGS=
         BLOWDART_PIPE = "Spit teeth at your enemies.",
         BEEMINE = "Weaponized bees. What could go wrong?",
         AMULET = "Protects you from death.",
+        PURPLEAMULET = "Induce insanity.",
+        BLUEAMULET = "What a cool amulet.",
+        ORANGEAMULET = "For those who don't like to pick items up.",
         SWEATERVEST = "Rugged, yet stylish.",
         TRUNKVEST_SUMMER = "Warm, but light enough for summer.",
 		TRUNKVEST_WINTER = "Warm enough for winter storms.",
@@ -742,7 +806,9 @@ STRINGS=
 		DIVININGROD = "There must be some kind of way out of here...", 
         LANTERN = "Refuelable, bright, portable!",
         BATBAT = "All this science is so... draining.",
-
+        TELESTAFF = "Bend space! Time bending sold separately.",
+        YELLOWSTAFF = "Summon a tiny star.",
+        TELEBASE = "Just add gems.",
     },
 
     MAXWELL_TEST = {"Say pal, you don't look so good.", "You better find something to eat before night comes!"},
@@ -757,8 +823,7 @@ STRINGS=
     	{"Safe and secure area?", "Its just a skip, hop and a jump away from here."},
     	{"Say pal, keep your chin up.", "You will probably find it hard to stay dapper."},
     	{"I left you a little something...","I don't think it will help you though.", "You know what I like about nighttime?", "All the spiders."},
-    	},
-    	
+    	},    	
 
     MAXWELL_SANDBOXINTROS =
     {
@@ -954,6 +1019,8 @@ STRINGS=
         REFINE = "Refine",
         DRESS = "Dress",
         MAGIC = "Magic",
+        BOOKS = "Books",
+        GEMOLOGY = "Gemology",
     },
 }
 
@@ -1204,6 +1271,7 @@ STRINGS.UI =
 		NEEDSCIENCEMACHINE = "Use a science machine to build a prototype!",
 		NEEDALCHEMYENGINE = "Use an alchemy engine to build a prototype!",
         NEEDSHADOWMANIPULATOR = "Use a shadow manipulator to build a prototype!",
+        NEEDPRESTIHATITATOR = "Use a Prestihatitator to build a prototype!",
 		CANTRESEARCH = "Some things are unknowable",
 	},
 	
@@ -1305,12 +1373,16 @@ STRINGS.UI =
 	},
 	EMAILSCREEN=
 	{
-		SIGNUPSUCCESSTITLE="Subscribe Complete",
-		SIGNUPSUCCESS="Thanks for signing up! You should receive a confirmation email in your inbox.",
+        SIGNUPSUBMITTITLE="Sending...",
+        SIGNUPSUBMIT="Please wait a moment while we sign you up.",
+        SIGNUPSUCCESSTITLE="Success!",
+        SIGNUPSUCCESS="Thanks for signing up! You should receive a confirmation email in your inbox.",
+        SIGNUPFAILTITLE="Something Went Wrong",
+        SIGNUPFAIL="Looks like we had some trouble signing you up. Please try again later if you don't receive a confirmation email.",
 		INVALIDEMAILTITLE= "Invalid Email", 
 		INVALIDEMAIL= "We aren't psychic! If you don't enter your email address, we won't be able to tell you about new stuff!",
 		INVALIDDATETITLE= "Invalid Date", 
-		INVALIDDATE= "We need to know your birthdate, otherwise ratings people will get mad at us for emailing you content that might not be appropriate for all ages.",
+		INVALIDDATE= "We need your birthdate or ratings people might get mad at us for emailing you content not appropriate for your age.",
 		OK = "Ok",
 		SUBSCRIBE = "Subscribe",
 		CANCEL = "Cancel",
@@ -1342,15 +1414,21 @@ STRINGS.UI =
 		BUYNOW = "Buy Now",
 		GIFT = "Send Gift",
         MODTITLE = "Mods Installed!",
-        MODDETAIL = "Installed mods:",
+        MODDETAIL = "Installed mods: ",
+		NEWMODDETAIL = "Newly installed mods: ",
+		NEWMODDETAIL2 = "Enable these mods from the main menu.",
         MODDETAIL2 = "Klei is not able to help you should issues arise while using mods. Use with caution!",
+		OLDMODS = "The following mods are out of date and have been disabled: ",
+		FAILEDMODS = "The following mods failed to run last time and have been disabled: ",
+		OLDORFAILEDMODS = "Check the forums for updated versions.",
         MODFAILTITLE = "WARNING!",
         MODFAILDETAIL = "The following mod(s) have caused a failure:",
-        MODFAILDETAIL2 = "You can disable the mod(s) in /mod/modsettings.lua",
+        MODFAILDETAIL2 = "The mod will be disabled, re-enable it from the mods menu.",
         MODQUIT = "No way!",
         MODFORUMS = "Mod Forums",
+		MODS = "Mods",
         SCRIPTERRORQUIT = "Exit Game",
-        SCRIPTERRORMODWARNING = "This error may have occurred due to a mod you have installed!\nYou have the following mods installed:\n",
+        SCRIPTERRORMODWARNING = "This error may have occurred due to a mod you have enabled!\nYou have the following mods enabled:\n",
         TESTING = "This is the testing branch!", 
 		TESTINGDETAIL = "You may encounter bugs or broken features, and you may lose your save game when we update. Please report all problems in the forum.",
 		TESTINGNO = "No thank you!",
@@ -1419,7 +1497,8 @@ STRINGS.UI =
 		EXIT = "Exit",
         LOGOUT = "Log Out",
         CREDITS = "Credits",
-        UPDATENAME = "It's Not a Rock!",
+        UPDATENAME = "Hungry For Your Hunger",
+        CONTROLS = "Controls",
 	},
 	
 	HUD=
@@ -1475,9 +1554,38 @@ STRINGS.UI =
 		QUITYES = "I said quit!",
 		QUITNO = "Never mind...",
 		OPTIONS = "Options",
+		CONTROLS = "Controls",
         SAVEANDQUIT = "Save and Quit",
         QUIT = "Quit",
 		CONTINUE = "Continue",
+	},
+
+	MODSSCREEN = {
+		APPLY = "OK",
+		CANCEL = "Cancel",
+		MOREMODS = "More Mods",
+		VERSION = "version %s",
+		AUTHORBY = "by %s",
+		MODLINK = "Take me to the mod page!",
+		MODLINKGENERIC = "Mod discussion forums",
+		ENABLE = "Enable",
+		DISABLE = "Disable",
+		WORKING_NORMALLY = "Mod is installed.",
+		WILL_ENABLE = "Mod will be enabled.",
+		WILL_DISABLE = "Mod will be disabled.",
+		DISABLED_MANUAL = "This mod has been disabled.",
+		DISABLED_ERROR = "Crashed on last start, automatically disabled.",
+		DISABLED_OLD = "Mod is out-of-date, automatically disabled.",
+		STATUS = {
+			WORKING_NORMALLY = "Enabled",
+			WILL_ENABLE = "To Be Enabled",
+			WILL_DISABLE = "To Be Disabled",
+			DISABLED_MANUAL = "Disabled",
+			DISABLED_ERROR = "Crashed!",
+			DISABLED_OLD = "Out-of-date!",
+		},
+		NO_MODS = "You don't have any mods installed, but you can download some from the Klei forums.",
+		NO_MODS_LINK = "Take me to the mods!",
 	},
 	
 	CUSTOMIZATIONSCREEN =
@@ -1550,6 +1658,261 @@ STRINGS.UI =
 		RESTART = "Restart",		
         CAVE = "Cave level",
 	},
+	CONTROLSSCREEN=
+	{
+	    CONTROLS = {
+	        "Primary",
+	        "Secondary",
+	        "Force Attack",
+	        "Force Inspect",
+	        "Do Action",
+	        "Zoom In",
+	        "Zoom Out",
+	        "Rotate Left",
+	        "Rotate Right",
+	        "Move Up",
+	        "Move Down",
+	        "Move Left",
+	        "Move Right",
+	    },
+	    DEVICE_TITLE = "Controls",
+	    APPLY = "Apply",
+	    RESET = "Reset", 
+	    CLOSE = "Close",	
+	    CANCEL = "Cancel",	     
+	    YES = "Yes",	    
+	    NO = "No",	      
+	    CONTROL_SELECT = " -- Select new input -- ",
+	    CONTROL_NOT_SELECTED = " -- None selected -- ",
+	    DEFAULT_CONTROL_TEXT = "Default: %s",
+	    LOSE_CHANGES_TITLE = "Lose Changes?",
+	    LOSE_CHANGES_BODY = "Do you want abandon your changes?",
+	    INPUTS = { 
+	        -- KeyBoardMouse
+	        [1] = {	                  
+                -- Keyboard buttons       
+                [0] = "Unknown",         
+                [8] = "Backspace",
+                [9] = "Tab", -- KEY_TAB			
+                [12] = "Clear", -- KEY_CLEAR		
+                [13] = "Enter", -- KEY_RETURN		
+                [19] = "Pause", -- KEY_PAUSE		
+                [27] = "Esc", -- KEY_ESCAPE		
+                [32] = "Space", -- KEY_SPACE		
+                --[33] = "!", -- KEY_EXCLAIM		
+                --[34] = "", -- KEY_QUOTEDBL	
+                --[35] = "", -- KEY_HASH		
+                --[36] = "", -- KEY_DOLLAR		
+                --[38] = "", -- KEY_AMPERSAND	
+                [39] = "'", -- KEY_QUOTE		
+                --[40] = "", -- KEY_LEFTPAREN	
+                --[41] = "", -- KEY_RIGHTPAREN	
+                --[42] = "", -- KEY_ASTERISK	
+                --[43] = "", -- KEY_PLUS		
+                [44] = ",", -- KEY_COMMA		
+                [45] = "-", -- KEY_MINUS		
+                [46] = ".", -- KEY_PERIOD		
+                [47] = "/", -- KEY_SLASH		
+                [48] = "0", -- KEY_0			
+                [49] = "1", -- KEY_1			
+                [50] = "2", -- KEY_2			
+                [51] = "3", -- KEY_3			
+                [52] = "4", -- KEY_4			
+                [53] = "5", -- KEY_5			
+                [54] = "6", -- KEY_6			
+                [55] = "7", -- KEY_7			
+                [56] = "8", -- KEY_8			
+                [57] = "9", -- KEY_9			
+                --[58] = "", -- KEY_COLON		
+                [59] = "Semicolon", -- KEY_SEMICOLON	    ;
+                [60] = "<", -- KEY_LESS		
+                [61] = "Equals", -- KEY_EQUALS		        =
+                [62] = ">", -- KEY_GREATER		
+                --[63] = "", -- KEY_QUESTION	
+                --[64] = "", -- KEY_AT		
+                	
+                [91] = "Left Bracket", -- KEY_LEFTBRACKET	[
+                [92] = "Backslash", -- KEY_BACKSLASH	    \\
+                [93] = "Right Bracket", -- KEY_RIGHTBRACKET [
+                --[94] = "", -- KEY_CARET		
+                --[95] = "", -- KEY_UNDERSCORE	
+                [96] = "`", -- KEY_BACKQUOTE	
+                [97] = "A", -- KEY_A			
+                [98] = "B", -- KEY_B			
+                [99] = "C", -- KEY_C			
+                [100] = "D", -- KEY_D			
+                [101] = "E", -- KEY_E			
+                [102] = "F", -- KEY_F			
+                [103] = "G", -- KEY_G			
+                [104] = "H", -- KEY_H			
+                [105] = "I", -- KEY_I			
+                [106] = "J", -- KEY_J			
+                [107] = "K", -- KEY_K			
+                [108] = "L", -- KEY_L			
+                [109] = "M", -- KEY_M			
+                [110] = "N", -- KEY_N			
+                [111] = "O", -- KEY_O			
+                [112] = "P", -- KEY_P			
+                [113] = "Q", -- KEY_Q			
+                [114] = "R", -- KEY_R			
+                [115] = "S", -- KEY_S			
+                [116] = "T", -- KEY_T			
+                [117] = "U", -- KEY_U			
+                [118] = "V", -- KEY_V			
+                [119] = "W", -- KEY_W			
+                [120] = "X", -- KEY_X			
+                [121] = "Y", -- KEY_Y			
+                [122] = "Z", -- KEY_Z			
+                [127] = "Delete", -- KEY_DELETE		
+
+                [256] = "Num 0", -- KEY_KP0				
+                [257] = "Num 1", -- KEY_KP1				
+                [258] = "Num 2", -- KEY_KP2				
+                [259] = "Num 3", -- KEY_KP3				
+                [260] = "Num 4", -- KEY_KP4				
+                [261] = "Num 5", -- KEY_KP5				
+                [262] = "Num 6", -- KEY_KP6				
+                [263] = "Num 7", -- KEY_KP7				
+                [264] = "Num 8", -- KEY_KP8				
+                [265] = "Num 9", -- KEY_KP9				
+                [266] = "Num .", -- KEY_KP_PERIOD		
+                [267] = "Num /", -- KEY_KP_DIVIDE		
+                [268] = "Num *", -- KEY_KP_MULTIPLY		
+                [269] = "Num -", -- KEY_KP_MINUS		
+                [270] = "Num +", -- KEY_KP_PLUS			
+                [271] = "Num Enter", -- KEY_KP_ENTER		
+                --[272] = "", -- KEY_KP_EQUALS		
+
+                [273] = "Up", -- KEY_UP			
+                [274] = "Down", -- KEY_DOWN		
+                [275] = "Right", -- KEY_RIGHT		
+                [276] = "Left", -- KEY_LEFT		
+                [277] = "Insert", -- KEY_INSERT		
+                [278] = "Home", -- KEY_HOME		
+                [279] = "End", -- KEY_END			
+                [280] = "Page Up", -- KEY_PAGEUP		
+                [281] = "Page Down", -- KEY_PAGEDOWN	
+                           
+                [282] = "F1", -- KEY_F1			
+                [283] = "F2", -- KEY_F2			
+                [284] = "F3", -- KEY_F3			
+                [285] = "F4", -- KEY_F4			
+                [286] = "F5", -- KEY_F5			
+                [287] = "F6", -- KEY_F6			
+                [288] = "F7", -- KEY_F7			
+                [289] = "F8", -- KEY_F8			
+                [290] = "F9", -- KEY_F9			
+                [291] = "F10", -- KEY_F10			
+                [292] = "F11", -- KEY_F11			
+                [293] = "F12", -- KEY_F12			
+                [294] = "F13", -- KEY_F13			
+                [295] = "F14", -- KEY_F14			
+                [296] = "F15", -- KEY_F15			
+                           
+                [300] = "Num Lock", -- KEY_NUMLOCK		
+                [301] = "Caps Lock", -- KEY_CAPSLOCK	
+                [302] = "Scroll Lock", -- KEY_SCROLLOCK	
+                [303] = "Right Shift", -- KEY_RSHIFT		
+                [304] = "Left Shift", -- KEY_LSHIFT		
+                [305] = "Right Control", -- KEY_RCTRL		
+                [306] = "Left Control", -- KEY_LCTRL		
+                [307] = "Right Alt", -- KEY_RALT		
+                [308] = "Left Alt", -- KEY_LALT		
+                [309] = "Right Meta", -- KEY_RMETA		
+                [310] = "Left Meta", -- KEY_LMETA		
+		        [311] = "Left Windows", -- KEY_LSUPER		/**< Left "Windows" key */
+		        [312] = "Right Windows", -- KEY_RSUPER		/**< Right "Windows" key */
+		        [313] = "Mode",	-- KEY_MODE	        /**< "Alt Gr" key */
+		        [314] = "Compose", -- KEY_COMPOSE	    /**< Multi-key compose key */
+
+                [315] = "Help", -- KEY_HELP		
+                [316] = "Print Screen", -- KEY_PRINT		
+                --[317] = "", -- KEY_SYSREQ		
+                --[318] = "", -- KEY_BREAK		
+                [319] = "Menu", -- KEY_MENU		
+		        [320] = "Power", -- KEY_POWER		/**< Power Macintosh power key */
+		        [321] = "Euro", -- KEY_EURO		    /**< Some european keyboards */
+		        [322] = "Undo", -- KEY_UNDO		    /**< Atari keyboard has Undo */
+		        
+                [400] = "Alt", -- KEY_ALT
+                [401] = "Control", -- KEY_CTRL
+                [402] = "Shift", -- KEY_SHIFT
+                
+	            -- Mouse controls
+                [1000] = "Left Mouse Button",
+                [1001] = "Right Mouse Button",
+                [1002] = "Middle Mouse Button",
+                [1003] = "Mouse Scroll Up",
+                [1004] = "Mouse Scroll Down", 
+	        },
+	        -- Xbox360
+	        [2] = { 
+	            -- Digital
+                "DPad Up",
+                "DPad Down",
+                "DPad Left",
+                "DPad Right",
+                "Start",
+                "Back",
+                "Left Stick",
+                "Right Stick",
+                "Left Bumper",
+                "Right Bumper",
+                "Button A",
+                "Button B",
+                "Button X",
+                "Button Y",    
+                  
+                -- Analog          
+	            "Left Thumb Left",
+	            "Left Thumb Right",
+	            "Left Thumb Down",
+	            "Left Thumb Up",
+	            "Right Thumb Left",
+	            "Right Thumb Right",
+	            "Right Thumb Down",
+	            "Right Thumb Up",
+	            "Left Trigger",
+	            "Left Trigger",
+	            "Right Trigger",
+	            "Right Trigger",
+	        }, 
+	        -- Generic
+	        [3] = { 
+	            -- Digital
+                "Button %d",
+                
+                -- Directional
+                "DPad %d Up",
+                "DPad %d Down",
+                "DPad %d Left",
+                "DPad %d Right",
+                
+                -- Analog
+                "-X Axis",
+                "+X Axis",
+                "-Y Axis",
+                "+Y Axis",
+                "-Z Axis",
+                "+Z Axis",
+                "-X Rotation",
+                "+X Rotation",
+                "-Y Rotation",
+                "+Y Rotation",
+                "-Z Rotation",
+                "+Z Rotation",
+                "Slider 0",
+                "Slider 0",
+                "Slider 1",
+                "Slider 1",
+	        },
+	        -- Unknown
+	        [4] = { 
+	            "Unknown",
+				" -- None selected -- ",
+	        },
+	    },
+	},
 
     UNLOCKMAXWELL=
     {
@@ -1587,9 +1950,10 @@ STRINGS.UI =
     STARTADVENTURE=
     {
         TITLE="Doorway to Adventure!",
-        BODY="You're about to step into a long, arduous journey to find Maxwell. You will need to survive 5 worlds, each randomly generated to present a new challenge.\n\nShould you die, you will start back at this portal, but lose all your progress on the journey.\n\nAre you ready?",
-        YES="Yes",
-        NO="No",
+        BODY="You're about to step into a long, arduous journey to find Maxwell. You will need to survive 5 worlds, each randomly generated to present a new challenge.\n\nShould you die, you will start back at this portal, but lose all your progress on the journey.",
+        BODY_TEST="If you die during adventure mode, you will return back to this portal where you may restart the adventure.\n\nYou're about to step into a long, arduous journey to find Maxwell. You will need to survive 5 worlds, each randomly generated to present a new challenge.",
+        YES="Let's Go!",
+        NO="Not Yet",
     },
 
     ENDGAME=
@@ -1728,10 +2092,122 @@ STRINGS.CHARACTERS =
 	WX78 = require "speech_wx78",
 	WILLOW = require "speech_willow",
 	WENDY = require "speech_wendy",
+    WOODIE = require "speech_woodie",
 	WICKERBOTTOM = require "speech_wickerbottom",
 }
 
+STRINGS.LUCY =
+{
+    equipped=
+    {
+        "Let's chop some trees!",
+        "Nice day for a walk!",
+        "We make a good team!",
+        "There must be some trees around here somewhere.",
+        "Woodie! Chop some trees!",
+        "All work and no play makes me want to chop some trees.",
+        "Chop chop chop. Heh.",
+    },
 
+    on_ground =
+    {
+        "Come back! Take we with you!",
+        "Where did you go?",
+        "Take me with you!",
+        "What if I get stolen?!",
+    },
+
+    in_container =
+    {
+        "It's dark in here!",
+        "I'm scared!",
+        "I can't see anything!",
+        "I hate it in here.",
+    },
+
+    other_owner =
+    {
+        "You're not Woodie!",
+        "Put me down!",
+    },
+
+    on_pickedup=
+    {
+        "You came back!",
+        "I missed you so much!",
+        "Did you miss me?",
+    },
+
+    on_dropped=
+    {
+        "You'll come back, right?",
+        "What did I say?",
+        "I... don't understand!",
+        "Can we talk about this?",
+        "Don't forget about me!",
+    },
+
+    on_chopped=
+    {
+        "Woooooo!",
+        "Yeah!",
+        "Stupid tree!",
+        "Nom nom nom!",
+        "We did it!",
+        "This is AWESOME!",
+        "Death to all trees!",
+        "Again! Let's chop another!",
+        "Nice swing!",
+        "Too easy!",
+    },
+    beaver_up_early=
+    {
+        "Are you OK?",
+        "You look distracted, Woodie.",
+        "It's just a tree! Calm down!",
+    },
+    beaver_up_mid=
+    {
+        "Woodie? Can you hear me?",
+        "You might want to slow down a bit.",
+        "Careful, you're getting yourself worked up!",
+        "Don't chop too fast. You know what will happen!",
+    },
+    beaver_up_late=
+    {
+        "Woodie! Be careful!",
+        "It's starting!",
+        "You're not looking so good!",
+        "Your teeth are growing!",
+        "Watch out! You're going to turn!",
+    },
+    beaver_down_washigh=
+    {
+        "That was a close one!",
+        "I think we'll be alright.",
+        "You're looking much better now.",
+        "It's passed. For now.",
+        "It's back in the lodge. Phew!",
+    },
+
+    transform_beaver=
+    {
+        "Oh no!",
+        "It happened again!",
+        "The curse!",
+        "I warned you!",
+        "Woodie!",
+    },
+    transform_woodie=
+    {
+        "You're back!",
+        "Quick! Pick me up!",
+        "Are you OK?",
+        "Don't let that happen again!",
+        "Everything is going to be fine. Just focus!",
+    }
+
+}
 
 if TranslateStringTable ~= nil then
 	TranslateStringTable( STRINGS )

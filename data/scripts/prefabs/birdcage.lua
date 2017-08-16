@@ -2,13 +2,21 @@ require "prefabutil"
 
 local assets=
 {
-	Asset("ANIM", "data/anim/bird_cage.zip"),
-    Asset("IMAGE", "data/inventoryimages/birdcage.tex"),
+	Asset("ANIM", "anim/bird_cage.zip"),
+
+	Asset("ANIM", "anim/crow_build.zip"),
+	Asset("ANIM", "anim/robin_build.zip"),
+	Asset("ANIM", "anim/robin_winter_build.zip"),
 }
 
 local prefabs =
 {
 	"bird_egg",
+
+	-- everything it can "produce" and might need symbol swaps from
+	"crow",
+	"robin",
+	"robin_winter",
 }
 
 local bird_symbols=

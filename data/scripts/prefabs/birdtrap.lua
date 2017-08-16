@@ -1,8 +1,20 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/birdtrap.zip"),
-    Asset("IMAGE", "data/inventoryimages/birdtrap.tex"),
-    Asset("SOUND", "data/sound/common.fsb"),
+	Asset("ANIM", "anim/birdtrap.zip"),
+    Asset("SOUND", "sound/common.fsb"),
+
+	Asset("ANIM", "anim/crow_build.zip"),
+	Asset("ANIM", "anim/robin_build.zip"),
+	Asset("ANIM", "anim/robin_winter_build.zip"),
+
+	-- Swapsymbol assets
+}
+
+local prefabs = {
+	-- everything it can "produce" and might need symbol swaps from
+	"crow",
+	"robin",
+	"robin_winter",
 }
 
 --this should be redone as a periodic test, probably, so that we can control the expected return explicitly
@@ -105,4 +117,4 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/inventory/birdtrap", fn, assets) 
+return Prefab( "common/inventory/birdtrap", fn, assets, prefabs) 

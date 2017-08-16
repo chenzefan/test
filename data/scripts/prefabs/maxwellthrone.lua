@@ -1,9 +1,9 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/maxwell_throne.zip"),
-    Asset("SOUND", "data/sound/sanity.fsb"),
-    Asset("SOUND", "data/sound/common.fsb"),
-    Asset("SOUND", "data/sound/wilson.fsb")
+	Asset("ANIM", "anim/maxwell_throne.zip"),
+    Asset("SOUND", "sound/sanity.fsb"),
+    Asset("SOUND", "sound/common.fsb"),
+    Asset("SOUND", "sound/wilson.fsb")
 
 }
 
@@ -65,10 +65,7 @@ local function ZoomAndFade(inst)
 	            
 				SaveGameIndex:SetSlotCharacter(SaveGameIndex:GetCurrentSaveSlot(), inst.previousLock, function() 
 					SaveGameIndex:OnFailAdventure( function()
-						local params = json.encode{reset_action="loadslot", save_slot = SaveGameIndex:GetCurrentSaveSlot(), playeranim="wakeup", character="waxwell"}
-						TheSim:SetInstanceParameters(params)
-						SendAccumulatedProfileStats()
-						TheSim:Reset()
+						StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = SaveGameIndex:GetCurrentSaveSlot(), playeranim="wakeup", character="waxwell"}, true)
 					end)
 				end)
 			end}

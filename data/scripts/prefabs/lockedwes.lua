@@ -2,9 +2,9 @@ require "prefabutil"
 
 local assets=
 {
-	Asset("ANIM", "data/anim/player_basic.zip"),
-    Asset("ANIM", "data/anim/wes.zip"),
-	Asset("ANIM", "data/anim/player_mime.zip"),    
+	Asset("ANIM", "anim/player_basic.zip"),
+    Asset("ANIM", "anim/wes.zip"),
+	Asset("ANIM", "anim/player_mime.zip"),    
 }
 
 local function removewes(inst)

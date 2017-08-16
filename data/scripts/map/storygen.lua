@@ -55,7 +55,7 @@ Story = Class(function(self, id, tasks, terrain, gen_params)
 	for k,task in pairs(tasks) do
 		self.tasks[task.id] = task
 	end
-	
+	self.GlobalTags = {}
 	self.TERRAIN = {}
 	self.terrain = terrain
 	
@@ -72,6 +72,21 @@ Story = Class(function(self, id, tasks, terrain, gen_params)
 	
 	self:ProcessExtraTags()
 end)
+
+function Story:ModRoom(roomname, room)
+	local modfns = ModManager:GetPostInitFns("RoomPreInit", roomname)
+	for i,modfn in ipairs(modfns) do
+		print("Applying mod to room '"..roomname.."'")
+		modfn(room)
+	end
+	
+end
+
+function Story:GetRoom(roomname)
+	local newroom = deepcopy(self.terrain.rooms[roomname])
+	self:ModRoom(roomname, newroom)
+	return newroom
+end
 
 function Story:PlaceTeleportatoParts()
 	local RemoveExitTag = function(node)
@@ -404,7 +419,7 @@ function Story:GenerateNodesFromTasks()
 	local start_node_data = {id="START"}
 
 	if self.gen_params.start_node ~= nil then
-		start_node_data.data = deepcopy(self.terrain.base[self.gen_params.start_node])
+		start_node_data.data = self:GetRoom(self.gen_params.start_node)
 		start_node_data.data.terrain_contents = start_node_data.data.contents		
 	else
 		start_node_data.data = {
@@ -458,7 +473,7 @@ function Story:AddBGNodes(random_count)
 
 	for taskid, task in pairs(tasksnodes) do
 
-		local background_template = deepcopy(self.terrain.base[task.data.background])
+		local background_template = self:GetRoom(task.data.background)
 		assert(background_template, "Couldn't find room with name "..task.data.background)
 
 		self:RunTaskSubstitution(task, background_template.contents.distributeprefabs)
@@ -472,15 +487,15 @@ function Story:AddBGNodes(random_count)
 				for i=1,count do
 
 					local new_room = deepcopy(background_template)
+					new_room.id = nodeid..":BG_"..bg_idx
 
 					-- this has to be inside the inner loop so that things like teleportato tags
 					-- only get processed for a single node.
 					local extra_contents, extra_tags = self:GetExtrasForRoom(new_room)
 
-					local room_id = nodeid..":BG_"..bg_idx
 					
 					local newNode = task:AddNode({
-										id=room_id, 
+										id=new_room.id, 
 										data={
 												type="background",
 												colour = new_room.colour,
@@ -549,6 +564,12 @@ function Story:GetExtrasForRoom(next_room)
 			if type == "TAG" then
 				table.insert(extra_tags, extra)
 			end
+			if type == "GLOBALTAG" then
+				if self.GlobalTags[extra] == nil then
+					self.GlobalTags[extra] = {}
+				end
+				table.insert(self.GlobalTags[extra], next_room.id)
+			end
 		end
 	end
 
@@ -588,7 +609,7 @@ function Story:GenerateNodesFromTask(task, crossLinkFactor)
 				task.entrance_room = GetRandomItem(task.entrance_room)
 			end
 			--print("\tAdding entrance: ",task.entrance_room,"rolled:",r,"needed:",task.entrance_room_chance)
-			local new_room = deepcopy(self.terrain.special[task.entrance_room])
+			local new_room = self:GetRoom(task.entrance_room)
 			assert(new_room, "Couldn't find entrance room with name "..task.entrance_room)
 
 			if new_room.contents == nil then
@@ -605,32 +626,14 @@ function Story:GenerateNodesFromTask(task, crossLinkFactor)
 		--	print("\tHad entrance but didn't use it. rolled:",r,"needed:",task.entrance_room_chance)
 		end
 	end
-	
-	if task.room_choices ~= nil then
+
+	if task.room_choices then
 		for room, count in pairs(task.room_choices) do
-			--print("Story:GenerateNodesFromTask adding "..count.." of "..room)
+			--print("Story:GenerateNodesFromTask adding "..count.." of "..room, self.terrain.rooms[room].contents.fn)
 			for id = 1, count do
-				--print("Story:GenerateNodesFromTask adding "..id)
-				--dumptable(TERRAIN[room])
-				local new_room = deepcopy(self.terrain.base[room])
+				local new_room = self:GetRoom(room)
+
 				assert(new_room, "Couldn't find room with name "..room)
-				if new_room.contents == nil then
-					new_room.contents = {}
-				end
-			
-				new_room.type = room
-				room_choices:push(new_room)
-			end
-		end
-	end
-
-	if task.room_choices_special then
-		for room, count in pairs(task.room_choices_special) do
-			--print("Story:GenerateNodesFromTask adding "..count.." of "..room, self.terrain.special[room].contents.fn)
-			for id = 1, count do
-				local new_room = deepcopy(self.terrain.special[room])
-
-				assert(new_room, "Couldn't find special room with name "..room)
 				if new_room.contents == nil then
 					new_room.contents = {}
 				end			
@@ -659,7 +662,7 @@ function Story:GenerateNodesFromTask(task, crossLinkFactor)
 	--print("Story:GenerateNodesFromTask adding "..room_choices:getn().." rooms")
 	while room_choices:getn() > 0 do
 		local next_room = room_choices:pop()
-		local room_id = task.id..":"..roomID..":"..next_room.type	-- TODO: add room names for special rooms
+		next_room.id = task.id..":"..roomID..":"..next_room.type	-- TODO: add room names for special rooms
 
 		self:RunTaskSubstitution(task, next_room.contents.distributeprefabs)
 		
@@ -667,7 +670,7 @@ function Story:GenerateNodesFromTask(task, crossLinkFactor)
 		local extra_contents, extra_tags = self:GetExtrasForRoom(next_room)
 		
 		newNode = task_node:AddNode({
-										id=room_id, 
+										id=next_room.id, 
 										data={
 												type= next_room.entrance and "blocker" or next_room.type, 
 												colour = next_room.colour,
@@ -719,7 +722,7 @@ function TEST_STORY(tasks, story_gen_params)
 	--story.rootNode:Dump()
 	--print("\n------------------------------------------------")
 	
-	return {root=story.rootNode, startNode=story.startNode}
+	return {root=story.rootNode, startNode=story.startNode, GlobalTags = story.GlobalTags}
 end
 
 

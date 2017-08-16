@@ -1,2 +1,0 @@
---ModManager:AddMod("samplemod")
---ModManager:AddMod("cursed")

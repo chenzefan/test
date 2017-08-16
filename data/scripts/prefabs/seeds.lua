@@ -1,9 +1,7 @@
 require "prefabs/veggies"
 local assets=
 {
-	Asset("ANIM", "data/anim/seeds.zip"),
-    Asset("IMAGE", "data/inventoryimages/seeds.tex"),
-    Asset("IMAGE", "data/inventoryimages/seeds_cooked.tex"),
+	Asset("ANIM", "anim/seeds.zip"),
 }
 
 local prefabs =

@@ -28,15 +28,13 @@ local prefabs =
 
 local assets =
 {
-    Asset("ANIM", "data/anim/tentacle_pillar.zip"),
-    Asset("SOUND", "data/sound/tentacle.fsb"),
+    Asset("ANIM", "anim/tentacle_pillar.zip"),
+    Asset("SOUND", "sound/tentacle.fsb"),
 }
 
 --  Don't keep arms around on save
 local function OnLoad(inst, data)
     if data then
-        dprint("Tentacle OnLoad")
-        --dumptable(data,1,1)
         inst.reloadTime = data.reloadTime or 0
         inst.retracted = data.retracted or false
         inst.nextEmerge = data.nextEmerge or 0
@@ -47,13 +45,15 @@ local function OnLoad(inst, data)
             --MakeObstaclePhysics(inst, 3, 1)
             -- inst.Physics:SetCollisionGroup(COLLISION.GROUND)
             inst.SoundEmitter:KillSound("loop")
-            inst.AnimState:PlayAnimation("idle_hole",true)
+            inst.AnimState:PlayAnimation("idle_hole","loop")
+	        inst.AnimState:SetTime(math.random()*2)    
             inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_hiddenidle_LP","loop") 
             inst:RemoveTag("wet")
             inst:AddTag("stone")
         else
             inst.SoundEmitter:KillSound("loop")
-            inst.AnimState:PlayAnimation("idle",true)
+            inst.AnimState:PlayAnimation("idle","loop")
+	        inst.AnimState:SetTime(math.random()*2)    
             inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_idle_LP","loop") 
             inst:RemoveTag("stone")
             inst:AddTag("wet")
@@ -74,7 +74,7 @@ end
 
 local function OnLongUpdate(inst, dt)
 
-    dprint(inst,"LongUpdate:",dt)
+    -- dprint(inst,"LongUpdate:",dt)
 
     inst.reloadTime = (inst.reloadTime or 0) - dt
     global_reset = (global_reset or 0) - dt
@@ -102,12 +102,12 @@ local function DropLoot(inst)
     global_reset = (global_reset or 0) - dt
     global_time = GetTime()
 
-    dprint("DropLoot: reload in:",inst.reloadTime," :glob_reset=",global_reset)
+    -- dprint("DropLoot: reload in:",inst.reloadTime," :glob_reset=",global_reset)
 
     -- We want lots of tentacles, but we don't want lots of loot dropped
     -- So keep a global track of what's been dropped today
     if global_reset <= 0 then
-        dprint("--------------------- RESET GLOBAL LOOT")
+        -- dprint("--------------------- RESET GLOBAL LOOT")
         global_loot_drops = { spikedone=false, skeletondone=false, turfcount=0 }
         global_reset = GetRandomWithVariance(TUNING.TOTAL_DAY_TIME,TUNING.TOTAL_DAY_TIME/5)
     end
@@ -132,8 +132,8 @@ local function DropLoot(inst)
 
         inst.components.lootdropper:SetLoot(loot)
         -- SetLoot removes all random and chance loot definitions
-        inst.components.lootdropper:AddChanceLoot("tentaclespots", 0.2)
-        inst.components.lootdropper:AddChanceLoot("lightbulb", 0.5)
+        inst.components.lootdropper:AddChanceLoot("tentaclespots", 0.4)
+        inst.components.lootdropper:AddChanceLoot("lightbulb", 0.8)
         inst.components.lootdropper:AddChanceLoot("slurtleslime", 0.1)
         --inst.components.lootdropper:AddChanceLoot("rocks", 0.1)
 
@@ -178,14 +178,14 @@ end
 local function PillarChange(inst)
 
     if inst:HasTag("pillaremerging") then
-        dprint("===================================  PillarEmerge")
+        -- dprint("===================================  PillarEmerge")
         inst:RemoveTag("pillaremerging")
         inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_idle_LP","loop") 
         inst:RemoveEventCallback("animover", PillarChange)
         inst.retracted = false
         inst.components.health:SetMaxHealth(TUNING.TENTACLE_HEALTH)
     elseif inst:HasTag("pillarretracting") then
-        dprint("===================================  PillarRetract")
+        -- dprint("===================================  PillarRetract")
         inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_hiddenidle_LP","loop") 
         inst:RemoveTag("pillarretracting")
         inst:RemoveEventCallback("animover", PillarChange)
@@ -201,7 +201,7 @@ local function PillarEmerges(inst,withArms)
     inst.lastEmergeCheck = GetTime()
 
     inst.nextEmerge = (inst.nextEmerge or 0) - dt
-    dprint("time=",GetTime(),"  last=",inst.lastEmergeCheck," nextEmerge=",inst.nextEmerge)
+    -- dprint("time=",GetTime(),"  last=",inst.lastEmergeCheck," nextEmerge=",inst.nextEmerge)
     
     inst.components.health:SetMaxHealth(TUNING.TENTACLE_HEALTH)
 
@@ -209,10 +209,10 @@ local function PillarEmerges(inst,withArms)
         inst.nextEmerge = GetNextEmergeTime(inst)
         inst.retractedHits = 0
 
-        dprint("NEXT Emerge at: ",inst.nextEmerge)
+        -- dprint("NEXT Emerge at: ",inst.nextEmerge)
 
-        inst.AnimState:PlayAnimation("emerge", false) 
-        inst.AnimState:PushAnimation("idle", true)
+        inst.AnimState:PlayAnimation("emerge") 
+        inst.AnimState:PushAnimation("idle", "loop")
         inst:ListenForEvent("animover", PillarChange)
         inst:AddTag("pillaremerging")
         inst:RemoveTag("stone")
@@ -243,12 +243,12 @@ local function DoShake(inst)
 end
 
 local function OnDeath(inst)
-    dprint("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ DEATH EVENT")
+    -- dprint("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ DEATH EVENT")
 end
 
 local function OnKilled(inst)
 
-    dprint("ONKILLED: Health is:",inst.components.health.currenthealth)
+    -- dprint("ONKILLED: Health is:",inst.components.health.currenthealth)
 
     if inst.retracted then
         inst.retractedHits = 0
@@ -267,7 +267,7 @@ local function OnKilled(inst)
     inst.SoundEmitter:KillSound("loop")
     inst.AnimState:PlayAnimation("retract",false)
     inst:ListenForEvent("animover", PillarChange)
-    inst.AnimState:PushAnimation("idle_hole",true)
+    inst.AnimState:PushAnimation("idle_hole","loop")
     inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_die")
     inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_die_VO")
 
@@ -302,7 +302,15 @@ local function ManageArms(inst)
 end
 
 local function OnEntityWake(inst)
-    inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_idle_LP","loop")
+    if inst.retracted then
+        inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_hiddenidle_LP","loop") 
+        inst:RemoveTag("wet")
+        inst:AddTag("stone")
+    else
+        inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_idle_LP","loop") 
+        inst:RemoveTag("stone")
+        inst:AddTag("wet")
+    end
 end
 
 local function OnEntitySleep(inst)
@@ -311,7 +319,7 @@ local function OnEntitySleep(inst)
 end
 
 local function onfar(inst)
-    dprint(inst,"FAR")
+    -- dprint(inst,"FAR")
     if not inst.components.health:IsDead() then
         --inst.AnimState:SetMultColour(.1, .1, .1, 0.)
         KillArms(inst,false)
@@ -322,10 +330,10 @@ local function onnear(inst)
     if not inst.components.health:IsDead() then
         -- inst.AnimState:SetMultColour(1, 1, 1, 1)
     end
-    dprint(inst,"NEAR")
+    -- dprint(inst,"NEAR")
     if inst.retracted then
         if math.random() > .75 then
-            dprint("ON_NEAR: Resurrect")
+            -- dprint("ON_NEAR: Resurrect")
             PillarEmerges(inst,true)
         end
     end
@@ -382,14 +390,14 @@ SpawnArms =  function(inst,attacker,forcelocal)
 
     for r=1, rings do
         theta = GetRandomWithVariance(0.0,PI/2) -- randomize starting angle
-        dprint("Starting theta:",theta)
+        -- dprint("Starting theta:",theta)
         for i = 1, steps do
             local radius = GetRandomWithVariance(ringdelta,ringdelta/3) + minRadius
             local offset = Vector3(radius * math.cos( theta ), 0, -radius * math.sin( theta ))
             local wander_point = pt + offset
             local pillars = TheSim:FindEntities(wander_point.x, wander_point.y,wander_point.z,3.5,{"tentacle_pillar"})
             if next(pillars) then
-                dprint("FoundPillar",pillars[1])
+                -- dprint("FoundPillar",pillars[1])
 	            pillarLoc = Vector3(pillars[1].Transform:GetWorldPosition())
             end
            
@@ -420,33 +428,35 @@ end
 
 local function OnHit(inst, attacker, damage) 
         
+    -- dprint(damage," Hit: Health->",inst.components.health.currenthealth," from:",attacker)
     if attacker.components.combat and attacker ~= GetPlayer() and math.random() > 0.5 then
         -- Followers should stop hitting the pillar
-        dprint(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>RESETTING ATTACKER TARGET")
+        -- dprint(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>RESETTING ATTACKER TARGET")
         attacker.components.combat:SetTarget(nil)
-        return
+        if inst.components.health.currenthealth and inst.components.health.currenthealth <0 then
+            inst.components.health:DoDelta(damage*.6, false, attacker)
+        end
     end
-    dprint("Hit:",inst.components.health.currenthealth)
     if not inst.components.health:IsDead() and not inst.retracted then
         inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_hurt_VO")
         inst.AnimState:PlayAnimation("hit")
-        inst.AnimState:PushAnimation("idle", true)
+        inst.AnimState:PushAnimation("idle", "loop")
         -- :Shake(shakeType, duration, speed, scale)
-        if attacker:HasTag("character") then
+        if attacker == GetPlayer() then
     	    TheCamera:Shake("SIDE", 0.5, 0.05, .2)
-            SpawnArms(inst,attacker)
         end
+        SpawnArms(inst,attacker)
     elseif inst.retracted and not inst:HasTag("pillaremerging") and not inst:HasTag("pillarretracting") then
         inst.retractedHits = inst.retractedHits or 0
         inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_hiddenhurt_VO")
         inst.AnimState:PlayAnimation("hit_hole")
-        inst.AnimState:PushAnimation("idle_hole", true)
+        inst.AnimState:PushAnimation("idle_hole", "loop")
         if attacker:HasTag("character") then
             inst.retractedHits = inst.retractedHits + 1
-            dprint("HITS:",inst.retractedHits)
+            -- dprint("HITS:",inst.retractedHits)
             -- Hitting the hole randomly attracts another tentacle
             if inst.retractedHits > math.random(9,18) then
-                dprint("Hit calls cthulu")
+                -- dprint("Hit calls cthulu")
                 PillarEmerges(inst)
                 inst.retractedHits = 0
             end
@@ -461,7 +471,7 @@ local function fn(Sim)
 	local anim = inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
 
-    inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_idle_LP","loop")
+    --inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_idle_LP","loop")
 	
     inst.OnLoad = OnLoad
     inst.OnSave = OnSave
@@ -520,10 +530,12 @@ local function Garden(Sim)   -- prefab with garden of arms
     inst.garden = true
     if math.random() < .2 then
         inst.retracted = true
-        inst.AnimState:PlayAnimation("idle_hole")
+        inst.AnimState:PlayAnimation("idle_hole","loop")
+	    inst.AnimState:SetTime(math.random()*2)    
         inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_hiddenidle_LP","loop") 
     else
-        inst.AnimState:PlayAnimation("idle")
+        inst.AnimState:PlayAnimation("idle","loop")
+	    inst.AnimState:SetTime(math.random()*2)    
         inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_idle_LP","loop")
     end
 

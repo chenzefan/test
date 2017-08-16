@@ -35,7 +35,8 @@ local function triggertrap(inst, scenariorunner)
             rock.AnimState:PushAnimation("idle_inactive", true)
             
         end
-        PlayFX(rock:GetPosition(), "blocker_sanity_fx", "blocker_sanity_fx", "raise")
+            local fx = SpawnPrefab("sanity_raise")
+            fx.Transform:SetPosition(rock:GetPosition())
     end
 
     -- Walk the circle trying to find a valid spawn point

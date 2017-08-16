@@ -85,9 +85,13 @@ local debris =
 	{
 		"redgem",
 		"bluegem",
+		"orangegem",
+		"yellowgem",
 		"marble",
 	},
 }
+
+
 
 function Quaker:OnSave()
 	if not self.noserial then
@@ -147,10 +151,10 @@ function Quaker:SetQuakeLevel(level)
 	self:SetNextQuake()
 end
 
-function Quaker:GetSpawnPoint(pt)
+function Quaker:GetSpawnPoint(pt, rad)
 
     local theta = math.random() * 2 * PI
-    local radius = math.random()*TUNING.FROG_RAIN_SPAWN_RADIUS
+    local radius = math.random()*(rad or TUNING.FROG_RAIN_SPAWN_RADIUS)
     	
 	local result_offset = FindValidPositionByFan(theta, radius, 12, function(offset)
 		local ground = GetWorld()
@@ -219,11 +223,6 @@ function Quaker:ForceQuake(level)
     return true
 end
 
-local function Lerp(a,b,t)
-	t = 1.0-math.cos(t*PI/2)
-	return a + (b - a) * t
-end
-
 local function UpdateShadowSize(inst, height)
 	if inst.shadow then
 		local scaleFactor = Lerp(0.5, 1.5, height/35)
@@ -259,7 +258,7 @@ function Quaker:SpawnDebris(spawn_point)
 		    db.Transform:SetRotation(180)
 	    end
 		spawn_point.y = 35
-    	TheCamera:Shake("FULL", 0.7, 0.02, .75, 40)
+
 
 	    db.Physics:Teleport(spawn_point.x,spawn_point.y,spawn_point.z)
 
@@ -330,6 +329,30 @@ local function start_grounddetection(inst)
 	inst.updatetask = inst:DoPeriodicTask(0.1, grounddetection_update, 0.05)
 end
 
+
+function Quaker:MiniQuake(rad, num, duration, target)
+
+	self.inst.SoundEmitter:PlaySound("dontstarve/cave/earthquake", "miniearthquake")
+	self.inst.SoundEmitter:SetParameter("miniearthquake", "intensity", 1)
+
+    local time = 0
+    for i=1,num do
+
+    	self.inst:DoTaskInTime(time, function()    		
+			local char_pos = Vector3(target.Transform:GetWorldPosition())
+			local spawn_point = self:GetSpawnPoint(char_pos, rad)								
+			if spawn_point then
+				local db = self:SpawnDebris(spawn_point)	
+				start_grounddetection(db)
+			end
+		end)
+
+		time = time + duration/num
+    end
+
+    self.inst:DoTaskInTime(duration, function() self.inst.SoundEmitter:KillSound("miniearthquake") end)
+end
+
 function Quaker:OnUpdate( dt )
 
 	if self.nextquake > 0 then
@@ -360,6 +383,7 @@ function Quaker:OnUpdate( dt )
 					local spawn_point = self:GetSpawnPoint(char_pos)								
 					if spawn_point then
 						local db = self:SpawnDebris(spawn_point)	
+				    	TheCamera:Shake("FULL", 0.7, 0.02, .75, 40)
 						start_grounddetection(db)
 						if self.spawntime then
 							self.timetospawn = self:GetTimeForNextDebris()

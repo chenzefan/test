@@ -1,8 +1,7 @@
 require "prefabutil"
 local assets =
 {
-	Asset("ANIM", "data/anim/pinecone.zip"),
-    Asset("IMAGE", "data/inventoryimages/pinecone.tex"),
+	Asset("ANIM", "anim/pinecone.zip"),
 }
 
 local function growtree(inst)
@@ -115,6 +114,11 @@ local function fn(Sim)
     inst.AnimState:SetBuild("pinecone")
     inst.AnimState:PlayAnimation("idle")
     
+
+    inst:AddComponent("edible")
+    inst.components.edible.foodtype = "WOOD"
+    inst.components.edible.woodiness = 2
+
     inst:AddComponent("stackable")
 	inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM
 

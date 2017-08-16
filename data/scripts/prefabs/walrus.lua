@@ -1,11 +1,11 @@
 local assets=
 {
-    Asset("ANIM", "data/anim/walrus_actions.zip"),
-    Asset("ANIM", "data/anim/walrus_attacks.zip"),
-    Asset("ANIM", "data/anim/walrus_basic.zip"),
-    Asset("ANIM", "data/anim/walrus_build.zip"),
-    Asset("ANIM", "data/anim/walrus_baby_build.zip"),
-    Asset("SOUND", "data/sound/mctusky.fsb"),
+    Asset("ANIM", "anim/walrus_actions.zip"),
+    Asset("ANIM", "anim/walrus_attacks.zip"),
+    Asset("ANIM", "anim/walrus_basic.zip"),
+    Asset("ANIM", "anim/walrus_build.zip"),
+    Asset("ANIM", "anim/walrus_baby_build.zip"),
+    Asset("SOUND", "sound/mctusky.fsb"),
 }
 
 local prefabs =

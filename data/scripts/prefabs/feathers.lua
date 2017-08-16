@@ -3,8 +3,7 @@ local function makefeather(name)
     local assetname = "feather_"..name
     local assets = 
     {
-	    Asset("ANIM", "data/anim/"..assetname..".zip"),
-        Asset("IMAGE", "data/inventoryimages/"..assetname..".tex"),
+	    Asset("ANIM", "anim/"..assetname..".zip"),
     }
     
     local function fn()
@@ -12,7 +11,7 @@ local function makefeather(name)
 	    inst.entity:AddTransform()
 	    inst.entity:AddAnimState()
         
-        inst.AnimState:SetBank("feather")
+        inst.AnimState:SetBank(assetname)
         inst.AnimState:SetBuild(assetname)
         inst.AnimState:PlayAnimation("idle")
         MakeInventoryPhysics(inst)

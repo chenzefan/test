@@ -1,10 +1,10 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/merm_build.zip"),
-	Asset("ANIM", "data/anim/ds_pig_basic.zip"),
-	Asset("ANIM", "data/anim/ds_pig_actions.zip"),
-	Asset("ANIM", "data/anim/ds_pig_attacks.zip"),
-	Asset("SOUND", "data/sound/merm.fsb"),
+	Asset("ANIM", "anim/merm_build.zip"),
+	Asset("ANIM", "anim/ds_pig_basic.zip"),
+	Asset("ANIM", "anim/ds_pig_actions.zip"),
+	Asset("ANIM", "anim/ds_pig_attacks.zip"),
+	Asset("SOUND", "sound/merm.fsb"),
 }
 
 local prefabs =

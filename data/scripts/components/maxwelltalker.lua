@@ -5,10 +5,11 @@ local MaxwellTalker = Class(function(self, inst)
 	self.canskip = false
 	self.defaultvoice = "dontstarve/maxwell/talk_LP"
 	self.inputhandlers = {}
-    table.insert(self.inputhandlers, TheInput:AddMouseButtonHandler(MOUSEBUTTON_LEFT, true, function() self:OnClick() end))
-    table.insert(self.inputhandlers, TheInput:AddMouseButtonHandler(MOUSEBUTTON_RIGHT, true, function() self:OnClick() end))
-    table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_SPACE, function() self:OnClick() end))
-    table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_ENTER, function() self:OnClick() end))
+    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_PRIMARY, function() self:OnClick() end))    
+    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_SECONDARY, function() self:OnClick() end))
+    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_ATTACK, function() self:OnClick() end))
+    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_INSPECT, function() self:OnClick() end))
+    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_ACTION, function() self:OnClick() end))
 end)
 
 function MaxwellTalker:OnCancel()
@@ -18,11 +19,18 @@ function MaxwellTalker:OnCancel()
 		    if self.inst.speech.disappearanim then
                 if SaveGameIndex:GetCurrentMode(Settings.save_slot) == "adventure" then
 	                self.inst.SoundEmitter:PlaySound("dontstarve/maxwell/disappear_adventure")
-	                PlayFX(Point(self.inst.Transform:GetWorldPosition()), "max_fx", "max_fx", "anim")
+
+	                local fx = SpawnPrefab("maxwell_smoke")
+                    
+    				fx.Transform:SetPosition(self.inst.Transform:GetWorldPosition())
+
+
+	                --PlayFX(Point(self.inst.Transform:GetWorldPosition()), "max_fx", "max_fx", "anim")
 		        else
 	                self.inst:DoTaskInTime(.4, function()
                         self.inst.SoundEmitter:PlaySound("dontstarve/maxwell/disappear")
-                        PlayFX(Point(self.inst.Transform:GetWorldPosition()), "max_fx", "max_fx", "anim")
+                        local fx = SpawnPrefab("maxwell_smoke")
+    					fx.Transform:SetPosition(self.inst.Transform:GetWorldPosition())
 	                end)
 		        end
 		        self.inst.AnimState:PlayAnimation(self.inst.speech.disappearanim, false)
@@ -101,7 +109,8 @@ function MaxwellTalker:DoTalk()
 			else
 			    Sleep(0.4)
 	            self.inst.SoundEmitter:PlaySound("dontstarve/maxwell/disappear")
-	            PlayFX(Point(self.inst.Transform:GetWorldPosition()), "max_fx", "max_fx", "anim")
+	            local fx = SpawnPrefab("maxwell_smoke")
+    			fx.Transform:SetPosition(self.inst.Transform:GetWorldPosition())
 			    Sleep(1)
 			end
 		end
@@ -146,10 +155,12 @@ function MaxwellTalker:DoTalk()
 		if self.inst.speech.disappearanim then
             if SaveGameIndex:GetCurrentMode(Settings.save_slot) == "adventure" then
 			    self.inst.SoundEmitter:PlaySound("dontstarve/maxwell/disappear_adventure")
-			    PlayFX(Point(self.inst.Transform:GetWorldPosition()), "max_fx", "max_fx", "anim")
+			    local fx = SpawnPrefab("maxwell_smoke")
+    			fx.Transform:SetPosition(self.inst.Transform:GetWorldPosition())
 			else
 	            self.inst.SoundEmitter:PlaySound("dontstarve/maxwell/disappear")
-	            PlayFX(Point(self.inst.Transform:GetWorldPosition()), "max_fx", "max_fx", "anim")
+	            local fx = SpawnPrefab("maxwell_smoke")
+    			fx.Transform:SetPosition(self.inst.Transform:GetWorldPosition())
 			end
 			self.inst.AnimState:PlayAnimation(self.inst.speech.disappearanim, false) --plays the disappear animation and removes from scene
 			self.inst:ListenForEvent("animqueueover", function()  self.inst:Remove() end)

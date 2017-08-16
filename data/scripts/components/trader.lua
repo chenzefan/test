@@ -52,6 +52,8 @@ function Trader:AcceptGift( giver, item )
 			self.onaccept(self.inst, giver, item)
 		end
 		
+        self.inst:PushEvent("trade", {giver = giver, item = item})
+
         return true
     end
 

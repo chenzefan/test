@@ -1,8 +1,8 @@
 
 local function makeassetlist(bankname, buildname)
     return {
-        Asset("ANIM", "data/anim/"..buildname..".zip"),
-        Asset("ANIM", "data/anim/"..bankname..".zip"),
+        Asset("ANIM", "anim/"..buildname..".zip"),
+        Asset("ANIM", "anim/"..bankname..".zip"),
     }
 end
 

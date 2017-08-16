@@ -1,5 +1,5 @@
 
-local TeamLeader = Class(function(self, inst)
+local TeamLeader = Class(function(self, inst )
 
 	self.inst = inst
 	self.team_type = "monster"
@@ -13,12 +13,14 @@ local TeamLeader = Class(function(self, inst)
 	self.radius = 5
 	self.reverse = false
 	self.timebetweenattacks = 3
+	self.attackinterval = 3
 	self.inst:StartUpdatingComponent(self)
 	self.lifetime = 0
+    self.attack_grp_size = nil
+    self.chk_state = true
 
 	self.maxchasetime = 30
 	self.chasetime = 0
-	
 		
 end)
 
@@ -31,7 +33,6 @@ local function getteamsize(team)
 		end
 	return count
 end
-
 
 
 function TeamLeader:OrganizeTeams()
@@ -78,19 +79,24 @@ function TeamLeader:IsTeamFull()
 end
 
 function TeamLeader:ValidMember(member)
+
 	if member:HasTag(self.team_type) and
-	member.components.combat and not
-	(member.components.health and member.components.health:IsDead()) and not
-	member.components.teamattacker.inteam  then
+	   member.components.combat and not
+	   (member.components.health and member.components.health:IsDead()) and not
+	   member.components.teamattacker.inteam  then
 		return true
 	end
 end
 
 function TeamLeader:DisbandTeam()
+    local team = {}
 	for k,v in pairs(self.team) do
+        team[k]=v
+    end
+
+	for k,v in pairs(team) do
 		self:OnLostTeammate(v)
 	end
-
 	self.threat = nil
 	self.team = {}
 	self.inst:Remove()
@@ -99,7 +105,11 @@ end
 function TeamLeader:TeamSizeControl()
 	if getteamsize(self.team) > self.max_team_size then
 		local teamcount = 0
+        local team = {}
 		for k,v in pairs(self.team) do
+            team[k]=v
+        end
+		for k,v in pairs(team) do
 			teamcount = teamcount + 1
 			if teamcount > self.max_team_size then
 				self:OnLostTeammate(v)
@@ -134,8 +144,7 @@ function TeamLeader:BroadcastDistress(member)
 
 	if member:IsValid() then
 		local x,y,z = member.Transform:GetWorldPosition()
-		local ents = TheSim:FindEntities(x,y,z, self.searchradius)
-
+		local ents = TheSim:FindEntities(x,y,z, self.searchradius, { self.team_type } )  -- filter by tag?  { self.team_type }
 		for k,v in pairs(ents) do
 			if v ~= member and self:ValidMember(v) then
 				self:NewTeammate(v)
@@ -239,7 +248,9 @@ end
 function TeamLeader:AllInState(state)
 	local b = true
 	for k,v in pairs(self.team) do
-		if v ~= nil and not (v.components.teamattacker.orders == nil or v.components.teamattacker.orders == state) then
+		if v ~= nil and
+		   not ( self.chk_state and (v:HasTag("frozen") or v:HasTag("fire")) ) and
+           not (v.components.teamattacker.orders == nil or v.components.teamattacker.orders == state) then
 			b = false
 		end
 	end
@@ -247,7 +258,11 @@ function TeamLeader:AllInState(state)
 end
 
 function TeamLeader:IsTeamEmpty()
-	if not next(self.team) then return true else return false end
+	if not next(self.team) then
+        return true
+    else
+        return false
+    end
 end
 
 function TeamLeader:SetNewThreat(threat)
@@ -263,7 +278,17 @@ function TeamLeader:GetTheta(dt)
 	end
 end
 
+function TeamLeader:SetAttackGrpSize(val)
+    self.attack_grp_size = val
+end
+
 function TeamLeader:NumberToAttack()
+    if type(self.attack_grp_size) == "function" then
+        return self.attack_grp_size()
+    elseif type(self.attack_grp_size) == "number" then
+        return self.attack_grp_size
+    end
+
 	if math.random() > 0.25 then return 1 else return 2 end
 end
 
@@ -277,7 +302,11 @@ function TeamLeader:ManageChase(dt)
 end
 
 function TeamLeader:ValidateTeam()
+    local team = {}
 	for k,v in pairs(self.team) do
+        team[k]=v
+    end
+	for k,v in pairs(team) do
 		if not v:IsValid() then
 			self:OnLostTeammate(v)
 		end
@@ -285,7 +314,7 @@ function TeamLeader:ValidateTeam()
 end
 
 function TeamLeader:OnUpdate(dt)
-	self:ValidateTeam()
+	--self:ValidateTeam()
 	self:ManageChase(dt)
 	self:CenterLeader()
 	self.lifetime = self.lifetime + dt
@@ -302,15 +331,16 @@ function TeamLeader:OnUpdate(dt)
 			self.timebetweenattacks = self.timebetweenattacks - dt
 
 			if self.timebetweenattacks <= 0 then
-				self.timebetweenattacks = 3
+				self.timebetweenattacks = self.attackinterval
 				self:GiveOrders("WARN", self:NumberToAttack())
 				self.inst:DoTaskInTime(0.5, function() self:GiveOrdersToAllWithOrder("ATTACK", "WARN") end)
+            else
 			end
 		end
+    else
 	end
 
 	if self:IsTeamEmpty() or (self.threat and not self.threat:IsValid()) then
-		--Disband team.
 		self:DisbandTeam()
 	end
 end

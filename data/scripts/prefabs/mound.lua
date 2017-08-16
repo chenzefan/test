@@ -1,6 +1,6 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/gravestones.zip"),
+	Asset("ANIM", "anim/gravestones.zip"),
 }
 
 local prefabs = 
@@ -45,14 +45,14 @@ local function onfinishcallback(inst, worker)
 					redgem = 5,
 					bluegem = 5,
 				}
-				item = SpawnPrefab(weighted_random_choice(loots))
+				item = weighted_random_choice(loots)
 			else
-				item = SpawnPrefab("trinket_"..tostring(math.random(NUM_TRINKETS)))
+				item = "trinket_"..tostring(math.random(NUM_TRINKETS))
 			end
 
 			
 			if item then
-				worker.components.inventory:GiveItem(item, nil, Vector3(TheSim:GetScreenPos(inst.Transform:GetWorldPosition())))
+				inst.components.lootdropper:SpawnLootPrefab(item)
 			end
 		end
 	end	
@@ -79,7 +79,7 @@ local function fn(Sim)
     inst:AddComponent("workable")
     inst.components.workable:SetWorkAction(ACTIONS.DIG)
     inst.components.workable:SetWorkLeft(1)
-
+	inst:AddComponent("lootdropper")
         
     inst.components.workable:SetOnFinishCallback(onfinishcallback)      
     

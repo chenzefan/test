@@ -2,8 +2,7 @@ require "prefabutil"
 
 local assets =
 {
-    Asset("ANIM", "data/anim/bee_box.zip"),
-    Asset("IMAGE", "data/inventoryimages/beebox.tex"),
+    Asset("ANIM", "anim/bee_box.zip"),
 }
 
 local prefabs = 

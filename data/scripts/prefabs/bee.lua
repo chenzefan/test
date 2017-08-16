@@ -12,12 +12,10 @@ it should head back there. Killer bees come out to defend beehives when they, th
 ]]--
 local assets=
 {
-	Asset("ANIM", "data/anim/bee.zip"),
-	Asset("ANIM", "data/anim/bee_build.zip"),
-	Asset("ANIM", "data/anim/bee_angry_build.zip"),
-	Asset("SOUND", "data/sound/bee.fsb"),
-    Asset("IMAGE", "data/inventoryimages/bee.tex"),
-    Asset("IMAGE", "data/inventoryimages/killerbee.tex"),
+	Asset("ANIM", "anim/bee.zip"),
+	Asset("ANIM", "anim/bee_build.zip"),
+	Asset("ANIM", "anim/bee_angry_build.zip"),
+	Asset("SOUND", "sound/bee.fsb"),
 }
     
     
@@ -51,6 +49,7 @@ local function OnWorked(inst, worker)
         owner.components.childspawner:OnChildKilled(inst)
     end
     if worker.components.inventory then
+        FightStat_Caught(inst)
         worker.components.inventory:GiveItem(inst, nil, Vector3(TheSim:GetScreenPos(inst.Transform:GetWorldPosition())))
     end
 end
@@ -174,7 +173,7 @@ local function commonfn()
     return inst
 end
 
--- local brainfn = loadfile("data/scripts/brains/beebrain.lua")
+-- local brainfn = loadfile("scripts/brains/beebrain.lua")
 -- assert(type(brainfn) == "function", brainfn)
 
 local workerbrain = require("brains/beebrain")

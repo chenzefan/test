@@ -1,11 +1,11 @@
 local assets =
 {
-    Asset("ANIM", "data/anim/evergreen_new.zip"),
-    Asset("ANIM", "data/anim/evergreen_new_2.zip"),
-    Asset("ANIM", "data/anim/evergreen_tall_old.zip"),
-    Asset("ANIM", "data/anim/evergreen_short_normal.zip"),
-    Asset("ANIM", "data/anim/dust_fx.zip"),
-    Asset("SOUND", "data/sound/forest.fsb"),
+    Asset("ANIM", "anim/evergreen_new.zip"), --build
+    Asset("ANIM", "anim/evergreen_new_2.zip"), --build
+    Asset("ANIM", "anim/evergreen_tall_old.zip"),
+    Asset("ANIM", "anim/evergreen_short_normal.zip"),
+    Asset("ANIM", "anim/dust_fx.zip"),
+    Asset("SOUND", "sound/forest.fsb"),
 }
 
 local prefabs =
@@ -16,6 +16,7 @@ local prefabs =
     "charcoal",
     "leif",
     "leif_sparse",
+    "pine_needles"
 }
 
 local builds = 
@@ -204,7 +205,10 @@ local function SetOld(inst)
 	
 	if GetBuild(inst).drop_pinecones then
 		inst.components.lootdropper:SetLoot({"pinecone"})
-	end
+	else
+        inst.components.lootdropper:SetLoot({})
+    end
+
     Sway(inst)
 end
 
@@ -232,7 +236,17 @@ local growth_stages =
 
 
 local function chop_tree(inst, chopper, chops)
-    inst.SoundEmitter:PlaySound("dontstarve/wilson/use_axe_tree")          
+    
+    if chopper and chopper.components.beaverness and chopper.components.beaverness:IsBeaver() then
+		inst.SoundEmitter:PlaySound("dontstarve/characters/woodie/beaver_chop_tree")          
+	else
+		inst.SoundEmitter:PlaySound("dontstarve/wilson/use_axe_tree")          
+	end
+
+    local fx = SpawnPrefab("pine_needles")
+    local x, y, z= inst.Transform:GetWorldPosition()
+    fx.Transform:SetPosition(x,y + math.random()*2,z)
+
     inst.AnimState:PlayAnimation(inst.anims.chop)
     inst.AnimState:PushAnimation(inst.anims.sway1, true)
     
@@ -264,6 +278,11 @@ local function chop_down_tree(inst, chopper)
         inst.AnimState:PlayAnimation(inst.anims.fallright)
         inst.components.lootdropper:DropLoot(pt + TheCamera:GetRightVec())
     end
+
+    inst:DoTaskInTime(.4, function() 
+		local sz = (inst.components.growable and inst.components.growable.stage > 2) and .5 or .25
+		GetPlayer().components.playercontroller:ShakeCamera(inst, "FULL", 0.25, 0.03, sz, 6)
+    end)
     
     RemovePhysicsColliders(inst)
     inst.AnimState:PushAnimation(inst.anims.stump)

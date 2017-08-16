@@ -7,6 +7,21 @@ local function MakeTags()
 		
 	local map_tags = 
 		{
+			["Maze"] = function(tagdata)
+								return "GLOBALTAG", "Maze"
+							end,
+			["MazeEntrance"] = function(tagdata)
+								return "GLOBALTAG", "MazeEntrance"
+							end,
+			["Labyrinth"] = function(tagdata)
+								return "GLOBALTAG", "Labyrinth"
+							end,
+			["LabyrinthEntrance"] = function(tagdata)
+								return "GLOBALTAG", "LabyrinthEntrance"
+							end,
+			["OverrideCentroid"] = function(tagdata)
+								return "GLOBALTAG", "OverrideCentroid"
+							end,
 			["RoadPoison"] = function(tagdata)
 								return "TAG", "RoadPoison"
 							end,

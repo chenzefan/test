@@ -25,6 +25,7 @@ local MinionSpawner = Class(function(self, inst)
 	self.shouldspawn = true
 	self.timeuntilspawn = nil
 	self.minionpositions = nil
+	self.validtiletypes = {2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17}
 	self.freepositions = generatefreepositions(self.maxminions * pos_modifier)
 	self.inst:DoTaskInTime(1, function() self:StartNextSpawn() end)
 end)
@@ -112,8 +113,10 @@ function MinionSpawner:LoadPostPass(newents, savedata)
 				minion.minionnumber = v.NUMBER
 				self:TakeOwnership(minion)
 				local pos = self:GetSpawnLocation(minion.minionnumber)
-				minion.Transform:SetPosition(pos.x, pos.y, pos.z)
-				self:RemovePosition(minion.minionnumber)
+				if pos then
+					minion.Transform:SetPosition(pos.x, pos.y, pos.z)
+					self:RemovePosition(minion.minionnumber)
+				end
 			end
 		end
 	end
@@ -174,6 +177,14 @@ function MinionSpawner:MakeMinion()
 	end
 end
 
+function MinionSpawner:CheckTileCompatibility(tile)
+	for k,v in pairs(self.validtiletypes) do
+		if v == tile then
+			return true
+		end
+	end
+end
+
 function MinionSpawner:MakeSpawnLocations()
 	local positions = {}
 	for i = 1, 100 do
@@ -190,6 +201,7 @@ function MinionSpawner:MakeSpawnLocations()
 		local offset = Vector3(v.x * self.distancemodifier, 0, v.z * self.distancemodifier)
 		local try_pos = offset + pt
 		if not (ground.Map and ground.Map:GetTileAtPoint(try_pos.x, try_pos.y, try_pos.z) == GROUND.IMPASSABLE or ground.Map:GetTileAtPoint(try_pos.x, try_pos.y, try_pos.z) > GROUND.UNDERGROUND ) and 
+		self:CheckTileCompatibility(ground.Map:GetTileAtPoint(try_pos.x, try_pos.y, try_pos.z)) and
 		ground.Pathfinder:IsClear(pt.x, pt.y, pt.z, try_pos.x, try_pos.y, try_pos.z, {ignorewalls = true}) and
 		#TheSim:FindEntities(try_pos.x, try_pos.y, try_pos.z,2.5, {"eyeplant"}) <= 0 and 
 		#TheSim:FindEntities(try_pos.x, try_pos.y, try_pos.z, 1) <= 0 then
@@ -215,7 +227,9 @@ function MinionSpawner:GetSpawnLocation(num)
 	-- local pt = Vector3(self.inst.Transform:GetWorldPosition())
 	local offset = self.minionpositions[num]
 	-- return (pt.x + (offset.x * self.minionradius)), pt.y, (pt.z + (offset.z * self.minionradius))
-	return Vector3(offset.x, offset.y, offset.z)
+	if offset and self:CheckTileCompatibility(GetWorld().Map:GetTileAtPoint(offset.x, offset.y, offset.z)) then
+		return Vector3(offset.x, offset.y, offset.z)
+	end
 end
 
 function MinionSpawner:GetNextSpawnTime()
@@ -254,8 +268,9 @@ function MinionSpawner:SpawnNewMinion()
 					self.onspawnminionfn(self.inst, minion)
 				end
 			else
-				self:RemovePosition(minion.minionnumber)
-				minion:Remove()
+				-- self:RemovePosition(minion.minionnumber)
+				-- minion:Remove()
+				self.minionpositions = self:MakeSpawnLocations()
 			end
 		end
 

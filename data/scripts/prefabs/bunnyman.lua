@@ -1,16 +1,14 @@
-require "fonthelper"
-
 local assets =
 {
-	Asset("ANIM", "data/anim/manrabbit_basic.zip"),
-	Asset("ANIM", "data/anim/manrabbit_actions.zip"),
-	Asset("ANIM", "data/anim/manrabbit_attacks.zip"),
-	Asset("ANIM", "data/anim/manrabbit_build.zip"),
+	Asset("ANIM", "anim/manrabbit_basic.zip"),
+	Asset("ANIM", "anim/manrabbit_actions.zip"),
+	Asset("ANIM", "anim/manrabbit_attacks.zip"),
+	Asset("ANIM", "anim/manrabbit_build.zip"),
 	
-	Asset("ANIM", "data/anim/manrabbit_beard_build.zip"),
-	Asset("ANIM", "data/anim/manrabbit_beard_basic.zip"),
-	Asset("ANIM", "data/anim/manrabbit_beard_actions.zip"),
-	Asset("SOUND", "data/sound/pig.fsb"),
+	Asset("ANIM", "anim/manrabbit_beard_build.zip"),
+	Asset("ANIM", "anim/manrabbit_beard_basic.zip"),
+	Asset("ANIM", "anim/manrabbit_beard_actions.zip"),
+	Asset("SOUND", "sound/bunnyman.fsb"),
 }
 
 local prefabs =
@@ -124,7 +122,7 @@ end
 
 local function NormalKeepTargetFn(inst, target)
     
-    return inst.components.combat:CanTarget(target)
+    return inst.components.combat:CanTarget(target) and not (target.sg and target.sg:HasStateTag("hiding")) 
 end
 
 
@@ -222,10 +220,14 @@ local function fn()
 
     inst:AddTag("character")
     inst:AddTag("pig")
+    inst:AddTag("manrabbit")
     inst:AddTag("scarytoprey")
     anim:SetBank("manrabbit")
     anim:PlayAnimation("idle_loop")
     anim:Hide("hat")
+
+
+    inst.CheckTransformState = CheckTransformState --used for purpleamulet
 
     ------------------------------------------
     inst:AddComponent("eater")
@@ -338,6 +340,7 @@ local function fn()
     inst.components.trader:Enable()
     --inst.Label:Enable(true)
     --inst.components.talker:StopIgnoringAll()
+
 
     local brain = require "brains/bunnymanbrain"
     inst:SetBrain(brain)

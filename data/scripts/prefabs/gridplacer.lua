@@ -1,6 +1,6 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/gridplacer.zip"),
+	Asset("ANIM", "anim/gridplacer.zip"),
 }
 
 local function fn(Sim)

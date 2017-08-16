@@ -1,7 +1,6 @@
 local function makeassetlist()
     return {
-		Asset("ANIM", "data/anim/phonograph.zip"),
- 		Asset("IMAGE", "data/inventoryimages/amulet.tex")
+		Asset("ANIM", "anim/phonograph.zip"),
     }
 end
 

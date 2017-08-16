@@ -64,7 +64,7 @@ end
 
 function Fueled:ChangeSection(amount)
     local fuelPerSection = self.maxfuel / self.sections
-    self:DoDelta(amount * fuelPerSection)
+    self:DoDelta((amount * fuelPerSection)-1)
 end
 
 function Fueled:TakeFuelItem(item)
@@ -87,7 +87,7 @@ function Fueled:TakeFuelItem(item)
         
             local newsection = self:GetCurrentSection()
             if oldsection ~= newsection then
-                self.sectionfn(newsection)
+                self.sectionfn(newsection,oldsection)
             end
             
         end
@@ -150,7 +150,7 @@ function Fueled:InitializeFuelLevel(fuel)
     
     local newsection = self:GetCurrentSection()
     if oldsection ~= newsection and self.sectionfn then
-        self.sectionfn(newsection)
+        self.sectionfn(newsection,oldsection)
     end
 end
 
@@ -163,7 +163,7 @@ function Fueled:DoDelta(amount)
     
     if oldsection ~= newsection then
         if self.sectionfn then
-            self.sectionfn(newsection)
+            self.sectionfn(newsection,oldsection)
         end
         if self.currentfuel <= 0 and self.depleted then
             self.depleted(self.inst)

@@ -1,7 +1,6 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/boards.zip"),
-    Asset("IMAGE", "data/inventoryimages/boards.tex"),
+	Asset("ANIM", "anim/boards.zip"),
 }
 
 local function fn(Sim)
@@ -20,6 +19,9 @@ local function fn(Sim)
 
     inst:AddComponent("inspectable")
     
+    inst:AddComponent("edible")
+    inst.components.edible.foodtype = "WOOD"
+    inst.components.edible.woodiness = 15
     
 	MakeSmallBurnable(inst, TUNING.LARGE_BURNTIME)
     MakeSmallPropagator(inst)

@@ -5,11 +5,11 @@ local NIS = Class(function(self, inst)
     self.data = {}
     self.name = ""
     self.inputhandlers = {}
-    table.insert(self.inputhandlers, TheInput:AddMouseButtonHandler(MOUSEBUTTON_LEFT, true, function() self:OnClick() end))
-    table.insert(self.inputhandlers, TheInput:AddMouseButtonHandler(MOUSEBUTTON_RIGHT, true, function() self:OnClick() end))
-    table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_SPACE, function() self:OnClick() end))
-    table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_ENTER, function() self:OnClick() end))
-    
+    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_PRIMARY, function() self:OnClick() end))    
+    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_SECONDARY, function() self:OnClick() end))
+    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_ATTACK, function() self:OnClick() end))
+    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_INSPECT, function() self:OnClick() end))
+    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_ACTION, function() self:OnClick() end))    
 end)
 
 

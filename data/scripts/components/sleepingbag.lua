@@ -3,12 +3,14 @@ local SleepingBag = Class(function(self, inst)
 end)
 
 function SleepingBag:CollectInventoryActions(doer, actions)
-	table.insert(actions, ACTIONS.SLEEPIN)
+
+	if doer and doer:HasTag("player") and not doer:HasTag("insomniac") then
+		table.insert(actions, ACTIONS.SLEEPIN)
+	end
 end
 
-
 function SleepingBag:CollectSceneActions(doer, actions)
-    if doer and doer:HasTag("player") then
+    if doer and doer:HasTag("player") and not doer:HasTag("insomniac") then
 		table.insert(actions, ACTIONS.SLEEPIN)
     end
 end
@@ -16,7 +18,7 @@ end
 
 
 function SleepingBag:CollectUseActions(doer, target, actions)
-    if target and target:HasTag("player") then
+    if target and target:HasTag("player") and not doer:HasTag("insomniac") then
 		table.insert(actions, ACTIONS.SLEEPIN)
     end
 end

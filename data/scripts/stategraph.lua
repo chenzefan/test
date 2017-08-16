@@ -10,7 +10,6 @@ end)
 
 SGManager = StateGraphWrangler()
 
-
 function StateGraphWrangler:SendToList(inst, list)
     local old_list = self.instances[inst]
     if old_list then
@@ -92,9 +91,6 @@ function StateGraphWrangler:AddInstance(inst)
 end
 
 function StateGraphWrangler:Update(current_tick)
-    
-    Dbg(self,"Updatetick:",current_tick)
-
     local waiters = self.tickwaiters[current_tick]
     if waiters then
         for k,v in pairs(waiters) do
@@ -124,8 +120,6 @@ function StateGraphWrangler:Update(current_tick)
         end
     end
     TheSim:ProfilerPop()
-        
-    
     
     local evs = self.haveEvents
     self.haveEvents = {}
@@ -215,8 +209,6 @@ State = Class(
 )
 
 function State:HandleEvent(sg, eventname, data)
-    Dbg(sg,"events","State:HandleEvent: In state:",sg.currentstate.name," event:",eventname,": handler:",self.events[eventname].event)
-
     if not data or not data.state or data.state == self.name then
         local handler = self.events[eventname]
         if handler ~= nil then
@@ -236,7 +228,8 @@ StateGraph = Class( function(self, name, states, events, defaultstate, actionhan
     self.name = name
     self.states = states
     self.defaultstate = defaultstate
-
+    
+    --reindex the tables
     self.actionhandlers = {}
     if actionhandlers then
         for k,v in pairs(actionhandlers) do
@@ -244,12 +237,23 @@ StateGraph = Class( function(self, name, states, events, defaultstate, actionhan
             self.actionhandlers[v.action] = v
         end
     end
-    
-    --reindex the events table
+	for k,modhandlers in pairs(ModManager:GetPostInitData("StategraphActionHandler", self.name)) do
+		for i,v in ipairs(modhandlers) do
+			assert( v:is_a(ActionHandler),"Non-action handler added in mod actionhandler table!")
+			self.actionhandlers[v.action] = v
+		end
+	end
+
     self.events = {}
     for k,v in pairs(events) do
         assert( v:is_a(EventHandler),"Non-event added in events table!")
         self.events[v.name] = v
+    end
+	for k,modhandlers in pairs(ModManager:GetPostInitData("StategraphEvent", self.name)) do
+		for i,v in ipairs(modhandlers) do
+			assert( v:is_a(EventHandler),"Non-event added in mod events table!")
+			self.events[v.name] = v
+		end
     end
 
     self.states = {}
@@ -257,7 +261,18 @@ StateGraph = Class( function(self, name, states, events, defaultstate, actionhan
         assert( v:is_a(State),"Non-state added in state table!")
         self.states[v.name] = v
     end
-    
+	for k,modhandlers in pairs(ModManager:GetPostInitData("StategraphState", self.name)) do
+		for i,v in ipairs(modhandlers) do
+			assert( v:is_a(State),"Non-state added in mod state table!")
+			self.states[v.name] = v
+		end
+    end
+
+	-- apply mods
+	local modfns = ModManager:GetPostInitFns("StategraphPostInit", self.name)
+	for i,modfn in ipairs(modfns) do
+		modfn(self)
+	end
 end)
 
 function StateGraph:__tostring()
@@ -299,7 +314,6 @@ function StateGraphInstance:PlayRandomAnim(anims, loop)
 end
 
 function StateGraphInstance:PushEvent(event, data)
-    Dbg(self,"events","SGI:PushEvent:",event)
     if data then
         data.state = self.currentstate.name
     else
@@ -340,10 +354,8 @@ function StateGraphInstance:HandleEvents()
     
     if self.inst:IsValid() then
 		for k, event in ipairs(self.bufferedevents) do
-            Dbg(self,"events","HandleEvent:NAME:",event.name," : ",event.data.state)
 			if not self.currentstate:HandleEvent(self, event.name, event.data) then
 				local handler = self.sg.events[event.name]
-                Dbg(self,"events","HandleEvent:",event.name,": handler:",handler)
 				if handler ~= nil then
 					handler.fn(self.inst, event.data)
 				end
@@ -351,7 +363,6 @@ function StateGraphInstance:HandleEvents()
 		end
 	end
 	
-    Dbg(self,"events","=================================EMPTY bufferedevents")
     self.bufferedevents = {}
 end
 
@@ -361,16 +372,21 @@ end
 
 function StateGraphInstance:GoToState(statename, params)
     local state = self.sg.states[statename]
-    assert(state ~= nil, "State not found: " ..tostring(self.sg.name).."."..tostring(statename) )
     
-    Dbg(self,"statechanges","GoToState:",statename," from:",self.currentstate.name)
+    if not state then 
+		print (self.inst, "TRIED TO GO TO INVALID STATE", statename)
+		return 
+    end
+    --assert(state ~= nil, "State not found: " ..tostring(self.sg.name).."."..tostring(statename) )
+    
 
     self.prevstate = self.currentstate
     if self.currentstate ~= nil and self.currentstate.onexit ~= nil then 
         self.currentstate.onexit(self.inst)
     end
 
-    if self.inst == GetPlayer() and self.currentstate then
+    -- Record stats
+    if self.inst == GetPlayer() and self.currentstate and not IsAwayFromKeyBoard() then
         local dt = GetTime() - self.statestarttime
         self.currentstate.totaltime = self.currentstate.totaltime and (self.currentstate.totaltime + dt) or dt  -- works even if currentstate.time is nil
         -- dprint(self.currentstate.name," time in state= ", self.currentstate.totaltime)

@@ -2,12 +2,12 @@ local brain = require "brains/koalefantbrain"
 
 local assets=
 {
-	Asset("ANIM", "data/anim/koalefant_basic.zip"),
-    Asset("ANIM", "data/anim/koalefant_actions.zip"),
-    --Asset("ANIM", "data/anim/koalefant_build.zip"),
-    Asset("ANIM", "data/anim/koalefant_summer_build.zip"),
-    Asset("ANIM", "data/anim/koalefant_winter_build.zip"),
-	--Asset("SOUND", "data/sound/koalefant.fsb"),
+	Asset("ANIM", "anim/koalefant_basic.zip"),
+    Asset("ANIM", "anim/koalefant_actions.zip"),
+    --Asset("ANIM", "anim/koalefant_build.zip"),
+    Asset("ANIM", "anim/koalefant_summer_build.zip"),
+    Asset("ANIM", "anim/koalefant_winter_build.zip"),
+	Asset("SOUND", "sound/koalefant.fsb"),
 }
 
 local prefabs =

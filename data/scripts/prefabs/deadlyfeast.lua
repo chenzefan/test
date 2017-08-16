@@ -1,7 +1,6 @@
 assets = 
 {
-	Asset("ANIM", "data/anim/cook_pot_food.zip"),
-	Asset("IMAGE", "data/inventoryimages/bonestew.tex")
+	Asset("ANIM", "anim/cook_pot_food.zip"),
 }
 
 local function fn()

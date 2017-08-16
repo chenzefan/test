@@ -3,6 +3,7 @@ function GetWorld() return TheSim:FindFirstEntityWithTag("ground") end
 function GetCeiling() return TheSim:FindFirstEntityWithTag("ceiling") end
 function GetMap() return GetWorld().Map end
 function GetClock() return GetWorld().components.clock end
+function GetNightmareClock() return GetWorld().components.nighmareclock end
 function GetSeasonManager() return GetWorld().components.seasonmanager end
 
 if TheSim then
@@ -36,7 +37,7 @@ end
 
 function GetRandomInstWithTag(tag, inst, radius)
     local trans = inst.Transform
-    local tags = {tag}
+    local tags = (type(tag)=="string" and {tag}) or tag
     local x,y,z = trans:GetWorldPosition()
     local ents = TheSim:FindEntities(x,y,z, radius, tags)
     if #ents > 0 then
@@ -86,6 +87,7 @@ function fadeout(inst, time)
 end
 
 function PlayFX(position, bank, build, anim, sound, sounddelay, tint, tintalpha)
+	--[[
     local inst = CreateEntity()
     
     
@@ -111,6 +113,8 @@ function PlayFX(position, bank, build, anim, sound, sounddelay, tint, tintalpha)
     end
 
     return inst
+    --]]
+    return nil
 end
 
 

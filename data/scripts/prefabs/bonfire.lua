@@ -1,7 +1,7 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/bonfire.zip"),
-	Asset("SOUND", "data/sound/common.fsb"),
+	Asset("ANIM", "anim/bonfire.zip"),
+	Asset("SOUND", "sound/common.fsb"),
 }
 
 local INTENSITY = 16

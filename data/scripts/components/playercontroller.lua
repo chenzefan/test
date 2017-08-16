@@ -20,16 +20,16 @@ local PlayerController = Class(function(self, inst)
     
     
     self.inputhandlers = {}
-    table.insert(self.inputhandlers, TheInput:AddMouseButtonHandler(MOUSEBUTTON_LEFT, true, function() self:OnLeftClick() end))
-    table.insert(self.inputhandlers, TheInput:AddMouseButtonHandler(MOUSEBUTTON_LEFT, false, function() self:OnLeftUp() end))
-    table.insert(self.inputhandlers, TheInput:AddMouseButtonHandler(MOUSEBUTTON_RIGHT, true, function() self:OnRightClick() end))
-
-    table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_SPACE, function() self:OnPressAction() end))
-    table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_LEFT, function() self:RotLeft() end))
-    table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_RIGHT, function() self:RotRight() end))
     
-    table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_Q, function() self:RotLeft() end))
-    table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_E, function() self:RotRight() end))
+    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_PRIMARY, function(isPressed) if isPressed then self:OnLeftClick() else self:OnLeftUp() end end))
+    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_SECONDARY, function(isPressed) if isPressed then self:OnRightClick() end end))    
+    --table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_INSPECT, function(isPressed) if isPressed then self:OnLeftClick() end end))    
+    --table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_ATTACK, function(isPressed) if isPressed then self:OnPressAction() end end))            
+    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_ACTION, function(isPressed) if isPressed then self:OnPressAction() end end))            
+    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_ROTATE_LEFT, function(isPressed) if isPressed then self:RotLeft() end end))
+    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_ROTATE_RIGHT, function(isPressed) if isPressed then self:RotRight() end end))
+    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_ZOOM_IN, function(isPressed) if isPressed and not IsHUDPaused() and TheCamera:CanControl() then TheCamera:ZoomIn() end end))
+    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_ZOOM_OUT, function(isPressed) if isPressed and not IsHUDPaused() and TheCamera:CanControl() then TheCamera:ZoomOut() end end))
 
     table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_P, function() if TheInput:IsKeyDown(KEY_CTRL) then TheCamera:SetPaused(not TheCamera.paused) end end))
     table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_H, function() 
@@ -41,13 +41,11 @@ local PlayerController = Class(function(self, inst)
 			end 
 		end
 	end))
-    
-    table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_UP, function() if not IsHUDPaused() and TheCamera:CanControl() then TheCamera:ZoomIn() end end))
-    table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_DOWN, function() if not IsHUDPaused() and TheCamera:CanControl() then TheCamera:ZoomOut() end end))
 
-    table.insert(self.inputhandlers, TheInput:AddMouseButtonHandler(MOUSEBUTTON_SCROLLUP, true, function() if not IsHUDPaused() and TheCamera:CanControl() then TheCamera:ZoomIn() end end))
-    table.insert(self.inputhandlers, TheInput:AddMouseButtonHandler(MOUSEBUTTON_SCROLLDOWN, true, function() if not IsHUDPaused() and TheCamera:CanControl() then TheCamera:ZoomOut() end end))
-
+	table.insert(self.inputhandlers, TheInput:AddGestureHandler(GESTURE_ZOOM_IN, function() if not IsHUDPaused() and TheCamera:CanControl() then TheCamera:ZoomIn() end end))
+    table.insert(self.inputhandlers, TheInput:AddGestureHandler(GESTURE_ZOOM_OUT, function() if not IsHUDPaused() and TheCamera:CanControl() then TheCamera:ZoomOut() end end))
+    table.insert(self.inputhandlers, TheInput:AddGestureHandler(GESTURE_ROTATE_LEFT, function() if not IsHUDPaused() and TheCamera:CanControl() then  TheCamera:SetHeadingTarget(TheCamera:GetHeadingTarget() + 30) UpdateCameraHeadings() end end))
+    table.insert(self.inputhandlers, TheInput:AddGestureHandler(GESTURE_ROTATE_RIGHT, function() if not IsHUDPaused() and TheCamera:CanControl() then  TheCamera:SetHeadingTarget(TheCamera:GetHeadingTarget() - 30) UpdateCameraHeadings() end end))
 
 	self.inst:ListenForEvent( "death", function() TheInput:EnableMouseovers() end)
     self.inst:StartUpdatingComponent(self)
@@ -127,10 +125,9 @@ function PlayerController:Enable(val)
 end
 
 
-function PlayerController:GetAttackTarget()
+function PlayerController:GetAttackTarget(force_attack)
 
 	local x,y,z = self.inst.Transform:GetWorldPosition()
-	local force_attack = TheInput:IsKeyDown(KEY_CTRL)
 	local rad = force_attack and 8 or 6 
 	local nearby_ents = TheSim:FindEntities(x,y,z, rad)
 	local tool = self.inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
@@ -141,6 +138,7 @@ function PlayerController:GetAttackTarget()
 		if guy ~= self.inst and
 		   guy:IsValid() and 
 		   not guy:IsInLimbo() and
+		   not (guy.sg and guy.sg:HasStateTag("invisible")) and
 		   guy.components.health and not guy.components.health:IsDead() and 
 		   guy.components.combat and guy.components.combat:CanBeAttacked(self.inst) and
 		   not (guy.components.follower and guy.components.follower.leader == self.inst) then
@@ -155,15 +153,23 @@ function PlayerController:GetAttackTarget()
 
 end
 
+
+--
+
 function PlayerController:OnPressAction()
+
+	if self.actionbuttonoverride then
+		self.actionbuttonoverride(self.inst)
+		return
+	end
 
 	if self.enabled and not (self.inst.sg:HasStateTag("working") or self.inst.sg:HasStateTag("doing")) then
 
 		local tool = self.inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
 
 		--bug catching (has to go before combat)
-		local force_attack = TheInput:IsKeyDown(KEY_CTRL)
-		if tool and tool.components.tool and tool.components.tool.action == ACTIONS.NET and not force_attack then
+		local force_attack = TheInput:IsControlPressed(CONTROL_ATTACK)
+		if tool and tool.components.tool and tool.components.tool:CanDoAction(ACTIONS.NET) and not force_attack then
 			local target = FindEntity(self.inst, 5, 
 				function(guy) 
 					return  guy.components.health and not guy.components.health:IsDead() and 
@@ -177,7 +183,7 @@ function PlayerController:OnPressAction()
 			end
 		end
 			
-		local attack_target = self:GetAttackTarget() 			
+		local attack_target = self:GetAttackTarget(force_attack) 			
 		if attack_target then
 			if self.inst.components.combat.target ~= attack_target or self.inst.sg:HasStateTag("idle") then
 				local action = BufferedAction(self.inst, attack_target, ACTIONS.ATTACK)
@@ -185,7 +191,7 @@ function PlayerController:OnPressAction()
 			end
 			return
 		end
-		
+		 
 		--catching
 		local rad = 8
 		local projectile = FindEntity(self.inst, rad, function(guy)
@@ -202,7 +208,7 @@ function PlayerController:OnPressAction()
 		rad = 6
 		--pickup
 		local pickup = FindEntity(self.inst, rad, function(guy) return (guy.components.inventoryitem and guy.components.inventoryitem.canbepickedup) or
-																		(tool and tool.components.tool and guy.components.workable and guy.components.workable.action == tool.components.tool.action) or
+																		(tool and tool.components.tool and guy.components.workable and tool.components.tool:CanDoAction(guy.components.workable.action)) or
 																		(guy.components.pickable and guy.components.pickable:CanBePicked() and guy.components.pickable.caninteractwith) or
 																		(guy.components.crop and guy.components.crop:IsReadyForHarvest()) or
 																		(guy.components.harvestable and guy.components.harvestable:CanBeHarvested()) or
@@ -215,8 +221,8 @@ function PlayerController:OnPressAction()
 		if pickup and not has_active_item then
 			local action = nil
 			
-			if (tool and tool.components.tool and pickup.components.workable and pickup.components.workable.action == tool.components.tool.action) then
-				action = tool.components.tool.action
+			if (tool and tool.components.tool and pickup.components.workable and tool.components.tool:CanDoAction(pickup.components.workable.action)) then
+				action = pickup.components.workable.action
 			elseif pickup.components.trap and pickup.components.trap.issprung then
 				action = ACTIONS.CHECKTRAP
 			elseif pickup.components.activatable and pickup.components.activatable.inactive then
@@ -305,7 +311,7 @@ function PlayerController:OnUpdate(dt)
     --if self.placer_recipe then return end
 
     -- if self.startdragtestpos and not self.draggingonground then
-    --     local pt = TheInput:GetMouseWorldPos()
+    --     local pt = TheInput:GetWorldPosition()
     --     if distsq(pt, self.startdragtestpos) > 1.5*1.5 then
     --         self.draggingonground = true
     --     end
@@ -320,7 +326,7 @@ function PlayerController:OnUpdate(dt)
 
 	if not self.inst.sg:HasStateTag("busy") then
 		if self.startdragtime then
-			local pt = TheInput:GetMouseWorldPos()
+			local pt = TheInput:GetWorldPosition()
 			local dst = distsq(pt, Vector3(self.inst.Transform:GetWorldPosition()))
 			if dst > 1 then
 				local angle = self.inst:GetAngleToPoint(pt)
@@ -331,34 +337,33 @@ function PlayerController:OnUpdate(dt)
 			end
 			self.directwalking = false
 		else
+		    if TheInput:IsControlPressed(CONTROL_ACTION) then
+		        self:OnPressAction()
+		    end
 	        
 			--WASD walking!
 			local xwalk = 0
 			local ywalk = 0
-			if TheInput:IsKeyDown(KEY_W) then
+			
+			if TheInput:IsControlPressed(CONTROL_MOVE_UP) then
 				ywalk = ywalk + 1
 			end
 
-			if TheInput:IsKeyDown(KEY_S) then
+			if TheInput:IsControlPressed(CONTROL_MOVE_DOWN) then
 				ywalk = ywalk - 1
 			end
 
-			if TheInput:IsKeyDown(KEY_A) then
+			if TheInput:IsControlPressed(CONTROL_MOVE_LEFT) then
 				xwalk = xwalk - 1
 			end
 	        
-			if TheInput:IsKeyDown(KEY_D) then
+			if TheInput:IsControlPressed(CONTROL_MOVE_RIGHT) then
 				xwalk = xwalk + 1
 			end
 
-			if not 	TheInput:IsKeyDown(KEY_W) and not --We only want to update headings if no keys are pressed.
-					TheInput:IsKeyDown(KEY_A) and not
-					TheInput:IsKeyDown(KEY_S) and not
-					TheInput:IsKeyDown(KEY_D) then
-
-					
-					CameraRight = TheCamera:GetRightVec()
-					CameraDown = TheCamera:GetDownVec()
+			if xwalk == 0 and ywalk == 0 then --We only want to update headings if no keys are pressed.					
+			    CameraRight = TheCamera:GetRightVec()
+				CameraDown = TheCamera:GetDownVec()
 			end
 	        
 			if xwalk ~= 0 or ywalk ~= 0 then
@@ -393,7 +398,7 @@ function PlayerController:OnLeftUp()
     
 	Print(VERBOSITY.DEBUG, "OnLeftUp")
 
-	local walk_key_down = TheInput:IsKeyDown(KEY_W) or TheInput:IsKeyDown(KEY_A) or TheInput:IsKeyDown(KEY_S) or TheInput:IsKeyDown(KEY_D)
+	local walk_key_down = TheInput:IsControlPressed(CONTROL_MOVE_UP) or TheInput:IsControlPressed(CONTROL_MOVE_DOWN) or TheInput:IsControlPressed(CONTROL_MOVE_LEFT) or TheInput:IsControlPressed(CONTROL_MOVE_RIGHT)
 
     if not self.enabled then return end    
     
@@ -409,7 +414,7 @@ function PlayerController:OnLeftUp()
 				end
 			elseif self.startdragtime then
    				Print(VERBOSITY.DEBUG, "    not dragging")
-				local pt = TheInput:GetMouseWorldPos()
+				local pt = TheInput:GetWorldPosition()
 				local dst = distsq(pt, Vector3(self.inst.Transform:GetWorldPosition()))
 				if dst > 1 then
 					Print(VERBOSITY.DEBUG, "    ending with pathfind")
@@ -488,7 +493,7 @@ function PlayerController:OnLeftClick()
 	if self.placer_recipe then
 		--do the placement
 		if self.placer.components.placer.can_build then
-			self.inst.components.builder:MakeRecipe(self.placer_recipe, TheInput:GetMouseWorldPos())
+			self.inst.components.builder:MakeRecipe(self.placer_recipe, TheInput:GetWorldPosition())
 			self:CancelPlacement()
 		end
 		return

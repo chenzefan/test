@@ -1,8 +1,8 @@
 local assets = 
 {
-	Asset("ANIM", "data/anim/teleportato.zip"),
-	Asset("ANIM", "data/anim/teleportato_build.zip"),
-	Asset("ANIM", "data/anim/teleportato_adventure_build.zip"),
+	Asset("ANIM", "anim/teleportato.zip"),
+	Asset("ANIM", "anim/teleportato_build.zip"),
+	Asset("ANIM", "anim/teleportato_adventure_build.zip"),
 }
 
 

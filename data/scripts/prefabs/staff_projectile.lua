@@ -1,6 +1,6 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/staff_projectile.zip"),
+	Asset("ANIM", "anim/staff_projectile.zip"),
 }
 
 local function OnHit(inst, owner, target)
@@ -36,7 +36,7 @@ end
 local function fire()
     local inst = common()
     inst.AnimState:PlayAnimation("ice_spin_loop", true)
-	inst.AnimState:SetBloomEffectHandle( "data/shaders/anim.ksh" )
+	inst.AnimState:SetBloomEffectHandle( "shaders/anim.ksh" )
     --colour projectile
     inst.AnimState:SetMultColour(10, 0, 0, 1)
     return inst

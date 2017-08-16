@@ -1,13 +1,7 @@
-require "fonthelper"
-
 assets = 
 {
-	Asset("ANIM", "data/anim/maxwell_endgame.zip"),
-	Asset("SOUND", "data/sound/maxwell.fsb"),
-}
-
-local FONTS = {
-	{ filename = "data/fonts/opensans50.zip", alias = DIALOGFONT },
+	Asset("ANIM", "anim/maxwell_endgame.zip"),
+	Asset("SOUND", "sound/maxwell.fsb"),
 }
 
 local function createconversationline(line)
@@ -304,8 +298,6 @@ local function teleportfail(inst)
         end)  
     end
 end
-
-AddFontAssets( assets, FONTS )
 
 local function fn()
     local inst = CreateEntity()

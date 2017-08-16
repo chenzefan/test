@@ -9,7 +9,7 @@ BigPopupDialogScreen = Class(Screen, function(self, title, text, buttons, timeou
 	Screen._ctor(self, "BigPopupDialogScreen")
 
 	--darken everything behind the dialog
-    self.black = self:AddChild(Image("data/images/square.tex"))
+    self.black = self:AddChild(Image("images/global.xml", "square.tex"))
     self.black:SetVRegPoint(ANCHOR_MIDDLE)
     self.black:SetHRegPoint(ANCHOR_MIDDLE)
     self.black:SetVAnchor(ANCHOR_MIDDLE)
@@ -24,7 +24,7 @@ BigPopupDialogScreen = Class(Screen, function(self, title, text, buttons, timeou
     self.proot:SetScaleMode(SCALEMODE_PROPORTIONAL)
 
 	--throw up the background
-    self.bg = self.proot:AddChild(Image("data/images/panel_upsell_small.tex"))
+    self.bg = self.proot:AddChild(Image("images/globalpanels.xml", "panel_upsell_small.tex"))
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
     self.bg:SetHRegPoint(ANCHOR_MIDDLE)
 	self.bg:SetScale(1.2,1.2,1.2)

@@ -1,8 +1,12 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/lightning_rod.zip"),
-	Asset("ANIM", "data/anim/lightning_rod_fx.zip"),
-    Asset("IMAGE", "data/inventoryimages/lightning_rod.tex"),
+	Asset("ANIM", "anim/lightning_rod.zip"),
+	Asset("ANIM", "anim/lightning_rod_fx.zip"),
+}
+
+local prefabs = 
+{
+    "lightning_rod_fx"
 }
 
 local function onhammered(inst, worker)
@@ -34,13 +38,19 @@ local function dozap(inst)
         inst.zaptask = nil
     end
     inst.SoundEmitter:PlaySound("dontstarve/common/lightningrod")
-    PlayFX(Vector3(inst.Transform:GetWorldPosition() ), "lightning_rod_fx", "lightning_rod_fx", "idle")
+
+    local fx = SpawnPrefab("lightning_rod_fx")
+    local pos = inst:GetPosition()
+    fx.Transform:SetPosition(pos.x, pos.y, pos.z)
+
+
+    --PlayFX(Vector3(inst.Transform:GetWorldPosition() ), "lightning_rod_fx", "lightning_rod_fx", "idle")
     inst.zaptask = inst:DoTaskInTime(math.random(10, 40), dozap)
 end
 
 local function setcharged(inst)
     dozap(inst)
-	inst.AnimState:SetBloomEffectHandle( "data/shaders/anim.ksh" )
+	inst.AnimState:SetBloomEffectHandle( "shaders/anim.ksh" )
     inst.Light:Enable(true)
 	inst.charged = true
 	inst.chargeleft = 3
@@ -127,5 +137,5 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/objects/lightning_rod", fn, assets),
+return Prefab( "common/objects/lightning_rod", fn, assets, prefabs),
 	   MakePlacer("common/lightning_rod_placer", "lightning_rod", "lightning_rod", "idle")  

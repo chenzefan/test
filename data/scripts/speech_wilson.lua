@@ -52,6 +52,7 @@ return {
 	ANNOUNCE_THORNS = "Ow!",
 	ANNOUNCE_TORCH_OUT = "My torch just ran out!",
 	ANNOUNCE_TRAP_WENT_OFF = "Oops.",
+	ANNOUNCE_UNIMPLEMENTED = "OW! I don't think it's ready yet.",
 	ANNOUNCE_WORMHOLE = "That was not a sane thing to do.",
 	BATTLECRY =
 	{
@@ -71,6 +72,26 @@ return {
 	},
 	DESCRIBE =
 	{
+
+		SLURPER = "It's so hairy!",
+		ORANGEAMULET = "Teleportation can be so useful.",
+		YELLOWSTAFF = "I put a gem on a stick.",
+		YELLOWGEM = "This gem is yellow.",
+		ORANGEGEM = "It's an orange gem.",
+		TELEBASE = 
+		{
+			VALID = "It's ready to go.",
+			GEMS = "It needs more purple gems.",
+		},
+		GEMSOCKET = 
+		{
+			VALID = "Looks ready.",
+			GEMS = "It needs a gem.",
+		},
+		STAFFLIGHT = "That seems really dangerous.",
+		RESEARCHLAB4 = "Who would name something that?",
+	
+        ANCIENT_ALTAR = "Which elder god dwelt here?",
 		CAVE_BANANA = "It's mushy.",
 		CAVE_BANANA_COOKED = "Yum!",
 		CAVE_BANANA_TREE = "It's dubiously photosynthetical.",
@@ -207,6 +228,7 @@ return {
 		BISHOP = "Back off, preacherman!",
 		BLOWDART_FIRE = "This seems fundamentally unsafe.",
 		BLOWDART_SLEEP = "Just don't breathe in.",
+		BLUEAMULET = "Cool as ice!",
 		BLUEGEM = "It sparkles with cold energy.",
 		BLUEPRINT = "It's scientific!",
 		BLUE_CAP = "It's weird and gooey.",
@@ -246,6 +268,9 @@ return {
 		CARROT_SEEDS = "It's a seed.",
 		CAVE_FERN = "It's a fern.",
 		CHARCOAL = "It's small, dark and smells like burnt wood.",
+        CHESSJUNK1 = "A pile of broken chess pieces",
+        CHESSJUNK2 = "Another pile of broken chess pieces",
+        CHESSJUNK3 = "Even more broken chess pieces",
 		CHESTER = "Otto von Chesterfield, Esq.",
 		CHESTER_EYEBONE =
 		{
@@ -280,6 +305,8 @@ return {
 		{
 			GENERIC = "It's probably a tuft of grass.",
 		},
+		DEVTOOL = "It smells of bacon!",
+		DEVTOOL_NODEV = "I'm not strong enough to wield it.",
 		DIRTPILE = "It's a pile of dirt... or IS it?",
 		DIVININGROD =
 		{
@@ -499,6 +526,8 @@ return {
 		MERMHEAD = "The stinkiest thing I'll smell all day.",
 		MERMHOUSE = "Who would live here?",
 		MINERHAT = "This will keep my hands free.",
+		MONKEY = "Curious little guy.",
+		MONKEYBARREL = "Did that barrel just move?",
 		MONSTERLASAGNA = "I cooked it myself!",
 		MONSTERMEAT = "Ugh. I don't think I should eat that.",
 		MONSTERMEAT_DRIED = "Strange-smelling jerky",
@@ -519,8 +548,8 @@ return {
 		ONEMANBAND = "I should have added a beefalo bell.",
 		PANDORASCHEST = "It may contain something fantastic! Or horrible.",
 		PANFLUTE = "I can serenade the animals.",
-		PAPYRUS = "Some sheets of paper",
-		PENGUIN = "...",
+		PAPYRUS = "Some sheets of paper.",
+		PENGUIN = "Must be breeding season.",
 		PERD = "Stupid bird! Stay away from my berries!",
 		PEROGIES = "I cooked it myself!",
 		PETALS = "I showed those flowers who's boss!",
@@ -570,6 +599,7 @@ return {
 		PUMPKIN_COOKED = "How did it turn into a pie...",
 		PUMPKIN_LANTERN = "Spooky!",
 		PUMPKIN_SEEDS = "It's a seed.",
+		PURPLEAMULET = "It's whispering to me.",
 		PURPLEGEM = "It contains the mysteries of the universe.",
 		RABBIT =
 		{
@@ -598,6 +628,7 @@ return {
 		RESEARCHLAB = "It breaks down objects into their scientific components.",
 		RESEARCHLAB2 = "It's even more science-y than the last one!",
 		RESEARCHLAB3 = "What have I created?",
+		RESEARCHLAB4 = "Who would name something that?",
 		RESURRECTIONSTATUE = "What a handsome devil!",
 		RESURRECTIONSTONE = "What an odd looking stone.",
 		ROBIN =
@@ -611,8 +642,16 @@ return {
 			HELD = "It's so soft.",
 		},
 		ROBOT_PUPPET = "It's trapped!",
+		ROCK_LIGHT =
+		{
+			GENERIC = "A crusted over lava pit.",
+			OUT = "Looks fragile",
+			LOW = "The lava's crusting over.",
+			NORMAL = "Nice and comfy.",
+		},
 		ROCK = "It wouldn't fit in my pocket.",
 		ROCKS = "I can make stuff with these.",
+        ROOK = "Storm the castle!",
 		ROPE = "Some short lengths of rope.",
 		ROTTENEGG = "Ew! It stinks!",
 		SANITYROCK =
@@ -689,6 +728,16 @@ return {
 			HUNGRY = "I'd better find it some food.",
 			STARVING = "It has a dangerous look in it's eye.",
 		},
+		TELEBASE =
+		{
+			VALID = "It's ready to go.",
+			GEMS = "It needs more purple gems.",
+		},
+		GEMSOCKET = 
+		{
+			VALID = "Looks ready.",
+			GEMS = "It needs a gem.",
+		},
 		TELEPORTATO_BASE =
 		{
 			ACTIVE = "With this I can surely pass through space and time!",
@@ -700,6 +749,7 @@ return {
 		TELEPORTATO_CRANK = "Tough enough to handle the most intense experiments.",
 		TELEPORTATO_POTATO = "This metal potato contains great and fearful power...",
 		TELEPORTATO_RING = "A ring that could focus dimensional energies.",
+		TELESTAFF = "It can show me the world.",
 		TENT = "I get crazy when I don't sleep.",
 		TENTACLE = "That looks dangerous.",
 		TENTACLESPIKE = "It's pointy and slimy.",
@@ -745,11 +795,14 @@ return {
 		TURKEYDINNER = "Mmmm.",
 		TWIGS = "It's a bunch of small twigs.",
 		UMBRELLA = "This will keep my hair dry, at least.",
+		UNIMPLEMENTED = "It doesn't look finished! It could be dangerous.",
 		WAFFLES = "I cooked it myself!",
 		WALL_HAY = "Hmmmm. I guess that'll have to do.",
 		WALL_HAY_ITEM = "This seems like a bad idea.",
 		WALL_STONE = "That's a nice wall",
 		WALL_STONE_ITEM = "They make me feel so safe.",
+		WALL_RUINS = "That's a nice wall",
+		WALL_RUINS_ITEM = "They make me feel so safe.",
 		WALL_WOOD = "Pointy!",
 		WALL_WOOD_ITEM = "Pickets!",
 		WALRUS = "Walruses are natural predators.",

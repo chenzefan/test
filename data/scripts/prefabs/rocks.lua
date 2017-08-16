@@ -1,16 +1,16 @@
 local rock1_assets =
 {
-	Asset("ANIM", "data/anim/rock.zip"),
+	Asset("ANIM", "anim/rock.zip"),
 }
 
 local rock2_assets =
 {
-	Asset("ANIM", "data/anim/rock2.zip"),
+	Asset("ANIM", "anim/rock2.zip"),
 }
 
 local rock_flintless_assets =
 {
-	Asset("ANIM", "data/anim/rock_flintless.zip"),
+	Asset("ANIM", "anim/rock_flintless.zip"),
 }
 
 local prefabs =

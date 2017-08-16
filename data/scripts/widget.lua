@@ -54,6 +54,10 @@ function Widget:GetParent()
     return self.parent
 end
 
+function Widget:GetChildren()
+    return self.children
+end
+
 function Widget:IsMouseOver()
     return self.over
 end
@@ -303,7 +307,7 @@ function Widget:OnMouseOutChild( child )
 end
 
 function Widget:OnMouseOver()
-	--print("Widget:OnMouseOver()", self)
+	--print("Widget:OnMouseOver()", self.name)
     self.mouse_over_self = true
 
     if self.parent then
@@ -314,7 +318,7 @@ function Widget:OnMouseOver()
 end
 
 function Widget:OnMouseOut()
-	--print("Widget:OnMouseOut()", self)
+	--print("Widget:OnMouseOut()", self.name)
     self.mouse_over_self = false
     
     if self.parent then
@@ -385,14 +389,14 @@ function Widget:SetClickable(val)
     self.inst.entity:SetClickable(val)
 end
 
-function Widget:OnMouseMove(x,y)
+function Widget:UpdatePosition(x,y)
     self:SetPosition(x,y,0)
 end
 
 function Widget:FollowMouse()
     if not self.followhandler then
-        self.followhandler = TheInput:AddMouseMoveHandler(function(x,y) self:OnMouseMove(x,y) end)
-        self:SetPosition(TheInput:GetMouseScreenPos())
+        self.followhandler = TheInput:AddMoveHandler(function(x,y) self:UpdatePosition(x,y) end)
+        self:SetPosition(TheInput:GetScreenPosition())
     end
 end
 

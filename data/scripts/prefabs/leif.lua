@@ -2,13 +2,13 @@ local brain = require "brains/leifbrain"
 
 local assets =
 {
-	Asset("ANIM", "data/anim/leif_walking.zip"),
-	Asset("ANIM", "data/anim/leif_actions.zip"),
-	Asset("ANIM", "data/anim/leif_attacks.zip"),
-	Asset("ANIM", "data/anim/leif_idles.zip"),
-	Asset("ANIM", "data/anim/leif_build.zip"),
-	Asset("ANIM", "data/anim/leif_lumpy_build.zip"),
-	Asset("SOUND", "data/sound/leif.fsb"),
+	Asset("ANIM", "anim/leif_walking.zip"),
+	Asset("ANIM", "anim/leif_actions.zip"),
+	Asset("ANIM", "anim/leif_attacks.zip"),
+	Asset("ANIM", "anim/leif_idles.zip"),
+	Asset("ANIM", "anim/leif_build.zip"),
+	Asset("ANIM", "anim/leif_lumpy_build.zip"),
+	Asset("SOUND", "sound/leif.fsb"),
 }
 
 local prefabs =
@@ -134,6 +134,7 @@ local function fn(Sim)
     ------------------------------------------
 
     inst:AddComponent("inspectable")
+	inst.components.inspectable:RecordViews()
     ------------------------------------------
     
     inst:SetBrain(brain)

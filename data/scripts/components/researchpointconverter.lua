@@ -1,3 +1,5 @@
+--DON'T USE THIS! Use prototyper.lua instead.
+
 local ResearchPointConverter = Class(function(self, inst)
     self.inst = inst
 	self.val = 0

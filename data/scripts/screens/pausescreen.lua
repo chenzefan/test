@@ -16,13 +16,14 @@ local function dorestart()
 			if player then
 				player:PushEvent("quit", {})
 			else
-				TheSim:SetInstanceParameters()
-				TheSim:Reset()
+				StartNextInstance()
 			end
 		else
 			ShowUpsellScreen(true)
 			DEMO_QUITTING = true
-		end	
+		end
+		
+		inGamePlay = false
 	end
 	
 	local ground = GetWorld()
@@ -45,7 +46,7 @@ end
 PauseScreen = Class(Screen, function(self)
 	Screen._ctor(self, "PauseScreen")
 
-	SetHUDPause(true)
+	SetHUDPause(true,"pause")
 	
 	self:CreateButtons()
 	self:CreateMenu()
@@ -83,6 +84,7 @@ function PauseScreen:CreateButtons()
 		{text=STRINGS.UI.PAUSEMENU.OPTIONS, cb=function() 
 			TheFrontEnd:PushScreen( OptionsScreen(true))
 		end },
+		--{text=STRINGS.UI.PAUSEMENU.CONTROLS, cb=function() TheFrontEnd:PushScreen( ControlsScreen(true)) end },
 		{text=can_save and STRINGS.UI.PAUSEMENU.SAVEANDQUIT or STRINGS.UI.PAUSEMENU.QUIT, cb=function() self:doconfirmquit() end},
 		{text=STRINGS.UI.PAUSEMENU.CONTINUE, cb=function() TheFrontEnd:PopScreen(self) SetHUDPause(false) end },
 	}
@@ -92,7 +94,7 @@ end
 
 function PauseScreen:CreateMenu()
 	--darken everything behind the dialog
-    self.black = self:AddChild(Image("data/images/square.tex"))
+    self.black = self:AddChild(Image("images/global.xml", "square.tex"))
     self.black:SetVRegPoint(ANCHOR_MIDDLE)
     self.black:SetHRegPoint(ANCHOR_MIDDLE)
     self.black:SetVAnchor(ANCHOR_MIDDLE)
@@ -107,10 +109,10 @@ function PauseScreen:CreateMenu()
     self.proot:SetScaleMode(SCALEMODE_PROPORTIONAL)
 
 	--throw up the background
-    self.bg = self.proot:AddChild(Image("data/images/small_dialog.tex"))
+    self.bg = self.proot:AddChild(Image("images/globalpanels.xml", "small_dialog.tex"))
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
     self.bg:SetHRegPoint(ANCHOR_MIDDLE)
-	self.bg:SetScale(1.2,1.2,1.2)
+	self.bg:SetScale(1.5,1.2,1.2)
 	
 	--title	
     self.title = self.proot:AddChild(Text(TITLEFONT, 50))

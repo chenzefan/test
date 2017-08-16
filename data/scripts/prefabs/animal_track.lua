@@ -2,7 +2,7 @@ local trace = function() end
 
 local assets=
 {
-    Asset("ANIM", "data/anim/koalefant_tracks.zip"),
+    Asset("ANIM", "anim/koalefant_tracks.zip"),
 }
 
 local function OnSave(inst, data)

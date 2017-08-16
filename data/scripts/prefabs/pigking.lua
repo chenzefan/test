@@ -1,7 +1,7 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/pig_king.zip"),
-	Asset("SOUND", "data/sound/pig.fsb"),
+	Asset("ANIM", "anim/pig_king.zip"),
+	Asset("SOUND", "sound/pig.fsb"),
 }
 
 

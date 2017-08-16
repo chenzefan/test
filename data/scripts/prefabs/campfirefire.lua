@@ -1,7 +1,7 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/campfire_fire.zip"),
-	Asset("SOUND", "data/sound/common.fsb"),
+	Asset("ANIM", "anim/campfire_fire.zip"),
+	Asset("SOUND", "sound/common.fsb"),
 }
 
 local heats = { 70, 120, 180, 220 }
@@ -19,7 +19,7 @@ local function fn(Sim)
 
     anim:SetBank("campfire_fire")
     anim:SetBuild("campfire_fire")
-	anim:SetBloomEffectHandle( "data/shaders/anim.ksh" )
+	anim:SetBloomEffectHandle( "shaders/anim.ksh" )
     inst.AnimState:SetRayTestOnBB(true)
     
     inst:AddTag("fx")

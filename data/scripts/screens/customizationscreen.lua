@@ -2,35 +2,29 @@ require "screen"
 require "animbutton"
 require "spinner"
 require "numericspinner"
-require "map/levels"
 require "screens/popupdialog"
 require "widgets/toggle"
 
-local spinner_images = {
-	arrow_normal = "data/images/spin_arrow.tex",
-	arrow_over = "data/images/spin_arrow_over.tex",
-	arrow_disabled = "data/images/spin_arrow_disabled.tex",
-	bgtexture = "data/images/spinner.tex",
-}
+local spinner_atlas = "images/ui.xml"
 
-local toggle_images = {
-	on = "data/images/arrow_right.tex",
-	off = "data/images/arrow_left.tex",
-	optional = "data/images/next_arrow.tex",
-	disabled = "data/images/spin_arrow_disabled.tex",
-	bgtexture = "data/images/spinner.tex",
+local spinner_images = {
+	arrow_normal = "spin_arrow.tex",
+	arrow_over = "spin_arrow_over.tex",
+	arrow_disabled = "spin_arrow_disabled.tex",
+	bgtexture = "spinner.tex",
 }
 
 local text_font = DEFAULTFONT--NUMBERFONT
 local spinnerFont = { font = text_font, size = 30 }
 local spinnerHeight = 64
 
+local levels = require "map/levels"
 local customise = require("map/customise")
 local options = {}
 
 for k,v in pairs(customise.GROUP) do
 	for kk, vv in pairs(v.items) do
-		table.insert(options, {name = kk, image = vv.image, options = vv.desc or v.desc, default = vv.value, group = k})
+		table.insert(options, {name = kk, image = vv.image, options = vv.desc or v.desc, default = vv.value, group = k, atlas = vv.atlas})
 	end
 end
 
@@ -53,7 +47,7 @@ CustomizationScreen = Class(Screen, function(self, profile, cb, defaults)
 		}
 	end
 	
-    self.bg = self:AddChild(Image("data/images/bg_plain.tex"))
+    self.bg = self:AddChild(Image("images/ui.xml", "bg_plain.tex"))
     self.bg:SetTint(BGCOLOURS.RED[1],BGCOLOURS.RED[2],BGCOLOURS.RED[3], 1)
 
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
@@ -97,7 +91,7 @@ CustomizationScreen = Class(Screen, function(self, profile, cb, defaults)
     
     self.presetpanel = self.root:AddChild(Widget("presetpanel"))
     self.presetpanel:SetPosition(left_col,50,0)
-    self.presetpanelbg = self.presetpanel:AddChild(Image("data/images/presetbox.tex"))
+    self.presetpanelbg = self.presetpanel:AddChild(Image("images/globalpanels.xml", "presetbox.tex"))
     self.presetpanelbg:SetScale(1,.9, 1)
 
     self.presettitle = self.presetpanel:AddChild(Text(TITLEFONT, 50))
@@ -116,7 +110,7 @@ CustomizationScreen = Class(Screen, function(self, profile, cb, defaults)
 	local presetspinnerFont = { font = BUTTONFONT, size = 30 }
 	
 	local w = 200
-	self.presetspinner = self.presetpanel:AddChild(Spinner( self.presets, w, 50, presetspinnerFont, spinner_images ))
+	self.presetspinner = self.presetpanel:AddChild(Spinner( self.presets, w, 50, presetspinnerFont, spinner_atlas, spinner_images ))
 	self.presetspinner:SetPosition(-self.presetspinner:GetWidth()/2, 50, 0)
 	self.presetspinner:SetTextColour(0,0,0,1)
 	self.presetspinner.OnChanged =
@@ -124,8 +118,8 @@ CustomizationScreen = Class(Screen, function(self, profile, cb, defaults)
 		
 			if self.dirty then
 				TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.CUSTOMIZATIONSCREEN.LOSECHANGESTITLE, STRINGS.UI.CUSTOMIZATIONSCREEN.LOSECHANGESBODY, 
-					{{text=STRINGS.UI.CUSTOMIZATIONSCREEN.YES, cb = function() self.options.tweak = {} self:MakeClean() end},
-					{text=STRINGS.UI.CUSTOMIZATIONSCREEN.NO, cb = function() self:MakeDirty() end}  }))
+					{{text=STRINGS.UI.CUSTOMIZATIONSCREEN.YES, cb = function() self.options.tweak = {} self:MakeClean() TheFrontEnd:PopScreen() end},
+					{text=STRINGS.UI.CUSTOMIZATIONSCREEN.NO, cb = function() self:MakeDirty() TheFrontEnd:PopScreen() end}  }))
 			else
 				self:LoadPreset(data)
 				self.options.tweak = {}				
@@ -138,7 +132,7 @@ CustomizationScreen = Class(Screen, function(self, profile, cb, defaults)
 	self.option_offset = 0
     self.optionspanel = self.root:AddChild(Widget("optionspanel"))
     self.optionspanel:SetPosition(right_col,0,0)
-    self.optionspanelbg = self.optionspanel:AddChild(Image("data/images/panel_customization.tex"))
+    self.optionspanelbg = self.optionspanel:AddChild(Image("images/globalpanels.xml", "panel_customization.tex"))
 
 	self.rightbutton = self.optionspanel:AddChild(AnimButton("scroll_arrow"))
     self.rightbutton:SetPosition(340, 0, 0)
@@ -195,9 +189,9 @@ function CustomizationScreen:RefreshOptions()
 			
 			local opt = self.optionspanel:AddChild(Widget("option"))
 			
-			local bg = opt:AddChild(Image("data/images/nondefault_customization.tex"))
+			local bg = opt:AddChild(Image("images/ui.xml", "nondefault_customization.tex"))
 			bg:Hide()
-			local image = opt:AddChild(Image(options[idx].image))
+			local image = opt:AddChild(Image(options[idx].atlas or "images/customisation.xml", options[idx].image))
 			
 			local imscale = .5
 			image:SetScale(imscale,imscale,imscale)
@@ -207,7 +201,7 @@ function CustomizationScreen:RefreshOptions()
 			
 			local spin_height = 50
 			local w = 120
-			local spinner = opt:AddChild(Spinner( spin_options, w, spin_height, spinfont, spinner_images ))
+			local spinner = opt:AddChild(Spinner( spin_options, w, spin_height, spinfont, spinner_atlas, spinner_images ))
 			spinner:SetTextColour(0,0,0,1)
 			local default_value = overrides[options[idx].name] or options[idx].default
 			

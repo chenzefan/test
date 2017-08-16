@@ -4,6 +4,7 @@ require "tilebg"
 require "widgets/common"
 
 local DOUBLECLICKTIME = .33
+local HUD_ATLAS = "images/hud.xml"
 
 Inv = Class(Widget, function(self, owner)
     Widget._ctor(self, "Inventory")
@@ -19,12 +20,12 @@ Inv = Class(Widget, function(self, owner)
     local num_equip = self.owner.components.inventory:GetNumEquipSlots()
 
     local equip_slots = {EQUIPSLOTS.HANDS, EQUIPSLOTS.BODY, EQUIPSLOTS.HEAD}
-    local bgs = {"images/equip_slot.tex", "images/equip_slot_body.tex", "images/equip_slot_head.tex"}
+    local bgs = {"equip_slot.tex", "equip_slot_body.tex", "equip_slot_head.tex"}
 
     self.inv = {}
     self.equip = {}
     
-    self.bg = self:AddChild(Image("data/images/inventory_bg.tex"))
+    self.bg = self:AddChild(Image(HUD_ATLAS, "inventory_bg.tex"))
     self.bg:SetVRegPoint(ANCHOR_BOTTOM)
     self.bg:SetScale(1.1,1,1)
     
@@ -37,7 +38,7 @@ Inv = Class(Widget, function(self, owner)
     
     local total_w = (num_slots + num_equip)*(W) + (num_slots + num_equip - 2 - num_intersep) *(SEP) + INTERSEP*num_intersep
     for k = 1, #equip_slots do
-        local slot = EquipSlot(equip_slots[k], bgs[k], self.owner)
+        local slot = EquipSlot(equip_slots[k], HUD_ATLAS, bgs[k], self.owner)
         self.equip[equip_slots[k]] = self:AddChild(slot)
         
         --local x = -total_w/2 + (num_slots + k - 1)*(W+SEP) + INTERSEP*num_intersep + W/2 + fudge
@@ -48,7 +49,7 @@ Inv = Class(Widget, function(self, owner)
     end    
 
     for k = 1,num_slots do
-        local slot = InvSlot(k,"data/images/inv_slot.tex", self.owner, self.owner.components.inventory)
+        local slot = InvSlot(k, HUD_ATLAS, "inv_slot.tex", self.owner, self.owner.components.inventory)
         self.inv[k] = self:AddChild(slot)
         
         local interseps = math.floor((k-1) / 5)
@@ -209,7 +210,7 @@ function Inv:OnItemGet(item, slot, source_pos)
 
         if source_pos then
 			local dest_pos = self.inv[slot]:GetWorldPosition()
-			local im = Image(item.components.inventoryitem:GetImage())
+			local im = Image(item.components.inventoryitem:GetAtlas(), item.components.inventoryitem:GetImage())
 			im:MoveTo(source_pos, dest_pos, .3, function() tile:Show() tile:ScaleTo(2, 1, .25) im:Kill() end)
         else
 			tile:Show() 

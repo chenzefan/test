@@ -205,6 +205,21 @@ function MakeGhostPhysics(inst, mass, rad)
     inst.Physics:CollidesWith(COLLISION.CHARACTERS)
 end
 
+function ChangeToGhostPhysics(inst)
+    inst.Physics:SetCollisionGroup(COLLISION.CHARACTERS)
+    inst.Physics:ClearCollisionMask()
+    inst.Physics:CollidesWith(COLLISION.WORLD)
+    --inst.Physics:CollidesWith(COLLISION.OBSTACLES)
+    inst.Physics:CollidesWith(COLLISION.CHARACTERS)
+end
+
+function ChangeToCharacterPhysics(inst)
+    inst.Physics:SetCollisionGroup(COLLISION.CHARACTERS)
+    inst.Physics:ClearCollisionMask()
+    inst.Physics:CollidesWith(COLLISION.WORLD)
+    inst.Physics:CollidesWith(COLLISION.OBSTACLES)
+    inst.Physics:CollidesWith(COLLISION.CHARACTERS)
+end
 
 function MakeObstaclePhysics(inst, rad, height)
 

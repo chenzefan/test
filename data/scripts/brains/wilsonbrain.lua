@@ -11,7 +11,7 @@ end)
 function WilsonBrain:OnStart()
     local root = PriorityNode(
     {
-    	WhileNode(function() return TheInput:IsMouseDown(MOUSEBUTTON_LEFT) end, "Hold LMB", ChaseAndAttack(self.inst, MAX_CHASE_TIME)),
+    	WhileNode(function() return TheInput:IsControlPressed(CONTROL_PRIMARY) end, "Hold LMB", ChaseAndAttack(self.inst, MAX_CHASE_TIME)),
     	ChaseAndAttack(self.inst, MAX_CHASE_TIME, nil, 1),
     },0)
     

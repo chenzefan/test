@@ -251,6 +251,16 @@ function SeasonManager:SetSegs(summer, winter)
 	self:UpdateSegs()
 end
 
+
+function SeasonManager:SetAppropriateDSP()
+	if self:IsWinter() then
+		self:ApplyDSP(.5)
+	else
+		self:ClearDSP(.5)
+	end
+end
+
+
 function SeasonManager:ApplyDSP(time_to_take)
 	for k,v in pairs(self.winterdsp) do
 		TheMixer:SetLowPassFilter(k, v, time_to_take)
@@ -468,6 +478,7 @@ end
 
 function SeasonManager:DoLightningStrike(pos)
     local rod = nil
+    local player = nil
     local rods = TheSim:FindEntities(pos.x, pos.y, pos.z, 40, {"lightningrod"})
     for k,v in pairs(rods) do
         if not rod or distsq(pos, Vector3(v.Transform:GetWorldPosition())) < distsq(pos, Vector3(rod.Transform:GetWorldPosition() )) then
@@ -477,19 +488,22 @@ function SeasonManager:DoLightningStrike(pos)
     
     if rod then
         pos = Vector3(rod.Transform:GetWorldPosition() )
+    elseif GetPlayer().components.playerlightningtarget and  GetPlayer().components.playerlightningtarget:CanBeHit() then
+    	player = GetPlayer()
+    	pos = Vector3(GetPlayer().Transform:GetWorldPosition() )
     end
 
-	local lightning = PlayFX(pos, "lightning", "lightning", "anim")
-	lightning.AnimState:SetBloomEffectHandle( "data/shaders/anim.ksh" )
-	lightning.AnimState:SetLightOverride(1)
-	lightning.Transform:SetScale(2,2,2)
-	GetClock():DoLightningLighting()
-	GetPlayer().SoundEmitter:PlaySound("dontstarve/rain/thunder_close")
-	GetPlayer().components.playercontroller:ShakeCamera(lightning, "FULL", 0.7, 0.02, .5, 40)
+
+	local lightning = SpawnPrefab("lightning")
+	lightning.Transform:SetPosition(pos:Get())
 
     if rod then
         rod:PushEvent("lightningstrike")
     else
+        if player then
+        	player:PushEvent("lightningstrike")
+        end
+
         local ents = TheSim:FindEntities(pos.x, pos.y, pos.z, 3)
         for k,v in pairs(ents) do
 		    if not v:IsInLimbo() then

@@ -182,9 +182,20 @@ end
 
 function Combat:SetTarget(target)
     local new = target ~= self.target
+    local player = GetPlayer()
+
     if new and (not target or self:IsValidTarget(target) ) and not (target.sg and target.sg:HasStateTag("hiding") and target:HasTag("player")) then
+
+        if self.target == player and new ~= player then
+            FightStat_GaveUp(self.inst)
+        end
+
         self.target = target
         self.inst:PushEvent("newcombattarget", {target=target})
+
+        if player == target or target and target.components.follower.leader == player then
+            FightStat_Targeted(self.inst)
+        end
         
         if target and self.keeptargetfn then
             self.inst:StartUpdatingComponent(self)
@@ -252,6 +263,11 @@ function Combat:GiveUp()
         end
         
     end
+
+    if GetPlayer() == self.target then
+        FightStat_GaveUp(self.inst)
+    end
+
     self.inst:PushEvent("giveuptarget", {target = self.target})
     self.target = nil
 end
@@ -278,13 +294,21 @@ end
 
 function Combat:GetAttacked(attacker, damage, weapon)
     --print ("ATTACKED", self.inst, attacker, damage)
-
     local blocked = false
+    local player = GetPlayer()
+    local init_damage = damage
+
     self.lastattacker = attacker
     if self.inst.components.health and damage then
     
         if self.inst.components.inventory then
             damage = self.inst.components.inventory:ApplyDamage(damage, attacker)
+        end
+
+        if GetPlayer() == self.inst then
+            local prefab = attacker.prefab or attacker.inst.prefab or "NIL"
+            ProfileStatsAdd("hitsby_"..prefab,math.floor(damage))
+            FightStat_AttackedBy(attacker,damage,init_damage-damage)
         end
     
         if damage > 0 and self.inst.components.health:IsInvincible() == false then
@@ -293,8 +317,18 @@ function Combat:GetAttacked(attacker, damage, weapon)
 				if attacker then
 					attacker:PushEvent("killed", {victim = self.inst})
 				end
-                if attacker and attacker:HasTag( "player" ) then
+
+                if attacker and attacker == GetPlayer() then
                     ProfileStatsAdd("kill_"..self.inst.prefab)
+                    FightStat_AddKill(self.inst,damage,weapon)
+                end
+                if attacker and attacker.components.follower.leader == GetPlayer() then
+                    ProfileStatsAdd("kill_by_minion"..self.inst.prefab)
+                    FightStat_AddKillByFollower(self.inst,damage,weapon)
+                end
+                if attacker and attacker.components.mine then
+                    ProfileStatsAdd("kill_by_trap_"..self.inst.prefab)
+                    FightStat_AddKillByMine(self.inst,damage)
                 end
                 
                 if self.onkilledbyother then
@@ -499,7 +533,15 @@ function Combat:CalcDamage(target, weapon, multiplier)
 	local multiplier = multiplier or self.damagemultiplier or 1
 	local bonus = self.damagebonus or 0
     if weapon then
-        return weapon.components.weapon.damage*multiplier + bonus
+        local weapondamage = 0
+        if weapon.components.weapon.variedmodefn then
+            local d = weapon.components.weapon.variedmodefn(weapon)
+            weapondamage = d.damage        
+        else
+            weapondamage = weapon.components.weapon.damage
+        end
+        if not weapondamage then weapondamage = 0 end
+        return weapondamage*multiplier + bonus
     end
     
     if target and target:HasTag("player") then
@@ -512,9 +554,14 @@ end
 function Combat:GetAttackRange()
     local range = self.attackrange
     local weapon = self:GetWeapon()
-    if weapon and weapon.components.weapon.attackrange then
+
+    if weapon and weapon.components.weapon.variedmodefn then
+        local weaponrange = weapon.components.weapon.variedmodefn(weapon)
+        range = range + weaponrange.attackrange
+    elseif weapon and weapon.components.weapon.attackrange then
         range = range + weapon.components.weapon.attackrange
     end
+
     return range
 end
 
@@ -542,7 +589,10 @@ end
 function Combat:GetHitRange()
     local range = self.hitrange
     local weapon = self:GetWeapon()
-    if weapon and weapon.components.weapon.hitrange then
+    if weapon and weapon.components.weapon.variedmodefn then
+        local weaponrange = weapon.components.weapon.variedmodefn(weapon)
+        range = range + weaponrange.hitrange
+    elseif weapon and weapon.components.weapon.hitrange then
         range = range + weapon.components.weapon.hitrange
     end
     --print("GetHitRange", self.inst, self.hitrange, range)
@@ -589,11 +639,19 @@ function Combat:DoAttack(target_override, weapon, projectile)
             if projectile then
                 projectile.components.projectile:Throw(self.inst, targ)
             end
-        elseif weapon and weapon.components.weapon.projectile and not projectile then
+        elseif weapon and weapon.components.weapon:CanRangedAttack() and not projectile then
             weapon.components.weapon:LaunchProjectile(self.inst, targ)
         else
             local damage = self:CalcDamage(targ, weapon)
             targ.components.combat:GetAttacked(self.inst, damage, weapon)
+
+            if self.inst:HasTag( "player" ) then
+                ProfileStatsAdd("hitson_"..targ.prefab,math.floor(damage))
+                FightStat_Attack(targ,weapon,projectile,damage)
+            end
+            if self.inst.components.follower.leader == GetPlayer() then
+                FightStat_AttackByFollower(targ,weapon,projectile,damage)
+            end
             
             if weapon then
                 weapon.components.weapon:OnAttack(self.inst, targ, projectile)

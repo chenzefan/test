@@ -13,7 +13,7 @@ end
 
 
 function Placer:OnUpdate(dt)
-	local pt = Input:GetMouseWorldPos()
+	local pt = Input:GetWorldPosition()
 	
 	if self.snap_to_tile and GetWorld().Map then
 		local pt2 = Vector3(GetWorld().Map:GetTileCenterPoint(pt:Get()))

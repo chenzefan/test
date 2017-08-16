@@ -1,6 +1,6 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/cave_exit_rope.zip"),
+	Asset("ANIM", "anim/cave_exit_rope.zip"),
 }
 
 
@@ -24,19 +24,24 @@ end
 local function OnActivate(inst)
 	--do popup confirmation
 	--do portal presentation 
+	--decrement the depth counter
 	--save and do restart
 	SetHUDPause(true)
 	local function startadventure()
-		
 		local function onsaved()
-		    local params = json.encode{reset_action="loadslot", save_slot = SaveGameIndex:GetCurrentSaveSlot()}
-		    TheSim:SetInstanceParameters(params)
-			SendAccumulatedProfileStats()
-		    TheSim:Reset()
+		    StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = SaveGameIndex:GetCurrentSaveSlot()}, true)
 		end
 
 		SetHUDPause(false)
-		SaveGameIndex:SaveCurrent(function() SaveGameIndex:LeaveCave(onsaved) end)
+		local level = GetWorld().topology.level_number or 1
+		if level == 1 then
+			SaveGameIndex:SaveCurrent(function() SaveGameIndex:LeaveCave(onsaved) end)
+		else
+			-- Ascend
+			local level = level - 1
+			
+			SaveGameIndex:SaveCurrent(function() SaveGameIndex:EnterCave(onsaved,nil, inst.cavenum, level) end)
+		end
 	end
 
 	TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.EXITCAVE.TITLE, STRINGS.UI.EXITCAVE.BODY, 

@@ -1,48 +1,28 @@
 local Firebug = Class(function(self, inst)
     self.inst = inst
-
-    inst:ListenForEvent("enterdark", 
-        function(inst, data) 
-            self:Start()
-        end)
-
-    inst:ListenForEvent("enterlight", 
-        function(inst, data) 
-            self:Stop()
-        end)    
-
+    self.time_to_fire = 60
+    self.inst:StartUpdatingComponent(self)
 end)
 
-function Firebug:Start()
-    self.inst:StartUpdatingComponent(self) 
-    self.nextHitTime = 4+math.random()*1
-    self.nextSoundTime = self.nextHitTime* (.4 + math.random()*.4)
-end
-
-
-function Firebug:Stop()
-    self.inst:StopUpdatingComponent(self) 
-end
 
 function Firebug:OnUpdate(dt)
-    if self.inst.components.health:IsDead() then
-        self:Stop()
-        return
+    if self.inst.components.sanity and self.inst.components.sanity:GetPercent() < TUNING.WILLOW_LIGHTFIRE_SANITY_THRESH then
+        self.time_to_fire = self.time_to_fire - dt
+
+        if self.time_to_fire <= 0 then
+            self.inst.components.talker:Say(GetString(self.inst.prefab, "ANNOUNCE_LIGHTFIRE"))      
+            if self.prefab then
+                local fire = SpawnPrefab(self.prefab)
+                fire.Transform:SetPosition(self.inst.Transform:GetWorldPosition())
+            end
+            self.time_to_fire = 120*math.random()+120
+        end
     end
-    
-    if self.nextHitTime > 0 then
-        self.nextHitTime = self.nextHitTime - dt
-    else
-		self.inst.components.talker:Say(GetString(self.inst.prefab, "ANNOUNCE_LIGHTFIRE"))		
-		if self.prefab then
-			local fire = SpawnPrefab(self.prefab)
-			fire.Transform:SetPosition(self.inst.Transform:GetWorldPosition())
-		end
-		
-        self.nextHitTime = 4+math.random()*1
-    end
-    
 end
 
+
+function Firebug:GetDebugString()
+    return string.format("%2.2f", self.time_to_fire)
+end
 
 return Firebug

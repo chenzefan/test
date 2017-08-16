@@ -6,6 +6,7 @@ local Heater = Class(function(self, inst)
 	self.equippedheatfn = nil
 	self.carriedheat = 0
 	self.carriedheatfn = nil
+	self.iscooler = false
 end)
 
 

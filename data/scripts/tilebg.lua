@@ -1,8 +1,9 @@
 require "widget"
 
-TileBG = Class(Widget, function(self, tileim, sepim, endim, horizontal)
+TileBG = Class(Widget, function(self, atlas, tileim, sepim, endim, horizontal)
     Widget._ctor(self, "TileBG")
-
+    
+    self.atlas = atlas
     self.tileim = tileim
     self.sepim = sepim
     self.endim = endim
@@ -39,18 +40,18 @@ function TileBG:SetNumTiles(numtiles)
     
     local end1, end2
     if self.endim then
-        end1 = self:AddChild(Image(self.endim))
-        end2 = self:AddChild(Image(self.endim))
+        end1 = self:AddChild(Image(self.atlas, self.endim))
+        end2 = self:AddChild(Image(self.atlas, self.endim))
     end
     
     self.bgs = {}
     for k = 1,numtiles do
-        self.bgs[k] = self:AddChild(Image(self.tileim))
+        self.bgs[k] = self:AddChild(Image(self.atlas, self.tileim))
     end
 
     self.seps = {}
     for k = 1,numtiles-1 do
-        self.seps[k] = self:AddChild(Image(self.sepim))
+        self.seps[k] = self:AddChild(Image(self.atlas, self.sepim))
     end
     
     local end_w, end_h = 0, 0

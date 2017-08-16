@@ -561,7 +561,7 @@ return {
           height = 0,
           visible = true,
           properties = {
-            ["data.setepitaph"] = "David R Forsey"
+            ["data.setepitaph"] = "David Forsey"
           }
         }
       }

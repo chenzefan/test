@@ -59,8 +59,14 @@ function Hunger:IsStarving()
     return self.current <= 0
 end
 
-function Hunger:DoDelta(delta, overtime)
-    if self.inst.components.health.invincible == true or self.inst.is_teleporting == true then
+function Hunger:DoDelta(delta, overtime, ignore_invincible)
+
+    if self.redirect then
+        self.redirect(self.inst, delta, overtime)
+        return
+    end
+
+    if not ignore_invincible and self.inst.components.health.invincible == true or self.inst.is_teleporting == true then
         return
     end
 
@@ -76,8 +82,10 @@ function Hunger:DoDelta(delta, overtime)
 
     if old > 0 and self.current <= 0 then
         self.inst:PushEvent("startstarving")
+        ProfileStatsSet("started_starving", true)
     elseif old <= 0 and self.current > 0 then
         self.inst:PushEvent("stopstarving")
+        ProfileStatsSet("stopped_starving", true)
     end
     
 end
@@ -93,8 +101,10 @@ function Hunger:SetPercent(p)
 
     if old > 0 and self.current <= 0 then
         self.inst:PushEvent("startstarving")
+        ProfileStatsSet("started_starving", true)
     elseif old <= 0 and self.current > 0 then
         self.inst:PushEvent("stopstarving")
+        ProfileStatsSet("stopped_starving", true)
     end
 
 end

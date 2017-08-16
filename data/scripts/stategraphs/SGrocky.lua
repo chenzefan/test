@@ -150,7 +150,7 @@ local states =
 
     State{
         name = "shield_start",
-        tags = {"busy", "hidden"},
+        tags = {"busy", "hiding"},
 
         onenter = function(inst)
             inst.AnimState:PlayAnimation("hide")
@@ -167,7 +167,7 @@ local states =
 
     State{
         name = "shield",
-        tags = {"busy", "hidden"},
+        tags = {"busy", "hiding"},
 
         onenter = function(inst)
             --If taking fire damage, spawn fire effect. 
@@ -197,7 +197,7 @@ local states =
 
     State{
         name = "shield_end",
-        tags = {"busy", "hidden"},
+        tags = {"busy", "hiding"},
 
         onenter = function(inst)
             inst.AnimState:PlayAnimation("unhide")
@@ -251,7 +251,7 @@ CommonStates.AddSleepStates(states,
 
 
 local function hitanim(inst)
-    if inst:HasTag("hidden") then
+    if inst:HasTag("hiding") then
         return "hide_hit"
     else
         return "hit"

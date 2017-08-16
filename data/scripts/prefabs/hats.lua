@@ -3,12 +3,12 @@ function MakeHat(name)
 
     local fname = "hat_"..name
     local symname = name.."hat"
-    local texture = "data/inventoryimages/"..symname..".tex"
+    local texture = symname..".tex"
     local prefabname = symname
     local assets=
     {
-        Asset("ANIM", "data/anim/"..fname..".zip"),
-        Asset("IMAGE", texture),
+        Asset("ANIM", "anim/"..fname..".zip"),
+        --Asset("IMAGE", texture),
     }
 
     local function onequip(inst, owner)

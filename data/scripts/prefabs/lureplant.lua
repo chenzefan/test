@@ -1,8 +1,8 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/eyeplant_trap.zip"),
-    Asset("ANIM", "data/anim/meat_rack_food.zip"),
-    Asset("SOUND", "data/sound/plant.fsb"),
+	Asset("ANIM", "anim/eyeplant_trap.zip"),
+    Asset("ANIM", "anim/meat_rack_food.zip"),
+    Asset("SOUND", "sound/plant.fsb"),
 }
 
 local prefabs = 
@@ -45,7 +45,9 @@ local function HideBait(inst)
     end
 
     if inst.lure then
-        inst:RemoveEventCallback("onremoved", inst.lure.onperishfn)
+        if inst.lure.onperishfn then
+            inst:RemoveEventCallback("onremoved", inst.lure.onperishfn)
+        end
         inst.lure = nil
     end
 
@@ -64,11 +66,13 @@ local function SetWakeInfo(inst, sleeptime)
 end
 
 local function WakeUp(inst)
-    inst.wakeinfo = nil
-    inst.components.minionspawner.shouldspawn = true
-    inst.components.minionspawner:StartNextSpawn()
-    inst.task = inst:DoTaskInTime(1, TryRevealBait)
-    inst.sg:GoToState("emerge")
+    if not GetSeasonManager():IsWinter() then
+        inst.wakeinfo = nil
+        inst.components.minionspawner.shouldspawn = true
+        inst.components.minionspawner:StartNextSpawn()
+        inst.task = inst:DoTaskInTime(1, TryRevealBait)
+        inst.sg:GoToState("emerge")
+    end
 end
 
 local function ResumeSleep(inst, seconds)
@@ -89,8 +93,10 @@ end
 
 local function OnPicked(inst)
     if inst.lure then
-        inst:RemoveEventCallback("onremoved", inst.lure.onperishfn)
-        inst.lure = nil
+        if inst.lure.onperishfn then
+			inst:RemoveEventCallback("onremoved", inst.lure.onperishfn)
+		end
+		inst.lure = nil
     end
     inst.components.shelf.cantakeitem = false
     inst.sg:GoToState("picked")
@@ -104,6 +110,12 @@ local function OnPicked(inst)
     inst.components.minionspawner:KillAllMinions()
 
     SetWakeInfo(inst, TUNING.LUREPLANT_HIBERNATE_TIME)
+
+    if inst.hibernatetask then
+        inst.hibernatetask:Cancel()
+        inst.hibernatetask = nil
+    end
+
     inst.hibernatetask = inst:DoTaskInTime(TUNING.LUREPLANT_HIBERNATE_TIME, WakeUp)
 end
 
@@ -127,10 +139,21 @@ local function CollectItems(inst)
                 for k = 1, v.components.inventory.maxslots do
                     local item = v.components.inventory.itemslots[k]
                     if item and not inst.components.inventory:IsFull() then
-                        inst.components.inventory:GiveItem(item)
-                        v.components.inventory:RemoveItem(item)
-                    else
-                        v.components.inventory:RemoveItem(item)
+                        local it = v.components.inventory:RemoveItem(item)
+                        
+                        if it.components.perishable then
+							local top = it.components.perishable:GetPercent()
+							local bottom = .2
+							if top > bottom then
+								it.components.perishable:SetPercent(bottom + math.random()*(top-bottom))
+							end
+                        end
+						inst.components.inventory:GiveItem(it)
+                                        
+                        
+                    elseif item then
+                        local item = v.components.inventory:RemoveItem(item)
+                        item:Remove()
                     end
                 end
             end
@@ -206,6 +229,25 @@ local function OnLongUpdate(inst, dt)
     end
 end
 
+local function SeasonChanges(inst)
+    local sm = GetSeasonManager()
+    if sm:IsWinter() then
+        --hibernate if you aren't already
+        if inst.sg.currentstate.name ~= "hibernate" then
+            OnPicked(inst)
+        else
+            --it's already hibernating & it's still winter. Make it sleep for longer!
+            SetWakeInfo(inst, TUNING.LUREPLANT_HIBERNATE_TIME)
+            if inst.hibernatetask then
+                inst.hibernatetask:Cancel()
+                inst.hibernatetask = nil
+            end
+            inst.hibernatetask = inst:DoTaskInTime(TUNING.LUREPLANT_HIBERNATE_TIME, WakeUp)
+        end
+    end
+
+end
+
 
 local function OnEntityWake(inst)
     inst.SoundEmitter:PlaySound("dontstarve/creatures/eyeplant/eye_central_idle", "loop")
@@ -254,6 +296,7 @@ local function fn()
 
     inst:AddComponent("minionspawner")
     inst.components.minionspawner.onminionattacked = HideBait
+    inst.components.minionspawner.validtiletypes = {4,5,6,7,8,13,14,15,17}
 
     inst:AddComponent("digester")
     inst.components.digester.itemstodigestfn = CanDigest
@@ -287,7 +330,8 @@ local function fn()
     inst:DoPeriodicTask(2,CollectItems) -- Always do this.
     TryRevealBait(inst)
 
-
+    inst.ListenForWinter = inst:DoPeriodicTask(30, SeasonChanges)
+    SeasonChanges(inst)
 
     local brain = require "brains/lureplantbrain"
     inst:SetBrain(brain)

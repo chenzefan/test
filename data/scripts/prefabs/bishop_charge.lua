@@ -1,7 +1,7 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/bishop_attack.zip"),
-	Asset("SOUND", "data/sound/chess.fsb"),
+	Asset("ANIM", "anim/bishop_attack.zip"),
+	Asset("SOUND", "sound/chess.fsb"),
 }
 
 local function OnHit(inst, owner, target)

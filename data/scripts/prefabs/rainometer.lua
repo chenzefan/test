@@ -26,8 +26,7 @@ end
 
 local assets = 
 {
-	Asset("ANIM", "data/anim/rain_meter.zip"),
-	Asset("IMAGE", "data/inventoryimages/rainometer.tex"),
+	Asset("ANIM", "anim/rain_meter.zip"),
 }
 
 local function onbuilt(inst)

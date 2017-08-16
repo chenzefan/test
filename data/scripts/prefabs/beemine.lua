@@ -1,9 +1,8 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/bee_mine.zip"),
-	Asset("ANIM", "data/anim/bee_mine_maxwell.zip"),
-    Asset("IMAGE", "data/inventoryimages/beemine.tex"),
-    Asset("SOUND", "data/sound/bee.fsb"),
+	Asset("ANIM", "anim/bee_mine.zip"),
+	Asset("ANIM", "anim/bee_mine_maxwell.zip"),
+    Asset("SOUND", "sound/bee.fsb"),
 }
 
 local prefabs = 
@@ -40,6 +39,7 @@ local function OnExplode(inst)
     inst.SoundEmitter:PlaySound("dontstarve/bee/beemine_launch")
     inst:DoTaskInTime(9*FRAMES, SpawnBees)
     inst:ListenForEvent("animover", function() inst:Remove() end)
+    FightStat_TrapSprung(inst,nil,0)
 end
 
 local function onhammered(inst, worker)

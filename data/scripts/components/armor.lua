@@ -3,6 +3,7 @@ local function PercentChanged(inst, data)
        and data.percent and data.percent <= 0
        and inst.components.inventoryitem and inst.components.inventoryitem.owner then
         inst.components.inventoryitem.owner:PushEvent("armorbroke", {armor = inst})
+        --ProfileStatsSet("armor_broke_" .. inst.prefab, true)
     end
 end
 
@@ -39,14 +40,15 @@ function Armor:SetCondition(amount)
     
     if self.condition <= 0 then
         self.condition = 0
+        ProfileStatsSet("armor_broke_" .. self.inst.prefab, true)
+        ProfileStatsSet("armor", self.inst.prefab)
+        FightStat_BrokenArmor(self.inst.prefab)
         if self.onfinished then
             self.onfinished()
         end
         
         self.inst:Remove()
     end
-    
-    
 end
 
 function Armor:OnSave()
@@ -84,6 +86,8 @@ function Armor:TakeDamage(damage_amount, attacker, weapon)
         local max_absorbed = damage_amount * self.absorb_percent;
         local absorbed = math.floor(math.min(max_absorbed, self.condition))
         leftover = damage_amount - absorbed
+        ProfileStatsAdd("armor_absorb", absorbed)
+        FightStat_Absorb(absorbed)
         self:SetCondition(self.condition - absorbed)
 		if self.ontakedamage then
 			self.ontakedamage(self.inst, damage_amount, absorbed, leftover)

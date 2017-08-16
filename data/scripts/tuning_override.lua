@@ -319,7 +319,12 @@ local TUNING_OVERRIDES =
 										end
 									end,
 						}, 
-
+	["ColourCube"] = 	{
+							doit = 	function(data)
+										local COLOURCUBE = "images/colour_cubes/"..data..".tex"
+										GetWorld().components.colourcubemanager:SetOverrideColourCube(COLOURCUBE)
+									end,
+						}, 
 }
 
 return {OVERRIDES = TUNING_OVERRIDES}

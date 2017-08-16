@@ -3,9 +3,8 @@ require "recipes"
 
 local assets =
 {
-	Asset("ANIM", "data/anim/pig_house.zip"),
-    Asset("IMAGE", "data/inventoryimages/pighouse.tex"),
-    Asset("SOUND", "data/sound/pig.fsb"),
+	Asset("ANIM", "anim/pig_house.zip"),
+    Asset("SOUND", "sound/pig.fsb"),
 }
 
 local prefabs = 

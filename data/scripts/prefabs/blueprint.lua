@@ -2,8 +2,7 @@ require "recipes"
 
 assets = 
 {
-	Asset("ANIM", "data/anim/blueprint.zip"),
-	Asset("IMAGE", "data/inventoryimages/blueprint.tex")
+	Asset("ANIM", "anim/blueprint.zip"),
 }
 
 local function onload(inst, data)

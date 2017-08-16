@@ -1,6 +1,6 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/cave_exit_lightsource.zip"),
+	Asset("ANIM", "anim/cave_exit_lightsource.zip"),
 }
 
 

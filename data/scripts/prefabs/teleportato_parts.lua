@@ -1,16 +1,8 @@
 local function makeassetlist()
     return {
-		Asset("ANIM", "data/anim/teleportato_parts.zip"),
-		Asset("ANIM", "data/anim/teleportato_parts_build.zip"),
-		Asset("ANIM", "data/anim/teleportato_adventure_parts_build.zip"),
-		Asset("IMAGE", "data/inventoryimages/teleportato_ring.tex"),
-		Asset("IMAGE", "data/inventoryimages/teleportato_box.tex"),
-		Asset("IMAGE", "data/inventoryimages/teleportato_crank.tex"),
-		Asset("IMAGE", "data/inventoryimages/teleportato_potato.tex"),
-		Asset("IMAGE", "data/inventoryimages/teleportato_ring_adv.tex"),
-		Asset("IMAGE", "data/inventoryimages/teleportato_box_adv.tex"),
-		Asset("IMAGE", "data/inventoryimages/teleportato_crank_adv.tex"),
-		Asset("IMAGE", "data/inventoryimages/teleportato_potato_adv.tex"),
+		Asset("ANIM", "anim/teleportato_parts.zip"),
+		Asset("ANIM", "anim/teleportato_parts_build.zip"),
+		Asset("ANIM", "anim/teleportato_adventure_parts_build.zip"),
     }
 end
 

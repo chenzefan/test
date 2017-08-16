@@ -40,9 +40,9 @@ end
 
 local assets = 
 {
-	Asset("ANIM", "data/anim/winter_meter.zip"),
-	Asset("IMAGE", "data/inventoryimages/winterometer.tex"),
+	Asset("ANIM", "anim/winter_meter.zip"),
 }
+
 local function fn(Sim)
 	local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()

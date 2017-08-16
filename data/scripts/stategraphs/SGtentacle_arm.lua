@@ -45,6 +45,7 @@ local function EmergeCheck(inst)
 end
 
 function NewTarget(inst, data)
+    dprint("Newtarget:",data.target)
     if data.target and not inst.sg:HasStateTag("attack") and not inst.sg:HasStateTag("hit") and not inst.components.health:IsDead() then
         inst.sg:GoToState("attack")
     else
@@ -290,7 +291,7 @@ local states=
             EventHandler("animover",
                             function(inst) 
                                 inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentacle_splat")
-                                inst:Remove()
+                                --inst:Remove()
                             end ),
         },        
     },

@@ -125,14 +125,49 @@ function tabletoliststring(obj, fn)
 end
 
 
--- Fast way to disable all debug prints
+--[[
+    Better control over IO
+--]]
 
 global("CWD")
+local userName = ""
 local dir = CWD or ""
 dir = string.gsub(dir, "\\", "/")
 
-local oldprint = print  -- only works properly if this file included before the original print is redefined in scheduler.lua
-local userName = ""
+-- Copied from scheduler.lua - puts tabs between items and LuaPrint adds a \n at the end
+local function oldprint(...)
+        local str = ''
+        local arg = {n=select('#',...),...}
+     
+        for i = 1, arg.n do
+            if str ~= '' then str = str .. '\t' end
+            str = str .. tostring( arg[i] )
+        end
+     
+        --str = str .. '\n'
+     
+        TheSim:LuaPrint( str )
+end
+
+
+-- Output directly to stdout after conversion to string representation - no extra cruft
+local function DirectIO(...)
+    local arg = {n=select('#',...),...}
+ 
+    for i = 1, arg.n do
+        io.stdout:write( tostring( arg[i] ) )
+    end
+end
+
+
+--[[
+   Fast way to disable all the spew to the console window by defining a few globals (yes, setting these should probably be functions)
+   Will not output if:
+        CHEATS_ENABLE_DPRINT is false
+   If DPRINT_USERNAME is defined, then will only print if this equals the string returned by TheSim:GetUsersName()
+   if DPRINT_PRINT_SOURCELINE is true, acts like print and outputs calling file and line number
+--]]
+    
 
 function dprint(...)
     global("CHEATS_ENABLE_DPRINT")
@@ -162,6 +197,33 @@ function dprint(...)
         oldprint(defline, ...)
     else
         oldprint(...)
+    end
+end
+
+-- Raw characters to stdout without processing
+function IOprint(...)
+    global("CHEATS_ENABLE_DPRINT")
+    global("DPRINT_USERNAME")
+
+    if not (CHEATS_ENABLED and CHEATS_ENABLE_DPRINT) then
+        return
+    end
+
+    if DPRINT_USERNAME then
+        if type(TheSim.GetUsersName) == "function" then 
+            userName = TheSim:GetUsersName()
+        end
+        if userName ~= DPRINT_USERNAME then
+            return
+        end
+    end
+    DirectIO(...)
+end
+
+-- Only print if inst is debugentity
+function eprint(inst,...)
+    if inst == GetDebugEntity() then
+        dprint(...)
     end
 end
 
@@ -220,7 +282,7 @@ function EnableDebugOnEntity(thing,items)
     end
 end
 
-function ddump(obj, indent, recurse_levels)
+function ddump(obj, indent, recurse_levels, root)
 	indent = indent or 1
 	local i_recurse_levels = recurse_levels or 3
     if obj then
@@ -233,9 +295,14 @@ function ddump(obj, indent, recurse_levels)
     		return
     	end
         for k,v in pairs(obj) do
+            if v and v == root then
+                dprint(dent.."K: <SELF>")
+                return
+            end
             if type(v) == "table" and i_recurse_levels>0 then
                 dprint(dent.."K: ",k)
-                ddump(v, indent+1, i_recurse_levels-1)
+                root = root or obj
+                ddump(v, indent+1, i_recurse_levels-1,root)
             else
                 dprint(dent.."K: ",k," V: ",v)
             end
@@ -251,3 +318,43 @@ function dtable( tab, depth )
         dprint(table.inspect(tab,depth))
     end
 end
+
+
+function DrawLine(pos1,pos2)
+	-- debug draw of new map gen
+	local debugdrawmap = CreateEntity()
+	local draw = debugdrawmap.entity:AddDebugRender()
+	draw:SetZ(0.1)
+	draw:Line(pos1.x, pos1.z, pos2.x,pos2.y, 255, 255, 255, 255)
+    draw:Flush()
+	
+--[[	
+	for idx,node in ipairs(graph.nodes) do
+		local colour = graph.colours[node.c]
+		
+		for i =1, #node.poly-1 do
+			draw:Line(node.poly[i][1], node.poly[i][2], node.poly[i+1][1], node.poly[i+1][2], colour.r, colour.g, colour.b, 255)
+		end
+		draw:Line(node.poly[1][1], node.poly[1][2], node.poly[#node.poly][1], node.poly[#node.poly][2], colour.r, colour.g, colour.b, 255)
+		
+		draw:Poly(node.cent[1], node.cent[2], colour.r, colour.g, colour.b, colour.a, node.poly)
+			
+		draw:String(graph.ids[idx].."("..node.cent[1]..","..node.cent[2]..")", 	node.cent[1], node.cent[2], node.ts)
+	end 
+	
+	draw:SetZ(0.15)
+
+	for idx,edge in ipairs(graph.edges) do
+		if edge.n1 ~= nil and edge.n2 ~= nil then
+			local colour = graph.colours[edge.c]
+			
+			local n1 = graph.nodes[edge.n1]
+			local n2 = graph.nodes[edge.n2]
+			if n1 ~= nil and n2 ~= nil then
+				draw:Line(n1.cent[1], n1.cent[2], n2.cent[1], n2.cent[2], colour.r, colour.g, colour.b, colour.a)
+			end
+		end
+	end 
+--]]
+end
+

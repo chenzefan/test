@@ -14,7 +14,7 @@ LoadGameScreen = Class(Screen, function(self, profile)
 	Screen._ctor(self, "LoadGameScreen")
     self.profile = profile
     
-    self.black = self:AddChild(Image("data/images/square.tex"))
+    self.black = self:AddChild(Image("images/global.xml", "square.tex"))
     self.black:SetVRegPoint(ANCHOR_MIDDLE)
     self.black:SetHRegPoint(ANCHOR_MIDDLE)
     self.black:SetVAnchor(ANCHOR_MIDDLE)
@@ -28,7 +28,7 @@ LoadGameScreen = Class(Screen, function(self, profile)
     self.root:SetPosition(0,0,0)
     self.root:SetScaleMode(SCALEMODE_PROPORTIONAL)
 	
-    self.bg = self.root:AddChild(Image("data/images/panel_saveslots.tex"))
+    self.bg = self.root:AddChild(Image("images/fepanels.xml", "panel_saveslots.tex"))
     
     --self.bg:SetPosition(150, daysuntil_offset + 128, 0)
     --SetDebugEntity(self.daysuntilanim.inst)
@@ -87,13 +87,13 @@ function LoadGameScreen:MakeSaveTile(slotnum)
     widget.bg:GetAnimState():SetBank("savetile")
     widget.bg:GetAnimState():PlayAnimation("anim")
 	
-	--[[widget.portrait_bg = widget.playerimage:AddChild(Image("data/images/portrait_bg.tex"))
+	--[[widget.portrait_bg = widget.playerimage:AddChild(Image("images/hud.xml", "portrait_bg.tex"))
 	widget.portrait_bg:SetClickable(false)		
 	widget.portrait_bg:SetScale(.6,.6,1)
 	widget.portrait_bg:SetVRegPoint(ANCHOR_MIDDLE)
    	widget.portrait_bg:SetHRegPoint(ANCHOR_MIDDLE)--]]
 	
-	widget.portraitbg = widget.base:AddChild(Image("data/images/saveslot_portraits/background.tex"))
+	widget.portraitbg = widget.base:AddChild(Image("images/saveslot_portraits.xml", "background.tex"))
 	widget.portraitbg:SetScale(.65,.65,1)
 	widget.portraitbg:SetPosition(-120 + 40, 2, 0)	
 	widget.portraitbg:SetClickable(false)	
@@ -103,7 +103,8 @@ function LoadGameScreen:MakeSaveTile(slotnum)
    	--widget.portrait:SetHRegPoint(ANCHOR_MIDDLE)
 	widget.portrait:SetClickable(false)	
 	if character and mode then	
-		widget.portrait:SetTexture("images/saveslot_portraits/"..character..".tex")
+		local atlas = (table.contains(MODCHARACTERLIST, character) and "images/saveslot_portraits/"..character..".xml") or "images/saveslot_portraits.xml"
+		widget.portrait:SetTexture(atlas, character..".tex")
 	else
 		widget.portraitbg:Hide()
 	end

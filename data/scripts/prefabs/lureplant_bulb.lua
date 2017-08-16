@@ -1,9 +1,8 @@
 require "prefabutil"
 local assets =
 {
-	Asset("ANIM", "data/anim/eyeplant_bulb.zip"),
-    Asset("ANIM", "data/anim/eyeplant_trap.zip"),
-    Asset("IMAGE", "data/inventoryimages/lureplantbulb.tex"),
+	Asset("ANIM", "anim/eyeplant_bulb.zip"),
+    Asset("ANIM", "anim/eyeplant_trap.zip"),
 }
 
 local function ondeploy(inst, pt) 

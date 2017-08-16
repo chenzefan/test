@@ -1,10 +1,8 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/lantern.zip"),
-	Asset("ANIM", "data/anim/swap_lantern.zip"),
-    Asset("IMAGE", "data/inventoryimages/lantern.tex"),
-    Asset("IMAGE", "data/inventoryimages/lantern_lit.tex"),
-    Asset("SOUND", "data/sound/wilson.fsb"),
+	Asset("ANIM", "anim/lantern.zip"),
+	Asset("ANIM", "anim/swap_lantern.zip"),
+    Asset("SOUND", "sound/wilson.fsb"),
 }
 
 local function turnon(inst)
@@ -61,13 +59,6 @@ local function OnLoad(inst, data)
         turnoff(inst)
     end
 end
-
-local function Lerp(a,b,t)
-    t = 1.0-math.cos(t*PI/2)
-    return a + (b - a) * t
-end
-
-
 
 local function ondropped(inst)
     turnoff(inst)

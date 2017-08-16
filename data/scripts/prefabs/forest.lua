@@ -1,24 +1,23 @@
-
 local assets =
 {
-	Asset("IMAGE", "data/images/colour_cubes/day05_cc.tex"),
-	Asset("IMAGE", "data/images/colour_cubes/dusk03_cc.tex"),
-	Asset("IMAGE", "data/images/colour_cubes/night03_cc.tex"),
-	Asset("IMAGE", "data/images/colour_cubes/snow_cc.tex"),
-	Asset("IMAGE", "data/images/colour_cubes/snowdusk_cc.tex"),
-	Asset("IMAGE", "data/images/colour_cubes/night04_cc.tex"),
-	Asset("IMAGE", "data/images/colour_cubes/insane_day_cc.tex"),
-	Asset("IMAGE", "data/images/colour_cubes/insane_dusk_cc.tex"),
-	Asset("IMAGE", "data/images/colour_cubes/insane_night_cc.tex"),
+	Asset("IMAGE", "images/colour_cubes/day05_cc.tex"),
+	Asset("IMAGE", "images/colour_cubes/dusk03_cc.tex"),
+	Asset("IMAGE", "images/colour_cubes/night03_cc.tex"),
+	Asset("IMAGE", "images/colour_cubes/snow_cc.tex"),
+	Asset("IMAGE", "images/colour_cubes/snowdusk_cc.tex"),
+	Asset("IMAGE", "images/colour_cubes/night04_cc.tex"),
+	Asset("IMAGE", "images/colour_cubes/insane_day_cc.tex"),
+	Asset("IMAGE", "images/colour_cubes/insane_dusk_cc.tex"),
+	Asset("IMAGE", "images/colour_cubes/insane_night_cc.tex"),
 
-    Asset("ANIM", "data/anim/snow.zip"),
-    Asset("ANIM", "data/anim/lightning.zip"),
-    Asset("ANIM", "data/anim/splash_ocean.zip"),
-    Asset("ANIM", "data/anim/frozen.zip"),
+    Asset("ANIM", "anim/snow.zip"),
+    Asset("ANIM", "anim/lightning.zip"),
+    Asset("ANIM", "anim/splash_ocean.zip"),
+    Asset("ANIM", "anim/frozen.zip"),
 
-    Asset("SOUND", "data/sound/forest_stream.fsb"),
-	Asset("IMAGE", "data/levels/textures/snow.tex"),
-	Asset("IMAGE", "data/images/wave.tex"),
+    Asset("SOUND", "sound/forest_stream.fsb"),
+	Asset("IMAGE", "levels/textures/snow.tex"),
+	Asset("IMAGE", "images/wave.tex"),
 }
 
 local forest_prefabs = 
@@ -27,14 +26,15 @@ local forest_prefabs =
 	"adventure_portal",
 	"resurrectionstone",
     "deerclops",
-	"knight",
-	"bishop",
     "gravestone",
     "flower",
     "animal_track",
     "dirtpile",
     "beefaloherd",
     "beefalo",
+    "penguinherd",
+    "penguin_ice",
+    "penguin",
     "koalefant_summer",
     "koalefant_winter",
     "beehive",
@@ -77,20 +77,23 @@ local forest_prefabs =
 	"statuemaxwell",
 	"eyeplant",
 	"lureplant",
+	"purpleamulet",
+	"monkey",
 }
 
 local function fn(Sim)
 
 	local inst = SpawnPrefab("world")
 	inst.prefab = "forest"
+	inst.entity:SetCanSleep(false)
 	
 	
 	--add waves
 	local waves = inst.entity:AddWaveComponent()
 	waves:SetRegionSize( 32, 16 )
 	waves:SetRegionNumWaves( 6 )
-	waves:SetWaveTexture( "data/images/wave.tex" )
-	waves:SetWaveEffect( "data/shaders/texture.ksh" )
+	waves:SetWaveTexture( "images/wave.tex" )
+	waves:SetWaveEffect( "shaders/texture.ksh" )
 	waves:SetWaveSize( 2048, 512 )
 
 	inst:AddComponent("seasonmanager")
@@ -105,11 +108,11 @@ local function fn(Sim)
 	inst:AddComponent("frograin")
 
 	inst:AddComponent("lureplantspawner")
+	inst:AddComponent("penguinspawner")
 
 	inst:AddComponent("colourcubemanager")
-	inst.Map:SetOverlayTexture( "data/levels/textures/snow.tex" )
+	inst.Map:SetOverlayTexture( "levels/textures/snow.tex" )
     return inst
 end
 
 return Prefab( "forest", fn, assets, forest_prefabs) 
-

@@ -28,8 +28,9 @@ function Terraformer:CanTerraformPoint(pt)
     local ground = GetWorld()
     if ground then
 		local tile = ground.Map:GetTileAtPoint(pt.x, pt.y, pt.z)
-		return tile ~= GROUND.IMPASSIBLE and tile ~= GROUND.DIRT
+		return tile ~= GROUND.IMPASSIBLE and tile ~= GROUND.DIRT and tile < GROUND.UNDERGROUND
 	end
+	return false
 end
 
 function Terraformer:CollectPointActions(doer, pos, actions, right)
@@ -39,14 +40,8 @@ function Terraformer:CollectPointActions(doer, pos, actions, right)
 			valid = not RoadManager:IsOnRoad( pos.x, 0, pos.z )
 		end
 		
-		if valid then
-			local ground = GetWorld()
-			if ground then
-				local tile = ground.Map:GetTileAtPoint(pos.x, pos.y, pos.z)
-				if tile ~= GROUND.IMPASSIBLE and tile ~= GROUND.DIRT then
-					table.insert(actions, ACTIONS.TERRAFORM)
-				end
-			end
+		if valid and self:CanTerraformPoint(pos) then
+			table.insert(actions, ACTIONS.TERRAFORM)
 		end
 	end
 end
@@ -63,6 +58,10 @@ local function SpawnTurf( turf, pt )
 end
 
 function Terraformer:Terraform(pt)
+	if self:CanTerraformPoint(pt) == false then
+		return false
+	end
+
     local ground = GetWorld()
     if ground then
 		local tile = ground.Map:GetTileAtPoint(pt.x, pt.y, pt.z)

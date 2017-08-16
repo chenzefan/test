@@ -1,5 +1,6 @@
 require "mods"
 require "playerprofile"
+require "playerdeaths"
 require "saveindex"
 require "screens/mainscreen"
 require "screens/deathscreen"
@@ -11,9 +12,8 @@ Print (VERBOSITY.DEBUG, "[Loading frontend assets]")
 
 local start_game_time = nil
 
-TheSim:SetRenderPassDefaultEffect( RENDERPASS.BLOOM, "data/shaders/anim_bloom.ksh" )
-TheSim:SetErosionTexture( "data/images/erosion.tex" )
-
+TheSim:SetRenderPassDefaultEffect( RENDERPASS.BLOOM, "shaders/anim_bloom.ksh" )
+TheSim:SetErosionTexture( "images/erosion.tex" )
 
 --this is suuuuuper placeholdery. We need to think about how to handle all of the different types of updates for this
 local function DoAgeWorld()
@@ -44,10 +44,10 @@ local function DoAgeWorld()
 	end
 end
 
-local function LoadAssets(fe)
+local function LoadAssets()
 
 	local be_prefabs = {"hud", "forest", "cave", "ceiling", "maxwell", "fire", "character_fire", "shatter"}
-	local fe_prefabs = {"frontend"}
+	local fe_prefabs = {"frontend", "MODSCREEN"}
 
 	local recipe_prefabs = {}
 	for k,v in pairs(Recipes) do
@@ -56,8 +56,12 @@ local function LoadAssets(fe)
 			table.insert(recipe_prefabs, v.placer)
 		end
 	end
-
-	if fe then
+	
+	local load_frontend = Settings.reset_action == nil
+	local in_backend = Settings.last_reset_action ~= nil
+	local in_frontend = not in_backend
+	
+	if load_frontend then
 		print ("LOAD FE")
 		TheSim:LoadPrefabs(fe_prefabs)
 		TheSim:UnloadPrefabs(be_prefabs)
@@ -129,9 +133,7 @@ local function HandleDeathCleanup(wilson, data)
 		SaveGameIndex:OnFailAdventure(function()
 		    scheduler:ExecuteInTime(3, function() 
 				TheFrontEnd:Fade(false, 3, function()
-						local params = json.encode{reset_action="loadslot", save_slot = SaveGameIndex:GetCurrentSaveSlot(), playeranim="failadventure"}
-						TheSim:SetInstanceParameters(params)
-						TheSim:Reset()
+						StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = SaveGameIndex:GetCurrentSaveSlot(), playeranim="failadventure"})
 					end)
 				end)
 			end)	
@@ -149,9 +151,7 @@ local function HandleDeathCleanup(wilson, data)
 						
 						SaveGameIndex:SaveCurrent(function()
 							SaveGameIndex:OnFailCave(function()
-								local params = json.encode{reset_action="loadslot", save_slot = SaveGameIndex:GetCurrentSaveSlot(), playeranim="failcave"}
-								TheSim:SetInstanceParameters(params)
-								TheSim:Reset()
+								StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = SaveGameIndex:GetCurrentSaveSlot(), playeranim="failcave"})
 							end)
 						end)
 					end)
@@ -168,13 +168,18 @@ local function OnPlayerDeath(wilson, data)
 	
     TheMixer:PushMix("death")
     wilson.HUD:Hide()
-    
+
+	Morgue:OnDeath({killed_by=cause, 
+					days_survived=GetClock().numcycles or 0,
+					character=GetPlayer().prefab, 
+					location= (wilson.components.area_aware and wilson.components.area_aware.current_area.story) or "unknown", 
+					world=GetWorld().meta.level_id or "unknown"})
+
     local game_time = GetClock():ToMetricsString()
     
 	RecordDeathStats(cause, GetClock():GetPhase(), wilson.components.sanity.current, wilson.components.hunger.current, will_resurrect)
 
 	ProfileStatsAdd("killed_by_"..cause)
-    
     ProfileStatsAdd("deaths")
 
     --local res = TheSim:FindFirstEntityWithTag("resurrector")
@@ -205,18 +210,20 @@ function SetUpPlayerCharacterCallbacks(wilson)
             local playtime = GetTimePlaying()
             playtime = math.floor(playtime*1000)
             
+            RecordQuitStats()
             SetTimingStat("time", "scenario", playtime)
             ProfileStatsSet("time_played", playtime)
             SendTrackingStats()
             SendAccumulatedProfileStats()
             
-			TheSim:SetInstanceParameters()
-			TheSim:Reset()
+			
+			StartNextInstance()
         end)        
     
     wilson:ListenForEvent( "daycomplete", 
         function(it, data) 
             if not wilson.components.health:IsDead() then
+                RecordEndOfDayStats()
                 ProfileStatsAdd("nights_survived_iar")
 				SendAccumulatedProfileStats()
             end
@@ -236,7 +243,6 @@ end
 
 
 local function StartGame(wilson)
-	
 	TheFrontEnd:GetSound():KillSound("FEMusic") -- just in case...
 	
 	start_game_time = GetTime()
@@ -245,7 +251,11 @@ end
 
 
 local deprecated = { turf_webbing = true }
-local replace = { farmplot = "slow_farmplot", farmplot2 = "fast_farmplot", farmplot3 = "fast_farmplot", sinkhole= "cave_entrance"}
+local replace = { 
+				farmplot = "slow_farmplot", farmplot2 = "fast_farmplot", 
+				farmplot3 = "fast_farmplot", sinkhole= "cave_entrance",
+				--cave_stairs= "cave_entrance"
+			}
 
 function PopulateWorld(savedata, profile, playercharacter, playersavedataoverride)
     
@@ -298,8 +308,6 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
         --this was spawned by the level file. kinda lame - we should just do everything from in here.
         local ground = GetWorld()
         if ground then
-
-
             if GetCeiling() then
 	        	GetCeiling().MapCeiling:SetSize(savedata.map.width, savedata.map.height)
 	        	GetCeiling().MapCeiling:SetFromString(savedata.map.tiles)
@@ -309,16 +317,17 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
             ground.Map:SetSize(savedata.map.width, savedata.map.height)
 	        if savedata.map.prefab == "cave" then
 	        	ground.Map:SetPhysicsWallDistance(0.75)--0) -- TEMP for STREAM
+				TheFrontEnd:GetGraphicsOptions():EnableStencil()
+				TheFrontEnd:GetGraphicsOptions():EnableLightMapComponent()
 	        else
 	        	ground.Map:SetPhysicsWallDistance(0)--0.75)
+				TheFrontEnd:GetGraphicsOptions():DisableStencil()
+				TheFrontEnd:GetGraphicsOptions():DisableLightMapComponent()
 	        end
 
             ground.Map:SetFromString(savedata.map.tiles)
             ground.Map:Finalize()
 	        
-
-
-
             if savedata.map.nav then
              	print("Loading Nav Grid")
              	ground.Map:SetNavSize(savedata.map.width, savedata.map.height)
@@ -346,7 +355,7 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
 			end		
 			
 			if ground.topology.level_number ~= nil then
-				require("map/levels")
+				local levels = require("map/levels")
 				if levels.story_levels[ground.topology.level_number] ~= nil then
 					profile:UnlockWorldGen("preset", levels.story_levels[ground.topology.level_number].name)
 				end
@@ -400,9 +409,6 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
 				ground:SetPersistData(savedata.map.persistdata)
 			end
 
-			-- A few other odds and ends from the save file which need to be read at runtime:
-			ground.level_id = savedata.map.level_id
-			
 			wilson.components.area_aware:StartCheckingPosition()
         end
         
@@ -475,6 +481,7 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
 
 		--Record mod information
 		ModManager:SetModRecords(savedata.mods or {})
+        SetSuper(savedata.super)
         
         if SaveGameIndex:GetCurrentMode() ~= "adventure" and GetWorld().components.age and GetPlayer().components.age then
 			local player_age = GetPlayer().components.age:GetAge()
@@ -545,7 +552,7 @@ end
 function DoInitGame(playercharacter, savedata, profile, next_world_playerdata, fast)	
 	--print("DoInitGame",playercharacter, savedata, profile, next_world_playerdata, fast)
 	TheFrontEnd:ClearScreens()	
-	LoadAssets(false)
+	LoadAssets()
 	
 	assert(savedata.map, "Map missing from savedata on load")
 	assert(savedata.map.prefab, "Map prefab missing from savedata on load")
@@ -575,23 +582,69 @@ function DoInitGame(playercharacter, savedata, profile, next_world_playerdata, f
 		for k, road_data in pairs( savedata.map.roads ) do
 			RoadManager:BeginRoad()
 			local weight = road_data[1]
-			for i = 2, #road_data do
-				local ctrl_pt = road_data[i]
-				RoadManager:AddControlPoint( ctrl_pt[1], ctrl_pt[2], ROAD_PARAMETERS.NUM_SUBDIVISIONS_PER_SEGMENT )
-			end
-
+			
 			if weight == 3 then
-				RoadManager:SetTexture( "data/images/roadnoise.tex" )
+				for i = 2, #road_data do
+					local ctrl_pt = road_data[i]
+					RoadManager:AddControlPoint( ctrl_pt[1], ctrl_pt[2] )
+				end
+
+				for k, v in pairs( ROAD_STRIPS ) do
+					RoadManager:SetStripEffect( v, "shaders/road.ksh" )
+				end
+				
+				RoadManager:SetStripTextures( ROAD_STRIPS.EDGES,	"images/roadedge.tex",		"images/roadnoise.tex" )
+				RoadManager:SetStripTextures( ROAD_STRIPS.CENTER,	"images/square.tex",		"images/roadnoise.tex" )
+				RoadManager:SetStripTextures( ROAD_STRIPS.CORNERS,	"images/roadcorner.tex",	"images/roadnoise.tex" )
+				RoadManager:SetStripTextures( ROAD_STRIPS.ENDS,		"images/roadendcap.tex",	"images/roadnoise.tex" )
+			
 				RoadManager:GenerateVB(
 						ROAD_PARAMETERS.NUM_SUBDIVISIONS_PER_SEGMENT,
 						ROAD_PARAMETERS.MIN_WIDTH, ROAD_PARAMETERS.MAX_WIDTH,
-						ROAD_PARAMETERS.MIN_EDGE_WIDTH, ROAD_PARAMETERS.MAX_EDGE_WIDTH )
+						ROAD_PARAMETERS.MIN_EDGE_WIDTH, ROAD_PARAMETERS.MAX_EDGE_WIDTH,
+						ROAD_PARAMETERS.WIDTH_JITTER_SCALE, true )
 			else
-				RoadManager:SetTexture( "data/images/pathnoise.tex" )
+				for i = 2, #road_data do
+					local ctrl_pt = road_data[i]
+					RoadManager:AddControlPoint( ctrl_pt[1], ctrl_pt[2] )
+				end
+				
+				for k, v in pairs( ROAD_STRIPS ) do
+					RoadManager:SetStripEffect( v, "shaders/road.ksh" )
+				end
+				RoadManager:SetStripTextures( ROAD_STRIPS.EDGES,	"images/roadedge.tex",		"images/pathnoise.tex" )
+				RoadManager:SetStripTextures( ROAD_STRIPS.CENTER,	"images/square.tex",		"images/pathnoise.tex" )
+				RoadManager:SetStripTextures( ROAD_STRIPS.CORNERS,	"images/roadcorner.tex",	"images/pathnoise.tex" )
+				RoadManager:SetStripTextures( ROAD_STRIPS.ENDS,		"images/roadendcap.tex",	"images/pathnoise.tex" )
+				
 				RoadManager:GenerateVB(
 						ROAD_PARAMETERS.NUM_SUBDIVISIONS_PER_SEGMENT,
 						0, 0,
-						ROAD_PARAMETERS.MIN_EDGE_WIDTH*4, ROAD_PARAMETERS.MAX_EDGE_WIDTH*4 )
+						ROAD_PARAMETERS.MIN_EDGE_WIDTH*4, ROAD_PARAMETERS.MAX_EDGE_WIDTH*4,
+						0, false )						
+				--[[
+			else
+				for i = 2, #road_data do
+					local ctrl_pt = road_data[i]
+					RoadManager:AddSmoothedControlPoint( ctrl_pt[1], ctrl_pt[2] )
+				end
+				
+				for k, v in pairs( ROAD_STRIPS ) do
+					RoadManager:SetStripEffect( v, "shaders/river.ksh" )
+				end
+				RoadManager:SetStripTextures( ROAD_STRIPS.EDGES,	"images/square.tex",		"images/river_bed.tex" )
+				RoadManager:SetStripTextures( ROAD_STRIPS.CENTER,	"images/square.tex",		"images/water_river.tex" )
+				RoadManager:SetStripUVAnimStep( ROAD_STRIPS.CENTER, 0, 0.25 )
+				RoadManager:SetStripWrapMode( ROAD_STRIPS.EDGES, WRAP_MODE.CLAMP_TO_EDGE, WRAP_MODE.WRAP )
+				--RoadManager:SetStripTextures( ROAD_STRIPS.CORNERS,	"images/roadcorner.tex",	"images/pathnoise.tex" )
+				--RoadManager:SetStripTextures( ROAD_STRIPS.ENDS,		"images/roadendcap.tex",	"images/pathnoise.tex" )
+				
+				RoadManager:GenerateVB(
+						ROAD_PARAMETERS.NUM_SUBDIVISIONS_PER_SEGMENT,
+						5, 5,
+						2, 2,
+						0, false )
+				--]]
 			end
 		end
 		RoadManager:GenerateQuadTree()
@@ -639,6 +692,8 @@ function DoInitGame(playercharacter, savedata, profile, next_world_playerdata, f
 		
 	    --clear the player stats, so that it doesn't count items "acquired" from the save file
 	    GetProfileStats(true)
+
+		RecordSessionStartStats()
 		
 	    --after starting everything up, give the mods additional environment variables
 	    ModManager:SimPostInit(wilson)
@@ -659,7 +714,7 @@ function DoInitGame(playercharacter, savedata, profile, next_world_playerdata, f
 	    if fast then
 	    	OnStart()
 	    else
-			SetHUDPause(true)
+			SetHUDPause(true,"InitGame")
 			if Settings.playeranim == "failcave" then
 				GetPlayer().sg:GoToState("wakeup")
 				GetClock():MakeNextDay()
@@ -688,7 +743,12 @@ function DoInitGame(playercharacter, savedata, profile, next_world_playerdata, f
 					speechName = Settings.maxwell
 				elseif SaveGameIndex:GetCurrentMode() == "adventure" then
 					if savedata.map.override_level_string == true then
-						speechName = "ADVENTURE_"..savedata.map.level_id
+						local level_id = 1
+						if GetWorld().meta then
+							level_id = GetWorld().meta.level_id or level_id 
+						end
+
+						speechName = "ADVENTURE_"..level_id
 					else
 						speechName = "ADVENTURE_"..SaveGameIndex:GetSlotWorld()
 					end
@@ -745,7 +805,9 @@ function DoInitGame(playercharacter, savedata, profile, next_world_playerdata, f
     if PRINT_TEXTURE_INFO then
 		c_printtextureinfo( "texinfo.csv" )
 		TheSim:Quit()
-	end    
+	end
+	
+	inGamePlay = true
 end
 
 ------------------------THESE FUNCTIONS HANDLE STARTUP FLOW
@@ -769,7 +831,13 @@ local function DoGenerateWorld(saveslot, type_override)
 			end
 		end
 
-		SaveGameIndex:OnGenerateNewWorld(saveslot, savedata, onsaved)
+		if string.match(savedata, "^error") then
+			local success,e = RunInSandbox(savedata)
+			print("Worldgen had an error, displaying...")
+			DisplayError(e)
+		else
+			SaveGameIndex:OnGenerateNewWorld(saveslot, savedata, onsaved)
+		end
 	end
 
 	local world_gen_options =
@@ -794,7 +862,6 @@ local function LoadSlot(slot)
 	if SaveGameIndex:HasWorld(slot, SaveGameIndex:GetCurrentMode(slot)) then
    		DoLoadWorld(slot, SaveGameIndex:GetModeData(slot, SaveGameIndex:GetCurrentMode(slot)).playerdata)
 	else
-		LoadAssets(true)
 		if SaveGameIndex:GetCurrentMode(slot) == "survival" and SaveGameIndex:IsContinuePending(slot) then
 			
 			local function onsave()
@@ -819,18 +886,25 @@ local function OnFilesLoaded()
 	UpdateGamePurchasedState( function()
 		--print( "[Settings]",Settings.character, Settings.savefile)
 		if Settings.reset_action then
-			if Settings.reset_action == "loadslot" then
+			if Settings.reset_action == RESET_ACTION.DO_DEMO then
+				SaveGameIndex:DeleteSlot(1, function()
+					SaveGameIndex:StartSurvivalMode(1, "wilson", {}, function() 
+						LoadAssets()
+						DoGenerateWorld(1)
+					end)
+				end)
+			elseif Settings.reset_action == RESET_ACTION.LOAD_SLOT then
 				if not SaveGameIndex:GetCurrentMode(Settings.save_slot) then
-					LoadAssets(true)
+					LoadAssets()
 					TheFrontEnd:ShowScreen(MainScreen(Profile))
 				else
 					LoadSlot(Settings.save_slot)
 				end
 			elseif Settings.reset_action == "printtextureinfo" then
-				LoadAssets(true)
+				LoadAssets()
 				DoGenerateWorld(1)
 			else
-				LoadAssets(true)
+				LoadAssets()
 				TheFrontEnd:ShowScreen(MainScreen(Profile))
 			end
 		else
@@ -845,7 +919,7 @@ local function OnFilesLoaded()
 						SaveGameIndex:StartSurvivalMode(1, "wilson", {}, onsaved)
 					end)
 			else
-				LoadAssets(true)
+				LoadAssets()
 				TheFrontEnd:ShowScreen(MainScreen(Profile))
 			end
 		end
@@ -855,10 +929,17 @@ end
 
 Profile = PlayerProfile()
 SaveGameIndex = SaveIndex()
+Morgue = PlayerDeaths()
+
+Print(VERBOSITY.DEBUG, "[Loading Morgue]")
+Morgue:Load( function(did_it_load) 
+	--print("Morgue loaded....[",did_it_load,"]")
+end )
 
 Print(VERBOSITY.DEBUG, "[Loading profile and save index]")
 Profile:Load( function() 
 	SaveGameIndex:Load( OnFilesLoaded )
 end )
+
 
 --dont_load_save in profile

@@ -36,8 +36,7 @@ local function make_turf(data)
 	
 	local assets =
 	{
-		Asset("ANIM", "data/anim/turf.zip"),
-		Asset("IMAGE", "data/inventoryimages/turf_"..name..".tex"),
+		Asset("ANIM", "anim/turf.zip"),
 	}
 	
 	local prefabs =

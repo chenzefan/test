@@ -5,21 +5,28 @@ local Fader = Class(function(self, inst)
     self.numvals = 0
 end)
 
-function Fader:Fade(startval, endval, time, setter, atend)
+function Fader:Fade(startval, endval, time, setter, atend, id)
     
     local rate = (endval-startval)/time
-    table.insert(self.values, {val=startval, v2 = endval, t=time, rate = rate, fn = setter, atend = atend})
+    --  table.insert depricated     -- table.insert(self.values, {val=startval, v2 = endval, t=time, rate = rate, fn = setter, atend = atend})
+    self.values[#self.values+1] = {val=startval, v2 = endval, t=time, rate = rate, fn = setter, atend = atend}
     
     self.numvals = self.numvals + 1
+
+    id = id or #self.values
+    self.values[#self.values].id = id 
     
     if self.numvals == 1 then
         self.inst:StartUpdatingComponent(self)
     end
+
+    return id
 end
 
 function Fader:StopAll()
+    self:OnUpdate(999999)
     self.values = {}
-    self.inst:StartUpdatingComponent(self)
+    self.inst:StopUpdatingComponent(self)
 end
 
 function Fader:OnUpdate(dt)
@@ -32,11 +39,11 @@ function Fader:OnUpdate(dt)
             v.val = v.val + v.rate*dt
         end
         
-        v.fn(v.val)
+        v.fn(v.val,self.inst)  -- calling in this order to keep old code functioning without change
         if v.t <= 0 then
         
             if v.atend then
-                v.atend()
+                v.atend(self.inst,v.val) 
             end
             
             self.values[k] = nil

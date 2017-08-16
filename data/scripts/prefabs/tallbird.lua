@@ -2,8 +2,8 @@ local brain = require "brains/tallbirdbrain"
 
 local assets=
 {
-	Asset("ANIM", "data/anim/ds_tallbird_basic.zip"),
-	Asset("SOUND", "data/sound/tallbird.fsb"),
+	Asset("ANIM", "anim/ds_tallbird_basic.zip"),
+	Asset("SOUND", "sound/tallbird.fsb"),
 }
     
     

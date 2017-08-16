@@ -33,11 +33,10 @@ local function make_plantable(data)
 	
 	local assets =
 	{
-		Asset("ANIM", "data/anim/"..name..".zip"),
-		Asset("IMAGE", "data/inventoryimages/dug_"..name..".tex"),
+		Asset("ANIM", "anim/"..name..".zip"),
 	}
 	if data.build then
-		table.insert(assets, Asset("ANIM", "data/anim/"..data.build..".zip"))
+		table.insert(assets, Asset("ANIM", "anim/"..data.build..".zip"))
 	end
 
 	local function ondeploy(inst, pt)
@@ -80,7 +79,10 @@ local function make_plantable(data)
 	    inst.components.deployable.test = test_ground
 	    inst.components.deployable.min_spacing = data.minspace or 2
 	    
-		
+	    inst:AddComponent("edible")
+	    inst.components.edible.foodtype = "WOOD"
+	    inst.components.edible.woodiness = 10
+
 	    
 		---------------------  
 		return inst      

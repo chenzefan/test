@@ -9,6 +9,13 @@ return {
 		},
 	},
 	ACTIONFAIL_GENERIC = "I am not mighty enough to do that.",
+	
+	ANNOUNCE_NORMALTOMIGHTY="I AM MIGHTY!",
+	ANNOUNCE_NORMALTOWIMPY="I am not feeling so good.",
+	ANNOUNCE_WIMPYTONORMAL="Wolfgang is better.",
+	ANNOUNCE_MIGHTYTONORMAL="I need to filly my mighty belly again!",
+
+
 	ANNOUNCE_ADVENTUREFAIL = "Next time I will be mightier!",
 	ANNOUNCE_BOOMERANG = "Ow! Why did you hurt me, throwy stick?",
 	ANNOUNCE_CHARLIE = "Show yourself!",
@@ -52,10 +59,35 @@ return {
 	DESCRIBE =
 	{
 
+		SLURPER = "No! No! Stay off head!",
+		ORANGEAMULET = "I can wear it around my neck.",
+		YELLOWSTAFF = "Pretty gem sits in stick.",
+		YELLOWGEM = "Pretty rock.",
+		ORANGEGEM = "Pretty rock.",
+		TELEBASE = 
+		{
+			VALID = "Glow is good sign.",
+			GEMS = "Do not think it working.",
+		},
+		GEMSOCKET = 
+		{
+			VALID = "Pretty rock now hovers.",
+			GEMS = "Is empty.",
+		},
+		STAFFLIGHT = "It hurts to touch.",
+		RESEARCHLAB4 = "Hat not just for head.",
+
+        ANCIENT_ALTAR = "Is nasty, creepy, god place.",
         CAVE_BANANA = "Is tasty!",
         CAVE_BANANA_COOKED = "Is warm and tasty!",
         CAVE_BANANA_TREE = "Hello, upside-down tree.",
         ROCKY = "He is mighty! Like me!",
+
+        BLUEAMULET = "Would make good ice cube!",
+		PURPLEAMULET = "This amulet... it frightens Wolfgang.",
+		TELESTAFF = "It gives me a headache.",
+		MONKEY = "Ugly monkey man!",
+		MONKEYBARREL = "Barrel should not move!",
 
 		HOUNDSTOOTH="Puppy tooth!",
 		ARMORSNURTLESHELL="Is sticky inside.",
@@ -193,6 +225,9 @@ return {
 		CARROT = "Is food. I guess.",
 		CAVE_FERN = "Pretty plant!",
 		CHARCOAL = "Is like holding tiny dead tree.",
+        CHESSJUNK1 = "Metal junk.",
+        CHESSJUNK2 = "Metal junk.",
+        CHESSJUNK3 = "Metal junk.",
 		CHESTER = "Strange box with legs.",
 		CHESTER_EYEBONE =
 		{
@@ -398,7 +433,7 @@ return {
 		PANDORASCHEST = "Fancy box!",
 		PANFLUTE = "I can play folk song.",
 		PAPYRUS = "Is like paper",
-		PENGUIN = "...",
+		PENGUIN = "Funny walking birds!",
 		PETALS = "These smell nice.",
 		PETALS_EVIL = "They make my brain hurt.",
 		PICKAXE = "Pick!",
@@ -466,8 +501,16 @@ return {
 		RESURRECTIONSTATUE = "I'm not going to die.",
 		RESURRECTIONSTONE = "Hop on rock!",
 		ROBOT_PUPPET = "Scary chair scare it!",
+		ROCK_LIGHT =
+		{
+			GENERIC = "A pile of crusty rocks!",
+			OUT = "Ha! Another thing to smash!",
+			LOW = "The lava is cooling.",
+			NORMAL = "Liquid fire!",
+        },
 		ROCK = "Is hard! Like me!",
 		ROCKS = "Is rock. What you not get?",
+        ROOK = "This one jumps the queen!",
 		ROPE = "Strong! Like me!",
 		ROTTENEGG = "Stinky!",
 		SANITYROCK =
@@ -583,6 +626,8 @@ return {
 		WALL_HAY_ITEM = "Scratchy straws!",
 		WALL_STONE = "Wall is strong like me!",
 		WALL_STONE_ITEM = "Piles of rocks!",
+		WALL_RUINS = "Wall is strong like me!",
+		WALL_RUINS_ITEM = "Piles of rocks!",
 		WALL_WOOD = "Hello, pointy sticks!",
 		WALL_WOOD_ITEM = "Pokey sticks!",
 		WALRUS = "Sea cow man!",

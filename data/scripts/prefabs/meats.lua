@@ -1,32 +1,12 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/meat.zip"),
-    Asset("IMAGE", "data/inventoryimages/meat.tex"),
-    Asset("IMAGE", "data/inventoryimages/cookedmeat.tex"),
-    Asset("IMAGE", "data/inventoryimages/meat_dried.tex"),
-    
-	Asset("ANIM", "data/anim/meat_monster.zip"),
-    Asset("IMAGE", "data/inventoryimages/monstermeat.tex"),
-    Asset("IMAGE", "data/inventoryimages/cookedmonstermeat.tex"),
-    Asset("IMAGE", "data/inventoryimages/monstermeat_dried.tex"),
-    
-	Asset("ANIM", "data/anim/meat_small.zip"),
-    Asset("IMAGE", "data/inventoryimages/smallmeat.tex"),
-    Asset("IMAGE", "data/inventoryimages/cookedsmallmeat.tex"),
-    Asset("IMAGE", "data/inventoryimages/smallmeat_dried.tex"),
-    
-	Asset("ANIM", "data/anim/drumstick.zip"),
-    Asset("IMAGE", "data/inventoryimages/drumstick.tex"),
-    Asset("IMAGE", "data/inventoryimages/drumstick_cooked.tex"),
-	Asset("ANIM", "data/anim/meat_rack_food.zip"),
-
-    Asset("ANIM", "data/anim/batwing.zip"),
-    Asset("IMAGE", "data/inventoryimages/batwing.tex"),
-    Asset("IMAGE", "data/inventoryimages/batwing_cooked.tex"),
-
-    Asset("ANIM", "data/anim/plant_meat.zip"),
-    Asset("IMAGE", "data/inventoryimages/plantmeat.tex"),
-    Asset("IMAGE", "data/inventoryimages/plantmeat_cooked.tex"),
+	Asset("ANIM", "anim/meat.zip"),
+	Asset("ANIM", "anim/meat_monster.zip"),
+	Asset("ANIM", "anim/meat_small.zip"),
+	Asset("ANIM", "anim/drumstick.zip"),
+	Asset("ANIM", "anim/meat_rack_food.zip"),
+    Asset("ANIM", "anim/batwing.zip"),
+    Asset("ANIM", "anim/plant_meat.zip"),
 }
 
 

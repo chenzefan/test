@@ -9,7 +9,6 @@ function Thief:SetOnStolenFn(fn)
 end
 
 function Thief:StealItem(victim, itemtosteal, attack)
-    print(victim)
     if victim.components.inventory then
         local item = itemtosteal or victim.components.inventory:FindItem(function(item) return not item:HasTag("nosteal") end)
 

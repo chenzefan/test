@@ -1,9 +1,7 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/ham_bat.zip"),
-	Asset("ANIM", "data/anim/swap_ham_bat.zip"),
-    
-    Asset("IMAGE", "data/inventoryimages/hambat.tex"),
+	Asset("ANIM", "anim/ham_bat.zip"),
+	Asset("ANIM", "anim/swap_ham_bat.zip"),
 }
 
 local function onfinished(inst)

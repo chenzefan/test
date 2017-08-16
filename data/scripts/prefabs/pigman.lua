@@ -1,17 +1,15 @@
-require "fonthelper"
-
 local assets =
 {
-	Asset("ANIM", "data/anim/ds_pig_basic.zip"),
-	Asset("ANIM", "data/anim/ds_pig_actions.zip"),
-	Asset("ANIM", "data/anim/ds_pig_attacks.zip"),
-	Asset("ANIM", "data/anim/pig_build.zip"),
-	Asset("ANIM", "data/anim/pigspotted_build.zip"),
-	Asset("ANIM", "data/anim/pig_guard_build.zip"),
-	Asset("ANIM", "data/anim/werepig_build.zip"),
-	Asset("ANIM", "data/anim/werepig_basic.zip"),
-	Asset("ANIM", "data/anim/werepig_actions.zip"),
-	Asset("SOUND", "data/sound/pig.fsb"),
+	Asset("ANIM", "anim/ds_pig_basic.zip"),
+	Asset("ANIM", "anim/ds_pig_actions.zip"),
+	Asset("ANIM", "anim/ds_pig_attacks.zip"),
+	Asset("ANIM", "anim/pig_build.zip"),
+	Asset("ANIM", "anim/pigspotted_build.zip"),
+	Asset("ANIM", "anim/pig_guard_build.zip"),
+	Asset("ANIM", "anim/werepig_build.zip"),
+	Asset("ANIM", "anim/werepig_basic.zip"),
+	Asset("ANIM", "anim/werepig_actions.zip"),
+	Asset("SOUND", "sound/pig.fsb"),
 }
 
 local prefabs =
@@ -23,12 +21,6 @@ local prefabs =
     "strawhat",
     "pigskin",
 }
-
-local FONTS = {
-	{ filename = "data/fonts/opensans50.zip", alias = DIALOGFONT },
-}
-
-AddFontAssets( assets, FONTS )
 
 local MAX_TARGET_SHARES = 5
 local SHARE_TARGET_DIST = 30

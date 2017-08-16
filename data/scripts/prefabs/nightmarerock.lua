@@ -1,12 +1,14 @@
 --Down when sane, up when insane.
 local assets = 
 {
-    Asset("ANIM", "data/anim/blocker_sanity.zip"),
-    Asset("ANIM", "data/anim/blocker_sanity_fx.zip"),
+    Asset("ANIM", "anim/blocker_sanity.zip"),
+    Asset("ANIM", "anim/blocker_sanity_fx.zip"),
 }
 
 local prefabs = 
 {
+    "sanity_raise",
+    "sanity_lower"
 }
 
 local function getnearbypoints(inst, pt)
@@ -65,7 +67,10 @@ end
 local function setrockactive(inst)    
     inst.AnimState:PlayAnimation("raise")
     inst.AnimState:PushAnimation("idle_active", true)
-    PlayFX(inst:GetPosition(), "blocker_sanity_fx", "blocker_sanity_fx", "raise")
+    local fx = SpawnPrefab("sanity_raise")
+    local pos = inst:GetPosition()
+    fx.Transform:SetPosition(pos.x, pos.y, pos.z)
+    
     inst.Physics:SetCollisionGroup(COLLISION.OBSTACLES)
     inst.Physics:ClearCollisionMask()
     inst.Physics:CollidesWith(COLLISION.WORLD)
@@ -78,7 +83,10 @@ end
 local function  setrockinactive(inst)    
     inst.AnimState:PlayAnimation("lower")
     inst.AnimState:PushAnimation("idle_inactive", true)
-    PlayFX(inst:GetPosition(), "blocker_sanity_fx", "blocker_sanity_fx", "lower")    
+    local fx = SpawnPrefab("sanity_lower")
+    local pos = inst:GetPosition()
+    fx.Transform:SetPosition(pos.x, pos.y, pos.z)
+    --PlayFX(inst:GetPosition(), "blocker_sanity_fx", "blocker_sanity_fx", "lower")    
     inst.Physics:SetCollisionGroup(COLLISION.OBSTACLES)
     inst.Physics:ClearCollisionMask()
     inst.Physics:CollidesWith(COLLISION.WORLD)

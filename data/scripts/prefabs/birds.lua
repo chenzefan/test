@@ -52,10 +52,9 @@ end
 local function makebird(name, soundname)
     local assets=
     {
-	    Asset("ANIM", "data/anim/crow.zip"),
-	    Asset("ANIM", "data/anim/"..name.."_build.zip"),
-        Asset("IMAGE", "data/inventoryimages/"..name..".tex"),
-	    Asset("SOUND", "data/sound/birds.fsb"),
+	    Asset("ANIM", "anim/crow.zip"),
+	    Asset("ANIM", "anim/"..name.."_build.zip"),
+	    Asset("SOUND", "sound/birds.fsb"),
     }
     
     local prefabs =

@@ -1,102 +1,84 @@
 local assets =
 {
-	Asset("PKGREF", "data/sound/dontstarve.fev"),
+	Asset("PKGREF", "sound/dontstarve.fev"),
 
-    Asset("SOUND", "data/sound/sfx.fsb"),
-	Asset("SOUND", "data/sound/music.fsb"),
+    Asset("SOUND", "sound/sfx.fsb"),
+	Asset("SOUND", "sound/music.fsb"),
 	
-    Asset("IMAGE", "data/images/square.tex"),
-	Asset("IMAGE", "data/images/circle.tex"),
-	Asset("IMAGE", "data/images/shadow.tex"),
-    Asset("ANIM", "data/anim/button.zip"),
-    Asset("ANIM", "data/anim/button_small.zip"),
-    Asset("ANIM", "data/anim/button_long.zip"),
+    Asset("ATLAS", "images/global.xml"),
+    Asset("IMAGE", "images/global.tex"),
+	
+    Asset("ANIM", "anim/button.zip"),
+    Asset("ANIM", "anim/button_small.zip"),
+    Asset("ANIM", "anim/button_long.zip"),
 
+	Asset("SHADER", "shaders/anim_bloom.ksh"),
+	Asset("SHADER", "shaders/wall_bloom.ksh"),
+	Asset("SHADER", "shaders/road.ksh"),
 
-	Asset("SHADER", "data/shaders/anim_bloom.ksh"),
-	Asset("SHADER", "data/shaders/wall_bloom.ksh"),
-	Asset("SHADER", "data/shaders/road.ksh"),
-	Asset("IMAGE", "data/images/square.tex"),
-	Asset("IMAGE", "data/images/roadedge.tex"),
-	Asset("IMAGE", "data/images/roadcorner.tex"),
-	Asset("IMAGE", "data/images/roadendcap.tex"),
-	Asset("IMAGE", "data/images/roadnoise.tex"),
-	Asset("IMAGE", "data/images/pathnoise.tex"),
-	Asset("IMAGE", "data/images/erosion.tex"),
-	Asset("IMAGE", "data/images/colour_cubes/identity_colourcube.tex"),
+	Asset("IMAGE", "images/shadow.tex"),
+	Asset("IMAGE", "images/erosion.tex"),
+	Asset("IMAGE", "images/circle.tex"),
+	Asset("IMAGE", "images/square.tex"),
+	
+	--Asset("IMAGE", "images/river_bed.tex"),
+	--Asset("IMAGE", "images/water_river.tex"),
+	Asset("IMAGE", "images/pathnoise.tex"),
+	Asset("IMAGE", "images/roadnoise.tex"),
+	Asset("IMAGE", "images/roadedge.tex"),
+	Asset("IMAGE", "images/roadcorner.tex"),
+	Asset("IMAGE", "images/roadendcap.tex"),
+	
+	Asset("ATLAS", "images/fx.xml"),
+	Asset("IMAGE", "images/fx.tex"),
 
-	Asset("SHADER", "data/shaders/anim.ksh"),
-	Asset("SHADER", "data/shaders/anim_bloom.ksh"),
-	Asset("SHADER", "data/shaders/blurh.ksh"),
-	Asset("SHADER", "data/shaders/blurv.ksh"),
-	Asset("SHADER", "data/shaders/creep.ksh"),
-	Asset("SHADER", "data/shaders/debug_line.ksh"),
-	Asset("SHADER", "data/shaders/debug_tri.ksh"),
-	Asset("SHADER", "data/shaders/font.ksh"),
-	Asset("SHADER", "data/shaders/ground.ksh"),
-    Asset("SHADER", "data/shaders/ceiling.ksh"),
-    Asset("SHADER", "data/shaders/triplanar.ksh"),
-	Asset("SHADER", "data/shaders/lighting.ksh"),
-	Asset("SHADER", "data/shaders/minimap.ksh"),
-	Asset("SHADER", "data/shaders/minimapfs.ksh"),
-	Asset("SHADER", "data/shaders/particle.ksh"),
-	Asset("SHADER", "data/shaders/road.ksh"),
-	Asset("SHADER", "data/shaders/splat.ksh"),
-	Asset("SHADER", "data/shaders/texture.ksh"),
-	Asset("SHADER", "data/shaders/ui.ksh"),
-	Asset("SHADER", "data/shaders/ui_anim.ksh"),
-	Asset("SHADER", "data/shaders/postprocess.ksh"),
-	Asset("SHADER", "data/shaders/postprocessbloom.ksh"),
-	Asset("SHADER", "data/shaders/postprocessdistort.ksh"),
-	Asset("SHADER", "data/shaders/postprocessbloomdistort.ksh"),
+	Asset("IMAGE", "images/colour_cubes/identity_colourcube.tex"),
 
+	Asset("SHADER", "shaders/anim.ksh"),
+	Asset("SHADER", "shaders/anim_bloom.ksh"),
+	Asset("SHADER", "shaders/blurh.ksh"),
+	Asset("SHADER", "shaders/blurv.ksh"),
+	Asset("SHADER", "shaders/creep.ksh"),
+	Asset("SHADER", "shaders/debug_line.ksh"),
+	Asset("SHADER", "shaders/debug_tri.ksh"),
+	Asset("SHADER", "shaders/render_depth.ksh"),
+	Asset("SHADER", "shaders/font.ksh"),
+	Asset("SHADER", "shaders/ground.ksh"),
+	Asset("SHADER", "shaders/ground_lights.ksh"),
+    Asset("SHADER", "shaders/ceiling.ksh"),
+    -- Asset("SHADER", "shaders/triplanar.ksh"),
+    Asset("SHADER", "shaders/triplanar_bg.ksh"),
+    Asset("SHADER", "shaders/triplanar_alpha_wall.ksh"),
+    Asset("SHADER", "shaders/triplanar_alpha_ceiling.ksh"),
+	Asset("SHADER", "shaders/lighting.ksh"),
+	Asset("SHADER", "shaders/minimap.ksh"),
+	Asset("SHADER", "shaders/minimapfs.ksh"),
+	Asset("SHADER", "shaders/particle.ksh"),
+	Asset("SHADER", "shaders/road.ksh"),
+	Asset("SHADER", "shaders/river.ksh"),
+	Asset("SHADER", "shaders/splat.ksh"),
+	Asset("SHADER", "shaders/texture.ksh"),
+	Asset("SHADER", "shaders/ui.ksh"),
+	Asset("SHADER", "shaders/ui_anim.ksh"),
+	Asset("SHADER", "shaders/postprocess.ksh"),
+	Asset("SHADER", "shaders/postprocessbloom.ksh"),
+	Asset("SHADER", "shaders/postprocessdistort.ksh"),
+	Asset("SHADER", "shaders/postprocessbloomdistort.ksh"),
 
     --common UI elements that we will always need
-
-    --background
-    Asset("IMAGE", "data/images/bg_plain.tex"),
-
-    --buttons
-    Asset("IMAGE", "data/images/button.tex"),
-    Asset("IMAGE", "data/images/button_over.tex"),
-    Asset("IMAGE", "data/images/button_disabled.tex"),
-    Asset("IMAGE", "data/images/button_small.tex"),
-    Asset("IMAGE", "data/images/button_small_over.tex"),
-    Asset("IMAGE", "data/images/button_small_disabled.tex"),
-
-    --spinners
-    Asset("IMAGE", "data/images/spin_arrow.tex"),
-    Asset("IMAGE", "data/images/spin_arrow_over.tex"),
-    Asset("IMAGE", "data/images/spin_arrow_disabled.tex"),
-    Asset("IMAGE", "data/images/spinner.tex"),
-
+    Asset("ATLAS", "images/ui.xml"),
+    Asset("IMAGE", "images/ui.tex"),
+    Asset("ANIM", "anim/generating_world.zip"),
+    Asset("ANIM", "anim/generating_cave.zip"),
+    Asset("ANIM", "anim/creepy_hands.zip"),    
+    
     --oft-used panel bgs
-    Asset("IMAGE", "data/images/panel.tex"),
-    Asset("IMAGE", "data/images/panel_upsell.tex"),
-    Asset("IMAGE", "data/images/small_dialog.tex"),
-    Asset("IMAGE", "data/images/panel_upsell_small.tex"),
-
-    --text input box
-    Asset("IMAGE", "data/images/textbox_long.tex"),
-    Asset("IMAGE", "data/images/textbox_long_over.tex"),
-    Asset("IMAGE", "data/images/textbox_short.tex"),
-    Asset("IMAGE", "data/images/textbox_short_over.tex"),
+    Asset("ATLAS", "images/globalpanels.xml"),
+    Asset("IMAGE", "images/globalpanels.tex"),
 
 	--character portraits
-    Asset("IMAGE", "data/images/saveslot_portraits/background.tex"),   
-    Asset("IMAGE", "data/images/saveslot_portraits/webber.tex"),   
-    Asset("IMAGE", "data/images/saveslot_portraits/wendy.tex"),   
-    Asset("IMAGE", "data/images/saveslot_portraits/wes.tex"),   
-    Asset("IMAGE", "data/images/saveslot_portraits/wickerbottom.tex"),   
-    Asset("IMAGE", "data/images/saveslot_portraits/willow.tex"),   
-    Asset("IMAGE", "data/images/saveslot_portraits/wilson.tex"),   
-    Asset("IMAGE", "data/images/saveslot_portraits/wilton.tex"),   
-    Asset("IMAGE", "data/images/saveslot_portraits/winnie.tex"),   
-    Asset("IMAGE", "data/images/saveslot_portraits/woodie.tex"),   
-    Asset("IMAGE", "data/images/saveslot_portraits/wortox.tex"),   
-    Asset("IMAGE", "data/images/saveslot_portraits/wolfgang.tex"),     
-    Asset("IMAGE", "data/images/saveslot_portraits/wx78.tex"),     
-    Asset("IMAGE", "data/images/saveslot_portraits/waxwell.tex"),     
+	Asset("ATLAS", "images/saveslot_portraits.xml"),
+    Asset("IMAGE", "images/saveslot_portraits.tex"),
 }
 
 
@@ -110,4 +92,3 @@ local function fn(Sim)
 end
 
 return Prefab( "common/global", fn, assets ) 
-

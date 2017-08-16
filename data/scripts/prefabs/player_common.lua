@@ -1,7 +1,3 @@
-require "fonthelper"
-
-
-
 local function OnSane(inst)
 	print ("SANE!")
 end
@@ -20,42 +16,42 @@ local function giveupstring(combat, target)
     return str
 end
 
-local function MakePlayerCharacter(name, customprefabs, customassets, customfn, starting_inventory, font, fontsize)
+local function MakePlayerCharacter(name, customprefabs, customassets, customfn, starting_inventory)
 
-    font = font or TALKINGFONT
-    fontsize = fontsize or 28
+    local font = TALKINGFONT
+    local fontsize = 28
     local assets =
     {
-        Asset("ANIM", "data/anim/player_basic.zip"),
-        Asset("ANIM", "data/anim/player_idles_shiver.zip"),
-        Asset("ANIM", "data/anim/player_actions.zip"),
-        Asset("ANIM", "data/anim/player_actions_axe.zip"),
-        Asset("ANIM", "data/anim/player_actions_pickaxe.zip"),
-        Asset("ANIM", "data/anim/player_actions_shovel.zip"),
-        Asset("ANIM", "data/anim/player_actions_blowdart.zip"),
-        Asset("ANIM", "data/anim/player_actions_eat.zip"),
-        Asset("ANIM", "data/anim/player_actions_item.zip"),
-        Asset("ANIM", "data/anim/player_cave_enter.zip"),
-        Asset("ANIM", "data/anim/player_actions_uniqueitem.zip"),
-        Asset("ANIM", "data/anim/player_actions_bugnet.zip"),
-        Asset("ANIM", "data/anim/player_actions_fishing.zip"),
-        Asset("ANIM", "data/anim/player_actions_boomerang.zip"),
-        Asset("ANIM", "data/anim/player_bush_hat.zip"),
-        Asset("ANIM", "data/anim/player_attacks.zip"),
-        Asset("ANIM", "data/anim/player_idles.zip"),
-        Asset("ANIM", "data/anim/player_rebirth.zip"),
-        Asset("ANIM", "data/anim/player_jump.zip"),
-        Asset("ANIM", "data/anim/player_amulet_resurrect.zip"),
-		Asset("ANIM", "data/anim/player_teleport.zip"),
-        Asset("ANIM", "data/anim/wilson_fx.zip"),
-        Asset("ANIM", "data/anim/player_one_man_band.zip"),
-        Asset("ANIM", "data/anim/player_slurtle_armor.zip"),
-        
+        Asset("ANIM", "anim/player_basic.zip"),
+        Asset("ANIM", "anim/player_idles_shiver.zip"),
+        Asset("ANIM", "anim/player_actions.zip"),
+        Asset("ANIM", "anim/player_actions_axe.zip"),
+        Asset("ANIM", "anim/player_actions_pickaxe.zip"),
+        Asset("ANIM", "anim/player_actions_shovel.zip"),
+        Asset("ANIM", "anim/player_actions_blowdart.zip"),
+        Asset("ANIM", "anim/player_actions_eat.zip"),
+        Asset("ANIM", "anim/player_actions_item.zip"),
+        Asset("ANIM", "anim/player_cave_enter.zip"),
+        Asset("ANIM", "anim/player_actions_uniqueitem.zip"),
+        Asset("ANIM", "anim/player_actions_bugnet.zip"),
+        Asset("ANIM", "anim/player_actions_fishing.zip"),
+        Asset("ANIM", "anim/player_actions_boomerang.zip"),
+        Asset("ANIM", "anim/player_bush_hat.zip"),
+        Asset("ANIM", "anim/player_attacks.zip"),
+        Asset("ANIM", "anim/player_idles.zip"),
+        Asset("ANIM", "anim/player_rebirth.zip"),
+        Asset("ANIM", "anim/player_jump.zip"),
+        Asset("ANIM", "anim/player_amulet_resurrect.zip"),
+		Asset("ANIM", "anim/player_teleport.zip"),
+        Asset("ANIM", "anim/wilson_fx.zip"),
+        Asset("ANIM", "anim/player_one_man_band.zip"),
+        Asset("ANIM", "anim/player_slurtle_armor.zip"),
+        Asset("ANIM", "anim/player_staff.zip"),
 
-		Asset("ANIM", "data/anim/shadow_hands.zip"),
+		Asset("ANIM", "anim/shadow_hands.zip"),
 
-        Asset("SOUND", "data/sound/sfx.fsb"),
-        Asset("SOUND", "data/sound/wilson.fsb"),
+        Asset("SOUND", "sound/sfx.fsb"),
+        Asset("SOUND", "sound/wilson.fsb"),
     }
 
     local prefabs =
@@ -71,8 +67,14 @@ local function MakePlayerCharacter(name, customprefabs, customassets, customfn, 
         "shadowwatcher",
         "shadowhand",
 		"frostbreath",
+        "book_birds",
+        "book_tentacles",
+        "book_gardening",
+        "book_sleep",
+        "book_brimstone",
+        "pine_needles"
     }
-    
+
     if starting_inventory then
 		for k,v in pairs(starting_inventory) do
 			table.insert(prefabs, v)
@@ -210,6 +212,10 @@ local function MakePlayerCharacter(name, customprefabs, customassets, customfn, 
         
         inst:AddComponent("grue")
         inst.components.grue:SetSounds("dontstarve/charlie/warn","dontstarve/charlie/attack")
+
+        -------
+        inst:AddComponent("overseer") 
+        -------
 
         inst.components.combat:SetAttackPeriod(TUNING.WILSON_ATTACK_PERIOD)
         inst.components.combat:SetRange(2)

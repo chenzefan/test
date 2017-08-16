@@ -31,16 +31,13 @@ table.insert(package.loaders, 1, loadfn)
 local basedir = "./"
 --patch this function because NACL has no fopen
 if TheSim then
-    basedir = "data/scripts/"
+    basedir = "scripts/"
     function loadfile(filename)
         return kleiloadlua(filename)
     end
 end
 
-
-require("mods")
-
-ModManager:LoadMods()
+package.path = package.path .. ";scripts/?.lua"
 
 
 require("simutil")
@@ -58,6 +55,14 @@ require("prefabs")
 require("profiler")
 require("dumper")
 require("map/tasks")
+
+require("mods")
+require("modindex")
+
+local moddata = json.decode(GEN_MODDATA)
+KnownModIndex:RestoreCachedSaveData(moddata.index)
+ModManager:LoadMods(moddata.modnames, true)
+
 
 print ("running worldgen_main.lua\n")
 
@@ -94,7 +99,7 @@ local Scripts = {}
 
 function LoadScript(filename)
     if not Scripts[filename] then
-        local scriptfn = loadfile("data/scripts/" .. filename)
+        local scriptfn = loadfile("scripts/" .. filename)
         Scripts[filename] = scriptfn()
     end
     return Scripts[filename]
@@ -244,7 +249,7 @@ function CheckMapSaveData(savedata)
 	assert(savedata.ents, "Entites missing from savedata on generate")
 end
 
-local function OverrideTweeks(level, world_gen_choices)
+local function OverrideTweaks(level, world_gen_choices)
 	local customise = require("map/customise")
 	for i,v in ipairs(level.overrides) do
 		local name = v[1]
@@ -406,15 +411,22 @@ end
 
 function GenerateNew(debug, parameters)
     
-    --print("Generate New map",debug, parameters.gen_type, parameters.level_type, parameters.current_level, parameters.world_gen_choices)
+    --print("Generate New map",debug, parameters.gen_type, "type: "..parameters.level_type, parameters.current_level, parameters.world_gen_choices)
 	local Gen = require "map/forest_map"
 	
-	require("map/levels")
+	local levels = require("map/levels")
 
 	local level = levels.test_level
 
+
 	if parameters.level_type and string.upper(parameters.level_type) == "CAVE" then
-		level = levels.cave_levels[1] -- should look at cave depth!
+		
+		if parameters.current_level == nil or parameters.current_level > #levels.cave_levels then
+			parameters.current_level = 1
+		end
+
+		level = levels.cave_levels[parameters.current_level]
+
 	elseif parameters.level_type and string.upper(parameters.level_type) == "ADVENTURE" then
 		level = levels.story_levels[parameters.current_level]
 
@@ -446,7 +458,18 @@ function GenerateNew(debug, parameters)
 		print("\n#######\n#\n# Generating Normal Mode "..level.name.." Level\n#\n#######\n")
 	end
 
-	OverrideTweeks(level, parameters.world_gen_choices)	
+	local modfns = ModManager:GetPostInitFns("LevelPreInit", level.id)
+	for i,modfn in ipairs(modfns) do
+		print("Applying mod to level '"..level.id.."'")
+		modfn(level)
+	end
+	modfns = ModManager:GetPostInitFns("LevelPreInitAny")
+	for i,modfn in ipairs(modfns) do
+		print("Applying mod to current level")
+		modfn(level)
+	end
+
+	OverrideTweaks(level, parameters.world_gen_choices)	
 	local level_area_triggers = level.override_triggers or nil
 	AddSetPeices(level, parameters.world_gen_choices)
 
@@ -459,7 +482,10 @@ function GenerateNew(debug, parameters)
 	local teleportmaxwell = level.teleportmaxwell or nil
 	local nomaxwell = level.nomaxwell or false
 
-	local prefab = parameters.world_gen_choices.tweak.misc["location"] or "forest"
+	local prefab = "forest"
+	if parameters.world_gen_choices.tweak and parameters.world_gen_choices.tweak.misc then
+		prefab = parameters.world_gen_choices.tweak.misc.location or "forest"
+	end
 
 	local choose_tasks = level:GetTasksForLevel(tasks.sampletasks)
 	if debug == true then
@@ -498,8 +524,7 @@ function GenerateNew(debug, parameters)
 	end
 		
 	savedata.map.topology.level_type = parameters.level_type
-	savedata.map.topology.level_number = parameters.current_level
-	savedata.map.level_id = id or "survival"
+	savedata.map.topology.level_number = parameters.current_level or 1
 	savedata.map.override_level_string = override_level_string
 	savedata.map.name = name
 	savedata.map.nomaxwell = nomaxwell
@@ -531,6 +556,7 @@ function GenerateNew(debug, parameters)
 						build_date = APP_BUILD_DATE,
 						build_time = APP_BUILD_TIME,
 						seed = SEED,
+						level_id = id or "survival",
 					}
 
 	CheckMapSaveData(savedata)

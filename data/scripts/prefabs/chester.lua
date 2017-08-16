@@ -6,13 +6,15 @@ local SLEEP_NEAR_LEADER_DISTANCE = 7
 
 local assets =
 {
-    Asset("ANIM", "data/anim/chester.zip"),
-    Asset("ANIM", "data/anim/ui_chest_3x2.zip"),
+    Asset("ANIM", "anim/chester.zip"),
+    Asset("ANIM", "anim/ui_chest_3x2.zip"),
+    Asset("SOUND", "sound/chester.fsb"),
 }
 
 local prefabs =
 {
     "chester_eyebone",
+    "die_fx"
 }
 
 local function ShouldWakeUp(inst)
@@ -120,6 +122,7 @@ local function create_chester()
 
     --print("   inspectable")
     inst:AddComponent("inspectable")
+	inst.components.inspectable:RecordViews()
     --inst.components.inspectable.getstatus = GetStatus
 
     --print("   locomotor")

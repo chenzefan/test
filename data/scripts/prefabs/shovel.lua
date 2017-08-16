@@ -1,12 +1,9 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/shovel.zip"),
-	Asset("ANIM", "data/anim/goldenshovel.zip"),
-	Asset("ANIM", "data/anim/swap_shovel.zip"),
-	Asset("ANIM", "data/anim/swap_goldenshovel.zip"),
-    
-    Asset("IMAGE", "data/inventoryimages/shovel.tex"),
-    Asset("IMAGE", "data/inventoryimages/goldenshovel.tex"),
+	Asset("ANIM", "anim/shovel.zip"),
+	Asset("ANIM", "anim/goldenshovel.zip"),
+	Asset("ANIM", "anim/swap_shovel.zip"),
+	Asset("ANIM", "anim/swap_goldenshovel.zip"),
 }
     
 local function onfinished(inst)
@@ -77,6 +74,7 @@ end
 local function golden(Sim)
 	local inst = fn(Sim)
 	inst.AnimState:SetBuild("goldenshovel")
+	inst.AnimState:SetBank("goldenshovel")
     inst.components.finiteuses:SetConsumption(ACTIONS.DIG, 1 / TUNING.GOLDENTOOLFACTOR)
     inst.components.finiteuses:SetConsumption(ACTIONS.TERRAFORM, .125 / TUNING.GOLDENTOOLFACTOR)
     inst.components.weapon.attackwear = 1 / TUNING.GOLDENTOOLFACTOR

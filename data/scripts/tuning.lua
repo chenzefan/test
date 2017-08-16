@@ -50,8 +50,16 @@ function Tune(overrides)
 	    WILSON_HUNGER = 150, --stomach size
 	    WILSON_HUNGER_RATE = calories_per_day/total_day_time, --calories burnt per day
 	    
+	    WX78_MIN_HEALTH = 100,
+	    WX78_MIN_HUNGER = 100,
+	    WX78_MIN_SANITY = 100,
+
+	    WX78_MAX_HEALTH = 400,
+	    WX78_MAX_HUNGER = 200,
+	    WX78_MAX_SANITY = 300,
 	    
 	    WILSON_SANITY = 200,
+	    WILLOW_SANITY = 120,
 	    
 	    HAMMER_LOOT_PERCENT = .5,
 	    AXE_USES = 100,
@@ -69,10 +77,32 @@ function Tune(overrides)
 	    NIGHTSWORD_USES = 100,
 	    ICESTAFF_USES = 20,
 	    FIRESTAFF_USES = 20,
+	    TELESTAFF_USES = 5,
 	    HAMBAT_USES = 100,
 	    BATBAT_USES = 75,
-	
+	    MULTITOOL_AXE_PICKAXE_USES = 230,
+
+	    REDAMULET_USES = 20,
+	    REDAMULET_CONVERSION = 5,
+
+	    BLUEAMULET_FUEL = total_day_time * 0.75,
+	    BLUEGEM_COOLER = -20,
+
+		PURPLEAMULET_FUEL = total_day_time * 0.4,
 	    
+		YELLOWAMULET_FUEL = total_day_time,
+		YELLOWSTAFF_USES = 20,
+
+		ORANGEAMULET_USES = 225,
+		ORANGEAMULET_RANGE = 4,
+		ORANGEAMULET_ICD = 0.33,
+		ORANGESTAFF_USES = 20,
+
+		GREENAMULET_USES = 5,
+		GREENAMULET_INGREDIENTMOD = 0.5,
+		GREENSTAFF_USES = 5,
+
+
 	    FISHING_MINWAIT = 2,
 	    FISHING_MAXWAIT = 20,
 	    
@@ -98,12 +128,15 @@ function Tune(overrides)
 	    FISHINGROD_DAMAGE = wilson_attack*.125,
 	    UMBRELLA_DAMAGE = wilson_attack*.5,
 	    CANE_DAMAGE = wilson_attack*.5,
+	    BEAVER_DAMAGE = wilson_attack*1.5,
+	    MULTITOOL_DAMAGE = wilson_attack*.9,
 
 		CANE_SPEED_MULT = 1.25,
 		PIGGYBACK_SPEED_MULT = 0.8,
 
 
 	    TORCH_ATTACK_IGNITE_PERCENT = 1,
+
 	
 	    PIG_DAMAGE = 33,
 	    PIG_HEALTH = 250,
@@ -167,6 +200,17 @@ function Tune(overrides)
 	    PENGUIN_DAMAGE = 33,
 	    PENGUIN_HEALTH = 150,
 	    PENGUIN_ATTACK_PERIOD = 3,
+	    PENGUIN_ATTACK_DIST = 2.5,
+	    PENGUIN_MATING_SEASON_LENGTH = 6,
+	    PENGUIN_MATING_SEASON_WAIT = 1,
+	    PENGUIN_MATING_SEASON_BABYDELAY = total_day_time*1.5,
+	    PENGUIN_MATING_SEASON_BABYDELAY_VARIANCE = 0.5*total_day_time,
+	    PENGUIN_TARGET_DIST = 15,
+	    PENGUIN_CHASE_DIST = 30,
+	    PENGUIN_FOLLOW_TIME = 10,
+	    PENGUIN_HUNGER = total_day_time * 12,  -- takes all winter to starve
+	    PENGUIN_STARVE_TIME = total_day_time * 12,
+	    PENGUIN_STARVE_KILL_TIME = 20,
 	    
 	    KNIGHT_DAMAGE = 40,
 	    KNIGHT_HEALTH = 300,
@@ -181,6 +225,13 @@ function Tune(overrides)
 	    BISHOP_WALK_SPEED = 5,
 	    BISHOP_TARGET_DIST = 12,
 
+	    ROOK_DAMAGE = 45,
+	    ROOK_HEALTH = 300,
+	    ROOK_ATTACK_PERIOD = 2,
+	    ROOK_WALK_SPEED = 5,
+	    ROOK_RUN_SPEED = 16,
+	    ROOK_TARGET_DIST = 12,
+	    
 	    SLURTLE_DAMAGE = 25,
 	    SLURTLE_HEALTH = 600,
 	    SLURTLE_ATTACK_PERIOD = 4,
@@ -218,11 +269,11 @@ function Tune(overrides)
 	    GHOST_DMG_PERIOD = 1.2,
 	    GHOST_DMG_PLAYER_PERCENT = 1,
 
-	    ABIGAIL_SPEED = 4,
-	    ABIGAIL_HEALTH = wilson_health*2,
-	    ABIGAIL_DAMAGE = wilson_health*0.1,
-	    ABIGAIL_DMG_PERIOD = 0.5,
-	    ABIGAIL_DMG_PLAYER_PERCENT = 0.75,
+	    ABIGAIL_SPEED = 5,
+	    ABIGAIL_HEALTH = wilson_health*4,
+	    ABIGAIL_DAMAGE_PER_SECOND = 20,
+	    ABIGAIL_DMG_PERIOD = 1.5,
+	    ABIGAIL_DMG_PLAYER_PERCENT = 0.25,
 	
 		EVERGREEN_GROW_TIME =
 	    {
@@ -414,8 +465,8 @@ function Tune(overrides)
 	    
 	    LUREPLANT_HIBERNATE_TIME = total_day_time * 2,
 	    LUREPLANT_GROWTHCHANCE = 0.02,
-	    LUREPLANT_SPAWNTIME = total_day_time * 9,
-	    LUREPLANT_SPAWNTIME_VARIANCE = total_day_time * 2,
+	    LUREPLANT_SPAWNTIME = total_day_time * 12,
+	    LUREPLANT_SPAWNTIME_VARIANCE = total_day_time * 3,
 	    
 	    TALLBIRD_HEALTH = 400,
 	    TALLBIRD_DAMAGE = 50,
@@ -458,6 +509,43 @@ function Tune(overrides)
 	    CHESTER_HEALTH_REGEN_AMOUNT = (wilson_health*3) * 3/60,
 	    CHESTER_HEALTH_REGEN_PERIOD = 3,
 	
+		PROTOTYPER_TREES = {
+		    SCIENCEMACHINE =
+		    {
+		    	SCIENCE = 1,
+		    	MAGIC = 1, 
+		    	ANCIENT = 0,
+			},
+
+			ALCHEMYMACHINE =
+			{
+				SCIENCE = 2,
+				MAGIC = 1,
+				ANCIENT = 0,
+			},
+
+			PRESTIHATITATOR =
+			{
+				SCIENCE = 0,
+				MAGIC = 2,
+				ANCIENT = 0,			
+			},
+
+			SHADOWMANIPULATOR =
+			{
+				SCIENCE = 0,
+				MAGIC = 3,
+				ANCIENT = 0,				
+			},
+
+			ANCIENTALTAR =
+			{
+				SCIENCE = 0,
+				MAGIC = 0,
+				ANCIENT = 2,
+			},
+		},
+
 	 
 	    RABBIT_HEALTH = 25,
 	    
@@ -554,6 +642,8 @@ function Tune(overrides)
 	    CAMPFIRE_RAIN_RATE = 2.5,
 	    CAMPFIRE_FUEL_MAX = (night_time+dusk_time)*1.5,
 	    CAMPFIRE_FUEL_START = (night_time+dusk_time)*.75,
+
+        ROCKLIGHT_FUEL_MAX = (night_time+dusk_time)*1.5,
 	
 		FIREPIT_RAIN_RATE = 2,
 	    FIREPIT_FUEL_MAX = (night_time+dusk_time)*2,
@@ -568,6 +658,7 @@ function Tune(overrides)
 	    
 	    TORCH_RAIN_RATE = 1.5,
 	    TORCH_FUEL = night_time*1.25,
+
 	    MINERHAT_LIGHTTIME = (night_time+dusk_time)*2.6,
 	    LANTERN_LIGHTTIME = (night_time+dusk_time)*2.6,
 	    SPIDERHAT_PERISHTIME = 4*seg_time,
@@ -717,6 +808,8 @@ function Tune(overrides)
 		
 		REPAIR_CUTSTONE = 50,
 		REPAIR_ROCKS = 50/3,
+		REPAIR_GEMS = 1,
+		REPAIR_GEARS = 1,
 	
 		REPAIR_BOARDS = 50,
 		REPAIR_LOGS = 50/4,
@@ -837,6 +930,51 @@ function Tune(overrides)
 		ROCKY_ABSORB = 0.95,
 		ROCKY_REGEN_AMOUNT = 10,
 		ROCKY_REGEN_PERIOD = 1,
+
+		MONKEY_MELEE_DAMAGE = 20,
+		MONKEY_HEALTH = 125,
+		MONKEY_ATTACK_PERIOD = 2,
+		MONKEY_MELEE_RANGE = 3,
+		MONKEY_RANGED_RANGE = 17,
+		MONKEY_MOVE_SPEED = 7,
+
+	    LIGHTER_ATTACK_IGNITE_PERCENT = .5,
+	    LIGHTER_DAMAGE = wilson_attack*.5,
+		WILLOW_LIGHTFIRE_SANITY_THRESH = .5,
+		WX78_RAIN_HURT_RATE = 1,
+
+
+		WOLFGANG_HUNGER = 300,
+		WOLFGANG_START_HUNGER = 200,
+		WOLFGANG_START_MIGHTY_THRESH = 225,
+		WOLFGANG_END_MIGHTY_THRESH = 220,
+		WOLFGANG_START_WIMPY_THRESH = 100,
+		WOLFGANG_END_WIMPY_THRESH = 105,
+
+		WOLFGANG_HUNGER_RATE_MULT_MIGHTY = 3,
+		WOLFGANG_HUNGER_RATE_MULT_NORMAL = 1.5,
+		WOLFGANG_HUNGER_RATE_MULT_WIMPY = 1,
+		
+		WOLFGANG_HEALTH_MIGHTY = 300,
+		WOLFGANG_HEALTH_NORMAL = 200,
+		WOLFGANG_HEALTH_WIMPY = 150,
+
+		WOLFGANG_ATTACKMULT_MIGHTY_MAX = 2,
+		WOLFGANG_ATTACKMULT_MIGHTY_MIN = 1.25,
+		WOLFGANG_ATTACKMULT_NORMAL = 1,
+		WOLFGANG_ATTACKMULT_WIMPY_MAX = .75,
+		WOLFGANG_ATTACKMULT_WIMPY_MIN = .5,
+
+		WENDY_DAMAGE_MULT = .75,
+		WENDY_SANITY_MULT = .75,
+
+		WICKERBOTTOM_SANITY = 250,
+	    WICKERBOTTOM_STALE_FOOD_HUNGER = .333,
+	    WICKERBOTTOM_SPOILED_FOOD_HUNGER = .167,
+	    
+	    WICKERBOTTOM_STALE_FOOD_HEALTH = .25,
+	    WICKERBOTTOM_SPOILED_FOOD_HEALTH = 0,
+
 	}
 end
 

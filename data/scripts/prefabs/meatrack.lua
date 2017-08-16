@@ -1,8 +1,30 @@
 local assets =
 {
-	Asset("ANIM", "data/anim/meat_rack.zip"),
-	Asset("ANIM", "data/anim/meat_rack_food.zip"),
-    Asset("IMAGE", "data/inventoryimages/meatrack.tex"),
+	Asset("ANIM", "anim/meat_rack.zip"),
+	Asset("ANIM", "anim/meat_rack_food.zip"),
+	Asset("ANIM", "anim/meat.zip"),
+
+	Asset("ANIM", "anim/meat_monster.zip"),
+	Asset("ANIM", "anim/meat_small.zip"),
+	Asset("ANIM", "anim/drumstick.zip"),
+	Asset("ANIM", "anim/meat_rack_food.zip"),
+    Asset("ANIM", "anim/batwing.zip"),
+    Asset("ANIM", "anim/plant_meat.zip"),
+}
+
+local prefabs =
+{
+	-- everything it can "produce" and might need symbol swaps from
+	"smallmeat",
+	"smallmeat_dried",
+	"monstermeat",
+	"monstermeat_dried",
+	"meat",
+	"meat_dried",
+	"drumstick", -- uses smallmeat_dried
+	"batwing", --uses smallmeat_dried
+	"fish", -- uses smallmeat_dried
+	"froglegs", -- uses smallmeat_dried
 }
 
 local function onhammered(inst, worker)
@@ -101,5 +123,5 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "common/objects/meatrack", fn, assets ),
+return Prefab( "common/objects/meatrack", fn, assets, prefabs ),
 	   MakePlacer("common/meatrack_placer", "meat_rack", "meat_rack", "idle_empty")  

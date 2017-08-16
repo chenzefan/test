@@ -145,7 +145,7 @@ local function tallfn()
 	    inst.components.workable:SetWorkLeft(TUNING.MUSHTREE_CHOPS_TALL)
 	    inst.components.workable:SetOnWorkCallback(workcallback)
 
-	--inst.AnimState:SetBloomEffectHandle( "data/shaders/anim.ksh" )
+	--inst.AnimState:SetBloomEffectHandle( "shaders/anim.ksh" )
 
     local light = inst.entity:AddLight()
 	light:SetFalloff(0.5)
@@ -188,7 +188,7 @@ local function mediumfn()
 	    inst.components.workable:SetWorkLeft(TUNING.MUSHTREE_CHOPS_MEDIUM)
 	    inst.components.workable:SetOnWorkCallback(workcallback)
 
-	--inst.AnimState:SetBloomEffectHandle( "data/shaders/anim.ksh" )
+	--inst.AnimState:SetBloomEffectHandle( "shaders/anim.ksh" )
 
     local light = inst.entity:AddLight()
 	light:SetFalloff(0.5)
@@ -232,7 +232,7 @@ local function smallfn()
 	    inst.components.workable:SetWorkLeft(TUNING.MUSHTREE_CHOPS_SMALL)
 	    inst.components.workable:SetOnWorkCallback(workcallback)
 
-	-- inst.AnimState:SetBloomEffectHandle( "data/shaders/anim.ksh" )
+	-- inst.AnimState:SetBloomEffectHandle( "shaders/anim.ksh" )
 
     local light = inst.entity:AddLight()
 	light:SetFalloff(0.5)
@@ -246,7 +246,7 @@ local function smallfn()
 	return inst
 end
 
-return Prefab("cave/objects/mushtree_tall", tallfn, { Asset("ANIM", "data/anim/mushroom_tree_tall.zip") }, prefabs),
-       Prefab("cave/objects/mushtree_medium", mediumfn, { Asset("ANIM", "data/anim/mushroom_tree_med.zip") }, prefabs),
-       Prefab("cave/objects/mushtree_small", smallfn, { Asset("ANIM", "data/anim/mushroom_tree_small.zip") }, prefabs) 
+return Prefab("cave/objects/mushtree_tall", tallfn, { Asset("ANIM", "anim/mushroom_tree_tall.zip") }, prefabs),
+       Prefab("cave/objects/mushtree_medium", mediumfn, { Asset("ANIM", "anim/mushroom_tree_med.zip") }, prefabs),
+       Prefab("cave/objects/mushtree_small", smallfn, { Asset("ANIM", "anim/mushroom_tree_small.zip") }, prefabs) 
 

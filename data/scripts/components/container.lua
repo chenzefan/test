@@ -9,6 +9,17 @@ local Container = Class(function(self, inst)
     self.side_widget = false
 end)
 
+
+function Container:NumItems()
+    local num = 0
+    for k,v in pairs(self.slots) do
+        num = num + 1
+    end
+    
+    return num
+end
+
+
 function Container:IsFull()
 	local items = 0
 	for k,v in pairs(self.slots) do

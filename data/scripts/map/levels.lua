@@ -1,5 +1,22 @@
 local CAMPAIGN_LENGTH = 5
 
+LEVELTYPE = {
+	SURVIVAL = 0,
+	CAVE = 1,
+	ADVENTURE = 2,
+	TEST = 99,
+}
+
+local levellist = {}
+levellist[LEVELTYPE.SURVIVAL] = {}
+levellist[LEVELTYPE.CAVE] = {}
+levellist[LEVELTYPE.ADVENTURE] = {}
+levellist[LEVELTYPE.TEST] = {}
+
+function AddLevel(type, data)
+	table.insert(levellist[type], Level(data))
+end
+
 
 Level = Class( function(self, data)
 	self.id = data.id or "UNKNOWN_ID"
@@ -21,6 +38,17 @@ Level = Class( function(self, data)
 	self.max_playlist_position = data.max_playlist_position or 999
 end)
 
+function Level:ApplyModsToTasks(tasklist)
+
+	for i,task in ipairs(tasklist) do
+		--print(i, "modding task "..task.id)
+		local modfns = ModManager:GetPostInitFns("TaskPreInit", task.id)
+		for i,modfn in ipairs(modfns) do
+			print("Applying mod to task '"..task.id.."'")
+			modfn(task)
+		end
+	end
+end
 
 function Level:GetOverridesForTasks(tasklist)
 	-- Update the task with whatever overrrides are going
@@ -111,6 +139,8 @@ function Level:GetTasksForLevel(sampletasks)
 			count = count-1
 		end
 	end
+
+	self:ApplyModsToTasks(tasklist)
 	
 	self:GetOverridesForTasks(tasklist)
 	return tasklist
@@ -135,7 +165,7 @@ function Level:GetTaskByName(taskname, sampletasks)
 	return nil
 end
 
-local test_level = Level({
+AddLevel(LEVELTYPE.TEST, {
 	name="TEST_LEVEL",
 	desc="",
 	overrides={
@@ -148,38 +178,53 @@ local test_level = Level({
 		{"traps", 			"never"},
 		{"protected", 		"never"},
 		{"start_setpeice", 	"CaveStart"},
-		{"start_node",	"BGSinkholeRoom"},
+		{"start_node",	"BGNoisyFungus"},
 	},
 	tasks={
-			"CavesStart",
-			"CavesAlternateStart",
-			"FungalBatCave",
-			"BatCaves",
-			"TentacledCave",
-			"LargeFungalComplex",
-			"SingleBatCaveTask",
-			"RabbitsAndFungs",
-			"FungalPlain",
-			"Cavern",
+			"RuinsStart",
+			"TheLabyrinth",
+			"CityInRuins",
 	},
-	numoptionaltasks = 1,
+	numoptionaltasks = 0,
 	optionaltasks = {
 			"CaveBase",
 			"MushBase",
 			"SinkBase",
 			"RabbitTown",
-	}
+	},
+		override_triggers = {
+			["RuinsStart"] = {	
+				{"SeasonColourCube", SEASONS.CAVES}, 
+			},
+			["TheLabyrinth"] = {	
+				{"SeasonColourCube", 	{	DAY = "images/colour_cubes/ruins_light_cc.tex",
+											DUSK = "images/colour_cubes/ruins_dim_cc.tex",
+											NIGHT = "images/colour_cubes/ruins_dark_cc.tex",
+										},
+								}, 
+			},
+			["CityInRuins"] = {	
+				{"SeasonColourCube", 	{	DAY = "images/colour_cubes/ruins_light_cc.tex",
+											DUSK = "images/colour_cubes/ruins_light_cc.tex",
+											NIGHT = "images/colour_cubes/ruins_light_cc.tex",
+										},
+								},
+			},
+		},
 })
 
-local cave_levels = {
+----------------------------------
+-- Cave levels
+----------------------------------
 
-	Level{
+AddLevel(LEVELTYPE.CAVE, {
+		id="CAVE_LEVEL_1",
 		name="CAVE_LEVEL_1",
 		overrides={
-			{"world_size", 	"tiny"},
-			{"day", 		"onlynight"}, 
-			{"waves", 		"off"},
-			{"location",	"cave"},
+			{"world_size", 		"tiny"},
+			{"day", 			"onlynight"}, 
+			{"waves", 			"off"},
+			{"location",		"cave"},
 			{"boons", 			"never"},
 			{"poi", 			"never"},
 			{"traps", 			"never"},
@@ -205,12 +250,97 @@ local cave_levels = {
 			"MushBase",
 			"SinkBase",
 			"RabbitTown",
-		}
-	}
-}
+		},
+		-- override_triggers = {
+		-- 	["CavesStart"] = {	
+		-- 		{"ColourCube", "sinkhole_cc"}, 
+		-- 	},
+		-- 	["CavesAlternateStart"] = {	
+		-- 		{"ColourCube", "sinkhole_cc"}, 
+		-- 	},
+		-- 	["BatCaves"] = {	
+		-- 		{"ColourCube", "caves_default"}, 
+		-- 	},	
+		-- 	["Cavern"] = {	
+		-- 		{"ColourCube", "caves_default"}, 
+		-- 	},	
+		-- 	["SingleBatCaveTask"] = {	
+		-- 		{"ColourCube", "caves_default"}, 
+		-- 	},	
+		-- 	["TentacledCave"] = {	
+		-- 		{"ColourCube", "caves_default"}, 
+		-- 	},
+		-- 	["LargeFungalComplex"] = {	
+		-- 		{"ColourCube", "fungus_cc"}, 
+		-- 	},
+		-- 	["FungalBatCave"] = {	
+		-- 		{"ColourCube", "fungus_cc"}, 
+		-- 	},
+		-- 	["RabbitsAndFungs"] = {	
+		-- 		{"ColourCube", "fungus_cc"}, 
+		-- 	},
+		-- 	["FungalPlain"] = {	
+		-- 		{"ColourCube", "fungus_cc"}, 
+		-- 	},
+		-- },
+	})
 
-local free_levels ={
-	Level({ 
+--[[AddLevel(LEVELTYPE.CAVE, {
+		id="CAVE_LEVEL_2",
+		name="CAVE_LEVEL_2",
+		overrides={
+			{"world_size", 		"tiny"},
+			{"day", 			"onlynight"}, 
+			{"waves", 			"off"},
+			{"location",		"cave"},
+			{"boons", 			"never"},
+			{"poi", 			"never"},
+			{"traps", 			"never"},
+			{"protected", 		"never"},
+			{"start_setpeice", 	"CaveStart"},
+			{"start_node",		"BGSinkholeRoom"},
+		},
+		tasks={
+			-- "RuinsStart",
+--			"TheLabyrinth",
+			"CityInRuins",
+		},
+		numoptionaltasks = 0,
+		optionaltasks = {
+			"CaveBase",
+			"MushBase",
+			"RabbitTown",
+		},
+		override_triggers = {
+			["RuinsStart"] = {	
+				{"SeasonColourCube", "caves"}, 
+				-- {"SeasonColourCube", SEASONS.CAVES}, 
+			},
+			["TheLabyrinth"] = {	
+				{"SeasonColourCube", "caves_ruins"}, 
+				-- {"SeasonColourCube", 	{	DAY = "images/colour_cubes/ruins_light_cc.tex",
+				-- 							DUSK = "images/colour_cubes/ruins_dim_cc.tex",
+				-- 							NIGHT = "images/colour_cubes/ruins_dark_cc.tex",
+				-- 						},
+								-- }, 
+			},
+			["CityInRuins"] = {	
+				{"SeasonColourCube", "caves_ruins"}, 
+				-- {"SeasonColourCube", 	{	DAY = "images/colour_cubes/ruins_light_cc.tex",
+				-- 							DUSK = "images/colour_cubes/ruins_dim_cc.tex",
+				-- 							NIGHT = "images/colour_cubes/ruins_dark_cc.tex",
+				-- 						},
+				-- 				},
+			},
+		},
+	})
+--]]
+
+----------------------------------
+-- Survival levels
+----------------------------------
+
+AddLevel(LEVELTYPE.SURVIVAL, { 
 		id="SURVIVAL_DEFAULT",
 		name=STRINGS.UI.CUSTOMIZATIONSCREEN.PRESETLEVELS[1],
 		desc=STRINGS.UI.CUSTOMIZATIONSCREEN.PRESETLEVELDESC[1],
@@ -242,8 +372,9 @@ local free_levels ={
 			["ResurrectionStone"] = { count=2, tasks={"Make a pick", "Dig that rock", "Great Plains", "Squeltch", "Beeeees!", "Speak to the king", "Forest hunters" } },
 			["WormholeGrass"] = { count=8, tasks={"Make a pick", "Dig that rock", "Great Plains", "Squeltch", "Beeeees!", "Speak to the king", "Forest hunters", "Befriend the pigs", "For a nice walk", "Kill the spiders", "Killer bees!", "Make a Beehat", "The hunters", "Magic meadow", "Frogs and bugs"} },
 		},
-	}),
-	Level({
+	})
+
+AddLevel(LEVELTYPE.SURVIVAL, {
 		id="SURVIVAL_DEFAULT_PLUS",
 		name=STRINGS.UI.CUSTOMIZATIONSCREEN.PRESETLEVELS[2],
 		desc= STRINGS.UI.CUSTOMIZATIONSCREEN.PRESETLEVELDESC[2],
@@ -286,9 +417,9 @@ local free_levels ={
 				["ResurrectionStone"] = { count=2, tasks={ "Speak to the king", "Forest hunters" } },
 				["WormholeGrass"] = { count=8, tasks={"Make a pick", "Dig that rock", "Great Plains", "Squeltch", "Beeeees!", "Speak to the king", "Forest hunters", "Befriend the pigs", "For a nice walk", "Kill the spiders", "Killer bees!", "Make a Beehat", "The hunters", "Magic meadow", "Frogs and bugs"} },
 		},
-	}),
+	})
 
-	Level({
+AddLevel(LEVELTYPE.SURVIVAL, {
 		id="COMPLETE_DARKNESS",
 		name=STRINGS.UI.CUSTOMIZATIONSCREEN.PRESETLEVELS[3],
 		desc= STRINGS.UI.CUSTOMIZATIONSCREEN.PRESETLEVELDESC[3],
@@ -324,9 +455,9 @@ local free_levels ={
 				["ResurrectionStone"] = { count=2, tasks={ "Speak to the king", "Forest hunters" } },
 				["WormholeGrass"] = { count=8, tasks={"Make a pick", "Dig that rock", "Great Plains", "Squeltch", "Beeeees!", "Speak to the king", "Forest hunters", "Befriend the pigs", "For a nice walk", "Kill the spiders", "Killer bees!", "Make a Beehat", "The hunters", "Magic meadow", "Frogs and bugs"} },
 		},
-	}),
+	})
 
-	-- Level({ 
+	-- AddLevel(LEVELTYPE.SURVIVAL, { 
 	-- 	id="SURVIVAL_CAVEPREVIEW",
 	-- 	name=STRINGS.UI.CUSTOMIZATIONSCREEN.PRESETLEVELS[3],
 	-- 	desc=STRINGS.UI.CUSTOMIZATIONSCREEN.PRESETLEVELDESC[3],
@@ -358,8 +489,17 @@ local free_levels ={
 	-- 		["ResurrectionStone"] = { count=2, tasks={"Make a pick", "Dig that rock", "Great Plains", "Squeltch", "Beeeees!", "Speak to the king", "Forest hunters" } },
 	-- 		["WormholeGrass"] = { count=8, tasks={"Make a pick", "Dig that rock", "Great Plains", "Squeltch", "Beeeees!", "Speak to the king", "Forest hunters", "Befriend the pigs", "For a nice walk", "Kill the spiders", "Killer bees!", "Make a Beehat", "The hunters", "Magic meadow", "Frogs and bugs"} },
 	-- 	},
-	-- }),
-}
+	-- })
+
+	
+
+
+
+
+----------------------------------
+-- Adventure levels
+----------------------------------
+
 
 local function GetRandomSubstituteList( substitutes, num_choices )	
 	local subs = {}
@@ -393,8 +533,7 @@ local SUBS_1= {
 			["spiderden"] =			{perstory=1, 	pertask=1, 		weight=1},
 		}
 
-local story_levels = {
-	Level({
+AddLevel(LEVELTYPE.ADVENTURE, {
 		id="RAINY", -- A Cold Reception
 		name=STRINGS.UI.SANDBOXMENU.ADVENTURELEVELS[1],
 		min_playlist_position=1,
@@ -477,8 +616,8 @@ local story_levels = {
 														"Wasps and Frogs and bugs",
 														"Guarded Walrus Desolate"} },
 		},
-	}),
-	Level({
+	})
+AddLevel(LEVELTYPE.ADVENTURE, {
 		id="WINTER",
 		name=STRINGS.UI.SANDBOXMENU.ADVENTURELEVELS[2],
 		min_playlist_position=1,
@@ -530,9 +669,9 @@ local story_levels = {
 														"The Deep Forest",
 														"Forest hunters"} },
 		},
-	}),
+	})
 	-- Weather: start with very short winter, then endless summer.
-	Level({
+AddLevel(LEVELTYPE.ADVENTURE, {
 		id="HUB",
 		name=STRINGS.UI.SANDBOXMENU.ADVENTURELEVELS[3],
 		min_playlist_position=1,
@@ -583,8 +722,8 @@ local story_levels = {
 														"Hounded Greater Plains",
 														"Merms ahoy"} },
 		},
-	}),
-	Level({
+	})
+AddLevel(LEVELTYPE.ADVENTURE, {
 		id="ISLANDHOP",
 		name=STRINGS.UI.SANDBOXMENU.ADVENTURELEVELS[4],
 		min_playlist_position=1,
@@ -611,8 +750,8 @@ local story_levels = {
 		set_pieces = {
 			["WesUnlock"] = { restrict_to="background", tasks={ "IslandHop1", "IslandHop2", "IslandHop3", "IslandHop4", "IslandHop5", "IslandHop6" } },
 		},
-	}),	
-	Level({
+	})
+AddLevel(LEVELTYPE.ADVENTURE, {
 		id="TWOLANDS",
 		name=STRINGS.UI.SANDBOXMENU.ADVENTURELEVELS[5],
 		override_level_string=true,
@@ -657,9 +796,9 @@ local story_levels = {
 			["MaxMermShrine"] = {tasks={"The other side"}},
 			["ResurrectionStone"] = { count=2, tasks={"Land of Plenty", "The other side" } },
 		},
-	}),
+	})
 
-	Level({
+AddLevel(LEVELTYPE.ADVENTURE, {
 		id="DARKNESS",
 		name=STRINGS.UI.SANDBOXMENU.ADVENTURELEVELS[6],
 		min_playlist_position=CAMPAIGN_LENGTH,
@@ -723,8 +862,8 @@ local story_levels = {
 														"Hounded Magic meadow", } },
 		},
 
-	}),
- 	Level({
+	})
+AddLevel(LEVELTYPE.ADVENTURE, {
 		id="ENDING",
 		name=STRINGS.UI.SANDBOXMENU.ADVENTURELEVELS[7],
 		nomaxwell=true,
@@ -753,7 +892,13 @@ local story_levels = {
 				{"areaambient", "VOID"}, 
 			},
 		},
-	}),
-	
-}
-levels = { story_levels=story_levels, sandbox_levels=free_levels, cave_levels = cave_levels, free_level=free_levels[1], test_level=test_level, CAMPAIGN_LENGTH=CAMPAIGN_LENGTH }
+	})
+
+
+return { story_levels=levellist[LEVELTYPE.ADVENTURE],
+			sandbox_levels=levellist[LEVELTYPE.SURVIVAL],
+			cave_levels = levellist[LEVELTYPE.CAVE],
+			--free_level=levellist[LEVELTYPE.SURVIVAL][1],
+			test_level=levellist[LEVELTYPE.TEST][1],
+			CAMPAIGN_LENGTH=CAMPAIGN_LENGTH
+		}

@@ -94,6 +94,7 @@ function Mine:Explode(target)
     self:StopTesting()
     self.target = target
     self.issprung = true
+    ProfileStatsAdd("trap_sprung_" .. target.prefab)
     if self.onexplode then
         self.onexplode(self.inst, target)
     end

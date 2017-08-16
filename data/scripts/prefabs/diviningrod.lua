@@ -1,17 +1,24 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/diviningrod.zip"),
-	Asset("ANIM", "data/anim/swap_diviningrod.zip"),
-	Asset("ANIM", "data/anim/diviningrod_fx.zip"),
-    Asset("IMAGE", "data/inventoryimages/diviningrod.tex"),
+	Asset("ANIM", "anim/diviningrod.zip"),
+	Asset("ANIM", "anim/swap_diviningrod.zip"),
+	Asset("ANIM", "anim/diviningrod_fx.zip"),
+}
+
+local prefabs =
+{
+    "dr_hot_loop",
+    "dr_warmer_loop",
+    "dr_warm_loop_2",
+    "dr_warm_loop_1",
 }
 
 local EFFECTS = 
 {
-    hot = {anim="hot_loop", tint=Vector3(181/255, 32/255, 32/255)},
-    warmer = {anim="warmer_loop", tint=Vector3(255/255, 163/255, 26/255)},
-    warm = {anim="warm_loop", tint=Vector3(105/255, 182/255, 239/255)},
-    cold = {anim="warm_loop", tint=Vector3(105/255, 160/255, 255/255)},
+    hot = "dr_hot_loop",--{anim="hot_loop", tint=Vector3(181/255, 32/255, 32/255)},
+    warmer = "dr_warmer_loop",--{anim="warmer_loop", tint=Vector3(255/255, 163/255, 26/255)},
+    warm = "dr_warm_loop_2",--{anim="warm_loop", tint=Vector3(105/255, 182/255, 239/255)},
+    cold = "dr_warm_loop_1",--{anim="warm_loop", tint=Vector3(105/255, 160/255, 255/255)},
 }
 
 local function FindClosestPart(inst)
@@ -73,8 +80,9 @@ local function CheckTargetPiece(inst)
         end
         
         if fx then
-            inst.effect = PlayFX(Vector3(0,0,0), "diviningrod_fx", "diviningrod_fx", fx.anim, nil, nil, fx.tint or Vector3(1, 1, 1) )
-	        local follower = inst.effect.entity:AddFollower()
+            inst.effect = SpawnPrefab(fx)--PlayFX(Vector3(0,0,0), "diviningrod_fx", "diviningrod_fx", fx.anim, nil, nil, fx.tint or Vector3(1, 1, 1) )
+	        print(inst.effect)
+            local follower = inst.effect.entity:AddFollower()
 	        follower:FollowSymbol(inst.components.inventoryitem.owner.GUID, "swap_object", 75, -300, 1 )
 	    end
 
@@ -163,5 +171,5 @@ local function fn(Sim)
 end
 
 
-return Prefab( "common/inventory/diviningrod", fn, assets) 
+return Prefab( "common/inventory/diviningrod", fn, assets, prefabs) 
 

@@ -1,7 +1,6 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/mosquito.zip"),
-    Asset("IMAGE", "data/inventoryimages/mosquito.tex"),
+	Asset("ANIM", "anim/mosquito.zip"),
 }
 
 local sounds =
@@ -23,6 +22,7 @@ local function OnWorked(inst, worker)
         owner.components.childspawner:OnChildKilled(inst)
     end
     if worker.components.inventory then
+        FightStat_Caught(inst)
         worker.components.inventory:GiveItem(inst, nil, Vector3(TheSim:GetScreenPos(inst.Transform:GetWorldPosition())))
     end
 end

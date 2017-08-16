@@ -1,13 +1,10 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/ds_rabbit_basic.zip"),
-	Asset("ANIM", "data/anim/rabbit_build.zip"),
-	Asset("ANIM", "data/anim/beard_monster.zip"),
-	Asset("ANIM", "data/anim/rabbit_winter_build.zip"),
-	Asset("SOUND", "data/sound/rabbit.fsb"),
-    Asset("IMAGE", "data/inventoryimages/rabbit.tex"),
-    Asset("IMAGE", "data/inventoryimages/beard_monster.tex"),
-    Asset("IMAGE", "data/inventoryimages/rabbit_winter.tex"),
+	Asset("ANIM", "anim/ds_rabbit_basic.zip"),
+	Asset("ANIM", "anim/rabbit_build.zip"),
+	Asset("ANIM", "anim/beard_monster.zip"),
+	Asset("ANIM", "anim/rabbit_winter_build.zip"),
+	Asset("SOUND", "sound/rabbit.fsb"),
 }
 
 local prefabs =
@@ -207,6 +204,7 @@ local function fn(Sim)
 
 	BecomeRabbit(inst)
     CheckTransformState(inst)
+    inst.CheckTransformState = CheckTransformState
 	
 	inst.OnEntityWake = OnWake
 	inst.OnEntitySleep = OnSleep    

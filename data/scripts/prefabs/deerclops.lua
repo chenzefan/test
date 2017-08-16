@@ -2,10 +2,10 @@ local brain = require "brains/deerclopsbrain"
 
 local assets =
 {
-	Asset("ANIM", "data/anim/deerclops_basic.zip"),
-	Asset("ANIM", "data/anim/deerclops_actions.zip"),
-	Asset("ANIM", "data/anim/deerclops_build.zip"),
-	Asset("SOUND", "data/sound/deerclops.fsb"),
+	Asset("ANIM", "anim/deerclops_basic.zip"),
+	Asset("ANIM", "anim/deerclops_actions.zip"),
+	Asset("ANIM", "anim/deerclops_build.zip"),
+	Asset("SOUND", "sound/deerclops.fsb"),
 }
 
 local prefabs =
@@ -162,6 +162,7 @@ local function fn(Sim)
     ------------------------------------------
 
     inst:AddComponent("inspectable")
+	inst.components.inspectable:RecordViews()
     ------------------------------------------
     inst:AddComponent("knownlocations")
     inst:SetBrain(brain)

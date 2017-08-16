@@ -146,12 +146,13 @@ local function LayoutForDefinition(name)
 	local pois = require("map/pointsofinterest")
 	local protres = require("map/protected_resources")
 	local boons = require("map/boons")
+	local maze_rooms = require("map/maze_layouts")
 
 	local layout = {}
 	
 	if objs.Layouts[name] == nil and traps.Layouts[name] == nil 
 		and pois.Layouts[name] == nil and protres.Layouts[name] == nil  
-		and boons.Layouts[name] == nil then
+		and boons.Layouts[name] == nil and maze_rooms.Layouts[name] == nil then
 		print("No layout available for", name)
 		return
 	else
@@ -163,6 +164,12 @@ local function LayoutForDefinition(name)
 			layout = deepcopy(protres.Layouts[name])
 		elseif boons.Layouts[name] ~= nil then
 			layout = deepcopy(boons.Layouts[name])
+		elseif maze_rooms.Layouts[name] ~= nil then
+			if math.random()>0.5 then
+				layout = deepcopy(maze_rooms.Layouts[name])
+			else
+				layout = deepcopy(maze_rooms.Alternate0[name])
+			end
 		else 
 			layout = deepcopy(pois.Layouts[name])
 		end
@@ -265,7 +272,7 @@ local function ConvertLayoutToEntitylist(layout)
 	return all_items
 end
 
-local function ReserveAndPlaceLayout(node_id, layout, prefabs, add_entity)
+local function ReserveAndPlaceLayout(node_id, layout, prefabs, add_entity, position)
 	assert(node_id~=nil)
 	assert(layout~=nil)
 	assert(prefabs~=nil)
@@ -300,27 +307,29 @@ local function ReserveAndPlaceLayout(node_id, layout, prefabs, add_entity)
 	size = layout.scale * size
 	local flip_x = 1
 	local flip_y = 1
-	local switch_xy = false
-	
-	-- local rotate = GetRandomItem({0,90,180,270})
-	-- --local rotate = GetRandomItem({180,270})
- 
-	-- local translations = { 
-	-- 						[0]=  {false, 1, 1}, 
-	-- 						[90]= {true,  -1, 1}, 
-	-- 						[180]={false, -1,-1}, 
-	-- 						[270]={true,  1,-1} 
-	-- 					 }
-						 
-	-- local translate = translations[rotate]
-	
-	--print("Rotate", rotate, "Translate", translate[1], translate[2], translate[3])
-	
+	local switch_xy = false	
 
 	if layout.disable_transform == nil or layout.disable_transform == false then
 		switch_xy = GetRandomItem({true,false})--translate[1]
 		flip_x =	GetRandomItem({1,-1})--translate[2]
 		flip_y =	GetRandomItem({1,-1})--translate[3]
+	end
+
+	-- If we specify a rotation then use that instead
+	if layout.force_rotation ~= nil then
+		--print(node_id, layout, layout.force_rotation)
+		local translations = { 
+								[LAYOUT_ROTATION.NORTH]={false,	1,	1}, 
+								[LAYOUT_ROTATION.EAST]= {true,	-1, 1}, 
+								[LAYOUT_ROTATION.SOUTH]={false,	-1,	-1}, 
+								[LAYOUT_ROTATION.WEST]=	{true,	1,	-1} 
+							 }
+							 
+		switch_xy  = translations[layout.force_rotation][1]
+		flip_x = translations[layout.force_rotation][2]
+		flip_y = translations[layout.force_rotation][3]
+
+		--print(switch_xy, flip_x, flip_y)
 	end
 
 	local tiles = nil
@@ -344,8 +353,13 @@ local function ReserveAndPlaceLayout(node_id, layout, prefabs, add_entity)
 					clmn = size - (clmn-1)
 				end
 				--print("rw",rw, "clmn", clmn)
-				if layout.ground[clmn][rw] ~= 0 then					
-					table.insert(tiles, layout.ground_types[layout.ground[clmn][rw]])
+				if layout.ground[clmn][rw] ~= 0 then	
+					if position ~= nil then
+						--print(position[1] + clmn, position[2] + rw, layout.ground_types[layout.ground[clmn][rw]])
+						WorldSim:SetTile(position[1] + column, size+position[2] - row, layout.ground_types[layout.ground[rw][clmn]])
+					else
+						table.insert(tiles, layout.ground_types[layout.ground[clmn][rw]])
+					end
 				else
 					table.insert(tiles, 0)
 				end
@@ -360,8 +374,14 @@ local function ReserveAndPlaceLayout(node_id, layout, prefabs, add_entity)
 	layout.layout_position = layout.layout_position or 0
 
 	-- reserve the area
-	local rcx, rcy = WorldSim:ReserveSpace(node_id, size, layout.start_mask, layout.fill_mask, layout.layout_position, tiles)
-
+	local rcx = 0
+	local rcy = 0
+	if position == nil then
+		rcx, rcy = WorldSim:ReserveSpace(node_id, size, layout.start_mask, layout.fill_mask, layout.layout_position, tiles)
+	else
+		rcx = position[1]
+		rcy = position[2]
+	end
 	-- place objects however you like within the reserved loc
 	--print ("RESERVED", rcx,rcy, flip_x, flip_y)	
 	
@@ -409,4 +429,17 @@ local function Convert(node_id, item, addEntity)
 	ReserveAndPlaceLayout(node_id, layout, prefabs, addEntity)
 end
 
-return {ConvertLayoutToEntitylist = ConvertLayoutToEntitylist, LayoutForDefinition = LayoutForDefinition, ReserveAndPlaceLayout = ReserveAndPlaceLayout, Convert = Convert}
+local function Place(position, item, addEntity)
+	assert(item and item ~= "", "Must provide a valid layout name, got nothing.")
+	local layout = LayoutForDefinition(item)
+	local prefabs = ConvertLayoutToEntitylist(layout)
+	ReserveAndPlaceLayout("POSITIONED", layout, prefabs, addEntity, position)
+end
+
+return {
+		ConvertLayoutToEntitylist = ConvertLayoutToEntitylist, 
+		LayoutForDefinition = LayoutForDefinition, 
+		ReserveAndPlaceLayout = ReserveAndPlaceLayout, 
+		Convert = Convert,
+		Place = Place,
+	}

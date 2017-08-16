@@ -4214,7 +4214,7 @@ return {
           properties = {}
         },
         {
-          name = "",
+          name = "David",
           type = "gravestone",
           shape = "rectangle",
           x = 1594,
@@ -4223,7 +4223,7 @@ return {
           height = 0,
           visible = true,
           properties = {
-            ["data.setepitaph"] = "David R Forsey"
+            ["data.setepitaph"] = "David Forsey"
           }
         }
       }

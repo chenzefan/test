@@ -29,7 +29,7 @@ EndGameDialog = Class(Screen, function(self, buttons)
 	Screen._ctor(self, "EndGameDialog")
 
 	--darken everything behind the dialog
-    self.black = self:AddChild(Image("data/images/square.tex"))
+    self.black = self:AddChild(Image("images/global.xml", "square.tex"))
     self.black:SetVRegPoint(ANCHOR_MIDDLE)
     self.black:SetHRegPoint(ANCHOR_MIDDLE)
     self.black:SetVAnchor(ANCHOR_MIDDLE)
@@ -44,7 +44,7 @@ EndGameDialog = Class(Screen, function(self, buttons)
     self.proot:SetScaleMode(SCALEMODE_PROPORTIONAL)
 
 	--throw up the background
-    self.bg = self.proot:AddChild(Image("data/images/panel_upsell.tex"))
+    self.bg = self.proot:AddChild(Image("images/globalpanels.xml", "panel_upsell.tex"))
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
     self.bg:SetHRegPoint(ANCHOR_MIDDLE)
 	self.bg:SetScale(0.8,0.8,0.8)

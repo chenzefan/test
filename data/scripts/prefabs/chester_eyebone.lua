@@ -1,9 +1,7 @@
 
 local assets=
 {
-    Asset("ANIM", "data/anim/chester_eyebone.zip"),
-    Asset("IMAGE", "data/inventoryimages/chester_eyebone.tex"),
-    Asset("IMAGE", "data/inventoryimages/chester_eyebone_closed.tex")
+    Asset("ANIM", "anim/chester_eyebone.zip"),
 }
 
 local SPAWN_DIST = 30
@@ -168,6 +166,7 @@ local function fn(Sim)
     inst.components.inventoryitem:ChangeImageName("chester_eyebone")    
     inst:AddComponent("inspectable")
     inst.components.inspectable.getstatus = GetStatus
+	inst.components.inspectable:RecordViews()
 
     inst:AddComponent("leader")
 

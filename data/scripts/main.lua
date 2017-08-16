@@ -1,3 +1,6 @@
+-- Override the package.path in luaconf.h because it is impossible to find
+package.path = "scripts\\?.lua;scriptlibs\\?.lua"
+
 --defines
 MAIN = 1
 ENCODE_SAVES = BRANCH ~= "dev"
@@ -27,11 +30,14 @@ if PLATFORM == "NACL" then
 	end
 end
 
+package.path = package.path .. ";scripts/?.lua"
+
 if PLATFORM == "WIN32" then
+	package.path = package.path .. ";scriptlibs/?.lua"
 	--this is done strangely, because we statically link to luasocket. We statically link to lusocket because we statically link to lua. We statically link to lua because of NaCl. Boo.
 	--anyway, you should be able to use luasocket as you would expect from this point forward (on windows at least).
-	dofile("data/scriptlibs/socket.lua")
-	dofile("data/scriptlibs/mime.lua")
+	dofile("scriptlibs/socket.lua")
+	dofile("scriptlibs/mime.lua")
 end
 
 --used for A/B testing and preview features. Gets serialized into and out of save games
@@ -62,7 +68,7 @@ table.insert(package.loaders, 1, loadfn)
 if TheSim then
     function loadfile(filename)
         filename = string.gsub(filename, ".lua", "")
-        filename = string.gsub(filename, "data/scripts/", "")
+        filename = string.gsub(filename, "scripts/", "")
         return loadfn(filename)
     end
 end
@@ -73,12 +79,10 @@ elseif PLATFORM == "WIN32" then
 end
 
 require("strict")
-
+require("config")
 
 require("mainfunctions")
 
-
---TheSim:UnloadAllPrefabs()
 require("mods")
 require("json")
 require("vector3")
@@ -106,6 +110,7 @@ require("input")
 require("upsell")
 require("stats")
 require("frontend")
+require("overseer")
 require("fileutil")
 require("screens/scripterrorscreen")
 require("prefablist")
@@ -118,6 +123,11 @@ require("standardcomponents")
 require("cameras\\followcamera")
 require("update")
 require("fonts")
+require("physics")
+require("modindex")
+require("mathutil")
+
+require("saveindex") -- Added by Altgames for Android focus lost handling
 
 print ("running main.lua\n")
 
@@ -138,6 +148,8 @@ local Mixer = require("mixer")
 TheMixer = Mixer.Mixer()
 require("mixes")
 TheMixer:PushMix("start")
+
+KnownModIndex:Load(function() end)
 
 ---PREFABS AND ENTITY INSTANTIATION
 Prefabs = {}
@@ -168,14 +180,12 @@ TheSim:LoadPrefabs({"global"})
 
 SplatManager = TheGlobalInstance.entity:AddSplatManager()
 ShadowManager = TheGlobalInstance.entity:AddShadowManager()
-ShadowManager:SetTexture( "data/images/shadow.tex" )
+ShadowManager:SetTexture( "images/shadow.tex" )
 RoadManager = TheGlobalInstance.entity:AddRoadManager()
-RoadManager:SetGlobalEffect( "data/shaders/road.ksh" )
-RoadManager:SetGlobalTextures( "data/images/roadedge.tex", "data/images/square.tex", "data/images/roadcorner.tex", "data/images/roadendcap.tex" )
 EnvelopeManager = TheGlobalInstance.entity:AddEnvelopeManager()
 
 PostProcessor = TheGlobalInstance.entity:AddPostProcessor()
-local IDENTITY_COLOURCUBE = "data/images/colour_cubes/identity_colourcube.tex"
+local IDENTITY_COLOURCUBE = "images/colour_cubes/identity_colourcube.tex"
 PostProcessor:SetColourCubeData( 0, IDENTITY_COLOURCUBE, IDENTITY_COLOURCUBE )
 PostProcessor:SetColourCubeData( 1, IDENTITY_COLOURCUBE, IDENTITY_COLOURCUBE )
 
@@ -185,3 +195,4 @@ Roads = nil
 TheFrontEnd = nil
 LoadFonts()
 
+inGamePlay = false
