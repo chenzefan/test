@@ -3,9 +3,9 @@
 -- msgctxt is set to the "path" in the table structure which is guaranteed unique
 -- versus the string values (msgid) which are not.
 --
--- Expanded to support v1 and v2 format in event user needs help converting a
+-- Expanded to support v1 and v2 format in event user needs help converting a 
 -- strings.lua based translation. Must use a mod to load the translated strings.lua
--- file into a seperate environment and then pass the alternate strings table to
+-- file into a seperate environment and then pass the alternate strings table to 
 -- CreateStringsPOT along with the actual global strings table for use as a lookup table.
 --
 
@@ -26,7 +26,7 @@ local STRINGS_LOOKUP = {}
 --
 
 local function PrintStringTableV1( base, tbl, file )
-
+	
 	for k,v in pairs(tbl) do
 		local path = base.."."..k
 		if type(v) == "table" then
@@ -35,12 +35,12 @@ local function PrintStringTableV1( base, tbl, file )
 			local str = string.gsub(v, "\n", "\\n")
 			str = string.gsub(str, "\r", "\\r")
 			str = string.gsub(str, "\"", "\\\"")
-
+			
 			if msgids[str] then
 				print("duplicate msgid found: "..str.." (skipping...)")
 			else
 				msgids[str] = true
-
+				
 				file:write("#. "..path)
 				file:write("\n")
 				file:write("#: "..path)
@@ -55,13 +55,13 @@ local function PrintStringTableV1( base, tbl, file )
 end
 
 function PrintTranslatedStringTableV1( base_dta, tbl_dta, lkp_var, file )
-
+	
 	for k,v in pairs(tbl_dta) do
 		local path = base_dta.."."..k
 		if type(v) == "table" then
 			PrintTranslatedStringTableV1(path, v, lkp_var, file)
 		else
-
+			
 			local idstr = LookupIdValue(lkp_var, path)
 			if idstr then
 				idstr = string.gsub(idstr, "\n", "\\n")
@@ -98,7 +98,7 @@ end
 local function IsValidString( str )
 	for i = 1, #str do
     	local a = string.byte( str, i, i)
-    	if a < 32 --[[or a > 127]] then
+    	if a < 32 or a > 127 then
     		return false
     	end
     end
@@ -112,7 +112,7 @@ end
 
 --Recursive function to process table structure
 local function PrintStringTableV2( base, tbl, file )
-
+	
 	for k,v in pairs(tbl) do
 		local path = base.."."..k
 		if type(v) == "table" then
@@ -143,7 +143,7 @@ local function PrintTranslatedStringTableV2( base, tbl_dta, lkp_var, file )
 		if type(v) == "table" then
 			PrintTranslatedStringTableV2(path, v, lkp_var, file)
 		else
-
+			
 			local idstr = LookupIdValue(lkp_var, path)
 			if idstr then
 				idstr = string.gsub(idstr, "\n", "\\n")
@@ -254,8 +254,10 @@ function CreateStringsPOTv2(filename, root, tbl_dta, tbl_lkp)
 end
 
 
- -- In CMD, DLC strings generate: "..\..\tools\LUA\lua.exe createstringspo_dlc.lua" from DontStarve\data\scripts folder
- -- In CMD, vanilla strings generate: "..\..\tools\LUA\lua.exe createstringspo.lua" from DontStarve\data\scripts folder
+-- *** INSTRUCTIONS ***
+-- To generate strings for the main game: 
+-- 1. Open cmd and navigate to the DontStarve\data\scripts folder
+-- 2. Enter "..\..\tools\LUA\lua.exe createstringspo.lua" (without quotes) into the cmd line and press return
 
 --Only run if this is not the released game version
 --if BRANCH == "release" then

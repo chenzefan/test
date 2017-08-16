@@ -422,6 +422,8 @@ local function MakePlayerCharacter(name, customprefabs, customassets, customfn, 
         if customfn then
             customfn(inst)
         end
+
+        inst:AddComponent("notereader")
         
         return inst
     end

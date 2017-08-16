@@ -324,7 +324,6 @@ function ModsScreen:CreateDetailPanel()
 		self.modlinkbutton:SetTextFocusColour(1,1,1,1)
 		self.modlinkbutton:SetText(STRINGS.UI.MODSSCREEN.NO_MODS_LINK)
 		self.modlinkbutton:SetOnClick( function() self:MoreMods() end )
-                self.cb(true)
 		
 	end
 
@@ -350,7 +349,11 @@ end
 
 
 function ModsScreen:StartWorkshopUpdate()
-	self:WorkshopUpdateComplete()
+	if TheSim:UpdateWorkshopMods( function() self:WorkshopUpdateComplete() end ) then
+		self.updatetask = scheduler:ExecutePeriodic(0, self.ShowWorkshopStatus, nil, 0, "workshopupdate", self )
+	else
+		self:WorkshopUpdateComplete()
+	end
 end
 
 function ModsScreen:WorkshopUpdateComplete(status, message) --bool, string

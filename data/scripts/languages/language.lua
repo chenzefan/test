@@ -5,7 +5,5 @@ require "translator"
 
 --Uncomment this for french!
 --LanguageTranslator:LoadPOFile("scripts/languages/french.po", "fr")
-LanguageTranslator:LoadPOFile("scripts/languages/chinese.po", "chs")
-
 
 

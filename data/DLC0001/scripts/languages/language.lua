@@ -3,8 +3,7 @@
 
 require "translator"
 
---[[if APP_REGION == "SCEJ" then
+if APP_REGION == "SCEJ" then
 	LanguageTranslator:LoadPOFile("scripts/languages/japanese.po", "jp")
-end]]
-LanguageTranslator:LoadPOFile("scripts/languages/chinese.po", "chs")
+end
 

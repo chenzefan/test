@@ -62,7 +62,7 @@ local BroadcastingOptionsScreen = Class(Screen, function(self, in_game)
 	shield:SetSize( 1000, 700 )		
 	
 	local broadcasting_beta = self.root:AddChild( Text( BUTTONFONT, 26 ) )
-	broadcasting_beta:SetString("π„ ≤• £® ≤‚  ‘ ∞Ê £©" ) 
+	broadcasting_beta:SetString("Broadcasting Beta" ) 
 	broadcasting_beta:SetPosition( 0,210,0 )
 	broadcasting_beta:SetSize( 40, 30 )	
 	

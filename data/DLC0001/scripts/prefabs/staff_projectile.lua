@@ -4,12 +4,6 @@ local assets=
 }
 
 local function OnHit(inst, owner, target)
-    if not target:HasTag("freezable") then
-        local fx = SpawnPrefab("shatter")
-        fx.Transform:SetPosition(target:GetPosition():Get())
-        fx.components.shatterfx:SetLevel(2)
-    end    
-
     inst:Remove()
 end
 

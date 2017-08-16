@@ -319,7 +319,7 @@ local function fn()
     inst.OnEntitySleep = OnEntitySleep
     inst.OnEntityWake = OnEntityWake
 
-    MakeMediumBurnableCharacter(inst, "bulb_leaf")
+    MakeMediumBurnableCharacter(inst, "swap_fire")
     MakeLargePropagator(inst)
 
     inst.OnLoad = OnLoad

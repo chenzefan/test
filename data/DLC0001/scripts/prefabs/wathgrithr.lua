@@ -68,7 +68,7 @@ local function custom_init(inst)
 	inst.components.combat.damagemultiplier = TUNING.WATHGRITHR_DAMAGE_MULT
 	inst.components.health:SetAbsorptionAmount(TUNING.WATHGRITHR_ABSORPTION)
 
-	if Profile:IsWathgrithrFontEnabled() then
+	if PlayerProfile():IsWathgrithrFontEnabled() then
 		inst.components.talker.font = TALKINGFONT_WATHGRITHR
 	else
 		inst.components.talker.font = TALKINGFONT
