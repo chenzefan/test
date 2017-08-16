@@ -1,0 +1,9 @@
+*.zip filter=lfs diff=lfs merge=lfs -text
+*.tex filter=lfs diff=lfs merge=lfs -text
+*.exe filter=lfs diff=lfs merge=lfs -text
+*.all filter=lfs diff=lfs merge=lfs -text
+*.xml filter=lfs diff=lfs merge=lfs -text
+*.fsd filter=lfs diff=lfs merge=lfs -text
+*.fs filter=lfs diff=lfs merge=lfs -text
+*.fsb filter=lfs diff=lfs merge=lfs -text
+*.fev filter=lfs diff=lfs merge=lfs -text
