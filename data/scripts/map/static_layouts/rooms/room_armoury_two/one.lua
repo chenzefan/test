@@ -89,7 +89,7 @@ return {
         },
         {
           name = "",
-          type = "bishop_nightmare",
+          type = "knight_nightmare",
           shape = "rectangle",
           x = 336,
           y = 272,

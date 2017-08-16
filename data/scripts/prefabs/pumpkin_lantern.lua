@@ -87,6 +87,7 @@ local function fn(Sim)
 
     inst:AddComponent("inspectable")
     inst:AddComponent("inventoryitem")
+    inst.components.inventoryitem.nobounce = true
     
     inst:AddComponent("combat")
     inst:AddComponent("health")

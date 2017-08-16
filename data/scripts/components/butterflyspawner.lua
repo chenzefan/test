@@ -15,11 +15,11 @@ function ButterflySpawner:GetSpawnPoint(player)
 	local rad = 25
 	local player = GetPlayer()
 	local x,y,z = player.Transform:GetWorldPosition()
-	local nearby_ents = TheSim:FindEntities(x,y,z, rad)
+	local nearby_ents = TheSim:FindEntities(x,y,z, rad, {'flower'})
 	local mindistance = 36
 	local validflowers = {}
 	for k,flower in ipairs(nearby_ents) do
-		if flower and flower:HasTag("flower") and
+		if flower and
 		player:GetDistanceSqToInst(flower) > mindistance then
 			table.insert(validflowers, flower)			
 		end
@@ -89,6 +89,43 @@ end
 
 function ButterflySpawner:GetDebugString()
 	return "Next spawn: "..tostring(self.timetospawn)
+end
+
+function ButterflySpawner:OnSave()
+	return 
+	{
+		timetospawn = self.timetospawn,
+    	butterflycap = self.butterflycap,
+	}
+end
+
+function ButterflySpawner:OnLoad(data)
+	self.timetospawn = data.timetospawn or 10
+	self.butterflycap = data.butterflycap or 4
+	if self.butterflycap <= 0 then
+		self.inst:StopUpdatingComponent(self)
+	end
+end
+
+function ButterflySpawner:SpawnModeNever()
+	self.timetospawn = -1
+    self.butterflycap = 0
+    self.inst:StopUpdatingComponent(self)
+end
+
+function ButterflySpawner:SpawnModeHeavy()
+	self.timetospawn = 3
+    self.butterflycap = 10
+end
+
+function ButterflySpawner:SpawnModeMed()
+	self.timetospawn = 6
+    self.butterflycap = 7
+end
+
+function ButterflySpawner:SpawnModeLight()
+	self.timetospawn = 20
+    self.butterflycap = 2
 end
 
 return ButterflySpawner

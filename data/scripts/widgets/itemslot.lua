@@ -7,19 +7,27 @@ local ItemSlot = Class(Widget, function(self, atlas, bgim, owner)
     self.tile = nil    
 end)
 
-
-function ItemSlot:OnGainFocus()
-
-    self:ScaleTo(1, 1.3, .125)
-    self.big = true
-
+function ItemSlot:Highlight()
+	if not self.big then
+		self:ScaleTo(1, 1.3, .125)
+		self.big = true	
+	end
 end
 
-function ItemSlot:OnLoseFocus()
+function ItemSlot:DeHighlight()
     if self.big then    
         self:ScaleTo(1.3, 1, .25)
         self.big = false
     end
+end
+
+function ItemSlot:OnGainFocus()
+	self:Highlight()
+
+end
+
+function ItemSlot:OnLoseFocus()
+	self:DeHighlight()
 end
 
 function ItemSlot:SetTile(tile)
@@ -29,6 +37,12 @@ function ItemSlot:SetTile(tile)
 
     if tile then
         self.tile = self:AddChild(tile)
+    end
+end
+
+function ItemSlot:Inspect()
+    if self.tile and self.tile.item then 
+        GetPlayer().components.locomotor:PushAction(BufferedAction(GetPlayer(), self.tile.item, ACTIONS.LOOKAT), true)
     end
 end
 

@@ -64,9 +64,14 @@ end
 function MinotaurBrain:OnStart()
     local root = PriorityNode(
     {
-        WhileNode( function() return self.inst.components.combat.target == nil or not self.inst.components.combat:InCooldown() end,
-            "RamAttack",
-            ChaseAndRam(self.inst, MAX_CHASE_TIME, CHASE_GIVEUP_DIST, MAX_CHARGE_DIST) ),
+        WhileNode( function() return self.inst.components.combat.target ~= nil and
+        (distsq(self.inst.components.combat.target:GetPosition(), self.inst:GetPosition()) > 6*6 or
+        self.inst.sg:HasStateTag("running")) end,
+            "RamAttack", ChaseAndRam(self.inst, MAX_CHASE_TIME, CHASE_GIVEUP_DIST, MAX_CHARGE_DIST)),
+        WhileNode( function() return self.inst.components.combat.target ~= nil and
+        distsq(self.inst.components.combat.target:GetPosition(), self.inst:GetPosition()) < 6*6
+        and not self.inst.sg:HasStateTag("running") end,
+            "NormalAttack", ChaseAndAttack(self.inst, 3, 5)),
         WhileNode( function() return self.inst.components.combat.target and self.inst.components.combat:InCooldown() end, "Rest",
             StandStill(self.inst)),
         WhileNode( function() return self.inst.components.health.takingfiredamage end, "OnFire", Panic(self.inst)),

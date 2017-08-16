@@ -19,8 +19,31 @@ local CraftSlots = Class(Widget, function(self, num, owner)
         self.slots[k] = slot
         self:AddChild(slot)
     end
-
 end)
+
+function CraftSlots:EnablePopups()
+    for k,v in ipairs(self.slots) do
+        v:EnablePopup()
+    end
+end
+
+function CraftSlots:Refresh()
+	for k,v in pairs(self.slots) do
+		v:Refresh()
+	end
+end
+
+function CraftSlots:Open(idx)
+	if idx > 0 and idx <= #self.slots then	
+		self.slots[idx]:Open()
+	end
+end
+
+function CraftSlots:LockOpen(idx)
+	if idx > 0 and idx <= #self.slots then	
+		self.slots[idx]:LockOpen()
+	end
+end
 
 function CraftSlots:Clear()
     for k,v in ipairs(self.slots) do

@@ -3,6 +3,11 @@ local assets=
 	Asset("ANIM", "anim/mosquito.zip"),
 }
 
+local prefabs = 
+{
+    "mosquitosack"
+}
+
 local sounds =
 {
     takeoff = "dontstarve/creatures/mosquito/mosquito_takeoff",
@@ -13,6 +18,11 @@ local sounds =
 	explode = "dontstarve/creatures/mosquito/mosquito_explo",
 }
 
+SetSharedLootTable( 'mosquito',
+{
+    {'mosquitosack', .5},
+})
+
 local SHARE_TARGET_DIST = 30
 local MAX_TARGET_SHARES = 10
 
@@ -21,10 +31,19 @@ local function OnWorked(inst, worker)
     if owner and owner.components.childspawner then
         owner.components.childspawner:OnChildKilled(inst)
     end
-    if worker.components.inventory then
+    if METRICS_ENABLED and worker.components.inventory then
         FightStat_Caught(inst)
         worker.components.inventory:GiveItem(inst, nil, Vector3(TheSim:GetScreenPos(inst.Transform:GetWorldPosition())))
     end
+end
+
+
+local function OnWake(inst)
+    inst.SoundEmitter:PlaySound(inst.sounds.buzz, "buzz")
+end
+
+local function OnSleep(inst)
+    inst.SoundEmitter:KillSound("buzz")
 end
 
 local function OnDropped(inst)
@@ -105,7 +124,6 @@ local function mosquito()
 
     inst:AddTag("mosquito")
     inst:AddTag("insect")
-    inst:AddTag("hit_panic")
     inst:AddTag("smallcreature")
 
     MakeCharacterPhysics(inst, 1, .5)
@@ -127,7 +145,10 @@ local function mosquito()
     inst:SetStateGraph("SGmosquito")
 
 	inst.sounds = sounds
-	inst.SoundEmitter:PlaySound(inst.sounds.buzz, "buzz")
+
+    inst.OnEntityWake = OnWake
+    inst.OnEntitySleep = OnSleep    
+
 
 	inst:AddComponent("inventoryitem")
 	inst:AddComponent("stackable")
@@ -137,10 +158,8 @@ local function mosquito()
 
 	---------------------
 
-	--inst:AddComponent("lootdropper")
-	--inst.components.lootdropper:AddRandomLoot("honey", 1)
-	--inst.components.lootdropper:AddRandomLoot("stinger", 5)
-	--inst.components.lootdropper.numrandomloot = 1
+	inst:AddComponent("lootdropper")
+    inst.components.lootdropper:SetChanceLootTable('mosquito')	
 
 	 ------------------
 	inst:AddComponent("workable")
@@ -148,8 +167,8 @@ local function mosquito()
 	inst.components.workable:SetWorkLeft(1)
 	inst.components.workable:SetOnFinishCallback(OnWorked)
 
-    MakeSmallBurnableCharacter(inst, "body", Vector3(0, -1, 0))
-    MakeTinyFreezableCharacter(inst, "body", Vector3(0, -1, 0))
+    MakeSmallBurnableCharacter(inst, "body", Vector3(0, -1, 1))
+    MakeTinyFreezableCharacter(inst, "body", Vector3(0, -1, 1))
 
     ------------------
     inst:AddComponent("health")
@@ -181,4 +200,4 @@ local function mosquito()
     return inst
 end
 
-return Prefab( "forest/monsters/mosquito", mosquito, assets) 
+return Prefab( "forest/monsters/mosquito", mosquito, assets, prefabs) 

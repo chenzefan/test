@@ -14,13 +14,12 @@ Recipes = {}
 Recipe = Class(function(self, name, ingredients, tab, level, placer, min_spacing, nounlock, numtogive)
     self.name          = name
     self.placer        = placer
-    self.descname      = STRINGS.NAMES[string.upper(name)]
-    self.description   = STRINGS.RECIPE_DESC[string.upper(name)]
     self.ingredients   = ingredients
     self.product       = name
     self.tab           = tab
 
     self.atlas         = resolvefilepath("images/inventoryimages.xml")
+
     self.image         = name .. ".tex"
     self.sortkey       = num
     self.level         = level or 0

@@ -13,6 +13,12 @@ local function OnCreate(inst, scenariorunner)
 			initfn = function(item) item.components.armor:SetCondition(math.random(item.components.armor.maxcondition * 0.33, item.components.armor.maxcondition * 0.8))end
 		},
 		{
+			--Body Items
+			item = "ruinshat",
+			chance = 0.33,
+			initfn = function(item) item.components.armor:SetCondition(math.random(item.components.armor.maxcondition * 0.33, item.components.armor.maxcondition * 0.8))end
+		},
+		{
 			--Weapon Items
 			item = {"ruins_bat", "orangestaff", "yellowstaff"},
 			chance = 0.25,
@@ -28,6 +34,11 @@ local function OnCreate(inst, scenariorunner)
 			item = "thulecite",
 			count = math.random(7, 14),
 			chance = 0.75,
+		},
+		{
+			item = "thulecite_pieces",
+			count = math.random(7, 14),
+			chance = 0.5,
 		},
 		{
 			item = "nightmarefuel",

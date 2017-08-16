@@ -12,53 +12,63 @@ local CraftSlots = require "widgets/craftslots"
 
 require "widgets/widgetutil"
 
-
-CRAFTING_CONSTANTS = 
-{
-    CRAFT_POS = 145,
-	TABBAR_HEIGHT = 750,
-	NUM_SLOTS = 7,
-}
-
-
-local Crafting = Class(Widget, function(self, crafttabs, owner)
+local Crafting = Class(Widget, function(self, num_slots)
     Widget._ctor(self, "Crafting")
-    self.craft_pos = CRAFTING_CONSTANTS.CRAFT_POS
-    self.crafttabs = crafttabs
-	self.owner = owner
-
-
-    self.bg = self:AddChild(TileBG(HUD_ATLAS, "craft_slotbg.tex", "craft_sep.tex", nil, false))
-    self.bg:SetNumTiles(CRAFTING_CONSTANTS.NUM_SLOTS)
-	local slot_w, slot_h = self.bg:GetSlotSize()
-    local w, h = self.bg:GetSize()
-    self:SetPosition(w/2 + 30, 0, 0)
     
+	self.owner = GetPlayer()
+
+    self.bg = self:AddChild(TileBG(HUD_ATLAS, "craft_slotbg.tex"))
 
     --slots
-    self.craftslots = CraftSlots(CRAFTING_CONSTANTS.NUM_SLOTS, self.owner)
+    self.num_slots = num_slots
+    self.craftslots = CraftSlots(num_slots, self.owner)
     self:AddChild(self.craftslots)
-    for k = 1, #self.craftslots.slots do
-		local slotpos = self.bg:GetSlotPos(k)
-        self.craftslots.slots[k]:SetPosition( slotpos.x,slotpos.y,slotpos.z )
-    end
 
     --buttons
     self.downbutton = self:AddChild(ImageButton(HUD_ATLAS, "craft_end_normal.tex", "craft_end_normal_mouseover.tex", "craft_end_normal_disabled.tex"))
-    local but_w, but_h = self.downbutton:GetSize()
-    self.downbutton:SetPosition(0, - self.bg.length/2 - but_h/2 + slot_h/2,0)
-    self.downbutton:SetOnClick(function() self:ScrollUp() end)
     self.upbutton = self:AddChild(ImageButton(HUD_ATLAS, "craft_end_normal.tex", "craft_end_normal_mouseover.tex", "craft_end_normal_disabled.tex"))
-    self.upbutton:SetScale(Vector3(1, -1, 1))
-    self.upbutton:SetPosition(0, self.bg.length/2 + but_h/2 - slot_h/2,0)
-    self.upbutton:SetOnClick(function() self:ScrollDown() end)
-    
+    self.downbutton:SetOnClick(function() self:ScrollDown() end)
+    self.upbutton:SetOnClick(function() self:ScrollUp() end)
+
 	-- start slightly scrolled down
     self.idx = -1
     self.scrolldir = true
     self:UpdateRecipes()
-    
 end)
+
+function Crafting:SetOrientation(horizontal)
+    self.horizontal = horizontal
+    self.bg.horizontal = horizontal
+    if horizontal then
+        self.bg.sepim = "craft_sep_h.tex"
+    else
+        self.bg.sepim = "craft_sep.tex"
+    end
+
+    self.bg:SetNumTiles(self.num_slots)
+    local slot_w, slot_h = self.bg:GetSlotSize()
+    local w, h = self.bg:GetSize()
+    
+    for k = 1, #self.craftslots.slots do
+        local slotpos = self.bg:GetSlotPos(k)
+        self.craftslots.slots[k]:SetPosition( slotpos.x,slotpos.y,slotpos.z )
+    end
+
+    local but_w, but_h = self.downbutton:GetSize()
+
+    if horizontal then
+        self.downbutton:SetRotation(90)
+        self.downbutton:SetPosition(-self.bg.length/2 - but_w/2 + slot_w/2,0,0)
+        self.upbutton:SetRotation(-90)
+        self.upbutton:SetPosition(self.bg.length/2 + but_w/2 - slot_w/2,0,0)
+    else
+        self.upbutton:SetPosition(0, - self.bg.length/2 - but_h/2 + slot_h/2,0)
+        self.downbutton:SetScale(Vector3(1, -1, 1))
+        self.downbutton:SetPosition(0, self.bg.length/2 + but_h/2 - slot_h/2,0)
+    end
+
+
+end
 
 function Crafting:SetFilter(filter)
     local new_filter = filter ~= self.filter
@@ -69,17 +79,18 @@ function Crafting:SetFilter(filter)
     end
 end
 
-function Crafting:Close()
+function Crafting:Close(fn)
+    self.open = false
     self:Disable() 
-	self:MoveTo(Vector3(self.craft_pos,0,0), Vector3(-64,0,0), .33)
-	
-	self.craftslots:CloseAll()
+    self.craftslots:CloseAll()
+    self:MoveTo(self.in_pos, self.out_pos, .33, function() self:Hide() if fn then fn() end end)
 end
 
-function Crafting:Open()
-	self:Show() 
+function Crafting:Open(fn)
+	self.open = true
 	self:Enable() 
-	self:MoveTo(Vector3(-64,0,0), Vector3(self.craft_pos,0,0), .33)
+    self:MoveTo(self.out_pos, self.in_pos, .33, fn)
+    self:Show() 
 end
 
 
@@ -89,7 +100,6 @@ function Crafting:UpdateRecipes()
         
         local recipes = GetAllRecipes()
         --local recipes = self.owner.components.builder.recipes
-        local offset = 1
         self.valid_recipes = {}
         
         for k,v in pairs(recipes) do
@@ -103,25 +113,26 @@ function Crafting:UpdateRecipes()
         
         local shown_num = 0
 
-        local num = math.min(CRAFTING_CONSTANTS.NUM_SLOTS, #self.valid_recipes)
+        local num = math.min(self.num_slots, #self.valid_recipes)
 
-        if self.idx > #self.valid_recipes+2-CRAFTING_CONSTANTS.NUM_SLOTS then
-            self.idx = #self.valid_recipes+2-CRAFTING_CONSTANTS.NUM_SLOTS -- the +2 is because of the blank at either end, effectively "two more recipes"
-        end
-        if self.idx < 0 then
-            self.idx = 0
+		if self.idx > #self.valid_recipes - (self.num_slots - 1)  then
+			self.idx = #self.valid_recipes - (self.num_slots - 1)
+		end 
+        
+        if self.idx < -1 then
+            self.idx = -1
         end
 
-        for k = 0,num do  -- 0 is one blank before the first recipe
+        for k = 0, num do  
             local recipe_idx = (self.idx + k )
             
-            local recipe = self.valid_recipes[recipe_idx]
+            local recipe = self.valid_recipes[recipe_idx+1]
             
             if recipe then
                 
                 local show = (not self.filter) or self.filter(recipe.name) 
                 if show then
-                    local slot = self.craftslots.slots[CRAFTING_CONSTANTS.NUM_SLOTS - k]
+                    local slot = self.craftslots.slots[k + 1]
                     if slot then
                         slot:SetRecipe( recipe.name )
                         shown_num = shown_num + 1
@@ -130,33 +141,24 @@ function Crafting:UpdateRecipes()
             end
         end
         
-        if shown_num == 0 then
-            --self:Disable() 
-            --self:MoveTo(Vector3(self.inst.UITransform:GetLocalPosition()), Vector3(-64,0,0), .33)
-            self.crafttabs.tabs:DeselectAll()
-        end
-        
-        
-        
-        if self.idx > 0 then
-            self.upbutton:Enable()
-        else
-            self.upbutton:Disable()
-        end
-
-        --print (CRAFTING_CONSTANTS.NUM_SLOTS, self.idx, #self.valid_recipes)
-        
-        if (CRAFTING_CONSTANTS.NUM_SLOTS-2)+self.idx < #self.valid_recipes then
-            self.downbutton:Enable()
-        else
-            self.downbutton:Disable()
-        end
+    if self.idx >= 0 then
+		self.downbutton:Enable()
+	else
+		self.downbutton:Disable()
+	end
+	
+	if #self.valid_recipes < self.idx + self.num_slots then  
+		self.upbutton:Disable()
+    else
+		self.upbutton:Enable()
+	end
+    
         
     end
 end
 
 function Crafting:ScrollUp()
-	if not IsHUDPaused() then
+	if not IsPaused() then
         self.idx = self.idx + 1
 		self:UpdateRecipes()
 		
@@ -165,7 +167,7 @@ function Crafting:ScrollUp()
 end
 
 function Crafting:ScrollDown()
-	if not IsHUDPaused() then
+	if not IsPaused() then
 		self.idx = self.idx - 1
 		self:UpdateRecipes()
 		self.owner.SoundEmitter:PlaySound("dontstarve/HUD/craft_down")

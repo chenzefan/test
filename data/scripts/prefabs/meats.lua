@@ -97,6 +97,8 @@ local function monster(Sim)
     
 	inst.components.tradable.goldvalue = 0
 	
+    inst:AddComponent("selfstacker")
+
     inst:AddComponent("cookable")
     inst.components.cookable.product = "cookedmonstermeat"
     inst:AddComponent("dryable")

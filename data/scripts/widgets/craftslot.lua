@@ -24,29 +24,34 @@ local CraftSlot = Class(Widget, function(self, atlas, bgim, owner)
     self.fgimage = self:AddChild(Image("images/hud.xml", "craft_slot_locked.tex"))
     self.fgimage:Hide()
     
-    self.recipepopup = self:AddChild(RecipePopup(self))
-    self.recipepopup:SetPosition(0,-20,0)
-    self.recipepopup:Hide()
-    
-    local s = 1.25
-    self.recipepopup:SetScale(s,s,s)
 end)
+
+function CraftSlot:EnablePopup()
+    if not self.recipepopup then
+        self.recipepopup = self:AddChild(RecipePopup())
+        self.recipepopup:SetPosition(0,-20,0)
+        self.recipepopup:Hide()
+        local s = 1.25
+        self.recipepopup:SetScale(s,s,s)
+    end
+end
 
 function CraftSlot:OnGainFocus()
     CraftSlot._base.OnGainFocus(self)
     self:Open()
 end
 
+
 function CraftSlot:OnControl(control, down)
     if CraftSlot._base.OnControl(self, control, down) then return true end
 
     if not down and control == CONTROL_ACCEPT then
         if self.owner and self.recipe then
-            if not self.recipepopup.focus then 
+            if self.recipepopup and not self.recipepopup.focus then 
+                TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/click_move")
                 if not DoRecipeClick(self.owner, self.recipe) then self:Close() end
                 return true
             end
-            
         end
     end
 end
@@ -71,8 +76,18 @@ function CraftSlot:Clear()
     --self:HideRecipe()
 end
 
+function CraftSlot:LockOpen()
+	self:Open()
+	self.locked = true
+    if self.recipepopup then
+	   self.recipepopup:SetPosition(-300,-300,0)
+    end
+end
 
 function CraftSlot:Open()
+    if self.recipepopup then
+        self.recipepopup:SetPosition(0,-20,0)
+    end
     self.open = true
     self:ShowRecipe()
     self.owner.SoundEmitter:PlaySound("dontstarve/HUD/click_mouseover")
@@ -80,33 +95,37 @@ end
 
 function CraftSlot:Close()
     self.open = false
+    self.locked = false
     self:HideRecipe()
 end
 
 function CraftSlot:ShowRecipe()
-    if self.recipe then
+    if self.recipe and self.recipepopup then
         self.recipepopup:Show()
         self.recipepopup:SetRecipe(self.recipe, self.owner)
     end
 end
 
 function CraftSlot:HideRecipe()
-    self.recipepopup:Hide()
+    if self.recipepopup then
+        self.recipepopup:Hide()
+    end
 end
 
 
-function CraftSlot:SetRecipe(recipename)
-    self:Show()
+function CraftSlot:Refresh(recipename)
+	recipename = recipename or self.recipename
     local recipe = GetRecipe(recipename)
+    
+	
     local canbuild = self.owner.components.builder:CanBuild(recipename)
     local knows = self.owner.components.builder:KnowsRecipe(recipename)
     local buffered = self.owner.components.builder:IsBuildBuffered(recipename)
-
-    --self:HideRecipe()
     
     local do_pulse = self.recipename == recipename and not self.canbuild and canbuild
     self.recipename = recipename
-    self.recipe = GetRecipe(recipename)
+    self.recipe = recipe
+    
     if self.recipe then
         self.canbuild = canbuild
         self.tile:SetRecipe(self.recipe)
@@ -137,12 +156,19 @@ function CraftSlot:SetRecipe(recipename)
         end
 
         self.tile:SetCanBuild((buffered or canbuild )and (knows or recipe.nounlock))
+
         if self.recipepopup then
             self.recipepopup:SetRecipe(self.recipe, self.owner)
         end
         
         --self:HideRecipe()
     end
+end
+
+function CraftSlot:SetRecipe(recipename)
+    self:Show()
+	self:Refresh(recipename)
+
 end
 
 

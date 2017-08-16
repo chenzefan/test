@@ -8,9 +8,7 @@ local SlurperBrain = Class(Brain, function(self, inst)
     Brain._ctor(self, inst)
 end)
 
-
-function SlurperBrain:OnStart()
-    
+function SlurperBrain:OnStart()    
     local root = PriorityNode(
     {
         WhileNode( function() return self.inst.components.health.takingfiredamage end, "OnFire", Panic(self.inst)),

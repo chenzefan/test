@@ -10,9 +10,15 @@ local MaxwellTalker = Class(function(self, inst)
     table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_ATTACK, function() self:OnClick() end))
     table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_INSPECT, function() self:OnClick() end))
     table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_ACTION, function() self:OnClick() end))
+    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_CONTROLLER_ACTION, function() self:OnClick() end))
 end)
 
 function MaxwellTalker:OnCancel()
+
+    if self.inst.components.talker then
+		self.inst.components.talker:ShutUp()
+	end
+
 	if self.inst.speech.disableplayer and self.inst.wilson then
 	    if self.inst.wilson.sg.currentstate.name == "sleep" then		
 		    self.inst.SoundEmitter:KillSound("talk")	--ensures any talking sounds have stopped
@@ -31,6 +37,7 @@ function MaxwellTalker:OnCancel()
                         self.inst.SoundEmitter:PlaySound("dontstarve/maxwell/disappear")
                         local fx = SpawnPrefab("maxwell_smoke")
     					fx.Transform:SetPosition(self.inst.Transform:GetWorldPosition())
+						self.inst.DynamicShadow:Enable(false)        
 	                end)
 		        end
 		        self.inst.AnimState:PlayAnimation(self.inst.speech.disappearanim, false)
@@ -49,6 +56,7 @@ end
 
 function MaxwellTalker:OnClick()
 	if self.inst.speech and self.canskip and self.inst.speech.disableplayer then
+
 		scheduler:KillTask(self.inst.task)
 		self:OnCancel()
 		for k,v in pairs(self.inputhandlers) do
@@ -58,9 +66,16 @@ function MaxwellTalker:OnClick()
 end
 
 function MaxwellTalker:StopTalking()
+	
+    if self.inst.components.talker then
+		self.inst.components.talker:ShutUp()
+	end
+
 	scheduler:KillTask(self.inst.task)
 	self.inst.SoundEmitter:KillSound("talk")
 	self.inst.speech = nil
+
+
 end
 
 function MaxwellTalker:Initialize()
@@ -74,7 +89,7 @@ function MaxwellTalker:Initialize()
 
         local pt = Vector3(self.inst.wilson.Transform:GetWorldPosition()) + TheCamera:GetRightVec()*4
         self.inst.Transform:SetPosition(pt.x,pt.y,pt.z)
-        self.inst:FacePoint(Vector3(self.inst.wilson.Transform:GetWorldPosition()))
+        self.inst:FacePoint(self.inst.wilson.Transform:GetWorldPosition())
         	
         self.inst:Hide()
 
@@ -158,6 +173,7 @@ function MaxwellTalker:DoTalk()
 			    local fx = SpawnPrefab("maxwell_smoke")
     			fx.Transform:SetPosition(self.inst.Transform:GetWorldPosition())
 			else
+				self.inst.DynamicShadow:Enable(false)        
 	            self.inst.SoundEmitter:PlaySound("dontstarve/maxwell/disappear")
 	            local fx = SpawnPrefab("maxwell_smoke")
     			fx.Transform:SetPosition(self.inst.Transform:GetWorldPosition())

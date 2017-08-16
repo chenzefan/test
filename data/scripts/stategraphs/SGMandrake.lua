@@ -83,7 +83,7 @@ local states=
         events=
         {
             EventHandler("animover", function(inst)
-                if inst.components.follower then
+                if not inst:HasTag("item") then
                     inst.sg:GoToState("idle")
                 else
                     inst.sg:GoToState("death")

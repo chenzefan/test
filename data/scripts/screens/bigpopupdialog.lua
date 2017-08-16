@@ -5,9 +5,10 @@ local ImageButton = require "widgets/imagebutton"
 local Text = require "widgets/text"
 local Image = require "widgets/image"
 local Widget = require "widgets/widget"
+local Menu = require "widgets/menu"
 
 
-BigPopupDialogScreen = Class(Screen, function(self, title, text, buttons, timeout)
+local BigPopupDialogScreen = Class(Screen, function(self, title, text, buttons, timeout)
 	Screen._ctor(self, "BigPopupDialogScreen")
 
 	--darken everything behind the dialog
@@ -31,9 +32,9 @@ BigPopupDialogScreen = Class(Screen, function(self, title, text, buttons, timeou
     self.bg:SetHRegPoint(ANCHOR_MIDDLE)
 	self.bg:SetScale(1.2,1.2,1.2)
 	
-	if #buttons >2 then
-		self.bg:SetScale(2,1.2,1.2)
-	end
+	--if #buttons >2 then
+	--	self.bg:SetScale(2,1.2,1.2)
+	--end
 	
 	--title	
     self.title = self.proot:AddChild(Text(TITLEFONT, 50))
@@ -41,44 +42,33 @@ BigPopupDialogScreen = Class(Screen, function(self, title, text, buttons, timeou
     self.title:SetString(title)
 
 	--text
-    self.text = self.proot:AddChild(Text(BODYTEXTFONT, 30))
+    if JapaneseOnPS4() then
+       self.text = self.proot:AddChild(Text(BODYTEXTFONT, 28))
+    else
+       self.text = self.proot:AddChild(Text(BODYTEXTFONT, 30))
+    end
 
     self.text:SetPosition(0, 5, 0)
     self.text:SetString(text)
     self.text:EnableWordWrap(true)
-    self.text:SetRegionSize(500, 200)
-    
+    if JapaneseOnPS4() then
+        self.text:SetRegionSize(500, 300)
+    else
+        self.text:SetRegionSize(500, 200)
+    end
 	
 	--create the menu itself
 	local button_w = 200
 	local space_between = 20
 	local spacing = button_w + space_between
 	
-	self.menu = self.proot:AddChild(Widget("menu"))
-	local total_w = #buttons*button_w
-	if #buttons > 1 then
-		total_w = total_w + space_between*(#buttons-1) 
-	end
 	
-	self.menu:SetPosition(-(total_w / 2) + button_w/2, -140,0) 
-	
-	local pos = Vector3(0,0,0)
-	for k,v in ipairs(buttons) do
-		local button = self.menu:AddChild(ImageButton())
-	    button:SetPosition(pos)
-	    button:SetText(v.text)
-	    button:SetOnClick( function() TheFrontEnd:PopScreen(self) v.cb() end )
-		button.text:SetColour(0,0,0,1)
-	    button:SetFont(BUTTONFONT)
-	    button:SetTextSize(40)    
-	    pos = pos + Vector3(spacing, 0, 0)  
-	end
+    local spacing = 200
 
-	if timeout then
-		self.timeout = timeout
-	end
-	
+	self.menu = self.proot:AddChild(Menu(buttons, spacing, true))
+	self.menu:SetPosition(-(spacing*(#buttons-1))/2, -140, 0) 
 	self.buttons = buttons
+	self.default_focus = self.menu
 end)
 
 
@@ -93,4 +83,10 @@ function BigPopupDialogScreen:OnUpdate( dt )
 	return true
 end
 
+function BigPopupDialogScreen:OnControl(control, down)
+    if BigPopupDialogScreen._base.OnControl(self,control, down) then 
+        return true 
+    end
+end
 
+return BigPopupDialogScreen

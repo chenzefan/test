@@ -10,6 +10,7 @@ local assets =
 	Asset("ANIM", "anim/meat_rack_food.zip"),
     Asset("ANIM", "anim/batwing.zip"),
     Asset("ANIM", "anim/plant_meat.zip"),
+    Asset("ANIM", "anim/eel.zip"),
 }
 
 local prefabs =
@@ -25,6 +26,7 @@ local prefabs =
 	"batwing", --uses smallmeat_dried
 	"fish", -- uses smallmeat_dried
 	"froglegs", -- uses smallmeat_dried
+	"eel",
 }
 
 local function onhammered(inst, worker)

@@ -160,8 +160,44 @@ function BirdSpawner:OnUpdate( dt )
 				end
 			end
 		end
+	end    
+end
+
+function BirdSpawner:OnSave()
+	return 
+	{
+		timetospawn = self.timetospawn,
+    	birdcap = self.birdcap,
+	}
+end
+
+function BirdSpawner:OnLoad(data)
+	self.timetospawn = data.timetospawn or 10
+	self.birdcap = data.birdcap or 4
+	if self.birdcap <= 0 then
+		self.inst:StopUpdatingComponent(self)
 	end
-    
+end
+
+function BirdSpawner:SpawnModeNever()
+	self.timetospawn = -1
+    self.birdcap = 0
+    self.inst:StopUpdatingComponent(self)
+end
+
+function BirdSpawner:SpawnModeHeavy()
+	self.timetospawn = 3
+    self.birdcap = 10
+end
+
+function BirdSpawner:SpawnModeMed()
+	self.timetospawn = 6
+    self.birdcap = 7
+end
+
+function BirdSpawner:SpawnModeLight()
+	self.timetospawn = 20
+    self.birdcap = 2
 end
 
 return BirdSpawner

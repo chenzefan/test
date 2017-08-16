@@ -14,6 +14,9 @@ for k,v in pairs(cooking.recipes.cookpot) do
 end
 
 local function onhammered(inst, worker)
+	if inst.components.stewer.product and inst.components.stewer.done then
+		inst.components.lootdropper:AddChanceLoot(inst.components.stewer.product, 1)
+	end
 	inst.components.lootdropper:DropLoot()
 	SpawnPrefab("collapse_small").Transform:SetPosition(inst.Transform:GetWorldPosition())
 	inst.SoundEmitter:PlaySound("dontstarve/common/destroy_metal")
@@ -173,8 +176,10 @@ local function fn(Sim)
     inst.components.container.widgetanimbank = "ui_cookpot_1x4"
     inst.components.container.widgetanimbuild = "ui_cookpot_1x4"
     inst.components.container.widgetpos = Vector3(200,0,0)
+    inst.components.container.side_align_tip = 100
     inst.components.container.widgetbuttoninfo = widgetbuttoninfo
     inst.components.container.acceptsstacks = false
+    inst.components.container.type = "cooker"
 
     inst.components.container.onopenfn = onopen
     inst.components.container.onclosefn = onclose

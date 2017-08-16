@@ -49,7 +49,11 @@ local function OnWorked(inst, worker)
         owner.components.childspawner:OnChildKilled(inst)
     end
     if worker.components.inventory then
-        FightStat_Caught(inst)
+        
+        if METRICS_ENABLED then
+			FightStat_Caught(inst)
+		end
+		
         worker.components.inventory:GiveItem(inst, nil, Vector3(TheSim:GetScreenPos(inst.Transform:GetWorldPosition())))
     end
 end
@@ -79,8 +83,8 @@ local function OnDropped(inst)
 end
 
 local function OnPickedUp(inst)
-    inst.SoundEmitter:KillSound("buzz")
     inst.sg:GoToState("idle")
+    inst.SoundEmitter:KillAllSounds()
 end
 
 local function KillerRetarget(inst)
@@ -107,7 +111,6 @@ local function commonfn()
     
     inst:AddTag("bee")
     inst:AddTag("insect")
-    inst:AddTag("hit_panic")
     inst:AddTag("smallcreature")
    
     MakeCharacterPhysics(inst, 1, .5)
@@ -145,8 +148,8 @@ local function commonfn()
 	inst.components.workable:SetWorkLeft(1)
 	inst.components.workable:SetOnFinishCallback(OnWorked)
    
-    MakeSmallBurnableCharacter(inst, "body", Vector3(0, -1, 0))
-    MakeTinyFreezableCharacter(inst, "body", Vector3(0, -1, 0))
+    MakeSmallBurnableCharacter(inst, "body", Vector3(0, -1, 1))
+    MakeTinyFreezableCharacter(inst, "body", Vector3(0, -1, 1))
     
     ------------------
     inst:AddComponent("health")
@@ -179,6 +182,17 @@ end
 local workerbrain = require("brains/beebrain")
 local killerbrain = require("brains/killerbeebrain")
 
+
+local function OnWake(inst)
+    if not inst.components.inventoryitem:IsHeld() then
+        inst.SoundEmitter:PlaySound(inst.sounds.buzz, "buzz")
+    end
+end
+
+local function OnSleep(inst)
+    inst.SoundEmitter:KillSound("buzz")
+end
+
 local function workerbee()
     local inst = commonfn()
     inst:AddTag("worker")
@@ -187,10 +201,12 @@ local function workerbee()
     inst.components.combat:SetDefaultDamage(TUNING.BEE_DAMAGE)
     inst.components.combat:SetAttackPeriod(TUNING.BEE_ATTACK_PERIOD)
 	inst:AddComponent("pollinator")
-    
     inst:SetBrain(workerbrain)
     inst.sounds = workersounds
-    inst.SoundEmitter:PlaySound(inst.sounds.buzz, "buzz")
+
+    inst.OnEntityWake = OnWake
+    inst.OnEntitySleep = OnSleep    
+    
     return inst
 end
 
@@ -205,7 +221,10 @@ local function killerbee()
     inst.components.combat:SetRetargetFunction(2, KillerRetarget)
     inst:SetBrain(killerbrain)
     inst.sounds = killersounds
-    inst.SoundEmitter:PlaySound(inst.sounds.buzz, "buzz")
+
+    inst.OnEntityWake = OnWake
+    inst.OnEntitySleep = OnSleep    
+
     return inst
 end 
 

@@ -84,7 +84,7 @@ local function fn(Sim)
     anim:PlayAnimation("idle", true)
     --inst.AnimState:SetMultColour(1,1,1,.6)
     
-    --inst:AddTag("monster")
+    inst:AddTag("character")
     inst:AddTag("scarytoprey")
     inst:AddTag("girl")
     inst:AddTag("ghost")

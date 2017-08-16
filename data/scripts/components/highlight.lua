@@ -1,15 +1,25 @@
 local easing = require("easing")
 
+
+
 local Highlight = Class(function(self, inst)
     self.inst = inst
-    self.mouseover = nil
-	self.base_add_colour = Vector3(0,0,0)
-	self.highlight_add_colour = Vector3(0,0,0)
+    --[[
+    self.highlit = nil
+	self.base_add_colour_red = 0
+    self.base_add_colour_green = 0
+    self.base_add_colour_blue = 0
+	self.highlight_add_colour_red = 0
+    self.highlight_add_colour_green = 0
+    self.highlight_add_colour_blue = 0
+    --]]
 end)
 
 
 function Highlight:SetAddColour(col)
-	self.base_add_colour = col
+	self.base_add_colour_red = col.x
+    self.base_add_colour_green = col.y
+    self.base_add_colour_blue = col.z
 	self:ApplyColour()
 end
 
@@ -30,6 +40,9 @@ function Highlight:OnUpdate(dt)
     if not self.inst:IsValid() then
 		self.inst:StopUpdatingComponent(self)
 		self.flashing = false
+		if not self.highlit then
+			self.inst:RemoveComponent("highlight")
+		end
 		return
     end
     
@@ -52,11 +65,13 @@ function Highlight:OnUpdate(dt)
             val = easing.outCubic( self.t, self.flashadd, 0, self.flashtimeout)                     
         end
         
-        if self.mouseover then
+        if self.highlit then
             val = val + .2
         end
         
-        self.highlight_add_colour = Vector3(val,val,val)
+        self.highlight_add_colour_red = val
+        self.highlight_add_colour_green = val
+        self.highlight_add_colour_blue = val
     end
 
 
@@ -64,11 +79,13 @@ function Highlight:OnUpdate(dt)
         self.inst:StopUpdatingComponent(self)
         local val = 0
         
-        if self.mouseover then
+        if self.highlit then
             val = .2
         end
         
-        self.highlight_add_colour = Vector3(val,val,val)
+        self.highlight_add_colour_red = val
+        self.highlight_add_colour_green = val
+        self.highlight_add_colour_blue = val
     end
 
 	self:ApplyColour()
@@ -77,25 +94,32 @@ end
 
 function Highlight:ApplyColour()
     if self.inst.AnimState then
-		self.inst.AnimState:SetAddColour(self.highlight_add_colour.x+ self.base_add_colour.x, self.highlight_add_colour.y + self.base_add_colour.y, self.highlight_add_colour.z + self.base_add_colour.z, 0)
+		self.inst.AnimState:SetAddColour((self.highlight_add_colour_red or 0) + (self.base_add_colour_red or 0), (self.highlight_add_colour_green or 0) + (self.base_add_colour_green or 0), (self.highlight_add_colour_blue or 0) + (self.base_add_colour_blue or 0), 0)
 	end
 end
 
-function Highlight:Highlight()
-    self.mouseover = true
+function Highlight:Highlight(r,g,b)
+    self.highlit = true
     
     if self.inst:IsValid() and self.inst:HasTag("player") or TheSim:GetLightAtPoint(self.inst.Transform:GetWorldPosition()) > TUNING.DARK_CUTOFF then
         local m = .2
-		self.highlight_add_colour = Vector3(m,m,m)
+		self.highlight_add_colour_red = r or m
+        self.highlight_add_colour_green = g or m
+        self.highlight_add_colour_blue = b or m
     end
 
 	self:ApplyColour()    
 end
 
 function Highlight:UnHighlight()
-    self.mouseover = nil
-	self.highlight_add_colour = Vector3(0,0,0)	
-	self:ApplyColour()    
+    self.highlit = nil
+	self.highlight_add_colour_red = nil
+    self.highlight_add_colour_green = nil
+    self.highlight_add_colour_blue = nil
+	self:ApplyColour()   
+	if not self.flashing then
+		self.inst:RemoveComponent("highlight")
+	end
 end
 
 return Highlight

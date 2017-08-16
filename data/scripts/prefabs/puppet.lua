@@ -48,9 +48,10 @@ end
 
 local prefabs = {}
 
-for k,v in pairs(STRINGS.CHARACTER_NAMES) do
-	name = k
-	if name ~= "unknown" and name ~= "waxwell" then
+local charlist = GetActiveCharacterList and GetActiveCharacterList() or MAIN_CHARACTERLIST
+for i,charname in ipairs(charlist) do
+	name = charname
+	if name ~= "unknown" and name ~= "waxwell" and name ~= "webber" then
 		table.insert(prefabs, Prefab("characters/puppet_"..name, createpuppet(name), createassets(name))) 
 	end
 end

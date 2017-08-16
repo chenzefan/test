@@ -16,7 +16,17 @@ local prefabs =
     "horn",
 }
 
-local loot = {"meat","meat","meat","meat","beefalowool","beefalowool","beefalowool"}
+SetSharedLootTable( 'beefalo',
+{
+    {'meat',            1.00},
+    {'meat',            1.00},
+    {'meat',            1.00},
+    {'meat',            1.00},
+    {'beefalowool',     1.00},
+    {'beefalowool',     1.00},
+    {'beefalowool',     1.00},
+    {'horn',            0.33},
+})
 
 local sounds = 
 {
@@ -147,8 +157,7 @@ local function fn(Sim)
     inst.components.health:SetMaxHealth(TUNING.BEEFALO_HEALTH)
 
     inst:AddComponent("lootdropper")
-    inst.components.lootdropper:SetLoot(loot)
-    inst.components.lootdropper:AddChanceLoot("horn", 0.33)
+    inst.components.lootdropper:SetChanceLootTable('beefalo')    
     
     inst:AddComponent("inspectable")
     inst.components.inspectable.getstatus = GetStatus

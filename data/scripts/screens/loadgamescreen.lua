@@ -2,19 +2,19 @@ local Screen = require "widgets/screen"
 local Button = require "widgets/button"
 local AnimButton = require "widgets/animbutton"
 local ImageButton = require "widgets/imagebutton"
+local MorgueScreen = require "screens/morguescreen"
 local Menu = require "widgets/menu"
 local Text = require "widgets/text"
 local Image = require "widgets/image"
 local UIAnim = require "widgets/uianim"
 local Widget = require "widgets/widget"
 require "os"
-require "screens/slotdetailsscreen"
-require "screens/newgamescreen"
+
+local SlotDetailsScreen = require "screens/slotdetailsscreen"
+local NewGameScreen = require "screens/newgamescreen"
 require "fileutil"
 
-
-
-LoadGameScreen = Class(Screen, function(self, profile)
+local LoadGameScreen = Class(Screen, function(self, profile)
 	Screen._ctor(self, "LoadGameScreen")
     self.profile = profile
     
@@ -26,40 +26,66 @@ LoadGameScreen = Class(Screen, function(self, profile)
     self.black:SetScaleMode(SCALEMODE_FILLSCREEN)
 	self.black:SetTint(0,0,0,.75)	
     
-	self.root = self:AddChild(Widget("ROOT"))
-    self.root:SetVAnchor(ANCHOR_MIDDLE)
-    self.root:SetHAnchor(ANCHOR_MIDDLE)
-    self.root:SetPosition(0,0,0)
-    self.root:SetScaleMode(SCALEMODE_PROPORTIONAL)
-	
+	self.scaleroot = self:AddChild(Widget("scaleroot"))
+    self.scaleroot:SetVAnchor(ANCHOR_MIDDLE)
+    self.scaleroot:SetHAnchor(ANCHOR_MIDDLE)
+    self.scaleroot:SetPosition(0,0,0)
+    self.scaleroot:SetScaleMode(SCALEMODE_PROPORTIONAL)
+    self.root = self.scaleroot:AddChild(Widget("root"))
+    self.root:SetScale(.9)
     self.bg = self.root:AddChild(Image("images/fepanels.xml", "panel_saveslots.tex"))
 	
-	self.button = self.root:AddChild(ImageButton())
-    self.button:SetText(STRINGS.UI.LOADGAMESCREEN.CANCEL)
-    self.button:SetOnClick( function() TheFrontEnd:PopScreen(self) end )
-    self.button:SetFont(BUTTONFONT)
-    self.button:SetTextSize(35)
-    self.button.text:SetVAlign(ANCHOR_MIDDLE)
-    self.button.text:SetColour(0,0,0,1)
-    self.button:SetPosition( 0, -250, 0)
-    
-    self.title = self.root:AddChild(Text(TITLEFONT, 60))
+    local menuitems = 
+    {
+		{text = STRINGS.UI.LOADGAMESCREEN.CANCEL, cb = function()
+			EnableAllDLC()
+			TheFrontEnd:PopScreen(self)
+		end},
+		{text = STRINGS.UI.MORGUESCREEN.MORGUE, cb = function() 
+			EnableAllDLC()
+			TheFrontEnd:PushScreen( MorgueScreen() ) 
+		end},
+    }
+    self.bmenu = self.root:AddChild(Menu(menuitems, 160, true))
+    self.bmenu:SetPosition(-70, -250, 0)
+    if IsDLCInstalled(REIGN_OF_GIANTS) then
+    	self.bmenu:SetScale(.8)
+    else
+    	self.bmenu:SetScale(.9)
+    end
+
+	if JapaneseOnPS4() then
+        self.title = self.root:AddChild(Text(TITLEFONT, 60 * 0.8))
+	else
+        self.title = self.root:AddChild(Text(TITLEFONT, 60))
+	end
     self.title:SetPosition( 0, 215, 0)
     self.title:SetRegionSize(250,70)
     self.title:SetString(STRINGS.UI.LOADGAMESCREEN.TITLE)
     self.title:SetVAlign(ANCHOR_MIDDLE)
 	
-    self.menu = self.root:AddChild(Menu(nil, -98, false))
-    self.menu:SetPosition( 0, 135, 0)
+    if IsDLCInstalled(REIGN_OF_GIANTS) then
+    	self.menu = self.root:AddChild(Menu(nil, -80, false))
+    	self.menu:SetPosition( 0, 143, 0)
+    else
+    	self.menu = self.root:AddChild(Menu(nil, -98, false))
+    	self.menu:SetPosition( 0, 135, 0)
+    end
 	
 	self.default_focus = self.menu
 	--self:RefreshFiles()  
 end)
 
 function LoadGameScreen:OnBecomeActive()
+
+    --TheGameService:AwardAchievement("achievement_1")
+    
 	self:RefreshFiles()
 	LoadGameScreen._base.OnBecomeActive(self)
-	print ("load become active")
+	if self.last_slotnum then
+		self.menu.items[self.last_slotnum]:SetFocus()
+	end
+
 end
 
 
@@ -74,17 +100,17 @@ end
 function LoadGameScreen:RefreshFiles()
 	self.menu:Clear()
 
-	for k = 1, 4 do
+	for k = 1, NUM_SAVE_SLOTS do
 		local tile = self:MakeSaveTile(k)
 		self.menu:AddCustomItem(tile)
 	end
 	
 
-	self.menu.items[1]:SetFocusChangeDir(MOVE_UP, self.button)
-	self.button:SetFocusChangeDir(MOVE_DOWN, self.menu.items[1])
+	self.menu.items[1]:SetFocusChangeDir(MOVE_UP, self.bmenu)
+	self.bmenu:SetFocusChangeDir(MOVE_DOWN, self.menu.items[1])
 
-	self.button:SetFocusChangeDir(MOVE_UP, self.menu.items[#self.menu.items])
-	self.menu.items[#self.menu.items]:SetFocusChangeDir(MOVE_DOWN, self.button)
+	self.bmenu:SetFocusChangeDir(MOVE_UP, self.menu.items[#self.menu.items])
+	self.menu.items[#self.menu.items]:SetFocusChangeDir(MOVE_DOWN, self.bmenu)
 	
 
 end
@@ -98,6 +124,8 @@ function LoadGameScreen:MakeSaveTile(slotnum)
 	local day = SaveGameIndex:GetSlotDay(slotnum)
 	local world = SaveGameIndex:GetSlotWorld(slotnum)
 	local character = SaveGameIndex:GetSlotCharacter(slotnum)
+	local DLC = SaveGameIndex:GetSlotDLC(slotnum)
+	local RoG = (DLC ~= nil and DLC.REIGN_OF_GIANTS ~= nil) and DLC.REIGN_OF_GIANTS or false
 	
     widget.bg = widget.base:AddChild(UIAnim())
     widget.bg:GetAnimState():SetBuild("savetile")
@@ -105,8 +133,21 @@ function LoadGameScreen:MakeSaveTile(slotnum)
     widget.bg:GetAnimState():PlayAnimation("anim")
 	
 	widget.portraitbg = widget.base:AddChild(Image("images/saveslot_portraits.xml", "background.tex"))
-	widget.portraitbg:SetScale(.65,.65,1)
-	widget.portraitbg:SetPosition(-120 + 40, 2, 0)	
+	if IsDLCInstalled(REIGN_OF_GIANTS) then
+		widget.portraitbg:SetScale(.60,.60,1)
+		if JapaneseOnPS4() then
+			widget.portraitbg:SetPosition(-120 + 20, 0, 0)
+		else	
+			widget.portraitbg:SetPosition(-120 + 40, 0, 0)
+		end
+	else
+		widget.portraitbg:SetScale(.65,.65,1)
+		if JapaneseOnPS4() then
+			widget.portraitbg:SetPosition(-120 + 20, 2, 0)
+		else	
+			widget.portraitbg:SetPosition(-120 + 40, 2, 0)
+		end
+	end
 	widget.portraitbg:SetClickable(false)	
 	
 	widget.portrait = widget.base:AddChild(Image())
@@ -117,10 +158,37 @@ function LoadGameScreen:MakeSaveTile(slotnum)
 	else
 		widget.portraitbg:Hide()
 	end
-	widget.portrait:SetScale(.65,.65,1)
-	widget.portrait:SetPosition(-120 + 40, 2, 0)	
+
+	if IsDLCInstalled(REIGN_OF_GIANTS) then
+		widget.portrait:SetScale(.60,.60,1)
+		if JapaneseOnPS4() then
+			widget.portrait:SetPosition(-120 + 20, 0, 0)	
+		else
+			widget.portrait:SetPosition(-120 + 40, 0, 0)	
+		end
+	else
+		widget.portrait:SetScale(.65,.65,1)
+		if JapaneseOnPS4() then
+			widget.portrait:SetPosition(-120 + 20, 2, 0)	
+		else
+			widget.portrait:SetPosition(-120 + 40, 2, 0)	
+		end
+	end
 	
 	
+	if JapaneseOnPS4() then
+    	widget.text = widget.base:AddChild(Text(TITLEFONT, 40 * 0.8))	-- KAJ
+	else
+    	widget.text = widget.base:AddChild(Text(TITLEFONT, 40))
+	end
+	if character and mode and RoG then
+		widget.dlcindicator = widget.base:AddChild(Image())
+		widget.dlcindicator:SetClickable(false)
+		widget.dlcindicator:SetTexture("images/ui.xml", "DLCicon.tex")
+		widget.dlcindicator:SetScale(.5,.5,1)
+		widget.dlcindicator:SetPosition(-142, 2, 0)
+	end
+
     widget.text = widget.base:AddChild(Text(TITLEFONT, 40))
     widget.text:SetPosition(40,0,0)
     widget.text:SetRegionSize(200 ,70)
@@ -135,22 +203,39 @@ function LoadGameScreen:MakeSaveTile(slotnum)
 	elseif mode == "cave" then
 		local level = SaveGameIndex:GetCurrentCaveLevel(slotnum)
 		widget.text:SetString(string.format("%s %d",STRINGS.UI.LOADGAMESCREEN.CAVE, level))
+	else
+    	--This should only happen if the user has run a mod that created a new type of game mode.
+		widget.text:SetString(STRINGS.UI.LOADGAMESCREEN.MODDED)
 	end
 	
     widget.text:SetVAlign(ANCHOR_MIDDLE)
     --widget.text:EnableWordWrap(true)
+
+    if IsDLCInstalled(REIGN_OF_GIANTS) then
+		widget.bg:SetScale(1,.8,1)
+	else
+		widget:SetScale(1,1,1)
+	end
     
 	widget.OnGainFocus = function(self)
 		Widget.OnGainFocus(self)
     	TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/click_mouseover")
-		widget:SetScale(1.1,1.1,1)
+    	if IsDLCInstalled(REIGN_OF_GIANTS) then
+    		widget.bg:SetScale(1.05,.87,1)
+    	else
+			widget:SetScale(1.1,1.1,1)
+		end
 		widget.bg:GetAnimState():PlayAnimation("over")
 	end
 
     widget.OnLoseFocus = function(self)
     	Widget.OnLoseFocus(self)
     	widget.base:SetPosition(0,0,0)
-		widget:SetScale(1,1,1)
+    	if IsDLCInstalled(REIGN_OF_GIANTS) then
+    		widget.bg:SetScale(1,.8,1)
+    	else
+			widget:SetScale(1,1,1)
+		end
 		widget.bg:GetAnimState():PlayAnimation("anim")
     end
         
@@ -166,18 +251,38 @@ function LoadGameScreen:MakeSaveTile(slotnum)
 			return true
 		end
 	end
+	
+	widget.GetHelpText = function(self)
+	    local controller_id = TheInput:GetControllerID()
+	    local t = {}
+        table.insert(t, TheInput:GetLocalizedControl(controller_id, CONTROL_ACCEPT) .. " " .. STRINGS.UI.HELP.SELECT)	
+	    return table.concat(t, "  ")
+    end
 
 	return widget
 end
 
 function LoadGameScreen:OnClickTile(slotnum)
-
+	self.last_slotnum = slotnum
 	TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/click_move")	
 	if not SaveGameIndex:GetCurrentMode(slotnum) then
 		TheFrontEnd:PushScreen(NewGameScreen(slotnum))
 	else
+		local DLC = SaveGameIndex:GetSlotDLC(slotnum)
+		local RoG = (DLC ~= nil and DLC.REIGN_OF_GIANTS ~= nil) and DLC.REIGN_OF_GIANTS or false
+		if RoG == true then
+			EnableDLC(REIGN_OF_GIANTS)
+		elseif RoG == false then
+			DisableDLC(REIGN_OF_GIANTS)
+		end
 		TheFrontEnd:PushScreen(SlotDetailsScreen(slotnum))
 	end
 end
 
+function LoadGameScreen:GetHelpText()
+	local controller_id = TheInput:GetControllerID()
+	return TheInput:GetLocalizedControl(controller_id, CONTROL_CANCEL) .. " " .. STRINGS.UI.HELP.BACK
+end
 
+
+return LoadGameScreen

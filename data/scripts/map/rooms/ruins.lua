@@ -116,6 +116,7 @@ AddRoom("BGSacredGround", {
 
 					                    rook_nightmare = .07,
 					                    bishop_nightmare = .07,
+					                    knight_nightmare = .07,
 					                }
 					            }
 					})
@@ -145,6 +146,7 @@ AddRoom("Altar", {
 
 					                    rook_nightmare = .07,
 					                    bishop_nightmare = .07,
+					                    knight_nightmare = .07,
 					                }
 
 					            }
@@ -176,6 +178,9 @@ AddRoom("Barracks",{
 
 					                    rook_nightmare = .07,
 					                    bishop_nightmare = .07,
+					                    knight_nightmare = .07,
+					                    
+
 					                }
 					            }
 					})
@@ -204,7 +209,8 @@ AddRoom("Bishops",{
 					                    ruins_statue_mage_nogem = .2,
 
 					                    rook_nightmare = .07,
-					                    bishop_nightmare = .07,
+					                    bishop_nightmare = .1,
+					                    knight_nightmare = .07,
 					                }
 
 					            }
@@ -236,6 +242,7 @@ AddRoom("Spiral",{
 
 					                    rook_nightmare = .07,
 					                    bishop_nightmare = .07,
+					                    knight_nightmare = .07,
 					                }
 					            }
 					})
@@ -266,6 +273,7 @@ AddRoom("BrokenAltar", {
 
 					                    rook_nightmare = .07,
 					                    bishop_nightmare = .07,
+					                    knight_nightmare = .07,
 					                }
 
 					            }
@@ -309,6 +317,9 @@ AddRoom("BGWilds", {
 					                    flower_cave = .05,
 					                    flower_cave_double = .03,
 					                    flower_cave_triple = .01,
+					                    worm = 0.07,
+
+					                    fissure_lower = 0.04,
 					                }
 					            }
 					})
@@ -324,6 +335,8 @@ AddRoom("PondWilds", {
 					                	cave_fern = .1,
 					                    pillar_algae = .01,
 					                	pond_cave = .1,
+					                    fissure_lower = 0.05,
+
 					                }
 					            }
 					})
@@ -340,6 +353,7 @@ AddRoom("SlurperWilds", {
 					                	cave_fern = 1,
 					                    pillar_algae = .01,
 					                	slurper = .35,
+
 					                }
 					            }
 					})
@@ -356,6 +370,9 @@ AddRoom("LushWilds", {
 					                	cave_fern = 1,
 					                    pillar_algae = .05,	
 
+					                    worm = 0.01,
+
+					                    fissure_lower = 0.07,
 
 					                    flower_cave = .1,
 					                    flower_cave_double = .03,
@@ -379,6 +396,8 @@ AddRoom("LightWilds", {
 					                    flower_cave = .75,
 					                    flower_cave_double = .33,
 					                    flower_cave_triple = .15,
+
+					                    fissure_lower = 0.07,
 					                }
 					            }
 					})
@@ -435,6 +454,8 @@ AddRoom("BGMonkeyWilds", {
 					                    monkeybarrel = 0.06,
 					                    slurper = 0.06,
 					                    pond_cave = 0.07,
+					                    fissure_lower = 0.04,
+					                    worm = 0.04,
 					                }
 					            }
 					})

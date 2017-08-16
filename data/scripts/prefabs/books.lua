@@ -7,7 +7,8 @@ local assets =
 local prefabs =
 {
     "tentacle",
-    "splash_ocean"
+    "splash_ocean",
+    "book_fx"
 }    
 
 function tentaclesfn(inst, reader)
@@ -51,23 +52,40 @@ function tentaclesfn(inst, reader)
 
 end
 
+
 function birdsfn(inst, reader)
     if not GetWorld().components.birdspawner then
         return false
     end
 
+
     reader.components.sanity:DoDelta(-TUNING.SANITY_HUGE)
     local num = 20 + math.random(10)
-    reader:StartThread(function()
-        for k = 1, num do
-            local pt = GetWorld().components.birdspawner:GetSpawnPoint(Vector3(reader.Transform:GetWorldPosition() ))
-            
-            if pt then
-                local bird = GetWorld().components.birdspawner:SpawnBird(pt, true)
-            end
-            Sleep(math.random(.2, .25))
-        end
-    end)
+    
+    --we can actually run out of command buffer memory if we allow for infinite birds
+	local x, y, z = reader.Transform:GetWorldPosition()
+	local ents = TheSim:FindEntities(x,y,z, 10, nil, nil, {'magicalbird'})
+	if #ents > 30 then
+		num = 0
+		reader.components.talker:Say(GetString(reader.prefab, "ANNOUNCE_WAYTOOMANYBIRDS"))
+	elseif #ents > 20 then
+		reader.components.talker:Say(GetString(reader.prefab, "ANNOUNCE_TOOMANYBIRDS"))
+		num = 10 + math.random(10)
+	end
+    
+    if num > 0 then
+		reader:StartThread(function()
+			for k = 1, num do
+				local pt = GetWorld().components.birdspawner:GetSpawnPoint(Vector3(reader.Transform:GetWorldPosition() ))
+	            
+				if pt then
+					local bird = GetWorld().components.birdspawner:SpawnBird(pt, true)
+					bird:AddTag("magicalbird")
+				end
+				Sleep(math.random(.2, .25))
+			end
+		end)
+	end
     return true
 end
 
@@ -139,12 +157,16 @@ function MakeBook(name, usefn, bookuses )
         anim:PlayAnimation(name)
         MakeInventoryPhysics(inst)
         
-        inst:AddComponent("inventoryitem")
         -----------------------------------
         
         inst:AddComponent("inspectable")
         inst:AddComponent("book")
         inst.components.book.onread = usefn
+
+        inst:AddComponent("characterspecific")
+        inst.components.characterspecific:SetOwner("wickerbottom")
+        
+        inst:AddComponent("inventoryitem")
 
         inst:AddComponent("finiteuses")
         inst.components.finiteuses:SetMaxUses( bookuses )

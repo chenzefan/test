@@ -27,6 +27,9 @@ local Wisecracker = Class(function(self, inst)
         
         
     inst:ListenForEvent( "dusktime", function(it, data) 
+            if it:IsCave() then
+                return 
+            end
             inst.components.talker:Say(GetString(inst.prefab, "ANNOUNCE_DUSK"))
         end, GetWorld())        
     
@@ -37,6 +40,13 @@ local Wisecracker = Class(function(self, inst)
 
     inst:ListenForEvent("heargrue", function(inst, data)
             inst.components.talker:Say(GetString(inst.prefab, "ANNOUNCE_CHARLIE"))
+    end)
+
+    inst:ListenForEvent("accomplishment", function(inst, data)
+            inst.components.talker:Say(GetString(inst.prefab, "ANNOUNCE_ACCOMPLISHMENT"))
+    end)
+    inst:ListenForEvent("accomplishment_done", function(inst, data)
+            inst.components.talker:Say(GetString(inst.prefab, "ANNOUNCE_ACCOMPLISHMENT_DONE"))
     end)
 
     inst:ListenForEvent("attacked", function(inst, data)
@@ -63,11 +73,9 @@ local Wisecracker = Class(function(self, inst)
             end    
         end)
 
-    inst:ListenForEvent("temperaturedelta", 
+    inst:ListenForEvent("startfreezing", 
         function(inst, data) 
-            if (data.last > 0) ~= (data.new > 0) and data.new <= 0 then
-				inst.components.talker:Say(GetString(inst.prefab, "ANNOUNCE_COLD"))
-            end    
+			inst.components.talker:Say(GetString(inst.prefab, "ANNOUNCE_COLD"))
         end)
     
     inst:ListenForEvent( "inventoryfull", function(it, data) 

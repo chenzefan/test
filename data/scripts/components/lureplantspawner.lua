@@ -1,7 +1,8 @@
 local LurePlantSpawner = Class(function(self, inst)
 	self.inst = inst
-	self.spawntime = TUNING.LUREPLANT_SPAWNTIME
-	self.spawntimevariance = TUNING.LUREPLANT_SPAWNTIME_VARIANCE
+	self.spawntime = TUNING.TOTAL_DAY_TIME * 12
+	self.spawntimevariance = TUNING.TOTAL_DAY_TIME * 3
+	self.active = true
 	self.minoffset = 80
 	self.maxoffset = 200
 	self.playertrail = {}
@@ -72,18 +73,22 @@ function LurePlantSpawner:FindSpawnLocationInTrail()
 end
 
 function LurePlantSpawner:ResumeSpawn(time)
-	if self.task then
-		self.task:Cancel()
-		self.task = nil
+	if self.active then
+		if self.task then
+			self.task:Cancel()
+			self.task = nil
+		end
+		self:SetSpawnInfo(time)
+		self.task = self.inst:DoTaskInTime(time, function() self:SpawnPlant() end)
 	end
-	self:SetSpawnInfo(time)
-	self.task = self.inst:DoTaskInTime(time, function() self:SpawnPlant() end)
 end
 
 function LurePlantSpawner:StartNextSpawn()
-	self:SetSpawnInfo(self.spawntime)
-	self.task = self.inst:DoTaskInTime(self.spawntime + math.random(-self.spawntimevariance, self.spawntimevariance),
-	function() self:SpawnPlant() end)
+	if self.active then
+		self:SetSpawnInfo(self.spawntime)
+		self.task = self.inst:DoTaskInTime(self.spawntime + math.random(-self.spawntimevariance, self.spawntimevariance),
+		function() self:SpawnPlant() end)
+	end
 end
 
 function LurePlantSpawner:SetSpawnInfo(time)
@@ -108,6 +113,10 @@ function LurePlantSpawner:SpawnPlant()
 		end
 		self:StartNextSpawn()
 	end
+end
+
+function LurePlantSpawner:GetDebugString()
+	return "Spawn Time: "..tostring(self.spawntime)
 end
 
 function LurePlantSpawner:FindSpawnLocation()
@@ -146,6 +155,11 @@ function LurePlantSpawner:OnLoad(data)
 	end
 
 	if data.playertrail then self.playertrail = data.playertrail end
+
+	if data.active then self.active = data.active end
+	if not self.active then
+		self.inst:StopUpdatingComponent(self)
+	end
 end
 
 function LurePlantSpawner:OnSave()
@@ -157,6 +171,9 @@ function LurePlantSpawner:OnSave()
 	if self.playertrail ~= nil then
 		data.playertrail = self.playertrail
 	end
+
+	data.active = self.active
+
 	return data
 end
 
@@ -176,6 +193,28 @@ function LurePlantSpawner:LongUpdate(dt)
 			self:ResumeSpawn(newtime)
 		end
 	end
+end
+
+function LurePlantSpawner:SpawnModeNever()
+    self.spawntimevariation = -1
+    self.spawntime = -1
+    self.active = false
+    self.inst:StopUpdatingComponent(self)
+end
+
+function LurePlantSpawner:SpawnModeHeavy()
+    self.spawntimevariation = TUNING.TOTAL_DAY_TIME * 2
+    self.spawntime = TUNING.TOTAL_DAY_TIME * 6
+end
+
+function LurePlantSpawner:SpawnModeMed()
+    self.spawntimevariation = TUNING.TOTAL_DAY_TIME * 3
+    self.spawntime = TUNING.TOTAL_DAY_TIME * 9
+end
+
+function LurePlantSpawner:SpawnModeLight()
+    self.spawntimevariation = TUNING.TOTAL_DAY_TIME * 6
+    self.spawntime = TUNING.TOTAL_DAY_TIME * 24
 end
 
 return LurePlantSpawner

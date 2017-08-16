@@ -85,6 +85,7 @@ local function fn(Sim)
     -- inst.AnimState:SetMultColour(.2, 1, .2, 1.0)
 
     inst:AddTag("monster")    
+    inst:AddTag("hostile")
     inst:AddTag("wet")
     inst:AddTag("WORM_DANGER")
 

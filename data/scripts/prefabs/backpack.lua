@@ -7,14 +7,15 @@ local assets=
 local function onequip(inst, owner) 
     owner.AnimState:OverrideSymbol("swap_body", "swap_backpack", "backpack")
     owner.AnimState:OverrideSymbol("swap_body", "swap_backpack", "swap_body")
-    owner.components.inventory.overflow = inst
+    owner.components.inventory:SetOverflow(inst)
     inst.components.container:Open(owner)
+    
 end
 
 local function onunequip(inst, owner) 
     owner.AnimState:ClearOverrideSymbol("swap_body")
     owner.AnimState:ClearOverrideSymbol("backpack")
-    owner.components.inventory.overflow = nil
+    owner.components.inventory:SetOverflow(nil)
     inst.components.container:Close(owner)
 end
 
@@ -70,6 +71,7 @@ local function fn(Sim)
     inst.components.container.widgetanimbuild = "ui_backpack_2x4"
     inst.components.container.widgetpos = Vector3(-5,-50,0)
     inst.components.container.side_widget = true
+    inst.components.container.type = "pack"
    
     inst.components.container.onopenfn = onopen
     inst.components.container.onclosefn = onclose

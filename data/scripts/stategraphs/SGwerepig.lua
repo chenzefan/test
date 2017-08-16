@@ -76,6 +76,8 @@ local states=
 			inst.SoundEmitter:PlaySound("dontstarve/creatures/werepig/transformToWere")
             inst.AnimState:SetBuild(inst.build)
 			inst.AnimState:PlayAnimation("transform_pig_were")
+			inst:AddTag("hostile")
+
 		end,
 		
 		onexit = function(inst)
@@ -88,6 +90,10 @@ local states=
                 inst.components.sleeper:WakeUp()
                 inst.sg:GoToState("howl")
             end ),
+			EventHandler("attacked", function(inst)
+	            inst.sg:GoToState("hit")
+		    end),
+            
         },        
     },
     

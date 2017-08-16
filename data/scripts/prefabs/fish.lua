@@ -25,8 +25,8 @@ local function makefish(build)
         
 	    inst.entity:AddAnimState()
         inst.AnimState:SetBank("fish")
-        inst.AnimState:SetBuild(build)
-        inst.build = build
+        inst.AnimState:SetBuild("fish")
+        inst.build = build --This is used within SGwilson, sent from an event in fishingrod.lua
         
         inst:AddTag("meat")
 

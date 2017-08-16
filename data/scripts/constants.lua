@@ -28,6 +28,7 @@ SCALEMODE_NONE = 0
 SCALEMODE_FILLSCREEN = 1
 SCALEMODE_PROPORTIONAL = 2
 SCALEMODE_FIXEDPROPORTIONAL = 3
+SCALEMODE_FIXEDSCREEN_NONDYNAMIC = 4
 
 PHYSICS_TYPE_ANIMATION_CONTROLLED = 0
 PHYSICS_TYPE_PHYSICS_CONTROLLED = 1
@@ -42,7 +43,10 @@ MOVE_RIGHT = 4
 --push priorities
 STATIC_PRIORITY = 10000
 
--- Controls: Must match the Control enum in DontStarveInputHandler.h
+-- Controls: 
+-- Must match the Control enum in DontStarveInputHandler.h
+-- Must match STRINGS.UI.CONTROLSSCREEN.CONTROLS
+
 -- player action controls
 CONTROL_PRIMARY = 0
 CONTROL_SECONDARY = 1
@@ -86,17 +90,42 @@ CONTROL_ACCEPT = 29
 CONTROL_CANCEL = 30
 CONTROL_PAGELEFT = 31
 CONTROL_PAGERIGHT = 32
-CONTROL_SPLITSTACK = 33
-CONTROL_TRADEITEM = 34
-CONTROL_TRADESTACK = 35
-CONTROL_FORCE_INSPECT = 36
-CONTROL_FORCE_ATTACK = 37
-CONTROL_FORCE_TRADE = 38
-CONTROL_FORCE_STACK = 39
 
-CONTROL_OPEN_DEBUG_CONSOLE = 40
-CONTROL_TOGGLE_LOG = 41
-CONTROL_TOGGLE_DEBUGRENDER = 42
+CONTROL_PREVVALUE = 33
+CONTROL_NEXTVALUE = 34
+
+CONTROL_SPLITSTACK = 35
+CONTROL_TRADEITEM = 36
+CONTROL_TRADESTACK = 37
+CONTROL_FORCE_INSPECT = 38
+CONTROL_FORCE_ATTACK = 39
+CONTROL_FORCE_TRADE = 40
+CONTROL_FORCE_STACK = 41
+
+CONTROL_OPEN_DEBUG_CONSOLE = 42
+CONTROL_TOGGLE_LOG = 43
+CONTROL_TOGGLE_DEBUGRENDER = 44
+
+CONTROL_OPEN_INVENTORY = 45
+CONTROL_OPEN_CRAFTING = 46
+CONTROL_INVENTORY_LEFT = 47
+CONTROL_INVENTORY_RIGHT = 48
+CONTROL_INVENTORY_UP = 49
+CONTROL_INVENTORY_DOWN = 50
+CONTROL_INVENTORY_EXAMINE = 51
+CONTROL_INVENTORY_USEONSELF = 52
+CONTROL_INVENTORY_USEONSCENE = 53
+CONTROL_INVENTORY_DROP = 54
+CONTROL_PUTSTACK = 55
+CONTROL_CONTROLLER_ATTACK = 56
+CONTROL_CONTROLLER_ACTION = 57
+CONTROL_CONTROLLER_ALTACTION = 58
+CONTROL_USE_ITEM_ON_ITEM = 59
+
+CONTROL_MAP_ZOOM_IN = 60
+CONTROL_MAP_ZOOM_OUT = 61
+
+CONTROL_OPEN_DEBUG_MENU = 62
 
 CONTROL_CUSTOM_START = 100
 
@@ -211,14 +240,19 @@ GESTURE_ROTATE_RIGHT = 903
 GESTURE_MAX = 904
 
 
-CHARACTERLIST =
+MAIN_CHARACTERLIST = 
 {
-	'wilson', 'willow', 'wolfgang', 'wendy', 'wx78', 'wickerbottom', 'woodie', 'wes', 'waxwell',
+	'wilson', 'willow', 'wolfgang', 'wendy', 'wx78', 'wickerbottom', 'woodie', 'wes', 'waxwell',	
 }
 
-MODCHARACTERLIST = 
+ROG_CHARACTERLIST =
 {
-	-- this gets populated by mods
+	'wathgrithr', 'webber',
+}
+
+MODCHARACTERLIST =
+{
+	--populated by mods
 }
 
 CHARACTER_GENDERS = 
@@ -294,6 +328,8 @@ GROUND =
     TILES_GLOW = 21,
     TRIM = 22,
     TRIM_GLOW = 23,
+	FUNGUSRED = 24,
+	FUNGUSGREEN = 25,
 
     -- Noise
 	ABYSS_NOISE = 124,
@@ -468,14 +504,15 @@ PLACE_MASK =
 
 COLLISION =
 {
-    GROUND = 32, -- See BpWorld.cpp (ground and cave walls)
-    LIMITS = 64, -- See BpWorld.cpp (ocean walls)
-    WORLD = 96,
-    ITEMS = 128,
-    OBSTACLES = 256,
-    CHARACTERS = 512,
-    FLYERS = 1024,
-    SANITY = 2048,
+
+    GROUND = 64, -- See BpWorld.cpp (ocean walls)
+    LIMITS = 128,
+    WORLD = 192, --limits and ground
+    ITEMS = 256,
+    OBSTACLES = 512,
+    CHARACTERS = 1024,
+    FLYERS = 2048,
+    SANITY = 4096
 }
 
 BLENDMODE =
@@ -496,17 +533,17 @@ ANIM_ORIENTATION =
 
 RECIPETABS=
 {
-    TOOLS = {str = STRINGS.TABS.TOOLS, sort=0, icon = "tab_tool.tex"},
-    LIGHT = {str = STRINGS.TABS.LIGHT, sort=1, icon = "tab_light.tex"},
-    SURVIVAL = {str = STRINGS.TABS.SURVIVAL, sort=2, icon = "tab_trap.tex"},
-    FARM = {str = STRINGS.TABS.FARM, sort=3, icon = "tab_farm.tex"},
-    SCIENCE = {str = STRINGS.TABS.SCIENCE, sort=4, icon = "tab_science.tex"},
-    WAR = {str = STRINGS.TABS.WAR, sort=5, icon = "tab_fight.tex"},
-    TOWN = {str = STRINGS.TABS.TOWN, sort=6, icon = "tab_build.tex"},
-    REFINE = {str = STRINGS.TABS.REFINE, sort=7, icon = "tab_refine.tex"},
-    MAGIC = {str = STRINGS.TABS.MAGIC, sort=8, icon = "tab_arcane.tex"},
-    DRESS = {str = STRINGS.TABS.DRESS, sort=9, icon = "tab_dress.tex"},
-    ANCIENT = {str = STRINGS.TABS.ANCIENT, sort = 10, icon = "tab_crafting_table.tex"}
+    TOOLS = {str = "TOOLS", sort=0, icon = "tab_tool.tex"},
+    LIGHT = {str = "LIGHT", sort=1, icon = "tab_light.tex"},
+    SURVIVAL = {str = "SURVIVAL", sort=2, icon = "tab_trap.tex"},
+    FARM = {str = "FARM", sort=3, icon = "tab_farm.tex"},
+    SCIENCE = {str = "SCIENCE", sort=4, icon = "tab_science.tex"},
+    WAR = {str = "WAR", sort=5, icon = "tab_fight.tex"},
+    TOWN = {str = "TOWN", sort=6, icon = "tab_build.tex"},
+    REFINE = {str = "REFINE", sort=7, icon = "tab_refine.tex"},
+    MAGIC = {str = "MAGIC", sort=8, icon = "tab_arcane.tex"},
+    DRESS = {str = "DRESS", sort=9, icon = "tab_dress.tex"},
+    ANCIENT = {str = "ANCIENT", sort = 10, icon = "tab_crafting_table.tex"}
 }
 
 
@@ -590,3 +627,32 @@ RESET_ACTION =
 
 HUD_ATLAS = "images/hud.xml"
 UI_ATLAS = "images/ui.xml"
+
+SNOW_THRESH = .015
+
+VIBRATION_CAMERA_SHAKE = 0
+VIBRATION_BLOOD_FLASH = 1
+VIBRATION_BLOOD_OVER = 2
+
+NUM_SAVE_SLOTS = 4
+
+SAVELOAD = 
+{    
+    OPERATION = 
+    {
+        PREPARE = 0,
+        LOAD = 1,
+        SAVE = 2,
+        DELETE = 3,
+        NONE = 4,
+    },
+    
+    STATUS = 
+    {
+        OK = 0,
+        DAMAGED = 1,
+        NOT_FOUND = 2,
+        NO_SPACE = 3,
+        FAILED = 4,
+    },
+}

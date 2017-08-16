@@ -18,7 +18,7 @@ local function OnGetItemFromPlayer(inst, giver, item)
         inst:DoTaskInTime(20/30, function() 
             inst.SoundEmitter:PlaySound("dontstarve/pig/PigKingThrowGold")
             
-            for k = 1,item.components.tradable.goldvalue do
+            for k = 1, item.components.tradable.goldvalue do
                 local nug = SpawnPrefab("goldnugget")
                 local pt = Vector3(inst.Transform:GetWorldPosition()) + Vector3(0,4.5,0)
                 
@@ -26,8 +26,8 @@ local function OnGetItemFromPlayer(inst, giver, item)
                 local down = TheCamera:GetDownVec()
                 local angle = math.atan2(down.z, down.x) + (math.random()*60-30)*DEGREES
                 --local angle = (-TUNING.CAM_ROT-90 + math.random()*60-30)/180*PI
-                local sp = math.random()*6+3
-                nug.Physics:SetVel(sp*math.cos(angle), math.random()*3+10, sp*math.sin(angle))
+                local sp = math.random()*4+2
+                nug.Physics:SetVel(sp*math.cos(angle), math.random()*2+8, sp*math.sin(angle))
             end
         end)
         inst:DoTaskInTime(1.5, function() 

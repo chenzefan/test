@@ -117,6 +117,15 @@ AddRoom("DeepForest", {
 					value = GROUND.FOREST,
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
+									countstaticlayouts=
+									{
+										["LivingTree"]= function() return (math.random() > TUNING.LIVINGTREE_CHANCE and 1) or 0 end	
+									},
+
+									-- countprefabs =
+									-- {
+									-- 	livingtree = function() return (math.random() > TUNING.LIVINGTREE_CHANCE and 1) or 0 end									
+									-- },
 					                distributepercent = .8,
 					                distributeprefabs=
 					                {
@@ -168,6 +177,7 @@ AddRoom("CrappyForest", {
 					                    berrybush=.03,
 					                    red_mushroom = .03,
 					                    green_mushroom = .02,
+
 					                },
 					            }
 					})

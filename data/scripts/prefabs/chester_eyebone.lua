@@ -2,11 +2,57 @@
 local assets=
 {
     Asset("ANIM", "anim/chester_eyebone.zip"),
+    Asset("ANIM", "anim/chester_eyebone_build.zip"),
+    Asset("ANIM", "anim/chester_eyebone_snow_build.zip"),
+    Asset("ANIM", "anim/chester_eyebone_shadow_build.zip"),
 }
 
 local SPAWN_DIST = 30
 
 local trace = function() end
+
+local function RebuildTile(inst)
+    if inst.components.inventoryitem:IsHeld() then
+        local owner = inst.components.inventoryitem.owner
+        inst.components.inventoryitem:RemoveFromOwner(true)
+        if owner.components.container then
+            owner.components.container:GiveItem(inst)
+        elseif owner.components.inventory then
+            owner.components.inventory:GiveItem(inst)
+        end
+    end
+end
+
+local function MorphShadowEyebone(inst)
+    inst.AnimState:SetBuild("chester_eyebone_shadow_build")
+
+    inst.openEye = "chester_eyebone_shadow"
+    inst.closedEye = "chester_eyebone_closed_shadow"    
+
+
+    inst.EyeboneState = "SHADOW"
+    RebuildTile(inst)
+end
+
+local function MorphSnowEyebone(inst)
+    inst.AnimState:SetBuild("chester_eyebone_snow_build")
+
+    inst.openEye = "chester_eyebone_snow"
+    inst.closedEye = "chester_eyebone_closed_snow"    
+
+    inst.EyeboneState = "SNOW"
+    RebuildTile(inst)
+end
+
+local function MorphNormalEyebone(inst)
+    inst.AnimState:SetBuild("chester_eyebone_build")
+
+    inst.openEye = "chester_eyebone"
+    inst.closedEye = "chester_eyebone_closed"    
+
+    inst.EyeboneState = "NORMAL"
+    RebuildTile(inst)
+end
 
 local function GetSpawnPoint(pt)
 
@@ -31,9 +77,11 @@ local function SpawnChester(inst)
         local chester = SpawnPrefab("chester")
         if chester then
             chester.Physics:Teleport(spawn_pt:Get())
-            chester:FacePoint(pt)
+            chester:FacePoint(pt.x, pt.y, pt.z)
+
             return chester
         end
+
     else
         -- this is not fatal, they can try again in a new location by picking up the bone again
         trace("chester_eyebone - SpawnChester: Couldn't find a suitable spawn point for chester")
@@ -55,7 +103,7 @@ local function RebindChester(inst, chester)
     if chester then
 
         inst.AnimState:PlayAnimation("idle_loop", true)
-        inst.components.inventoryitem:ChangeImageName("chester_eyebone")
+        inst.components.inventoryitem:ChangeImageName(inst.openEye)
         inst:ListenForEvent("death", function() inst:OnChesterDeath() end, chester)
 
         if chester.components.follower.leader ~= inst then
@@ -85,7 +133,7 @@ local function StartRespawn(inst, time)
         inst.respawntask = inst:DoTaskInTime(respawntime, function() RespawnChester(inst) end)
         inst.respawntime = GetTime() + respawntime
         inst.AnimState:PlayAnimation("dead", true)
-        inst.components.inventoryitem:ChangeImageName("chester_eyebone_closed")
+        inst.components.inventoryitem:ChangeImageName(inst.closedEye)
     end
 end
 
@@ -98,7 +146,7 @@ local function FixChester(inst)
 	--take an existing chester if there is one
 	if not RebindChester(inst) then
         inst.AnimState:PlayAnimation("dead", true)
-        inst.components.inventoryitem:ChangeImageName("chester_eyebone_closed")
+        inst.components.inventoryitem:ChangeImageName(inst.closedEye)
 		
 		if inst.components.inventoryitem.owner then
 			local time_remaining = 0
@@ -119,6 +167,7 @@ end
 
 local function OnSave(inst, data)
     trace("chester_eyebone - OnSave")
+    data.EyeboneState = inst.EyeboneState
     local time = GetTime()
     if inst.respawntime and inst.respawntime > time then
         data.respawntimeremaining = inst.respawntime - time
@@ -127,6 +176,15 @@ end
 
 
 local function OnLoad(inst, data)
+
+    if data and data.EyeboneState then
+        if data.EyeboneState == "SHADOW" then
+            inst:MorphShadowEyebone()
+        elseif data.EyeboneState == "SNOW" then
+            inst:MorphSnowEyebone()
+        end
+    end
+
     if data and data.respawntimeremaining then
 		inst.respawntime = data.respawntimeremaining + GetTime()
 	end
@@ -138,6 +196,9 @@ local function GetStatus(inst)
         return "WAITING"
     end
 end
+
+
+
 
 
 local function fn(Sim)
@@ -156,21 +217,27 @@ local function fn(Sim)
     MakeInventoryPhysics(inst)
     
     inst.AnimState:SetBank("eyebone")
-    inst.AnimState:SetBuild("chester_eyebone")
+    inst.AnimState:SetBuild("chester_eyebone_build")
     inst.AnimState:PlayAnimation("idle_loop", true)
 
     inst:AddComponent("inventoryitem")
     inst.components.inventoryitem:SetOnPutInInventoryFn(OnPutInInventory)
     
 
-    inst.components.inventoryitem:ChangeImageName("chester_eyebone")    
+    inst.EyeboneState = "NORMAL"
+    inst.openEye = "chester_eyebone"
+    inst.closedEye = "chester_eyebone_closed"   
+
+    inst.components.inventoryitem:ChangeImageName(inst.openEye)    
     inst:AddComponent("inspectable")
     inst.components.inspectable.getstatus = GetStatus
 	inst.components.inspectable:RecordViews()
 
     inst:AddComponent("leader")
 
-    
+    inst.MorphNormalEyebone = MorphNormalEyebone
+    inst.MorphSnowEyebone = MorphSnowEyebone
+    inst.MorphShadowEyebone = MorphShadowEyebone
 
     inst.OnLoad = OnLoad
     inst.OnSave = OnSave

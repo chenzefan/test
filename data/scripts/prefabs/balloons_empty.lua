@@ -25,6 +25,9 @@ local function fn(Sim)
     
     inst:AddComponent("inventoryitem")
     -----------------------------------
+
+    inst:AddComponent("characterspecific")
+    inst.components.characterspecific:SetOwner("wes")
     
     inst:AddComponent("inspectable")
     

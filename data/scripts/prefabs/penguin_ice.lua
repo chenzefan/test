@@ -156,7 +156,7 @@ local function fn(Sim)
 	local minimap = inst.entity:AddMiniMapEntity()
 	minimap:SetIcon( "penguin.png" )
 
-    local function SnowCover(source,data)
+    local function SnowCover(source)
         local snow_cover = GetSeasonManager():GetSnowPercent()
         dprint("snowcoverchange",string.format("%d",snow_cover*100))
         local Erode = function(val,inst)

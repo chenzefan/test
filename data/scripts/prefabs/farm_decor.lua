@@ -11,6 +11,7 @@ local function makefn(bankname, buildname, animname)
         local inst = CreateEntity()
         local trans = inst.entity:AddTransform()
         local anim = inst.entity:AddAnimState()
+        inst:AddTag("DECOR")
         
         anim:SetBank(bankname)
         anim:SetBuild(buildname)

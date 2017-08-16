@@ -50,6 +50,9 @@ return {
 	ANNOUNCE_TORCH_OUT = "My light ran out!",
 	ANNOUNCE_TRAP_WENT_OFF = "Oops!",
 	ANNOUNCE_WORMHOLE = "It was gross in there!",
+	ANNOUNCE_CANFIX = "\nI think I can fix this!",
+	ANNOUNCE_ACCOMPLISHMENT= "Lucy is going to be so proud of me!",
+	ANNOUNCE_ACCOMPLISHMENT_DONE = "That's a wrap, eh!",
 	BATTLECRY =
 	{
 		GENERIC = "Get over here, eh!",
@@ -60,10 +63,29 @@ return {
 	},
 	DESCRIBE =
 	{
+		WORMLIGHT = "This thing will be useful.",
+		WORM =
+		{
+		    PLANT = "I know a plant when I see one. This'n an impostor!",
+		    DIRT = "Be wary the moving ground.",
+		    WORM = "WOOORM!",
+		},
+		EEL = "This should cook up nicely.",
+		EEL_COOKED = "This cooked up nicely.",
+		UNAGI = "It'll fill ya up.",
+		EYETURRET = "That'll drive the hosers off.",
+		EYETURRET_ITEM = "This needs to be installed properly.",
+		MINOTAURHORN = "That's a nice horn, eh.",
+		MINOTAURCHEST = "That's a nice chest with horns, eh.",
+		THULECITE_PIECES = "It's not wood but it'll do.",
+		POND_ALGAE = "Doesn't look edible.",
+		GREENSTAFF = "This'll help me dismantle stuff!",
+		POTTEDFERN = "It shows my love of plant life.",
 
 		THULECITE = "It's the wood of the caves!",
 		ARMORRUINS = "That'll stop the hurt.",
 		RUINS_BAT = "Metal on a stick.",
+		RUINSHAT = "It's no toque, but it'll do.",
 		NIGHTMARE_TIMEPIECE = --Keeps track of the nightmare cycle
 		{
 		CALM = "I think it's off.",	--calm phase
@@ -117,6 +139,7 @@ return {
         	BROKEN = "Looks a little worn out.",
         },     
         
+        ANCIENT_ALTAR_BROKEN = "Looks a little worn out.",
         ANCIENT_STATUE = "Another hoser.",
 
         LICHEN = "Looks barely edible.",
@@ -161,7 +184,7 @@ return {
 		FLOWER_CAVE_TRIPLE="Shiny!",
 		GUANO="It stinks less than the other kind.",
 		LANTERN="High tech!",
-		LIGHTBULB="I looks chewy.",
+		LIGHTBULB="It looks chewy.",
 		MANRABBIT_TAIL="I feel sorry for him.",
 		MUSHTREE_TALL  ="I can't let that stand.",
 		MUSHTREE_MEDIUM="Maybe I should chop it.",
@@ -184,10 +207,26 @@ return {
 		STALAGMITE_TALL_FULL="I'm not too interested in rocks.",
 		STALAGMITE_TALL_LOW="I'm not too interested in rocks.",
 		STALAGMITE_TALL_MED="I'm not too interested in rocks.",
+
+
+		TURF_CARPETFLOOR = "Some ground.",
+		TURF_CHECKERFLOOR = "Some ground.",
+		TURF_DIRT = "Some ground.",
+		TURF_FOREST = "Some ground.",
+		TURF_GRASS = "Some ground.",
+		TURF_MARSH = "Some ground.",
+		TURF_ROAD = "Some ground.",
+		TURF_ROCKY = "Some ground.",
+		TURF_SAVANNA = "Some ground.",
+		TURF_WOODFLOOR = "Some ground.",
+
+		TURF_CAVE="Some ground.",
 		TURF_FUNGUS="It's mushy like peas.",
-		TURF_MUD="At least you don't have to clean it.",
 		TURF_SINKHOLE="I found this underground.",
 		TURF_UNDERROCK="Rocks. Bleh.",	
+		TURF_MUD="At least you don't have to clean it.",
+
+		
 		POWCAKE = "I like the ones made with real sugar better.",
         CAVE_ENTRANCE = 
         {
@@ -267,6 +306,7 @@ return {
 		BISHOP = "It's been a while since my last confession.",
 		BLOWDART_FIRE = "This seems a bit aggressive.",
 		BLOWDART_SLEEP = "I can make my escape if I use this!",
+		BLOWDART_PIPE = "Let's see what my huge lungs can do with this!",
 		BLUEGEM = "It's very cold.",
 		BLUEPRINT = "I'm not one for book learning.",
 		BLUE_CAP = "That's not meat.",
@@ -340,6 +380,7 @@ return {
 		CUTGRASS = "I think I might be allergic to this.",
 		CUTREEDS = "Want to hear my loon call?",
 		CUTSTONE = "Part of the Canadian shield.",
+		DEADLYFEAST = "That doesn't smell quite right, eh.",
 		DEERCLOPS = "That's a big moose!",
 		DEERCLOPS_EYEBALL = "Now what is this good for?",
 		DEPLETED_GRASS =
@@ -550,6 +591,7 @@ return {
 			GENERIC = "Trees shouldn't fight back!",
 		},
 		MAXWELL = "Why does he hate me?",
+		MAXWELLHEAD = "Just a head, eh?",
 		MAXWELLLIGHT = "That's unnatural.",
 		MAXWELLLOCK = "Where is the key?",
 		MAXWELLTHRONE = "I've seen nicer chairs.",
@@ -574,6 +616,7 @@ return {
 			GENERIC = "That'll take a pint out of me!",
 			HELD = "What do I do with this, eh?",
 		},
+		MOSQUITOSACK = "Blood and guts, eh?",
 		MOUND =
 		{
 			DUG = "Sorry! Don't haunt me!",
@@ -740,6 +783,7 @@ return {
 		STRAWHAT = "It will keep the sun off my head.",
 		STUFFEDEGGPLANT = "I'm getting better at cooking.",
 		SUNKBOAT = "That wood has seen better days.",
+		SWEATERVEST = "It's not plaid but it'll do.",
 		TAFFY = "Sugary good.",
 		TALLBIRD = "I don't trust birds that can't fly, either.",
 		TALLBIRDEGG = "What's in here?",
@@ -754,7 +798,7 @@ return {
 		},
 		TALLBIRDNEST =
 		{
-			GENERIC = "I should steal its egg to each it a lesson.",
+			GENERIC = "I should steal its egg to teach it a lesson.",
 			PICKED = "Nothing there.",
 		},
 		TEENBIRD =
@@ -802,7 +846,7 @@ return {
 		TRINKET_2 = "Not the real thing, eh?",
 		TRINKET_3 = "Reminds me of a story I heard once.",
 		TRINKET_4 = "Don't ask me.",
-		TRINKET_5 = "I needs a robot arm, eh?",
+		TRINKET_5 = "It needs a robot arm, eh?",
 		TRINKET_6 = "They're not good any more, eh?",
 		TRINKET_7 = "I could play this for hours!",
 		TRINKET_8 = "If I find a tub, I'm all set.",
@@ -853,6 +897,9 @@ return {
 			OPEN = "I'm not sure I want to look at that, eh?",
 		},
 		WORMHOLE_LIMITED = "It smells a bit off, eh?",
+		ACCOMPLISHMENT_SHRINE = "It seems a bit show-offy to me.",        		
+		LIVINGTREE = "I feel conflicted, eh?",
+		ICESTAFF = "It reminds me of home.",
 	},
 	DESCRIBE_GENERIC = "What's that, eh?",
 	DESCRIBE_TOODARK = "It's dark, eh!",

@@ -8,8 +8,12 @@ local Widget = require "widgets/widget"
 local TabGroup = require "widgets/tabgroup"
 local UIAnim = require "widgets/uianim"
 local Text = require "widgets/text"
-local Crafting = require "widgets/crafting"
+local MouseCrafting = require "widgets/mousecrafting"
+local ControllerCrafting = require "widgets/controllercrafting"
 
+local base_scale = .75
+local selected_scale = .9
+local HINT_UPDATE_INTERVAL = 2.0 -- once per second
 
 local tab_bg = 
 {
@@ -20,20 +24,37 @@ local tab_bg =
 }
 
 
-local CraftTabs = Class(Widget, function(self, owner)
+local CraftTabs = Class(Widget, function(self, owner, top_root)
     
     Widget._ctor(self, "CraftTabs")
     self.owner = GetPlayer()    
 	self.owner = owner
 
+
+	self.craft_idx_by_tab = {}
+
     self:SetPosition(0,0,0)
+
+    --[[self.craftroot = self:AddChild(Widget("craftroot"))
+	self.craftroot:SetVAnchor(ANCHOR_TOP)
+    self.craftroot:SetHAnchor(ANCHOR_MIDDLE)
+    self.craftroot:SetScaleMode(SCALEMODE_PROPORTIONAL)
     
-    self.crafting = self:AddChild(Crafting(self, self.owner))
+    self.controllercrafting = self.craftroot:AddChild(ControllerCrafting())
+    --]]
+    self.controllercrafting = self:AddChild(ControllerCrafting())
+	self.controllercrafting:Hide()
+
+    self.crafting = self:AddChild(MouseCrafting(self))
     self.crafting:Hide()
-    self.bg = self:AddChild(Image("images/hud.xml", "craft_bg.tex"))
+    self.bg = self:AddChild(Image("images/hud.xml", "craft_bg.tex"))      
     
     self.tabs = self:AddChild(TabGroup())
     self.tabs:SetPosition(-16,0,0)
+    
+    self.bg_cover = self:AddChild(Image("images/hud.xml", "craft_bg_cover.tex"))
+    self.bg_cover:SetPosition(-38, 0, 0)
+    self.bg_cover:SetClickable(false)
 
     self.tabs.onopen = function() self.owner.SoundEmitter:PlaySound("dontstarve/HUD/craft_open") end
     self.tabs.onchange = function() self.owner.SoundEmitter:PlaySound("dontstarve/HUD/craft_open") end
@@ -52,26 +73,43 @@ local CraftTabs = Class(Widget, function(self, owner)
 
     table.sort(tabnames, function(a,b) return a.sort < b.sort end)
     
-    self.tabs.spacing = CRAFTING_CONSTANTS.TABBAR_HEIGHT/#tabnames
+    self.tab_order = {}
+
+    self.tabs.spacing = 750/#tabnames
     
     self.tabbyfilter = {}
     for k,v in ipairs(tabnames) do
-        local tab = self.tabs:AddTab(v.str, resolvefilepath("images/hud.xml"), v.icon_atlas or resolvefilepath("images/hud.xml"), v.icon, tab_bg.normal, tab_bg.selected, tab_bg.highlight, tab_bg.overlay,
+        local tab = self.tabs:AddTab(STRINGS.TABS[v.str], resolvefilepath("images/hud.xml"), v.icon_atlas or resolvefilepath("images/hud.xml"), v.icon, tab_bg.normal, tab_bg.selected, tab_bg.highlight, tab_bg.overlay,
+            
             function() --select fn
-                self.crafting:SetFilter( 
-                    function(recipe)
-                        local rec = GetRecipe(recipe)
-                        
-                        return rec and rec.tab == v
-                    end)
-                self.crafting:Open() 
+                if not self.controllercraftingopen then
+	                
+            		if self.craft_idx_by_tab[k] then
+            			self.crafting.idx = self.craft_idx_by_tab[k]
+            		end
+
+	                self.crafting:SetFilter( 
+	                    function(recipe)
+	                        local rec = GetRecipe(recipe)
+	                        return rec and rec.tab == v
+	                    end)
                 
+															                
+					self.crafting:Open()
+                end
             end, 
+
             function() --deselect fn
+            	self.craft_idx_by_tab[k] = self.crafting.idx
                 self.crafting:Close()
             end)
+        tab.filter = v
+        tab.icon = v.icon
+        tab.icon_atlas = v.icon_atlas or resolvefilepath("images/hud.xml")
+        tab.tabname = STRINGS.TABS[v.str]
         self.tabbyfilter[v] = tab
         
+        table.insert(self.tab_order, tab)
     end
     
     self.inst:ListenForEvent("techtreechange", function(inst, data) self:UpdateRecipes() end, self.owner)
@@ -79,23 +117,96 @@ local CraftTabs = Class(Widget, function(self, owner)
     self.inst:ListenForEvent("itemlose", function(inst, data) self:UpdateRecipes() end, self.owner)
     self.inst:ListenForEvent("stacksizechange", function(inst, data) self:UpdateRecipes() end, self.owner)
     self.inst:ListenForEvent("unlockrecipe", function(inst, data) self:UpdateRecipes() end, self.owner)
+    self:DoUpdateRecipes()
+    self:SetScale(base_scale, base_scale, base_scale)
+    self:StartUpdating()
+    
+	self.openhint = self:AddChild(Text(UIFONT, 40))
+	self.openhint:SetPosition(10+150, 430, 0)
+	self.openhint:SetRegionSize(300, 45, 0)
+	self.openhint:SetHAlign(ANCHOR_LEFT)
+
+    self.hint_update_check = HINT_UPDATE_INTERVAL
+    
 end)
 
+
 function CraftTabs:Close()
+	self.crafting:Close()
+	self.controllercrafting:Close()
+
 	self.tabs:DeselectAll()
+	self.controllercraftingopen = false
 end
 
-function CraftTabs:Update(dt)
-	local x = TheInput:GetScreenPosition().x
-	local w,h = TheSim:GetScreenSize()
-	if x > w*.33 then
-		self:Close()
+function CraftTabs:CloseControllerCrafting()
+	if self.controllercraftingopen then
+		self:ScaleTo(selected_scale, base_scale, .15)
+		--self.blackoverlay:Hide()
+		self.controllercraftingopen = false
+		self.tabs:DeselectAll()
+		self.controllercrafting:Close()
+	end
+end
+
+function CraftTabs:OpenControllerCrafting()
+	--self.parent:AddChild(self.controllercrafting)
+	
+	if not self.controllercraftingopen then
+		self:ScaleTo(base_scale, selected_scale, .15)
+		--self.blackoverlay:Show()
+		self.controllercraftingopen = true
+		self.crafting:Close()	
+		self.controllercrafting:Open()	
+	end
+end
+
+function CraftTabs:OnUpdate(dt)
+	
+	self.hint_update_check = self.hint_update_check - dt
+	if 0 > self.hint_update_check then	
+	   	if not TheInput:ControllerAttached() then
+			self.openhint:Hide()
+		else
+			self.openhint:Show()
+		    self.openhint:SetString(TheInput:GetLocalizedControl(TheInput:GetControllerID(), CONTROL_OPEN_CRAFTING))
+		end
+	    self.hint_update_check = HINT_UPDATE_INTERVAL
+	end
+	
+	if self.crafting.open then
+		local x = TheInput:GetScreenPosition().x
+		local w,h = TheSim:GetScreenSize()
+		if x > w*.33 then
+			self.crafting:Close()
+			self.tabs:DeselectAll()
+		end
+
 	end
 
 	if self.needtoupdate then
 		self:DoUpdateRecipes()
 	end
+	
 end
+
+function CraftTabs:OpenTab(idx)
+	return self.tabs:OpenTab(idx)
+end
+
+
+function CraftTabs:GetCurrentIdx()
+	return self.tabs:GetCurrentIdx()
+end
+
+function CraftTabs:GetNextIdx()
+	return self.tabs:GetNextIdx()
+end
+
+function CraftTabs:GetPrevIdx()
+	return self.tabs:GetPrevIdx()
+end
+
 
 function CraftTabs:UpdateRecipes()
     self.needtoupdate = true

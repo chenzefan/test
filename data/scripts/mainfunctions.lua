@@ -1,5 +1,38 @@
+local PopupDialogScreen = require "screens/popupdialog"
+local ScriptErrorScreen = require "screens/scripterrorscreen"
 
 
+function SavePersistentString(name, data, encode, callback)
+	
+	if TheFrontEnd then
+		TheFrontEnd:ShowSavingIndicator()
+		local function cb()
+			TheFrontEnd:HideSavingIndicator()
+			if callback then
+				callback()
+			end
+		end
+		TheSim:SetPersistentString(name, data, encode, cb)
+	else
+		TheSim:SetPersistentString(name, data, encode, callback)
+	end
+end
+
+function ErasePersistentString(name, callback)
+   
+	if TheFrontEnd then
+		TheFrontEnd:ShowSavingIndicator()
+		local function cb()		
+			TheFrontEnd:HideSavingIndicator()
+			if callback then
+				callback()
+			end
+		end
+		TheSim:ErasePersistentString(name, cb)
+	else
+		TheSim:ErasePersistentString(name, callback)
+	end 
+end
 
 function Print( msg_verbosity, ... )
 	if msg_verbosity <= VERBOSITY_LEVEL then
@@ -11,20 +44,23 @@ end
 ---PREFABS AND ENTITY INSTANTIATION
 
 function RegisterPrefabs(...)
-    for i, prefab in ipairs(arg) do
+    for i, prefab in ipairs({...}) do
         --print ("Register " .. tostring(prefab))
 		-- allow mod-relative asset paths
 		for i,asset in ipairs(prefab.assets) do
 			local resolvedpath = resolvefilepath(asset.file)
 			assert(resolvedpath, "Could not find "..asset.file.." required by "..prefab.name)
+			TheSim:OnAssetPathResolve(asset.file, resolvedpath)			
 			asset.file = resolvedpath
 		end
         prefab.modfns = ModManager:GetPostInitFns("PrefabPostInit", prefab.name)
         Prefabs[prefab.name] = prefab
         
-		TheSim:RegisterPrefab(prefab.name, prefab.assets, prefab.deps, prefab.loadimmediate)
+		TheSim:RegisterPrefab(prefab.name, prefab.assets, prefab.deps)
     end
 end
+
+PREFABDEFINITIONS = {}
 
 function LoadPrefabFile( filename )
 	--print("Loading prefab file "..filename)
@@ -40,6 +76,35 @@ function LoadPrefabFile( filename )
 		for i,val in ipairs(ret) do
 			if type(val)=="table" and val.is_a and val:is_a(Prefab) then
 				RegisterPrefabs(val)
+				PREFABDEFINITIONS[val.name] = val
+			end
+		end
+	end
+
+	return ret
+end
+
+function RegisterAchievements(achievements)
+    for i, achievement in ipairs(achievements) do
+        --print ("Registering achievement:", achievement.name, achievement.id.steam, achievement.id.psn)
+        TheGameService:RegisterAchievement(achievement.name, achievement.id.steam, achievement.id.psn)        
+    end
+end
+
+function LoadAchievements( filename )
+	--print("Loading achievement file "..filename)
+    local fn, r = loadfile(filename)
+    assert(fn, "Could not load file ".. filename)
+	if type(fn) == "string" then
+		assert(false, "Error loading file "..filename.."\n"..fn)
+	end
+    assert( type(fn) == "function", "Achievements file doesn't return a callable chunk: "..filename)
+	local ret = {fn()}
+
+	if ret then
+		for i,val in ipairs(ret) do
+			if type(val)=="table" then --and val.is_a and val:is_a(Achievements)then
+				RegisterAchievements(val)
 			end
 		end
 	end
@@ -61,10 +126,6 @@ function SpawnPrefabFromSim(name)
         local inst = prefab.fn(TheSim)
 
         if inst ~= nil then
-
-            if inst.AnimState then
-                inst:AddComponent("highlight")
-            end
 
             inst:SetPrefabName(inst.prefab or name)
 
@@ -166,6 +227,10 @@ function OnRemoveEntity(entityguid)
             UpdatingEnts[entityguid] = nil
             num_updating_ents = num_updating_ents - 1
         end
+
+        if WallUpdatingEnts[entityguid] then
+            WallUpdatingEnts[entityguid] = nil
+        end
     end
 end
 
@@ -242,7 +307,7 @@ function GetDebugString()
 	
 	if debug_entity then
 		table.insert(str, "\n-------DEBUG-ENTITY-----------------------\n")
-		table.insert(str, debug_entity:GetDebugString())
+		table.insert(str, debug_entity.GetDebugString and debug_entity:GetDebugString() or "<no debug string>")
 	end
 	
     return table.concat(str)
@@ -298,15 +363,18 @@ function OnEntityWake(guid)
         if inst.OnEntityWake then
 			inst:OnEntityWake()
         end
-        
-		inst:RestartBrain()
-        if inst.sg then
-            SGManager:Wake(inst.sg)
-        end
 
+        if not inst:IsInLimbo() then
+			inst:RestartBrain()
+			if inst.sg then
+	            SGManager:Wake(inst.sg)
+			end
+		end
+		
 		if inst.emitter then
 			EmitterManager:Wake(inst.emitter)
 		end
+
 
         for k,v in pairs(inst.components) do
             if v.OnEntityWake then
@@ -334,21 +402,32 @@ end
 
 
 
-function IsHUDPaused()
-    return TheSim:GetTimeScale() <= 0
+local paused = false
+local default_time_scale = 1
+
+function IsPaused()
+    return paused
 end
 
 global("PlayerPauseCheck")  -- function not defined when this file included
 
-function SetHUDPause(val,reason)
-    if val ~= IsHUDPaused then
+
+function SetDefaultTimeScale(scale)
+	default_time_scale = scale
+	if not paused then
+		TheSim:SetTimeScale(default_time_scale)
+	end
+end
+
+function SetPause(val,reason)
+    if val ~= paused then
 		if val then
-			Print(VERBOSITY.INFO,"pause")
+			paused = true
 			TheSim:SetTimeScale(0)
 			TheMixer:PushMix("pause")
 		else
-			Print(VERBOSITY.INFO,"unpause")
-			TheSim:SetTimeScale(1)
+			paused = false
+			TheSim:SetTimeScale(default_time_scale)
 			TheMixer:PopMix("pause")
 			--ShowHUD(true)
 		end
@@ -358,6 +437,9 @@ function SetHUDPause(val,reason)
 	end
 end
 
+function IsPaused()
+    return paused
+end
 
 
 --- EXTERNALLY SET GAME SETTINGS ---
@@ -377,7 +459,9 @@ function SetPurchases(purchases)
 end
 
 
-function SaveGame(savename, callback)
+function SaveGame(savename, cb)
+	local callback = function() SaveGameIndex:Save(cb) end
+
     local save = {}
     save.ents = {}
 
@@ -483,7 +567,7 @@ function SaveGame(savename, callback)
     
     
 	local data = DataDumper(save, nil, BRANCH ~= "dev")
-    local insz, outsz = TheSim:SetPersistentString(savename, data, ENCODE_SAVES, callback)
+    local insz, outsz = SavePersistentString(savename, data, ENCODE_SAVES, callback)
     print ("Saved", savename, outsz)
     
     
@@ -521,7 +605,7 @@ function ProcessJsonMessage(message)
     	--print("Sim command", message)
     	if command.sim == 'toggle_pause' then
     		--TheSim:TogglePause()
-			SetHUDPause(not IsHUDPaused())
+			SetPause(not IsPaused())
 		elseif command.sim == 'upsell_closed' then
 			HandleUpsellClose()
 		elseif command.sim == 'quit' then
@@ -542,7 +626,7 @@ end
 
 function UnloadFonts()
 	for k,v in pairs(FONTS) do
-		TheSim:UnloadFont(v.filename)
+		TheSim:UnloadFont(v.alias)
 	end
 end
 
@@ -555,11 +639,13 @@ function Start()
 	TheFrontEnd = FrontEnd()	
 	require ("gamelogic")
 
-    --after starting everything up, give the mods additional environment variables
-    ModManager:SetPostEnv(GetPlayer())
+    if MODS_ENABLED then
+        --after starting everything up, give the mods additional environment variables
+        ModManager:SetPostEnv(GetPlayer())
 
-	--By this point the game should have either a) disabled bad mods, or b) be interactive
-	KnownModIndex:EndStartupSequence(nil) -- no callback, this doesn't need to block and we don't need the results
+	    --By this point the game should have either a) disabled bad mods, or b) be interactive
+	    KnownModIndex:EndStartupSequence(nil) -- no callback, this doesn't need to block and we don't need the results
+	end
 
 	--If we collected a non-fatal error during startup, display it now!
 	for i,err in ipairs(PendingErrors) do
@@ -575,8 +661,9 @@ exiting_game = false
 
 -- Gets called ONCE when the sim first gets created. Does not get called on subsequent sim recreations!
 function GlobalInit()
-	TheSim:ForceLoadPrefabs({"global"})
+	TheSim:LoadPrefabs({"global"})
 	LoadFonts()
+	TheSim:SendHardwareStats()
 end
 
 function StartNextInstance(in_params, send_stats)
@@ -587,12 +674,19 @@ function StartNextInstance(in_params, send_stats)
 		SendAccumulatedProfileStats()
 	end
 	
+	if LOADED_CHARACTER then 
+		if GetPlayer() and GetPlayer().components.talker then -- Make sure talker shuts down before we unload the character
+			GetPlayer().components.talker:ShutUp()
+		end
+		TheSim:UnloadPrefabs(LOADED_CHARACTER) 
+	end   	
+
 	SimReset(params)
 end
 
 function SimReset(instanceparameters)
 
-	ModManager:ForceUnloadPrefabs()
+	ModManager:UnloadPrefabs()
 
 	if not instanceparameters then
 		instanceparameters = {}
@@ -637,15 +731,9 @@ function Shutdown()
 	for i,file in ipairs(PREFABFILES) do -- required from prefablist.lua
 		LoadPrefabFile("prefabs/"..file)
 	end	
-	
-	TheSim:ForceUnloadPrefabs({"global"})
-	TheSim:ForceUnloadPrefabs(FRONTEND_PREFABS)
-	TheSim:ForceUnloadPrefabs(BACKEND_PREFABS)
-	TheSim:ForceUnloadPrefabs(RECIPE_PREFABS)
-	if LOADED_CHARACTER ~= nil then
-		TheSim:ForceUnloadPrefabs(LOADED_CHARACTER)
-	end
-	ModManager:ForceUnloadPrefabs()
+
+	TheSim:UnloadAllPrefabs()
+	ModManager:UnloadPrefabs()
 		
 	TheSim:Quit()
 end
@@ -659,12 +747,10 @@ function DisplayError(error)
 		return
 	end
 
-    SetHUDPause(true,"DisplayError")
+    SetPause(true,"DisplayError")
     if TheFrontEnd:IsDisplayingError() then
         return nil
     end
-
-	KnownModIndex:HadACrash()
 
     local modnames = ModManager:GetEnabledModNames()
 
@@ -707,3 +793,18 @@ function DisplayError(error)
                 ))
     end
 end
+
+function SetPauseFromCode(pause)
+    if pause then
+        if inGamePlay and not IsPaused() then
+			local PauseScreen = require "screens/pausescreen"
+            TheFrontEnd:PushScreen(PauseScreen())
+        end
+    end
+end
+
+function InGamePlay()
+	return inGamePlay
+end
+
+require("dlcsupport")

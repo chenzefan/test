@@ -2,6 +2,7 @@ local groundtiles = require "worldtiledefs"
 
 local common_prefabs =
 {
+    "minimap",
 	"evergreen",
     "evergreen_normal",
     "evergreen_short",
@@ -47,6 +48,7 @@ local common_prefabs =
     "spiderden",
     "spawnpoint",
     "fireflies",
+
     "turf_road",
     "turf_rocky",
     "turf_marsh",
@@ -59,6 +61,7 @@ local common_prefabs =
     "turf_sinkhole",
     "turf_underrock",
     "turf_mud",
+    
     "skeleton",
 	"insanityrock",
 	"sanityrock",
@@ -110,6 +113,10 @@ end
 function PlayCreatureSound(inst, sound, creature)
     local creature = creature or inst.soundgroup or inst.prefab
     inst.SoundEmitter:PlaySound("dontstarve/creatures/" .. creature .. "/" .. sound)
+end
+
+function onremove(inst)
+    inst.minimap:Remove()
 end
 
 local function fn(Sim)
@@ -164,13 +171,18 @@ local function fn(Sim)
     map:SetImpassableType( GROUND.IMPASSABLE )
 
 	--common stuff
-	inst:AddComponent("clock")
-	
-	inst:AddComponent("groundcreep")
-	inst:AddComponent("ambientsoundmixer")
-	inst:AddComponent("age")
-
 	inst.IsCave = function() return inst:HasTag("cave") end
+	inst.IsRuins = function() return inst:HasTag("cave") and inst:HasTag("ruin") end
+    
+    --clock is now added at the sub-prefab level (forest.lua, cave.lua)
+    
+    inst:AddComponent("groundcreep")
+    inst:AddComponent("ambientsoundmixer")
+    inst:AddComponent("age")
+
+    inst.minimap = SpawnPrefab("minimap")
+
+    inst.OnRemoveEntity = onremove
 
     return inst
 end

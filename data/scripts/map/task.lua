@@ -22,6 +22,8 @@ Task = Class(function(self, id, data)
 	self.background_room = data.background_room
 	self.colour = data.colour
 	self.maze_tiles = data.maze_tiles
+	self.crosslink_factor = data.crosslink_factor
+	self.make_loop = data.make_loop
 end)
 
 

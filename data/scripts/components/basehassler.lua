@@ -13,12 +13,14 @@ local BaseHassler = Class(function(self, inst)
 	self.attackdelay = nil
 	self.attackrandom = nil
 	
-	self.inst:ListenForEvent("snowcoverchange", function(inst, data)
-	    if data and data.snow >= 0.2 then 
+	self.inst:ListenForEvent("snowcoverchange", function(inst)
+		local snow_cover = GetSeasonManager() and GetSeasonManager():GetSnowPercent() or 0
+
+	    if snow_cover >= 0.2 then 
 	        if not self.timetoattack then
 	            self:StartAttacks()
 	        end
-	    elseif data and data.snow <= 0 and self.attackduringsummer and not self.timetoattack then
+	    elseif snow_cover <= 0 and self.attackduringsummer and not self.timetoattack then
             self:StartAttacks()
         else
             self:CeaseAttacks()
@@ -236,6 +238,18 @@ function BaseHassler:ReleaseHassler()
 		        hassler.components.combat:SetTarget(GetPlayer())
 		    end
 		end
+	end
+end
+
+function BaseHassler:OverrideAttacksPerSeason(name, num)
+	if name == "DEERCLOPS" then
+		self.attacksperwinter = num
+	end
+end
+
+function BaseHassler:OverrideAttackDuringOffSeason(name, bool)
+	if name == "DEERCLOPS" then
+		self.attackduringsummer = bool
 	end
 end
 

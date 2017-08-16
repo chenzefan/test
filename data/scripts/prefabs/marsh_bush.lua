@@ -25,7 +25,7 @@ local function onpickedfn(inst, picker)
 	inst.AnimState:PlayAnimation("picking") 
 	inst.AnimState:PushAnimation("picked", false)
 	if picker.components.combat then
-        picker.components.combat:GetAttacked(nil, TUNING.MARSHBUSH_DAMAGE)
+        picker.components.combat:GetAttacked(inst, TUNING.MARSHBUSH_DAMAGE)
         picker:PushEvent("thorns")
 	end
 end

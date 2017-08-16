@@ -12,6 +12,14 @@ local prefabs =
 	"krampus_sack",
 }
 
+SetSharedLootTable( 'krampus',
+{
+    {'monstermeat',  1.0},
+    {'charcoal',     1.0},
+    {'charcoal',     1.0},
+    {'krampus_sack', .01},
+})
+
 local function makebagfull(inst)
 	inst.AnimState:Show("SACK")
 	inst.AnimState:Hide("ARM")
@@ -54,6 +62,7 @@ local function fn(Sim)
     inst:SetStateGraph("SGkrampus")
 
     inst:AddTag("monster")
+    inst:AddTag("hostile")
 
     local brain = require "brains/krampusbrain"
     inst:SetBrain(brain)
@@ -76,8 +85,7 @@ local function fn(Sim)
     inst.components.combat:SetAttackPeriod(TUNING.KRAMPUS_ATTACK_PERIOD)
 
     inst:AddComponent("lootdropper")
-    inst.components.lootdropper:SetLoot({"monstermeat","charcoal","charcoal"})
-    inst.components.lootdropper:AddChanceLoot("krampus_sack", .01)
+    inst.components.lootdropper:SetChanceLootTable('krampus')
     
     inst:AddComponent("inspectable")
 	inst.components.inspectable:RecordViews()

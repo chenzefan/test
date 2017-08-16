@@ -121,17 +121,18 @@ function WalrusBrain:OnStart()
     {
         WhileNode( function() return self.inst.components.health.takingfiredamage end, "OnFire", Panic(self.inst)),
 
+        Leash(self.inst, GetNoLeaderLeashPos, LEASH_MAX_DIST, LEASH_RETURN_DIST),
+
         RunAway(self.inst, ShouldRunAway, RUN_START_DIST, RUN_STOP_DIST),
         WhileNode(function() return ShouldGoHomeScared(self.inst) end, "ShouldGoHomeScared", DoAction(self.inst, GoHomeAction, "Go Home Scared", true)),
+
+        Follow(self.inst, GetLeader, MIN_FOLLOW_LEADER, TARGET_FOLLOW_LEADER, MAX_FOLLOW_LEADER, false),
 
         WhileNode(function() return CanAttackNow(self.inst) end, "AttackMomentarily", ChaseAndAttack(self.inst, MAX_CHASE_TIME) ),
         Follow(self.inst, function() return self.inst.components.combat.target end, MIN_FOLLOW_DIST, TARGET_FOLLOW_DIST, MAX_FOLLOW_DIST, true),
 
         WhileNode(function() return ShouldGoHomeAtNight(self.inst) end, "ShouldGoHomeAtNight", DoAction(self.inst, GoHomeAction, "Go Home Night" )),
 
-        Follow(self.inst, GetLeader, MIN_FOLLOW_LEADER, TARGET_FOLLOW_LEADER, MAX_FOLLOW_LEADER, false),
-
-        Leash(self.inst, GetNoLeaderLeashPos, LEASH_MAX_DIST, LEASH_RETURN_DIST),
         Follow(self.inst, GetNoLeaderFollowTarget, MIN_FOLLOW_DIST, TARGET_FOLLOW_DIST, MAX_FOLLOW_DIST, false),
 
         DoAction(self.inst, EatFoodAction, "Eat Food"),

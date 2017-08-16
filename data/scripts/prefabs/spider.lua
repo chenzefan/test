@@ -132,6 +132,7 @@ local function create_common(Sim)
     ----------
     
     inst:AddTag("monster")
+    inst:AddTag("hostile")
 	inst:AddTag("scarytoprey")    
     inst:AddTag("canbetrapped")    
     
@@ -222,6 +223,7 @@ local function create_spider(Sim)
     inst.components.combat:SetDefaultDamage(TUNING.SPIDER_DAMAGE)
     inst.components.combat:SetAttackPeriod(TUNING.SPIDER_ATTACK_PERIOD)
     inst.components.combat:SetRetargetFunction(1, NormalRetarget)
+    inst.components.combat:SetHurtSound("dontstarve/creatures/spider/hit_response")
 
     inst.components.locomotor.walkspeed = TUNING.SPIDER_WALK_SPEED
     inst.components.locomotor.runspeed = TUNING.SPIDER_RUN_SPEED
@@ -242,6 +244,7 @@ local function create_warrior(Sim)
     inst.components.combat:SetAttackPeriod(TUNING.SPIDER_WARRIOR_ATTACK_PERIOD + math.random()*2)
     inst.components.combat:SetRange(TUNING.SPIDER_WARRIOR_ATTACK_RANGE, TUNING.SPIDER_WARRIOR_HIT_RANGE)
     inst.components.combat:SetRetargetFunction(2, WarriorRetarget)
+    inst.components.combat:SetHurtSound("dontstarve/creatures/spiderwarrior/hit_response")
     
     inst.components.locomotor.walkspeed = TUNING.SPIDER_WARRIOR_WALK_SPEED
     inst.components.locomotor.runspeed = TUNING.SPIDER_WARRIOR_RUN_SPEED

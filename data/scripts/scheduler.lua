@@ -37,25 +37,38 @@ function Task:SetList(list)
 end
 
 -------------------------------
-Periodic = Class(function(self, fn, period, limit, ...)
+Periodic = Class(function(self, fn, period, limit, id, ...)
     self.fn = fn
+    self.id = id
     self.period = period
     self.limit = limit
     self.list = nil
     self.onfinish = nil
-    self.arg = arg
+    
+    if ... then
+        self.arg = {...}
+    end
+
 end)
 
 function Periodic:Cancel()
+    
     self.limit = 0
     if self.list then
         self.list[self] = nil
     end
     
     if self.onfinish then
-        self.onfinish(false)
+        if self.arg then
+			self.onfinish(self, false, unpack(self.arg))
+		else
+			self.onfinish(self, false)
+		end
+        self.onfinish = nil
     end
     
+	self.fn = nil
+    self.arg = nil
 end
 
 function Periodic:__tostring()
@@ -153,7 +166,11 @@ function Scheduler:OnTick(tick)
                 local already_dead = k.limit and k.limit == 0
                     
                 if not already_dead and k.fn then
-                    k.fn(unpack(k.arg))
+                    if k.arg then
+                        k.fn(unpack(k.arg))
+                    else
+                        k.fn()
+                    end
                 end
                 
                 if k.limit then
@@ -166,7 +183,12 @@ function Scheduler:OnTick(tick)
                     k.list = list
                 else
                     if k.onfinish and not already_dead then
-                        k.onfinish(true)
+						if k.arg then
+							k.onfinish(k, true, unpack(k.arg))
+						else
+							k.onfinish(k, true)
+						end
+						k.onfinish = nil
                     end
                 end
             end
@@ -243,8 +265,8 @@ local function removeif(tab, fn)
     end
 end
 
-function Scheduler:ExecuteInTime(timefromnow, fn, ...)
-    return self:ExecutePeriodic(timefromnow, fn, 1, nil, ...)
+function Scheduler:ExecuteInTime(timefromnow, fn, id, ...)
+    return self:ExecutePeriodic(timefromnow, fn, 1, nil, id, ...)
 end
 
 function Scheduler:GetListForTimeFromNow(dt)
@@ -262,9 +284,8 @@ function Scheduler:GetListForTimeFromNow(dt)
     return list
 end
 
-function Scheduler:ExecutePeriodic(period, fn, limit, initialdelay, ...)
-    local periodic = Periodic(fn, period, limit, ...)
-
+function Scheduler:ExecutePeriodic(period, fn, limit, initialdelay, id, ...)
+    local periodic = Periodic(fn, period, limit, id, ...)
     local list = self:GetListForTimeFromNow(initialdelay or period)
     list[periodic] = true
     periodic.list = list

@@ -6,7 +6,7 @@ local AreaAwareness = Class(function(self, inst)
 end)
 
 function AreaAwareness:UpdatePosition()
-	self.checkpositiontask = self.inst:DoTaskInTime(self.checkinterval, function() self:UpdatePosition() end)    
+	--self.checkpositiontask = self.inst:DoTaskInTime(self.checkinterval, function() self:UpdatePosition() end)    
 
 	local pos = Vector3(self.inst.Transform:GetWorldPosition())
     local ground = GetWorld()  
@@ -32,11 +32,11 @@ function AreaAwareness:GetDebugString()
 end
 
 function AreaAwareness:StartCheckingPosition(checkinterval)    
-	self.checkpositiontask = self.inst:DoTaskInTime(checkinterval or self.checkinterval, function() self:UpdatePosition() end)
+	self.checkpositiontask = self.inst:DoPeriodicTask(checkinterval or self.checkinterval, function() self:UpdatePosition() end)
 end
 
 function AreaAwareness:RegisterArea(node)
-	table.insert(self.areas, {idx=node.idx, type=node.type, poly=node.poly, story=node.story, story_depth=node.story_depth})
+	table.insert(self.areas, {idx=node.idx, type=node.type, poly=node.poly, story=node.story, story_depth=node.story_depth, cent=node.cent})
 end
 
 return AreaAwareness

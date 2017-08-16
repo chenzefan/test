@@ -56,7 +56,7 @@ function Leader:AddFollower(follower)
     if self.followers[follower] == nil and follower.components.follower then
         self.followers[follower] = true
         self.numfollowers = self.numfollowers + 1
-        follower.components.follower.leader = self.inst
+        follower.components.follower:SetLeader(self.inst)
         follower:PushEvent("startfollowing", {leader = self.inst} )
         
         self.inst:ListenForEvent("death", function(inst, data) self:RemoveFollower(follower) end, follower)

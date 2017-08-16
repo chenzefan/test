@@ -23,6 +23,8 @@ local function fn(Sim)
     inst:AddComponent("stackable")
 	inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM
 
+    inst:AddComponent("selfstacker")
+
     inst:AddComponent("fuel")
     inst.components.fuel.fuelvalue = TUNING.SMALL_FUEL
     MakeSmallBurnable(inst, TUNING.SMALL_BURNTIME)

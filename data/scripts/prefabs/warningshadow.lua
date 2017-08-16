@@ -10,7 +10,7 @@ local function fn()
 	
     anim:SetBank("warning_shadow")
     anim:SetBuild("warning_shadow")
-    anim:PlayAnimation("idle")
+    anim:PlayAnimation("idle", true)
     anim:SetFinalOffset(-1)
     inst.persists = false
     inst:AddTag("fx")

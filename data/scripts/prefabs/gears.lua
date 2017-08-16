@@ -29,7 +29,7 @@ local function fn(Sim)
 
 	inst:AddComponent("repairer")
 	inst.components.repairer.repairmaterial = "gears"
-	inst.components.repairer.value = TUNING.REPAIR_GEARS
+	inst.components.repairer.workrepairvalue = TUNING.REPAIR_GEARS_WORK
     
     return inst
 end

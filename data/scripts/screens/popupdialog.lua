@@ -7,8 +7,7 @@ local Image = require "widgets/image"
 local UIAnim = require "widgets/uianim"
 local Widget = require "widgets/widget"
 
-
-PopupDialogScreen = Class(Screen, function(self, title, text, buttons)
+local PopupDialogScreen = Class(Screen, function(self, title, text, buttons)
 	Screen._ctor(self, "PopupDialogScreen")
 
 	--darken everything behind the dialog
@@ -38,26 +37,32 @@ PopupDialogScreen = Class(Screen, function(self, title, text, buttons)
 	
 	--title	
     self.title = self.proot:AddChild(Text(TITLEFONT, 50))
-    self.title:SetPosition(0, 65, 0)
+    self.title:SetPosition(0, 70, 0)
     self.title:SetString(title)
 
 	--text
-    self.text = self.proot:AddChild(Text(BODYTEXTFONT, 30))
+    self.text = self.proot:AddChild(Text(BODYTEXTFONT, 25))
 
-    self.text:SetPosition(0, 0, 0)
+    self.text:SetPosition(0, 5, 0)
     self.text:SetString(text)
     self.text:EnableWordWrap(true)
-    self.text:SetRegionSize(480, 70)
+    self.text:SetRegionSize(500, 80)
   
     local spacing = 200
 
 	self.menu = self.proot:AddChild(Menu(buttons, spacing, true))
-	self.menu:SetPosition(-(spacing*(#buttons-1))/2, -65, 0) 
+	self.menu:SetPosition(-(spacing*(#buttons-1))/2, -70, 0) 
 	self.buttons = buttons
 	self.default_focus = self.menu
 end)
 
+function PopupDialogScreen:SetTitleTextSize(size)
+	self.title:SetSize(size)
+end
 
+function PopupDialogScreen:SetButtonTextSize(size)
+	self.menu:SetTextSize(size)
+end
 
 function PopupDialogScreen:OnControl(control, down)
     if PopupDialogScreen._base.OnControl(self,control, down) then return true end
@@ -74,3 +79,14 @@ end
 function PopupDialogScreen:Close()
 	TheFrontEnd:PopScreen(self)
 end
+
+function PopupDialogScreen:GetHelpText()
+	local controller_id = TheInput:GetControllerID()
+	local t = {}
+	if #self.buttons > 1 and self.buttons[#self.buttons] then
+        table.insert(t, TheInput:GetLocalizedControl(controller_id, CONTROL_CANCEL) .. " " .. STRINGS.UI.HELP.BACK)	
+    end
+	return table.concat(t, "  ")
+end
+
+return PopupDialogScreen

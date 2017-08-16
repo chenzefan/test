@@ -16,7 +16,11 @@ local function onkilledbyother(inst, attacker)
 	end
 end
 
-local loot = {"nightmarefuel"}
+SetSharedLootTable( 'shadow_creature',
+{
+    {'nightmarefuel',  1.0},
+    {'nightmarefuel',  0.5},
+})
 
 local function CalcSanityAura(inst, observer)
 	if inst.components.combat.target then
@@ -27,7 +31,7 @@ end
 
 local function canbeattackedfn(inst, attacker)
 	return inst.components.combat.target ~= nil or
-		(attacker.components.sanity and attacker.components.sanity:IsCrazy())
+		(attacker and attacker.components.sanity and attacker.components.sanity:IsCrazy())
 end
 
 local function OnAttacked(inst, data)
@@ -82,7 +86,9 @@ local function MakeShadowCreature(data)
         inst:SetStateGraph("SGshadowcreature")
 
         inst:AddTag("monster")
+	    inst:AddTag("hostile")
         inst:AddTag("shadow")
+        inst:AddTag("notraptrigger")
 
         local brain = require "brains/shadowcreaturebrain"
         inst:SetBrain(brain)
@@ -104,8 +110,7 @@ local function MakeShadowCreature(data)
         inst.components.combat.canbeattackedfn = canbeattackedfn
 
         inst:AddComponent("lootdropper")
-        inst.components.lootdropper:SetLoot(loot)
-        inst.components.lootdropper:AddChanceLoot("nightmarefuel", 0.5)
+        inst.components.lootdropper:SetChanceLootTable('shadow_creature')
         
         inst:ListenForEvent("attacked", OnAttacked)
 

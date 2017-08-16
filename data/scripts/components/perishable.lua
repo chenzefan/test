@@ -15,18 +15,13 @@ end)
 local function Update(inst, dt)
     if inst.components.perishable then
 		
-		if inst.components.perishable.updatetask then
-			inst.components.perishable.updatetask:Cancel()
-		end
-		
-		inst.components.perishable.updatetask = nil
-		
-		
 		local modifier = 1
 		local owner = inst.components.inventoryitem and inst.components.inventoryitem.owner or nil
 		if owner then
 			if owner:HasTag("fridge") then
 				modifier = TUNING.PERISH_FRIDGE_MULT 
+			elseif owner:HasTag("spoiler") then
+				modifier = TUNING.PERISH_GROUND_MULT 
 			end
 		else
 			modifier = TUNING.PERISH_GROUND_MULT 
@@ -35,11 +30,8 @@ local function Update(inst, dt)
 		if GetSeasonManager() and GetSeasonManager():GetCurrentTemperature() < 0 then
 			modifier = modifier * TUNING.PERISH_WINTER_MULT
 		end
-		
 
 		modifier = modifier * TUNING.PERISH_GLOBAL_MULT
-
-
 		
 		local old_val = inst.components.perishable.perishremainingtime
 		inst.components.perishable.perishremainingtime = inst.components.perishable.perishremainingtime - dt*modifier
@@ -48,9 +40,7 @@ local function Update(inst, dt)
 	    end
         
         --trigger the next callback
-        if inst.components.perishable.perishremainingtime > 0 then
-			inst.components.perishable:StartPerishing()
-        else
+        if inst.components.perishable.perishremainingtime <= 0 then
 			inst.components.perishable:Perish()
         end
     end
@@ -136,16 +126,21 @@ function Perishable:StartPerishing()
 		self.updatetask = nil
 	end
 
-    local dt = math.min( self.perishtime / 100, 3)
+    local dt = 10 + math.random()*FRAMES*8--math.max( 4, math.min( self.perishtime / 100, 10)) + ( math.random()* FRAMES * 8)
 
     if dt > 0 then
-        self.updatetask = self.inst:DoTaskInTime(dt, Update, dt)
+        self.updatetask = self.inst:DoPeriodicTask(dt, Update, math.random()*2, dt)
     else
         Update(self.inst, 0)
     end
 end
 
 function Perishable:Perish()
+    
+	if self.updatetask then
+		self.updatetask:Cancel()
+		self.updatetask = nil
+	end
     
     if self.perishfn then
         self.perishfn(self.inst)

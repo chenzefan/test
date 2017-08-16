@@ -30,7 +30,7 @@ function Armor:SetTags(tags)
     self.tags = tags
 end
 
-function Armor:SetAbsorbtion(absorb_percent)
+function Armor:SetAbsorption(absorb_percent)
     self.absorb_percent = absorb_percent
 end
 
@@ -46,7 +46,11 @@ function Armor:SetCondition(amount)
         self.condition = 0
         ProfileStatsSet("armor_broke_" .. self.inst.prefab, true)
         ProfileStatsSet("armor", self.inst.prefab)
-        FightStat_BrokenArmor(self.inst.prefab)
+        
+        if METRICS_ENABLED then
+			FightStat_BrokenArmor(self.inst.prefab)
+		end
+		
         if self.onfinished then
             self.onfinished()
         end
@@ -91,11 +95,19 @@ function Armor:TakeDamage(damage_amount, attacker, weapon)
         local absorbed = math.floor(math.min(max_absorbed, self.condition))
         leftover = damage_amount - absorbed
         ProfileStatsAdd("armor_absorb", absorbed)
-        FightStat_Absorb(absorbed)
+        
+        if METRICS_ENABLED then
+			FightStat_Absorb(absorbed)
+		end
         self:SetCondition(self.condition - absorbed)
 		if self.ontakedamage then
 			self.ontakedamage(self.inst, damage_amount, absorbed, leftover)
 		end
+
+        if self.absorb_percent >= 1 then
+            return 0
+        end
+
         return leftover
     else
         return damage_amount

@@ -6,6 +6,7 @@ local Workable = Class(function(self, inst)
     self.workleft = 10
     self.maxwork = -1
     self.savestate = false
+    self.destroyed = false
 end)
 
 function Workable:GetDebugString()
@@ -19,6 +20,13 @@ end
 
 function Workable:SetWorkAction(act)
     self.action = act
+end
+
+function Workable:Destroy(destroyer)
+    if not self.destroyed then
+        self:WorkedBy(destroyer, self.workleft)
+        self.destroyed = true
+    end
 end
 
 function Workable:SetWorkLeft(work)

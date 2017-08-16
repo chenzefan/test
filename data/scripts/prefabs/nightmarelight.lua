@@ -46,18 +46,14 @@ local states =
         inst.SoundEmitter:KillSound("warnLP")
         inst.SoundEmitter:KillSound("nightmareLP")
 
-        spawnfx(inst)
-
         inst.Light:Enable(true)
 
         inst.components.lighttweener:StartTween(nil, 0, nil, nil, nil, (instant and 0) or 1, turnoff) 
         
         if not instant then
-            inst.AnimState:PlayAnimation("close_1")
             inst.AnimState:PushAnimation("close_2") 
             inst.AnimState:PushAnimation("idle_closed")
 
-            inst.fx.AnimState:PlayAnimation("close_1")
             inst.fx.AnimState:PushAnimation("close_2") 
             inst.fx.AnimState:PushAnimation("idle_closed")
             inst.SoundEmitter:PlaySound("dontstarve/cave/nightmare_spawner_close")
@@ -75,8 +71,6 @@ local states =
 
     warn = function(inst, instant)
 
-        spawnfx(inst)
-
         inst.Light:Enable(true)
 
         inst.components.lighttweener:StartTween(nil, 3, nil, nil, nil, (instant and 0) or  0.5)
@@ -91,8 +85,6 @@ local states =
 
         inst.SoundEmitter:KillSound("warnLP")
         inst.SoundEmitter:PlaySound("dontstarve/cave/nightmare_spawner_open_LP", "nightmareLP")
-
-        spawnfx(inst)
 
         inst.Light:Enable(true)
 
@@ -115,9 +107,28 @@ local states =
             inst.components.childspawner:StopRegen()
         end 
     end,
+
+
+    dawn = function(inst, instant)
+
+        inst.SoundEmitter:KillSound("nightmareLP")
+        inst.Light:Enable(true)
+        inst.components.lighttweener:StartTween(nil, 3, nil, nil, nil, (instant and 0) or 0.5)
+        inst.SoundEmitter:PlaySound("dontstarve/cave/nightmare_spawner_close")
+        inst.SoundEmitter:KillSound("nightmareLP")
+        inst.SoundEmitter:PlaySound("dontstarve/cave/nightmare_spawner_open_LP", "nightmareLP")
+
+        inst.AnimState:PlayAnimation("close_1")
+        inst.fx.AnimState:PlayAnimation("close_1")
+       
+        inst.SoundEmitter:PlaySound("dontstarve/cave/nightmare_spawner_open")
+
+        if inst.components.childspawner then
+            inst.components.childspawner:StartSpawning()
+            inst.components.childspawner:StopRegen()
+        end 
+    end
 }
-
-
 
 
 local function onsave(inst, data)
@@ -131,7 +142,8 @@ local function onload(inst, data)
         return
     end
     if data.rockstate then
-        inst.rockstate = data.rockstate
+        inst.rockstate = data.rockstate        
+        spawnfx(inst)
         states[inst.rockstate](inst, true)
     end
 end
@@ -150,6 +162,7 @@ local function changestate(inst, data)
     local statefn = states[data.newphase]
 
     if statefn then
+        spawnfx(inst)
         inst.rockstate = data.newphase
         inst:DoTaskInTime(math.random() * 2, statefn)
     end

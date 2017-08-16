@@ -22,7 +22,7 @@ return {
 	ANNOUNCE_COLD = "So Cold!",
 	ANNOUNCE_CRAFTING_FAIL = "I don't have all of the ingredients.",
 	ANNOUNCE_DEERCLOPS = "That sounded big!",
-	ANNOUNCE_DUSK = "It's getting late. I need to make a fire.",
+	ANNOUNCE_DUSK = "It's getting late. It will be dark soon.",
 	ANNOUNCE_EAT =
 	{
 		GENERIC = "Yum!",
@@ -44,17 +44,20 @@ return {
 	ANNOUNCE_MOSQUITOS = "Aaah! Bug off!",
 	ANNOUNCE_NODANGERSLEEP = "It's too dangerous right now!",
 	ANNOUNCE_NODAYSLEEP = "It's too bright out.",
+	ANNOUNCE_NODAYSLEEP_CAVE = "I'm not tired.",
 	ANNOUNCE_NOHUNGERSLEEP = "I'm too hungry to sleep, the growling will keep me up!",
 	ANNOUNCE_NO_TRAP = "Well, that was easy.",
 	ANNOUNCE_PECKED = "Ow! Quit it!",
 	ANNOUNCE_QUAKE = "That doesn't sound good.",
 	ANNOUNCE_RESEARCH = "Never stop learning!",
 	ANNOUNCE_THORNS = "Ow!",
-	ANNOUNCE_TORCH_OUT = "My torch just ran out!",
+	ANNOUNCE_TORCH_OUT = "My light just ran out!",
 	ANNOUNCE_TRAP_WENT_OFF = "Oops.",
 	ANNOUNCE_UNIMPLEMENTED = "OW! I don't think it's ready yet.",
 	ANNOUNCE_WORMHOLE = "That was not a sane thing to do.",
-	ANNOUNCE_CANFIX = "\nI think I could fix this!",
+	ANNOUNCE_CANFIX = "\nI think I can fix this!",
+	ANNOUNCE_ACCOMPLISHMENT = "I feel so accomplished!",
+	ANNOUNCE_ACCOMPLISHMENT_DONE = "If only my friends could see me now...",	
 	BATTLECRY =
 	{
 		GENERIC = "Go for the eyes!",
@@ -73,10 +76,30 @@ return {
 	},
 	DESCRIBE =
 	{
+		WORMLIGHT = "Looks delicious.",
+		WORM =
+		{
+		    PLANT = "Seems safe to me.",
+		    DIRT = "Just looks like a pile of dirt.",
+		    WORM = "It's a worm!",
+		},
+
+		EEL = "This will make a delicious meal.",
+		EEL_COOKED = "Smells great!",
+		UNAGI = "I cooked it myself!",
+		EYETURRET = "I hope it doesn't turn on me.",
+		EYETURRET_ITEM = "I think it's sleeping.",
+		MINOTAURHORN = "Wow! I'm glad that didn't gore me!",
+		MINOTAURCHEST = "It may contain a bigger something fantastic! Or horrible.",
+		THULECITE_PIECES = "It's some smaller chunks of Thulecite.",
+		POND_ALGAE = "Some algae by a pond.",
+		GREENSTAFF = "This will come in handy.",
+		POTTEDFERN = "A fern in a pot.",
 
 		THULECITE = "I wonder where this is from?",
 		ARMORRUINS = "It's oddly light.",
 		RUINS_BAT = "It has quite a heft to it.",
+		RUINSHAT = "Fit for a king. Or me.",
 		NIGHTMARE_TIMEPIECE =
 		{
 		CALM = "All is well.",
@@ -196,10 +219,23 @@ return {
 		STALAGMITE_TALL_FULL="Rocks, rocks, rocks, rocks...",
 		STALAGMITE_TALL_LOW="Rocks, rocks, rocks, rocks...",
 		STALAGMITE_TALL_MED="Rocks, rocks, rocks, rocks...",
+
+		TURF_CARPETFLOOR = "Yet another ground type.",
+		TURF_CHECKERFLOOR = "Yet another ground type.",
+		TURF_DIRT = "Yet another ground type.",
+		TURF_FOREST = "Yet another ground type.",
+		TURF_GRASS = "Yet another ground type.",
+		TURF_MARSH = "Yet another ground type.",
+		TURF_ROAD = "Yet another ground type.",
+		TURF_ROCKY = "Yet another ground type.",
+		TURF_SAVANNA = "Yet another ground type.",
+		TURF_WOODFLOOR = "Yet another ground type.",
+
+		TURF_CAVE="Yet another ground type.",
 		TURF_FUNGUS="Yet another ground type.",
-		TURF_MUD="Yet another ground type.",
 		TURF_SINKHOLE="Yet another ground type.",
-		TURF_UNDERROCK="Yet another ground type.",	
+		TURF_UNDERROCK="Yet another ground type.",
+		TURF_MUD="Yet another ground type.",
 
 		POWCAKE = "I don't know if I'm hungry enough.",
         CAVE_ENTRANCE = 
@@ -279,6 +315,7 @@ return {
 		BISHOP = "Back off, preacherman!",
 		BLOWDART_FIRE = "This seems fundamentally unsafe.",
 		BLOWDART_SLEEP = "Just don't breathe in.",
+		BLOWDART_PIPE = "Good practice for my birthday cake!",
 		BLUEAMULET = "Cool as ice!",
 		BLUEGEM = "It sparkles with cold energy.",
 		BLUEPRINT = "It's scientific!",
@@ -350,6 +387,7 @@ return {
 		CUTGRASS = "Cut grass, ready for arts and crafts.",
 		CUTREEDS = "Cut reeds, ready for crafting and hobbying.",
 		CUTSTONE = "I've made them seductively smooth.",
+		DEADLYFEAST = "A most potent dish.",
 		DEERCLOPS = "It's enormous!!",
 		DEERCLOPS_EYEBALL = "This is really gross.",
 		DEPLETED_GRASS =
@@ -433,6 +471,7 @@ return {
 			OUT = "At least I can start it up again.",
 		},
 		FIRESTAFF = "I don't want to set the world on fire.",
+
 		FISH = "Now I shall eat for a day.",
 		FISHINGROD = "Hook, line and stick!",
 		FISHSTICKS = "I cooked it myself!",
@@ -578,7 +617,7 @@ return {
 		MERMHOUSE = "Who would live here?",
 		MINERHAT = "This will keep my hands free.",
 		MONKEY = "Curious little guy.",
-		MONKEYBARREL = "Did that barrel just move?",
+		MONKEYBARREL = "Did that just move?",
 		MONSTERLASAGNA = "I cooked it myself!",
 		MONSTERMEAT = "Ugh. I don't think I should eat that.",
 		MONSTERMEAT_DRIED = "Strange-smelling jerky.",
@@ -587,6 +626,7 @@ return {
 			GENERIC = "Disgusting little bloodsucker.",
 			HELD = "Hey, is that my blood?",
 		},
+		MOSQUITOSACK = "It's probably not someone else's blood...",
 		MOUND =
 		{
 			DUG = "I should probably feel bad about that.",
@@ -647,7 +687,7 @@ return {
 		POOP = "I should fill my pockets!",
 		PUMPKIN = "It's as big as my head!",
 		PUMPKINCOOKIE = "I cooked it myself!",
-		PUMPKIN_COOKED = "How did it turn into a pie...",
+		PUMPKIN_COOKED = "How did it not turn into a pie?",
 		PUMPKIN_LANTERN = "Spooky!",
 		PUMPKIN_SEEDS = "It's a seed.",
 		PURPLEAMULET = "It's whispering to me.",
@@ -763,6 +803,7 @@ return {
 		STRAWHAT = "What a nice hat.",
 		STUFFEDEGGPLANT = "I cooked it myself!",
 		SUNKBOAT = "It's no use to me out there!",
+		SWEATERVEST = "This vest is dapper as all get-out.",
 		TAFFY = "I cooked it myself!",
 		TALLBIRD = "That's a tall bird!",
 		TALLBIRDEGG = "Will it hatch?",
@@ -881,6 +922,9 @@ return {
 			OPEN = "Science compels me to jump in.",
 		},
 		WORMHOLE_LIMITED = "Guh, that thing looks worse off than usual.",
+		ACCOMPLISHMENT_SHRINE = "I want to use it, and I want the world to know what I did.",        
+		LIVINGTREE = "Is it watching me?",
+		ICESTAFF = "It's cold to the touch",
 	},
 	DESCRIBE_GENERIC = "It's a... thing.",
 	DESCRIBE_TOODARK = "It's too dark to see!",

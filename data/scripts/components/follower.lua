@@ -42,6 +42,42 @@ function Follower:GetDebugString()
 	return str
 end
 
+function Follower:StartLeashing()
+    self.inst.portnearleader = function()    
+    	if not self.leader or (self.leader and self.leader:IsAsleep()) then
+    		return
+    	end
+
+    	local init_pos = self.inst:GetPosition()
+    	local leader_pos = self.leader:GetPosition()
+    	local angle = self.leader:GetAngleToPoint(init_pos)
+
+    	local offset = FindWalkableOffset(leader_pos, angle*DEGREES, 30, 10) or Vector3(0,0,0)
+		
+		local pos = leader_pos + offset
+
+    	if pos and distsq(leader_pos, init_pos) > 1600 then
+    		--There's a crash if you teleport without the delay
+    		if self.inst.components.combat then
+    			self.inst.components.combat:SetTarget(nil)
+    		end
+    		self.inst:DoTaskInTime(.1, function() 
+	    		self.inst.Transform:SetPosition(pos:Get())
+    		end)
+    	elseif not pos then
+    		self.inst:DoTaskInTime(3, self.inst.portnearleader)
+    	end
+	end
+
+    self.inst:ListenForEvent("entitysleep", self.inst.portnearleader)    
+end
+
+function Follower:StopLeashing()
+	if self.inst.portnearleader then -- If this function exists then the follower also has the callback.
+		self.inst:RemoveEventCallback("entitysleep", self.inst.portnearleader)
+	end
+end
+
 function Follower:SetLeader(inst)
     if self.leader and self.leader.components.leader then
         self.leader.components.leader:RemoveFollower(self.inst)
@@ -51,10 +87,17 @@ function Follower:SetLeader(inst)
     end
     self.leader = inst
     
+    if self.leader and (self.leader:HasTag("player") or 
+    	--Special case for Chester...
+    (self.leader.components.inventoryitem and self.leader.components.inventoryitem.owner == GetPlayer())) then
+		self:StartLeashing()
+	end
+
     if inst == nil then
 		if self.task then
 			self.task:Cancel()
 			self.task = nil
+			self:StopLeashing()
 		end
     end
 end
@@ -90,13 +133,13 @@ function Follower:AddLoyaltyTime(time)
 		self.task = nil
 	end
 	self.task = self.inst:DoTaskInTime(timeLeft, stopfollow)
-
 end
 
 function Follower:StopFollowing()
 	if self.inst:IsValid() then
 		self.inst:PushEvent("loseloyalty", {leader=self.inst.components.follower.leader})
 		self.inst.components.follower:SetLeader(nil)
+		self:StopLeashing()
 	end
 end
 

@@ -44,7 +44,7 @@ function ChildSpawner:StartRegen()
 	
 	if self.numchildrenoutside + self.childreninside < self.maxchildren then
 		self.timetonextregen = self.regenperiod + (math.random()*2-1)*self.regenvariance
-		self.inst:StartUpdatingComponent(self)	
+		self:StartUpdate(6)
 	end
 end
 
@@ -99,18 +99,27 @@ function ChildSpawner:OnUpdate(dt)
 	
 	
 	if not need_to_continue_spawning and not need_to_continue_regening then
-		self.inst:StopUpdatingComponent(self)
+		if self.task then
+			self.task:Cancel()
+			self.task = nil
+		end
+		--self.inst:StopUpdatingComponent(self)
 	end
-	
-	
 end
 
+function ChildSpawner:StartUpdate(dt)
+	if not self.task then
+		local dt = 5 + math.random()*5 
+		self.task = self.inst:DoPeriodicTask(dt, function() self:OnUpdate(dt) end)
+	end
+end
 
 function ChildSpawner:StartSpawning()
 	trace(self.inst, "ChildSpawner:StartSpawning()")
 	self.spawning = true
 	self.timetonextspawn = 0
-	self.inst:StartUpdatingComponent(self)
+	self:StartUpdate(6)
+	
 end
 
 function ChildSpawner:StopSpawning()
@@ -225,7 +234,7 @@ function ChildSpawner:OnLoad(data)
 	self.timetonextspawn = data.timetonextspawn or self.timetonextspawn
 	
 	if self.spawning or self.regening then
-		self.inst:StartUpdatingComponent(self)
+		self:StartUpdate(6)
 	end
 	
 end
@@ -351,7 +360,7 @@ function ChildSpawner:OnChildKilled( child )
         self.numchildrenoutside = self.numchildrenoutside - 1
         
         if self.regening then
-			self.inst:StartUpdatingComponent(self)
+			self:StartUpdate(6)
         end
     end
 end

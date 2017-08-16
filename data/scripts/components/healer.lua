@@ -26,7 +26,7 @@ function Healer:Heal(target)
 end
 
 function Healer:CollectUseActions(doer, target, actions)
-    if target.components.health then
+    if target.components.health and target.components.health.canheal then
         table.insert(actions, ACTIONS.HEAL)
     end
 end

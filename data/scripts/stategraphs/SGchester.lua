@@ -64,20 +64,6 @@ local states=
             inst.Physics:Stop()
             RemovePhysicsColliders(inst)            
         end,
-        
-        
-        events =
-        {
-            EventHandler("animover", function(inst) 
-
-                local fx = SpawnPrefab("die_fx")
-                fx.Transform:SetPosition(inst:GetPosition():Get())
-
-                inst:Remove()
-
-				--PlayFX(Vector3(inst.Transform:GetWorldPosition()), "die_fx", "die", "small", "dontstarve/common/deathpoof", nil, Vector3(90/255, 66/255, 41/255))        
-			end ),
-        },        
     },
     
 
@@ -151,6 +137,67 @@ local states=
         {
             TimeEvent(0*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/chester/close") end),
         },        
+    },
+
+
+    State{
+        name = "transition",
+        tags = {"busy"},
+        onenter = function(inst)
+            inst.Physics:Stop()
+
+            local shadow, snow = inst:CanMorph()
+            --Check that you are still valid to transform
+            if not (shadow or snow) then
+                inst.sg:GoToState("idle")
+                return
+            end
+
+            --Remove ability to open chester for short time.
+            inst.components.container.canbeopened = false
+
+            --Create light shaft
+            inst.sg.statemem.light = SpawnPrefab("chesterlight")
+            inst.sg.statemem.light.Transform:SetPosition(inst:GetPosition():Get())
+            inst.sg.statemem.light:TurnOn()
+
+            inst.SoundEmitter:PlaySound("dontstarve/creatures/chester/raise")
+
+            inst.AnimState:PlayAnimation("idle_loop")
+            inst.AnimState:PushAnimation("idle_loop")
+            inst.AnimState:PushAnimation("idle_loop")
+            inst.AnimState:PushAnimation("transition", false)
+        end,
+
+        onexit = function(inst)
+            --Add ability to open chester again.
+            inst.components.container.canbeopened = true
+            --Remove light shaft
+            if inst.sg.statemem.light then
+                inst.sg.statemem.light:TurnOff()
+            end
+        end,
+
+        timeline = 
+        {
+            TimeEvent(75*FRAMES, function(inst) 
+                local smokeFX = SpawnPrefab("chester_transform_fx")
+                local sparkleFX = SpawnPrefab("sparklefx")
+                local pos = inst:GetPosition()
+                pos.y = pos.y + 1
+                smokeFX.Transform:SetPosition(pos:Get())
+                sparkleFX.Transform:SetPosition(pos:Get())
+            end),
+            TimeEvent(75*FRAMES, function(inst)
+                inst.SoundEmitter:PlaySound("dontstarve/creatures/chester/pop")
+                inst:MorphChester()
+            end),
+        },
+
+        events =
+        {
+            EventHandler("animqueueover", function(inst) inst.sg:GoToState("idle") end ),
+        },
     },
 }
 

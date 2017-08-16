@@ -96,6 +96,9 @@ local turfs =
 
 	{name="cave",			anim="cave",		tile=GROUND.CAVE},
 	{name="fungus",			anim="fungus",		tile=GROUND.FUNGUS},
+    {name="fungus_red",		anim="fungus_red",	tile=GROUND.FUNGUSRED},
+	{name="fungus_green",	anim="fungus_green",tile=GROUND.FUNGUSGREEN},
+
 	{name="sinkhole",		anim="sinkhole",	tile=GROUND.SINKHOLE},
 	{name="underrock",		anim="rock",		tile=GROUND.UNDERROCK},
 	{name="mud",			anim="mud",			tile=GROUND.MUD},

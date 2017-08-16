@@ -14,11 +14,19 @@ local prefabs =
     "explode_small"
 }
 
-local loot = 
+SetSharedLootTable( 'slurtle',
 {
-    "slurtleslime",
-    "slurtleslime",
-}
+    {'slurtleslime',  1.0},
+    {'slurtleslime',  1.0},
+    {'slurtlehat',    0.1},
+})
+
+SetSharedLootTable( 'snurtle',
+{
+    {'slurtleslime',      1.0},
+    {'slurtleslime',      1.0},
+    {'armorsnurtleshell', 0.75},
+})
 
 local SLEEP_DIST_FROMHOME = 1
 local SLEEP_DIST_FROMTHREAT = 20
@@ -154,8 +162,7 @@ local function makeslurtle()
     local brain = require "brains/slurtlebrain"
     inst:SetBrain(brain)
 
-    inst.components.lootdropper:SetLoot(loot)
-    inst.components.lootdropper:AddChanceLoot("slurtlehat", 0.1)
+    inst.components.lootdropper:SetChanceLootTable('slurtle')
     inst.components.lootdropper:AddIfNotChanceLoot("slurtle_shellpieces")
 
     inst.components.locomotor.walkspeed = TUNING.SLURTLE_WALK_SPEED
@@ -181,9 +188,8 @@ local function makesnurtle()
     inst:AddTag("animal")
     local brain = require "brains/slurtlesnailbrain"
     inst:SetBrain(brain)
-
-    inst.components.lootdropper:SetLoot(loot)
-    inst.components.lootdropper:AddChanceLoot("armorsnurtleshell", 0.75)
+    
+    inst.components.lootdropper:SetChanceLootTable('snurtle')
     inst.components.lootdropper:AddIfNotChanceLoot("slurtle_shellpieces")
 
     inst.components.locomotor.walkspeed = TUNING.SNURTLE_WALK_SPEED

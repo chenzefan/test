@@ -86,7 +86,6 @@ function Grid:GetRowsInCol(c)
 end
 
 function Grid:SetFocus(c, r)
-	print (c, r, self.rows, self.cols)
 	r = r or 1
 	c = c or 1
 
@@ -98,7 +97,6 @@ function Grid:SetFocus(c, r)
 		r = r + self.rows + 1
 	end
 
-	print (c,r)
 	local item = self:GetItemInSlot(c, r)
 	if item then
 		item:SetFocus()

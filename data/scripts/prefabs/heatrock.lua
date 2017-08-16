@@ -53,7 +53,7 @@ end
 
 local function TemperatureChange(inst, data)
 	AdjustLighting(inst)
-	local range = GetRangeForTemperature(data.new)
+	local range = GetRangeForTemperature(inst.components.temperature.current)
 	if range ~= inst.currentTempRange then
 		UpdateImages(inst, range)
 	end
@@ -89,6 +89,7 @@ local function fn(Sim)
     inst.Light:SetIntensity(.5)
     inst.Light:SetColour(235/255,165/255,12/255)
 	inst.Light:Enable(false)
+	inst.Light:SetDisableOnSceneRemoval(false)
 
 	inst:ListenForEvent("temperaturedelta", TemperatureChange)
 	inst.currentTempRange = 0

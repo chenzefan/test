@@ -105,11 +105,17 @@ function Builder:CanBuildAtPoint(pt, recipe)
 	if tile == GROUND.IMPASSABLE then
 		return false
 	else
-		local ents = TheSim:FindEntities(pt.x,pt.y,pt.z, 6) -- or we could include a flag to the search?
+		local ents = TheSim:FindEntities(pt.x,pt.y,pt.z, 6, nil, {'player', 'fx', 'NOBLOCK'}) -- or we could include a flag to the search?
 		for k, v in pairs(ents) do
-			if v ~= self.inst and (not v.components.placer) and not v:HasTag("player") and not v:HasTag("FX") and v.entity:IsVisible() and not (v.components.inventoryitem and v.components.inventoryitem.owner )then
+			if v ~= self.inst and (not v.components.placer) and v.entity:IsVisible() and not (v.components.inventoryitem and v.components.inventoryitem.owner ) then
 				local min_rad = recipe.min_spacing or 2+1.2
 				--local rad = (v.Physics and v.Physics:GetRadius() or 1) + 1.25
+				
+				--stupid finalling hack because it's too late to change stuff
+				if recipe.name == "treasurechest" and v.prefab == "pond" then
+					min_rad = min_rad + 1
+				end
+
 				local dsq = distsq(Vector3(v.Transform:GetWorldPosition()), pt)
 				if dsq <= min_rad*min_rad then
 					return false
@@ -132,8 +138,7 @@ function Builder:EvaluateTechTrees()
 	local prototyper_active = false
 	for k,v in pairs(ents) do
 		if v.components.prototyper then
-			local distsq = self.inst:GetDistanceSqToInst(v)
-			if not prototyper_active and distsq < TUNING.RESEARCH_MACHINE_DIST*TUNING.RESEARCH_MACHINE_DIST then
+			if not prototyper_active then
 				--activate the first machine in the list. This will be the one you're closest to.
 				v.components.prototyper:TurnOn()
 				self.accessible_tech_trees = v.components.prototyper:GetTechTrees()
@@ -302,7 +307,6 @@ function Builder:DoBuild(recname, pt)
                 pt = pt or Point(self.inst.Transform:GetWorldPosition())
 				prod.Transform:SetPosition(pt.x,pt.y,pt.z)
                 self.inst:PushEvent("buildstructure", {item=prod, recipe = recipe})
-                print("onbuilt")
                 prod:PushEvent("onbuilt")
                 ProfileStatsAdd("build_"..prod.prefab)
                 
@@ -322,6 +326,12 @@ function Builder:DoBuild(recname, pt)
 end
 
 function Builder:KnowsRecipe(recname)
+	local recipe = GetRecipe(recname)
+
+	if recipe and recipe.level.ANCIENT <= self.ancient_bonus and recipe.level.MAGIC <= self.magic_bonus and recipe.level.SCIENCE <= self.science_bonus then
+		return true
+	end
+
 	return self.freebuildmode or table.contains(self.recipes, recname)
 end
 

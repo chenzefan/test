@@ -4,9 +4,6 @@ local assets=
 	Asset("ANIM", "anim/swap_ham_bat.zip"),
 }
 
-local function onfinished(inst)
-    inst:Remove()
-end
 
 local function onequip(inst, owner) 
     owner.AnimState:OverrideSymbol("swap_object", "swap_ham_bat", "swap_ham_bat")
@@ -34,23 +31,20 @@ local function fn(Sim)
     inst.components.weapon:SetDamage(TUNING.HAMBAT_DAMAGE)
     
     -------
-    
+    --[[
     inst:AddComponent("edible")
     inst.components.edible.foodtype = "MEAT"
     inst.components.edible.healthvalue = -TUNING.HEALING_MEDSMALL
     inst.components.edible.hungervalue = TUNING.CALORIES_MED
     inst.components.edible.sanityvalue = -TUNING.SANITY_MED
+    --]]
     
+    inst:AddTag("show_spoilage")
+
 	inst:AddComponent("perishable")
 	inst.components.perishable:SetPerishTime(TUNING.PERISH_MED)
 	inst.components.perishable:StartPerishing()
-	inst.components.perishable.onperishreplacement = "spoiled_food"    
-    
-    inst:AddComponent("finiteuses")
-    inst.components.finiteuses:SetMaxUses(TUNING.HAMBAT_USES)
-    inst.components.finiteuses:SetUses(TUNING.HAMBAT_USES)
-    
-    inst.components.finiteuses:SetOnFinished( onfinished )
+	inst.components.perishable.onperishreplacement = "spoiled_food"
 
     inst:AddComponent("inspectable")
     

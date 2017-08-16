@@ -159,6 +159,9 @@ local function commonfn()
     inst:AddComponent("inventoryitem")
 
     inst:AddComponent("edible")
+
+    inst:AddTag("cattoy")
+    inst:AddComponent("tradable")
     
     return inst
 end

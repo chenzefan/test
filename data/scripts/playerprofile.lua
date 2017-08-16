@@ -1,3 +1,6 @@
+
+USE_SETTINGS_FILE = PLATFORM ~= "PS4" and PLATFORM ~= "NACL"
+
 PlayerProfile = Class(function(self)
     self.persistdata = 
     {
@@ -9,17 +12,19 @@ PlayerProfile = Class(function(self)
         -- Controlls should be a seperate file
         controls = {},
         starts = 0,
+        saw_display_adjustment_popup = false
     }
 
   	--we should migrate the non-gameplay stuff to a separate file, so that we can save them whenever we want
   
- 	if PLATFORM == "NACL" then
+ 	if not USE_SETTINGS_FILE then
         self.persistdata.volume_ambient = 7
         self.persistdata.volume_sfx = 7
         self.persistdata.volume_music = 7
         self.persistdata.HUDSize = 5
+        self.persistdata.vibration = true
+        self.persistdata.autosave = true
 	end
-
 
     self.dirty = true
 
@@ -32,15 +37,47 @@ function PlayerProfile:Reset()
 	self.persistdata.unlocked_worldgen = {}
 	self.persistdata.unlocked_characters = {}
 	self.persistdata.characterinthrone = "waxwell"
+    self.persistdata.saw_display_adjustment_popup = false
+	
+ 	if not USE_SETTINGS_FILE then
+        self.persistdata.volume_ambient = 7
+        self.persistdata.volume_sfx = 7
+        self.persistdata.volume_music = 7
+        self.persistdata.HUDSize = 5
+        self.persistdata.vibration = true
+        self.persistdata.autosave = true
+	end
+	
     --self.persistdata.starts = 0 -- save starts?
 	self.dirty = true
 	self:Save()
 end
 
+function PlayerProfile:SoftReset()
+    self.persistdata.xp = 0
+	self.persistdata.unlocked_worldgen = {}
+	self.persistdata.unlocked_characters = {}
+	self.persistdata.characterinthrone = "waxwell"
+    self.persistdata.saw_display_adjustment_popup = false
+	
+ 	if not USE_SETTINGS_FILE then
+        self.persistdata.volume_ambient = 7
+        self.persistdata.volume_sfx = 7
+        self.persistdata.volume_music = 7
+        self.persistdata.HUDSize = 5
+        self.persistdata.vibration = true
+        self.persistdata.autosave = true
+	end
+    -- and apply these values
+    local str = json.encode(self.persistdata)
+    self:Set(str, nil)
+end
+
+
 function PlayerProfile:UnlockEverything()
     self.persistdata.xp = 0
 	self.persistdata.unlocked_characters = {}
-	local characters = {'willow', 'wendy', 'wolfgang', 'wilton', 'wx78', 'wickerbottom', 'wes', 'waxwell', 'woodie'}
+	local characters = {'willow', 'wendy', 'wolfgang', 'wilton', 'wx78', 'wickerbottom', 'wes', 'waxwell', 'woodie', 'wathgrithr', 'webber'}
 	for k,v in pairs(characters) do
 		self:UnlockCharacter(v)
 	end
@@ -58,74 +95,101 @@ function PlayerProfile:GetValue(name)
 end
 
 function PlayerProfile:SetVolume(ambient, sfx, music)
-	if PLATFORM == "NACL" then
+ 	if USE_SETTINGS_FILE then
+		TheSim:SetSetting("audio", "volume_ambient", tostring(math.floor(ambient))) 
+		TheSim:SetSetting("audio", "volume_sfx", tostring(math.floor(sfx)))
+		TheSim:SetSetting("audio", "volume_music", tostring(math.floor(music))) 		
+	else
 	    self:SetValue("volume_ambient", ambient) 
 	    self:SetValue("volume_sfx", sfx) 
 	    self:SetValue("volume_music", music) 
 	    self.dirty = true
-	else
-		TheSim:SetSetting("audio", "volume_ambient", tostring(math.floor(ambient))) 
-		TheSim:SetSetting("audio", "volume_sfx", tostring(math.floor(sfx)))
-		TheSim:SetSetting("audio", "volume_music", tostring(math.floor(music))) 		
 	end
 end
 
 function PlayerProfile:SetBloomEnabled(enabled)
-	if PLATFORM == "NACL" then
+ 	if USE_SETTINGS_FILE then
+		TheSim:SetSetting("graphics", "bloom", tostring(enabled)) 
+	else
 		self:SetValue("bloom", enabled)
 		self.dirty = true
-	else
-		TheSim:SetSetting("graphics", "bloom", tostring(enabled)) 
 	end
 end
 
 function PlayerProfile:GetBloomEnabled()
-	if PLATFORM == "NACL" then
-		return self:GetValue("bloom")
-	else
+ 	if USE_SETTINGS_FILE then
 		return TheSim:GetSetting("graphics", "bloom") == "true"
+	else
+		return self:GetValue("bloom")
 	end
 end
 
 function PlayerProfile:SetHUDSize(size)
-	if PLATFORM == "NACL" then
+ 	if USE_SETTINGS_FILE then
+		TheSim:SetSetting("graphics", "HUDSize", tostring(size)) 
+	else
 		self:SetValue("HUDSize", size)
 		self.dirty = true
-	else
-		TheSim:SetSetting("graphics", "HUDSize", tostring(size)) 
 	end
 end
 
 function PlayerProfile:GetHUDSize()
-	if PLATFORM == "NACL" then
-		return self:GetValue("HUDSize") or 5
-	else
+ 	if USE_SETTINGS_FILE then
 		return TheSim:GetSetting("graphics", "HUDSize") or 5
+	else
+		return self:GetValue("HUDSize") or 5
 	end
 end
 
 function PlayerProfile:SetDistortionEnabled(enabled)
-	if PLATFORM == "NACL" then
+ 	if USE_SETTINGS_FILE then
+		TheSim:SetSetting("graphics", "distortion", tostring(enabled)) 
+	else
 		self:SetValue("distortion", enabled)
 		self.dirty = true
-	else
-		TheSim:SetSetting("graphics", "distortion", tostring(enabled)) 
 	end
 end
 
 function PlayerProfile:GetDistortionEnabled()
-	if PLATFORM == "NACL" then
-		return self:GetValue("distortion")
-	else
+ 	if USE_SETTINGS_FILE then
 		return TheSim:GetSetting("graphics", "distortion") == "true"
+	else
+		return self:GetValue("distortion")
+	end
+end
+
+function PlayerProfile:SetVibrationEnabled(enabled)
+ 	if USE_SETTINGS_FILE then
+		TheSim:SetSetting("misc", "vibration", tostring(enabled)) 
+	else
+		self:SetValue("vibration", enabled)
+		self.dirty = true
+	end
+end
+
+function PlayerProfile:GetVibrationEnabled()
+ 	if USE_SETTINGS_FILE then
+		return TheSim:GetSetting("misc", "vibration") == "true"
+	else
+		return self:GetValue("vibration")
+	end
+end
+
+function PlayerProfile:SetAutosaveEnabled(enabled)
+ 	if not USE_SETTINGS_FILE then
+		self:SetValue("autosave", enabled)
+		self.dirty = true
+	end
+end
+
+function PlayerProfile:GetAutosaveEnabled()
+ 	if not USE_SETTINGS_FILE then
+		return self:GetValue("autosave")
 	end
 end
 
 function PlayerProfile:GetVolume()
-	if PLATFORM == "NACL" then
-    	return self.persistdata.volume_ambient, self.persistdata.volume_sfx, self.persistdata.volume_music
-	else
-
+ 	if USE_SETTINGS_FILE then
 		local amb = TheSim:GetSetting("audio", "volume_ambient")
 		if amb == nil then
 			amb = 10
@@ -140,6 +204,8 @@ function PlayerProfile:GetVolume()
 		end
 
 		return amb, sfx, music
+	else
+    	return self.persistdata.volume_ambient or 10, self.persistdata.volume_sfx or 10, self.persistdata.volume_music or 10
 	end
 end
 
@@ -164,14 +230,30 @@ function PlayerProfile:IsCharacterUnlocked(character)
         return true
 	end
 
-	if not table.contains(CHARACTERLIST, character) then
+	if not table.contains(GetOfficialCharacterList(), character) then
 		return true -- mod character
 	end
 
 	return false
 end
 
+local cheevos = {
+	willow = "achievement_1",
+	wolfgang = "achievement_2",
+	wendy = "achievement_3",
+	wx78 = "achievement_4",
+	wickerbottom = "achievement_5",
+	woodie = "achievement_6",
+	wes = "achievement_7",
+	waxwell = "achievement_8",
+}
+
 function PlayerProfile:UnlockCharacter(character)
+
+	if cheevos[character] then
+		TheGameService:AwardAchievement(cheevos[character])
+	end
+
     self.persistdata.unlocked_characters[character] = true
     self.dirty = true
 end
@@ -234,7 +316,7 @@ function PlayerProfile:Save(callback)
 	Print( VERBOSITY.DEBUG, "SAVING" )
     if self.dirty then
         local str = json.encode(self.persistdata)
-        local insz, outsz = TheSim:SetPersistentString(self:GetSaveName(), str, ENCODE_SAVES, callback)
+        local insz, outsz = SavePersistentString(self:GetSaveName(), str, ENCODE_SAVES, callback)
     else
 		if callback then
 			callback(true)
@@ -244,9 +326,10 @@ end
 
 function PlayerProfile:Load(callback)
     TheSim:GetPersistentString(self:GetSaveName(),
-        function(str) 
+        function(load_success, str) 
 			self:Set( str, callback )
         end, false)    
+	SaveGameIndex:GuaranteeMinNumSlots(NUM_SAVE_SLOTS)
 end
 
 local function GetValueOrDefault( value, default )
@@ -260,7 +343,9 @@ end
 function PlayerProfile:Set(str, callback)
 	if not str or string.len(str) == 0 then
 		print ("could not load ".. self:GetSaveName())
+
 		if callback then
+			self:SoftReset()	-- this is purposely inside the if
 			callback(false)
 		end
 	else
@@ -268,7 +353,16 @@ function PlayerProfile:Set(str, callback)
 		self.dirty = false
 
 		self.persistdata = TrackedAssert("TheSim:GetPersistentString profile",  json.decode, str)
-		if PLATFORM ~= "NACL" then
+		    
+        if self.persistdata.saw_display_adjustment_popup == nil then
+            self.persistdata.saw_display_adjustment_popup = false
+        end
+        
+		if self.persistdata.autosave == nil then
+		    self.persistdata.autosave = true
+		end
+		    
+ 	    if USE_SETTINGS_FILE then
 			-- Copy over old settings
 			if self.persistdata.volume_ambient ~= nil and self.persistdata.volume_sfx ~= nil and self.persistdata.volume_music ~= nil then
 				print("Copying audio settings from profile to settings.ini")
@@ -279,6 +373,14 @@ function PlayerProfile:Set(str, callback)
 				self.persistdata.volume_music = nil
 				self.dirty = true
 			end
+		else
+		    if self.persistdata.volume_ambient == nil and self.persistdata.volume_sfx == nil and self.persistdata.volume_music == nil then
+                self.persistdata.volume_ambient = 7
+                self.persistdata.volume_sfx = 7
+                self.persistdata.volume_music = 7
+                self.persistdata.HUDSize = 5
+                self.persistdata.vibration = true
+		    end		    
 		end
 
 		local amb, sfx, music = self:GetVolume()
@@ -287,12 +389,14 @@ function PlayerProfile:Set(str, callback)
 		TheMixer:SetLevel("set_sfx", sfx / 10)
 		TheMixer:SetLevel("set_ambience", amb / 10)
 		TheMixer:SetLevel("set_music", music / 10)
+		
+		TheInputProxy:EnableVibration(self:GetVibrationEnabled())
 
 		if TheFrontEnd then
 			local bloom_enabled = GetValueOrDefault( self.persistdata.bloom, true )
 			local distortion_enabled = GetValueOrDefault( self.persistdata.distortion, true )
 
-			if PLATFORM ~= "NACL" then
+ 	        if USE_SETTINGS_FILE then
 				-- Copy over old settings
 				if self.persistdata.bloom ~= nil and self.persistdata.distortion ~= nil and self.persistdata.HUDSize ~= nil then
 					print("Copying render settings from profile to settings.ini")
@@ -320,7 +424,14 @@ function PlayerProfile:Set(str, callback)
 		end
 		
 	    for idx,entry in pairs(self.persistdata.controls) do
-	        TheInputProxy:LoadControls(entry.guid, entry.data)
+	        
+	        local enabled = true
+			if entry.enabled == nil then
+				enabled = false
+			else 
+				enabled = entry.enabled
+			end
+	        TheInputProxy:LoadControls(entry.guid, entry.data, enabled)
 	    end
 
 		if callback then
@@ -335,29 +446,43 @@ end
 
 function PlayerProfile:GetControls(guid)  
     local controls = nil
+    local enabled = false
     for idx, entry in pairs(self.persistdata.controls) do
         if entry.guid == guid then
             controls = entry.data
+            enabled = entry.enabled
         end
     end  
-    return controls
+    return controls, enabled
 end
 
-function PlayerProfile:SetControls(guid, data)  
+function PlayerProfile:SetControls(guid, data, enabled)  
 	
 	-- check if this device is already in the list and update if found
 	local found = false
     for idx, entry in pairs(self.persistdata.controls) do
         if entry.guid == guid then
             entry.data = data
+            entry.enabled = enabled
             found = true
         end
     end  
     
     -- not an existing device so add it
     if not found then
-        table.insert(self.persistdata.controls, {["guid"]=guid, ["data"]=data,})
+        table.insert(self.persistdata.controls, {["guid"]=guid, ["data"]=data, ["enabled"] = enabled})
     end
 
     self.dirty = true
 end
+
+function PlayerProfile:SawDisplayAdjustmentPopup()
+    return self.persistdata.saw_display_adjustment_popup
+end
+
+function PlayerProfile:ShowedDisplayAdjustmentPopup()
+    self.persistdata.saw_display_adjustment_popup = true
+	self.dirty = true
+end
+
+return PlayerProfile

@@ -28,6 +28,11 @@ local function OnCreate(inst, scenariorunner)
 			chance = 0.15,
 		},
 		{
+			item = "thulecite_pieces",
+			count = math.random(2, 4),
+			chance = 0.2,
+		},
+		{
 			item = "thulecite",
 			count = math.random(1, 3),
 			chance = 0.1,

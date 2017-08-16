@@ -8,7 +8,7 @@ local Widget = require "widgets/widget"
 
 local MIN_GEN_TIME = 9.5
 
-WorldGenScreen = Class(Screen, function(self, profile, cb, world_gen_options)
+local WorldGenScreen = Class(Screen, function(self, profile, cb, world_gen_options)
 	Screen._ctor(self, "WorldGenScreen")
     self.profile = profile
 	self.log = true
@@ -106,7 +106,10 @@ WorldGenScreen = Class(Screen, function(self, profile, cb, world_gen_options)
 	local moddata = {}
 	moddata.index = KnownModIndex:CacheSaveData()
 
-    TheSim:GenerateNewWorld( json.encode(gen_parameters), json.encode(moddata), function(worlddata) 
+	self.genparam = json.encode(gen_parameters)
+	self.modparam = json.encode(moddata)
+
+    TheSim:GenerateNewWorld( self.genparam, self.modparam, function(worlddata) 
     		self.worlddata = worlddata
 			self.done = true
 		end)
@@ -138,6 +141,17 @@ end
 function WorldGenScreen:OnUpdate(dt)
 	self.total_time = self.total_time + dt
 	if self.done then
+		if self.worlddata == "" then
+			print ("RESTARTING GENERATION")
+			self.done = false
+			self.worldata = nil
+			TheSim:GenerateNewWorld( self.genparam, self.modparam, function(worlddata) 
+    				self.worlddata = worlddata
+					self.done = true
+				end)
+			return
+		end
+		
 		if string.match(self.worlddata,"^error") then
 			self.done = false
 			self.cb(self.worlddata)
@@ -162,3 +176,5 @@ function WorldGenScreen:ChangeFlavourText()
 	local time = GetRandomWithVariance(2, 1)
 	self.inst:DoTaskInTime(time, function() self:ChangeFlavourText() end)
 end
+
+return WorldGenScreen

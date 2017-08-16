@@ -18,7 +18,7 @@ local Herd = Class(function(self, inst)
     self.onfull = nil
     self.addmember = nil
     
-    self.task = self.inst:DoPeriodicTask(3, function() self:OnUpdate() end)
+    self.task = self.inst:DoPeriodicTask(math.random()*2+6, function() self:OnUpdate() end)
 end)
 
 function Herd:GetDebugString()
@@ -106,7 +106,7 @@ function Herd:GatherNearbyMembers()
     end
     
     local x,y,z = self.inst.Transform:GetWorldPosition()
-    local ents = TheSim:FindEntities(x,y,z, self.gatherrange)
+    local ents = TheSim:FindEntities(x,y,z, self.gatherrange, self.membertag and {self.membertag} or nil )
 
     for k,v in pairs(ents) do 
         if not self.members[v]
@@ -124,7 +124,7 @@ function Herd:MergeNearbyHerds()
     end
     
     local x,y,z = self.inst.Transform:GetWorldPosition()
-    local ents = TheSim:FindEntities(x,y,z, self.gatherrange)
+    local ents = TheSim:FindEntities(x,y,z, self.gatherrange, {"herd"})
 
     for k,v in pairs(ents) do 
         if v ~= self.inst

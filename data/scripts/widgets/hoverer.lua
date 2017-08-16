@@ -7,7 +7,7 @@ local XOFFSET = 10
 
 local HoverText = Class(Widget, function(self, owner)
     Widget._ctor(self, "HoverText")
-	self.owner = owner
+    self.owner = owner
     self.isFE = false
     self:SetClickable(false)
     --self:MakeNonClickable()
@@ -16,10 +16,25 @@ local HoverText = Class(Widget, function(self, owner)
     self.secondarytext = self:AddChild(Text(UIFONT, 30))
     self.secondarytext:SetPosition(0,-YOFFSETDOWN,0)
     self:FollowMouseConstrained()
+    self:StartUpdating()
 end)
 
-function HoverText:Update()
-	
+function HoverText:OnUpdate()
+        
+    local using_mouse = self.owner.components and self.owner.components.playercontroller:UsingMouse()        
+    
+    if using_mouse ~= self.shown then
+        if using_mouse then
+            self:Show()
+        else
+            self:Hide()
+        end
+    end
+    
+    if not self.shown then 
+        return 
+    end
+    
     local str = nil
     if self.isFE == false then 
         str = self.owner.HUD.controls:GetTooltip() or self.owner.components.playercontroller:GetHoverTextOverride()
@@ -30,46 +45,49 @@ function HoverText:Update()
     local secondarystr = nil
  
     if not str and self.isFE == false then
-        local lmb = self.owner.components.playeractionpicker:GetLeftMouseAction()
+        local lmb = self.owner.components.playercontroller:GetLeftMouseAction()
         if lmb then
             
             str = lmb:GetActionString()
             
             if lmb.target and lmb.invobject == nil and lmb.target ~= lmb.doer then
-				local name = lmb.target:GetDisplayName() or (lmb.target.components.named and lb.target.components.named.name)
+                local name = lmb.target:GetDisplayName() or (lmb.target.components.named and lb.target.components.named.name)
                 
                 
                 if name then
-					local adjective = lmb.target:GetAdjective()
-					
-					if adjective then
-						str = str.. " " .. adjective .. " " .. name
-					else
-						str = str.. " " .. name
-					end
-					
-					if lmb.target.components.stackable and lmb.target.components.stackable.stacksize > 1 then
-	                    str = str .. " x" .. tostring(lmb.target.components.stackable.stacksize)
-					end
+                    local adjective = lmb.target:GetAdjective()
+                    
+                    if adjective then
+                        str = str.. " " .. adjective .. " " .. name
+                    else
+                        str = str.. " " .. name
+                    end
+                    
+                    if lmb.target.components.stackable and lmb.target.components.stackable.stacksize > 1 then
+                        str = str .. " x" .. tostring(lmb.target.components.stackable.stacksize)
+                    end
                     if lmb.target.components.inspectable and lmb.target.components.inspectable.recordview and lmb.target.prefab then
                         ProfileStatsSet(lmb.target.prefab .. "_seen", true)
                     end
-				end
+                end
             end
         end
-        local rmb = self.owner.components.playeractionpicker:GetRightMouseAction()
+        local rmb = self.owner.components.playercontroller:GetRightMouseAction()
         if rmb then
             secondarystr = STRINGS.RMB .. ": " .. rmb:GetActionString()
         end
     end
 
     if str then
+
         self.text:SetString(str)
         self.text:Show()
     else
         self.text:Hide()
     end
     if secondarystr then
+        YOFFSETUP = -80
+        YOFFSETDOWN = -50
         self.secondarytext:SetString(secondarystr)
         self.secondarytext:Show()
     else
@@ -88,8 +106,8 @@ end
 function HoverText:UpdatePosition(x,y)
 
 
-	local scale = self:GetScale()
-	
+    local scale = self:GetScale()
+    
     local scr_w, scr_h = TheSim:GetScreenSize()
 
     local w = 0
@@ -106,9 +124,9 @@ function HoverText:UpdatePosition(x,y)
         h = math.max(h, h1)
     end
 
-	w = w*scale.x
-	h = h*scale.y
-	
+    w = w*scale.x
+    h = h*scale.y
+    
     x = math.max(x, w/2 + XOFFSET)
     x = math.min(x, scr_w - w/2 - XOFFSET)
 

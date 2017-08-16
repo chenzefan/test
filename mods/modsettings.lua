@@ -5,4 +5,8 @@
 -- Note! You shout NOT do this for normal mod loading. Please use the Mods menu
 -- from the main screen instead.
 
---ForceEnableMod("apiexamples")
+ForceEnableMod("Display Food Values")
+
+
+-- Use "EnableModDebugPrint()" to show extra information during startup.
+--EnableModDebugPrint(Display Food Values)

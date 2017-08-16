@@ -39,7 +39,7 @@ function FrostyBreather:Disable()
 end
 
 function FrostyBreather:EmitOnce()
-	if self.breath then
+	if self.breath and self.inst.AnimState:GetCurrentFacing() ~= FACING_UP then
 		self.breath.Emit(self.breath)
 	end
 end

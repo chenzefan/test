@@ -9,7 +9,7 @@ local ItemTile = Class(Widget, function(self, invitem)
 
 	-- NOT SURE WAHT YOU WANT HERE
 	if invitem.components.inventoryitem == nil then
-		print("NO INVENTORY ITEM COMPONENT"..tostring(invitem.prefab), invitem, owner)
+		print("NO INVENTORY ITEM COMPONENT"..tostring(invitem.prefab), invitem)
 		return
 	end
 	
@@ -17,6 +17,7 @@ local ItemTile = Class(Widget, function(self, invitem)
 	self.bg:SetTexture(HUD_ATLAS, "inv_slot_spoiled.tex")
 	self.bg:Hide()
 	self.bg:SetClickable(false)
+	self.basescale = 1
 	
 	self.spoilage = self:AddChild(UIAnim())
 	
@@ -31,11 +32,11 @@ local ItemTile = Class(Widget, function(self, invitem)
 
     local owner = self.item.components.inventoryitem.owner
     
-    if self.item.prefab == "spoiled_food" or (self.item.components.edible and self.item.components.perishable) then
+    if self.item.prefab == "spoiled_food" or self:HasSpoilage() then
 		self.bg:Show( )
 	end
 	
-	if self.item.components.perishable and self.item.components.edible then
+	if self:HasSpoilage() then
 		self.spoilage:Show()
 	end
 
@@ -52,11 +53,11 @@ local ItemTile = Class(Widget, function(self, invitem)
 						local im = Image(invitem.components.inventoryitem:GetAtlas(), invitem.components.inventoryitem:GetImage())
 						im:MoveTo(data.src_pos, dest_pos, .3, function() 
 							self:SetQuantity(invitem.components.stackable:StackSize())
-							self:ScaleTo(2, 1, .25)
+							self:ScaleTo(self.basescale*2, self.basescale, .25)
 							im:Kill() end)
 					else
 	                    self:SetQuantity(invitem.components.stackable:StackSize())
-						self:ScaleTo(2, 1, .25)
+						self:ScaleTo(self.basescale*2, self.basescale, .25)
 					end
                 end
             end, invitem)
@@ -72,7 +73,13 @@ local ItemTile = Class(Widget, function(self, invitem)
             end, invitem)
     self.inst:ListenForEvent("perishchange",
             function(inst, data)
-                self:SetPerishPercent(data.percent)
+				if self.item.components.perishable then
+                    if self:HasSpoilage() then
+                        self:SetPerishPercent(data.percent)
+    				else
+                        self:SetPercent(data.percent)
+    				end
+                end
             end, invitem)
 
     if invitem.components.fueled then
@@ -83,10 +90,14 @@ local ItemTile = Class(Widget, function(self, invitem)
         self:SetPercent(invitem.components.finiteuses:GetPercent())
     end
 
+
     if invitem.components.perishable then
-        self:SetPerishPercent(invitem.components.perishable:GetPercent())
+        if self:HasSpoilage() then
+            self:SetPerishPercent(invitem.components.perishable:GetPercent())
+        else
+            self:SetPercent(invitem.components.perishable:GetPercent())
+        end
     end
-    
     
     if invitem.components.armor then
         self:SetPercent(invitem.components.armor:GetPercent())
@@ -94,19 +105,29 @@ local ItemTile = Class(Widget, function(self, invitem)
     
 end)
 
+function ItemTile:SetBaseScale(sc)
+	self.basescale = sc
+	self:SetScale(sc)
+end
+
 function ItemTile:OnControl(control, down)
     self:UpdateTooltip()
     return false
 end
 
-
 function ItemTile:UpdateTooltip()
+	local str = self:GetDescriptionString()
+	self:SetTooltip(str)
+end
+
+function ItemTile:GetDescriptionString()
+    local str = nil
     local in_equip_slot = self.item and self.item.components.equippable and self.item.components.equippable:IsEquipped()
     local active_item = GetPlayer().components.inventory:GetActiveItem()
     if self.item and self.item.components.inventoryitem then
 
         local adjective = self.item:GetAdjective()
-        local str = nil
+        
         if adjective then
             str = adjective .. " " .. self.item:GetDisplayName()
         else
@@ -116,7 +137,11 @@ function ItemTile:UpdateTooltip()
         if active_item then 
             
             if not in_equip_slot then
-                str = str .. "\n" .. STRINGS.LMB .. ": " .. STRINGS.SWAP
+                if active_item.components.stackable and active_item.prefab == self.item.prefab then
+                    str = str .. "\n" .. STRINGS.LMB .. ": " .. STRINGS.UI.HUD.PUT
+                else
+                    str = str .. "\n" .. STRINGS.LMB .. ": " .. STRINGS.UI.HUD.SWAP
+                end
             end 
             
             local actions = GetPlayer().components.playeractionpicker:GetUseItemActions(self.item, active_item, true)
@@ -154,11 +179,10 @@ function ItemTile:UpdateTooltip()
 
             end
         end
-        
-        self:SetTooltip(str) --self.namedisp:SetString(str)
-    else
-        self:SetTooltip("")
     end
+    
+    return str or ""
+    
 end
 
 function ItemTile:OnGainFocus()
@@ -174,7 +198,7 @@ function ItemTile:SetQuantity(quantity)
 end
 
 function ItemTile:SetPerishPercent(percent)
-	if self.item.components.perishable and self.item.components.edible then
+	if self:HasSpoilage() then
 		self.spoilage:GetAnimState():SetPercent("anim", 1-self.item.components.perishable:GetPercent())
 	end
 end
@@ -182,10 +206,13 @@ end
 function ItemTile:SetPercent(percent)
     --if not self.item.components.stackable then
         
-	if not self.percent then
-		self.percent = self:AddChild(Text(NUMBERFONT, 42))
-		self.percent:SetPosition(5,-32+15,0)
-	end
+    if not self.percent then
+        self.percent = self:AddChild(Text(NUMBERFONT, 42))
+        if JapaneseOnPS4() then
+            self.percent:SetHorizontalSqueeze(0.7)
+        end
+        self.percent:SetPosition(5,-32+15,0)
+    end
     local val_to_show = percent*100
     if val_to_show > 0 and val_to_show < 1 then
         val_to_show = 1
@@ -195,12 +222,7 @@ function ItemTile:SetPercent(percent)
     --end
 end
 
-function ItemTile:OnLoseFocus()
-    if self.namedisp then
-        self.namedisp:Hide()
-    end
-end
-
+--[[
 function ItemTile:CancelDrag()
     self:StopFollowMouse()
     
@@ -216,14 +238,17 @@ function ItemTile:CancelDrag()
 
     
 end
+--]]
 
 function ItemTile:StartDrag()
-    self:SetScale(1,1,1)
+    --self:SetScale(1,1,1)
     self.spoilage:Hide()
     self.bg:Hide( )
     self.image:SetClickable(false)
 end
 
-
+function ItemTile:HasSpoilage()
+    return (self.item.components.perishable and (self.item.components.edible or self.item:HasTag("show_spoilage")) )
+end
 
 return ItemTile

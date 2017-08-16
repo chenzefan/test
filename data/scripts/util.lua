@@ -24,6 +24,7 @@ function DebugSpawn(prefab)
         if inst then
             SuUsed("c_spawn_" .. prefab , true)
 	        inst.Transform:SetPosition(TheInput:GetWorldPosition():Get())
+			return inst
 	    end
 	end
 end
@@ -63,6 +64,12 @@ function string:split(sep)
         return fields
 end
 
+function table.clear(t)
+    for k,v in pairs(t) do
+      t[k] = nil
+    end
+end
+
 function table.contains(table, element)
   if table == nil then
         return false
@@ -74,6 +81,18 @@ function table.contains(table, element)
     end
   end
   return false
+end
+
+-- only for indexed tables!
+function table.reverse ( tab )
+    local size = #tab
+    local newTable = {}
+ 
+    for i,v in ipairs ( tab ) do
+        newTable[size-i] = v
+    end
+ 
+    return newTable
 end
 
 -- RemoveByValue only applies to array-type tables
@@ -161,7 +180,7 @@ end
 -- concatenate two array-style tables
 function JoinArrays(...)
 	local ret = {}
-	for i,array in ipairs(arg) do
+	for i,array in ipairs({...}) do
 		for j,val in ipairs(array) do
 			table.insert(ret, val)
 		end
@@ -172,7 +191,7 @@ end
 -- merge two array-style tables, only allowing each value once
 function ArrayUnion(...)
 	local ret = {}
-	for i,array in ipairs(arg) do
+	for i,array in ipairs({...}) do
 		for j,val in ipairs(array) do
 			if not table.contains(ret, val) then
 				table.insert(ret, val)
@@ -185,7 +204,7 @@ end
 -- merge two map-style tables, overwriting duplicate keys with the latter map's value
 function MergeMaps(...)
 	local ret = {}
-	for i,map in ipairs(arg) do
+	for i,map in ipairs({...}) do
 		for k,v in pairs(map) do
 			ret[k] = v
 		end
@@ -230,7 +249,20 @@ function GetRandomMinMax(min, max)
     return min + math.random()*(max - min)
 end
 
-function distsq(v1, v2)
+function distsq(v1, v2, v3, v4)
+
+    -- PLEASE FORGIVE US! WE NEVER MEANT FOR IT TO END THIS WAY!
+
+    assert(v1, "Something is wrong: v1 is nil stale component reference?")
+    assert(v2, "Something is wrong: v2 is nil stale component reference?")
+    
+    --special case for 2dvects passed in as numbers
+    if v1 and v2 and v3 and v4 then
+        local dx = v1-v3
+        local dy = v2-v4
+        return dx*dx + dy*dy
+    end
+
     local dx = (v1.x or v1[1]) - (v2.x or v2[1])
     local dy = (v1.y or v1[2]) - (v2.y or v2[2])
     local dz = (v1.z or v1[3]) - (v2.z or v2[3])
@@ -240,7 +272,13 @@ end
 -- look in package loaders to find the file from the root directories
 -- this will look first in the mods and then in the data directory
 function resolvefilepath( filepath )
-	if PLATFORM == "NACL" then
+	local resolved = softresolvefilepath(filepath)
+	assert(resolved ~= nil, "Could not find an asset matching "..filepath.." in any of the search paths.")
+    return resolved
+end
+
+function softresolvefilepath(filepath)
+	if PLATFORM == "NACL" or PLATFORM == "PS4" then
 		return filepath -- it's already absolute, so just send it back
 	end
 
@@ -266,8 +304,7 @@ function resolvefilepath( filepath )
 		return filepath
 	end
 
-	assert(false, "Could not find an asset matching "..filepath.." in any of the search paths.")
-    return nil
+	return nil
 end
 
 -------------------------MEMREPORT
@@ -711,3 +748,15 @@ function table.findpath(Table,Names,indx)
     return nil
 end
 
+function TrackMem()
+	collectgarbage()
+	collectgarbage("stop")
+	TheSim:SetMemoryTracking(true)
+end
+
+function DumpMem()
+	TheSim:DumpMemoryStats()
+	mem_report()
+	collectgarbage("restart")
+	TheSim:SetMemoryTracking(false)
+end

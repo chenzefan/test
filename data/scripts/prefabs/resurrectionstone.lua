@@ -20,6 +20,7 @@ local function OnActivate(inst)
 	inst.AnimState:SetSortOrder( 0 )
 
 	inst.Physics:CollidesWith(COLLISION.CHARACTERS)	
+	inst.components.resurrector:OnBuilt()
 end
 
 local function makeactive(inst)
@@ -43,7 +44,8 @@ local function doresurrect(inst, dude)
     dude.Transform:SetPosition(inst.Transform:GetWorldPosition())
     dude:Hide()
     TheCamera:SetDistance(12)
-
+	dude.components.hunger:Pause()
+	
     scheduler:ExecuteInTime(3, function()
         dude:Show()
         --inst:Hide()
@@ -67,7 +69,10 @@ local function doresurrect(inst, dude)
 			dude.components.sanity:SetPercent(.5)
         end
         
+        dude.components.hunger:Resume()
+        
         dude.sg:GoToState("wakeup")
+        
         
         dude:DoTaskInTime(3, function(inst) 
 		            if dude.HUD then

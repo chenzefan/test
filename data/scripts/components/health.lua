@@ -14,6 +14,7 @@ local Health = Class(function(self, inst)
     self.absorb = 0
 
     self.canmurder = true
+    self.canheal = true
 	
 end)
 
@@ -32,26 +33,28 @@ end
 
 
 function Health:RecalculatePenalty()
-	self.penalty = 0
-
-	for k,v in pairs(Ents) do
-		if v.components.resurrector and v.components.resurrector.penalty then
-			self.penalty = self.penalty + v.components.resurrector.penalty
-		end
-	end
-
-	self:DoDelta(0)
+    if SaveGameIndex:CanUseExternalResurector() == false then
+        self.penalty = 0
+    	for k,v in pairs(Ents) do
+    		if v.components.resurrector and v.components.resurrector.penalty then
+    			self.penalty = self.penalty + v.components.resurrector.penalty
+    		end
+    	end
+    else
+        self.penalty = SaveGameIndex:GetResurrectorPenalty()
+    end
+	self:DoDelta(0, nil, "resurrection_penalty")
 
 end
 
 function Health:OnLoad(data)
     self.penalty = data.penalty or self.penalty
     if data.health then
-        self:SetVal(data.health, "loading")
+        self:SetVal(data.health, "file_load")
         self:DoDelta(0) --to update hud
 	elseif data.percent then
 		-- used for setpieces!
-		self:SetPercent(data.percent, "loading")
+		self:SetPercent(data.percent, "file_load")
         self:DoDelta(0) --to update hud
     end
 end
@@ -209,7 +212,6 @@ function Health:OnProgress()
 end
 
 function Health:SetVal(val, cause)
-
     local old_percent = self:GetPercent()
 
     self.currenthealth = val
@@ -261,7 +263,7 @@ function Health:DoDelta(amount, overtime, cause, ignore_invincible)
 
     self.inst:PushEvent("healthdelta", {oldpercent = old_percent, newpercent = self:GetPercent(), overtime=overtime, cause=cause})
 
-    if self.inst == GetPlayer() and cause and cause ~= "debug_key" then
+    if METRICS_ENABLED and self.inst == GetPlayer() and cause and cause ~= "debug_key" then
         if amount > 0 then
             ProfileStatsAdd("healby_" .. cause, math.floor(amount))
             FightStat_Heal(math.floor(amount))

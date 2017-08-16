@@ -145,7 +145,7 @@ function OverseerPauseCheck(reason)
 end
 
 local function UpdateInputTime()
-    if IsHUDPaused() then
+    if IsPaused() then
         -- dprint("HUDPAUSED InputUpdate")
         local t = GetTime()
         if t > lastInputTime then  -- means this is the first time into the paused HUD

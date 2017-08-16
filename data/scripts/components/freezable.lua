@@ -54,7 +54,7 @@ function Freezable:SetDefaultWearOffTime(wearofftime)
 end
 
 function Freezable:AddShatterFX(prefab, offset, followsymbol)
-    table.insert(self.fxdata, {prefab=prefab, pt=offset, follow=followsymbol})
+    table.insert(self.fxdata, {prefab=prefab, x = offset.x, y=offset.y, z=offset.z, follow=followsymbol})
 end
 
 function Freezable:SetShatterFXLevel(level, percent)
@@ -63,7 +63,6 @@ function Freezable:SetShatterFXLevel(level, percent)
 	for k,v in pairs(self.fxchildren) do
 	    if v.components.shatterfx then
 	        v.components.shatterfx:SetLevel(level)
-            v.components.shatterfx:SetPercentInLevel(percent or 1)
         end
 	end
 end
@@ -74,10 +73,10 @@ function Freezable:SpawnShatterFX()
 		if fx then
 			if v.follow then
 				local follower = fx.entity:AddFollower()
-				follower:FollowSymbol(self.inst.GUID, v.follow, v.pt.x,v.pt.y,v.pt.z)
+				follower:FollowSymbol(self.inst.GUID, v.follow, v.x,v.y,v.z)
 			else
 			    self.inst:AddChild(fx)
-			    fx.Transform:SetPosition(v.pt.x, v.pt.y, v.pt.z)
+			    fx.Transform:SetPosition(v.x, v.y, v.z)
 			end
 			table.insert(self.fxchildren, fx)
 			if fx.components.shatterfx then
@@ -92,7 +91,7 @@ function Freezable:IsFrozen( )
 end
 
 function Freezable:GetDebugString()
-    return string.format("%s", self.state)
+    return string.format("%s: %d", self.state, self.coldness)
 end
 
 function Freezable:AddColdness(coldness, freezetime)
@@ -130,11 +129,12 @@ function Freezable:UpdateTint()
             g = defaultColor.y+percent*frozenColor.y
             b = defaultColor.z+percent*frozenColor.z
         end
-        if self.inst.components.highlight then
-            self.inst.components.highlight:SetAddColour(Vector3(r, g, b) )
-        else
-            self.inst.AnimState:SetAddColour(r, g, b, 0)
-        end
+
+        if not self.inst.components.highlight then
+			self.inst:AddComponent("highlight")
+		end
+		
+        self.inst.components.highlight:SetAddColour(Vector3(r, g, b) )
     end
 end
 
@@ -165,8 +165,6 @@ end
 
 function Freezable:Unfreeze()
     if (not self.inst.components.health or not self.inst.components.health:IsDead()) and self:IsFrozen() then
-        self.inst:PushEvent("unfreeze")
-        
 
         self.state = states.NORMAL
         self.coldness = 0
@@ -178,6 +176,7 @@ function Freezable:Unfreeze()
             self.inst.brain:Start()
         end
 
+        self.inst:PushEvent("unfreeze")
     end
 end
 

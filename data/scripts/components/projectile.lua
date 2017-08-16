@@ -56,6 +56,10 @@ function Projectile:SetHoming(homing)
     self.homing = homing
 end
 
+function Projectile:SetLaunchOffset(offset)
+    self.launchoffset = offset -- x is radius, y is height, z is ignored
+end
+
 function Projectile:IsThrown()
     return self.target ~= nil
 end
@@ -65,6 +69,19 @@ function Projectile:Throw(owner, target, attacker)
     self.target = target
     self.start = Vector3(owner.Transform:GetWorldPosition() )
     self.dest = Vector3(target.Transform:GetWorldPosition() )
+
+    local offset = self.launchoffset
+    if attacker and offset then
+        local pos = self.inst:GetPosition()
+        local facing_angle = attacker.Transform:GetRotation()*DEGREES
+        local offset_vec = Vector3(offset.x * math.cos( facing_angle ), offset.y, -offset.x * math.sin( facing_angle ))
+        print("facing", facing_angle)
+        print("offset", offset)
+        print("vec", offset_vec)
+        pos = pos + offset_vec
+        self.inst.Transform:SetPosition( pos:Get() )
+    end
+
     self:RotateToTarget(self.dest)
     self.inst.Physics:SetMotorVel(self.speed,0,0)
     self.inst:StartUpdatingComponent(self)
@@ -141,17 +158,24 @@ function Projectile:OnUpdate(dt)
     if self.range and coveredDistSq > self.range*self.range then
         self:Miss(target)
     elseif self.homing then
-        if direction:Dot(dest - projected) < 0 then
-            if target and target:IsValid() and not target:IsInLimbo() then
-                self:Hit(target)
-            else
-                self:Miss(target)
-            end
-	    else
-            self:RotateToTarget(dest)
-        end
+        if target and target:IsValid() and not target:IsInLimbo() and self.inst:IsNear(target, self.hitdist + (target.Physics and target.Physics:GetRadius() or 0)) then
+            self:Hit(target)
+        else
+			if direction:Dot(dest - projected) < 0 then
+				if target and target:IsValid() and not target:IsInLimbo() then
+					self:Hit(target)
+				else
+					self:Miss(target)
+				end
+			else
+				self:RotateToTarget(dest)
+			end
+		end        
+        
     else
-        if target and target:IsValid() and not target:IsInLimbo() and self.inst:GetDistanceSqToInst(target) < self.hitdist*self.hitdist then
+        -- WARNING: IsNear specifically excludes vertical distance
+        local targ_rad = (target:IsValid() and target.Physics and target.Physics:GetRadius() or 0)
+        if target and target:IsValid() and not target:IsInLimbo() and self.inst:IsNear(target, self.hitdist + targ_rad) then
             self:Hit(target)
         end
     end

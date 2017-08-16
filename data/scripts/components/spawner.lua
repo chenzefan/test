@@ -1,3 +1,14 @@
+-- spawner in unique from childspawner in that it manages a single persistant entity 
+-- (eg. a specific named pigman with a specific hat)
+-- whereas childspawner creates and destroys one or more generic entities as they enter 
+-- and leave the spawner (eg. spiders). it can manage more than one, but can not maintain
+-- individual properties of each entity
+
+local trace = function() end
+-- local trace = function(inst, ...)
+--     print(inst, ...)
+-- end
+
 local function ReleaseChild(inst)
     local spawner = inst.components.spawner
     if spawner then
@@ -176,7 +187,7 @@ function Spawner:ReleaseChild()
         self.inst:RemoveChild(self.child)
         self.child:ReturnToScene()
     
-        local rad = 0
+        local rad = 0.5
         if self.inst.Physics then
 	        local prad = self.inst.Physics:GetRadius() or 0
             rad = rad + prad
@@ -188,9 +199,18 @@ function Spawner:ReleaseChild()
         end
         
         local pos = Vector3(self.inst.Transform:GetWorldPosition())
-        local angle = math.random()*2*PI
-        pos = pos + Vector3(rad*math.cos(angle),0, rad*math.sin(angle))
-        
+        local start_angle = math.random()*2*PI
+
+        local offset = FindWalkableOffset(pos, start_angle, rad, 8, false)
+        if offset == nil then
+            -- well it's gotta go somewhere!
+            trace(self.inst, "Spawner:ReleaseChild() no good place to spawn child: ", self.child)
+            pos = pos + Vector3(rad*math.cos(start_angle), 0, rad*math.sin(start_angle))
+        else
+            trace(self.inst, "Spawner:ReleaseChild() safe spawn of: ", self.child)
+            pos = pos + offset
+        end
+    
         self:TakeOwnership(self.child)
         if self.child.Physics then
             self.child.Physics:Teleport(pos:Get() )

@@ -17,78 +17,162 @@ end
 local TUNING_OVERRIDES = 
 {
 	["hounds"] = 	{
-							doit = 	function(difficulty)
-										--local Hounded = require("components/hounded")
+						doit = 	function(difficulty)
+							--local Hounded = require("components/hounded")
 
-										local hounded = GetWorld().components.hounded
-										if hounded then
-											if difficulty == "never" then
-												hounded:SpawnModeNever()
-											elseif difficulty == "always" then
-												hounded:SpawnModeHeavy()
-											elseif difficulty == "often" then
-												hounded:SpawnModeMed()
-											elseif difficulty == "rare" then
-												hounded:SpawnModeLight()
-											end
-										end
-									end,
-				},
+							local hounded = GetWorld().components.hounded
+							if hounded then
+								if difficulty == "never" then
+									hounded:SpawnModeNever()
+								elseif difficulty == "always" then
+									hounded:SpawnModeHeavy()
+								elseif difficulty == "often" then
+									hounded:SpawnModeMed()
+								elseif difficulty == "rare" then
+									hounded:SpawnModeLight()
+								end
+							end
+						end,
+					},
 	["deerclops"] = 	{
-							doit = 	function(difficulty)
-										--local BaseHassler = require("components/basehassler")
-										
-										local basehassler = GetWorld().components.basehassler
-										if basehassler then
-											if difficulty == "never" then
-												basehassler:SetAttacksPerWinter(0)
-												basehassler:SetAttackDuringSummer(false)
-											elseif difficulty == "rare" then
-												basehassler:SetAttacksPerWinter(1)
-												basehassler:SetAttackDuringSummer(false)
-											elseif difficulty == "often" then
-												basehassler:SetAttacksPerWinter(2)
-												basehassler:SetAttackDuringSummer(false)
-											elseif difficulty == "always" then
-												basehassler:SetAttacksPerWinter(3)
-												basehassler:SetAttackDuringSummer(true)
-											end
-										end
-									end,
-				},
+							doit = 	function(difficulty)									
+								local basehassler = GetWorld().components.basehassler
+								if basehassler then
+									if difficulty == "never" then
+										basehassler:OverrideAttacksPerSeason("DEERCLOPS", 0)
+										basehassler:OverrideAttackDuringOffSeason("DEERCLOPS", false)
+									elseif difficulty == "rare" then
+										basehassler:OverrideAttacksPerSeason("DEERCLOPS", 1)
+										basehassler:OverrideAttackDuringOffSeason("DEERCLOPS", false)
+									elseif difficulty == "often" then
+										basehassler:OverrideAttacksPerSeason("DEERCLOPS", 2)
+										basehassler:OverrideAttackDuringOffSeason("DEERCLOPS", false)
+									elseif difficulty == "always" then
+										basehassler:OverrideAttacksPerSeason("DEERCLOPS", 3)
+										basehassler:OverrideAttackDuringOffSeason("DEERCLOPS", true)
+									end
+								end
+							end,
+						},
 	["perd"] = 	{
+					doit = 	function(difficulty)
+						local tuning_vars = {
+								["never"] =  {PERD_SPAWNCHANCE = 0, 	PERD_ATTACK_PERIOD = 1},
+								["rare"] = 	 {PERD_SPAWNCHANCE = 0.1, 	PERD_ATTACK_PERIOD = 1},
+								["often"] =  {PERD_SPAWNCHANCE = 0.2,	PERD_ATTACK_PERIOD = 1},
+								["always"] = {PERD_SPAWNCHANCE = 0.4, 	PERD_ATTACK_PERIOD = 1},
+							}
+						OverrideTuningVariables(tuning_vars[difficulty])
+					end,
+				},
+	["hunt"] = 	{
+					doit = 	function(difficulty)
+						local tuning_vars = {
+								["never"] =  {HUNT_COOLDOWN = -1, HUNT_COOLDOWNDEVIATION = 0, HUNT_RESET_TIME = 0, HUNT_SPRING_RESET_TIME = -1},
+								["rare"] = 	 {HUNT_COOLDOWN = TUNING.TOTAL_DAY_TIME*2.4, HUNT_COOLDOWNDEVIATION = TUNING.TOTAL_DAY_TIME*.3, HUNT_RESET_TIME = 5, HUNT_SPRING_RESET_TIME = TUNING.TOTAL_DAY_TIME*5},
+								["often"] =  {HUNT_COOLDOWN = TUNING.TOTAL_DAY_TIME*.6, HUNT_COOLDOWNDEVIATION = TUNING.TOTAL_DAY_TIME*.3, HUNT_RESET_TIME = 5, HUNT_SPRING_RESET_TIME = TUNING.TOTAL_DAY_TIME*2},
+								["always"] = {HUNT_COOLDOWN = TUNING.TOTAL_DAY_TIME*.3, HUNT_COOLDOWNDEVIATION = TUNING.TOTAL_DAY_TIME*.2, HUNT_RESET_TIME = 5, HUNT_SPRING_RESET_TIME = TUNING.TOTAL_DAY_TIME*1},
+							}
+						OverrideTuningVariables(tuning_vars[difficulty])
+					end,
+				},				
+	["krampus"] = 	{
+						doit = 	function(difficulty)
+							local tuning_vars = {
+									["never"] =  {KRAMPUS_THRESHOLD = -1, KRAMPUS_THRESHOLD_VARIANCE = 0, KRAMPUS_INCREASE_LVL1 = -1, KRAMPUS_INCREASE_LVL2 = -1, KRAMPUS_INCREASE_RAMP = -1, KRAMPUS_NAUGHTINESS_DECAY_PERIOD = 1},
+									["rare"] = 	 {KRAMPUS_THRESHOLD = 45, KRAMPUS_THRESHOLD_VARIANCE = 30, KRAMPUS_INCREASE_LVL1 = 75, KRAMPUS_INCREASE_LVL2 = 125, KRAMPUS_INCREASE_RAMP = 1, KRAMPUS_NAUGHTINESS_DECAY_PERIOD = 30},
+									["often"] =  {KRAMPUS_THRESHOLD = 20, KRAMPUS_THRESHOLD_VARIANCE = 15, KRAMPUS_INCREASE_LVL1 = 37, KRAMPUS_INCREASE_LVL2 = 75, KRAMPUS_INCREASE_RAMP = 3, KRAMPUS_NAUGHTINESS_DECAY_PERIOD = 90},
+									["always"] = {KRAMPUS_THRESHOLD = 10, KRAMPUS_THRESHOLD_VARIANCE = 5, KRAMPUS_INCREASE_LVL1 = 25, KRAMPUS_INCREASE_LVL2 = 50, KRAMPUS_INCREASE_RAMP = 4, KRAMPUS_NAUGHTINESS_DECAY_PERIOD = 120},
+								}
+							OverrideTuningVariables(tuning_vars[difficulty])
+						end,
+					},				
+	["butterfly"] = 	{
+					doit = 	function(difficulty)
+						local butterflies = GetWorld().components.butterflyspawner
+						if butterflies then
+							if difficulty == "never" then
+								butterflies:SpawnModeNever()
+							elseif difficulty == "always" then
+								butterflies:SpawnModeHeavy()
+							elseif difficulty == "often" then
+								butterflies:SpawnModeMed()
+							elseif difficulty == "rare" then
+								butterflies:SpawnModeLight()
+							end
+						end								
+					end,
+				},
+	["birds"] = 	{
+					doit = 	function(difficulty)
+						local birds = GetWorld().components.birdspawner
+						if birds then
+							if difficulty == "never" then
+								birds:SpawnModeNever()
+							elseif difficulty == "always" then
+								birds:SpawnModeHeavy()
+							elseif difficulty == "often" then
+								birds:SpawnModeMed()
+							elseif difficulty == "rare" then
+								birds:SpawnModeLight()
+							end
+						end								
+					end,
+				},
+	["penguins"] = 	{
+						doit = 	function(difficulty)
+							local penguins = GetWorld().components.penguinspawner
+							if penguins then
+								if difficulty == "never" then
+									penguins:SpawnModeNever()
+								elseif difficulty == "always" then
+									penguins:SpawnModeHeavy()
+								elseif difficulty == "often" then
+									penguins:SpawnModeMed()
+								elseif difficulty == "rare" then
+									penguins:SpawnModeLight()
+								end
+							end								
+						end,
+					},				
+	["lureplants"] = 	{
 							doit = 	function(difficulty)
-										local tuning_vars = {
-												["never"] =  {PERD_SPAWNCHANCE = 0, 	PERD_ATTACK_PERIOD = 1},
-												["rare"] = 	 {PERD_SPAWNCHANCE = 0.1, 	PERD_ATTACK_PERIOD = 1},
-												["often"] =  {PERD_SPAWNCHANCE = 0.2,	PERD_ATTACK_PERIOD = 1},
-												["always"] = {PERD_SPAWNCHANCE = 0.4, 	PERD_ATTACK_PERIOD = 1},
-											}
-										OverrideTuningVariables(tuning_vars[difficulty])
-									end,
-							},
+								local lureplants = GetWorld().components.lureplantspawner
+								if lureplants then
+									if difficulty == "never" then
+										lureplants:SpawnModeNever()
+									elseif difficulty == "always" then
+										lureplants:SpawnModeHeavy()
+									elseif difficulty == "often" then
+										lureplants:SpawnModeMed()
+									elseif difficulty == "rare" then
+										lureplants:SpawnModeLight()
+									end
+								end
+							end,
+						},
 	["beefaloheat"] = 	{
 							doit = 	function(difficulty)
-										local tuning_vars = {
-												["never"] =  {BEEFALO_MATING_SEASON_LENGTH = 0, 	BEEFALO_MATING_SEASON_WAIT = -1},
-												["rare"] = 	 {BEEFALO_MATING_SEASON_LENGTH = 2, 	BEEFALO_MATING_SEASON_WAIT = 18},
-												["often"] =  {BEEFALO_MATING_SEASON_LENGTH = 4,     BEEFALO_MATING_SEASON_WAIT = 6},
-												["always"] = {BEEFALO_MATING_SEASON_LENGTH = -1, 	BEEFALO_MATING_SEASON_WAIT = 0},
-											}
-										OverrideTuningVariables(tuning_vars[difficulty])
-									end,
-							},
+								local tuning_vars = {
+										["never"] =  {BEEFALO_MATING_SEASON_LENGTH = 0, 	BEEFALO_MATING_SEASON_WAIT = -1},
+										["rare"] = 	 {BEEFALO_MATING_SEASON_LENGTH = 2, 	BEEFALO_MATING_SEASON_WAIT = 18},
+										["often"] =  {BEEFALO_MATING_SEASON_LENGTH = 4,     BEEFALO_MATING_SEASON_WAIT = 6},
+										["always"] = {BEEFALO_MATING_SEASON_LENGTH = -1, 	BEEFALO_MATING_SEASON_WAIT = 0},
+									}
+								OverrideTuningVariables(tuning_vars[difficulty])
+							end,
+						},
 	["liefs"] = 	{
-							doit = 	function(difficulty)
-										local tuning_vars = {												
-												["never"] =  {LEIF_MIN_DAY = 9999, LEIF_PERCENT_CHANCE = 0},
-												["rare"] = 	 {LEIF_MIN_DAY = 5, LEIF_PERCENT_CHANCE = 1/100},
-												["often"] =  {LEIF_MIN_DAY = 2, LEIF_PERCENT_CHANCE = 1/70},
-												["always"] = {LEIF_MIN_DAY = 1, LEIF_PERCENT_CHANCE = 1/55},
-											}
-										OverrideTuningVariables(tuning_vars[difficulty])
-									end
-							},
+						doit = 	function(difficulty)
+							local tuning_vars = {												
+									["never"] =  {LEIF_MIN_DAY = 9999, LEIF_PERCENT_CHANCE = 0},
+									["rare"] = 	 {LEIF_MIN_DAY = 5, LEIF_PERCENT_CHANCE = 1/100},
+									["often"] =  {LEIF_MIN_DAY = 2, LEIF_PERCENT_CHANCE = 1/70},
+									["always"] = {LEIF_MIN_DAY = 1, LEIF_PERCENT_CHANCE = 1/55},
+								}
+							OverrideTuningVariables(tuning_vars[difficulty])
+						end
+					},
 	["day"] = {
 							doit =  function(data)
 										local lookup = { 
@@ -211,19 +295,6 @@ local TUNING_OVERRIDES =
 
 						end
 					},
-	["frograin"] = {
-					doit = 	function(difficulty)
-						local tuning_vars = {
-							["default"] =  {FROG_RAIN_PRECIPITATION=999, FROG_RAIN_MOISTURE=99999}, -- never
-							["rare"] =  {FROG_RAIN_PRECIPITATION=0.95, FROG_RAIN_MOISTURE=3000},
-							["sometimes"] =  {FROG_RAIN_PRECIPITATION=0.9, FROG_RAIN_MOISTURE=2800},
-							["often"] =  {FROG_RAIN_PRECIPITATION=0.8, FROG_RAIN_MOISTURE=2500},
-							["always"] =  {FROG_RAIN_PRECIPITATION=0.7, FROG_RAIN_MOISTURE=2000},
-							["force"] =  {FROG_RAIN_PRECIPITATION=0.01, FROG_RAIN_MOISTURE=400},
-						}
-						OverrideTuningVariables(tuning_vars[difficulty])
-					end
-					},
 	["lightning"] = 	{
 					doit = 	function(data)
 							if not GetSeasonManager() then return end
@@ -298,6 +369,8 @@ local TUNING_OVERRIDES =
 										else
 											-- Clear out the cave sounds
 											ambient.components.ambientsoundmixer:SetOverride(GROUND.CAVE, "ROCKY")
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.FUNGUSRED, "ROCKY")
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.FUNGUSGREEN, "ROCKY")
 											ambient.components.ambientsoundmixer:SetOverride(GROUND.FUNGUS, "ROCKY")
 											ambient.components.ambientsoundmixer:SetOverride(GROUND.SINKHOLE, "ROCKY")
 											ambient.components.ambientsoundmixer:SetOverride(GROUND.UNDERROCK, "ROCKY")

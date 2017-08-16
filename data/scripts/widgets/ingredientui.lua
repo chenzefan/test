@@ -32,7 +32,11 @@ local IngredientUI = Class(Widget, function(self, atlas, image, quantity, on_han
             quantity = RoundUp(quantity * owner.components.builder.ingredientmod)
         end
 
-        self.quant = self:AddChild(Text(SMALLNUMBERFONT, 24))
+        if JapaneseOnPS4() then
+            self.quant = self:AddChild(Text(SMALLNUMBERFONT, 30))
+        else
+            self.quant = self:AddChild(Text(SMALLNUMBERFONT, 24))
+        end
         self.quant:SetPosition(7,-32, 0)
         self.quant:SetString(string.format("%d/%d", on_hand,quantity))
         if not has_enough then

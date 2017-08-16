@@ -12,12 +12,18 @@ local Clock = Class(function(self, inst)
     self.dayColour = Point(255/255, 230/255, 158/255)
     self.duskColour = Point(100/255, 100/255, 100/255)
     self.nightColour = Point(0/255, 0/255, 0/255)
+    self.caveColour = Point(0,0,0)
 
     self.currentColour = self.dayColour
-
     self.lerpToColour = self.dayColour
     self.lerpFromColour = self.dayColour
     
+    if GetWorld():IsCave() then
+        self.currentColour = self.caveColour
+        self.lerpToColour = self.caveColour
+        self.lerpFromColour = self.caveColour
+    end
+
     self.lerptimeleft = 0
     self.totallerptime = 0
     self.override_timeLeftInEra = nil
@@ -282,6 +288,10 @@ function Clock:LongUpdate(dt)
 		self.currentColour = self.nightColour
 	end
 	
+    if GetWorld():IsCave() then
+        self.currentColour = self.caveColour
+    end
+    
 	local p = GetSeasonManager() and GetSeasonManager():GetWeatherLightPercent() or 1
 	TheSim:SetAmbientColour( p*self.currentColour.x, p*self.currentColour.y, p*self.currentColour.z )
 end
@@ -311,6 +321,11 @@ function Clock:OnUpdate(dt)
         local g = percent*self.lerpToColour.y + (1 - percent)*self.lerpFromColour.y
         local b = percent*self.lerpToColour.z + (1 - percent)*self.lerpFromColour.z
         self.currentColour = Point(r,g,b)
+
+        if GetWorld():IsCave() then
+            self.currentColour = self.caveColour
+        end
+
         self.lerptimeleft = self.lerptimeleft - dt
     end
     
@@ -340,9 +355,9 @@ function Clock:OnUpdate(dt)
         end
 
     else
-        if GetWorld():IsCave() then
-            return
-        end
+        -- if GetWorld():IsCave() then            
+        --     return
+        -- end
         local p = GetSeasonManager() and GetSeasonManager():GetWeatherLightPercent() or 1
         TheSim:SetAmbientColour( p*self.currentColour.x, p*self.currentColour.y, p*self.currentColour.z )
     end
@@ -355,6 +370,10 @@ end
 function Clock:LerpAmbientColour(src, dest, time)
 	self.lerptimeleft = time
 	self.totallerptime = time
+
+    if GetWorld():IsCave() then
+        dest = self.caveColour
+    end
 
     if time == 0 then
 		self.currentColour = dest
@@ -417,7 +436,7 @@ function Clock:StartDay(instant)
     end
     
     if self.phase ~= self.previous_phase then
-        self.previous_phase = self.phase   
+        self.previous_phase = self.phase
     	self:LerpAmbientColour(self.currentColour, self.dayColour, instant and 0 or 4)
 	end
 end

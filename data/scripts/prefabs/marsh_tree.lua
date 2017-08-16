@@ -1,6 +1,6 @@
 local assets =
 {
-	Asset("ANIM", "anim/tree_marsh.zip"),
+    Asset("ANIM", "anim/tree_marsh.zip"),
 }
 
 local prefabs =
@@ -10,7 +10,11 @@ local prefabs =
     "charcoal",
 }
 
-local loot = {"twigs"}
+SetSharedLootTable( 'marsh_tree',
+{
+    {'twigs',  1.0},
+    {'log',    0.2},
+})
 
 local function sway(inst)
     inst.AnimState:PushAnimation("sway"..math.random(4).."_loop", true)
@@ -31,8 +35,8 @@ local function set_stump(inst)
 end
 
 local function dig_up_stump(inst, chopper)
-	inst:Remove()
-	inst.components.lootdropper:SpawnLootPrefab("log")
+    inst:Remove()
+    inst.components.lootdropper:SpawnLootPrefab("log")
 end
 
 
@@ -44,7 +48,7 @@ local function chop_down_tree(inst, chopper)
     set_stump(inst)
     inst.components.lootdropper:DropLoot()
     
-	inst:AddComponent("workable")
+    inst:AddComponent("workable")
     inst.components.workable:SetWorkAction(ACTIONS.DIG)
     inst.components.workable:SetOnFinishCallback(dig_up_stump)
     inst.components.workable:SetWorkLeft(1)
@@ -53,9 +57,10 @@ end
 local function chop_down_burnt_tree(inst, chopper)
     inst.SoundEmitter:PlaySound("dontstarve/forest/treeCrumble")          
     inst.SoundEmitter:PlaySound("dontstarve/wilson/use_axe_tree")          
-	inst.AnimState:PlayAnimation("burnt_chop")
+    inst.AnimState:PlayAnimation("burnt_chop")
+    set_stump(inst)
     inst.Physics:ClearCollisionMask()
-	inst:ListenForEvent("animover", function() inst:Remove() end)
+    inst:ListenForEvent("animover", function() inst:Remove() end)
     inst.components.lootdropper:DropLoot()
 end
 
@@ -118,15 +123,15 @@ local function onload(inst, data)
 end   
 
 local function fn(Sim)
-	local inst = CreateEntity()
-	local trans = inst.entity:AddTransform()
-	local anim = inst.entity:AddAnimState()
+    local inst = CreateEntity()
+    local trans = inst.entity:AddTransform()
+    local anim = inst.entity:AddAnimState()
     local shadow = inst.entity:AddDynamicShadow()
     local sound = inst.entity:AddSoundEmitter()
 
-	local minimap = inst.entity:AddMiniMapEntity()
-	minimap:SetIcon( "marshtree.png" )
-	minimap:SetPriority(-1)
+    local minimap = inst.entity:AddMiniMapEntity()
+    minimap:SetIcon( "marshtree.png" )
+    minimap:SetPriority(-1)
 
     MakeObstaclePhysics(inst, .25)   
     inst:AddTag("tree")
@@ -136,8 +141,7 @@ local function fn(Sim)
     MakeSmallPropagator(inst)
     
     inst:AddComponent("lootdropper") 
-    inst.components.lootdropper:SetLoot(loot)
-    inst.components.lootdropper:AddChanceLoot("log", 0.2)
+    inst.components.lootdropper:SetChanceLootTable('marsh_tree')
     
     inst:AddComponent("workable")
     inst.components.workable:SetWorkAction(ACTIONS.CHOP)
@@ -157,7 +161,7 @@ local function fn(Sim)
     
     inst.OnSave = onsave
     inst.OnLoad = onload
-	MakeSnowCovered(inst, .01)
+    MakeSnowCovered(inst, .01)
     return inst
 end
 

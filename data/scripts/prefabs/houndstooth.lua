@@ -19,7 +19,7 @@ local function fn(Sim)
     inst:AddComponent("inspectable")
     
     inst:AddComponent("inventoryitem")
-    
+    inst:AddComponent("selfstacker")
     return inst
 end
 

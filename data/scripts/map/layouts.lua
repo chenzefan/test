@@ -136,6 +136,10 @@ local ExampleLayout =
 							fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN,
 						}),
 
+		["LivingTree"] = StaticLayout.Get("map/static_layouts/livingtree", {
+							
+						}),
+
 		
 --------------------------------------------------------------------------------
 -- MacTusk 

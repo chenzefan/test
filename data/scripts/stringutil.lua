@@ -86,17 +86,27 @@ end
 
 function GetDescription(character, item, modifier)
     character = character and string.upper(character)
-    item = item and string.upper(item)
+    local itemname = item.components.inspectable.nameoverride or item.prefab
+    itemname = itemname and string.upper(itemname)
     modifier = modifier and string.upper(modifier)
 
     local ret = GetSpecialCharacterString(character)
 
     if not ret and STRINGS.CHARACTERS[character] then
-        ret = getcharacterstring(STRINGS.CHARACTERS[character].DESCRIBE, item, modifier)
+        ret = getcharacterstring(STRINGS.CHARACTERS[character].DESCRIBE, itemname, modifier)
+
+        if item and item.components.repairable and item.components.repairable:NeedsRepairs() then
+            ret = ret..getcharacterstring(STRINGS.CHARACTERS[character], "ANNOUNCE_CANFIX", modifier)
+        end
+
     end
 
     if not ret then
-        ret = getcharacterstring(STRINGS.CHARACTERS.GENERIC.DESCRIBE, item, modifier)
+        ret = getcharacterstring(STRINGS.CHARACTERS.GENERIC.DESCRIBE, itemname, modifier)
+
+        if item and item.components.repairable and item.components.repairable:NeedsRepairs() then
+            ret = ret..getcharacterstring(STRINGS.CHARACTERS.GENERIC, "ANNOUNCE_CANFIX", modifier)
+        end
     end
 
     if ret then

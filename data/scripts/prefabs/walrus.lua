@@ -11,22 +11,24 @@ local assets=
 local prefabs =
 {
     "meat",
-    "blowdart_pipe",
+    "blowdart_walrus", -- creature weapon
+    "blowdart_pipe", -- player loot
     "walrushat",
     "walrus_tusk",
-    "walrus_dart",
 }
 
-local loot = 
+SetSharedLootTable( 'walrus',
 {
-    "meat",
-    "blowdart_pipe",
-}
+    {'meat',            1.00},
+    {'blowdart_pipe',   1.00},
+    {'walrushat',       0.25},
+    {'walrus_tusk',     0.50},
+})
 
-local wee_loot = 
+SetSharedLootTable( 'walrus_wee_loot',
 {
-    "meat",
-}
+    ['meat']     = 1.0,
+})
 
 local function OnAttacked(inst, data)
     inst.components.combat:SetTarget(data.attacker)
@@ -84,7 +86,7 @@ local function EquipBlowdart(inst)
         blowdart:AddTag("sharp")
         blowdart.components.weapon:SetDamage(inst.components.combat.defaultdamage)
         blowdart.components.weapon:SetRange(inst.components.combat.attackrange)
-        blowdart.components.weapon:SetProjectile("walrus_dart")
+        blowdart.components.weapon:SetProjectile("blowdart_walrus")
         blowdart:AddComponent("inventoryitem")
         blowdart.persists = false
         blowdart.components.inventoryitem:SetOnDroppedFn(BlowdartDropped)
@@ -143,10 +145,7 @@ local function create()
     inst.components.health:SetMaxHealth(TUNING.WALRUS_HEALTH)
 
     inst:AddComponent("lootdropper")
-    inst.components.lootdropper:SetLoot(loot)
-    inst.components.lootdropper:AddChanceLoot("walrushat", 0.25)
-    inst.components.lootdropper:AddChanceLoot("walrus_tusk", 0.5)
-
+    inst.components.lootdropper:SetChanceLootTable('walrus')
     
     inst:AddComponent("inventory")
     
@@ -176,7 +175,7 @@ local function create_little()
 
     inst.soundgroup = "wee_mctusk"
 
-    inst.components.lootdropper:SetLoot(wee_loot)
+    inst.components.lootdropper:SetChanceLootTable('walrus_wee_loot')
 
     inst.AnimState:SetBuild("walrus_baby_build")
 

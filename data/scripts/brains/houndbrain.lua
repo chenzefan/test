@@ -21,6 +21,9 @@ local TARGET_FOLLOW_LEADER = (MAX_FOLLOW_LEADER+MIN_FOLLOW_LEADER)/2
 local LEASH_RETURN_DIST = 10
 local LEASH_MAX_DIST = 40
 
+local HOUSE_MAX_DIST = 40
+local HOUSE_RETURN_DIST = 50 
+
 local SIT_BOY_DIST = 10
 
 local function EatFoodAction(inst)
@@ -55,7 +58,7 @@ local function GetWanderPoint(inst)
 
     if target then
         return target:GetPosition()
-    end
+    end 
 end
 
 local function ShouldStandStill(inst)
@@ -69,10 +72,11 @@ function HoundBrain:OnStart()
         WhileNode(function() return self.inst.components.health.takingfiredamage end, "OnFire", Panic(self.inst) ),
         WhileNode(function() return not GetLeader(self.inst) end, "NoLeader", AttackWall(self.inst) ),
 
-        Leash(self.inst, GetNoLeaderLeashPos, LEASH_MAX_DIST, LEASH_RETURN_DIST),
-
         WhileNode(function() return self.inst:HasTag("pet_hound") end, "Is Pet", ChaseAndAttack(self.inst, 10)),
-        WhileNode(function() return not self.inst:HasTag("pet_hound") end, "Not Pet", ChaseAndAttack(self.inst, 100)),
+        WhileNode(function() return not self.inst:HasTag("pet_hound") and GetHome(self.inst) end, "No Pet Has Home", ChaseAndAttack(self.inst, 10, 20)),
+        WhileNode(function() return not self.inst:HasTag("pet_hound") and not GetHome(self.inst) end, "Not Pet", ChaseAndAttack(self.inst, 100)),
+        
+        Leash(self.inst, GetNoLeaderLeashPos, HOUSE_MAX_DIST, HOUSE_RETURN_DIST),
 
         DoAction(self.inst, EatFoodAction, "eat food", true ),
         Follow(self.inst, GetLeader, MIN_FOLLOW_LEADER, TARGET_FOLLOW_LEADER, MAX_FOLLOW_LEADER),

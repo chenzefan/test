@@ -5,10 +5,18 @@ local Autosaver = Class(function(self, inst)
 end)
 
 function Autosaver:DoSave()
+    local enabled = true
+    if PLATFORM == "PS4" then
+        enabled = GetPlayer().profile:GetAutosaveEnabled()
+    end
+    
+    if enabled then
+        GetPlayer().HUD.controls.saving:StartSave()
+        self.inst:DoTaskInTime(1, function() SaveGameIndex:SaveCurrent() end )
+        self.inst:DoTaskInTime(3, function() GetPlayer().HUD.controls.saving:EndSave() end)
+    end
+    
     self.timeout = TUNING.AUTOSAVE_INTERVAL
-    GetPlayer().HUD.controls.saving:StartSave()
-    self.inst:DoTaskInTime(1, function() SaveGameIndex:SaveCurrent() end )
-    self.inst:DoTaskInTime(3, function() GetPlayer().HUD.controls.saving:EndSave() end)
 end
 
 function Autosaver:OnUpdate(dt)

@@ -24,11 +24,11 @@ end
 function SpiderQueenBrain:CanPlantNest()
 	if self.inst:GetTimeAlive() > TUNING.SPIDERQUEEN_MINWANDERTIME then
 		local pt = Vector3(self.inst.Transform:GetWorldPosition())
-	    local ents = TheSim:FindEntities(pt.x,pt.y,pt.z, 4) 
+	    local ents = TheSim:FindEntities(pt.x,pt.y,pt.z, 4, {'blocker'}) 
 		local min_spacing = 3
 
 	    for k, v in pairs(ents) do
-			if v ~= self.inst and v.entity:IsValid() and v.entity:IsVisible() and v:HasTag("blocker") then
+			if v ~= self.inst and v.entity:IsValid() and v.entity:IsVisible() then
 				if distsq( Vector3(v.Transform:GetWorldPosition()), pt) < min_spacing*min_spacing then
 					return false
 				end

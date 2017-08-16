@@ -13,11 +13,54 @@ local TabGroup = Class(Widget, function(self)
     self.shown = {}
 end)
 
+function TabGroup:GetNumTabs()
+    return #self.tabs
+end
+
 function TabGroup:HideTab(tab)
 	if self.shown[tab] then
 		if self.base_pos[tab] then
 			tab:MoveTo(self.base_pos[tab], (self.base_pos[tab] + self.hideoffset), .33)
 			self.shown[tab] = false
+		end
+	end
+end
+
+function TabGroup:GetNextIdx()
+
+    local idx = self:GetCurrentIdx() or 1
+    while idx < #self.tabs do
+        idx = idx + 1
+        local tab = self.tabs[idx]
+        
+        if tab and self.shown[tab] then
+            return idx
+        end
+    end
+    return self:GetCurrentIdx()
+
+end
+
+function TabGroup:GetPrevIdx()
+
+    local idx = self:GetCurrentIdx() or 1
+    while idx > 1 do
+        idx = idx - 1
+        local tab = self.tabs[idx]
+        
+        if tab and self.shown[tab] then
+            return idx
+        end
+    end
+    return self:GetCurrentIdx()
+
+end
+
+
+function TabGroup:GetCurrentIdx()
+	for k,v in pairs(self.tabs) do
+		if v.selected then
+			return k
 		end
 	end
 end
@@ -31,6 +74,17 @@ function TabGroup:ShowTab(tab)
 	end
 end
 
+function TabGroup:OpenTab(idx)
+	local tab = self.tabs[idx]
+	if tab then
+		if self.shown[tab] then
+			tab:Select()
+            return tab
+		end
+	end
+end
+
+
 function TabGroup:AddTab(name, atlas, icon_atlas, icon, imnorm, imselected, imhighlight, imoverlay, highlightpos, onselect, ondeselect)
 
     local tab = self:AddChild(Tab(self, name, atlas, icon_atlas, icon, imnorm, imselected, imhighlight, imoverlay, highlightpos, onselect, ondeselect))
@@ -42,6 +96,7 @@ function TabGroup:AddTab(name, atlas, icon_atlas, icon, imnorm, imselected, imhi
     local offset = self.offset*scalar
     
     for k,v in ipairs(self.tabs) do
+
         v:SetPosition(offset.x, offset.y, offset.z)
         self.base_pos[v] = Vector3(offset.x, offset.y, offset.z)
         offset = offset + self.offset*self.spacing
@@ -76,7 +131,6 @@ function TabGroup:OnTabsChanged()
 end
 
 function TabGroup:DeselectAll()
-    
     for k,v in ipairs(self.tabs) do
         v:Deselect()
     end

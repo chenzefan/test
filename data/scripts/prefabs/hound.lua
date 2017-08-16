@@ -17,7 +17,31 @@ local prefabs =
 	"redgem",
 	"bluegem",
 }
+
+SetSharedLootTable( 'hound',
+{
+    {'monstermeat', 1.000},
+    {'houndstooth',  0.125},
+})
  
+SetSharedLootTable( 'hound_fire',
+{
+    {'monstermeat', 1.0},
+    {'houndstooth', 1.0},
+    {'houndfire',   1.0},
+    {'houndfire',   1.0},
+    {'houndfire',   1.0},
+    {'redgem',      0.2},
+})
+
+SetSharedLootTable( 'hound_cold',
+{
+    {'monstermeat', 1.0},
+    {'houndstooth', 1.0},
+    {'houndstooth', 1.0},
+    {'bluegem',     0.2},
+})
+
 local WAKE_TO_FOLLOW_DISTANCE = 8
 local SLEEP_NEAR_HOME_DISTANCE = 10
 local SHARE_TARGET_DIST = 30
@@ -84,7 +108,7 @@ local function DoReturn(inst)
                 inst.Physics:Teleport(x, y, z)
                 trace("hound warped home", x, y, z)
             end
-        else
+        elseif inst.components.homeseeker.home.components.childspawner then
             inst.components.homeseeker.home.components.childspawner:GoHome(inst)
         end
     end
@@ -133,6 +157,7 @@ local function fncommon()
 	
 	inst:AddTag("scarytoprey")
     inst:AddTag("monster")
+    inst:AddTag("hostile")
     inst:AddTag("hound")
 	
     MakeCharacterPhysics(inst, 10, .5)
@@ -166,10 +191,10 @@ local function fncommon()
     inst.components.combat:SetAttackPeriod(TUNING.HOUND_ATTACK_PERIOD)
     inst.components.combat:SetRetargetFunction(3, retargetfn)
     inst.components.combat:SetKeepTargetFunction(KeepTarget)
+    inst.components.combat:SetHurtSound("dontstarve/creatures/hound/hurt")
 
     inst:AddComponent("lootdropper")
-    inst.components.lootdropper:SetLoot({"monstermeat"})
-    inst.components.lootdropper:AddChanceLoot("houndstooth", 0.125)
+    inst.components.lootdropper:SetChanceLootTable('hound')
     
     inst:AddComponent("inspectable")
     
@@ -205,12 +230,14 @@ local function fnfire(Sim)
 	local inst = fncommon(Sim)
 	inst.AnimState:SetBuild("hound_red")
 	
+    MakeMediumFreezableCharacter(inst, "hound_body")
+    inst.components.freezable:SetResistance(4) --because fire
+
     inst.components.combat:SetDefaultDamage(TUNING.FIREHOUND_DAMAGE)
     inst.components.combat:SetAttackPeriod(TUNING.FIREHOUND_ATTACK_PERIOD)
     inst.components.locomotor.runspeed = TUNING.FIREHOUND_SPEED
     inst.components.health:SetMaxHealth(TUNING.FIREHOUND_HEALTH)
-    inst.components.lootdropper:SetLoot({"monstermeat","houndstooth","houndfire","houndfire","houndfire"})
-    inst.components.lootdropper:AddChanceLoot("redgem", 0.2)
+    inst.components.lootdropper:SetChanceLootTable('hound_fire')
 
 	inst:ListenForEvent("death", function(inst)
 		inst.SoundEmitter:PlaySound("dontstarve/creatures/hound/firehound_explo", "explosion")
@@ -222,13 +249,14 @@ end
 local function fncold(Sim)
 	local inst = fncommon(Sim)
 	inst.AnimState:SetBuild("hound_ice")
-	
+
+    MakeMediumBurnableCharacter(inst, "hound_body")
+
     inst.components.combat:SetDefaultDamage(TUNING.ICEHOUND_DAMAGE)
     inst.components.combat:SetAttackPeriod(TUNING.ICEHOUND_ATTACK_PERIOD)
     inst.components.locomotor.runspeed = TUNING.ICEHOUND_SPEED
     inst.components.health:SetMaxHealth(TUNING.ICEHOUND_HEALTH)
-    inst.components.lootdropper:SetLoot({"monstermeat","houndstooth","houndstooth"})
-    inst.components.lootdropper:AddChanceLoot("bluegem", 0.2)
+    inst.components.lootdropper:SetChanceLootTable('hound_cold')
 	
 	inst:ListenForEvent("death", function(inst)
 		inst.SoundEmitter:PlaySound("dontstarve/creatures/hound/icehound_explo", "explosion")

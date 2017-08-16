@@ -122,6 +122,16 @@ AddLevel(LEVELTYPE.ADVENTURE, {
 														"Wasps and Frogs and bugs",
 														"Guarded Walrus Desolate"} },
 		},
+		ordered_story_setpieces = {
+			"TeleportatoRingLayout",
+			"TeleportatoBoxLayout",
+			"TeleportatoCrankLayout",
+			"TeleportatoPotatoLayout",
+			"TeleportatoBaseAdventureLayout",
+		},
+		required_prefabs = {
+			"teleportato_ring",  "teleportato_box",  "teleportato_crank", "teleportato_potato", "teleportato_base", "chester_eyebone"
+		},
 	})
 AddLevel(LEVELTYPE.ADVENTURE, {
 		id="WINTER",
@@ -174,6 +184,16 @@ AddLevel(LEVELTYPE.ADVENTURE, {
 														"Walled Kill the spiders",
 														"The Deep Forest",
 														"Forest hunters"} },
+		},
+		ordered_story_setpieces = {
+			"TeleportatoRingLayout",
+			"TeleportatoBoxLayout",
+			"TeleportatoCrankLayout",
+			"TeleportatoPotatoLayout",
+			"TeleportatoBaseAdventureLayout",
+		},
+		required_prefabs = {
+			"teleportato_ring",  "teleportato_box",  "teleportato_crank", "teleportato_potato", "teleportato_base", "chester_eyebone"
 		},
 	})
 	-- Weather: start with very short winter, then endless summer.
@@ -228,6 +248,16 @@ AddLevel(LEVELTYPE.ADVENTURE, {
 														"Hounded Greater Plains",
 														"Merms ahoy"} },
 		},
+		ordered_story_setpieces = {
+			"TeleportatoRingLayout",
+			"TeleportatoBoxLayout",
+			"TeleportatoCrankLayout",
+			"TeleportatoPotatoLayout",
+			"TeleportatoBaseAdventureLayout",
+		},
+		required_prefabs = {
+			"teleportato_ring",  "teleportato_box",  "teleportato_crank", "teleportato_potato", "teleportato_base", "chester_eyebone"
+		},
 	})
 AddLevel(LEVELTYPE.ADVENTURE, {
 		id="ISLANDHOP",
@@ -254,7 +284,17 @@ AddLevel(LEVELTYPE.ADVENTURE, {
 		optionaltasks = {
 		},
 		set_pieces = {
-			["WesUnlock"] = { restrict_to="background", tasks={ "IslandHop1", "IslandHop2", "IslandHop3", "IslandHop4", "IslandHop5", "IslandHop6" } },
+			["WesUnlock"] = { restrict_to="background", tasks={ "IslandHop_Start", "IslandHop_Hounds", "IslandHop_Forest", "IslandHop_Savanna", "IslandHop_Rocky", "IslandHop_Merm" } },
+		},
+		ordered_story_setpieces = {
+			"TeleportatoRingLayout",
+			"TeleportatoBoxLayout",
+			"TeleportatoCrankLayout",
+			"TeleportatoPotatoLayout",
+			"TeleportatoBaseAdventureLayout",
+		},
+		required_prefabs = {
+			"teleportato_ring",  "teleportato_box",  "teleportato_crank", "teleportato_potato", "teleportato_base", "chester_eyebone"
 		},
 	})
 AddLevel(LEVELTYPE.ADVENTURE, {
@@ -301,6 +341,16 @@ AddLevel(LEVELTYPE.ADVENTURE, {
 			["MaxPigShrine"] = {tasks={"Land of Plenty"}},
 			["MaxMermShrine"] = {tasks={"The other side"}},
 			["ResurrectionStone"] = { count=2, tasks={"Land of Plenty", "The other side" } },
+		},
+		ordered_story_setpieces = {
+			"TeleportatoRingLayout",
+			"TeleportatoBoxLayout",
+			"TeleportatoCrankLayout",
+			"TeleportatoPotatoLayout",
+			"TeleportatoBaseAdventureLayout",
+		},
+		required_prefabs = {
+			"teleportato_ring",  "teleportato_box",  "teleportato_crank", "teleportato_potato", "teleportato_base", "chester_eyebone"
 		},
 	})
 
@@ -367,7 +417,16 @@ AddLevel(LEVELTYPE.ADVENTURE, {
 														"Waspy The hunters",
 														"Hounded Magic meadow", } },
 		},
-
+		ordered_story_setpieces = {
+			"TeleportatoRingLayout",
+			"TeleportatoBoxLayout",
+			"TeleportatoCrankLayout",
+			"TeleportatoPotatoLayout",
+			"TeleportatoBaseAdventureLayout",
+		},
+		required_prefabs = {
+			"teleportato_ring",  "teleportato_box",  "teleportato_crank", "teleportato_potato", "teleportato_base", "chester_eyebone"
+		},
 	})
 AddLevel(LEVELTYPE.ADVENTURE, {
 		id="ENDING",

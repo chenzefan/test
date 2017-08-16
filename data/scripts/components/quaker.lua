@@ -171,7 +171,7 @@ end
 
 function Quaker:WarnQuake()
 	self.inst:DoTaskInTime(1, function()
-		GetPlayer().components.talker:Say(GetString(self.inst.prefab, "ANNOUNCE_QUAKE"))
+		GetPlayer().components.talker:Say(GetString(GetPlayer().prefab, "ANNOUNCE_QUAKE"))
 		self.inst:PushEvent("warnquake")
 	end)
 	self.emittingsound = true
@@ -296,9 +296,9 @@ local function grounddetection_update(inst)
 			inst.shadow:Remove()
 		end
 
-		local ents = TheSim:FindEntities(pt.x, 0, pt.z, 2)
+		local ents = TheSim:FindEntities(pt.x, 0, pt.z, 2, nil, {'smashable'})
 	    for k,v in pairs(ents) do
-	    	if v and v.components.combat and not v:HasTag("smashable") then  -- quakes shouldn't break the set dressing
+	    	if v and v.components.combat then  -- quakes shouldn't break the set dressing
 	    		v.components.combat:GetAttacked(inst, 20, nil)
 	    	end
 	   	end

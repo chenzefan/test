@@ -4,7 +4,6 @@ local BehaviourTrees = {}
 local StateGraphs = {}
 local Components = {}
 
-
 local function LoadComponent(name)
     
     if Components[name] == nil then
@@ -12,8 +11,6 @@ local function LoadComponent(name)
     end
     return Components[name]
 end
-
-
 
 local function LoadStateGraph(name)
 
@@ -93,6 +90,7 @@ function EntityScript:IsInLimbo()
 end
 
 function EntityScript:RemoveFromScene()
+    self.entity:AddTag("INLIMBO")
     self.inlimbo = true
 	self.entity:Hide()
 	
@@ -104,7 +102,7 @@ function EntityScript:RemoveFromScene()
 	if self.Physics then
         self.Physics:SetActive(false)
     end
-    if self.Light then
+    if self.Light and self.Light:GetDisableOnSceneRemoval() then
         self.Light:Enable(false)
     end
     if self.AnimState then
@@ -121,7 +119,7 @@ function EntityScript:RemoveFromScene()
 end
 
 function EntityScript:ReturnToScene()
-    
+    self.entity:RemoveTag("INLIMBO")
     self.inlimbo = false
 	self.entity:Show()
     if self.Physics then
@@ -186,20 +184,23 @@ function EntityScript:StartUpdatingComponent(cmp)
         NewUpdatingEnts[self.GUID] = self
         num_updating_ents = num_updating_ents + 1
     end
-
-    self.updatecomponents[cmp] = true
     
     
+	local cmpname = nil
+	for k,v in pairs(self.components) do
+		if v == cmp then
+			cmpname = k
+			break
+		end
+	end
+    self.updatecomponents[cmp] = cmpname or "component"
 end
-
-
 
 function EntityScript:StopUpdatingComponent(cmp)
     
     if self.updatecomponents then
-        
         self.updatecomponents[cmp] = nil
-        
+
         local num = 0
         for k,v in pairs(self.updatecomponents) do
             num = num + 1
@@ -213,7 +214,56 @@ function EntityScript:StopUpdatingComponent(cmp)
             num_updating_ents = num_updating_ents - 1
         end
     end
+end
+
+
+function EntityScript:StartWallUpdatingComponent(cmp)
     
+    if not self.wallupdatecomponents then
+        self.wallupdatecomponents = {}
+        NewWallUpdatingEnts[self.GUID] = self
+    end
+
+	local cmpname = nil
+	for k,v in pairs(self.components) do
+		if v == cmp then
+			cmpname = k
+			break
+		end
+	end
+
+    self.wallupdatecomponents[cmp] = cmpname or "component"
+end
+
+
+
+function EntityScript:StopWallUpdatingComponent(cmp)
+    
+    if self.wallupdatecomponents then
+        self.wallupdatecomponents[cmp] = nil
+
+        local num = 0
+        for k,v in pairs(self.wallupdatecomponents) do
+            num = num + 1
+            break
+        end
+        
+        if num == 0 then
+            self.wallupdatecomponents = nil
+            WallUpdatingEnts[self.GUID] = nil
+            NewWallUpdatingEnts[self.GUID] = nil
+        end
+    end
+end
+
+
+function EntityScript:GetComponentName(cmp)
+	for k,v in pairs(self.components) do
+		if v == cmp then
+			return k
+		end
+	end
+	return "component"
 end
 
 function EntityScript:AddTag(tag)
@@ -247,6 +297,8 @@ end
 function EntityScript:RemoveComponent(name)
     local cmp = self.components[name]
     if cmp then
+		self:StopUpdatingComponent(cmp)
+		self:StopWallUpdatingComponent(cmp)
         self.components[name] = nil
         if cmp.OnRemoveFromEntity then
             cmp:OnRemoveFromEntity()
@@ -444,9 +496,6 @@ end
 
 
 function EntityScript:SetBrain(brainfn)
-	if brainfn == nil then
-		print (self)
-	end
 	self.brainfn = brainfn
 	if self.brain then
 		self:RestartBrain()
@@ -590,8 +639,9 @@ function EntityScript:PushEvent(event, data)
 	    
     if self.sg then
         if self.sg:IsListeningForEvent(event) then
-            self.sg:PushEvent(event, data)
-            SGManager:OnPushEvent(self.sg)
+            if SGManager:OnPushEvent(self.sg) then
+				self.sg:PushEvent(event, data)
+			end
         end
     end
     
@@ -604,38 +654,81 @@ function EntityScript:GetPosition()
     return Point(self.Transform:GetWorldPosition())
 end
 
-function EntityScript:GetAngleToPoint(dest)
-    local pos = Point(self.Transform:GetWorldPosition())
-    local dz = pos.z - dest.z
-    local dx = dest.x - pos.x
+function EntityScript:GetAngleToPoint(x, y, z)
+	if not x then
+		return 0
+	end
+
+    if x and not y and not z then
+        x, y, z = x:Get()
+    end    
+
+    local px, py, pz = self.Transform:GetWorldPosition()
+    local dz = pz - z
+    local dx = x - px
     local angle = math.atan2(dz, dx) / DEGREES
     return angle
 end
 
-function EntityScript:FacePoint(dest, force)
-    if not force and (self.sg and self.sg:HasStateTag("busy")) then
-        return
+function EntityScript:ForceFacePoint(x, y, z)
+
+    if not x then
+		return 
+	end
+
+    if x and not y and not z then
+        x, y, z = x:Get()
     end
-    
-    local angle = self:GetAngleToPoint(dest)
+
+    local angle = self:GetAngleToPoint(x, y, z)
     self.Transform:SetRotation(angle)
 end
 
+function EntityScript:FacePoint(x, y, z)
+    if self.sg and self.sg:HasStateTag("busy") then
+        return
+    end
+    
+    if not x then
+		return 
+	end
 
+    if x and not y and not z then
+        x, y, z = x:Get()
+    end
+
+    local angle = self:GetAngleToPoint(x, y, z)
+    self.Transform:SetRotation(angle)
+end
+
+-- consider using IsNear if you're checking if something is inside/outside a certain horizontal distance
 function EntityScript:GetDistanceSqToInst(inst)
-        local pos1 = Point(inst.Transform:GetWorldPosition())
-        local pos2 = Point(self.Transform:GetWorldPosition())
+    local p1x, p1y, p1z = self.Transform:GetWorldPosition()
+    local p2x, p2y, p2z = inst.Transform:GetWorldPosition()
         
-        return distsq(pos1, pos2)
+    assert(p1x and p1z, "Something is wrong: self.Transform:GetWorldPosition() stale component reference?")
+    assert(p2x and p2z, "Something is wrong: inst.Transform:GetWorldPosition() stale component reference?")
+    
+    return distsq(p1x, p1z, p2x, p2z)
+end
+
+-- excludes vertical distance
+function EntityScript:GetHorzDistanceSqToInst(inst)
+    local pos1 = self:GetPosition()
+    pos1.y = 0
+    local pos2 = inst:GetPosition()
+    pos2.y = 0
+
+    return distsq(pos1, pos2)
 end
 
 function EntityScript:IsNear(otherinst, dist)
-        return otherinst and self:GetDistanceSqToInst(otherinst) < dist*dist
+    return otherinst and self:GetHorzDistanceSqToInst(otherinst) < dist*dist
 end
 
 function EntityScript:GetDistanceSqToPoint(point)
-        local pos2 = Point(self.Transform:GetWorldPosition())
-        return distsq(point, pos2)
+    local pos2 = Point(self.Transform:GetWorldPosition())
+    return distsq(point, pos2)
 end
 
 function EntityScript:FaceAwayFromPoint(dest, force)
@@ -663,31 +756,60 @@ function EntityScript:CancelAllPendingTasks()
 	end
 end
 
+local function task_finish(task, success, inst)
+	--print ("TASK DONE", task, success, inst)
+	if inst and inst.pendingtasks and inst.pendingtasks[task] then
+		inst.pendingtasks[task] = nil
+	else
+		print ("   NOT FOUND")
+	end
+end
+
 function EntityScript:DoPeriodicTask(time, fn, initialdelay, ...)
-    
-    local per = scheduler:ExecutePeriodic(time, fn, nil, initialdelay, self, ...)
+
+	--print ("DO PERIODIC", time, self)
+    local per = scheduler:ExecutePeriodic(time, fn, nil, initialdelay, self.GUID, self, ...)
 
     if not self.pendingtasks then
 		self.pendingtasks = {}
     end
     
     self.pendingtasks[per] = true
-    per.onfinish = function() if self.pendingtasks then self.pendingtasks[per] = nil end end
+    per.onfinish = task_finish --function() if self.pendingtasks then self.pendingtasks[per] = nil end end
     return per
 end
 
 function EntityScript:DoTaskInTime(time, fn, ...)
-
+	--print ("DO TASK IN TIME", time, self)
     if not self.pendingtasks then
 		self.pendingtasks = {}
     end
     
-    local per = scheduler:ExecuteInTime(time, fn, self, ...)
+    local per = scheduler:ExecuteInTime(time, fn, self.GUID, self, ...)
     self.pendingtasks[per] = true
-    per.onfinish = function() if self and self.pendingtasks then self.pendingtasks[per] = nil end end
+    per.onfinish = task_finish -- function() if self and self.pendingtasks then self.pendingtasks[per] = nil end end
     return per
 end
 
+function EntityScript:GetTaskInfo(time)
+    local taskinfo = {}
+    taskinfo.start = GetTime()
+    taskinfo.time = time
+    return taskinfo
+end
+
+function EntityScript:TimeRemainingInTask(taskinfo)
+    local timeleft = (taskinfo.start + taskinfo.time) - GetTime()
+    if timeleft < 1 then timeleft = 1 end
+    return timeleft
+end
+
+function EntityScript:ResumeTask(time, fn, ...)
+    local task = self:DoTaskInTime(time, fn, ...)
+    local taskinfo = self:GetTaskInfo(time)
+
+    return task, taskinfo
+end
 
 function EntityScript:ClearBufferedAction()
     if self.bufferedaction then
@@ -697,9 +819,7 @@ function EntityScript:ClearBufferedAction()
 end
 
 function EntityScript:InterruptBufferedAction()
-    if self.bufferedaction then
-        self.bufferedaction:Interrupt()
-    end
+	self:ClearBufferedAction()
 end
 
 
@@ -708,7 +828,9 @@ function EntityScript:PushBufferedAction(bufferedaction)
 	local dupe = bufferedaction and self.bufferedaction
 	            and bufferedaction.target == self.bufferedaction.target
 	            and bufferedaction.action == bufferedaction.action
-	            and not self.bufferedaction.interrupted
+	            and bufferedaction.inv_obj == bufferedaction.inv_obj
+	            and not (self.sg and self.sg:HasStateTag("idle"))
+	            
 	if dupe then
 		return
 	end
@@ -730,7 +852,7 @@ function EntityScript:PushBufferedAction(bufferedaction)
         self.bufferedaction = nil
     elseif bufferedaction.action.instant then
         if bufferedaction.target and bufferedaction.target.Transform and (not self.sg or self.sg:HasStateTag("canrotate")) then
-            self:FacePoint(Vector3(bufferedaction.target.Transform:GetWorldPosition()))
+            self:FacePoint(bufferedaction.target.Transform:GetWorldPosition())
         end
         
         bufferedaction:Do()
@@ -754,7 +876,7 @@ function EntityScript:PerformBufferedAction()
     if self.bufferedaction then
         
         if self.bufferedaction.target and self.bufferedaction.target:IsValid() and self.bufferedaction.target.Transform then
-            self:FacePoint(Vector3(self.bufferedaction.target.Transform:GetWorldPosition()))
+            self:FacePoint(self.bufferedaction.target.Transform:GetWorldPosition())
         end
         
         
@@ -812,9 +934,14 @@ function EntityScript:Remove()
     
     
     if self.updatecomponents then
-		self.updatecomponents = nil
+        self.updatecomponents = nil
         UpdatingEnts[self.GUID] = nil
-		num_updating_ents = num_updating_ents - 1
+        num_updating_ents = num_updating_ents - 1
+    end
+
+    if self.wallupdatecomponents then
+        self.wallupdatecomponents = nil
+        WallUpdatingEnts[self.GUID] = nil
     end
     
     
@@ -906,35 +1033,41 @@ end
 function EntityScript:GetCurrentTileType()
 
     if GetWorld().Map then
-		local pt = Vector3(self.Transform:GetWorldPosition())
-		local tilecenter = Vector3(GetWorld().Map:GetTileCenterPoint(pt.x,0,pt.z))
-		local tx, ty = GetWorld().Map:GetTileCoordsAtPoint(pt.x, 0, pt.z)
+		local ptx, pty, ptz = self.Transform:GetWorldPosition()
+		local tilecenter_x, tilecenter_y,tilecenter_z  = GetWorld().Map:GetTileCenterPoint(ptx,0,ptz)
+		local tx, ty = GetWorld().Map:GetTileCoordsAtPoint(ptx, 0, ptz)
 		local actual_tile = GetWorld().Map:GetTile(tx, ty)
 		
-		if actual_tile then
-			local xpercent = (tilecenter.x - pt.x)/TILE_SCALE + .5
-			local ypercent = (tilecenter.z - pt.z)/TILE_SCALE + .5
+		if actual_tile and tilecenter_x and tilecenter_z then
+			local xpercent = (tilecenter_x - ptx)/TILE_SCALE + .5
+			local ypercent = (tilecenter_z - ptz)/TILE_SCALE + .5
 			
 			local x_off = 0
 			local y_off = 0
-			local x_checks = {0}
-			local y_checks = {0}
+			
+			local x_min = 0
+			local x_max = 0
+			local y_min = 0
+			local y_max = 0
+			
 			if actual_tile == GROUND.IMPASSABLE then
 				
 				if xpercent < .333 then
-					table.insert(x_checks, 1)
+					x_max = 1
+					
 				elseif xpercent > .666 then
-					table.insert(x_checks, -1)
+					x_min = -1
 				end
 
 				if ypercent < .333 then
-					table.insert(y_checks, 1)
+					y_max = 1
+					
 				elseif ypercent > .666 then
-					table.insert(y_checks, -1)
+					y_min = -1
 				end
 				
-				for k, x in pairs(x_checks) do
-					for k, y in pairs(y_checks) do
+				for x = x_min, x_max do
+					for y = y_min, y_max do
 						local tile = GetWorld().Map:GetTile(tx + x, ty + y)
 						if tile > actual_tile then
 							actual_tile = tile
@@ -986,7 +1119,19 @@ function EntityScript:GetPersistData()
         if not data then
             data = {}
         end
-        self.OnSave(self, data)
+
+        local refs = self.OnSave(self, data)
+
+        if refs then
+            if not references then
+                references = {}
+            end
+            for k,v in pairs(refs) do
+                
+                table.insert(references, v)
+            end
+        end
+        
     end
     
     if (data and next(data)) or references then
@@ -1014,6 +1159,11 @@ end
 
 
 function EntityScript:SetPersistData(data, newents)
+	
+	if self.OnPreLoad then
+		self:OnPreLoad(data, newents)
+	end
+    
     if data then
         for k,v in pairs(data) do
             local cmp = self.components[k]
@@ -1061,6 +1211,10 @@ end
 
 function EntityScript:SetInherentSceneAction(action)
 	self.inherentsceneaction = action
+end
+
+function EntityScript:SetInherentSceneAltAction(action)
+	self.inherentscenealtaction = action
 end
 
 function EntityScript:LongUpdate(dt)

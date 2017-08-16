@@ -14,7 +14,7 @@ local STOP_RUN_AWAY_DIST = 15
 
 local SEE_FOOD_DIST = 10
 
-local MAX_WANDER_DIST = 10
+local MAX_WANDER_DIST = 20
 
 local MAX_CHASE_TIME = 60
 local MAX_CHASE_DIST = 40
@@ -142,7 +142,7 @@ local function EatFoodAction(inst)
     if not target then
         for k,item in pairs(ents) do
             if item.components.pickable and item.components.pickable.caninteractwith and item.components.pickable:CanBePicked()
-            and ItemIsInList(item.components.pickable.product, ValidFoodsToPick) then
+            and (ItemIsInList(item.components.pickable.product, ValidFoodsToPick) or item.prefab == "worm") then
                 target = item
                 break
             end
@@ -195,7 +195,7 @@ local function AnnoyLeader(inst)
     if inst.sg:HasStateTag("busy") then
         return
     end
-    local player = GetPlayer()
+    local player = GetPlayer() -- You will only ever harass the player.
     local p_pt = player:GetPosition()
     local m_pt = inst:GetPosition()
     local ents = TheSim:FindEntities(m_pt.x, m_pt.y, m_pt.z, 30)
@@ -290,10 +290,10 @@ function MonkeyBrain:OnStart()
             DoAction(self.inst, EatFoodAction)),
         --Priority must be lower than poop pick up or it will never happen.
         WhileNode(function() return self.inst.components.combat.target == GetPlayer() and not self.inst.HasAmmo(self.inst) end, "Leash to Player",
-            Leash(self.inst, function() if self.inst.components.combat.target then return self.inst.components.combat.target:GetPosition() end end, LEASH_MAX_DIST, LEASH_RETURN_DIST)),
-
-        WhileNode(function() return self.inst.components.combat.target == GetPlayer() and not self.inst.HasAmmo(self.inst) end, "Look at Player", 
-            FaceEntity(self.inst, GetFaceTargetFn, KeepFaceTargetFn)),
+        PriorityNode{
+            Leash(self.inst, function() if self.inst.components.combat.target then return self.inst.components.combat.target:GetPosition() end end, LEASH_MAX_DIST, LEASH_RETURN_DIST),
+            FaceEntity(self.inst, GetFaceTargetFn, KeepFaceTargetFn)
+        }),
 
 
         --In combat with everything else
@@ -302,16 +302,14 @@ function MonkeyBrain:OnStart()
 
         
         --Following
-        WhileNode(function() return self.inst.components.follower and self.inst.components.follower.leader end, "Annoy Leader", 
+        WhileNode(function() return self.inst.harassplayer end, "Annoy Leader", 
             DoAction(self.inst, AnnoyLeader)),
-        Follow(self.inst, function() return self.inst.components.follower and self.inst.components.follower.leader end, MIN_FOLLOW_DIST, TARGET_FOLLOW_DIST, MAX_FOLLOW_DIST),
+        Follow(self.inst, function() return self.inst.harassplayer and GetPlayer()  end, MIN_FOLLOW_DIST, TARGET_FOLLOW_DIST, MAX_FOLLOW_DIST),
         
         --Doing nothing
-        WhileNode(function() return self.inst.components.follower and self.inst.components.follower.leader ~= nil end, "Wander Around Leader", 
-            Wander(self.inst, function() if self.inst.components.follower.leader then return self.inst.components.follower.leader:GetPosition() end end, MAX_FOLLOW_DIST)),
-        WhileNode(function() return self.inst.components.follower 
-                            and not self.inst.components.follower.leader
-                            and not self.inst.components.combat.target end,
+        WhileNode(function() return self.inst.harassplayer  end, "Wander Around Leader", 
+            Wander(self.inst, function() if self.inst.harassplayer  then return GetPlayer():GetPosition() end end, MAX_FOLLOW_DIST)),
+        WhileNode(function() return not self.inst.harassplayer and not self.inst.components.combat.target end,
         "Wander Around Home", Wander(self.inst, function() return self.inst.components.knownlocations:GetLocation("home") end, MAX_WANDER_DIST))
     }, .25)
     self.bt = BT(self.inst, root)

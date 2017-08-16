@@ -144,6 +144,9 @@ local states=
         tags = {"attack"},
         
         onenter = function(inst)
+            if inst.components.combat.target and inst.components.combat.target:IsValid() then
+                inst:FacePoint(inst.components.combat.target:GetPosition())
+            end
             inst.components.combat:StartAttack()
             inst.Physics:Stop()
             inst.AnimState:PlayAnimation("atk_dart")

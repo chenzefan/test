@@ -1,9 +1,9 @@
 local Widget = require "widgets/widget"
 local Image = require "widgets/image"
 
-MapWidget = Class(Widget, function(self, owner)
+local MapWidget = Class(Widget, function(self)
     Widget._ctor(self, "MapWidget")
-	self.owner = owner
+	self.owner = GetPlayer()
 
     self.bg = self:AddChild(Image("images/hud.xml", "map.tex"))
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
@@ -13,96 +13,64 @@ MapWidget = Class(Widget, function(self, owner)
     self.bg:SetScaleMode(SCALEMODE_FILLSCREEN)
 	self.bg.inst.ImageWidget:SetBlendMode( BLENDMODE.Premultiplied )
     
-    self.minimap = self.owner.HUD.minimap.MiniMap
+    self.minimap = GetWorld().minimap.MiniMap
     
     self.img = self:AddChild(Image())
     self.img:SetHAnchor(ANCHOR_MIDDLE)
     self.img:SetVAnchor(ANCHOR_MIDDLE)
     self.img.inst.ImageWidget:SetBlendMode( BLENDMODE.Additive )    
-
-    self.inputhandlers = {}
-    table.insert(self.inputhandlers, TheInput:AddMoveHandler(function(x, y) self:UpdatePosition(x, y) end))
     
 	self.lastpos = nil
+	self.minimap:ResetOffset()	
+	self:StartUpdating()
+
 end)
-
-
-function MapWidget:OnRemoveEntity()
-    for k,v in pairs(self.inputhandlers) do
-        v:Remove()
-    end
-end
 
 
 function MapWidget:SetTextureHandle(handle)
 	self.img.inst.ImageWidget:SetTextureHandle( handle )
 end
 
-function MapWidget:OnZoomIn( )
+function MapWidget:OnZoomIn(  )
 	if self.shown then
 		self.minimap:Zoom( -1 )
 	end
 end
 
 function MapWidget:OnZoomOut( )
-	if self.shown then
+	if self.shown and self.minimap:GetZoom() < 20 then
 		self.minimap:Zoom( 1 )
 	end
 end
 
-function MapWidget:Update()
+function MapWidget:UpdateTexture()
 	local handle = self.minimap:GetTextureHandle()
 	self:SetTextureHandle( handle )
 end
 
-function MapWidget:OnControl(control, down)
-	if not down then return false end
-	if not self.shown then return false end
-	
-	local s = -10
-	
-	if control == CONTROL_ZOOM_IN then
-		self:OnZoomIn()
-	elseif control == CONTROL_ZOOM_OUT then
-		self:OnZoomOut()
-	elseif control == CONTROL_ROTATE_LEFT then
-		GetPlayer().components.playercontroller:RotLeft()
-	elseif control == CONTROL_ROTATE_RIGHT then
-		GetPlayer().components.playercontroller:RotRight()
-	elseif control == CONTROL_MOVE_LEFT then
-		self.minimap:Offset( -s, 0 )
-	elseif control == CONTROL_MOVE_RIGHT then
-		self.minimap:Offset( s, 0 )
-	elseif control == CONTROL_MOVE_UP then
-		self.minimap:Offset( 0, s )
-	elseif control == CONTROL_MOVE_DOWN then
-		self.minimap:Offset( 0, -s )
-	else
-		return false
-	end
-	
-	return true
-	
-end
+function MapWidget:OnUpdate(dt)
 
-
-function MapWidget:UpdatePosition( x, y )
 	if not self.shown then return end
 	
 	if TheInput:IsControlPressed(CONTROL_PRIMARY) then
-		
+		local pos = TheInput:GetScreenPosition()
 		if self.lastpos then
-			local scale = 0.5
-			local dx = scale * ( x - self.lastpos.x )
-			local dy = scale * ( y - self.lastpos.y )
+			local scale = 0.25
+			local dx = scale * ( pos.x - self.lastpos.x )
+			local dy = scale * ( pos.y - self.lastpos.y )
 			self.minimap:Offset( dx, dy )
 		end
 		
-		self.lastpos = Vector3(x,y,0)
+		self.lastpos = pos
 	else
 		self.lastpos = nil
 	end
 end
+
+function MapWidget:Offset(dx,dy)
+	self.minimap:Offset(dx,dy)
+end
+
 
 function MapWidget:OnShow()
 	self.minimap:ResetOffset()
@@ -111,3 +79,4 @@ end
 function MapWidget:OnHide()
 	self.lastpos = nil
 end
+return MapWidget

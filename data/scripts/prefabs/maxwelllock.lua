@@ -1,3 +1,5 @@
+local PopupDialogScreen = require "screens/popupdialog"
+
 local assets =
 {
 	Asset("ANIM", "anim/diviningrod.zip"),
@@ -16,23 +18,31 @@ local function OnUnlock(inst, key, doer)
     inst.throne.lock = inst
 	local character = GetPlayer().profile:GetValue("characterinthrone") or "wilson"
     GetPlayer().components.playercontroller:Enable(false)
-    TheFrontEnd:PushScreen(PopupDialogScreen(
-        STRINGS.UI.UNLOCKMAXWELL.TITLE, STRINGS.UI.UNLOCKMAXWELL.BODY1..
-        STRINGS.CHARACTER_NAMES[character]..
-        string.format(STRINGS.UI.UNLOCKMAXWELL.BODY2, STRINGS.UI.GENDERSTRINGS[GetGenderStrings(character)].TWO),
-        {
-            {text=STRINGS.UI.UNLOCKMAXWELL.YES, cb = function()
-                inst.SoundEmitter:PlaySound("dontstarve/common/teleportato/teleportato_add_divining")
-                inst.throne.startthread(inst.throne)
-            end},
+    SetPause(true)
 
-            {text=STRINGS.UI.UNLOCKMAXWELL.NO, cb = function()
-                SetHUDPause(false)
-                GetPlayer().components.playercontroller:Enable(true)
-                inst.components.lock:Lock(doer)
-                inst:PushEvent("notfree")                
-            end}
-        }))
+    local title =  STRINGS.UI.UNLOCKMAXWELL.TITLE
+    local body =  STRINGS.UI.UNLOCKMAXWELL.BODY1..STRINGS.CHARACTER_NAMES[character]..string.format(STRINGS.UI.UNLOCKMAXWELL.BODY2, STRINGS.UI.GENDERSTRINGS[GetGenderStrings(character)].TWO)
+    local popup = PopupDialogScreen(title, body,
+            {
+                {text=STRINGS.UI.UNLOCKMAXWELL.YES, cb = function()
+                    TheFrontEnd:PopScreen() 
+                    SetPause(false)
+                    inst.SoundEmitter:PlaySound("dontstarve/common/teleportato/teleportato_add_divining")
+                    inst.throne.startthread(inst.throne)
+                    
+                end},
+
+                {text=STRINGS.UI.UNLOCKMAXWELL.NO, cb = function()
+                    TheFrontEnd:PopScreen()               
+                    SetPause(false)
+                    GetPlayer().components.playercontroller:Enable(true)
+                    inst.components.lock:Lock(doer)
+                    inst:PushEvent("notfree")  
+                end}
+            }
+        )
+
+    TheFrontEnd:PushScreen(  popup  )
 end
 
 local function OnLock(inst, doer)

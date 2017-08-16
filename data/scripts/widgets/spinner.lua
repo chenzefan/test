@@ -1,3 +1,4 @@
+require "fonts"
 local Widget = require "widgets/widget"
 local ImageButton = require "widgets/imagebutton"
 local ThreeSlice = require "widgets/threeslice"
@@ -111,6 +112,21 @@ function Spinner:OnGainFocus()
 	self:UpdateBG()
 end
 
+function Spinner:GetHelpText()
+	local controller_id = TheInput:GetControllerID()
+
+	local t = {}
+	if self.leftimage.enabled then
+		table.insert(t, TheInput:GetLocalizedControl(controller_id, CONTROL_PREVVALUE) .. " " .. STRINGS.UI.HELP.PREVVALUE)
+	end
+
+	if self.rightimage.enabled then
+		table.insert(t, TheInput:GetLocalizedControl(controller_id, CONTROL_NEXTVALUE) .. " " .. STRINGS.UI.HELP.NEXTVALUE)
+	end
+	
+	return table.concat(t, "  ")
+end
+
 function Spinner:OnLoseFocus()
 	Spinner._base.OnLoseFocus(self)
 	self.changing = false
@@ -120,17 +136,17 @@ end
 function Spinner:OnControl(control, down)
 	if Spinner._base.OnControl(self, control, down) then return true end
 
-	if down then
-		if control == CONTROL_PAGELEFT then
+	if not down then
+		if control == CONTROL_PREVVALUE then
 			self:Prev()
 			return true
-		elseif control == CONTROL_PAGERIGHT then
+		elseif control == CONTROL_NEXTVALUE then
 			self:Next()
 			return true
 		end
 	end
 
-	if not down and control == CONTROL_ACCEPT then
+	--[[if not down and control == CONTROL_ACCEPT then
 		if self.changing then
 			self.changing = false
 			self:UpdateBG()
@@ -152,7 +168,7 @@ function Spinner:OnControl(control, down)
 			end
 			return true
 		end
-	end
+	end--]]
 
 
 end
@@ -335,7 +351,14 @@ function Spinner:Changed()
 	end
 end
 
+function Spinner:SetOnChangedFn(fn)
+	self.onchangedfn = fn
+end
+
 function Spinner:OnChanged( selected )
+	if self.onchangedfn then
+		self.onchangedfn(selected)
+	end
 end
 
 function Spinner:MinIndex()

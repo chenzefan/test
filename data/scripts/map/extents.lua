@@ -47,3 +47,35 @@ function GetMinimumRadiusForNodes(nodes)
 
 	return getminimumradius(floats) --sim:GetMinimumRadius(floats)
 end
+
+local function UpdateextentsForPoint(extents, point)
+	if point[1]<extents.xmin then
+		extents.xmin = point[1]
+	end
+	if point[2]<extents.ymin then
+		extents.ymin = point[2]
+	end
+	if point[1]>extents.xmax then
+		extents.xmax = point[1]
+	end
+	if point[2]>extents.ymax then
+		extents.ymax = point[2]
+	end
+end
+function ResetextentsForPoly(poly)
+	local extents = {xmin=1000000,ymin=1000000,xmax=-1000000,ymax=-1000000}	
+	
+	for i =1, #poly do
+		UpdateextentsForPoint(extents, poly[i])
+	end
+	
+	extents.size = {x = extents.xmax - extents.xmin, y = extents.ymax - extents.ymin}
+
+	if  extents.size.x > extents.size.y then
+		extents.radius = extents.size.x
+	else
+		extents.radius = extents.size.y
+	end
+
+	return extents
+end

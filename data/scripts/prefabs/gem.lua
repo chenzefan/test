@@ -39,7 +39,7 @@ local function buildgem(colour)
         
 	    inst:AddComponent("repairer")
 	    inst.components.repairer.repairmaterial = "gem"
-	    inst.components.repairer.value = TUNING.REPAIR_GEMS
+	    inst.components.repairer.workrepairvalue = TUNING.REPAIR_GEMS_WORK
 
         inst:AddComponent("stackable")
     	inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM

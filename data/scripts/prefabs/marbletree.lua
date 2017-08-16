@@ -7,9 +7,14 @@ assets =
 
 local prefabs =
 {
-	--marble drops
 	"marble",
 }
+
+SetSharedLootTable( 'marble_tree',
+{
+    {'marble', 1.0},
+    {'marble', 0.5},
+})
 
 local function onsave(inst, data)
 	data.anim = inst.animnumber
@@ -40,8 +45,7 @@ local function makeMarbleTree(animnumber)
 		MakeObstaclePhysics(inst, 0.1)
 
 		inst:AddComponent("lootdropper")
-		inst.components.lootdropper:SetLoot({"marble"}) --Add other loot?
-		inst.components.lootdropper:AddChanceLoot("marble", 0.5)
+		inst.components.lootdropper:SetChanceLootTable('marble_tree')
 
 		if animnumber and animnumber > 0 then
 			inst.animnumber = animnumber

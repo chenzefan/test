@@ -35,6 +35,7 @@ local function fn(Sim)
     --inst.AnimState:SetMultColour(1,1,1,.6)
     
     inst:AddTag("monster")
+    inst:AddTag("hostile")
     inst:AddTag("ghost")
     inst:AddTag("noauradamage")
 

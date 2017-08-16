@@ -14,6 +14,9 @@ local GROUND_PROPERTIES = {
 
 	{ GROUND.CAVE,		{ name = "cave",		noise_texture = "levels/textures/noise_cave.tex",					runsound="dontstarve/movement/run_dirt",		walksound="dontstarve/movement/walk_dirt",		snowsound="dontstarve/movement/run_ice"		} },
 	{ GROUND.FUNGUS,	{ name = "cave",		noise_texture = "levels/textures/noise_fungus.tex",					runsound="dontstarve/movement/run_moss",		walksound="dontstarve/movement/walk_moss",		snowsound="dontstarve/movement/run_ice"		} },
+	{ GROUND.FUNGUSRED,	{ name = "cave",		noise_texture = "levels/textures/noise_fungus_red.tex",					runsound="dontstarve/movement/run_moss",		walksound="dontstarve/movement/walk_moss",		snowsound="dontstarve/movement/run_ice"		} },
+	{ GROUND.FUNGUSGREEN,{ name = "cave",		noise_texture = "levels/textures/noise_fungus_green.tex", 				runsound="dontstarve/movement/run_moss",		walksound="dontstarve/movement/walk_moss",		snowsound="dontstarve/movement/run_ice"		} },
+	
 	{ GROUND.SINKHOLE,	{ name = "cave",		noise_texture = "levels/textures/noise_sinkhole.tex",				runsound="dontstarve/movement/run_dirt",		walksound="dontstarve/movement/walk_dirt",		snowsound="dontstarve/movement/run_snow"	} },
 	{ GROUND.UNDERROCK,	{ name = "cave",		noise_texture = "levels/textures/noise_rock.tex",					runsound="dontstarve/movement/run_dirt",		walksound="dontstarve/movement/walk_dirt",		snowsound="dontstarve/movement/run_ice"		} },
 	{ GROUND.MUD,		{ name = "cave",		noise_texture = "levels/textures/noise_mud.tex",					runsound="dontstarve/movement/run_mud",			walksound="dontstarve/movement/walk_mud",		snowsound="dontstarve/movement/run_snow"	} },

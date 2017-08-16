@@ -45,11 +45,12 @@ Area 1
 	3. Add Starting position
 --]]
 
-Story = Class(function(self, id, tasks, terrain, gen_params)
+Story = Class(function(self, id, tasks, terrain, gen_params, level)
 	self.id = id
 	self.loop_blanks = 1
 	self.gen_params = gen_params
 	self.impassible_value = gen_params.impassible_value or GROUND.IMPASSABLE
+	self.level = level
 
 	self.tasks = {}
 	for k,task in pairs(tasks) do
@@ -63,15 +64,17 @@ Story = Class(function(self, id, tasks, terrain, gen_params)
 	self.startNode = nil
 
 	self.map_tags = MapTags()
-	
+end)
+
+function Story:GenerationPipeline()
 	self:GenerateNodesFromTasks()
 
-	self:AddBGNodes(2)
-
+	local min_bg = self.level.background_node_range and self.level.background_node_range[1] or 0
+	local max_bg = self.level.background_node_range and self.level.background_node_range[2] or 2
+	self:AddBGNodes(min_bg, max_bg)
 	self:InsertAdditionalSetPieces()
-	
 	self:ProcessExtraTags()
-end)
+end
 
 function Story:ModRoom(roomname, room)
 	local modfns = ModManager:GetPostInitFns("RoomPreInit", roomname)
@@ -116,6 +119,9 @@ function Story:PlaceTeleportatoParts()
 		for i,name in ipairs(nodeNames) do
 			if IsNodeAnExit(task.nodes[name]) then
 				local extra = task.nodes[name].data.terrain_contents_extra
+				if not extra then
+					extra = {}
+				end
 				if not extra.static_layouts then
 					extra.static_layouts = {}
 				end
@@ -139,13 +145,7 @@ function Story:PlaceTeleportatoParts()
 		return false
 	end
 
-	local parts = {"TeleportatoRingLayout",  "TeleportatoBoxLayout", "TeleportatoCrankLayout",  "TeleportatoPotatoLayout"}
-	if self.gen_params.level_type ~= "adventure" then
-		table.insert(parts, "AdventurePortalLayout")
-		table.insert(parts, "TeleportatoBaseLayout")
-	elseif self.gen_params.level_type == "adventure" then
-		table.insert(parts, "TeleportatoBaseAdventureLayout")
-	end
+	local parts = self.level.ordered_story_setpieces or {}
 	local maxdepth = -1
 	for id,task in pairs(self.rootNode:GetChildren()) do
 		if task.story_depth > maxdepth then
@@ -180,11 +180,14 @@ function Story:InsertAdditionalSetPieces()
 					-- return true if the piece is not backround restricted, or if it is but we are on a background
 					return setpiece_data.restrict_to ~= "background" or room.data.type == "background"
 				end
+				local isnt_blank = function(room)
+					return room.data.type ~= "blank"
+				end
 
 				local choicekeys = shuffledKeys(task.nodes)
 				local choice = nil
 				for i, choicekey in ipairs(choicekeys) do
-					if not is_entrance(task.nodes[choicekey]) and is_background_ok(task.nodes[choicekey]) then
+					if not is_entrance(task.nodes[choicekey]) and is_background_ok(task.nodes[choicekey]) and isnt_blank(task.nodes[choicekey]) then
 						choice = choicekey
 						break
 					end
@@ -378,7 +381,7 @@ function Story:GenerateNodesFromTasks()
 	-- Generate all the TERRAIN
 	for k,task in pairs(self.tasks) do
 		--print("Story:GenerateNodesFromTasks k,task",k,task,  GetTableSize(self.TERRAIN))
-		local node = self:GenerateNodesFromTask(task, 1)--0.5)
+		local node = self:GenerateNodesFromTask(task, task.crosslink_factor or 1)--0.5)
 		self.TERRAIN[task.id] = node
 		unusedTasks[task.id] = node
 	end
@@ -467,7 +470,7 @@ function Story:GenerateNodesFromTasks()
 	end
 end
 
-function Story:AddBGNodes(random_count)
+function Story:AddBGNodes(min_count, max_count)
 	local tasksnodes = self.rootNode:GetChildren(false)
 	local bg_idx = 0
 
@@ -475,6 +478,16 @@ function Story:AddBGNodes(random_count)
 
 		local background_template = self:GetRoom(task.data.background)
 		assert(background_template, "Couldn't find room with name "..task.data.background)
+		local blocker_blank_template = self:GetRoom(self.level.blocker_blank_room_name)
+		if blocker_blank_template == nil then
+			blocker_blank_template = {
+				type="blank",
+				tags = {"RoadPoison", "ForceDisconnected"},					 
+				colour={r=0.3,g=.8,b=.5,a=.50},
+				value = self.impassible_value
+			}
+		end
+		
 
 		self:RunTaskSubstitution(task, background_template.contents.distributeprefabs)
 
@@ -482,7 +495,7 @@ function Story:AddBGNodes(random_count)
 
 			if not node.data.entrance then
 
-				local count = math.random(0,random_count)
+				local count = math.random(min_count,max_count)
 				local prevNode = nil
 				for i=1,count do
 
@@ -519,6 +532,30 @@ function Story:AddBGNodes(random_count)
 
 					bg_idx = bg_idx + 1
 					prevNode = newNode
+				end
+			else -- this is an entrance node
+				for i=1,2 do
+					local new_room = deepcopy(blocker_blank_template)
+					new_room.task = task.id
+
+					local extra_contents, extra_tags = self:GetExtrasForRoom(new_room)
+
+					local blank_subnode = task:AddNode({
+											id=nodeid..":BLOCKER_BLANK_"..tostring(i), 
+											data={
+													type= new_room.type or "blank",
+													colour = new_room.colour,
+													value = new_room.value,
+													internal_type = new_room.internal_type,
+													tags = extra_tags,
+													terrain_contents = new_room.contents,
+													terrain_contents_extra = extra_contents,
+													terrain_filter = self.terrain.filter,
+													blocker_blank = true,
+												  }										
+										})
+
+					task:AddEdge({node1id=nodeid, node2id=blank_subnode.id})
 				end
 			end
 
@@ -663,7 +700,7 @@ function Story:GenerateNodesFromTask(task, crossLinkFactor)
 	
 	local newNode = nil
 	local prevNode = nil
-	
+	-- TODO: we could shuffleArray here on rom_choices_.et to make it more random
 	local roomID = 0
 	--print("Story:GenerateNodesFromTask adding "..room_choices:getn().." rooms")
 	while room_choices:getn() > 0 do
@@ -705,6 +742,9 @@ function Story:GenerateNodesFromTask(task, crossLinkFactor)
 		roomID = roomID + 1
 	end
 	
+	if task.make_loop then
+		task_node:MakeLoop()
+	end
 	if crossLinkFactor then
 		--print("Story:GenerateNodesFromTask crosslinking")
 		-- do some extra linking.
@@ -717,11 +757,12 @@ end
 ---------             TESTING                   --------------------------------------
 ------------------------------------------------------------------------------------------
 
-function TEST_STORY(tasks, story_gen_params)
+function TEST_STORY(tasks, story_gen_params, level)
 	--print("Building TEST STORY", tasks)
 	local start_time = GetTimeReal()
 	
-	local story = Story("GAME", tasks, terrain, story_gen_params)
+	local story = Story("GAME", tasks, terrain, story_gen_params, level)
+	story:GenerationPipeline()
 	    
 	SetTimingStat("time", "generate_story", GetTimeReal() - start_time)
 	

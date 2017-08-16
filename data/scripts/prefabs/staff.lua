@@ -1,7 +1,7 @@
 local assets=
 {
-	Asset("ANIM", "anim/staffs.zip"),
-	Asset("ANIM", "anim/swap_staffs.zip"), 
+    Asset("ANIM", "anim/staffs.zip"),
+    Asset("ANIM", "anim/swap_staffs.zip"), 
 }
 
 local prefabs = 
@@ -9,7 +9,7 @@ local prefabs =
     "ice_projectile",
     "fire_projectile",
     "staffcastfx",
-	"stafflight",
+    "stafflight",
 }
 
 ---------RED STAFF---------
@@ -20,7 +20,7 @@ local function onattack_red(inst, attacker, target)
         if target.components.freezable and target.components.freezable:IsFrozen() then           
             target.components.freezable:Unfreeze()            
         else            
-            target.components.burnable:Ignite()
+            target.components.burnable:Ignite(true)
         end   
     end
 
@@ -87,10 +87,17 @@ local function getrandomposition(inst)
     local ground = GetWorld()
     local centers = {}
     for i,node in ipairs(ground.topology.nodes) do
-        table.insert(centers, {x = node.x, z = node.y})
+        local tile = GetWorld().Map:GetTileAtPoint(node.x, 0, node.y)
+        if tile and tile ~= GROUND.IMPASSABLE then
+            table.insert(centers, {x = node.x, z = node.y})
+        end
     end
-    local pos = centers[math.random(#centers)]
-    return Point(pos.x, 0, pos.z)
+    if #centers > 0 then
+        local pos = centers[math.random(#centers)]
+        return Point(pos.x, 0, pos.z)
+    else
+        return GetPlayer():GetPosition()
+    end
 end
 
 local function canteleport(inst, caster, target)
@@ -211,8 +218,40 @@ end
 
 -------GREEN STAFF-----------
 
+local DESTSOUNDS =
+{
+    {   --magic
+        soundpath = "dontstarve/common/destroy_magic",
+        ing = {"nightmarefuel", "livinglog"},
+    },
+    {   --cloth
+        soundpath = "dontstarve/common/destroy_clothing",
+        ing = {"silk", "beefalowool"},
+    },
+    {   --tool
+        soundpath = "dontstarve/common/destroy_tool",
+        ing = {"twigs"},
+    },
+    {   --gem
+        soundpath = "dontstarve/common/gem_shatter",
+        ing = {"redgem", "bluegem", "greengem", "purplegem", "yellowgem", "orangegem"},
+    },
+    {   --wood
+        soundpath = "dontstarve/common/destroy_wood",
+        ing = {"log", "board"}
+    },
+    {   --stone
+        soundpath = "dontstarve/common/destroy_stone",
+        ing = {"rocks", "cutstone"}
+    },
+    {   --straw
+        soundpath = "dontstarve/common/destroy_straw",
+        ing = {"cutgrass", "cutreeds"}
+    },
+}
+
 local function candestroy(staff, caster, target)
-	if not target then return false end
+    if not target then return false end
 
     local recipe = GetRecipe(target.prefab)
 
@@ -261,6 +300,28 @@ local function SpawnLootPrefab(inst, lootprefab)
     end
 end
 
+local function getsoundsforstructure(inst, target)
+
+    local sounds = {}
+
+    local recipe = GetRecipe(target.prefab)
+
+    if recipe then       
+        for k, soundtbl in pairs(DESTSOUNDS) do
+            for k2, ing in pairs(soundtbl.ing) do
+                for k3, rec_ingredients in pairs(recipe.ingredients) do
+                    if rec_ingredients.type == ing then
+                        table.insert(sounds, soundtbl.soundpath)
+                    end
+                end 
+            end
+        end
+    end
+
+    return sounds
+
+end
+
 local function destroystructure(staff, target)
 
     local ingredient_percent = 1
@@ -269,6 +330,8 @@ local function destroystructure(staff, target)
         ingredient_percent = target.components.finiteuses:GetPercent()
     elseif target.components.fueled and target.components.inventoryitem then
         ingredient_percent = target.components.fueled:GetPercent()
+    elseif target.components.armor and target.components.inventoryitem then
+        ingredient_percent = target.components.armor:GetPercent()
     end
 
     local recipe = GetRecipe(target.prefab)
@@ -292,10 +355,15 @@ local function destroystructure(staff, target)
         return
     end
 
+    local sounds = {}
+    sounds = getsoundsforstructure(staff, target)
+    for k,v in pairs(sounds) do
+        print("playing ",v)
+        staff.SoundEmitter:PlaySound(v)
+    end
+
     for k,v in pairs(loot) do
         SpawnLootPrefab(target, v)
-        --local i = SpawnPrefab(v)
-        --caster.components.inventory:GiveItem(i)
     end
 
     if caster.components.sanity then
@@ -327,8 +395,6 @@ local function destroystructure(staff, target)
             player.components.health:RecalculatePenalty()
         end
     end
-
-
 end
 
 ---------YELLOW STAFF-------------
@@ -348,7 +414,7 @@ local function createlight(staff, target, pos)
     staff.components.finiteuses:Use(1)
 
     local caster = staff.components.inventoryitem.owner
-    if caster.components.sanity then
+    if caster and caster.components.sanity then
         caster.components.sanity:DoDelta(-TUNING.SANITY_MEDLARGE)
     end
 
@@ -386,9 +452,9 @@ local function commonfn(colour)
         owner.AnimState:Show("ARM_normal") 
     end
 
-	local inst = CreateEntity()
-	local trans = inst.entity:AddTransform()
-	local anim = inst.entity:AddAnimState()
+    local inst = CreateEntity()
+    local trans = inst.entity:AddTransform()
+    local anim = inst.entity:AddAnimState()
     local sound = inst.entity:AddSoundEmitter()
     MakeInventoryPhysics(inst)
     
@@ -475,28 +541,17 @@ local function yellow()
     inst:AddComponent("spellcaster")
     inst.components.spellcaster:SetSpellFn(createlight)
     inst.components.spellcaster:SetSpellTestFn(cancreatelight)
-
     inst.components.spellcaster.canuseonpoint = true
     inst.components.spellcaster.canusefrominventory = false
 
+    inst:AddComponent("reticule")
+    inst.components.reticule.targetfn = function() 
+        return Vector3(GetPlayer().entity:LocalToWorldSpace(5,0,0))
+    end
+    inst.components.reticule.ease = true
+
     inst.components.finiteuses:SetMaxUses(TUNING.YELLOWSTAFF_USES)
     inst.components.finiteuses:SetUses(TUNING.YELLOWSTAFF_USES)
-    inst:AddTag("nopunch")
-
-    return inst
-end
-
-local function orange()
-    local inst = commonfn("orange")
-    inst.fxcolour = {1, 145/255, 0}
-    inst.castsound = "dontstarve/common/staffteleport"
-    inst:AddComponent("blinkstaff")
-    inst.components.blinkstaff.onblinkfn = onblink
-
-    inst.components.equippable.walkspeedmult = TUNING.CANE_SPEED_MULT
-
-    inst.components.finiteuses:SetMaxUses(TUNING.ORANGESTAFF_USES)
-    inst.components.finiteuses:SetUses(TUNING.ORANGESTAFF_USES)
     inst:AddTag("nopunch")
 
     return inst
@@ -514,6 +569,30 @@ local function green()
 
     inst.components.finiteuses:SetMaxUses(TUNING.GREENSTAFF_USES)
     inst.components.finiteuses:SetUses(TUNING.GREENSTAFF_USES)
+
+    return inst
+end
+
+local function orange()
+    local inst = commonfn("orange")
+    
+    inst.fxcolour = {1, 145/255, 0}
+    inst.castsound = "dontstarve/common/staffteleport"
+
+    inst:AddComponent("blinkstaff")
+    inst.components.blinkstaff.onblinkfn = onblink
+    
+    inst:AddComponent("reticule")
+    inst.components.reticule.targetfn = function() 
+        return inst.components.blinkstaff:GetBlinkPoint()
+    end
+    inst.components.reticule.ease = true
+
+    inst.components.equippable.walkspeedmult = TUNING.CANE_SPEED_MULT
+
+    inst.components.finiteuses:SetMaxUses(TUNING.ORANGESTAFF_USES)
+    inst.components.finiteuses:SetUses(TUNING.ORANGESTAFF_USES)
+    inst:AddTag("nopunch")
 
     return inst
 end

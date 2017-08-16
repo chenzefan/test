@@ -12,6 +12,36 @@ local prefabs =
 	"orangegem",
 }
 
+SetSharedLootTable( 'full_rock',
+{
+    {'rocks',     	1.00},
+    {'rocks',       1.00},
+    {'rocks',       1.00},
+    {'goldnugget',  1.00},
+    {'flint',       1.00},
+    {'goldnugget',  0.25},
+    {'flint',       0.60},
+    {'bluegem',     0.05},
+    {'redgem',      0.05},
+})
+
+SetSharedLootTable( 'med_rock',
+{
+    {'rocks',     	1.00},
+    {'rocks',       1.00},
+    {'flint',       1.00},
+    {'goldnugget',  0.50},
+    {'flint',       0.60},
+})
+
+SetSharedLootTable( 'low_rock',
+{
+    {'rocks',     	1.00},
+    {'flint',       1.00},
+    {'goldnugget',  0.25},
+    {'flint',       0.30},
+})
+
 local function workcallback(inst, worker, workleft)
 	local pt = Point(inst.Transform:GetWorldPosition())
 	if workleft <= 0 then
@@ -40,6 +70,9 @@ local function commonfn()
 
 	MakeObstaclePhysics(inst, 1.)
 
+    local color = 0.5 + math.random() * 0.5
+    anim:SetMultColour(color, color, color, 1)
+
 	anim:SetBank("rock_stalagmite")
 	anim:SetBuild("rock_stalagmite")
 
@@ -47,6 +80,10 @@ local function commonfn()
 	
 	inst:AddComponent("inspectable")
 	inst.components.inspectable.nameoverride = "stalagmite"
+
+
+	inst:AddComponent("named")
+	inst.components.named:SetName(STRINGS.NAMES["STALAGMITE"])
 
 	inst:AddComponent("workable")
 	inst.components.workable:SetWorkAction(ACTIONS.MINE)
@@ -59,9 +96,8 @@ end
 
 local function fullrock()
 	local inst = commonfn()
-	inst.components.lootdropper:SetLoot({"rocks", "rocks", "rocks", "goldnugget", "flint"})
-	inst.components.lootdropper:AddChanceLoot("goldnugget", 0.25)
-	inst.components.lootdropper:AddChanceLoot("flint", 0.6)
+
+	inst.components.lootdropper:SetChanceLootTable('full_rock')
 	
 	inst.AnimState:PlayAnimation("full")
 	return inst
@@ -69,21 +105,21 @@ end
 
 local function medrock()
 	local inst = commonfn()
-	isnt.components.workable:SetWorkLeft(TUNING.ROCKS * (2/3))
+	inst.components.workable:SetWorkLeft(TUNING.ROCKS_MINE_MED)
 	inst.AnimState:PlayAnimation("med")
-	inst.components.lootdropper:SetLoot({"rocks", "rocks", "flint"})
-	inst.components.lootdropper:AddChanceLoot("goldnugget", 0.5)
-	inst.components.lootdropper:AddChanceLoot("flint", 0.6)
+
+	inst.components.lootdropper:SetChanceLootTable('med_rock')
+
 	return inst
 end
 
 local function lowrock()
 	local inst = commonfn()
-	isnt.components.workable:SetWorkLeft(TUNING.ROCKS * (1/3))
+	inst.components.workable:SetWorkLeft(TUNING.ROCKS_MINE_LOW)
 	inst.AnimState:PlayAnimation("low")
-	inst.components.lootdropper:SetLoot({"rocks", "flint"})
-	inst.components.lootdropper:AddChanceLoot("goldnugget", 0.25)
-	inst.components.lootdropper:AddChanceLoot("flint", 0.3)
+
+	inst.components.lootdropper:SetChanceLootTable('low_rock')
+
 	return inst
 end
 

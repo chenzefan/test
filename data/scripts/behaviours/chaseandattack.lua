@@ -73,7 +73,7 @@ function ChaseAndAttack:Visit()
             local pt = Point(self.inst.Transform:GetWorldPosition())
             local dsq = distsq(hp, pt)
             local angle = self.inst:GetAngleToPoint(hp)
-            local r= self.inst.Physics:GetRadius()+ combat.target.Physics:GetRadius() + .1
+            local r= self.inst.Physics:GetRadius()+ (combat.target.Physics and combat.target.Physics:GetRadius() + .1 or 0)
             local running = self.inst.components.locomotor:WantsToRun()
             
             if (running and dsq > r*r) or (not running and dsq > combat:CalcAttackRangeSq() ) then

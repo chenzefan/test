@@ -2,6 +2,7 @@ require "behaviours/standstill"
 require "behaviours/runaway"
 require "behaviours/doaction"
 require "behaviours/panic"
+require "behaviours/follow"
 
 local START_FACE_DIST = 6
 local KEEP_FACE_DIST = 8
@@ -36,6 +37,11 @@ local function KeepFaceTargetFn(inst, target)
 end
 
 local function ShouldGoHome(inst)
+
+    if (inst.components.follower and inst.components.follower.leader) then
+        return false
+    end
+
     local homePos = inst.components.knownlocations:GetLocation("home")
     local myPos = Vector3(inst.Transform:GetWorldPosition() )
     return (homePos and distsq(homePos, myPos) > GO_HOME_DIST*GO_HOME_DIST)
@@ -48,6 +54,9 @@ function BishopBrain:OnStart()
         ChaseAndAttack(self.inst, MAX_CHASE_TIME, MAX_CHASE_DIST),
         WhileNode(function() return ShouldGoHome(self.inst) end, "ShouldGoHome",
             DoAction(self.inst, GoHomeAction, "Go Home", true )),
+        Follow(self.inst, function() return self.inst.components.follower and self.inst.components.follower.leader end, 
+             5, 7, 12),
+
         FaceEntity(self.inst, GetFaceTargetFn, KeepFaceTargetFn),
         StandStill(self.inst),
     }, .25)

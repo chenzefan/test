@@ -1,6 +1,6 @@
 require "class"
 require "bufferedaction"
-require "screens/characterselectscreen"
+
 
 Action = Class(function(self, priority, instant, rmb, distance) 
     self.priority = priority or 0
@@ -17,6 +17,7 @@ ACTIONS=
 	REPAIR = Action(),
     READ = Action(),
     DROP = Action(-1),
+    TRAVEL = Action(),
     CHOP = Action(),
     ATTACK = Action(2, true),
     FORCEATTACK = Action(2, true),
@@ -76,6 +77,7 @@ ACTIONS=
     CASTSPELL = Action(0, false, true, 20),
     BLINK = Action(10, false, true, 36),
     COMBINESTACK = Action(),
+    TOGGLE_DEPLOY_MODE = Action(1),
 }
 
 for k,v in pairs(ACTIONS) do
@@ -135,14 +137,16 @@ ACTIONS.UNEQUIP.fn = function(act)
 end
 
 ACTIONS.PICKUP.fn = function(act)
-    if act.doer.components.inventory and act.target.components.inventoryitem then    
+    if act.doer.components.inventory and act.target and act.target.components.inventoryitem and not act.target:IsInLimbo() then    
 	    act.doer:PushEvent("onpickup", {item = act.target})
 
         --special case for trying to carry two backpacks
         if not act.target.components.inventoryitem.cangoincontainer and act.target.components.equippable and act.doer.components.inventory:GetEquippedItem(act.target.components.equippable.equipslot) then
             local item = act.doer.components.inventory:GetEquippedItem(act.target.components.equippable.equipslot)
             if item.components.inventoryitem and item.components.inventoryitem.cangoincontainer then
-                act.doer.components.inventory:SelectActiveItemFromEquipSlot(act.target.components.equippable.equipslot)
+                
+                --act.doer.components.inventory:SelectActiveItemFromEquipSlot(act.target.components.equippable.equipslot)
+                act.doer.components.inventory:GiveItem(act.doer.components.inventory:Unequip(act.target.components.equippable.equipslot))
             else
                 act.doer.components.inventory:DropItem(act.doer.components.inventory:GetEquippedItem(act.target.components.equippable.equipslot))
             end
@@ -210,6 +214,8 @@ ACTIONS.DROP.strfn = function(act)
         return "SETTRAP"
     elseif act.invobject and act.invobject:HasTag("mine") then
         return "SETMINE"
+    elseif act.invobject and act.invobject.prefab == "pumpkin_lantern" then
+        return "PLACELANTERN"
     end
 end
 
@@ -230,8 +236,7 @@ end
 ACTIONS.READ.fn = function(act)
     local targ = act.target or act.invobject
     if targ and targ.components.book and act.doer and act.doer.components.reader then
-        act.doer.components.reader:Read(targ)
-        return true
+        return act.doer.components.reader:Read(targ)
     end
 end
 
@@ -259,12 +264,15 @@ end
 
 ACTIONS.DEPLOY.fn = function(act)
     if act.invobject and act.invobject.components.deployable and act.invobject.components.deployable:CanDeploy(act.pos) then
-	    local obj = act.doer.components.inventory:RemoveItem(act.invobject)
+        local container = act.invobject.components.inventoryitem and act.invobject.components.inventoryitem:GetContainer()
+	    local obj = container and container:RemoveItem(act.invobject) or act.invobject
 	    if obj then
 			if obj.components.deployable:Deploy(act.pos, act.doer) then
 				return true
-			else
-				act.doer.components.inventory:GiveItem(obj)
+            elseif container then
+                container:GiveItem(obj)
+            else
+                act.doer.components.inventory:GiveItem(obj)
 			end
 		end
     end
@@ -275,7 +283,9 @@ ACTIONS.DEPLOY.strfn = function(act)
 		return "GROUNDTILE"
 	elseif act.invobject and act.invobject:HasTag("wallbuilder") then
 		return "WALL"
-	end
+	elseif act.invobject and act.invobject:HasTag("eyeturret") then
+        return "TURRET"
+    end
 end
 
 ACTIONS.CHECKTRAP.fn = function(act)
@@ -284,8 +294,6 @@ ACTIONS.CHECKTRAP.fn = function(act)
 	    return true
     end
 end
-
-
 
 ACTIONS.CHOP.fn = function(act)
     if act.target.components.workable and act.target.components.workable.action == ACTIONS.CHOP then
@@ -313,6 +321,7 @@ ACTIONS.FERTILIZE.fn = function(act)
     elseif act.target.components.grower and act.target.components.grower:IsEmpty() and act.invobject and act.invobject.components.fertilizer then
 		local obj = act.doer.components.inventory:RemoveItem(act.invobject)
         act.target.components.grower:Fertilize(obj)
+        return true
 	elseif act.target.components.pickable and act.target.components.pickable:CanBeFertilized() and act.invobject and act.invobject.components.fertilizer then
 		local obj = act.doer.components.inventory:RemoveItem(act.invobject)
         act.target.components.pickable:Fertilize(obj)
@@ -429,6 +438,7 @@ end
 ACTIONS.ATTACK.fn = function(act)
     if act.target.components.combat then
         act.doer.components.combat:SetTarget(act.target)
+        --act.doer.components.combat:TryAttack()
         return true
     end
 end
@@ -454,6 +464,9 @@ ACTIONS.COOK.fn = function(act)
 	        act.doer.components.inventory:GiveItem(product,nil, Vector3(TheSim:GetScreenPos(act.target.Transform:GetWorldPosition()) ))
 	        return true
 	    end
+    elseif act.target.components.stewer then
+		act.target.components.stewer:StartCooking()
+		return true
     end
 end
 
@@ -515,8 +528,12 @@ ACTIONS.STORE.fn = function(act)
 				act.target.components.container:Open(act.doer)
 			end
 			
-            if not act.target.components.container:GiveItem(item) then
-				act.doer.components.inventory:GiveActiveItem(item)
+            if not act.target.components.container:GiveItem(item,nil,nil,false) then
+                if TheInput:ControllerAttached() then
+				    act.doer.components.inventory:GiveItem(item)
+                else
+                    act.doer.components.inventory:GiveActiveItem(item)
+                end
 				return false
             end
 				return true
@@ -724,6 +741,7 @@ ACTIONS.ACTIVATE.strfn = function(act)
 end
 
 ACTIONS.MURDER.fn = function(act)
+
     local murdered = act.invobject or act.target
     if murdered and murdered.components.health then
                 
@@ -843,6 +861,14 @@ ACTIONS.COMBINESTACK.fn = function(act)
         return true
     end 
 end
+
+ACTIONS.TRAVEL.fn = function(act)
+	if act.target and act.target.travel_action_fn then
+		act.target.travel_action_fn(act.doer)
+		return true
+	end
+end
+
 
 --[[ACTIONS.OPEN_SHOP.fn = function(act)
     if act.target.components.shop then

@@ -275,7 +275,7 @@ AddTask("Dig that rock", {
 		keys_given={KEYS.TRINKETS,KEYS.STONE,KEYS.WOOD,KEYS.TIER1},
 		room_choices={
 			["Graveyard"] = 1,
-			["Sinkhole"] = 2,
+			["Sinkhole"] = 1,
 			["Rocky"] = 1 + math.random(SIZE_VARIATION), 
 			["Forest"] = math.random(SIZE_VARIATION), 
 			["Clearing"] = math.random(SIZE_VARIATION)
@@ -310,7 +310,8 @@ AddTask("The Deep Forest", {
 			["Forest"] = 1 + math.random(SIZE_VARIATION), 
 			["Marsh"] = math.random(SIZE_VARIATION), 
 			["DeepForest"] = 1+math.random(SIZE_VARIATION), 
-			["Clearing"] = 1
+			["Clearing"] = 1,
+			["Sinkhole"] = 1
 		}, 
 		room_bg=GROUND.FOREST,
 		background_room="BGDeepForest",

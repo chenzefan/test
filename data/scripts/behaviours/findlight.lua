@@ -22,7 +22,7 @@ function FindLight:Visit()
     
     if self.status == RUNNING then
        
-        if self.targ and self.targ:HasTag("fire") then
+        if self.targ and self.targ:HasTag("lightsource") then
             
             local dsq = self.inst:GetDistanceSqToInst(self.targ)
             
@@ -39,5 +39,5 @@ function FindLight:Visit()
 end
 
 function FindLight:PickTarget()
-    self.targ = GetClosestInstWithTag("fire", self.inst, SEE_DIST)
+    self.targ = GetClosestInstWithTag("lightsource", self.inst, SEE_DIST)
 end

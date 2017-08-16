@@ -12,6 +12,15 @@ local prefabs =
     "houndstooth",
 }
 
+SetSharedLootTable( 'hound_mound',
+{
+    {'houndstooth', 1.00},
+    {'houndstooth', 1.00},
+    {'houndstooth', 1.00},
+    {'redgem',      0.01},
+    {'bluegem',     0.01},
+})
+
 local function GetSpecialHoundChance()
 	local day = GetClock().numcycles
 	local chance = 0
@@ -111,9 +120,7 @@ local function fn(Sim)
  
     ---------------------
     inst:AddComponent("lootdropper")
-    inst.components.lootdropper:SetLoot({"houndstooth", "houndstooth", "houndstooth"})
-    inst.components.lootdropper:AddChanceLoot("redgem", 0.01)
-    inst.components.lootdropper:AddChanceLoot("bluegem", 0.01)
+    inst.components.lootdropper:SetChanceLootTable('hound_mound')
 
     inst:AddComponent("combat")
     inst.components.combat:SetOnHit(SpawnAllGuards)

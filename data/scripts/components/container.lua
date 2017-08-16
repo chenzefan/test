@@ -7,6 +7,7 @@ local Container = Class(function(self, inst)
     self.canbeopened = true
     self.acceptsstacks = true
     self.side_widget = false
+    self.type = "chest"
 end)
 
 
@@ -19,12 +20,24 @@ function Container:NumItems()
     return num
 end
 
+function Container:OnRemoveEntity()
+	if self.open then
+		local old_opener = self.opener
+		if self.opener and self.opener.HUD then
+			local opener = self.opener
+			self.opener = nil
+			opener.HUD:CloseContainer(self.inst)
+		end
+		self:OnClose(old_opener)
+	end
+end
+
 
 function Container:IsFull()
 	local items = 0
 	for k,v in pairs(self.slots) do
 		items = items + 1
-	end
+end
 	
 	return items >= self.numslots
 
@@ -40,7 +53,7 @@ end
 
 
 function Container:SetNumSlots(numslots)
-    assert(numslots > self.numslots)
+    assert(numslots >= self.numslots)
     self.numslots = numslots
 end
 
@@ -93,7 +106,8 @@ function Container:DestroyContents()
 	end
 end
 
-function Container:GiveItem(item, slot, src_pos)
+function Container:GiveItem(item, slot, src_pos, drop_on_fail)
+    drop_on_fail = drop_on_fail == nil and true or false
     --print("Container:GiveItem", item.prefab)
     if item and item.components.inventoryitem and self:CanTakeItemInSlot(item, slot) then
 		
@@ -149,10 +163,12 @@ function Container:GiveItem(item, slot, src_pos)
 			
 			return true
         else
-            item.Transform:SetPosition(self.inst.Transform:GetWorldPosition())
-            if item.components.inventoryitem then
-                item.components.inventoryitem:OnDropped(true)
-            end
+            if drop_on_fail then
+				item.Transform:SetPosition(self.inst.Transform:GetWorldPosition())
+				if item.components.inventoryitem then
+	                item.components.inventoryitem:OnDropped(true)
+				end
+			end				
             return false
         end
         
@@ -171,7 +187,10 @@ function Container:RemoveItemBySlot(slot)
 			
 			self.inst:PushEvent("itemlose", {slot = slot})
 		end
+        item.prevcontainer = self
+        item.prevslot = slot
         return item
+        
     end
 end
 
@@ -245,6 +264,8 @@ function Container:OnClose(old_opener)
     if self.onclosefn then
         self.onclosefn(self.inst)
     end
+
+    self.inst:PushEvent("onclose")
 end
 
 function Container:CollectSceneActions(doer, actions)
@@ -255,7 +276,9 @@ end
 
 function Container:CollectInventoryActions(doer, actions)
     if doer.components.inventory and self.canbeopened then
-        table.insert(actions, ACTIONS.RUMMAGE)
+        if not (self.side_widget and TheInput:ControllerAttached()) then
+            table.insert(actions, ACTIONS.RUMMAGE)
+        end
     end
 end
 
@@ -331,11 +354,8 @@ function Container:ConsumeByName(item, amount)
     end
 end
 
-
-
 function Container:OnSave()
     local data = {items= {}}
-
     for k,v in pairs(self.slots) do
         if v:IsValid() then --only save the valid items
 			data.items[k] = v:GetSaveRecord()
@@ -360,9 +380,11 @@ end
 
 function Container:RemoveItem(item, wholestack)
     local dec_stack = not wholestack and item and item.components.stackable and item.components.stackable:IsStack() and item.components.stackable:StackSize() > 1
-
+	local slot = self:GetItemSlot(item)
     if dec_stack then
         local dec = item.components.stackable:Get()
+        dec.prevslot = slot
+        dec.prevcontainer = self
         return dec
     else
         for k,v in pairs(self.slots) do
@@ -374,10 +396,13 @@ function Container:RemoveItem(item, wholestack)
                     item.components.inventoryitem:OnRemoved()
                 end
                 
+		        item.prevslot = slot
+		        item.prevcontainer = self
                 return item
             end
         end
     end
+    
     return item
 
 end

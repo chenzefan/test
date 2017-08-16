@@ -32,7 +32,7 @@ function FrogRain:OnSave()
 function FrogRain:OnLoad(data)
 	if data ~= nil then
 		self.timetospawn = data.timetospawn or self.timetospawn
-		self.frog_count = data.frog_count or self.forg_count
+		self.frog_count = data.frog_count or self.frog_count
 		self.frogcap = data.frogcap or self.frogcap
 		self.spawntime = data.spawntime or self.spawntime
 	end
@@ -132,7 +132,8 @@ function FrogRain:OnUpdate( dt )
 		if self.timetospawn <= 0 and self.frog_count < self.frogcap then
 			--print("Upd",  GetSeasonManager():IsRaining(), GetSeasonManager():GetPrecipitationRate() > TUNING.FROG_RAIN_PRECIPITATION, TUNING.FROG_RAIN_PRECIPITATION,
 			--			GetSeasonManager():GetMoistureLimit() > TUNING.FROG_RAIN_MOISTURE, TUNING.FROG_RAIN_MOISTURE)
-			if GetSeasonManager():IsRaining() and
+			if SaveGameIndex:GetCurrentMode() == "adventure" and 
+					GetSeasonManager():IsRaining() and
 					GetSeasonManager():GetPrecipitationRate() > TUNING.FROG_RAIN_PRECIPITATION and
 					GetSeasonManager():GetMoistureLimit() > TUNING.FROG_RAIN_MOISTURE then
 				local char_pos = Vector3(maincharacter.Transform:GetWorldPosition())

@@ -20,6 +20,7 @@ function CanPrototypeRecipe(recipetree, buildertree)
 end
 
 function DoRecipeClick(owner, recipe)
+    
     if recipe and owner and owner.components.builder then
         local knows = owner.components.builder:KnowsRecipe(recipe.name)
         local can_build = owner.components.builder:CanBuild(recipe.name)
@@ -34,7 +35,7 @@ function DoRecipeClick(owner, recipe)
         
         if knows then
             if buffered then
-                TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/click_move")
+                --TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/click_move")
                 --owner.HUD.controls.crafttabs.tabs:DeselectAll()
                 if recipe.placer then
                     owner.components.playercontroller:StartBuildPlacementMode(recipe, function(pt) return owner.components.builder:CanBuildAtPoint(pt, recipe) end)
@@ -42,7 +43,7 @@ function DoRecipeClick(owner, recipe)
                     owner.components.builder:MakeRecipe(recipe)
                 end
             elseif can_build then
-                TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/click_move")           
+                --TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/click_move")           
                 if recipe.placer then
                     --owner.HUD.controls.crafttabs.tabs:DeselectAll()
                     owner.components.builder:BufferBuild(recipe.name)

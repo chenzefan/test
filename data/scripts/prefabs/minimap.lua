@@ -22,6 +22,8 @@ local MINIMAP_GROUND_PROPERTIES =
 
 	{ GROUND.CAVE,  	 { name = "map_edge",      noise_texture = "levels/textures/mini_cave_noise.tex" } },
 	{ GROUND.FUNGUS,  	 { name = "map_edge",      noise_texture = "levels/textures/mini_fungus_noise.tex" } },
+	{ GROUND.FUNGUSRED,  { name = "map_edge",      noise_texture = "levels/textures/mini_fungus_red_noise.tex" } },
+	{ GROUND.FUNGUSGREEN,{ name = "map_edge",      noise_texture = "levels/textures/mini_fungus_green_noise.tex" } },	
 	{ GROUND.SINKHOLE, 	 { name = "map_edge",      noise_texture = "levels/textures/mini_sinkhole_noise.tex" } },
 	{ GROUND.UNDERROCK,  { name = "map_edge",      noise_texture = "levels/textures/mini_rock_noise.tex" } },
 	{ GROUND.MUD, 	 	 { name = "map_edge",      noise_texture = "levels/textures/mini_mud_noise.tex" } },
@@ -68,12 +70,18 @@ AddAssets( MINIMAP_GROUND_PROPERTIES )
 local function fn(Sim)
 	local inst = CreateEntity()
 	local uitrans = inst.entity:AddUITransform()
-	local minimap = inst.entity:AddMiniMap()
+	local minimap = inst.entity:AddMiniMap() --c side renderer
     inst:AddTag("minimap")
     inst.entity:SetCanSleep(false)
 
 	minimap:SetEffects( shader_filename, fs_shader )
-	minimap:SetAtlasInfo( atlas_info_filename )
+
+	minimap:AddAtlas( resolvefilepath(atlas_info_filename) )
+	for i,atlases in ipairs(ModManager:GetPostInitData("MinimapAtlases")) do
+		for i,path in ipairs(atlases) do
+			minimap:AddAtlas( resolvefilepath(path) )
+		end
+	end
 
 	for i, data in pairs( MINIMAP_GROUND_PROPERTIES ) do
 		local tile_type, layer_properties = unpack( data )

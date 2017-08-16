@@ -68,6 +68,7 @@ local function fn(Sim)
     ----------
     
     inst:AddTag("monster")
+    inst:AddTag("hostile")
     inst:AddTag("epic")    
     inst:AddTag("largecreature")
     inst:AddTag("spiderqueen")    
@@ -76,8 +77,6 @@ local function fn(Sim)
     MakeCharacterPhysics(inst, 1000, 1)
 
     
-    inst:AddTag("spider")
-    inst:AddTag("monster")
     inst.AnimState:SetBank("spider_queen")
     inst.AnimState:SetBuild("spider_queen_build")
     inst.AnimState:PlayAnimation("idle", true)

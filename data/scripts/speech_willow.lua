@@ -4,7 +4,7 @@ return {
 	ANNOUNCE_CHARLIE = "I'm not afraid of you!",
 	ANNOUNCE_CHARLIE_ATTACK = "OUCH! You jerk!",
 	ANNOUNCE_COLD = "The Cold! It burns!",
-	ANNOUNCE_DUSK = "Night is coming. I need fire!",
+	ANNOUNCE_DUSK = "Night is coming.",
 	ANNOUNCE_EAT =
 	{
 		GENERIC = "Yum!",
@@ -16,6 +16,8 @@ return {
 	ANNOUNCE_HUNGRY = "I need food!",
 	ANNOUNCE_HUNT_BEAST_NEARBY = "I'll find you!",
 	ANNOUNCE_HUNT_LOST_TRAIL = "Ohh... he got away.",
+	ANNOUNCE_ACCOMPLISHMENT= "Move, arrow! MOVE!",
+	ANNOUNCE_ACCOMPLISHMENT_DONE = "I DID IT!",	
 	ANNOUNCE_LIGHTFIRE =
 	{
 		[1] = "Tee hee!",
@@ -26,8 +28,26 @@ return {
 		[6] = "I can't help myself!",
 	},
 	ANNOUNCE_PECKED = "No! Bad birdy!",
-	ANNOUNCE_TORCH_OUT = "My precious fire is gone!",
+	ANNOUNCE_TORCH_OUT = "My precious light is gone!",
 	ANNOUNCE_WORMHOLE = "I'll have to burn these clothes!",
+	ANNOUNCE_TRAP_WENT_OFF = "Aah!",
+    ANNOUNCE_CRAFTING_FAIL = "I'm missing something.",
+    ANNOUNCE_QUAKE = "That sound probably doesn't mean good things.",
+    ANNOUNCE_NODANGERSLEEP = "No time for sleep, there's fighting to do!",
+    ANNOUNCE_NOHUNGERSLEEP = "My tummy is grumbling, I can't sleep!",
+    ANNOUNCE_FREEDOM = "I'm free! Time for fires!",
+    ANNOUNCE_RESEARCH = "That was useful, even if it didn't have anything about fires.",
+    ANNOUNCE_NO_TRAP = "Like lighting a barrel of fish on fire.",
+    ANNOUNCE_HIGHRESEARCH = "So much information!",
+    ANNOUNCE_THORNS = "Ouch!",
+    ANNOUNCE_NODAYSLEEP_CAVE = "Too spooky down here to sleep.",
+    ANNOUNCE_BEES = "Aaaah! Pokey bugs!",
+    ANNOUNCE_KNOCKEDOUT = "Argh, my little head!",
+    ANNOUNCE_LOWRESEARCH = "Boo, that was boring.",
+    ANNOUNCE_DEERCLOPS = "That sounded like a big mean monster man!",
+    ANNOUNCE_MOSQUITOS = "Get away, you bloodsucking jerks!",
+    ANNOUNCE_NODAYSLEEP = "I can't sleep when there's a great ball of fire to stare at.",
+	ANNOUNCE_CANFIX = "\nI think I can fix this!",
 	BATTLECRY =
 	{
 		GENERIC = "It's you or me!",
@@ -46,10 +66,30 @@ return {
 	},
 	DESCRIBE =
 	{
+		WORMLIGHT = "Light without fire. Unnatural.",
+		WORM =
+		{
+		    PLANT = "Light without fire. Unnatural.",
+		    DIRT = "Does dirt normally move around?",
+		    WORM = "It's so furry!",
+		},
+		EEL = "I don't like the look it's giving me!",
+		EEL_COOKED = "Fire improves everything.",
+		UNAGI = "I cooked that.",
+		EYETURRET = "I wish it lit stuff on fire.",
+		EYETURRET_ITEM = "It's no good until I place it.",
+		MINOTAURHORN = "I wonder if these rings are an indication of age.",
+		MINOTAURCHEST = "I want big horns like that!",
+		THULECITE_PIECES = "This Thulecite crumbled to pieces.",
+		POND = "This pond will definitely not ignite. How dull.",
+		POND_ALGAE = "It must need a lot of water.",
+		GREENSTAFF = "It won't start a fire but I guess it's still useful.",
+		POTTEDFERN = "I'd rather burn them.",
 
 		THULECITE = "I don't think it would burn.",
 		ARMORRUINS = "Not sure I want to wear this.",
 		RUINS_BAT = "This will keep the nasties at bay.",
+		RUINSHAT = "It seems like there's something flowing through it.",
 		NIGHTMARE_TIMEPIECE = --Keeps track of the nightmare cycle
 		{
 		CALM = "Looks normal to me.",	--Calm phase
@@ -101,7 +141,8 @@ return {
         {
         	WORKING = "Oooo! An afterlife intercom.",
         	BROKEN = "The dead can't get through here.",
-        },     
+        },  
+        ANCIENT_ALTAR_BROKEN = "The dead can't get through here.",
 
         ANCIENT_STATUE = "Drat, won't burn.",
 
@@ -116,6 +157,7 @@ return {
         BLUEAMULET = "Boo to this.",
 		PURPLEAMULET = "Has science gone too far?",
 		TELESTAFF = "It's quite a rush to use.",
+		MINERHAT = "It's not real fire, but it's still pretty fun.",
 		MONKEY = "Joke's on you! I can burn this poo.",
 		MONKEYBARREL = "What a wonderfully flammable home.",
 
@@ -155,11 +197,26 @@ return {
 		STALAGMITE_TALL_FULL="More boring rocks.",
 		STALAGMITE_TALL_LOW="More boring rocks.",
 		STALAGMITE_TALL_MED="More boring rocks.",
+
+		TURF_CARPETFLOOR = "The ground is boring.",
+		TURF_CHECKERFLOOR = "The ground is boring.",
+		TURF_DIRT = "The ground is boring.",
+		TURF_FOREST = "The ground is boring.",
+		TURF_GRASS = "The ground is boring.",
+		TURF_MARSH = "The ground is boring.",
+		TURF_ROAD = "The ground is boring.",
+		TURF_ROCKY = "The ground is boring.",
+		TURF_SAVANNA = "The ground is boring.",
+		TURF_WOODFLOOR = "The ground is boring.",
+
+		TURF_CAVE="The ground is boring.",
 		TURF_FUNGUS="The ground is boring.",
-		TURF_MUD="The ground is boring.",
 		TURF_SINKHOLE="The ground is boring.",
 		TURF_UNDERROCK="The ground is boring.",
+		TURF_MUD="The ground is boring.",
 		
+		TURKEYDINNER = "A feast of burned bird!",
+		TWIGS = "A bunch of small twigs. Good for fires, among other things.",
 		POWCAKE = "I wonder if it is flammable.",
         CAVE_ENTRANCE = 
         {
@@ -172,20 +229,30 @@ return {
 		PIGGUARD = "I like his attitude!",
 		BOOMERANG = "It's not the most exciting weapon.",
 		ADVENTURE_PORTAL = "Maybe that leads home.",
+		AMULET = "I'm invincible! Well, maybe not. But it feels good.",
 		ANIMAL_TRACK = "It leads to my new friend.",
 		ARMORGRASS = "A waste of flammable materials.",
 		ARMORMARBLE = "If I have to fight I might as well be protected.",
 		ARMORWOOD = "Now I can take on the world!",
 		ARMOR_SANITY = "Like being wrapped in smoke.",
+		ASH =
+		{
+			GENERIC = "Leftovers from a fire. I wish it was still here.",
+			REMAINS_EYE_BONE = "The eyebone was consumed by fire when I teleported!",
+			REMAINS_THINGIE = "I wish this thing was still burning, whatever it was.",
+		},
 		AXE = "It's very sharp.",
 		BABYBEEFALO =
 		{
 			GENERIC = "Even the babies are ugly.",
 			SLEEPING = "WAKE UP!",
 		},
+		BACKPACK = "I could fit like a million lighters in here.",
+		BACONEGGS = "The yellow mucousy part is gross but the bacon is great!",
 		BANDAGE = "Eww, do I have to?",
 		BASALT = "It's too hard to break!",
 		BEARDHAIR = "Uh, where did this come from?",
+		BEDROLL_STRAW = "Musty.",
 		BEE =
 		{
 			GENERIC = "It's fat, but that stinger looks dangerous.",
@@ -203,9 +270,14 @@ return {
 			NAKED = "Ha! He's all naked now!",
 			SLEEPING = "They look even dumber when they're sleeping.",
 		},
+		BEEFALOHAT = "I've taken his hair and put it on my own!",
 		BEEFALOWOOL = "Ha! I stole his hair!",
 		BEEHIVE = "It's full of bees!",
+		BEEMINE = "Bees inside. Should've put some fire in there for good measure.",
+		BEEMINE_MAXWELL = "Mosquitos inside. They don't sound happy.",
+		BEEHAT = "This will keep the pokeys off of me.",
 		BERRIES = "Red berries taste the best.",
+		BERRIES_COOKED = "Red berries with fire somehow taste even better.",
 		BERRYBUSH =
 		{
 			BARREN = "Eat poop, stupid plant!",
@@ -223,6 +295,8 @@ return {
 		BIRD_EGG_COOKED = "Yuck. The yellow part is all runny.",
 		BISHOP = "It's a bishop!",
 		BLOWDART_FIRE = "This is my favourite thing in the whole wide world.",
+		BLOWDART_SLEEP = "The tranquilizer will make it easier to light on fire.",
+		BLOWDART_PIPE = "Good practice for blowing into a fire.",
 		BLUEGEM = "Ugh. This one is ugly.",
 		BLUEPRINT = "This will save some experimentation.",
 		BLUE_CAP = "It smells like a gym sock!",
@@ -233,6 +307,8 @@ return {
 			INGROUND = "Hey! You! Get up here!",
 			PICKED = "Maybe it will return some day.",
 		},
+		BOARDS = "Boards. They'll burn, same as other wood.",
+		BONESTEW = "Just add fire to food and voila!",
 		BUGNET = "I can catch a bug!",
 		BUSHHAT = "Too passive!",
 		BUTTER = "Tasty, and just a little bit insecty",
@@ -241,6 +317,7 @@ return {
 			GENERIC = "Flutter away, butterfly!",
 			HELD = "I want to squish it.",
 		},
+		BUTTERFLYMUFFIN = "Heehee, look at that butterfly stuck in the muffin.",
 		BUTTERFLYWINGS = "No more flying for that butterfly!",
 		CAMPFIRE =
 		{
@@ -253,6 +330,9 @@ return {
 		},
 		CANE = "I can walk more easily with this!",
 		CARROT = "Yuck. It's all vegetabley.",
+		CARROT_COOKED = "Still vegetabley, but better for having been in fire.",
+		CARROT_PLANTED = "Maybe its special carrot friend is in the ground.",
+		CARROT_SEEDS = "Seeds for a yucky orange vegetable.",
 		CAVE_FERN = "Looks flammable.",
 		CHARCOAL = "Mmmm. Smells like fire.",
         CHESSJUNK1 = "Dead windup horsey",
@@ -267,11 +347,18 @@ return {
 		COOKEDMEAT = "I've tasted better.",
 		COOKEDMONSTERMEAT = "It's still gross.",
 		COOKEDSMALLMEAT = "I'll need more than appetizers if I'm going to survive.",
+		CORN = "A sweet vegetable, yum!",
+		CORN_COOKED = "Ooh, this one explodes when it goes in fire!",
+		CORN_SEEDS = "Seeds for my favorite explosive vegetable.",
 		CROW =
 		{
 			GENERIC = "I think it's waiting for me to die.",
 			HELD = "Not so smart now, are you?",
 		},
+		CUTGRASS = "Cut grass, ready for burning. Or maybe crafting.",
+		CUTREEDS = "Cut reeds, ready for burning. Or maybe crafting.",
+		CUTSTONE = "Perfectly squared for maximum enjoyment.",
+		DEADLYFEAST = "Fire didn't cure this dish of being nasty.",
 		DEERCLOPS = "Holy crap!",
 		DEERCLOPS_EYEBALL = "Stop staring at me!",
 		DIRTPILE = "Who just leaves dirt lying around in the forest?",
@@ -283,6 +370,27 @@ return {
 			WARM = "This thing is getting noisier.",
 			WARMER = "I must be close!",
 		},
+		DIVININGRODBASE =
+		{
+			GENERIC = "Not sure what this does. Doesn't seem like it's fiery things.",
+			READY = "Just needs to be unlocked with a key. Not fire, unfortunately.",
+			UNLOCKED = "It's whirring now!",
+		},
+		DIVININGRODSTART = "I'll make something out of it.",
+		DRAGONFRUIT = "It looks sort of like a fire!",
+		DRAGONFRUIT_COOKED = "It looks more like a fruit that's been in a fire now.",
+		DRAGONFRUIT_SEEDS = "Seeds for that fire-looking fruit.",
+		DRAGONPIE = "Fire fruit in a pie? Oh boy!",
+		DRUMSTICK = "Bang on the drum all day!",
+		DRUMSTICK_COOKED = "Do I satisfy my hunger or do I bang on the drum?",
+		DURIAN = "Ew, stinky!",
+		DURIAN_COOKED = "Yuck, it smells just as bad cooked!",
+		DURIAN_SEEDS = "Smelly seeds for a smelly fruit.",
+		EARMUFFSHAT = "Smells like rabbit butt.",
+		EGGPLANT = "Definitely not a bird.",
+		EGGPLANT_COOKED = "Using fire on it made it a tastier eggplant.",
+		EGGPLANT_SEEDS = "Will these seeds make a plant or baby bird?",
+		STUFFEDEGGPLANT = "It's still not a bird, but I stuffed it like one!",
 		DUG_BERRYBUSH = "What's the matter, got no dirt?",
 		DUG_GRASS = "What's the matter, got no dirt?",
 		DUG_MARSH_BUSH = "What's the matter, got no dirt?",
@@ -309,6 +417,10 @@ return {
 			GROWING = "Hurry up, dirtpile. Feed me!",
 			NEEDSFERTILIZER = "Stupid thing needs poop.",
 		},
+		FEATHERHAT = "I am a phoenix!",
+		FEATHER_CROW = "Crow feather. It probably smells terrible on fire.",
+		FEATHER_ROBIN = "Redbird feather. It probably smells terrible on fire.",
+		FEATHER_ROBIN_WINTER = "Snowbird feather. It probably smells terrible on fire.",
 		FEM_PUPPET = "She looks scared half to death.",
 		FIREFLIES =
 		{
@@ -325,17 +437,34 @@ return {
 			NORMAL = "Burn!",
 			OUT = "I should make the fire come back.",
 		},
+		FIRESTAFF = "This is my absolute favorite toy.",
+		FISH = "Slippery fishy!",
+		FISHINGROD = "Fishing for the answer with a line and sinker.",
+		FISHSTICKS = "What you see is what you get. Sticks of fish.",
+		FISHTACOS = "Convenient taco-grip.",
+		FISH_COOKED = "Less slippery now that it's found fire.",
+		FLINT = "The poor man's fire-starter.",
 		FLOWER = "I don't have time to waste on flowers.",
+		FLOWERHAT = "A halo of flowers. Too bad it's not a burning halo of flowers.",
 		FLOWER_EVIL = "Ugh, that smells terrible.",
 		FOLIAGE = "Fuel for the fire.",
+		FOOTBALLHAT = "Sports are hard.",
 		FROG =
 		{
 			DEAD = "I showed him!",
 			GENERIC = "He's too damp to burn.",
 			SLEEPING = "They're cute when they're sleeping.",
 		},
+		FROGGLEBUNWICH = "Maybe I won't notice that it's frog legs in the sandwich.",
+		FROGLEGS = "It still twitches every now and then. Freaky.",
+		FROGLEGS_COOKED = "The fire made it stop twitching. Fire is the best.",
+		FRUITMEDLEY = "Yum, fruit!",
 		GEARS = "These must make them move.",
 		GHOST = "I can't kill what's already dead.",
+		GOLDENAXE = "It won't light trees on fire, but at least it's shiny.",
+		GOLDENPICKAXE = "It won't light rocks on fire, but at least it's shiny.",
+		GOLDENPITCHFORK = "It won't light the ground on fire, but at least it's shiny.",
+		GOLDENSHOVEL = "It won't make flaming pits, but at least it's shiny.",
 		GOLDNUGGET = "Where am I going to spend this.",
 		GRASS =
 		{
@@ -366,8 +495,12 @@ return {
 		HOMESIGN = "Less reading! More burning!",
 		HONEY = "Sweet and delicious!",
 		HONEYCOMB = "It's waxy.",
+		HONEYHAM = "Fire, ham and honey go well together.",
+		HONEYNUGGETS = "Honey-covered morsels that have met my friend, fire.",
+		HORN = "I can hear those hairy beasts inside.",
 		HOUND = "What a jerk!",
 		HOUNDMOUND = "Uh oh, I don't like the look of that.",
+		HOUNDBONE = "Gross.",
 		ICEBOX = "That is the opposite of fire.",
 		ICEHOUND = "Gross! Cold!",
 		INSANITYROCK =
@@ -375,6 +508,8 @@ return {
 			ACTIVE = "Am I seeing things?",
 			INACTIVE = "Doesn't look flammable. How boring.",
 		},
+		JAMMYPRESERVES = "Wham, bam, jam! Thank you, ma'am.",
+		KABOBS = "Meat and fire, now with a stick!",
 		KILLERBEE =
 		{
 			GENERIC = "I like the cut of that bee's jib.",
@@ -393,6 +528,13 @@ return {
 			GENERIC = "All the lightning can come here!",
 		},
 		LITTLE_WALRUS = "He looks tasty.",
+		LIVINGLOG = "It looks upset.",
+		LOCKEDWES = "He's trapped by those mean statues!",
+		LOG =
+		{
+			BURNING = "Burn, log, buuuurn!",
+			GENERIC = "Wood! So flammable! Hooray!",
+		},
 		LUREPLANT = "I bet a quick fire would take care of this.",
 		LUREPLANTBULB = "It's mine now.",
 		MALE_PUPPET = "He looks scared half to death.",
@@ -402,6 +544,8 @@ return {
 			GENERIC = "That's not a normal plant",
 			PICKED = "Now that's just creepy!",
 		},
+		COOKEDMANDRAKE = "The fire didn't get rid of its face. Gives me the willies.",
+		MANDRAKESOUP = "Blending it into a soup got rid of its face.",
 		MARBLE = "It's heavy!",
 		MARBLEPILLAR = "I wonder if the rest burnt down.",
 		MARBLETREE = "The worst kind of tree. The non-flammable kind.",
@@ -425,6 +569,7 @@ return {
 		MAXWELLLOCK = "Now I just need a key.",
 		MAXWELLTHRONE = "Looks sticky.",
 		MEAT = "I could make this better with FIRE!",
+		MEATBALLS = "Meat made into spheres and improved with fire.",
 		MEATRACK =
 		{
 			DONE = "It's ready!",
@@ -435,6 +580,7 @@ return {
 		MERM = "Eww, it's all swampy.",
 		MERMHEAD = "That's what you get for being so stinky!",
 		MERMHOUSE = "No-one would care if this burned down.",
+		MONSTERLASAGNA = "Noodles, meat and clumps of hair. Nasty.",
 		MONSTERMEAT = "Gross. It's full of hairs.",
 		MONSTERMEAT_DRIED = "It's dry and smells strange.",
 		MOSQUITO =
@@ -442,6 +588,7 @@ return {
 			GENERIC = "So annoying!",
 			HELD = "Keep that mouth away from me!",
 		},
+		MOSQUITOSACK = "Blood must bubble in currents muggy and thick.",
 		MOUND =
 		{
 			DUG = "Better it than me.",
@@ -456,6 +603,8 @@ return {
 		PANFLUTE = "Music is boring.",
 		PAPYRUS = "I bet it'd burn!",
 		PENGUIN = "Run away tiny dancers.",
+		PERD = "Evil bird! Get away from my yummy berries!",
+		PEROGIES = "Tasty things sealed with fire.",
 		PETALS = "Stupid flowers. They're almost useless.",
 		PETALS_EVIL = "Ew, they're sticky.",
 		PICKAXE = "It's very pointy.",
@@ -476,6 +625,7 @@ return {
 			GUARD = "He's not the boss of me!",
 			WEREPIG = "Bring it on, piggie!",
 		},
+		PIGSKIN = "Ha ha. A pig's butt.",
 		PIGTORCH = "These pigs sure know how to have a good time.",
 		PINECONE = 
 		{
@@ -491,7 +641,15 @@ return {
 			GROWING = "Hurry up, you stupid plant!",
 			READY = "Oh boy. Vegetables.",
 		},
+		POMEGRANATE = "Is it supposed to have this many parts?",
+		POMEGRANATE_COOKED = "Fire always makes things better.",
+		POMEGRANATE_SEEDS = "A tiny seed. Looks like the parts inside the fruit.",
 		POOP = "Ew. Nasty. But useful.",
+		PUMPKIN = "I wonder what will happen if I apply fire.",
+		PUMPKINCOOKIE = "Cookies!!!",
+		PUMPKIN_COOKED = "Fire on the outside turned out pretty well.",
+		PUMPKIN_LANTERN = "Fire on the inside is amazing!",
+		PUMPKIN_SEEDS = "Seeds for the best vegetable-friend of fire: pumpkin.",
 		PURPLEGEM = "Weird!",
 		RABBIT =
 		{
@@ -500,6 +658,7 @@ return {
 		},
 		RABBITHOLE = "Stupid rabbits. Come out so I can eat you.",
 		RAINOMETER = "Rain is the anti-fire. Boo!",
+		RATATOUILLE = "Vegetables. So many vegetables.",
 		RAZOR = "Why did I build this?",
 		REDGEM = "So pretty!",
 		RED_CAP = "I like the colour.",
@@ -527,6 +686,16 @@ return {
 		RESEARCHLAB3 = "A dark and powerful energy radiates from it.",
 		RESURRECTIONSTATUE = "That's my insurance policy.",
 		RESURRECTIONSTONE = "I guess I should touch it?",
+		ROBIN =
+		{
+			GENERIC = "A redbird. The color of fire, but not a phoenix.",
+			HELD = "It's cozy in my pocket.",
+		},
+		ROBIN_WINTER =
+		{
+			GENERIC = "It looks cold out here. I bet it wants a fire.",
+			HELD = "It's so fluffy.",
+		},
 		ROBOT_PUPPET = "It looks scared half to death.",
 		ROCK_LIGHT =
 		{
@@ -537,6 +706,7 @@ return {
 		},
 		ROCKS = "Can make inuksuks with these?",
         ROOK = "It's a castle!",
+        ROPE = "What can I tie up with this?",
 		ROTTENEGG = "Ew! Why? Oh Why?!",
 		SANITYROCK =
 		{
@@ -550,6 +720,7 @@ return {
 			PICKED = "Poor little limp tree.",
 		},
 		SEEDS = "Farming is boring.",
+		SEEDS_COOKED = "No good for farming now.",
 		SEWING_KIT = "But destruction is so much more fun!",
 		SHOVEL = "Not great for fighting.",
 		SILK = "Mmmmmm. Smooth.",
@@ -571,6 +742,7 @@ return {
 			SLEEPING = "I could take him.",
 		},
 		SPIDERDEN = "That's just nasty.",
+		SPIDEREGGSACK = "Tons of tiny disgusting spiders.",
 		SPIDERGLAND = "Eeeeew it's slimy and stinky!",
 		SPIDERHAT = "Who's your mommy!",
 		SPIDERQUEEN = "Kill it with fire!",
@@ -584,7 +756,10 @@ return {
 		STATUEHARP = "What a nice statue. Shame if something were to happen to it.",
 		STATUEMAXWELL = "I'm beginning to dislike that man.",
 		STINGER = "It's pokey!",
+		STRAWHAT = "A hat made of straw. To think, it could've been tinder.",
 		SUNKBOAT = "It's too far out, I can't even burn it!",
+		SWEATERVEST = "Not as nice as a flaming vest, but it'll do.",
+		TAFFY = "Sugary things burn great, but I should eat this instead.",
 		TALLBIRD = "I don't think it wants to be friends.",
 		TALLBIRDEGG = "Does it like fire?",
 		TALLBIRDEGG_COOKED = "Fire makes them so much better.",
@@ -595,6 +770,11 @@ return {
 			HOT = "Is there such a thing as too much fire?",
 			LONG = "How long is this going to take?",
 			SHORT = "I'm getting tired of waiting.",
+		},
+		TALLBIRDNEST =
+		{
+			GENERIC = "That egg could use some fire!",
+			PICKED = "The nest is empty.",
 		},
 		TEENBIRD =
 		{
@@ -620,17 +800,31 @@ return {
 		TENTACLE_PILLAR = "It's quivering.",
 		TENTACLE_PILLAR_ARM = "Awwww, they want hugs!",
 		TENTACLE_GARDEN = "I hear little digging sounds.",
+		TOPHAT = "A top hat and a lighter, a perfect combination.",
 		TORCH = "Fire is so pretty.",
 		TRAP = "It's a bit passive aggressive, but it'll work.",
 		TRAP_TEETH = "It would be better with fire.",
 		TRAP_TEETH_MAXWELL = "What kind of jerk leaves this lying around?",
 		TREASURECHEST = "It's a trunk for my junk.",
+		TRINKET_1 = "I'll bet the fire that melted these was fiercely hot.",
+		TRINKET_10 = "I don't think dentures don't burn well.",
+		TRINKET_11 = "Ooh, I wonder if he has a flamethrower!",
+		TRINKET_12 = "All dried up, as if it stayed a bit too close to the fire.",
+		TRINKET_2 = "A cheap fake. It probably doesn't even burn properly.",
+		TRINKET_3 = "The knot is stuck. Who needs a knife when you've got fire?",
+		TRINKET_4 = "He looks like he was forged in flame.",
+		TRINKET_5 = "Check out those tiny thrusters. Such explosive power!",
+		TRINKET_6 = "Not even a spark.",
+		TRINKET_7 = "Fire is more fun.",
+		TRINKET_8 = "I've never liked bathing with water.",
+		TRINKET_9 = "You can strike a match on a zipper, but not on buttons.",
 		TRUNKVEST_SUMMER = "Now I'll be with my friend forever.",
 		TRUNKVEST_WINTER = "Not as warm as a good fire, but still pretty good!",
 		TRUNK_COOKED = "I'm still not sure I want to eat this.",
 		TRUNK_SUMMER = "Well, part of him is still cuddly.",
 		TRUNK_WINTER = "It's so soft and squishy!",
 		UMBRELLA = "I love the colour!",
+		WAFFLES = "Hi, waffles!",
 		WALL_HAY = "That looks so flammable!",
 		WALL_HAY_ITEM = "Hmmm. I wonder if these will burn.",
 		WALL_STONE = "Eh. I guess that's OK.",
@@ -648,6 +842,7 @@ return {
 		},
 		WALRUS_TUSK = "Nom nom nom.",
 		WASPHIVE = "I had better keep my distance.",
+		WETGOOP = "How did it go wrong?! I put it in fire and everything.",
 		WINTERHAT = "It's not warm enough for my liking.",
 		WINTEROMETER = "It would be better if it measured fire.",
 		WORMHOLE =
@@ -655,6 +850,9 @@ return {
 			GENERIC = "Poke it with a stick!",
 			OPEN = "I wonder if he likes spicy food?",
 		},
+		ACCOMPLISHMENT_SHRINE = "I hate that arrow!",        		
+		LIVINGTREE = "I bet it burns extra nicely!",
+		ICESTAFF = "I hate this thing.",
 	},
 	DESCRIBE_TOODARK = "I need more light!",
 	EAT_FOOD =

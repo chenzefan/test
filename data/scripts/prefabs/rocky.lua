@@ -76,6 +76,7 @@ local function OnGetItemFromPlayer(inst, giver, item)
                 inst.SoundEmitter:PlaySound("dontstarve/common/makeFriend")
                 giver.components.leader:AddFollower(inst)
                 inst.components.follower:AddLoyaltyTime(TUNING.ROCKY_LOYALTY)
+                inst.sg:GoToState("rocklick")
             end
     end
 

@@ -5,7 +5,7 @@ local assets =
 
 local prefabs =
 {
-    "campfirefire",
+    "maxwelllight_flame",
 }
 
 local function changelevels(inst, order)

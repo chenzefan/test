@@ -182,7 +182,8 @@ function Overseer:Targeted(attacker)
 
     local player = GetPlayer() 
     
-    if not attacker or attacker == player or
+    if not attacker or attacker == player or not player or
+		not attacker:IsValid() or not player:IsValid() or
        (attacker.IsInLimbo and attacker:IsInLimbo()) or  -- Deal with bees that can be in the inventory
        (attacker.sg and attacker.sg:HasStateTag("hiding")) or -- Deal with animals that hide 
        (attacker.Transform and player:GetDistanceSqToInst(attacker) >= (15*15)) then  -- some target from a long distance
@@ -368,12 +369,12 @@ function Overseer:TrapSprung(trap,target,damage)
 
 
     local data   = self.data
-    local targName = target.prefab or target.inst.prefab or "none"
-    local prefab = trap.prefab or trap.inst.prefab
+    local targName = (target and (target.prefab or target.inst.prefab)) or "none"
+    local prefab = (trap and trap.prefab or trap.inst.prefab)
 
     data.traps_sprung                        = (data.traps_sprung or 0) + 1
 
-    if target == player or (target.components.follower ~= nil and target.components.follower.leader == player) then
+    if target == player or (target and target.components.follower ~= nil and target.components.follower.leader == player) then
         data.trap_hit_minion = (data.trap_hit_minion or 0) + damage
     else
         data.trap_damage     = (data.traps_damage or 0) + damage
@@ -422,7 +423,7 @@ function Overseer:AddKillByMine(targ,damage)
     local prefab = targ.prefab or targ.inst.prefab
     local player = GetPlayer()
 
-    if targ == player or targ.components.follower.leader == player then
+    if targ == player or (targ.components.follower and targ.components.follower.leader == player) then
     else
         data.trap_kills = (data.trap_kills or 0) + 1
         data.kill_total = (data.kill_total or 0) + 1
@@ -499,7 +500,8 @@ function Overseer:Process()
     -- Fix until I figure out why penguins continually target and retarget the player
     for ent,v in pairs(data.foeList) do
         if ent.prefab == "penguin" then
-            if ent.components.health.currenthealth > 0 then
+            if ent.components.health and
+                ent.components.health.currenthealth > 0 then
                 data.eluded         = data.eluded or {}
                 data.eluded_total   = (data.eluded_total or 0) + 1
                 data.eluded[ent.prefab] = (data.eluded[ent.prefab] or 0) + 1
@@ -510,7 +512,7 @@ function Overseer:Process()
     return true
 end
 
-local charlie = {prefab="NIL"}
+--local charlie = {prefab="NIL"}
 
 function Overseer:OnUpdate(dt)
 	local player = GetPlayer()
@@ -530,7 +532,7 @@ function Overseer:OnUpdate(dt)
             if inst.components.teamattacker then
                 local threat = inst.components.teamattacker.teamleader.threat
                 -- See if the team (not just the particular enemy) is targeting the player or a follower
-                if threat == player or threat.components.follower.leader == player then
+                if threat == player or (threat.components.follower and threat.components.follower.leader == player) then
                     return true
                 end
             end
@@ -542,7 +544,7 @@ function Overseer:OnUpdate(dt)
             local targ = ent.components and ent.components.combat and ent.components.combat.target
             --dprint("ent= ",ent,"::",targ)
             if targ and ( targ == player or (targ.components.follower and targ.components.follower.leader == player) or CheckAura(ent) or (ent.components.teamattacker and CheckTeam(ent)) )  and
-              ( ent.components.health.currenthealth and ent.components.health.currenthealth > 0 ) and
+              (ent.components.health and ent.components.health.currenthealth and ent.components.health.currenthealth > 0 ) and
               not ent:IsInLimbo() and
               not ent:HasTag("hidden") and
               not (ent.sg and ent.sg:HasStateTag("hiding") and player:GetDistanceSqToInst(ent) > (25*25)) and
@@ -552,6 +554,7 @@ function Overseer:OnUpdate(dt)
         end
     end
 
+--[[
     if not self.inst.LightWatcher:IsInLight() then
         targeted = true  -- Charlie will be coming
         self:Targeted(charlie)
@@ -560,6 +563,7 @@ function Overseer:OnUpdate(dt)
         self:GaveUp(charlie)
         self.inDark = false
     end
+--]]
 
     if not targeted and self.engaged then
         self.inst:StopUpdatingComponent(self)

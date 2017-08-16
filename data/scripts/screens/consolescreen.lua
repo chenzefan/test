@@ -8,12 +8,12 @@ local NumericSpinner = require "widgets/numericspinner"
 local TextEdit = require "widgets/textedit"
 local Widget = require "widgets/widget"
 
-require "screens/popupdialog"
-
 local VALID_CHARS = [[ abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,:;[]\@!#$%&()'*+-/=?^_{|}~"]]
+-- fix syntax highlighting due to above list: "'
+
 local CONSOLE_HISTORY = {}
 
-ConsoleScreen = Class(Screen, function(self)
+local ConsoleScreen = Class(Screen, function(self)
 	Screen._ctor(self, "ConsoleScreen")
 	self:DoInit()
 end)
@@ -22,7 +22,9 @@ function ConsoleScreen:OnBecomeActive()
 	ConsoleScreen._base.OnBecomeActive(self)
 	TheFrontEnd:ShowConsoleLog()
 
+	self.console_edit:SetFocus()
 	self.console_edit:SetEditing(true)
+	TheFrontEnd:LockFocus(true)
 end
 
 function ConsoleScreen:OnControl(control, down)
@@ -170,7 +172,7 @@ function ConsoleScreen:AutoComplete()
 end
 
 function ConsoleScreen:Close()
-	SetHUDPause(false)
+	SetPause(false)
 	TheInput:EnableDebugToggle(true)
 	TheFrontEnd:PopScreen()
 end
@@ -194,7 +196,7 @@ function SetConsoleHistory(history)
 end
 
 function ConsoleScreen:DoInit()
-	SetHUDPause(true,"console")
+	SetPause(true,"console")
 	TheInput:EnableDebugToggle(false)
 
 	local label_width = 200
@@ -240,10 +242,11 @@ function ConsoleScreen:DoInit()
 
 	self.console_edit:SetString("")
 	self.history_idx = nil
-	self.default_focus = self.console_edit
 
 	self.console_edit.validrawkeys[KEY_TAB] = true
 	self.console_edit.validrawkeys[KEY_UP] = true
 	self.console_edit.validrawkeys[KEY_DOWN] = true
 
 end
+
+return ConsoleScreen

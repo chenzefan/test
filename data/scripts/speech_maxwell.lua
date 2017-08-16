@@ -34,22 +34,33 @@ return {
 	ANNOUNCE_ENTER_DARK = "It's dark! I can't see!",
 	ANNOUNCE_ENTER_LIGHT = "The light is back.",
 	ANNOUNCE_FREEDOM = "Freedom, at last!",
+	ANNOUNCE_HIGHRESEARCH = "My brain swells with power!",
 	ANNOUNCE_HOUNDS = "The hounds are growing restless.",
 	ANNOUNCE_HUNGRY = "I am empty inside.",
 	ANNOUNCE_HUNT_BEAST_NEARBY = "I smell dung and beast-sweat.",
 	ANNOUNCE_HUNT_LOST_TRAIL = "Drat! It got away.",
 	ANNOUNCE_INV_FULL = "My pockets are full.",
 	ANNOUNCE_KNOCKEDOUT = "Ugh. My head hurts.",
+	ANNOUNCE_LOWRESEARCH = "That wasn't very informative.",
 	ANNOUNCE_MOSQUITOS = "What annoying little bugs.",
 	ANNOUNCE_NODANGERSLEEP = "Not while there's danger afoot!",
 	ANNOUNCE_NODAYSLEEP = "I can't sleep in the day.",
+	ANNOUNCE_NODAYSLEEP_CAVE = "Sleeping now would mess up my sleep schedule!",
 	ANNOUNCE_NOHUNGERSLEEP = "I'm too hungry. I can't sleep.",
 	ANNOUNCE_NO_TRAP = "Weird. They forgot to set it.",
 	ANNOUNCE_PECKED = "Have patience!",
+	ANNOUNCE_QUAKE = "That rumbling can't be good.",
+	ANNOUNCE_RESEARCH = "Knowledge is power. And power is... well, power.",
 	ANNOUNCE_THORNS = "I scratched my arms up doing that.",
-	ANNOUNCE_TORCH_OUT = "Dang it, another torch down.",
+	ANNOUNCE_TORCH_OUT = "Dang it, another light down.",
 	ANNOUNCE_TRAP_WENT_OFF = "Ack!",
+	ANNOUNCE_UNIMPLEMENTED = "Hmm, not quite done.",
 	ANNOUNCE_WORMHOLE = "Yech. It's horrible in there.",
+	ANNOUNCE_CANFIX = "\nI think I can fix this!",
+	ANNOUNCE_NOSANITY = "I have a headache!",
+	ANNOUNCE_NOFUEL = "I need some nightmare fuel.",
+	ANNOUNCE_ACCOMPLISHMENT= "I need to pass the time somehow.",
+	ANNOUNCE_ACCOMPLISHMENT_DONE = "That kinda makes it all worthwhile.",	
 	BATTLECRY =
 	{
 		GENERIC = "To arms!",
@@ -64,10 +75,30 @@ return {
 	},
 	DESCRIBE =
 	{
+		WAXWELLJOURNAL = "I'm so sorry Charlie.",
+		WORMLIGHT = "What a neat trick.",
+		WORM =
+		{
+		    PLANT = "You aren't fooling me, plant.",
+		    DIRT = "Something stirs.",
+		    WORM = "Well that's new!",
+		},
+		EEL = "They only exsist in the depths.",
+		EEL_COOKED = "It will have to do.",
+		UNAGI = "My compliments to the chef!",
+		EYETURRET = "Some of my better work.",
+		EYETURRET_ITEM = "Now I just have to set it up.",
+		MINOTAURHORN = "I'm sorry I had to do that, old friend.",
+		MINOTAURCHEST = "It's almost like he's still alive.",
+		THULECITE_PIECES = "I could combine several piles to make a bigger piece.",
+		POND_ALGAE = "It's some algae.",
+		GREENSTAFF = "I must rely on focusing tools in this form.",
+		POTTEDFERN = "How quaint.",
 
 		THULECITE = "An exceedingly rare but useful material.",
 		ARMORRUINS = "Thulecite meshes so well with nightmare fuel.",
 		RUINS_BAT = "The fuel runs deep in this.",
+		RUINSHAT = "Fuel must flow.",
 		NIGHTMARE_TIMEPIECE = --Keeps track of the nightmare cycle
 		{
 			CALM = "The heart of the city is still.",	--calm phase
@@ -118,6 +149,7 @@ return {
         },
 
         ANCIENT_STATUE = "A once proud race.",
+
 		CAVE_BANANA = "Like ashes in my mouth.",
 		CAVE_BANANA_COOKED = "Even worse than raw.",
 		CAVE_BANANA_TREE = "It looks like a banana, but I'm not buying it.",
@@ -159,10 +191,6 @@ return {
 		STALAGMITE_TALL_FULL="Stalagmite. How dull.",
 		STALAGMITE_TALL_LOW="Stalagmite. How dull.",
 		STALAGMITE_TALL_MED="Stalagmite. How dull.",
-		TURF_FUNGUS="Turf.",
-		TURF_MUD="Turf.",
-		TURF_SINKHOLE="Turf.",
-		TURF_UNDERROCK="Turf.",
 
 		POWCAKE = "What foul product of science is this?",
 		CAVE_ENTRANCE = 
@@ -242,6 +270,7 @@ return {
 		BISHOP = "I'm especially proud of that piece.",
 		BLOWDART_FIRE = "Just make sure to breathe out.",
 		BLOWDART_SLEEP = "Call me Mr. Sandman.",
+		BLOWDART_PIPE = "A glorious tube of pain-giving!",
 		BLUEAMULET = "It's frosted over.",
 		BLUEGEM = "Blue brings ice.",
 		BLUEPRINT = "I know all about that. I just forgot.",
@@ -310,10 +339,12 @@ return {
 			GENERIC = "I don't know how they got here.",
 			HELD = "Shhhh... My pretty.",
 		},
+		LICHEN = "This fungus survived the downfall.",
 		CUTLICHEN = "Dry, crumbly, sustaining.",
 		CUTGRASS = "The mundane stuff of the earth.",
 		CUTREEDS = "I think I could build something useful from this.",
 		CUTSTONE = "The building blocks of civilization.",
+		DEADLYFEAST = "It smells... noxious.",
 		DEERCLOPS = "Even I am afraid of that guy.",
 		DEERCLOPS_EYEBALL = "Deerclops are myopic.",
 		DEPLETED_GRASS =
@@ -404,7 +435,7 @@ return {
 		FLOWER = "I am filled with the irrational urge to stomp upon it.",
 		FLOWERHAT = "Definitely not my style.",
 		FLOWER_EVIL = "I like that flower.",
-		FOLIAGE = "A meal fit for a pesant.",
+		FOLIAGE = "A meal fit for a peasant.",
 		FOOTBALLHAT = "Now I am ready for the scrimmage.",
 		FROG =
 		{
@@ -479,6 +510,7 @@ return {
 		KRAMPUS = "You won't catch me!",
 		KRAMPUS_SACK = "It's really light.",
 		LEIF = "Disgusting creature!",
+		LEIF_SPARSE = "Disgusting creature!",
 		LIGHTNING_ROD =
 		{
 			CHARGED = "Energy flows through it.",
@@ -522,6 +554,7 @@ return {
 		},
 		MAXWELL = "Looking good!",
 		MAXWELLHEAD = "Hey, handsome.",
+		MAXWELLLIGHT = "Aw, it remembers me.",
 		MAXWELLLOCK = "It keeps the master in the chair.",
 		MAXWELLTHRONE = "It's less painful than it looks. Barely.",
 		MEAT = "I'm used to much finer fare.",
@@ -547,6 +580,7 @@ return {
 			GENERIC = "Bloody blood sucking blood suckers.",
 			HELD = "I got him.",
 		},
+		MOSQUITOSACK = "A bloody sack. With blood in it.",
 		MOUND =
 		{
 			DUG = "Already got that one.",
@@ -586,7 +620,11 @@ return {
 		PIGSKIN = "It was him or me.",
 		PIGTENT = "That's just nasty.",
 		PIGTORCH = "Great. Now they have fire.",
-		PINECONE = "A more outdoorsy type might be able to make something of this.",
+		PINECONE = 
+		{
+		    GENERIC = "A more outdoorsy type might be able to make something of this.",
+		    PLANTED = "Oh my, it grows!",
+		},
 		PITCHFORK = "The tool of choice for perfectionists.",
 		PLANTMEAT = "A feeble attempt to trick the weaker minded.",
 		PLANTMEAT_COOKED = "The heat has made this a suitable meal.",
@@ -718,6 +756,7 @@ return {
 		STRAWHAT = "A hat fit for a peasant.",
 		STUFFEDEGGPLANT = "My compliments to the chef!",
 		SUNKBOAT = "That's not how you use a boat!",
+		SWEATERVEST = "It's no three-piece, but it's dapper enough.",
 		TAFFY = "My compliments to the chef!",
 		TALLBIRD = "These were a failed experiment.",
 		TALLBIRDEGG = "Tallbirds are territorial because of these things.",
@@ -785,6 +824,7 @@ return {
 		TRUNK_COOKED = "At least the mucus burned off.",
 		TRUNK_SUMMER = "Full of summer mucus.",
 		TRUNK_WINTER = "The trunk thickens in the winter to hold more mucus.",
+
 		TURF_CARPETFLOOR = "That's a quality, high-pile carpet sample!",
 		TURF_CHECKERFLOOR = "That's my natural habitat.",
 		TURF_DIRT = "Dusty.",
@@ -795,6 +835,13 @@ return {
 		TURF_ROCKY = "Kinda rough.",
 		TURF_SAVANNA = "Dirty.",
 		TURF_WOODFLOOR = "I prefer hardwoods.",
+
+		TURF_CAVE="Turf.",
+		TURF_FUNGUS="Turf.",
+		TURF_SINKHOLE="Turf.",
+		TURF_UNDERROCK="Turf.",
+		TURF_MUD="Turf.",
+
 		TURKEYDINNER = "How festive.",
 		TWIGS = "Common, but useful.",
 		UMBRELLA = "It's crooked!",
@@ -825,6 +872,9 @@ return {
 			OPEN = "I can assure you that it smells worse than it looks.",
 		},
 		WORMHOLE_LIMITED = "It looks ill.",
+		ACCOMPLISHMENT_SHRINE = "Even THEY couldn't build something so devious.",		
+		LIVINGTREE = "What's his problem?",
+		ICESTAFF = "It feels like my heart.",
 	},
 	DESCRIBE_GENERIC = "You tell me.",
 	DESCRIBE_TOODARK = "I can't see in the dark!",

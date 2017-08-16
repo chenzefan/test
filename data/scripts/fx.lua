@@ -43,6 +43,32 @@ local FX =
 	    tint = nil,
 	    tintalpha = nil,
     },
+    {
+	    name = "firework_fx", 
+	    bank = "firework", 
+	    build = "accomplishment_fireworks", 
+	    anim = "single_firework",
+	    sound = "dontstarve/common/shrine/sadwork_fire",
+	    sound2 = "dontstarve/common/shrine/sadwork_explo",
+	    sounddelay2 = 26/30,
+	    tint = nil,
+	    tintalpha = nil,
+	    fn = function() GetClock():DoLightningLighting(.25) end,
+	    fntime = 26/30
+    },    
+    {
+	    name = "multifirework_fx", 
+	    bank = "firework", 
+	    build = "accomplishment_fireworks", 
+	    anim = "multi_firework",
+	    sound = "dontstarve/common/shrine/sadwork_fire",
+	    sound2 = "dontstarve/common/shrine/firework_explo",
+	    sounddelay2 = 26/30,
+	    tint = nil,
+	    tintalpha = nil,
+	    fn = function() GetClock():DoLightningLighting(1) end,
+	    fntime = 26/30
+    },    
 
     {
 	    name = "explode_small", 
@@ -110,6 +136,26 @@ local FX =
 	    tint = nil,
 	    tintalpha = nil,
     },
+    {
+	    name = "shovel_dirt", 
+	    bank = "shovel_dirt", 
+	    build = "shovel_dirt", 
+	    anim = "anim",
+	    sound = nil,
+	    sounddelay = nil,
+	    tint = nil,
+	    tintalpha = nil,
+    },    
+    {
+	    name = "mining_fx", 
+	    bank = "mining_fx", 
+	    build = "mining_fx", 
+	    anim = "anim",
+	    sound = nil,
+	    sounddelay = nil,
+	    tint = nil,
+	    tintalpha = nil,
+    },    
     {
 	    name = "pine_needles", 
 	    bank = "pine_needles", 
@@ -185,6 +231,46 @@ local FX =
 	    sounddelay = nil,
 	    tint = Vector3(0,0,0),
 	    tintalpha = 0.6,
+    },
+
+    {
+	    name = "sparklefx", 
+	    bank = "sparklefx", 
+	    build = "sparklefx", 
+	    anim = "sparkle",
+	    sounddelay = nil,
+	    tint = nil,
+	    --transform = Vector3(1.5, 1, 1)
+    },
+    {
+	    name = "book_fx", 
+	    bank = "book_fx", 
+	    build = "book_fx", 
+	    anim = "book_fx",
+	    sound = nil,
+	    sounddelay = nil,
+	    tint = nil,
+	    tintalpha = 0.4,
+	    --transform = Vector3(1.5, 1, 1)
+    },
+    {
+	    name = "waxwell_book_fx", 
+	    bank = "book_fx", 
+	    build = "book_fx", 
+	    anim = "book_fx",
+	    sound = nil,
+	    sounddelay = nil,
+	    tint =  Vector3(0,0,0),
+	    tintalpha = nil,
+	    --transform = Vector3(1.5, 1, 1)
+    },
+
+
+    {
+	    name = "chester_transform_fx", 
+	    bank = "die_fx", 
+	    build = "die", 
+	    anim = "small",
     },
 
 }

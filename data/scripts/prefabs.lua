@@ -2,14 +2,14 @@ require("class")
 --require("entityscript")
 --PREFABS.LUA
 
-Prefab = Class( function(self, name, fn, assets, deps, loadimmediate)
+Prefab = Class( function(self, name, fn, assets, deps)
     self.name = name or ""
+    self.path = name or nil
     self.name = string.sub(name, string.find(name, "[^/]*$"))
     self.desc = ""
     self.fn = fn
     self.assets = assets or {}
     self.deps = deps or {}
-    self.loadimmediate = loadimmediate or false
 end)
 
 function Prefab:__tostring()

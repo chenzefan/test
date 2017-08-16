@@ -34,7 +34,7 @@ local function create(sim)
     inst.AnimState:SetOrientation( ANIM_ORIENTATION.OnGround )
     inst.AnimState:SetLayer( LAYER_BACKGROUND )
     inst.AnimState:SetSortOrder( 3 )
-    inst.AnimState:SetRayTestOnBB(true);
+    inst.AnimState:SetRayTestOnBB(true)
     inst.AnimState:PlayAnimation("idle")
 
     inst.entity:AddPhysics()

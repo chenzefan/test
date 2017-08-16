@@ -61,6 +61,9 @@ function Stackable:Get(num)
 	return self.inst	
 end
 
+function Stackable:RoomLeft()
+    return self.maxsize - self.stacksize
+end
 
 function Stackable:IsFull()
     return self.stacksize >= self.maxsize

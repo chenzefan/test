@@ -80,6 +80,7 @@ local function fn(Sim)
     inst.components.container.widgetanimbank = "ui_chest_3x3"
     inst.components.container.widgetanimbuild = "ui_chest_3x3"
     inst.components.container.widgetpos = Vector3(0,200,0)
+    inst.components.container.side_align_tip = 160
     
     inst:AddComponent("lootdropper")
     inst:AddComponent("workable")

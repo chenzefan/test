@@ -132,7 +132,7 @@ function Tab:Deselect()
     if self.selected then
         self:ScaleTo(1.25*self.basescale, 1*self.basescale, .125)
         if self.deselectfn then
-            self.deselectfn()
+            self.deselectfn(self)
         end
         self.bg:SetTexture(self.atlas, self.highlighted and self.imhighlight or self.imnormal)
         self.selected = false
@@ -147,7 +147,7 @@ function Tab:Select()
         self.group:DeselectAll()
 
         if self.selectfn then
-            self.selectfn()
+            self.selectfn(self)
         end
         
         self.bg:SetTexture(self.atlas, self.imselected)

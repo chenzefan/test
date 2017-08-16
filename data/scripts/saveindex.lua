@@ -1,11 +1,15 @@
 SaveIndex = Class(function(self)
+	self:Init()
+end)
+
+function SaveIndex:Init()
 	self.data =
 	{
 		slots=
 		{
 		}
 	}
-	for k = 1, 4 do
+	for k = 1, NUM_SAVE_SLOTS do
 
 		local filename = "latest_" .. tostring(k)
 
@@ -16,11 +20,34 @@ SaveIndex = Class(function(self)
 		self.data.slots[k] = 
 		{
 			current_mode = nil,
-			modes = {survival= {file = filename}}
+			modes = {survival= {file = filename}},
+			resurrectors = {},
+			dlc = {},
 		}
 	end
 	self.current_slot = 1
-end)
+end
+
+function SaveIndex:GuaranteeMinNumSlots(numslots)
+	if #self.data.slots < numslots then
+		local filename = nil
+		for i = 1, numslots do
+			if self.data.slots[i] == nil then
+				filename = "latest_" .. tostring(i)
+				if BRANCH ~= "release" then
+					filename = filename .. "_" .. BRANCH
+				end
+				self.data.slots[i] = 
+				{
+					current_mode = nil,
+					modes = {survival= {file = filename}},
+					resurrectors = {},
+					dlc = {},
+				}
+			end
+		end
+	end
+end
 
 function SaveIndex:GetSaveGameName(type, slot)
 
@@ -51,29 +78,36 @@ function SaveIndex:GetSaveIndexName()
 end
 
 function SaveIndex:Save(callback)
+
 	local data = DataDumper(self.data, nil, false)
     local insz, outsz = TheSim:SetPersistentString(self:GetSaveIndexName(), data, ENCODE_SAVES, callback)
 end
 
 function SaveIndex:Load(callback)
-
-    local filename = self:GetSaveIndexName()
+	--This happens on game start.
+	local filename = self:GetSaveIndexName()
     TheSim:GetPersistentString(filename,
-        function(str) 
+        function(load_success, str) 
 			local success, savedata = RunInSandbox(str)
-			if success and string.len(str) > 0 then
+
+			-- If we are on steam cloud this will stop a currupt saveindex file from 
+			-- ruining everyones day.. 
+			if success and string.len(str) > 0 and savedata ~= nil then
 				self.data = savedata
 				print ("loaded "..filename)
 			else
 				print ("Could not load "..filename)
 			end
-
-			--callback()
-			self:VerifyFiles(callback)
+			
+	        if PLATFORM == "PS4" then 
+                -- PS4 doesn't need to verify files. If they're missing then the save was damaged and wouldn't have been loaded.
+                -- Just fire the callback and keep going.
+                callback()  
+            else
+			    self:VerifyFiles(callback)                
+			end
         end)    
 end
-
-
 
 --this also does recovery of pre-existing save files (sort of)
 function SaveIndex:VerifyFiles(completion_callback)
@@ -139,15 +173,259 @@ function SaveIndex:GetModeData(slot, mode)
 	return {}
 end
 
+function SaveIndex:SetSaveSeasonData()
+	local seasondata = {}
+
+	local seasonmgr = GetSeasonManager()
+	if seasonmgr then
+		seasondata["targetseason"] = seasonmgr.current_season
+		seasondata["targetpercent"] = seasonmgr.percent_season
+		seasondata["autumnlen"] = seasonmgr.autumnlength
+		seasondata["winterlen"] = seasonmgr.winterlength
+		seasondata["springlen"] = seasonmgr.springlength
+		seasondata["summerlen"] = seasonmgr.summerlength
+		seasondata["autumnenabled"] = seasonmgr.autumnenabled
+		seasondata["winterenabled"] = seasonmgr.winterenabled
+		seasondata["springenabled"] = seasonmgr.springenabled
+		seasondata["summerenabled"] = seasonmgr.summerenabled
+		seasondata["autumnsegs"] = seasonmgr.autumnsegs
+		seasondata["wintersegs"] = seasonmgr.wintersegs
+		seasondata["springsegs"] = seasonmgr.springsegs
+		seasondata["summersegs"] = seasonmgr.summersegs
+		seasondata["initialevent"] = seasonmgr.initialevent
+	end
+
+	if self.data~= nil and self.data.slots ~= nil and self.data.slots[self.current_slot] ~= nil then
+	 	self.data.slots[self.current_slot].seasondata = seasondata
+	end	
+end
+
+function SaveIndex:LoadSavedSeasonData()
+	local seasonmgr = GetSeasonManager()
+	local seasondata = self.data.slots[self.current_slot].seasondata
+	if seasonmgr and seasondata then
+		seasonmgr.target_season = seasondata["targetseason"]
+		seasonmgr.target_percent = seasondata["targetpercent"]
+		seasonmgr.autumnlength = seasondata["autumnlen"]
+		seasonmgr.winterlength = seasondata["winterlen"]
+		seasonmgr.springlength = seasondata["springlen"]
+		seasonmgr.summerlength = seasondata["summerlen"]
+		seasonmgr.autumnenabled = seasondata["autumnenabled"]
+		seasonmgr.winterenabled = seasondata["winterenabled"]
+		seasonmgr.springenabled = seasondata["springenabled"]
+		seasonmgr.summerenabled = seasondata["summerenabled"]
+		seasonmgr.autumnsegs = seasondata["autumnsegs"]
+		seasonmgr.wintersegs = seasondata["wintersegs"]
+		seasonmgr.springsegs = seasondata["springsegs"]
+		seasonmgr.summersegs = seasondata["summersegs"]
+		seasonmgr.initialevent = seasondata["initialevent"]
+	end
+	self.data.slots[self.current_slot].seasondata = nil
+	self:Save(function () print("LoadSavedSeasonData CB") end)
+end
+
+function SaveIndex:GetSaveFollowers(doer)
+	local followers = {}
+
+	if doer.components.leader then
+		for follower,v in pairs(doer.components.leader.followers) do
+			local ent_data = follower:GetPersistData()
+			table.insert(followers, {prefab = follower.prefab, data = follower:GetPersistData()})
+			follower:Remove()
+		end
+	end
+
+	--special case for the chester_eyebone: look for inventory items with followers
+	if doer.components.inventory then
+		for k,item in pairs(doer.components.inventory.itemslots) do
+			if item.components.leader then
+				for follower,v in pairs(item.components.leader.followers) do
+					local ent_data = follower:GetPersistData()
+					table.insert(followers, {prefab = follower.prefab, data = follower:GetPersistData()})
+					follower:Remove()
+				end
+			end
+		end
+
+		-- special special case, look inside equipped containers
+		for k,equipped in pairs(doer.components.inventory.equipslots) do
+			if equipped and equipped.components.container then
+				local container = equipped.components.container
+				for j,item in pairs(container.slots) do
+					if item.components.leader then
+						for follower,v in pairs(item.components.leader.followers) do
+							local ent_data = follower:GetPersistData()
+							table.insert(followers, {prefab = follower.prefab, data = follower:GetPersistData()})
+							follower:Remove()
+						end
+					end
+				end
+			end
+		end
+	end
+
+	if self.data~= nil and self.data.slots ~= nil and self.data.slots[self.current_slot] ~= nil then
+	 	self.data.slots[self.current_slot].followers = followers
+	end	
+end
+
+function SaveIndex:LoadSavedFollowers(doer)
+    local x,y,z = doer.Transform:GetWorldPosition()
+
+	if doer.components.leader and self.data.slots[self.current_slot].followers then
+		for idx,follower in pairs(self.data.slots[self.current_slot].followers) do
+			local ent  = SpawnPrefab(follower.prefab)
+			if ent ~= nil then
+				ent:SetPersistData(follower.data)
+
+		        local angle = TheCamera.headingtarget + math.random()*10*DEGREES-5*DEGREES
+		        x = x + .5*math.cos(angle)
+		        z = z + .5*math.sin(angle)
+		 		ent.Transform:SetPosition(x,y,z)
+		 		if ent.MakeFollowerFn then
+		 			ent.MakeFollowerFn(ent, doer)
+		 		end
+		 		ent.components.follower:SetLeader(doer)
+			end
+		end
+		self.data.slots[self.current_slot].followers = nil
+		self:Save(function () print("LoadSavedFollowers CB") end)
+	end
+end
+
+function SaveIndex:GetResurrectorName( res )
+	return self:GetSaveGameName(self.data.slots[self.current_slot].current_mode, self.current_slot)..":"..tostring(res.GUID)
+end
+
+function SaveIndex:GetResurrectorPenalty()
+	if self.data.slots[self.current_slot].current_mode == "adventure" then
+		return nil
+	end
+
+	local penalty = 0
+
+	for k,v in pairs(self.data.slots[self.current_slot].resurrectors) do
+		penalty = penalty + v
+	end
+
+	return penalty
+end
+
+function SaveIndex:ClearCurrentResurrectors()
+	if self.data.slots[self.current_slot].resurrectors == nil then
+		self.data.slots[self.current_slot].resurrectors = {}
+		return
+	end
+
+	for k,v in pairs(self.data.slots[self.current_slot].resurrectors) do
+		if string.find(k, self:GetSaveGameName(self.data.slots[self.current_slot].current_mode, self.current_slot))~= nil then
+			self.data.slots[self.current_slot].resurrectors[k] = nil
+		end
+	end
+	self:Save(function () print("ClearCurrentResurrectors CB") end)
+end
+
+function SaveIndex:RegisterResurrector(res, penalty)
+
+	if self.data.slots[self.current_slot].resurrectors == nil then
+		self.data.slots[self.current_slot].resurrectors = {}
+	end
+	print("RegisterResurrector", res)
+	self.data.slots[self.current_slot].resurrectors[self:GetResurrectorName(res)] = penalty
+	
+	if PLATFORM ~= "PS4" then 
+	    -- Don't need to save on each of these events as regular saveindex save will be enough to keep these consistent
+	    self:Save(function () print("RegisterResurrector CB") end)
+	end
+end
+
+function SaveIndex:DeregisterResurrector(res)
+
+	if self.data.slots[self.current_slot].resurrectors == nil then
+		self.data.slots[self.current_slot].resurrectors = {}
+		return
+	end
+
+	print("DeregisterResurrector", res.inst)
+
+	local name = self:GetResurrectorName(res)
+	for k,v in pairs(self.data.slots[self.current_slot].resurrectors) do
+		if k == name then
+			print("DeregisterResurrector found", name)
+			self.data.slots[self.current_slot].resurrectors[name] = nil
+			
+	        if PLATFORM ~= "PS4" then 
+	            -- Don't need to save on each of these events as regular saveindex save will be enough to keep these consistent
+			    self:Save(function () print("DeregisterResurrector CB") end)
+			end
+			return
+		end
+	end
+
+	print("DeregisterResurrector", res.inst, "not found")
+end
+
+function SaveIndex:GetResurrector()
+	if self.data.slots[self.current_slot].current_mode == "adventure" then
+		return nil
+	end
+	if self.data.slots[self.current_slot].resurrectors == nil then
+		return nil
+	end
+	for k,v in pairs(self.data.slots[self.current_slot].resurrectors) do
+		return k
+	end
+
+	return nil
+end
+
+function SaveIndex:CanUseExternalResurector()
+	return self.data.slots[self.current_slot].current_mode ~= "adventure"
+end
+function SaveIndex:GotoResurrector(cb)
+	print ("SaveIndex:GotoResurrector()")
+
+	if self.data.slots[self.current_slot].current_mode == "adventure" then
+		assert(nil, "SaveIndex:GotoResurrector() In adventure mode! why are we here!!??")
+		return
+	end
+	
+	if self.data.slots[self.current_slot].resurrectors == nil then
+		self.data.slots[self.current_slot].resurrectors = {}
+		return
+	end
+
+	local file = string.split(self:GetResurrector(), ":")[1]
+	local mode = string.split(file, "_")[1]
+
+	print ("SaveIndex:GotoResurrector() File:", file, "Mode:", mode)
+	if mode == "survival" then
+		self:LeaveCave(cb)
+	else
+		local cavenum, level = string.match(file, "cave_(%d+)_(%d+)")
+		cavenum = tonumber(cavenum)
+		level = tonumber(level)
+		print ("SaveIndex:GotoResurrector() File:", cavenum, "Mode:", level)
+		self:EnterCave(cb, self.current_slot, cavenum, level)
+	end
+
+	print ("SaveIndex:GotoResurrector() done")
+end
+
 function SaveIndex:GetSaveData(slot, mode, cb)
 	self.current_slot = slot
-	
-	TheSim:GetPersistentString(self:GetModeData(slot, mode).file, function(str)
+	local file = self:GetModeData(slot, mode).file
+	TheSim:GetPersistentString(file, function(load_success, str)
+		assert(load_success, "SaveIndex:GetSaveData: Load failed for file ["..file.."] please consider deleting this save slot and trying again.")
+
+		assert(str, "SaveIndex:GetSaveData: Encoded Savedata is NIL on load ["..file.."]")
+		assert(#str>0, "SaveIndex:GetSaveData: Encoded Savedata is empty on load ["..file.."]")
+
 		local success, savedata = RunInSandbox(str)
 		
 		--[[
 		if not success then
-			local file = io.open("bin/badfile.lua", "w")
+			local file = io.open("badfile.lua", "w")
 			if file then
 				str = string.gsub(str, "},", "},\n")
 				file:write(str)
@@ -156,8 +434,9 @@ function SaveIndex:GetSaveData(slot, mode, cb)
 			end
 		end--]]
 
-		assert(success, "Corrupt Save file")
-
+		assert(success, "Corrupt Save file ["..file.."]")
+		assert(savedata, "SaveIndex:GetSaveData: Savedata is NIL on load ["..file.."]")
+		assert(GetTableSize(savedata)>0, "SaveIndex:GetSaveData: Savedata is empty on load ["..file.."]")
 
 		cb(savedata)
 	end)
@@ -168,24 +447,49 @@ function SaveIndex:GetPlayerData(slot, mode)
 	return self:GetModeData(slot, mode or self.data.slots[slot].current_mode).playerdata
 end
 
-function SaveIndex:DeleteSlot(slot, cb)
-	local function onerased()
-		self.data.slots[slot] = { current_mode = nil, modes = {}}
-		self:Save(cb)
+function SaveIndex:DeleteSlot(slot, cb, save_options)
+	local character = self.data.slots[slot].character
+	local dlc = self.data.slots[slot].dlc
+	local options = nil
+	if  self.data.slots[slot] and  self.data.slots[slot].modes and self.data.slots[slot].modes.survival then
+		options = self.data.slots[slot].modes.survival.options
 	end
 
 	local files = {}
 	for k,v in pairs(self.data.slots[slot].modes) do
-		table.insert(files, v.file)
+		local add_file = true
 		if v.files then
 			for kk, vv in pairs(v.files) do
+				if vv == v.file then
+					add_file = false
+				end
 				table.insert(files, vv)
 			end
 		end
-
+		
+		if add_file then
+			table.insert(files, v.file)
+		end
 	end
 
-	EraseFiles(onerased, files)
+	if next(files) then
+		EraseFiles(nil, files)
+	end
+
+	local slot_exists = self.data.slots[slot] and self.data.slots[slot].current_mode
+	if slot_exists then
+		self.data.slots[slot] = { current_mode = nil, modes = {}}
+		if save_options == true then
+			self.data.slots[slot].character = character
+			self.data.slots[slot].dlc = dlc
+			self.data.slots[slot].current_mode = "survival"
+			self.data.slots[slot].modes["survival"] = {options = options}
+		end
+		self:Save(nil)		
+	end
+	if cb then
+		cb()
+	end
 end
 
 
@@ -261,10 +565,18 @@ function SaveIndex:EraseCurrent(cb)
 	data.day = nil
 	data.world = nil
 	self:Save(onerased)
-
 end
 
-function SaveIndex:SaveCurrent(onsavedcb)
+function SaveIndex:GetDirectionOfTravel()
+	return self.data.slots[self.current_slot].direction,
+			self.data.slots[self.current_slot].cave_num
+end
+function SaveIndex:GetCaveNumber()
+	return  (self.data.slots[self.current_slot].modes and
+			self.data.slots[self.current_slot].modes.cave and
+			self.data.slots[self.current_slot].modes.cave.current_cave) or nil
+end
+function SaveIndex:SaveCurrent(onsavedcb, direction, cave_num)
 	
 	local ground = GetWorld()
 	assert(ground, "missing world?")
@@ -277,13 +589,23 @@ function SaveIndex:SaveCurrent(onsavedcb)
 
 	local current_mode = self.data.slots[self.current_slot].current_mode
 	local data = self:GetModeData(self.current_slot, current_mode)
+	local dlc = self.data.slots[self.current_slot].dlc
 
 	self.data.slots[self.current_slot].character = GetPlayer().prefab
+	self.data.slots[self.current_slot].direction = direction
+	self.data.slots[self.current_slot].cave_num = cave_num
+	self.data.slots[self.current_slot].dlc = dlc
+
 	data.day = day_number
 	data.playerdata = nil
-
 	data.file = self:GetSaveGameName(current_mode, self.current_slot)
 	SaveGame(self:GetSaveGameName(current_mode, self.current_slot), onsavedgame)
+end
+
+function SaveIndex:GetSlotDLC(slot)
+	local dlc = self.data.slots[slot or self.current_slot].dlc --#srosen need to make .dlc a table everywhere for using the dlc index sys
+	if not dlc then dlc = NO_DLC_TABLE end
+	return dlc
 end
 
 function SaveIndex:SetSlotCharacter(saveslot, character, cb)
@@ -316,7 +638,21 @@ function SaveIndex:OnGenerateNewWorld(saveslot, savedata, cb)
 		local current_mode = self.data.slots[self.current_slot].current_mode
 		local data = self:GetModeData(self.current_slot, current_mode)
 		data.file = filename
+		data.files = data.files or {}
 		data.day = 1
+
+		local found = false
+		for k,v in pairs(data.files) do
+			if v == filename then
+				found = true
+			end
+		end
+
+		if not found then 
+			table.insert(data.files, filename)
+		end
+
+
 		
 		--playerdata = data.playerdata
 		--data.playerdata = nil
@@ -328,18 +664,29 @@ function SaveIndex:OnGenerateNewWorld(saveslot, savedata, cb)
 end
 
 
+function SaveIndex:GetOrCreateSlot(saveslot)
+	if self.data.slots[saveslot] == nil then
+		self.data.slots[saveslot] = {}
+	end
+	return self.data.slots[saveslot]
+end
+
+
 --call after you have worldgen data to initialize a new survival save slot
-function SaveIndex:StartSurvivalMode(saveslot, character, customoptions, onsavedcb)
+function SaveIndex:StartSurvivalMode(saveslot, character, customoptions, onsavedcb, dlc)
 	self.current_slot = saveslot
 --	local data = self:GetModeData(saveslot, "survival")
-	self.data.slots[self.current_slot].character = character
-	self.data.slots[self.current_slot].current_mode = "survival"
-	self.data.slots[self.current_slot].save_id = self:GenerateSaveID(self.current_slot)
+	local slot = self:GetOrCreateSlot(saveslot)
+	slot.character = character
+	slot.current_mode = "survival"
+	slot.save_id = self:GenerateSaveID(self.current_slot)
+	slot.dlc = dlc and dlc or NO_DLC_TABLE
+	print("SaveIndex:StartSurvivalMode!:", slot.dlc.REIGN_OF_GIANTS)
 
-	self.data.slots[self.current_slot].modes = 
+	slot.modes = 
 	{
 		survival = {
-			file = self:GetSaveGameName("survival", self.current_slot),
+			--file = self:GetSaveGameName("survival", self.current_slot),
 			day = 1,
 			world = 1,
 			options = customoptions
@@ -437,21 +784,16 @@ function SaveIndex:EnterCave(onsavedcb, saveslot, cavenum, level)
 	
 	local savename = self:GetSaveGameName("cave", self.current_slot)
 	self.data.slots[self.current_slot].modes.cave.playerdata = playerdata
+	self.data.slots[self.current_slot].modes.cave.file = nil
 	
-	local found = false
-	for k,v in pairs(self.data.slots[self.current_slot].modes.cave.files) do
-		if v == savename then
-			found = true
+	
+	TheSim:CheckPersistentStringExists(savename, function(exists) 
+		if exists then
+			self.data.slots[self.current_slot].modes.cave.file = savename
 		end
-	end
+		self:Save(onsavedcb)
+	 end)
 
-	if not found then 
-		table.insert(self.data.slots[self.current_slot].modes.cave.files, savename)
-	end
-	
-	self.data.slots[self.current_slot].modes.cave.file = savename
-
- 	self:Save(onsavedcb)
 end
 
 function SaveIndex:OnFailAdventure(cb)
@@ -594,7 +936,9 @@ end
 function SaveIndex:GetSlotCharacter(slot)
 	local character = self.data.slots[slot or self.current_slot].character
 	-- In case a file was saved with a mod character that has become disabled, fall back to wilson
-	if not table.contains(CHARACTERLIST, character) and not table.contains(MODCHARACTERLIST, character) then
+
+	local charlist = GetActiveCharacterList()
+	if not table.contains(charlist, character) and not table.contains(MODCHARACTERLIST, character) then
 		character = "wilson"
 	end
 	return character
@@ -656,7 +1000,7 @@ end
 function OnFocusLost()
 	--check that we are in gameplay, not main menu
 	if inGamePlay then
-		SetHUDPause(true)
+		SetPause(true)
 		SaveGameIndex:SaveCurrent()
 	end
 end
@@ -664,6 +1008,6 @@ end
 function OnFocusGained()
 	--check that we are in gameplay, not main menu
 	if inGamePlay then
-		SetHUDPause(false)
+		SetPause(false)
 	end
 end

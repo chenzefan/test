@@ -265,6 +265,18 @@ local foods=
 		sanity = 0,
 		cooktime = 0.5,
 	},
+
+	unagi =
+	{
+		test = function(cooker, names, tags) return names.cutlichen and (names.eel or names.eel_cooked) end,
+		priority = 20,
+		foodtype = "MEAT",
+		health = TUNING.HEALING_MED,
+		hunger = TUNING.CALORIES_MEDSMALL,
+		perishtime = TUNING.PERISH_MED,
+		sanity = TUNING.SANITY_TINY,
+		cooktime = 0.5,
+	},
 	
 	wetgoop =
 	{

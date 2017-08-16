@@ -13,8 +13,10 @@ local function IntColour( r, g, b, a )
 	return { r / 255.0, g / 255.0, b / 255.0, a / 255.0 }
 end
 
+local init = false
 local function InitEnvelope()
-	if EnvelopeManager then
+	if EnvelopeManager and not init then
+		init = true
 		EnvelopeManager:AddColourEnvelope(
 			colour_envelope_name,
 			{	{ 0,	IntColour( 255, 255, 255, 200 ) },

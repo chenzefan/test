@@ -54,15 +54,17 @@ local function fn(Sim)
 
     inst:AddComponent("talker")
     --inst.components.talker.ontalk = ontalk
-    
-    inst.entity:AddLabel()
-    inst.Label:SetFontSize(28)
-    inst.Label:SetFont(TALKINGFONT)
-    inst.Label:SetColour(.9, .4, .4, 1)
-    inst.Label:SetPos(0,2.5,0)
+
+    inst.components.talker.fontsize = 28
+    inst.components.talker.font = TALKINGFONT
+    inst.components.talker.colour = Vector3(.9, .4, .4, 1)
+    inst.components.talker.offset = Vector3(0,0,0)
+    inst.components.talker.symbol = "swap_object"
 
     inst:AddComponent("sentientaxe")
-    inst:DoTaskInTime(0, function() if not GetPlayer() or GetPlayer().prefab ~= "woodie" then inst:Remove() end end)
+    
+    inst:AddComponent("characterspecific")
+    inst.components.characterspecific:SetOwner("woodie")
     
     
     inst:ListenForEvent("donetalking", function() inst.SoundEmitter:KillSound("talk") end)

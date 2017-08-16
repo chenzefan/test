@@ -10,7 +10,11 @@ local function retargetfn(inst)
     return entity
 end
 
-local loot = {"nightmarefuel"}
+SetSharedLootTable( 'nightmare_creature',
+{
+    {'nightmarefuel', 1.0},
+    {'nightmarefuel', 0.5},
+})
 
 local function CalcSanityAura(inst, observer)	
 	return -TUNING.SANITYAURA_LARGE
@@ -66,7 +70,9 @@ local function MakeShadowCreature(data)
         inst:SetStateGraph("SGshadowcreature")
 
         inst:AddTag("monster")
+	    inst:AddTag("hostile")
         inst:AddTag("shadow")
+        inst:AddTag("notraptrigger")
 
         local brain = require "brains/nightmarecreaturebrain"
         inst:SetBrain(brain)
@@ -83,8 +89,7 @@ local function MakeShadowCreature(data)
         inst.components.combat:SetRetargetFunction(3, retargetfn)
 
         inst:AddComponent("lootdropper")
-        inst.components.lootdropper:SetLoot(loot)
-        inst.components.lootdropper:AddChanceLoot("nightmarefuel", 0.5)
+        inst.components.lootdropper:SetChanceLootTable('nightmare_creature')
         
         inst:ListenForEvent("attacked", OnAttacked)
         -- if GetNightmareClock() then

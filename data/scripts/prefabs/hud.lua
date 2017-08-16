@@ -41,13 +41,13 @@ local assets =
     
     Asset("ATLAS", "images/inventoryimages.xml"),
     Asset("IMAGE", "images/inventoryimages.tex"),    
-
-    Asset("ANIM", "anim/crafting_submenu.zip"), 
 }
 
 
 local prefabs = {
 	"minimap",
+    "gridplacer",
+
 }
 
 --we don't actually instantiate this prefab. It's used for controlling asset loading

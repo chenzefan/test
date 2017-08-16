@@ -11,6 +11,10 @@ end)
 function Screen:OnCreate()
 end
 
+function Screen:GetHelpText()
+	return ""
+end
+
 function Screen:OnDestroy()
 	self:Kill()
 end
@@ -20,12 +24,18 @@ function Screen:OnUpdate(dt)
 end
 
 function Screen:OnBecomeInactive()
+	self.last_focus = self:GetDeepestFocus()
 end
 
 function Screen:OnBecomeActive()
 	TheSim:SetUIRoot(self.inst.entity)
-	if self.default_focus then
-		self.default_focus:SetFocus()
+	if self.last_focus and self.last_focus.inst.entity:IsValid() then
+		self.last_focus:SetFocus()
+	else
+		self.last_focus = nil
+		if self.default_focus then
+			self.default_focus:SetFocus()
+		end
 	end
 end
 

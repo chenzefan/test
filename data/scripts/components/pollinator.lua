@@ -5,6 +5,7 @@ local Pollinator = Class(function(self, inst)
     self.maxdensity = 4
     self.collectcount = 5
     self.target = nil
+    self.inst:AddTag("pollinator")
 end)
 
 function Pollinator:GetDebugString()

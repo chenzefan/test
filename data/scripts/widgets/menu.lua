@@ -1,6 +1,7 @@
 local Widget = require "widgets/widget"
 local AnimButton = require "widgets/animbutton"
 local ImageButton = require "widgets/imagebutton"
+local Spinner = require "widgets/spinner"
 
 
 local Menu = Class(Widget, function(self, menuitems, offset, horizontal)
@@ -11,7 +12,11 @@ local Menu = Class(Widget, function(self, menuitems, offset, horizontal)
 
     if menuitems then
     	for k,v in ipairs(menuitems) do
-    		self:AddItem(v.text, v.cb)
+    		if v.widget then
+    			self:AddCustomItem(v.widget)
+    		else
+    			self:AddItem(v.text, v.cb, v.offset)
+    		end
 	    end
 	end
 end)
@@ -28,13 +33,22 @@ function Menu:GetNumberOfItems()
 end
 
 function Menu:SetFocus(index)
-	
-	index = index or 1
+	index = index or (self.reverse and -1 or 1)
 	if index < 0 then
 		index = index + #self.items +1 
 	end
+
 	if self.items[index] then
 		self.items[index]:SetFocus()
+	end
+end
+
+function Menu:SetTextSize(size)
+	self.textSize = size
+	if self.items then
+		for i,v in ipairs(self.items) do
+			self.items[i]:SetTextSize(size)
+		end
 	end
 end
 
@@ -112,8 +126,9 @@ function Menu:AddCustomItem(widget)
 	return widget
 end
 
-function Menu:AddItem(text, cb, offset)
+function Menu:AddItem(text, cb, offset, style)
 	local pos = Vector3(0,0,0)
+	
 	if self.horizontal then
 		pos.x = pos.x + self.offset * #self.items
 	else
@@ -121,10 +136,8 @@ function Menu:AddItem(text, cb, offset)
 	end
 	
 	if offset then
-		print(offset)
 		pos = pos + offset	
-	end
-	
+	end	
 
 	local button = self:AddChild(ImageButton())
 	button:SetPosition(pos)
@@ -132,12 +145,36 @@ function Menu:AddItem(text, cb, offset)
 	button.text:SetColour(0,0,0,1)
 	button:SetOnClick( cb )
 	button:SetFont(BUTTONFONT)
-	button:SetTextSize(40)    
-
+	if self.textSize then
+		button:SetTextSize(self.textSize)
+	else
+		if JapaneseOnPS4() then
+			button:SetTextSize(40*0.8)
+		else
+			button:SetTextSize(40)
+		end
+	end
 	table.insert(self.items, button)
 
 	self:DoFocusHookups()
 	return button
+end
+
+function Menu:EditItem(num, text, cb)
+
+	if self.items[num] then
+		local i = self.items[num]
+
+		if text then
+			i:SetText(text)
+		end
+
+		if cb then
+			i:SetOnClick(cb)
+		end
+
+	end
+
 end
 
 return Menu

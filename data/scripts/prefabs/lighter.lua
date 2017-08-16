@@ -68,6 +68,9 @@ local function fn(Sim)
         end
     )
     
+    inst:AddComponent("characterspecific")
+    inst.components.characterspecific:SetOwner("willow")
+
     -----------------------------------
     inst:AddComponent("lighter")
     -----------------------------------

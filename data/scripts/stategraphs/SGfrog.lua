@@ -176,7 +176,6 @@ local states=
         name = "fall",
         tags = {"busy"},
         onenter = function(inst)
-            inst.inlimbo = true
 			inst.Physics:SetDamping(0)
             inst.Physics:SetMotorVel(0,-20+math.random()*10,0)
             inst.AnimState:PlayAnimation("fall_idle", true)
@@ -190,7 +189,6 @@ local states=
             
             if pt.y <= .1 then
                 pt.y = 0
-                inst.inlimbo = false
 
 				-- TODO: 20% of the time, they should explode on impact!
 

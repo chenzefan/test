@@ -151,7 +151,7 @@ local function fn(Sim)
     inst.components.machine.turnonfn = turnon
     inst.components.machine.turnofffn = turnoff
     inst.components.machine.cooldowntime = 0
-    inst.components.machine.caninteractfn = function() return not inst.components.fueled:IsEmpty() end
+    inst.components.machine.caninteractfn = function() return not inst.components.fueled:IsEmpty() and (inst.components.inventoryitem.owner == nil or inst.components.equippable.isequipped) end
 
 
     inst.components.fueled.fueltype = "CAVE"

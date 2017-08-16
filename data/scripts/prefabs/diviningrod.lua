@@ -81,7 +81,6 @@ local function CheckTargetPiece(inst)
         
         if fx then
             inst.effect = SpawnPrefab(fx)--PlayFX(Vector3(0,0,0), "diviningrod_fx", "diviningrod_fx", fx.anim, nil, nil, fx.tint or Vector3(1, 1, 1) )
-	        print(inst.effect)
             local follower = inst.effect.entity:AddFollower()
 	        follower:FollowSymbol(inst.components.inventoryitem.owner.GUID, "swap_object", 75, -300, 1 )
 	    end
@@ -152,6 +151,7 @@ local function fn(Sim)
 	inst:AddTag("irreplaceable")
 	inst:AddTag("nonpotatable")
 	inst:AddTag("diviningrod")
+    inst:AddTag("nopunch")
     inst:AddComponent("inspectable")
 
     inst:AddComponent("key")

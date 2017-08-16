@@ -15,43 +15,43 @@ local events=
     CommonHandlers.OnDeath(),
 
     EventHandler("doattack", function(inst)
-                                local nstate = "attack"
-                                if inst.sg:HasStateTag("running") then
-                                    nstate = "runningattack"
-                                end
-                                if inst.components.health and not inst.components.health:IsDead()
-                                   and (inst.sg:HasStateTag("hit") or not inst.sg:HasStateTag("busy")) then
-                                    inst.sg:GoToState(nstate)
-                                end
-                            end),
+        local nstate = "attack"
+        if inst.sg:HasStateTag("running") then
+            nstate = "runningattack"
+        end
+        if inst.components.health and not inst.components.health:IsDead()
+           and not inst.sg:HasStateTag("busy") then
+            inst.sg:GoToState(nstate)
+        end
+    end),
 
     EventHandler("locomote", function(inst)
-                                local is_attacking = inst.sg:HasStateTag("attack") or inst.sg:HasStateTag("runningattack")
-                                local is_busy = inst.sg:HasStateTag("busy")
-                                local is_idling = inst.sg:HasStateTag("idle")
-                                local is_moving = inst.sg:HasStateTag("moving")
-                                local is_running = inst.sg:HasStateTag("running") or inst.sg:HasStateTag("runningattack")
+        local is_attacking = inst.sg:HasStateTag("attack") or inst.sg:HasStateTag("runningattack")
+        local is_busy = inst.sg:HasStateTag("busy")
+        local is_idling = inst.sg:HasStateTag("idle")
+        local is_moving = inst.sg:HasStateTag("moving")
+        local is_running = inst.sg:HasStateTag("running") or inst.sg:HasStateTag("runningattack")
 
-                                if is_attacking or is_busy then return end
+        if is_attacking or is_busy then return end
 
-                                local should_move = inst.components.locomotor:WantsToMoveForward()
-                                local should_run = inst.components.locomotor:WantsToRun()
-                                
-                                if is_moving and not should_move then
-                                    inst.SoundEmitter:KillSound("charge")
-                                    if is_running then
-                                        inst.sg:GoToState("run_stop")
-                                    else
-                                        inst.sg:GoToState("walk_stop")
-                                    end
-                                elseif (not is_moving and should_move) or (is_moving and should_move and is_running ~= should_run) then
-                                    if should_run then
-                                        inst.sg:GoToState("run_start")
-                                    else
-                                        inst.sg:GoToState("walk_start")
-                                    end
-                                end 
-                            end),
+        local should_move = inst.components.locomotor:WantsToMoveForward()
+        local should_run = inst.components.locomotor:WantsToRun()
+        
+        if is_moving and not should_move then
+            inst.SoundEmitter:KillSound("charge")
+            if is_running then
+                inst.sg:GoToState("run_stop")
+            else
+                inst.sg:GoToState("walk_stop")
+            end
+        elseif (not is_moving and should_move) or (is_moving and should_move and is_running ~= should_run) then
+            if should_run then
+                inst.sg:GoToState("run_start")
+            else
+                inst.sg:GoToState("walk_start")
+            end
+        end 
+    end),
 }
 
 local states=
@@ -147,12 +147,17 @@ local states=
             onenter = function(inst) 
                 inst.SoundEmitter:KillSound("charge")
                 inst.components.locomotor:Stop()
-                inst.AnimState:PlayAnimation("atk_pst")
+                inst.AnimState:PlayAnimation("gore")
             end,
             
-            events=
-            {   
-                EventHandler("animover", function(inst) inst.sg:GoToState("walk_start") end ),        
+            timeline =
+            {
+                TimeEvent(5*FRAMES, function(inst) inst.components.combat:DoAttack() end),
+            },
+            
+            events =
+            {
+                EventHandler("animqueueover", function(inst) inst.sg:GoToState("idle") end),
             },
         },    
 
@@ -178,28 +183,84 @@ local states=
         },
     },
 
-    State{  name = "runningattack",
-            tags = {"runningattack"},
-            
-            onenter = function(inst)
-                inst.SoundEmitter:KillSound("charge")
-                inst.components.combat:StartAttack()
-                inst.components.locomotor:StopMoving()
-                inst.AnimState:PlayAnimation("atk_pst")
-            end,
-            
-            timeline =
-            {
-                TimeEvent(1*FRAMES, function(inst)
-                                        inst.components.combat:DoAttack()
-                                     end),
-            },
-            
-            events =
-            {
-                EventHandler("animqueueover", function(inst) inst.sg:GoToState("idle") end),
-            },
+    State{  
+        name = "runningattack",
+        tags = {"runningattack"},
+        
+        onenter = function(inst)
+            inst.SoundEmitter:KillSound("charge")
+            inst.components.combat:StartAttack()
+            inst.components.locomotor:StopMoving()
+            inst.AnimState:PlayAnimation("gore")
+        end,
+        
+        timeline =
+        {
+            TimeEvent(1*FRAMES, function(inst) inst.components.combat:DoAttack() end),
         },
+        
+        events =
+        {
+            EventHandler("animqueueover", function(inst) inst.sg:GoToState("attack") end),
+        },
+    },
+    State{
+        name = "attack",
+        tags = {"attack", "busy"},
+        
+        onenter = function(inst)
+            inst.components.combat:StartAttack()
+            inst.components.locomotor:StopMoving()
+            inst.AnimState:PlayAnimation("gore")
+        end,
+        
+        timeline =
+        {
+            TimeEvent(5*FRAMES, function(inst) inst.components.combat:DoAttack() end),
+        },
+        
+        events =
+        {
+            EventHandler("animqueueover", function(inst) inst.sg:GoToState("idle") end),
+        },
+    },
+
+    State{
+        name = "hit",
+        tags = {"hit", "busy"},
+        
+        onenter = function(inst)
+            inst.components.locomotor:StopMoving()
+            inst.AnimState:PlayAnimation("hit")
+        end,
+        
+        hittimeline = 
+        {
+            TimeEvent(0*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/rook_minotaur/hurt") end),
+        },
+        
+        events =
+        {
+            EventHandler("animqueueover", function(inst) inst.sg:GoToState("idle") end),
+        },
+    },
+
+    State{
+        name = "death",
+        tags = {"death", "busy"},
+        
+        onenter = function(inst)
+            inst.components.locomotor:StopMoving()
+            inst.AnimState:PlayAnimation("death")
+            inst.components.lootdropper:DropLoot()
+        end,
+        
+        TimeEvent(0*FRAMES, function(inst) 
+            inst.SoundEmitter:PlaySound("dontstarve/creatures/rook_minotaur/death")
+            inst.SoundEmitter:PlaySound("dontstarve/creatures/rook_minotaur/death_voice")
+        end),
+        
+    },
 }
 
 CommonStates.AddWalkStates(states,
@@ -234,26 +295,26 @@ CommonStates.AddSleepStates(states,
 	},
 })
 
-CommonStates.AddCombatStates(states,
-{
-    attacktimeline = 
-    {
-        TimeEvent(17*FRAMES, function(inst)
-                                inst.components.combat:DoAttack()
-                             end),
-    },
-    hittimeline = 
-    {
-        TimeEvent(0*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/rook_minotaur/hurt") end),
-    },
-    deathtimeline = 
-    {
-        TimeEvent(0*FRAMES, function(inst) 
-            inst.SoundEmitter:PlaySound("dontstarve/creatures/rook_minotaur/death")
-            inst.SoundEmitter:PlaySound("dontstarve/creatures/rook_minotaur/death_voice")
-        end),
-    },
-})
+-- CommonStates.AddCombatStates(states,
+-- {
+--     attacktimeline = 
+--     {
+--         TimeEvent(17*FRAMES, function(inst)
+--                                 inst.components.combat:DoAttack()
+--                              end),
+--     },
+--     hittimeline = 
+--     {
+--         TimeEvent(0*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/rook_minotaur/hurt") end),
+--     },
+--     deathtimeline = 
+--     {
+--         TimeEvent(0*FRAMES, function(inst) 
+--             inst.SoundEmitter:PlaySound("dontstarve/creatures/rook_minotaur/death")
+--             inst.SoundEmitter:PlaySound("dontstarve/creatures/rook_minotaur/death_voice")
+--         end),
+--     },
+-- })
 
 CommonStates.AddFrozenStates(states)
 

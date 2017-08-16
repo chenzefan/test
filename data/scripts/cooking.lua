@@ -46,7 +46,7 @@ AddIngredientValues({"durian"}, {fruit=1, monster=1}, true)
 
 AddIngredientValues({"honey", "honeycomb"}, {sweetener=1}, true)
 
-local veggies = {"carrot", "corn", "pumpkin", "eggplant"}
+local veggies = {"carrot", "corn", "pumpkin", "eggplant", "cutlichen"}
 AddIngredientValues(veggies, {veggie=1}, true)
 
 local mushrooms = {"red_cap", "green_cap", "blue_cap"}
@@ -57,7 +57,8 @@ AddIngredientValues({"monstermeat"}, {meat=1, monster=1}, true, true)
 AddIngredientValues({"froglegs", "drumstick"}, {meat=.5}, true)
 AddIngredientValues({"smallmeat"}, {meat=.5}, true, true)
 
-AddIngredientValues({"fish"}, {meat=.5,fish=1}, true)
+AddIngredientValues({"fish", "eel"}, {meat=.5,fish=1}, true)
+
 
 AddIngredientValues({"mandrake"}, {veggie=1, magic=1}, true)
 AddIngredientValues({"egg"}, {egg=1}, true)

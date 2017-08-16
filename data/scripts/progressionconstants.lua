@@ -14,7 +14,8 @@ local XP_levels =
     --100000, --
 }
 
-local Level_rewards = {'willow', 'wolfgang', 'wendy', 'wx78', 'wickerbottom', 'woodie', 'wortox'} --wes is unlocked via the statue, woodie isn't active yet
+--Wes & Maxwell unlocked through other means.
+local Level_rewards = {'willow', 'wolfgang', 'wendy', 'wx78', 'wickerbottom', 'woodie'} 
 local Level_cap = #XP_levels
 
 local function GetLevelForXP(xp)
@@ -72,5 +73,9 @@ return
 
     GetLevelForXP = function (xp)
         return GetLevelForXP(xp)
+    end, 
+
+    IsCappedXP = function(xp)
+        return xp >= XP_levels[#XP_levels]
     end
 }

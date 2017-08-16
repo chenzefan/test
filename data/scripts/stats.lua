@@ -1,6 +1,6 @@
 -- require "stats_schema"    -- for when we actually organize 
 
-STATS_ENABLE = true
+STATS_ENABLE = false
 -- NOTE: There is also a call to 'anon/start' in dontstarve/main.cpp which has to be un/commented
 
 --- non-user-facing Tracking stats  ---
@@ -11,6 +11,10 @@ GameStats.StatsLastTrodCount = 0
 local OnLoadGameInfo = {}
 
 function IncTrackingStat(stat, subtable)
+
+	if not STATS_ENABLE then
+		return
+	end
 
     local t = TrackingEventsStats
     if subtable then
@@ -27,6 +31,10 @@ end
 
 function SetTimingStat(subtable, stat, value)
 
+	if not STATS_ENABLE then
+		return
+	end
+
     local t = TrackingTimingStats
     if subtable then
         t = TrackingTimingStats[subtable]
@@ -42,6 +50,11 @@ end
 
 
 function SendTrackingStats()
+
+	if not STATS_ENABLE then
+		return
+	end
+
 	if GetTableSize(TrackingEventsStats) then
     	local stats = json.encode({events=TrackingEventsStats, timings=TrackingTimingStats})
     	TheSim:LogBulkMetric(stats)
@@ -101,9 +114,11 @@ function BuildContextTable()
 	sendstats.save_id = SaveGameIndex:GetSaveID()
     sendstats.starts = Profile:GetValue("starts")
     sendstats.super = GameStats.super
-    sendstats.hunger = math.floor(GetPlayer().components.hunger:GetPercent()*100)
-    sendstats.sanity = math.floor(GetPlayer().components.sanity:GetPercent()*100)
-    sendstats.health = math.floor(GetPlayer().components.health:GetPercent()*100)
+    if GetPlayer() then
+        sendstats.hunger = math.floor(GetPlayer().components.hunger:GetPercent()*100)
+        sendstats.sanity = math.floor(GetPlayer().components.sanity:GetPercent()*100)
+        sendstats.health = math.floor(GetPlayer().components.health:GetPercent()*100)
+    end
 
 	return sendstats
 end
@@ -172,7 +187,7 @@ function RecordQuitStats()
 end
 
 function RecordPauseStats()         -- Run some analysis and save stats when player pauses
-	if not STATS_ENABLE or not IsHUDPaused() then
+	if not STATS_ENABLE or not IsPaused() then
 		return
 	end
     dprint("RecordPauseStats")
@@ -279,7 +294,7 @@ function RecordSessionStartStats()
 		Loads = {
 			Mods = { 
 				mod = false,
-				list = {}
+				list = {},
 				
 			},
 		}
@@ -288,6 +303,15 @@ function RecordSessionStartStats()
 	for i,name in ipairs(ModManager:GetEnabledModNames()) do
 		sendstats.Session.Loads.Mods.mod = true
 		table.insert(sendstats.Session.Loads.Mods.list, name)
+	end
+
+	if IsDLCInstalled(REIGN_OF_GIANTS) and not IsDLCEnabled(REIGN_OF_GIANTS) then
+		sendstats.Session.Loads.Mods.mod = true
+		table.insert(sendstats.Session.Loads.Mods.list, "RoG-NotPlaying")
+	end
+	if IsDLCEnabled(REIGN_OF_GIANTS) then
+		sendstats.Session.Loads.Mods.mod = true
+		table.insert(sendstats.Session.Loads.Mods.list, "RoG-Playing")
 	end
 
     sendstats.Session.map_trod = (GetMap() and GetMap():GetNumVisitedTiles()) or 0

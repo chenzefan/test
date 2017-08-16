@@ -108,6 +108,10 @@ local function OnNewTarget(inst, data)
     inst.components.combat:ShareTarget(data.target, SHARE_TARGET_DIST, function(dude) return dude.prefab == inst.prefab end, MAX_TARGET_SHARES)
 end
 
+local function is_meat(item)
+	return item.components.edible and item.components.edible.foodtype == "MEAT" 
+end
+
 local function NormalRetargetFn(inst)
     
     return FindEntity(inst, TUNING.PIG_TARGET_DIST,
@@ -115,7 +119,7 @@ local function NormalRetargetFn(inst)
             
             if guy.components.health and not guy.components.health:IsDead() and inst.components.combat:CanTarget(guy) then
                 if guy:HasTag("monster") then return guy end
-                if guy:HasTag("player") and guy.components.inventory and guy:GetDistanceSqToInst(inst) < TUNING.BUNNYMAN_SEE_MEAT_DIST*TUNING.BUNNYMAN_SEE_MEAT_DIST and guy.components.inventory:FindItem(function(item) return item.components.edible and item.components.edible.foodtype == "MEAT" end ) then return guy end
+                if guy:HasTag("player") and guy.components.inventory and guy:GetDistanceSqToInst(inst) < TUNING.BUNNYMAN_SEE_MEAT_DIST*TUNING.BUNNYMAN_SEE_MEAT_DIST and guy.components.inventory:FindItem(is_meat ) then return guy end
             end
         end)
 end
@@ -268,11 +272,9 @@ local function fn()
     inst:AddComponent("knownlocations")
     inst:AddComponent("talker")
     inst.components.talker.ontalk = ontalk
-    
-    inst.entity:AddLabel()
-    inst.Label:SetFontSize(24)
-    inst.Label:SetFont(TALKINGFONT)
-    inst.Label:SetPos(0,3.8,0)
+    inst.components.talker.fontsize = 24
+    inst.components.talker.font = TALKINGFONT
+    inst.components.talker.offset = Vector3(0,-500,0)
 
     ------------------------------------------
 

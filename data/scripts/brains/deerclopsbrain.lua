@@ -13,26 +13,24 @@ local CHASE_DIST = 32
 local CHASE_TIME = 20
 
 local function BaseDestroy(inst)
-	local target = FindEntity(inst, SEE_DIST, function(item) 
-		if item.components.workable
-		   and item.components.workable.action == ACTIONS.HAMMER
-		   and not item:HasTag("wall") then
-				return true
-			end
-		end)
-	if target then
-		return BufferedAction(inst, target, ACTIONS.HAMMER)
-	end
+    if inst.components.knownlocations:GetLocation("targetbase") then
+    	local target = FindEntity(inst, SEE_DIST, function(item) 
+    		if item.components.workable
+    		   and item.components.workable.action == ACTIONS.HAMMER
+    		   and not item:HasTag("wall") then
+    				return true
+    			end
+    		end)
+    	if target then
+    		return BufferedAction(inst, target, ACTIONS.HAMMER)
+    	end
+    end
 end
 
 local function GoHome(inst)
     if inst.components.knownlocations:GetLocation("home") then
         return BufferedAction(inst, nil, ACTIONS.GOHOME, nil, inst.components.knownlocations:GetLocation("home") )
     end
-end
-
-local function CanDestroyBase(inst)
-    return inst.structuresDestroyed and inst.structuresDestroyed < 2
 end
 
 local function GetWanderPos(inst)
@@ -58,8 +56,7 @@ function DeerclopsBrain:OnStart()
         {
 			AttackWall(self.inst),
             ChaseAndAttack(self.inst, CHASE_TIME, CHASE_DIST),
-            WhileNode(function() return CanDestroyBase(self.inst) end, "CanDestroy",
-                DoAction(self.inst, function() return BaseDestroy(self.inst) end, "DestroyBase", true) ),
+            DoAction(self.inst, function() return BaseDestroy(self.inst) end, "DestroyBase", true),
             WhileNode(function() return self.inst.components.knownlocations:GetLocation("home") end, "HasHome",
                 DoAction(self.inst, function() return GoHome(self.inst) end, "GoHome", true) ),
             Wander(self.inst, GetWanderPos, 30, {minwwwalktime = 10}),

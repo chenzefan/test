@@ -117,7 +117,7 @@ local function KeepChoppingAction(inst)
 end
 
 local function StartChoppingCondition(inst)
-    return inst.components.follower.leader and inst.components.follower.leader.sg:HasStateTag("chopping")
+    return inst.components.follower.leader and inst.components.follower.leader.sg and inst.components.follower.leader.sg:HasStateTag("chopping")
 end
 
 

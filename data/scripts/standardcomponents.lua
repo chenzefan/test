@@ -98,7 +98,7 @@ function MakeSmallBurnableCharacter(inst, sym, offset)
     inst.components.burnable:SetFXLevel(1)
     inst.components.burnable:SetBurnTime(6)
     inst.components.burnable.canlight = false
-    inst.components.burnable:AddBurnFX(burnfx.character, offset or Vector3(0, 0, 0), sym)
+    inst.components.burnable:AddBurnFX(burnfx.character, offset or Vector3(0, 0, 1), sym)
     MakeSmallPropagator(inst)
     inst.components.propagator.acceptsheat = false
 end
@@ -108,7 +108,7 @@ function MakeMediumBurnableCharacter(inst, sym, offset)
     inst.components.burnable:SetFXLevel(2)
     inst.components.burnable.canlight = false
     inst.components.burnable:SetBurnTime(8)
-    inst.components.burnable:AddBurnFX(burnfx.character, offset or Vector3(0, 0, 0), sym)
+    inst.components.burnable:AddBurnFX(burnfx.character, offset or Vector3(0, 0, 1), sym)
     MakeSmallPropagator(inst)
     inst.components.propagator.acceptsheat = false
 end
@@ -118,7 +118,7 @@ function MakeLargeBurnableCharacter(inst, sym, offset)
     inst.components.burnable:SetFXLevel(3)
     inst.components.burnable.canlight = false
     inst.components.burnable:SetBurnTime(10)
-    inst.components.burnable:AddBurnFX(burnfx.character, offset or Vector3(0, 0, 0), sym)
+    inst.components.burnable:AddBurnFX(burnfx.character, offset or Vector3(0, 0, 1), sym)
     MakeLargePropagator(inst)
     inst.components.propagator.acceptsheat = false
 end
@@ -221,6 +221,22 @@ function ChangeToCharacterPhysics(inst)
     inst.Physics:CollidesWith(COLLISION.CHARACTERS)
 end
 
+function ChangeToObstaclePhysics(inst)
+    inst.Physics:SetCollisionGroup(COLLISION.OBSTACLES)
+    inst.Physics:ClearCollisionMask()
+    inst.Physics:SetMass(0) 
+    --inst.Physics:CollidesWith(COLLISION.GROUND)
+    inst.Physics:CollidesWith(COLLISION.ITEMS)
+    inst.Physics:CollidesWith(COLLISION.CHARACTERS)
+end
+
+function ChangeToInventoryPhysics(inst)
+    inst.Physics:SetCollisionGroup(COLLISION.OBSTACLES)
+    inst.Physics:ClearCollisionMask()
+    inst.Physics:CollidesWith(COLLISION.WORLD)
+    inst.Physics:CollidesWith(COLLISION.OBSTACLES)
+end
+
 function MakeObstaclePhysics(inst, rad, height)
 
     height = height or 2
@@ -234,16 +250,16 @@ function MakeObstaclePhysics(inst, rad, height)
     inst.Physics:SetMass(0) 
     inst.Physics:SetCapsule(rad,height)
     inst.Physics:SetCollisionGroup(COLLISION.OBSTACLES)
-    inst.Physics:SetFriction(10000)
-    
-    inst.Physics:CollidesWith(COLLISION.WORLD)
+    inst.Physics:ClearCollisionMask()
     inst.Physics:CollidesWith(COLLISION.ITEMS)
     inst.Physics:CollidesWith(COLLISION.CHARACTERS)
 end
 
 function RemovePhysicsColliders(inst)
     inst.Physics:ClearCollisionMask()
-    inst.Physics:CollidesWith(COLLISION.GROUND)
+    if inst.Physics:GetMass() > 0 then
+        inst.Physics:CollidesWith(COLLISION.GROUND)
+    end
 end
 
 
@@ -268,21 +284,15 @@ function MakeNoGrowInWinter(inst)
 	end
 end
 
-local function OnSnowCoverChange(inst, thresh)
-	thresh = thresh or .2
-	local snow_cover = GetSeasonManager():GetSnowPercent()
 
-	if snow_cover > thresh then
-		inst.AnimState:Show("snow")
-	else
-		inst.AnimState:Hide("snow")
-	end
-end
-
-function MakeSnowCovered(inst, thresh)
+function MakeSnowCovered(inst)
 	if not GetSeasonManager() then return end
-	thresh = thresh or .02
 	inst.AnimState:OverrideSymbol("snow", "snow", "snow")
-	inst:ListenForEvent("snowcoverchange", function() OnSnowCoverChange(inst, thresh) end, GetWorld())
-	OnSnowCoverChange(inst, thresh)
+	inst:AddTag("SnowCovered")
+
+	if GetSeasonManager().ground_snow_level < SNOW_THRESH then
+		inst.AnimState:Hide("snow")
+	else
+		inst.AnimState:Show("snow")
+	end
 end

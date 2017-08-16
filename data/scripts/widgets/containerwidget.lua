@@ -17,7 +17,7 @@ local ContainerWidget = Class(Widget, function(self, owner)
     self.owner = owner
     self:SetPosition(0, 0, 0)
     self.slotsperrow = 3
-    
+   
     self.bganim = self:AddChild(UIAnim())
 	self.bgimage = self:AddChild(Image())
     self.isopen = false
@@ -25,7 +25,8 @@ end)
 
 function ContainerWidget:Open(container, doer)
     self:Close()
-
+	self:StartUpdating()
+	
 	if container.components.container.widgetbgatlas and container.components.container.widgetbgimage then
 		self.bgimage:SetTexture( container.components.container.widgetbgatlas, container.components.container.widgetbgimage )
 	end
@@ -43,7 +44,7 @@ function ContainerWidget:Open(container, doer)
 		self:SetPosition(container.components.container.widgetpos)
 	end
 	
-	if container.components.container.widgetbuttoninfo then
+	if container.components.container.widgetbuttoninfo and not TheInput:ControllerAttached() then
 		self.button = self:AddChild(ImageButton("images/ui.xml", "button_small.tex", "button_small_over.tex", "button_small_disabled.tex"))
 	    self.button:SetPosition(container.components.container.widgetbuttoninfo.position)
 	    self.button:SetText(container.components.container.widgetbuttoninfo.text)
@@ -87,11 +88,14 @@ function ContainerWidget:Open(container, doer)
 		self.inv[n] = self:AddChild(slot)
 
 		slot:SetPosition(v)
-		
+
+		if not container.components.container.side_widget then
+			slot.side_align_tip = container.components.container.side_align_tip - v.x
+		end
 		
 		local obj = container.components.container:GetItemInSlot(n)
 		if obj then
-			local tile = ItemTile(obj, self)
+			local tile = ItemTile(obj)
 			slot:SetTile(tile)
 		end
 		
@@ -104,7 +108,7 @@ end
 
 function ContainerWidget:OnItemGet(data)
     if data.slot and self.inv[data.slot] then
-		local tile = ItemTile(data.item, self)
+		local tile = ItemTile(data.item)
         self.inv[data.slot]:SetTile(tile)
         tile:Hide()
 
@@ -119,7 +123,7 @@ function ContainerWidget:OnItemGet(data)
         end
 	end
 	
-	if self.container and self.container.components.container.widgetbuttoninfo and self.container.components.container.widgetbuttoninfo.validfn then
+	if self.button and self.container and self.container.components.container.widgetbuttoninfo and self.container.components.container.widgetbuttoninfo.validfn then
 		if self.container.components.container.widgetbuttoninfo.validfn(self.container) then
 			self.button:Enable()
 		else
@@ -128,7 +132,7 @@ function ContainerWidget:OnItemGet(data)
 	end
 end
 
-function ContainerWidget:Update(dt)
+function ContainerWidget:OnUpdate(dt)
 	if self.isopen and self.owner and self.container then
 		
 		if not (self.container.components.inventoryitem and self.container.components.inventoryitem:IsHeldBy(self.owner)) then
@@ -139,7 +143,7 @@ function ContainerWidget:Update(dt)
 		end
 	end
 	
-	return self.should_close_widget ~= true
+	--return self.should_close_widget ~= true
 end
 
 function ContainerWidget:OnItemLose(data)
@@ -148,7 +152,7 @@ function ContainerWidget:OnItemLose(data)
 		tileslot:SetTile(nil)
 	end
 	
-	if self.container and self.container.components.container.widgetbuttoninfo and self.container.components.container.widgetbuttoninfo.validfn then
+	if self.container and self.button and self.container.components.container.widgetbuttoninfo and self.container.components.container.widgetbuttoninfo.validfn then
 		if self.container.components.container.widgetbuttoninfo.validfn(self.container) then
 			self.button:Enable()
 		else
@@ -161,7 +165,8 @@ end
 
 function ContainerWidget:Close()
     if self.isopen then
-		
+		self:StopUpdating()
+
 		if self.button then
 			self.button:Kill()
 			self.button = nil

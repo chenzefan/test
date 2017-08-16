@@ -13,7 +13,7 @@ local prefabs =
 local loot = 
 {
     "drumstick",
-    "smallmeat",
+    "drumstick",
 }
  
 local function fn()

@@ -8,7 +8,7 @@ local UIAnim = require "widgets/uianim"
 local Widget = require "widgets/widget"
 
 
-EndGameDialog = Class(Screen, function(self, buttons)
+local EndGameDialog = Class(Screen, function(self, buttons)
 	Screen._ctor(self, "EndGameDialog")
 
 	--darken everything behind the dialog
@@ -74,8 +74,11 @@ EndGameDialog = Class(Screen, function(self, buttons)
 	    button:SetFont(BUTTONFONT)
 	    button:SetTextSize(40)    
 	    pos = pos + Vector3(spacing, 0, 0)  
+	    
+		self.default_focus = button
 	end
 
 	self.buttons = buttons
 end)
 
+return EndGameDialog

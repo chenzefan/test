@@ -54,42 +54,54 @@ end
 
 local function onhungerchange(inst, data)
 
+	local silent = POPULATING
+
 	if inst.strength == "mighty" then
 		if inst.components.hunger.current < TUNING.WOLFGANG_END_MIGHTY_THRESH then
 			inst.strength = "normal"
-			inst.components.talker:Say(GetString("wolfgang", "ANNOUNCE_MIGHTYTONORMAL"))
 			inst.AnimState:SetBuild("wolfgang")
-			inst.sg:PushEvent("powerdown")
-			inst.SoundEmitter:PlaySound("dontstarve/characters/wolfgang/shrink_lrgtomed")
+
+			if not silent then
+				inst.components.talker:Say(GetString("wolfgang", "ANNOUNCE_MIGHTYTONORMAL"))
+				inst.sg:PushEvent("powerdown")
+				inst.SoundEmitter:PlaySound("dontstarve/characters/wolfgang/shrink_lrgtomed")
+			end
 			inst.talksoundoverride = "dontstarve/characters/wolfgang/talk_LP"
 			inst.hurtsoundoverride = "dontstarve/characters/wolfgang/hurt"
 		end
 	elseif inst.strength == "wimpy" then
 		if inst.components.hunger.current > TUNING.WOLFGANG_END_WIMPY_THRESH then
 			inst.strength = "normal"
-			inst.components.talker:Say(GetString("wolfgang", "ANNOUNCE_WIMPYTONORMAL"))
+			if not silent then
+				inst.components.talker:Say(GetString("wolfgang", "ANNOUNCE_WIMPYTONORMAL"))
+				inst.sg:PushEvent("powerup")
+				inst.SoundEmitter:PlaySound("dontstarve/characters/wolfgang/grow_smtomed")	
+			end
 			inst.AnimState:SetBuild("wolfgang")
-			inst.sg:PushEvent("powerup")
-			inst.SoundEmitter:PlaySound("dontstarve/characters/wolfgang/grow_smtomed")	
 			inst.talksoundoverride = "dontstarve/characters/wolfgang/talk_LP"
 			inst.hurtsoundoverride = "dontstarve/characters/wolfgang/hurt"
 		end
 	else
 		if inst.components.hunger.current > TUNING.WOLFGANG_START_MIGHTY_THRESH then
-			inst.components.talker:Say(GetString("wolfgang", "ANNOUNCE_NORMALTOMIGHTY"))
 			inst.strength = "mighty"
 			inst.AnimState:SetBuild("wolfgang_mighty")
-			inst.sg:PushEvent("powerup")
-			inst.SoundEmitter:PlaySound("dontstarve/characters/wolfgang/grow_medtolrg")
+			if not silent then
+				print ("mighty!", GetTime(), debugstack())
+				inst.components.talker:Say(GetString("wolfgang", "ANNOUNCE_NORMALTOMIGHTY"))
+				inst.sg:PushEvent("powerup")
+				inst.SoundEmitter:PlaySound("dontstarve/characters/wolfgang/grow_medtolrg")
+			end
 			inst.talksoundoverride = "dontstarve/characters/wolfgang/talk_large_LP"
 			inst.hurtsoundoverride = "dontstarve/characters/wolfgang/hurt_large"
 
 		elseif inst.components.hunger.current < TUNING.WOLFGANG_START_WIMPY_THRESH then
-			inst.components.talker:Say(GetString("wolfgang", "ANNOUNCE_NORMALTOWIMPY"))
 			inst.strength = "wimpy"
 			inst.AnimState:SetBuild("wolfgang_skinny")
-			inst.sg:PushEvent("powerdown")
-			inst.SoundEmitter:PlaySound("dontstarve/characters/wolfgang/shrink_medtosml")
+			if not silent then
+				inst.sg:PushEvent("powerdown")
+				inst.components.talker:Say(GetString("wolfgang", "ANNOUNCE_NORMALTOWIMPY"))
+				inst.SoundEmitter:PlaySound("dontstarve/characters/wolfgang/shrink_medtosml")
+			end
 			inst.talksoundoverride = "dontstarve/characters/wolfgang/talk_small_LP"
 			inst.hurtsoundoverride = "dontstarve/characters/wolfgang/hurt_small"
 		end

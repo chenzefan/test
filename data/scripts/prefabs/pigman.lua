@@ -45,6 +45,10 @@ end
 
 
 local function ShouldAcceptItem(inst, item)
+    if inst.components.sleeper:IsAsleep() then
+        return false
+    end
+
     if item.components.equippable and item.components.equippable.equipslot == EQUIPSLOTS.HEAD then
         return true
     end
@@ -61,6 +65,10 @@ local function ShouldAcceptItem(inst, item)
 			if last_eat_time and last_eat_time < TUNING.PIG_MIN_POOP_PERIOD then        
 				return false
 			end
+
+            if inst.components.inventory:Has(item.prefab, 1) then
+                return false
+            end
 		end
 		
         return true
@@ -207,8 +215,9 @@ local function SetNormalPig(inst)
     inst.components.combat:SetTarget(nil)
     
     inst.components.trader:Enable()
-    inst.Label:Enable(true)
     inst.components.talker:StopIgnoringAll()
+    inst.components.combat:SetHurtSound(nil)
+
 end
 
 local function GuardRetargetFn(inst)
@@ -295,9 +304,11 @@ local function SetGuardPig(inst)
 
     
     inst.components.trader:Enable()
-    inst.Label:Enable(true)
     inst.components.talker:StopIgnoringAll()
     inst.components.follower:SetLeader(nil)
+
+    inst.components.combat:SetHurtSound(nil)
+
 end
 
 local function WerepigRetargetFn(inst)
@@ -348,8 +359,8 @@ local function SetWerePig(inst)
     inst.components.trader:Disable()
     inst.components.follower:SetLeader(nil)
     inst.components.talker:IgnoreAll()
-    inst.Label:Enable(false)
-    inst.Label:SetText("")
+    inst.components.combat:SetHurtSound("dontstarve/creatures/werepig/hurt")
+
 end
 
 
@@ -363,13 +374,15 @@ local function common()
     inst.Transform:SetFourFaced()
 
     inst.entity:AddLightWatcher()
-    inst.entity:AddLabel()
+    
+    inst:AddComponent("talker")
+    inst.components.talker.ontalk = ontalk
+    inst.components.talker.fontsize = 35
+    inst.components.talker.font = TALKINGFONT
+    --inst.components.talker.colour = Vector3(133/255, 140/255, 167/255)
+    inst.components.talker.offset = Vector3(0,-400,0)
 
-    inst.Label:SetFontSize(24)
-    inst.Label:SetFont(TALKINGFONT)
-    inst.Label:SetPos(0,3.8,0)
-    --inst.Label:SetColour(180/255, 50/255, 50/255)
-    inst.Label:Enable(false)
+
 
     MakeCharacterPhysics(inst, 50, .5)
     
@@ -422,8 +435,6 @@ local function common()
     ------------------------------------------
 
     inst:AddComponent("knownlocations")
-    inst:AddComponent("talker")
-    inst.components.talker.ontalk = ontalk
     
 
     ------------------------------------------

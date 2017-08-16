@@ -6,6 +6,7 @@ levellist[LEVELTYPE.SURVIVAL] = {}
 levellist[LEVELTYPE.CAVE] = {}
 levellist[LEVELTYPE.ADVENTURE] = {}
 levellist[LEVELTYPE.TEST] = {}
+levellist[LEVELTYPE.CUSTOM] = {}
 
 function AddLevel(type, data)
 	table.insert(levellist[type], Level(data))
@@ -98,6 +99,7 @@ return { story_levels=levellist[LEVELTYPE.ADVENTURE],
 			cave_levels = levellist[LEVELTYPE.CAVE],
 			--free_level=levellist[LEVELTYPE.SURVIVAL][1],
 			test_level=levellist[LEVELTYPE.TEST][1],
+			custom_levels = levellist[LEVELTYPE.CUSTOM],
 			CAMPAIGN_LENGTH=CAMPAIGN_LENGTH,
 			GetTypeForLevelID = GetTypeForLevelID
 		}

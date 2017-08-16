@@ -10,9 +10,10 @@ local prefabs =
 }
 
 
+
 local function MakeFollower(inst, leader)
-	inst:AddTag("picked") 
-	inst:RemoveComponent("pickable")
+    inst:AddTag("picked") 
+    inst:RemoveComponent("pickable")
     inst:AddComponent("health")
     inst.components.health:SetMaxHealth(20)
     inst.components.health.nofadeout = true
@@ -28,13 +29,18 @@ local function MakeFollower(inst, leader)
     inst:RemoveComponent("burnable")
     inst:RemoveComponent("propagator")
     MakeSmallBurnableCharacter(inst, "mandrake_root")
-	
+    
     inst.DynamicShadow:Enable(true)
-    inst:AddComponent("follower")
-	if leader and leader.components.leader then
-		leader.components.leader:AddFollower(inst)
-	end
-	
+    if leader and leader.components.leader then
+        leader.components.leader:AddFollower(inst)
+    end
+    
+end
+
+local function LoadFollower(inst, leader)
+    --For transitions between caves
+    MakeFollower(inst,leader)
+    inst.sg:GoToState("idle")
 end
 
 local function MakeItem(inst)
@@ -61,7 +67,6 @@ local function MakeItem(inst)
     inst:DoTaskInTime(0, function(inst)
 	    inst:RemoveComponent("pickable")
 	    inst:RemoveComponent("combat")
-	    inst:RemoveComponent("follower")
         inst:RemoveComponent("health")
     end)
     inst:RemoveComponent("burnable")
@@ -84,19 +89,18 @@ local function MakePlanted(inst)
 	inst.DynamicShadow:Enable(false)
     inst.components.pickable.canbepicked = true
     inst.components.pickable.onpickedfn = function(inst, picker)
-        inst.sg:GoToState("picked")
         if GetClock():IsDay() then
             MakeItem(inst)
         else
             MakeFollower(inst, picker)
         end
+        inst.sg:GoToState("picked")
     end
 	local leader = inst.components.follower and inst.components.follower.leader
 	if leader and leader.components.leader and leader.components.leader:IsFollower(inst) then
 		leader.components.leader:RemoveFollower(inst)
 	end
 	inst:RemoveComponent("combat")
-	inst:RemoveComponent("follower")
     inst:RemoveComponent("health")
     inst:RemoveComponent("burnable")
     inst:RemoveComponent("propagator")
@@ -182,12 +186,15 @@ local function defaultfn()
 
 	local sound = inst.entity:AddSoundEmitter()
 	local shadow = inst.entity:AddDynamicShadow()
-	shadow:SetSize( 1.75, .5 )
+	shadow:SetSize( 1, .5 )
     inst.Transform:SetFourFaced()
 	MakeCharacterPhysics(inst, 10, .25)
 
     inst:AddComponent("locomotor") -- locomotor must be constructed before the stategraph
     inst.components.locomotor.walkspeed = 6
+    
+    inst:AddComponent("follower")
+    inst.MakeFollowerFn = LoadFollower
 
     inst:SetStateGraph("SGMandrake")
     local brain = require "brains/mandrakebrain"
@@ -222,8 +229,7 @@ local function defaultfn()
                     MakePlanted(inst)
                     inst.sg:GoToState("plant")
                 else
-    			    MakeFollower(inst)
-    			    inst.sg:GoToState("idle")
+    			    LoadFollower(inst)
                 end
     		elseif data.item then
     		    MakeItem(inst)

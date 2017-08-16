@@ -10,9 +10,9 @@ end
 local function ProtectionLevels(inst, data)
     local equippedArmor = inst.components.inventory and inst.components.inventory:GetEquippedItem(EQUIPSLOTS.BODY)
     if data.statename == "shell_idle" or data.statename == "shell_hit" or data.statename == "shell_enter" then
-        equippedArmor.components.armor:SetAbsorbtion(1)
+        equippedArmor.components.armor:SetAbsorption(TUNING.FULL_ABSORPTION)
     else
-        equippedArmor.components.armor:SetAbsorbtion(0.6)
+        equippedArmor.components.armor:SetAbsorption(TUNING.ARMORSNURTLESHELL_ABSORPTION)
         equippedArmor.components.useableitem:StopUsingItem()
     end
 end
@@ -86,7 +86,7 @@ local function fn()
     inst:AddTag("shell")
 
     inst:AddComponent("armor")
-    inst.components.armor:InitCondition(TUNING.ARMORMARBLE, 0.8)
+    inst.components.armor:InitCondition(TUNING.ARMORSNURTLESHELL, TUNING.ARMORSNURTLESHELL_ABSORPTION)
 
     inst:AddComponent("equippable")
     inst.components.equippable.equipslot = EQUIPSLOTS.BODY

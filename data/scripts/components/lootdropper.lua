@@ -8,8 +8,18 @@ local LootDropper = Class(function(self, inst)
     self.ifnotchanceloot = nil
     self.droppingchanceloot = false
     self.loot = nil
+    self.chanceloottable = nil
     
 end)
+
+LootTables = {}
+function SetSharedLootTable(name, table)
+	LootTables[name] = table
+end
+
+function LootDropper:SetChanceLootTable(name)
+	self.chanceloottable = name
+end
 
 function LootDropper:SetLoot( loots )
     self.loot = loots
@@ -71,6 +81,20 @@ function LootDropper:GenerateLoot()
 			if math.random() < v.chance then
 				table.insert(loots, v.prefab)
 				self.droppingchanceloot = true
+			end
+		end
+	end
+
+    if self.chanceloottable then
+    	local loot_table = LootTables[self.chanceloottable]
+    	if loot_table then
+    		for i, entry in ipairs(loot_table) do
+    			local prefab = entry[1]
+    			local chance = entry[2]    			
+				if math.random() <= chance then
+					table.insert(loots, prefab)
+					self.droppingchanceloot = true
+				end
 			end
 		end
 	end

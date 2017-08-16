@@ -1,10 +1,19 @@
-local freqency_descriptions = {
-	{ text = STRINGS.UI.SANDBOXMENU.SLIDENEVER, data = "never" },
-	{ text = STRINGS.UI.SANDBOXMENU.SLIDERARE, data = "rare" },
-	{ text = STRINGS.UI.SANDBOXMENU.SLIDEDEFAULT, data = "default" },
-	{ text = STRINGS.UI.SANDBOXMENU.SLIDEOFTEN, data = "often" },
-	{ text = STRINGS.UI.SANDBOXMENU.SLIDEALWAYS, data = "always" },
-}
+local freqency_descriptions
+if PLATFORM ~= "PS4" then
+	freqency_descriptions = {
+		{ text = STRINGS.UI.SANDBOXMENU.SLIDENEVER, data = "never" },
+		{ text = STRINGS.UI.SANDBOXMENU.SLIDERARE, data = "rare" },
+		{ text = STRINGS.UI.SANDBOXMENU.SLIDEDEFAULT, data = "default" },
+		{ text = STRINGS.UI.SANDBOXMENU.SLIDEOFTEN, data = "often" },
+		{ text = STRINGS.UI.SANDBOXMENU.SLIDEALWAYS, data = "always" },
+	}
+else
+	freqency_descriptions = {
+		{ text = STRINGS.UI.SANDBOXMENU.SLIDENEVER, data = "never" },
+		{ text = STRINGS.UI.SANDBOXMENU.SLIDERARE, data = "rare" },
+		{ text = STRINGS.UI.SANDBOXMENU.SLIDEDEFAULT, data = "default" }
+	}
+end
 
 local speed_descriptions = {
 	{ text = STRINGS.UI.SANDBOXMENU.SLIDEVERYSLOW, data = "veryslow" },
@@ -26,12 +35,10 @@ local day_descriptions = {
 	{ text = STRINGS.UI.SANDBOXMENU.SLIDELONG.." "..STRINGS.UI.SANDBOXMENU.NIGHT, data = "longnight" },
 }
 
-local season_descriptions = {
+local season_descriptions = { 
 	{ text = STRINGS.UI.SANDBOXMENU.SLIDEALL.." "..STRINGS.UI.SANDBOXMENU.SUMMER, data = "onlysummer" },
 	{ text = STRINGS.UI.SANDBOXMENU.SLIDEALL.." "..STRINGS.UI.SANDBOXMENU.WINTER, data = "onlywinter" },
-	
 	{ text = STRINGS.UI.SANDBOXMENU.SLIDEDEFAULT, data = "default" },
-
 	{ text = STRINGS.UI.SANDBOXMENU.SLIDELONG.." "..STRINGS.UI.SANDBOXMENU.SUMMER, data = "longsummer" },
 	{ text = STRINGS.UI.SANDBOXMENU.SLIDELONG.." "..STRINGS.UI.SANDBOXMENU.WINTER, data = "longwinter" },
 	{ text = STRINGS.UI.SANDBOXMENU.SLIDELONG.." "..STRINGS.UI.SANDBOXMENU.BOTH, data = "longboth" },
@@ -43,12 +50,22 @@ local season_start_descriptions = {
 	{ text = STRINGS.UI.SANDBOXMENU.WINTER, data = "winter"},-- 	image = "season_start_winter.tex" },
 }
 
-local size_descriptions = {
-	{ text = STRINGS.UI.SANDBOXMENU.SLIDESMALL, data = "default"},-- 	image = "world_size_small.tex"}, 	--350x350
-	{ text = STRINGS.UI.SANDBOXMENU.SLIDESMEDIUM, data = "medium"},-- 	image = "world_size_medium.tex"},	--450x450
-	{ text = STRINGS.UI.SANDBOXMENU.SLIDESLARGE, data = "large"},-- 	image = "world_size_large.tex"},	--550x550
-	{ text = STRINGS.UI.SANDBOXMENU.SLIDESHUGE, data = "huge"},-- 		image = "world_size_huge.tex"},	--800x800
-}
+local size_descriptions = nil
+if PLATFORM == "PS4" then
+	size_descriptions = {
+		{ text = STRINGS.UI.SANDBOXMENU.SLIDESMALL, data = "default"},-- 	image = "world_size_small.tex"}, 	--350x350
+		{ text = STRINGS.UI.SANDBOXMENU.SLIDESMEDIUM, data = "medium"},-- 	image = "world_size_medium.tex"},	--450x450
+		{ text = STRINGS.UI.SANDBOXMENU.SLIDESLARGE, data = "large"},-- 	image = "world_size_large.tex"},	--550x550
+	}
+else
+	size_descriptions = {
+		{ text = STRINGS.UI.SANDBOXMENU.SLIDESMALL, data = "default"},-- 	image = "world_size_small.tex"}, 	--350x350
+		{ text = STRINGS.UI.SANDBOXMENU.SLIDESMEDIUM, data = "medium"},-- 	image = "world_size_medium.tex"},	--450x450
+		{ text = STRINGS.UI.SANDBOXMENU.SLIDESLARGE, data = "large"},-- 	image = "world_size_large.tex"},	--550x550
+		{ text = STRINGS.UI.SANDBOXMENU.SLIDESHUGE, data = "huge"},-- 		image = "world_size_huge.tex"},	--800x800
+	}
+end
+
 
 local branching_descriptions = {
 	{ text = STRINGS.UI.SANDBOXMENU.BRANCHINGNEVER, data = "never" },
@@ -83,52 +100,70 @@ local yesno_descriptions = {
 
 local GROUP = {
 	["monsters"] = 	{	-- These guys come after you	
+						order = 5,
 						text = STRINGS.UI.SANDBOXMENU.CHOICEMONSTERS, 
 						desc = freqency_descriptions,
 						enable = false,
 						items={
-							["spiders"] = {value = "default", enable = false, spinner = nil, image = "spiders.tex"}, 
-							["tentacles"] = {value = "default", enable = false, spinner = nil, image = "tentacles.tex"}, 
-							["hounds"] = {value = "default", enable = false, spinner = nil, image = "hounds.tex"}, 
-							["liefs"] = {value = "default", enable = false, spinner = nil, image = "liefs.tex"}, 
-							["deerclops"] = {value = "default", enable = false, spinner = nil, image = "deerclops.tex"}, 
+							["spiders"] = {value = "default", enable = false, spinner = nil, image = "spiders.tex", order = 1}, 
+							["tentacles"] = {value = "default", enable = false, spinner = nil, image = "tentacles.tex", order = 4}, 
+							["hounds"] = {value = "default", enable = false, spinner = nil, image = "hounds.tex", order = 2}, 
+							["liefs"] = {value = "default", enable = false, spinner = nil, image = "liefs.tex", order = 7}, 
+							["walrus"] = {value = "default", enable = false, spinner = nil, image = "mactusk.tex", order = 6}, 
+							["krampus"] = {value = "default", enable = false, spinner = nil, image = "krampus.tex", order = 9}, 
+							["deerclops"] = {value = "default", enable = false, spinner = nil, image = "deerclops.tex", order = 10}, 
+							["merm"] = {value = "default", enable = false, spinner = nil, image = "merms.tex", order = 3}, 
+							["lureplants"] = {value = "default", enable = false, spinner = nil, image = "lureplant.tex", order = 5},
+							["chess"] = {value = "default", enable = false, spinner = nil, image = "chess_monsters.tex", order = 8}, 
 							--["mactusk"] = {value = "default", enable = false, spinner = nil, image = "mactusk.tex"}, 
-							--["merm"] = {value = "default", enable = false, spinner = nil, image = "merm.tex"}, 
 						}
 					},
 	["animals"] =  	{	-- These guys live and let live
+						order= 4,
 						text = STRINGS.UI.SANDBOXMENU.CHOICEANIMALS, 
 						desc = freqency_descriptions,
 						enable = false,
 						items={
-							["pigs"] = {value = "default", enable = false, spinner = nil, image = "pigs.tex"}, 
-							["tallbirds"] = {value = "default", enable = false, spinner = nil, image = "tallbirds.tex"}, 
-							["rabbits"] = {value = "default", enable = false, spinner = nil, image = "rabbits.tex"}, 
-							["beefalo"] = {value = "default", enable = false, spinner = nil, image = "beefalo.tex"}, 
-							["beefaloheat"] = {value = "default", enable = false, spinner = nil, image = "beefaloheat.tex"}, 
-							["frogs"] = {value = "default", enable = false, spinner = nil, image = "frogs.tex"}, 
-							["bees"] = {value = "default", enable = false, spinner = nil, image = "bees.tex"}, 
-							["perd"] = {value = "default", enable = false, spinner = nil, image = "perd.tex"}, 
+							["pigs"] = {value = "default", enable = false, spinner = nil, image = "pigs.tex", order = 4}, 
+							["tallbirds"] = {value = "default", enable = false, spinner = nil, image = "tallbirds.tex", order = 14}, 
+							["rabbits"] = {value = "default", enable = false, spinner = nil, image = "rabbits.tex", order = 1}, 
+							["beefalo"] = {value = "default", enable = false, spinner = nil, image = "beefalo.tex", order = 7}, 
+							["beefaloheat"] = {value = "default", enable = false, spinner = nil, image = "beefaloheat.tex", order = 8},
+							["hunt"] = {value = "default", enable = false, spinner = nil, image = "tracks.tex", order = 9},  
+							["frogs"] = {value = "default", enable = false, spinner = nil, image = "ponds.tex", order = 11}, 
+							["bees"] = {value = "default", enable = false, spinner = nil, image = "beehive.tex", order = 12}, 
+							["angrybees"] = {value = "default", enable = false, spinner = nil, image = "wasphive.tex", order = 13}, 
+							["perd"] = {value = "default", enable = false, spinner = nil, image = "perd.tex", order = 3}, 
+							["butterfly"] = {value = "default", enable = false, spinner = nil, image = "butterfly.tex", order = 5}, 
+							["birds"] = {value = "default", enable = false, spinner = nil, image = "birds.tex", order = 6},
+							["penguins"] = {value = "default", enable = false, spinner = nil, image = "pengull.tex", order = 10},
+							["mandrake"] = {value = "default", enable = false, spinner = nil, image = "mandrake.tex", order = 2}, 
 						}
 					},
 	["resources"] = {
+						order= 2,
 						text = STRINGS.UI.SANDBOXMENU.CHOICERESOURCES, 
 						desc = freqency_descriptions,
 						enable = false,
 						items={
-							["grass"] = {value = "default", enable = false, spinner = nil, image = "grass.tex"}, 
-							["rock"] = {value = "default", enable = false, spinner = nil, image = "rock.tex"}, 
-							["sapling"] = {value = "default", enable = false, spinner = nil, image = "sapling.tex"}, 
-							["reeds"] = {value = "default", enable = false, spinner = nil, image = "reeds.tex"}, 
-							["trees"] = {value = "default", enable = false, spinner = nil, image = "trees.tex"}, 
+							["grass"] = {value = "default", enable = false, spinner = nil, image = "grass.tex", order = 1}, 
+							["rock"] = {value = "default", enable = false, spinner = nil, image = "rock.tex", order = 6}, 
+							["sapling"] = {value = "default", enable = false, spinner = nil, image = "sapling.tex", order = 2}, 
+							["reeds"] = {value = "default", enable = false, spinner = nil, image = "reeds.tex", order = 8}, 
+							["trees"] = {value = "default", enable = false, spinner = nil, image = "trees.tex", order = 3}, 
+							["marshbush"] = {value = "default", enable = false, spinner = nil, image = "marsh_bush.tex", order = 9}, 
+							["flowers"] = {value = "default", enable = false, spinner = nil, image = "flowers.tex", order = 7},
+							["flint"] = {value = "default", enable = false, spinner = nil, image = "flint.tex", order = 4},
+							["rocks"] = {value = "default", enable = false, spinner = nil, image = "rocks.tex", order = 5},
 						}
 					},
 	["unprepared"] ={
+						order= 3,
 						text = STRINGS.UI.SANDBOXMENU.CHOICEFOOD, 
 						desc = freqency_descriptions,
 						enable = true,
 						items={
-							["carrot"] = {value = "default", enable = true, spinner = nil, image = "carrot.tex",
+							["carrot"] = {value = "default", enable = true, spinner = nil, image = "carrot.tex", order = 2
 --											images ={
 --												"carrot_never.tex",
 --												"carrot_rare.tex",
@@ -137,27 +172,28 @@ local GROUP = {
 --												"carrot_always.tex",
 --											}
 										}, 
-							["berrybush"] = {value = "default", enable = true, spinner = nil, image = "berrybush.tex"}, 
-							--["flowers"] = {value = "default", enable = true, spinner = nil, image = "flowers.tex"}, 
+							["berrybush"] = {value = "default", enable = true, spinner = nil, image = "berrybush.tex", order = 1}, 
+							["mushroom"] = {value = "default", enable = false, spinner = nil, image = "mushrooms.tex", order = 3}, 
 						}
 					},
 	["misc"] =		{
+						order= 1,
 						text = STRINGS.UI.SANDBOXMENU.CHOICEMISC, 
 						desc = nil,
 						enable = true,
 						items={
-							["day"] = {value = "default", enable = false, spinner = nil, image = "day.tex", desc = day_descriptions}, 
-							["season"] = {value = "default", enable = true, spinner = nil, image = "season.tex", desc = season_descriptions}, 
-							["season_start"] = {value = "summer", enable = false, spinner = nil, image = "season_start.tex", desc = season_start_descriptions}, 
-							["weather"] = {value = "default", enable = false, spinner = nil, image = "rain.tex", desc = freqency_descriptions}, 
-							["lightning"] = {value = "default", enable = false, spinner = nil, image = "lightning.tex", desc = freqency_descriptions}, 
-							["world_size"] = {value = "default", enable = false, spinner = nil, image = "world_size.tex", desc = size_descriptions}, 
-							["branching"] = {value = "default", enable = false, spinner = nil, image = "world_branching.tex", desc = branching_descriptions}, 
-							["loop"] = {value = "default", enable = false, spinner = nil, image = "world_loop.tex", desc = loop_descriptions}, 
+							["day"] = {value = "default", enable = false, spinner = nil, image = "day.tex", desc = day_descriptions, order = 6}, 
+							["season"] = {value = "default", enable = true, spinner = nil, image = "season.tex", desc = season_descriptions, order = 4}, 
+							["season_start"] = {value = "summer", enable = false, spinner = nil, image = "season_start.tex", desc = season_start_descriptions, order = 5}, 
+							["weather"] = {value = "default", enable = false, spinner = nil, image = "rain.tex", desc = freqency_descriptions, order = 7}, 
+							["lightning"] = {value = "default", enable = false, spinner = nil, image = "lightning.tex", desc = freqency_descriptions, order = 8}, 
+							["world_size"] = {value = "default", enable = false, spinner = nil, image = "world_size.tex", desc = size_descriptions, order = 1}, 
+							["branching"] = {value = "default", enable = false, spinner = nil, image = "world_branching.tex", desc = branching_descriptions, order = 2}, 
+							["loop"] = {value = "default", enable = false, spinner = nil, image = "world_loop.tex", desc = loop_descriptions, order = 3}, 
 --							["world_complexity"] = {value = "default", enable = false, spinner = nil, image = "world_complexity.tex", desc = complexity_descriptions}, 
-							["boons"] = {value = "default", enable = false, spinner = nil, image = "skeletons.tex", desc = freqency_descriptions}, 
-							["touchstone"] = {value = "default", enable = false, spinner = nil, image = "resurrection.tex", desc = freqency_descriptions}, 
-							["cave_entrance"] = {value = "default", enable = false, spinner = nil, image = "caves.tex", desc = yesno_descriptions},
+							["boons"] = {value = "default", enable = false, spinner = nil, image = "skeletons.tex", desc = freqency_descriptions, order = 11}, 
+							["touchstone"] = {value = "default", enable = false, spinner = nil, image = "resurrection.tex", desc = freqency_descriptions, order = 10}, 
+							["cave_entrance"] = {value = "default", enable = false, spinner = nil, image = "caves.tex", desc = yesno_descriptions, order = 9},
 						}
 					},
 }

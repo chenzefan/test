@@ -168,7 +168,13 @@ local states=
         tags = {"moving", "running", "canrotate"},
         
         onenter = function(inst) 
-            inst.SoundEmitter:PlaySound(inst.sounds.scream)
+            local play_scream = true
+            if inst.components.inventoryitem then
+                play_scream = inst.components.inventoryitem.owner == nil
+            end
+            if play_scream then
+                inst.SoundEmitter:PlaySound(inst.sounds.scream)
+            end
             inst.AnimState:PlayAnimation("run_pre")
             inst.AnimState:PushAnimation("run", true)
             inst.components.locomotor:RunForward()

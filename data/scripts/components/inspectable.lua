@@ -14,7 +14,7 @@ function Inspectable:RecordViews(state)
 end
 
 function Inspectable:CollectSceneActions(doer, actions)
-    if not self.onlyforcedinspect then
+    if not self.onlyforcedinspect and GetPlayer():CanExamine() then
         if not (doer.sg and doer.sg:HasStateTag("moving")) then
             table.insert(actions, ACTIONS.LOOKAT)
         end
@@ -22,7 +22,7 @@ function Inspectable:CollectSceneActions(doer, actions)
 end
 
 function Inspectable:CollectInventoryActions(doer, actions)
-    if not self.onlyforcedinspect then
+    if not self.onlyforcedinspect and GetPlayer():CanExamine() then
         table.insert(actions, ACTIONS.LOOKAT)
     end
 end
@@ -56,7 +56,7 @@ end
 function Inspectable:GetDescription(viewer)
     local desc = self.description
     if desc == nil then
-        desc = GetDescription(string.upper(viewer.prefab), string.upper(self.nameoverride or self.inst.prefab), self:GetStatus(viewer) )
+        desc = GetDescription(string.upper(viewer.prefab), self.inst, self:GetStatus(viewer))
     end
 
     if TheSim:GetLightAtPoint(self.inst.Transform:GetWorldPosition()) < TUNING.DARK_CUTOFF then

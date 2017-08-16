@@ -16,7 +16,69 @@ Input = Class(function(self)
     self.hoverinst = nil
     self.enabledebugtoggle = true
 
+	if PLATFORM == "PS4" then     
+        self.mouse_enabled = false
+    else
+        self.mouse_enabled = true
+    end
+
+    self:DisableAllControllers()
 end)
+
+function Input:DisableAllControllers()
+    for i = 1, TheInputProxy:GetInputDeviceCount() -1 do
+        if TheInputProxy:IsInputDeviceEnabled(i) and TheInputProxy:IsInputDeviceConnected(i) then
+            TheInputProxy:EnableInputDevice(i, false)
+        end
+    end
+end
+
+function Input:EnableMouse(enable)
+    self.mouse_enabled = enable
+end
+
+function Input:GetControllerID()
+    local device_id = 0
+    for i = 1, TheInputProxy:GetInputDeviceCount() -1 do
+        if TheInputProxy:IsInputDeviceEnabled(i) and TheInputProxy:IsInputDeviceConnected(i) then
+            device_id = i
+        end
+    end
+
+    return device_id
+end
+
+function Input:ControllerAttached()
+	if PLATFORM == "PS4" then
+		return true	
+	elseif PLATFORM == "NACL" then
+		return false
+	else
+		--need to take enabled into account
+        for i = 1, TheInputProxy:GetInputDeviceCount() -1 do
+            if i > 0 and TheInputProxy:IsInputDeviceEnabled(i) and TheInputProxy:IsInputDeviceConnected(i) then
+                --print ("DEVICE", i, "of", TheInputProxy:GetInputDeviceCount(), "IS ENABLED")
+                return true
+            end
+        end
+        return false
+	end
+end
+
+
+-- Get a list of connected input devices and their ids
+function Input:GetInputDevices()
+    local numDevices = TheInputProxy:GetInputDeviceCount()
+    local devices = {}
+    for i = 0, numDevices - 1 do
+        if TheInputProxy:IsInputDeviceConnected(i) then
+            local device_type = TheInputProxy:GetInputDeviceType(i)
+            table.insert(devices, {text=STRINGS.UI.CONTROLSSCREEN.INPUT_NAMES[device_type+1], data=i})
+        end
+    end
+    return devices
+end
+
 
 function Input:AddTextInputHandler( fn )
     return self.ontextinput:AddEventHandler("text", fn)
@@ -64,10 +126,15 @@ end
 
 function Input:UpdatePosition(x,y)
     --print("Input:UpdatePosition", x, y)
-    self.position:HandleEvent("move", x, y)
+    if self.mouse_enabled then
+		self.position:HandleEvent("move", x, y)
+	end
 end
 
 function Input:OnControl(control, digitalvalue, analogvalue)
+    
+    if (control == CONTROL_PRIMARY or control == CONTROL_SECONDARY) and not self.mouse_enabled then return end
+    
     if not TheFrontEnd:OnControl(control, digitalvalue) then
         self.oncontrol:HandleEvent(control, digitalvalue, analogvalue)
         self.oncontrol:HandleEvent("oncontrol", control, digitalvalue, analogvalue)
@@ -75,11 +142,15 @@ function Input:OnControl(control, digitalvalue, analogvalue)
 end
 
 function Input:OnMouseMove(x,y)
-	TheFrontEnd:OnMouseMove(x,y)
+	if self.mouse_enabled then
+		TheFrontEnd:OnMouseMove(x,y)
+	end
 end
 
 function Input:OnMouseButton(button, down, x,y)
-	TheFrontEnd:OnMouseButton(button, down, x,y)
+	if self.mouse_enabled then
+		TheFrontEnd:OnMouseButton(button, down, x,y)
+	end
 end
 
 function Input:OnRawKey(key, down)
@@ -123,13 +194,18 @@ function Input:GetWorldPosition()
 end
 
 function Input:GetAllEntitiesUnderMouse()
-    return self.entitiesundermouse or {}
+    if self.mouse_enabled then 
+		return self.entitiesundermouse or {}
+	end
+	return {}
 end
 
 function Input:GetWorldEntityUnderMouse()
-    if self.hoverinst and self.hoverinst.Transform then
-        return self.hoverinst 
-    end
+    if self.mouse_enabled then
+		if self.hoverinst and self.hoverinst.Transform then
+	        return self.hoverinst 
+	    end
+	end
 end
 
 
@@ -142,9 +218,11 @@ function Input:IsDebugToggleEnabled()
 end
 
 function Input:GetHUDEntityUnderMouse()
-    if self.hoverinst and not self.hoverinst.Transform then
-        return self.hoverinst 
-    end
+	if self.mouse_enabled then
+		if self.hoverinst and not self.hoverinst.Transform then
+	        return self.hoverinst 
+	    end
+	end
 end
 
 function Input:IsMouseDown(button)
@@ -164,21 +242,62 @@ function Input:GetAnalogControlValue(control)
 end
 
 function Input:OnUpdate()
-    self.entitiesundermouse = TheSim:GetEntitiesAtScreenPoint(TheSim:GetPosition())
-    
-    local inst = self.entitiesundermouse[1]
-    if inst ~= self.hoverinst then
-        
-        if inst and inst.Transform then
-            inst:PushEvent("mouseover")
-        end
+	if PLATFORM == "PS4" then return end
 
-        if self.hoverinst and self.hoverinst.Transform then
-            self.hoverinst:PushEvent("mouseout")
+	if self.mouse_enabled then
+		self.entitiesundermouse = TheSim:GetEntitiesAtScreenPoint(TheSim:GetPosition())
+	    
+		local inst = self.entitiesundermouse[1]
+		if inst ~= self.hoverinst then
+	        
+			if inst and inst.Transform then
+				inst:PushEvent("mouseover")
+			end
+
+			if self.hoverinst and self.hoverinst.Transform then
+				self.hoverinst:PushEvent("mouseout")
+			end
+	        
+			self.hoverinst = inst
+		end
+	end
+end
+
+
+function Input:GetLocalizedControl(deviceId, controlId, use_default_mapping)
+    
+    if nil == use_default_mapping then
+        -- default mapping not specified so don't use it
+        use_default_mapping = false
+    end
+    
+    local device, numInputs, input1, input2, input3, input4, intParam = TheInputProxy:GetLocalizedControl(deviceId, controlId, use_default_mapping)
+    local inputs = {
+        [1] = input1,
+        [2] = input2,
+        [3] = input3,
+        [4] = input4,
+    }
+    local text = ""
+    if nil == device then
+        text = STRINGS.UI.CONTROLSSCREEN.INPUTS[6][1]
+    else
+        -- concatenate the inputs
+        for idx = 1, numInputs do
+            local inputId = inputs[idx]
+            text = text .. STRINGS.UI.CONTROLSSCREEN.INPUTS[device][inputs[idx]]
+            if idx < numInputs then
+                text = text .. " + "
+            end
         end
         
-        self.hoverinst = inst
+        -- process string format params if there are any
+        if not (nil == intParam) then
+            text = string.format(text, intParam)
+        end
     end
+    --print ("Input Text:" .. tostring(text))
+    return text;
 end
 
 ---------------- Globals
@@ -216,5 +335,6 @@ end
 function OnControlMapped(deviceId, controlId, inputId, hasChanged)
     TheInput:OnControlMapped(deviceId, controlId, inputId, hasChanged)
 end
+
 
 return Input

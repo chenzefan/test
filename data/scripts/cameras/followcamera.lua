@@ -4,16 +4,16 @@ require("camerashake")
 FollowCamera = Class(function(self, inst)
     self.inst = inst
     self.target = nil
+    self.currentpos = Vector3(0,0,0)
+	self.distance = 30
     self:SetDefault()
     self:Snap()
-    
     self.time_since_zoom = nil
-
-    self.currentpos = Vector3(0,0,0)
 end)
 
 function FollowCamera:SetDefault()
     self.targetpos = Vector3(0,0,0)
+    --self.currentpos = Vector3(0,0,0)
     self.targetoffset = Vector3(0,1.5,0)
 
     if self.headingtarget == nil then
@@ -30,7 +30,7 @@ function FollowCamera:SetDefault()
 
     self.mindist = 15
     self.maxdist = 50 --40
-    
+   
     self.mindistpitch = 30
     self.maxdistpitch = 60--60 
     self.paused = false
@@ -45,6 +45,10 @@ function FollowCamera:SetDefault()
         self.mindistpitch = 25
         self.maxdistpitch = 40
         self.distancetarget = 25
+    end
+
+    if self.target then
+        self:SetTarget(self.target)
     end
 
 end
@@ -84,7 +88,7 @@ function FollowCamera:CanControl()
 end
 
 function FollowCamera:SetOffset(offset)
-    self.targetoffset = offset
+    self.targetoffset.x, self.targetoffset.y, self.targetoffset.z = offset.x, offset.y, offset.z
 end
 
 function FollowCamera:GetDistance()
@@ -102,28 +106,46 @@ end
 function FollowCamera:SetTarget(inst)
     self.target = inst
     self.targetpos.x, self.targetpos.y, self.targetpos.z = self.target.Transform:GetWorldPosition()
-    self.currentpos.x, self.currentpos.y, self.currentpos.z = self.target.Transform:GetWorldPosition()
+    --self.currentpos.x, self.currentpos.y, self.currentpos.z = self.target.Transform:GetWorldPosition()
 end
 
 function FollowCamera:Apply()
     
-    local dir = Vector3(0,0,0)
-    dir.x = -math.cos(self.pitch*DEGREES)*math.cos(self.heading*DEGREES)
-    dir.y = -math.sin(self.pitch*DEGREES)
-    dir.z = -math.cos(self.pitch*DEGREES)*math.sin(self.heading*DEGREES)
+    --dir
+    local dx = -math.cos(self.pitch*DEGREES)*math.cos(self.heading*DEGREES)
+    local dy = -math.sin(self.pitch*DEGREES)
+    local dz = -math.cos(self.pitch*DEGREES)*math.sin(self.heading*DEGREES)
 
-    local pos = dir*(-self.distance) + self.currentpos 
-    local right = Vector3(math.cos((self.heading+90)*DEGREES), 0, math.sin((self.heading+90)*DEGREES))
-    local up = dir:Cross(right)
+    --pos
+    local px = dx*(-self.distance) + self.currentpos.x 
+    local py = dy*(-self.distance) + self.currentpos.y 
+    local pz = dz*(-self.distance) + self.currentpos.z 
+
+    --right
+    local rx = math.cos((self.heading+90)*DEGREES)
+    local ry = 0
+    local rz = math.sin((self.heading+90)*DEGREES)
+
+    --up
+    local ux, uy, uz =  dy * rz - dz * ry,
+                        dz * rx - dx * rz,
+                        dx * ry - dy * rx
+
 
 	
-    TheSim:SetCameraPos(pos.x,pos.y,pos.z)
-    TheSim:SetCameraDir(dir.x,dir.y,dir.z)
-    TheSim:SetCameraUp(up.x, up.y, up.z)
+    TheSim:SetCameraPos(px,py,pz)
+    TheSim:SetCameraDir(dx, dy, dz)
+    TheSim:SetCameraUp(ux, uy, uz)
     TheSim:SetCameraFOV(self.fov)
     
-    local listenpos = dir*(-self.distance*.1) + self.currentpos
-    TheSim:SetListener(listenpos.x, listenpos.y, listenpos.z, dir.x, dir.y, dir.z, up.x, up.y, up.z)
+    --local listenpos = dir*(-self.distance*.1) + self.currentpos
+
+    --listen dist
+    local lx = dx*(-self.distance*.1) + self.currentpos.x
+    local ly = dy*(-self.distance*.1) + self.currentpos.y
+    local lz = dz*(-self.distance*.1) + self.currentpos.z
+	--print (lx, ly, lz, self.distance)
+    TheSim:SetListener(lx, ly, lz, dx, dy, dz, ux, uy, uz)
     
 end
 
@@ -166,10 +188,10 @@ function FollowCamera:Snap()
     if self.target then
         self.targetpos = Vector3(self.target.Transform:GetWorldPosition()) + self.targetoffset
     else
-        self.targetpos = self.targetoffset
+        self.targetpos.x,self.targetpos.y,self.targetpos.z = self.targetoffset.x,self.targetoffset.y,self.targetoffset.z
     end
 
-    self.currentpos = self.targetpos
+    self.currentpos.x, self.currentpos.y, self.currentpos.z = self.targetpos.x, self.targetpos.y, self.targetpos.z
     self.heading = self.headingtarget
     self.distance = self.distancetarget
 
@@ -184,7 +206,7 @@ function FollowCamera:CutsceneMode(b)
 end
 
 function FollowCamera:SetCustomLocation(loc)
-    self.targetpos = loc
+    self.targetpos.x,self.targetpos.y,self.targetpos.z  = loc.x,loc.y,loc.z
 end
 
 function FollowCamera:Update(dt)
@@ -195,7 +217,9 @@ function FollowCamera:Update(dt)
 
     if self.cutscene then
 
-        self.currentpos = lerp(self.currentpos, self.targetpos + self.targetoffset, dt*self.pangain)
+        self.currentpos.x = lerp(self.currentpos.x, self.targetpos.x + self.targetoffset.x, dt*self.pangain)
+        self.currentpos.y = lerp(self.currentpos.y, self.targetpos.y + self.targetoffset.y, dt*self.pangain)
+        self.currentpos.z = lerp(self.currentpos.z, self.targetpos.z + self.targetoffset.z, dt*self.pangain)
 
 
         if self.shake then
@@ -203,7 +227,9 @@ function FollowCamera:Update(dt)
             if shakeOffset then
                 local upOffset = Vector3(0, shakeOffset.y, 0)
                 local rightOffset = self:GetRightVec() * shakeOffset.x
-                self.currentpos = self.currentpos + upOffset + rightOffset
+                self.currentpos.x = self.currentpos.x + upOffset.x + rightOffset.x
+                self.currentpos.y = self.currentpos.y + upOffset.y + rightOffset.y
+                self.currentpos.z = self.currentpos.z + upOffset.z + rightOffset.z
             else
                 self.shake = nil
             end
@@ -230,19 +256,30 @@ function FollowCamera:Update(dt)
     	end
 
         if self.target then
-            self.targetpos = Vector3(self.target.Transform:GetWorldPosition()) + self.targetoffset
+            --self.targetpos = Vector3(self.target.Transform:GetWorldPosition()) + self.targetoffset
+            local x, y, z = self.target.Transform:GetWorldPosition()
+            self.targetpos.x = x + self.targetoffset.x
+            self.targetpos.y = y + self.targetoffset.y
+            self.targetpos.z = z + self.targetoffset.z
+
         else
-            self.targetpos = self.targetoffset
+            self.targetpos.x, self.targetpos.y, self.targetpos.z = self.targetoffset.x, self.targetoffset.y, self.targetoffset.z
         end
 
-        self.currentpos = lerp(self.currentpos, self.targetpos, dt*self.pangain)
+        self.currentpos.x = lerp(self.currentpos.x, self.targetpos.x, dt*self.pangain)
+        self.currentpos.y = lerp(self.currentpos.y, self.targetpos.y, dt*self.pangain)
+        self.currentpos.z = lerp(self.currentpos.z, self.targetpos.z, dt*self.pangain)
+
+        --self.currentpos = lerp(self.currentpos, self.targetpos, dt*self.pangain)
         
         if self.shake then
             local shakeOffset = self.shake:Update(dt)
             if shakeOffset then
                 local upOffset = Vector3(0, shakeOffset.y, 0)
                 local rightOffset = self:GetRightVec() * shakeOffset.x
-                self.currentpos = self.currentpos + upOffset + rightOffset
+                self.currentpos.x = self.currentpos.x + upOffset.x + rightOffset.x
+                self.currentpos.y = self.currentpos.y + upOffset.y + rightOffset.y
+                self.currentpos.z = self.currentpos.z + upOffset.z + rightOffset.z
             else
                 self.shake = nil
             end

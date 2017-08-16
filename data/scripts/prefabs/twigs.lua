@@ -40,7 +40,7 @@ local function fn(Sim)
     
 	inst:AddComponent("repairer")
 	inst.components.repairer.repairmaterial = "wood"
-	inst.components.repairer.value = TUNING.REPAIR_STICK
+	inst.components.repairer.healthrepairvalue = TUNING.REPAIR_STICK_HEALTH
     
     
     return inst

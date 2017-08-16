@@ -7,9 +7,10 @@ local Image = require "widgets/image"
 local UIAnim = require "widgets/uianim"
 local Widget = require "widgets/widget"
 
-
-ScriptErrorScreen = Class(Screen, function(self, title, text, buttons, texthalign, additionaltext, textsize, timeout)
+local ScriptErrorScreen = Class(Screen, function(self, title, text, buttons, texthalign, additionaltext, textsize, timeout)
 	Screen._ctor(self, "ScriptErrorScreen")
+
+    TheInputProxy:SetCursorVisible(true)
 
 	--darken everything behind the dialog
 	self.blackoverlay = self:AddChild(Image("images/global.xml", "square.tex"))
@@ -75,16 +76,17 @@ ScriptErrorScreen = Class(Screen, function(self, title, text, buttons, texthalig
 	self.version:SetPosition(110, 30, 0)
 	self.version:SetString("Rev. "..APP_VERSION.." "..PLATFORM)
 	
-	--create the menu itself
-	local button_w = 200
-	local space_between = 20
-	local spacing = button_w + space_between
+	if PLATFORM ~= "PS4" then
+	    --create the menu itself
+	    local button_w = 200
+	    local space_between = 20
+	    local spacing = button_w + space_between
 	
-	self.menu = self.root:AddChild(Menu(buttons, 200, true))
-	self.menu:SetHRegPoint(ANCHOR_MIDDLE)
-	self.menu:SetPosition(0, -250, 0)
-
-	self.default_focus = self.menu
+	    self.menu = self.root:AddChild(Menu(buttons, 200, true))
+	    self.menu:SetHRegPoint(ANCHOR_MIDDLE)
+	    self.menu:SetPosition(0, -250, 0)
+	    self.default_focus = self.menu
+	end
 end)
 
 function ScriptErrorScreen:OnUpdate( dt )
@@ -96,3 +98,5 @@ function ScriptErrorScreen:OnUpdate( dt )
 	end
 	return true
 end
+
+return ScriptErrorScreen

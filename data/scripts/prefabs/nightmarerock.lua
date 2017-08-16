@@ -197,6 +197,9 @@ local function commonfn()
     MakeObstaclePhysics(inst, inst.collisionsize)
     inst.entity:AddSoundEmitter()
 
+    local minimap = inst.entity:AddMiniMapEntity()
+    minimap:SetIcon( "obelisk.png" )
+
     inst:AddComponent("inspectable")
 
     anim:SetBank("blocker_sanity")

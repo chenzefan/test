@@ -37,7 +37,7 @@ local Burnable = Class(function(self, inst)
     self.onburnt = nil
     self.canlight = true
     
-    self.inst:ListenForEvent("death", OnKilled)
+    
 end)
 
 --- Set the function that will be called when the object starts burning
@@ -69,7 +69,7 @@ end
 -- @param offset The offset from the burning entity/symbol that the effect should appear at
 -- @param followsymbol Optional symbol for the effect to follow
 function Burnable:AddBurnFX(prefab, offset, followsymbol)
-    table.insert(self.fxdata, {prefab=prefab, pt=offset, follow=followsymbol})
+    table.insert(self.fxdata, {prefab=prefab, x = offset.x, y = offset.y, z = offset.z, follow=followsymbol})
 end
 
 --- Set the level of any current or future burning effects
@@ -88,7 +88,7 @@ function Burnable:GetLargestLightRadius()
     local largestRadius = nil
     for k,v in pairs(self.fxchildren) do
         if v.Light and v.Light:IsEnabled() then
-            local radius = v.Light:GetRadius()
+            local radius = v.Light:GetCalculatedRadius()
             if not largestRadius or radius > largestRadius then
                 largestRadius = radius
             end
@@ -109,13 +109,13 @@ function Burnable:OnRemoveEntity()
 	self:KillFX()
 end
 
-function Burnable:Ignite()
+function Burnable:Ignite(immediate)
     if not self.burning then
         self.inst:AddTag("fire")
         self.burning = true
+        self.inst:ListenForEvent("death", OnKilled)
         
-        
-        self:SpawnFX()
+        self:SpawnFX(immediate)
         self.inst:PushEvent("onignite")
         if self.onignite then
             self.onignite(self.inst)
@@ -183,11 +183,11 @@ function Burnable:Extinguish()
 end
 
 
-function Burnable:SpawnFX()
+function Burnable:SpawnFX(immediate)
     self:KillFX()
     
     if not self.fxdata then
-        self.fxdata = {pt=Vector3(), level=self:GetDefaultFXLevel() }
+        self.fxdata = { x = 0, y = 0, z = 0, level=self:GetDefaultFXLevel() }
     end
     
     if self.fxdata then
@@ -196,14 +196,14 @@ function Burnable:SpawnFX()
 			if fx then
 				if v.follow then
 					local follower = fx.entity:AddFollower()
-					follower:FollowSymbol( self.inst.GUID, v.follow, v.pt.x,v.pt.y,v.pt.z)
+					follower:FollowSymbol( self.inst.GUID, v.follow, v.x,v.y,v.z)
 				else
 				    self.inst:AddChild(fx)
-				    fx.Transform:SetPosition(v.pt.x, v.pt.y, v.pt.z)
+				    fx.Transform:SetPosition(v.x, v.y, v.z)
 				end
 				table.insert(self.fxchildren, fx)
 				if fx.components.firefx then
-					fx.components.firefx:SetLevel(self.fxlevel)
+					fx.components.firefx:SetLevel(self.fxlevel, immediate)
 				end
 				
 			end

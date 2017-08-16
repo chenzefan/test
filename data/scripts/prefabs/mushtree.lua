@@ -171,7 +171,7 @@ local function mediumfn()
     inst.components.burnable:SetOnBurntFn(tree_burnt)
 
     local minimap = inst.entity:AddMiniMapEntity()
-	minimap:SetIcon("mushroom_tree.png")
+	minimap:SetIcon("mushroom_tree_med.png")
 	MakeObstaclePhysics(inst, 1)
 
 	anim:SetBuild("mushroom_tree_med")
@@ -215,7 +215,7 @@ local function smallfn()
     inst.components.burnable:SetOnBurntFn(tree_burnt)
 
     local minimap = inst.entity:AddMiniMapEntity()
-	minimap:SetIcon("mushroom_tree.png")
+	minimap:SetIcon("mushroom_tree_small.png")
 	MakeObstaclePhysics(inst, 1)
 
 	anim:SetBuild("mushroom_tree_small")

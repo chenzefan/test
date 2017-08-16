@@ -64,27 +64,36 @@ local MULTIPLY = {
 
 	
 local TRANSLATE_TO_PREFABS = {
-	["spiders"] = 	{"spiderden"},
-	["tentacles"] = {"tentacle"},
-	["tallbirds"] = {"tallbirdnest"},
-	["pigs"] = 		{"pighouse"},
-	["rabbits"] = 	{"rabbithole"},
-	["beefalo"] = 	{"beefalo"},
-	["frogs"] = 	{"pond"},
-	["bees"] = 		{"killerbee", "beehive"},
-	["grass"] = 	{"grass"},
-	["rock"] = 		{"rock1", "rock2", "rock_flintless"}, 
-	["rocks"] = 	{"rocks"}, 
-	["sapling"] = 	{"sapling"},
-	["reeds"] = 	{"reeds"},	
-	["trees"] = 	{"evergreen", "evergreen_sparse"},	
-	["evergreen"] = {"evergreen"},	
-	["carrot"] = 	{"carrot_planted"},
-	["berrybush"] = {"berrybush", "berrybush2"},
-	["maxwelllight"] = {"maxwelllight"},
+	["spiders"] = 			{"spiderden"},
+	["tentacles"] = 		{"tentacle"},
+	["tallbirds"] = 		{"tallbirdnest"},
+	["pigs"] = 				{"pighouse"},
+	["rabbits"] = 			{"rabbithole"},
+	["beefalo"] = 			{"beefalo"},
+	["frogs"] = 			{"pond"},
+	["bees"] = 				{"beehive", "bee"},
+	["grass"] = 			{"grass"},
+	["rock"] = 				{"rock1", "rock2", "rock_flintless"}, 
+	["rocks"] = 			{"rocks"}, 
+	["sapling"] = 			{"sapling"},
+	["reeds"] = 			{"reeds"},	
+	["trees"] = 			{"evergreen", "evergreen_sparse"},	
+	["evergreen"] = 		{"evergreen"},	
+	["carrot"] = 			{"carrot_planted"},
+	["berrybush"] = 		{"berrybush", "berrybush2"},
+	["maxwelllight"] = 		{"maxwelllight"},
 	["maxwelllight_area"] = {"maxwelllight_area"},
-	["fireflies"] = {"fireflies"},
-	["cave_entrance"] = {"cave_entrance"},
+	["fireflies"] = 		{"fireflies"},
+	["cave_entrance"] = 	{"cave_entrance"},
+	["flowers"] = 			{"flower", "flower_evil"},
+	["mushroom"] =			{"red_mushroom", "green_mushroom", "blue_mushroom"},
+	["marshbush"] = 		{"marsh_bush"},
+	["merm"] = 				{"merm"},
+	["flint"] = 			{"flint"},
+	["mandrake"] = 			{"mandrake"},
+	["angrybees"] = 		{"wasphive", "killerbee"},
+	["chess"] = 			{"knight", "bishop", "rook"},
+	["walrus"] = 			{"walrus_camp"},
 	}
 
 local customise = require("map/customise")
@@ -151,7 +160,7 @@ local function UpdateTerrainValues(world_gen_choices)
 end
 
 
-local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choices, level_type)
+local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choices, level_type, level)
 	--print("Generate",prefab, map_width, map_height, tasks, world_gen_choices, level_type)
 	local start_time = GetTimeReal()
 
@@ -210,7 +219,7 @@ local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choi
 	end
 
     print("Creating story...")
-	local topology_save = TEST_STORY(tasks, story_gen_params)
+	local topology_save = TEST_STORY(tasks, story_gen_params, level)
 
 	local entities = {}
  
@@ -511,21 +520,15 @@ local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choi
 
     save.map.tiles, save.map.nav, save.map.adj = WorldSim:GetEncodedMap(join_islands)
 
-   	-- TEMP HACK: add it to the "START" node, should really just restart world gen
-   	local double_check = {"teleportato_ring",  "teleportato_box",  "teleportato_crank", "teleportato_potato", "teleportato_base", "chester_eyebone",}
-	if level_type ~= "adventure" then
-		table.insert(double_check, "adventure_portal")
-	end
+   	local double_check = level.required_prefabs or {}
    	
-   	if prefab == "forest" then	   	
-	   	for i,k in ipairs(double_check) do
-	   		if entities[k] == nil then
-	   			print("PANIC: missing teleportato part! ",k)
-				if SKIP_GEN_CHECKS == false then
-					return nil
-				end
-			end			
-		end
+	for i,k in ipairs(double_check) do
+		if entities[k] == nil then
+			print("PANIC: missing required prefab! ",k)
+			if SKIP_GEN_CHECKS == false then
+				return nil
+			end
+		end			
 	end
    	
    	save.map.topology.overrides = runtime_overrides

@@ -287,6 +287,12 @@ function SeasonManager:GetDaysLeftInSeason()
 		else
 			return self.endless_pre - GetClock():GetNumCycles()
 		end
+    elseif self.seasonmode == "endlesssummer" then
+		if self:IsSummer() then
+			return 10000
+		else
+			return self.endless_pre - GetClock():GetNumCycles()
+		end
     else
     	return 10000
     end
@@ -297,6 +303,12 @@ function SeasonManager:GetDaysIntoSeason()
 	    return (self.percent_season)* self:GetSeasonLength()
 	 elseif self.seasonmode == "endlesswinter" then
 		if self:IsWinter() then
+			return GetClock():GetNumCycles() - self.endless_pre
+		else
+			return GetClock():GetNumCycles()
+		end
+	 elseif self.seasonmode == "endlesssummer" then
+		if self:IsSummer() then
 			return GetClock():GetNumCycles() - self.endless_pre
 		else
 			return GetClock():GetNumCycles()
@@ -498,7 +510,7 @@ function SeasonManager:DoLightningStrike(pos)
 	lightning.Transform:SetPosition(pos:Get())
 
     if rod then
-        rod:PushEvent("lightningstrike")
+        rod:PushEvent("lightningstrike") --#srosen: this will make all rods that are awake react. Needs to be DoStrike like for player.
     else
         if player then
         	player:PushEvent("lightningstrike")
@@ -535,6 +547,8 @@ end
 
 
 function SeasonManager:OnUpdate( dt )
+	
+	
 	
 	--print ("time to pass:", dt)
 	if self.seasonmode == "caves" then return end
@@ -691,6 +705,19 @@ function SeasonManager:OnUpdate( dt )
 	end
 	
 	GetWorld().Map:SetOverlayLerp( self.ground_snow_level * 3)
+	
+	if (last_ground_snow < SNOW_THRESH) ~= (self.ground_snow_level < SNOW_THRESH) then
+		for k,v in pairs(Ents) do
+			if v:HasTag("SnowCovered") then
+				if self.ground_snow_level < SNOW_THRESH then
+					v.AnimState:Hide("snow")
+				else
+					v.AnimState:Show("snow")
+				end
+			end
+		end
+	end
+	--]]
 end
 
 function SeasonManager:GetPrecipitationRate()

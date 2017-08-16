@@ -53,9 +53,9 @@ local states=
         {
             TimeEvent(11*FRAMES, function(inst) 
 				local pt = Vector3(inst.Transform:GetWorldPosition())
-				local ents = TheSim:FindEntities(pt.x,pt.y,pt.z, TUNING.MOSQUITO_BURST_RANGE)
+				local ents = TheSim:FindEntities(pt.x,pt.y,pt.z, TUNING.MOSQUITO_BURST_RANGE, nil, {'insect'})
 				for i,ent in ipairs(ents) do
-					if not ent:HasTag("insect") and ent.components.combat then
+					if ent.components.combat then
 						ent.components.combat:GetAttacked(inst, TUNING.MOSQUITO_BURST_DAMAGE, nil)
 					end
 				end

@@ -12,6 +12,9 @@ FaceEntity = Class(BehaviourNode, function(self, inst, getfn, keepfn, timeout)
     
 end)
 
+function FaceEntity:HasLocomotor()
+    return self.inst.components.locomotor ~= nil
+end
 
 function FaceEntity:Visit()
 
@@ -20,7 +23,11 @@ function FaceEntity:Visit()
         
         if self.target then
             self.status = RUNNING
-            self.inst.components.locomotor:Stop()
+
+            if self:HasLocomotor() then
+                self.inst.components.locomotor:Stop()
+            end
+
             self.starttime = GetTime()
         else
             self.status = FAILED
@@ -45,7 +52,7 @@ function FaceEntity:Visit()
         
         if self.keepfn(self.inst, self.target) then
             if self.inst.sg:HasStateTag("canrotate") then
-                self.inst:FacePoint(Point(self.target.Transform:GetWorldPosition()))
+                self.inst:FacePoint(self.target.Transform:GetWorldPosition())
             end
             
         else

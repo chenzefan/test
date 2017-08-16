@@ -37,6 +37,7 @@ local Mixer = Class(function(self)
     self.stack = {}
     
     self.lowpassfilters = {}
+    self.highpassfilters = {}
 end)
 
 function Mixer:AddNewMix(name, fadetime, priority, levels)
@@ -147,7 +148,16 @@ function Mixer:UpdateFilters(dt)
 			self.lowpassfilters[k] = nil
 		end
 	end
-	
+	for k,v in pairs(self.highpassfilters) do
+        if v.totaltime > 0 and v.currenttime < v.totaltime then
+            v.currenttime = v.currenttime + dt
+            v.freq = easing.linear(v.currenttime, v.startfreq, v.endfreq - v.startfreq, v.totaltime)
+            TheSim:SetHighPassFilter(k, v.freq)
+        elseif v.freq >= top_val then
+            TheSim:ClearDSP(k)
+            self.highpassfilters[k] = nil
+        end
+    end
 end
 
 
@@ -167,12 +177,31 @@ function Mixer:SetLowPassFilter(category, cutoff, timetotake)
 		freq_entry.freq = cutoff
 		TheSim:SetLowPassFilter(category, cutoff)
 	end
-	
-	
+end
+
+function Mixer:SetHighPassFilter(category, cutoff, timetotake)
+    timetotake = timetotake or 3
+    
+    local startfreq = top_val
+    if self.lowpassfilters[category] then
+        startfreq = self.lowpassfilters[category].freq
+    end
+    
+    local freq_entry = {startfreq = startfreq, endfreq = cutoff, freq= startfreq, totaltime = timetotake, currenttime = 0}
+    self.lowpassfilters[category] = freq_entry
+    
+    if timetotake <= 0 then
+        freq_entry.freq = cutoff
+        TheSim:SetHighPassFilter(category, cutoff)
+    end 
 end
 
 function Mixer:ClearLowPassFilter(category, timetotake)
 	self:SetLowPassFilter(category, top_val, timetotake)	
+end
+
+function Mixer:ClearHighPassFilter(category, timetotake)
+    self:SetHighPassFilter(category, top_val, timetotake)    
 end
 
 return { Mix = Mix, Mixer = Mixer}

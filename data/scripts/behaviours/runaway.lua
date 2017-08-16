@@ -55,9 +55,7 @@ function RunAway:Visit()
     
     if self.status == READY then
 		if type(self.hunterparams) == "string" then
-			self.hunter = FindEntity(self.inst, self.see_dist, function(guy)
-			    return not guy:HasTag("notarget")
-			end, {self.hunterparams})
+			self.hunter = FindEntity(self.inst, self.see_dist, nil, {self.hunterparams}, {'notarget'} )
 		else
 			self.hunter = FindEntity(self.inst, self.see_dist, self.hunterparams)
 		end
@@ -101,7 +99,7 @@ function RunAway:Visit()
                 end
             end
             
-            
+        self:Sleep(1/4)  
         end
     end
 end

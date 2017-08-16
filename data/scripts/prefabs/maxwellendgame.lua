@@ -313,13 +313,10 @@ local function fn()
 
 
     inst:AddComponent("talker")
-    inst.entity:AddLabel()
-    inst.Label:SetFontSize(35)
-    inst.Label:SetFont(TALKINGFONT)
-    inst.Label:SetPos(0,5,0)
-    --inst.Label:SetColour(133/255, 140/255, 167/255)
-
-    inst.Label:Enable(false)
+    inst.components.talker.fontsize = 40
+    inst.components.talker.font = TALKINGFONT
+    --inst.components.talker.colour = Vector3(133/255, 140/255, 167/255)
+    inst.components.talker.offset = Vector3(0,-700,0)
 
     inst:AddComponent("named")
     inst.components.named:SetName("Maxwell")

@@ -7,11 +7,24 @@ AddRoom("BGNoisyFungus", {
 					                distributepercent = .1,
 					                distributeprefabs=
 					                {
-					                    spiderhole= 0.1,
-					                    mushtree_tall = 1.5,
-										--mushroomtree_normal = 0.5,
-										--mushroomtree_short = 0.5,
-					                    slurtlehole = 0.001,
+
+										flower_cave = .5,
+										flower_cave_double = .4,
+										flower_cave_triple = .33,
+										
+	                    				blue_mushroom = .33,
+					                    green_mushroom = .33,
+					                    red_mushroom = .33,
+
+					                    mushtree_tall = 1,
+										mushtree_medium = 1,
+										mushtree_small = 1,
+
+										cave_fern = .1,
+										fireflies = .1,
+					                    slurtlehole = .1,
+					                    carrot = .1,
+					                    tentacle = .1,
 					                }
 					            }
 					})
@@ -29,13 +42,22 @@ AddRoom("BGFungusRoom", {
 					                distributepercent = .15,
 					                distributeprefabs=
 					                {
-										spiderhole=0.001,
-										fireflies=0.01,
-										flower_cave=0.01,
-										tentacle=0.001,
-					                    blue_mushroom = .01,
-					                    slurtlehole = 0.003,
-					                    mushtree_tall =0.02,	
+										fireflies = .1,
+										tentacle = .1,
+					                    slurtlehole = .33,		
+										cave_fern = .1,
+
+										flower_cave = .5,
+										flower_cave_double = .4,
+										flower_cave_triple = .33,
+										
+					                    -- blue_mushroom = .33,
+					                    -- green_mushroom = .33,
+					                    -- red_mushroom = .33,
+					                    
+					     --                mushtree_tall = .66,
+   							-- 			mushtree_medium = .66,
+										-- mushtree_small = .66,
 					                },
 					            }
 					})

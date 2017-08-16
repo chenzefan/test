@@ -1,3 +1,5 @@
+local BigPopupDialogScreen = require "screens/bigpopupdialog"
+
 local assets=
 {
 	Asset("ANIM", "anim/portal_adventure.zip"),
@@ -13,19 +15,22 @@ local function OnActivate(inst)
 	--do portal presentation 
 	--save and do restart
     ProfileStatsSet("portal_used", true)
-	SetHUDPause(true,"portal")
+	SetPause(true,"portal")
+	
 	local function startadventure()
 		local function onsaved()
 		    StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = SaveGameIndex:GetCurrentSaveSlot()}, true)
 		end
-		SetHUDPause(false)
+		TheFrontEnd:PopScreen()
+		SetPause(false)
 		GetPlayer().sg:GoToState("teleportato_teleport")
 		ProfileStatsSet("portal_accepted", true)
 		GetPlayer():DoTaskInTime(5, function() SaveGameIndex:StartAdventure(onsaved) end)
 	end
 
 	local function rejectadventure()
-		SetHUDPause(false) 
+		TheFrontEnd:PopScreen()
+		SetPause(false) 
 		inst.components.activatable.inactive = true
 		ProfileStatsSet("portal_rejected", true)
 	end

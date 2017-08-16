@@ -17,10 +17,11 @@ local function onsleep(inst, sleeper)
 			br.persists = false
 		end
 	end
-	
+	GetPlayer().HUD:Hide()
 	TheFrontEnd:Fade(false,1)
 	inst:DoTaskInTime(1.2, function() 
 		TheFrontEnd:Fade(true,1) 
+		GetPlayer().HUD:Show()
 		
 		
 		sleeper.sg:GoToState("wakeup")

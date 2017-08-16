@@ -8,7 +8,6 @@ BufferedAction = Class(function(self, doer, target, action, invobject, pos, reci
     self.pos = pos
     self.onsuccess = {}
     self.onfail = {}
-    self.interrupted = true
     self.recipe = recipe
     self.options = {}
     self.distance = distance or action.distance 
@@ -106,8 +105,4 @@ function BufferedAction:Fail()
     
     self.onsuccess = {}
     self.onfail = {}
-end
-
-function BufferedAction:Interrupt()
-    self.interrupted = true
 end

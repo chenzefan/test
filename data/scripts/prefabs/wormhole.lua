@@ -23,9 +23,11 @@ local function OnActivate(inst, doer)
 			DeleteCloseEntsWithTag(inst.components.teleporter.targetTeleporter, "WORM_DANGER", 15)
 		end
 
+		GetPlayer().HUD:Hide()
 		TheFrontEnd:SetFadeLevel(1)
 		doer:DoTaskInTime(4, function() 
 			TheFrontEnd:Fade(true,2)
+			GetPlayer().HUD:Show()
 			doer.sg:GoToState("wakeup")
 			if doer.components.sanity then
 				doer.components.sanity:DoDelta(-TUNING.SANITY_MED)

@@ -20,17 +20,14 @@ local function fn(Sim)
     anim:SetBuild("maxwell_build")
     anim:PlayAnimation("appear")
 
-    inst.entity:AddLabel()
-    
-    inst.Label:SetFontSize(28)
-    inst.Label:SetFont(TALKINGFONT)
-    inst.Label:SetColour(133/255, 140/255, 167/255)
-
-    inst.Label:SetPos(0,5,0)
-    inst.Label:SetColour(133/255, 140/255, 167/255)
-    inst.Label:Enable(false)
     
     inst:AddComponent("talker")
+    inst.components.talker.fontsize = 28
+    inst.components.talker.font = TALKINGFONT
+    inst.components.talker.colour = Vector3(133/255, 140/255, 167/255)
+    inst.components.talker.offset = Vector3(0,-600,0)
+
+    
     inst:AddComponent("inspectable")
 
     --inst:ListenForEvent( "ontalk", function(inst, data) inst.AnimState:PlayAnimation("dialog_pre") inst.AnimState:PushAnimation("dial_loop", true) end)

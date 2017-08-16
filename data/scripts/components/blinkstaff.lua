@@ -1,8 +1,25 @@
 local BlinkStaff = Class(function(self, inst)
     self.inst = inst
     self.onblinkfn = nil
+    self.blinkdistance_controller = 13 
 end)
 
+function BlinkStaff:GetBlinkPoint()
+	--For use with controller.
+	local owner = self.inst.components.inventoryitem.owner
+	if not owner then return end
+	local pt = nil
+	local rotation = owner.Transform:GetRotation()*DEGREES
+	local pos = owner:GetPosition()
+
+	for r = self.blinkdistance_controller, 1, -1 do
+        local numtries = 2*PI*r
+		pt = FindWalkableOffset(pos, rotation, r, numtries)
+		if pt then
+			return pt + pos
+		end
+	end
+end
 
 function BlinkStaff:CanBlinkToPoint(pt)
     local ground = GetWorld()
@@ -15,7 +32,13 @@ end
 
 function BlinkStaff:CollectPointActions(doer, pos, actions, right)
     if right then
+    	--print(GetTick(), "Testing Action")
+
+    	if self.target_position then
+    		pos = self.target_position
+    	end
 		if self:CanBlinkToPoint(pos) then
+			--print(GetTick(), "Inserting Action")
 			table.insert(actions, ACTIONS.BLINK)
 		end
 	end
@@ -25,7 +48,6 @@ function BlinkStaff:SpawnEffect(inst)
 	local pt = inst:GetPosition()
 	local fx = SpawnPrefab("small_puff")
 	fx.Transform:SetPosition(pt.x, pt.y, pt.z)
-
 end
 
 function BlinkStaff:Blink(pt, caster)
@@ -53,7 +75,6 @@ function BlinkStaff:Blink(pt, caster)
 	if self.onblinkfn then
 		self.onblinkfn(self.inst, pt, caster)
 	end
-
 	return true
 end
 

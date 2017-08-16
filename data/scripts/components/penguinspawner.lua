@@ -1,30 +1,14 @@
 local FLOCK_SIZE = 9
-local SEASON_LIMIT = 60
-local SPAWN_INTERVAL = 30
 local MIN_SPAWN_DIST = 40
 local LAND_CHECK_RADIUS = 6
 local WATER_CHECK_RADIUS = 2
-local MAX_COLONIES = 10
 
 local LOCAL_CHEATS_ENABLED = false
 
---[[
-if CHEATS_ENABLED and TheSim:GetUsersName() == "David Forsey" then
-    DPRINT_USERNAME = "David Forsey"
-    LOCAL_CHEATS_ENABLED = true
-    FLOCK_SIZE = 9
-    SEASON_LIMIT = 600
-    SPAWN_INTERVAL = 0
-    MIN_SPAWN_DIST = 0
-end
---]]
-
-
 local PenguinSpawner = Class(function(self, inst)
-	self.inst = inst
+    self.inst = inst
     self.colonies = {}       -- existing colonies
     self.maxColonySize = 12
-    self.maxPenguins = 50  -- max simultaneous penguins
     self.totalBirds = 0    -- current number of birds alive
     self.flockSize = FLOCK_SIZE
     self.seasonLimit = 0  -- total spawned this season
@@ -32,11 +16,17 @@ local PenguinSpawner = Class(function(self, inst)
     self.checktime = 5
     self.lastSpawnTime = 0
     self.lastSpawnPos = Vector3(0,0,0)
+
+    self.maxPenguins = 50  -- max simultaneous penguins
+    self.spawnInterval = 30
+    self.maxColonies = 10
+    self.maxSpawnsPerSeason = 35
+    self.active = true
     -- self.badground = {}
     -- self.badpath = {}
     -- self.badclose = {}
 
-	self.inst:DoPeriodicTask(self.checktime, function() self:TryToSpawnFlock() end)
+    self.inst:DoPeriodicTask(self.checktime, function() self:TryToSpawnFlock() end)
 
 end)
 
@@ -44,31 +34,31 @@ local MAX_DIST_FROM_PLAYER = 12
 local MAX_DIST_FROM_WATER = 6
 
 function FindLandNextToWater( playerpos, waterpos )
-	--print("FindWalkableOffset:")
+    --print("FindWalkableOffset:")
     local ignore_walls = true 
     local radius = WATER_CHECK_RADIUS
 
-	local test = function(offset)
-		local run_point = waterpos+offset
-		local ground = GetWorld()
-		local tile = ground.Map:GetTileAtPoint(run_point.x, run_point.y, run_point.z)
+    local test = function(offset)
+        local run_point = waterpos+offset
+        local ground = GetWorld()
+        local tile = ground.Map:GetTileAtPoint(run_point.x, run_point.y, run_point.z)
 
         -- TODO: Also test for suitability - trees or too many objects
-		if tile == GROUND.IMPASSABLE or tile >= GROUND.UNDERGROUND then
-			return false
-		end
-		if not ground.Pathfinder:IsClear(playerpos.x, playerpos.y, playerpos.z,
+        if tile == GROUND.IMPASSABLE or tile >= GROUND.UNDERGROUND then
+            return false
+        end
+        if not ground.Pathfinder:IsClear(playerpos.x, playerpos.y, playerpos.z,
                                          run_point.x, run_point.y, run_point.z,
                                          {ignorewalls = ignore_walls, ignorecreep = true}) then
-			return false
+            return false
         end
         -- dprint("found valid ground pos",run_point)
-		return true
-	end
+        return true
+    end
         -- FindValidPositionByFan(start_angle, radius, attempts, test_fn)
-		-- returns offset, check_angle, deflected
+        -- returns offset, check_angle, deflected
         local cang = (TheCamera:GetHeading()%360)*DEGREES
-	    local loc,landAngle,deflected = FindValidPositionByFan(cang, radius, 4, test)
+        local loc,landAngle,deflected = FindValidPositionByFan(cang, radius, 4, test)
         if loc then
             -- dprint("Fan angle=",landAngle)
             return waterpos+loc,landAngle,deflected
@@ -77,19 +67,19 @@ end
 
 
 function PenguinSpawner:FindSpawnLocation()
-	local player = GetPlayer()
-	local playerPos = Vector3(player.Transform:GetWorldPosition())
+    local player = GetPlayer()
+    local playerPos = Vector3(player.Transform:GetWorldPosition())
     local radius = LAND_CHECK_RADIUS
     local loc,landPos,landAngle,deflected 
     local tmpAng
 
-	local test = function(offset)
-		local run_point = playerPos+offset
-		local ground = GetWorld()
-		local tile = ground.Map:GetTileAtPoint(run_point.x, run_point.y, run_point.z)
+    local test = function(offset)
+        local run_point = playerPos+offset
+        local ground = GetWorld()
+        local tile = ground.Map:GetTileAtPoint(run_point.x, run_point.y, run_point.z)
         -- Above ground, this should be water
-		if tile == GROUND.IMPASSABLE or tile >= GROUND.UNDERGROUND then
-	        local loc,ang,def= FindLandNextToWater(playerPos,run_point)
+        if tile == GROUND.IMPASSABLE or tile >= GROUND.UNDERGROUND then
+            local loc,ang,def= FindLandNextToWater(playerPos,run_point)
             if loc then
                 landPos = loc
                 tmpAng = ang
@@ -97,13 +87,13 @@ function PenguinSpawner:FindSpawnLocation()
                 return true
             end
         else
-			return false
-		end
-	end
+            return false
+        end
+    end
 
     local cang = (TheCamera:GetHeading()%360)*DEGREES
     --dprint("cang:",cang)
-	local loc,landAngle,deflected = FindValidPositionByFan(cang, radius, 4, test)
+    local loc,landAngle,deflected = FindValidPositionByFan(cang, radius, 4, test)
     if loc then
         return landPos,tmpAng,deflected
     else
@@ -133,8 +123,8 @@ function PenguinSpawner:LostPenguin(pengu)
         if members[pengu] then
             members[pengu] = nil
             self.totalBirds = self.totalBirds-1
-		    self.inst:RemoveEventCallback("death", pengu.deathfn, pengu)
-		    self.inst:RemoveEventCallback("onremove", pengu.deathfn, pengu)
+            self.inst:RemoveEventCallback("death", pengu.deathfn, pengu)
+            self.inst:RemoveEventCallback("onremove", pengu.deathfn, pengu)
             return
         end
     end
@@ -168,7 +158,7 @@ local function SpawnPenguin(inst,spawner,colonyNum,pos,angle)
     end
     --]]
 
-    if spawner.totalBirds >= spawner.maxPenguins or spawner.seasonLimit > SEASON_LIMIT then
+    if spawner.totalBirds >= spawner.maxPenguins or spawner.seasonLimit > spawner.maxSpawnsPerSeason then
         return
     end
 
@@ -184,7 +174,7 @@ local function SpawnPenguin(inst,spawner,colonyNum,pos,angle)
 end
 
 function PenguinSpawner:SpawnFlock(colonyNum,loc,check_angle)
-	local ground = GetWorld()
+    local ground = GetWorld()
     local flock = GetRandomWithVariance(self.flockSize,3)
     local spawned = 0
     local i = 0
@@ -280,12 +270,12 @@ function PenguinSpawner:EstablishColony(loc)
         -- Otherwise, find another good spot far enough away from the other colonies
         while not newFlock.rookery and radius>30 do
             -- Starting angle set towards player (to reduce peninsula effects)
-			local angle
+            local angle
             -- angle = GetRandomWithVariance(GetPlayer():GetAngleToPoint(loc)-180, 10)
-			angle = GetRandomWithVariance(0, PI) -- otherwise will 
+            angle = GetRandomWithVariance(0, PI) -- otherwise will 
             --newFlock.rookery = FindWalkableOffset(loc, angle, radius, 16, true)
             --                  FindValidPositionByFan(start_angle, radius, attempts, test_fn)
-	        newFlock.rookery =  FindValidPositionByFan(angle, radius, 32, testfn)
+            newFlock.rookery =  FindValidPositionByFan(angle, radius, 32, testfn)
             radius = radius - 10
         end
         if newFlock.rookery then
@@ -303,58 +293,60 @@ function PenguinSpawner:EstablishColony(loc)
 end
 
 function PenguinSpawner:TryToSpawnFlock()
+    if self.active then
 
-    -- dprint("---------PS WINTERTEST:", SaveGameIndex:GetCurrentMode(), GetWorld().meta.level_id )
-    -- dprint("---------:", GetSeasonManager():GetSeason(), GetSeasonManager():GetDaysLeftInSeason())
-    local mode = SaveGameIndex:GetCurrentMode() 
-    local level = GetWorld().meta and GetWorld().meta.level_id 
+        -- dprint("---------PS WINTERTEST:", SaveGameIndex:GetCurrentMode(), GetWorld().meta.level_id )
+        -- dprint("---------:", GetSeasonManager():GetSeason(), GetSeasonManager():GetDaysLeftInSeason())
+        local mode = SaveGameIndex:GetCurrentMode() 
+        local level = GetWorld().meta and GetWorld().meta.level_id 
 
-    if (not (GetSeasonManager():IsWinter() and GetSeasonManager():GetDaysLeftInSeason() > 3)) or
-       ( mode == "adventure" and level == "ENDING" ) or
-       ( mode == "adventure" and level == "RAINY" )
-       then
-        return
-    end
-
-    -- dprint("Totalbirds=",self.totalBirds,self.maxPenguins)
-    if #self.colonies > MAX_COLONIES then
-        -- dprint("Maxed out colonies")
-        return
-    end
-
-    if self.totalBirds >= self.maxPenguins or self.seasonLimit > SEASON_LIMIT then
-        -- dprint("TryToSpawn maxed out")
-        return
-    end
-
-	local playerPos = Vector3(GetPlayer().Transform:GetWorldPosition())
-
-    if (self.lastSpawnLoc and distsq(self.lastSpawnLoc,playerPos) < MIN_SPAWN_DIST*MIN_SPAWN_DIST) then
-        -- dprint("player position too close")
-        return
-    end
-    if (self.lastSpawnTime and (GetTime() - self.lastSpawnTime) < SPAWN_INTERVAL) then
-        -- dprint("too soon to spawn")
-        return
-    end
-
-    -- Go find a spot on land close to water
-	-- returns offset, check_angle, deflected
-	local loc,check_angle,deflected = self:FindSpawnLocation()
-    if loc then	
-
-        dprint("trying to spawn: Angle is",check_angle/DEGREES)
-        local colony = self:EstablishColony(loc)
-
-        if not colony then
-            dprint("can't establish colony")
+        if (not (GetSeasonManager():IsWinter() and GetSeasonManager():GetDaysLeftInSeason() > 3)) or
+           ( mode == "adventure" and level == "ENDING" ) or
+           ( mode == "adventure" and level == "RAINY" )
+           then
             return
         end
 
-        self.lastSpawnTime = GetTime()
-        self.lastSpawnLoc = loc
+        -- dprint("Totalbirds=",self.totalBirds,self.maxPenguins)
+        if #self.colonies > self.maxColonies then
+            -- dprint("Maxed out colonies")
+            return
+        end
 
-        self:SpawnFlock(colony,loc,check_angle)
+        if self.totalBirds >= self.maxPenguins or self.seasonLimit > self.maxSpawnsPerSeason then
+            -- dprint("TryToSpawn maxed out")
+            return
+        end
+
+        local playerPos = Vector3(GetPlayer().Transform:GetWorldPosition())
+
+        if (self.lastSpawnLoc and distsq(self.lastSpawnLoc,playerPos) < MIN_SPAWN_DIST*MIN_SPAWN_DIST) then
+            -- dprint("player position too close")
+            return
+        end
+        if (self.lastSpawnTime and (GetTime() - self.lastSpawnTime) < self.spawnInterval) then
+            -- dprint("too soon to spawn")
+            return
+        end
+
+        -- Go find a spot on land close to water
+        -- returns offset, check_angle, deflected
+        local loc,check_angle,deflected = self:FindSpawnLocation()
+        if loc then 
+
+            dprint("trying to spawn: Angle is",check_angle/DEGREES)
+            local colony = self:EstablishColony(loc)
+
+            if not colony then
+                dprint("can't establish colony")
+                return
+            end
+
+            self.lastSpawnTime = GetTime()
+            self.lastSpawnLoc = loc
+
+            self:SpawnFlock(colony,loc,check_angle)
+        end
     end
 end
 
@@ -387,7 +379,7 @@ function PenguinSpawner:OnLoad(data)
 end
 
 function PenguinSpawner:OnSave()
-	local data = {}
+    local data = {}
     if #self.colonies >= 1 then
         data.colonies = {}
         for i,v in ipairs(self.colonies) do
@@ -396,10 +388,58 @@ function PenguinSpawner:OnSave()
     else
         --dprint("__NO COLONIES")
     end
-	return data
+    data.maxPenguins = self.maxPenguins
+    data.spawnInterval = self.spawnInterval
+    data.maxColonies = self.maxColonies
+    data.maxSpawnsPerSeason = self.maxSpawnsPerSeason
+    data.active = self.active
+    return data
+end
+
+function PenguinSpawner:OnLoad(data)
+    if data then
+        self.active = data.active or true
+        if not self.active then
+            self.inst:StopUpdatingComponent(self)
+        end
+        self.maxPenguins = data.maxPenguins or 50 
+        self.spawnInterval = data.spawnInterval or 30
+        self.maxColonies = data.maxColonies or 10
+        self.maxSpawnsPerSeason = data.maxSpawnsPerSeason or 35
+    end
 end
 
 function PenguinSpawner:LongUpdate(dt)
+end
+
+function PenguinSpawner:SpawnModeNever()
+    self.maxPenguins = 0
+    self.spawnInterval = -1
+    self.maxColonies = 0
+    self.maxSpawnsPerSeason = 0
+    self.active = false
+    self.inst:StopUpdatingComponent(self)
+end
+
+function PenguinSpawner:SpawnModeHeavy()
+    self.maxPenguins = 70 
+    self.spawnInterval = 10
+    self.maxColonies = 15
+    self.maxSpawnsPerSeason = 70
+end
+
+function PenguinSpawner:SpawnModeMed()
+    self.maxPenguins = 60 
+    self.spawnInterval = 20
+    self.maxColonies = 12
+    self.maxSpawnsPerSeason = 50
+end
+
+function PenguinSpawner:SpawnModeLight()
+    self.maxPenguins = 25
+    self.spawnInterval = 60
+    self.maxColonies = 5
+    self.maxSpawnsPerSeason = 20
 end
 
 return PenguinSpawner

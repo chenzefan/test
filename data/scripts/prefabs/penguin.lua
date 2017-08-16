@@ -13,11 +13,13 @@ local prefabs =
     "bird_egg",
 }
 
-local loot = 
+
+SetSharedLootTable( 'penguin',
 {
-    
-}
- 
+    {'feather_crow',  0.2},
+    {'smallmeat',     0.1},
+    {'drumstick',     0.1},
+})
 
 local SLEEP_DIST_FROMHOME = 3
 local SLEEP_DIST_FROMTHREAT = 8
@@ -273,10 +275,7 @@ local function fn()
     inst.components.health:SetMaxHealth(TUNING.PENGUIN_HEALTH)
 
     inst:AddComponent("lootdropper")
-    inst.components.lootdropper:SetLoot(loot)
-    inst.components.lootdropper:AddChanceLoot("feather_crow", 0.2)
-    inst.components.lootdropper:AddChanceLoot("smallmeat", 0.1)
-    inst.components.lootdropper:AddChanceLoot("drumstick", 0.1)
+    inst.components.lootdropper:SetChanceLootTable('penguin')
      
     inst:AddComponent("homeseeker")
 
@@ -323,7 +322,6 @@ local function fn()
 
     inst:AddComponent("inventory")
 	inst.components.inventory.maxslots = 1
-	inst.components.inventory.numequipslots = 0
 	inst.components.inventory.acceptsstacks = false
 
     inst:AddComponent("hunger")

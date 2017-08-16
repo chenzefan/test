@@ -10,7 +10,14 @@ local events=
     CommonHandlers.OnStep(),
     CommonHandlers.OnLocomote(false,true),
     CommonHandlers.OnFreeze(),
-    EventHandler("attacked", function(inst) if not inst.components.health:IsDead() and not inst.sg:HasStateTag("attack") and not inst.sg:HasStateTag("waking") and not inst.sg:HasStateTag("sleeping") and not inst.sg:HasStateTag("busy") then inst.sg:GoToState("hit") end end),
+    EventHandler("attacked", function(inst) if not inst.components.health:IsDead() and not
+     inst.sg:HasStateTag("attack") and not
+      inst.sg:HasStateTag("waking") and not
+       inst.sg:HasStateTag("sleeping") and 
+        (not inst.sg:HasStateTag("busy") or inst.sg:HasStateTag("frozen")) then
+            inst.sg:GoToState("hit") 
+      end
+    end),
     EventHandler("death", function(inst) inst.sg:GoToState("death") end),
 
     EventHandler("doattack", function(inst, data) if inst.components.health:GetPercent() > 0 and (inst.sg:HasStateTag("hit") or not inst.sg:HasStateTag("busy")) then inst.sg:GoToState("attack", data.target) end end),

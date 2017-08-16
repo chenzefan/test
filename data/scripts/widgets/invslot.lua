@@ -17,12 +17,11 @@ end
 function InvSlot:OnControl(control, down)
     if InvSlot._base.OnControl(self, control, down) then return true end
     if down then
-        
         if control == CONTROL_ACCEPT then
             --generic click, with possible modifiers
             if TheInput:IsControlPressed(CONTROL_FORCE_INSPECT) then
                 self:Inspect()
-            else
+            else                
                 if TheInput:IsControlPressed(CONTROL_FORCE_TRADE) then
                     self:TradeItem(TheInput:IsControlPressed(CONTROL_FORCE_STACK))
                 else
@@ -155,13 +154,13 @@ function InvSlot:TradeItem(stack_mod)
         
 
         --if a destination container/inv is found...
-        if dest_inst then
+        if dest_inst then                
             local dest = dest_inst.components.inventory or dest_inst.components.container
             if dest then
                 local item = nil
                 
                 --take either the item or half of its stack
-                if container_item.components.stackable and stack_mod then             
+                if container_item.components.stackable and stack_mod then
                     item = container_item.components.stackable:Get(math.floor(container_item.components.stackable:StackSize() / 2))
                     if item.components.stackable.stacksize < 1 then
                         item = nil
@@ -172,6 +171,7 @@ function InvSlot:TradeItem(stack_mod)
                 end
 
                 --and give it to the dest object
+                item.prevcontainer = nil
                 if not dest:GiveItem(item) then
                     container:GiveItem(item, slot_number)
                 end
@@ -180,13 +180,5 @@ function InvSlot:TradeItem(stack_mod)
         end
     end
 end
-
-
-function InvSlot:Inspect()
-    if self.tile and self.tile.item then 
-        GetPlayer().components.locomotor:PushAction(BufferedAction(GetPlayer(), self.tile.item, ACTIONS.LOOKAT), true)
-    end
-end
-
 
 return InvSlot

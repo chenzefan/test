@@ -30,7 +30,7 @@ local Badge = Class(Widget, function(self, anim, owner)
     
     self.underNumber = self:AddChild(Widget("undernumber"))
     
-    self.num = self:AddChild(Text(NUMBERFONT, 35))
+    self.num = self:AddChild(Text(BODYTEXTFONT, 33))
     self.num:SetHAlign(ANCHOR_MIDDLE)
     self.num:SetPosition(5, 0, 0)
     self.num:Hide()

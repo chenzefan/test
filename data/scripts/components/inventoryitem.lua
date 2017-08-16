@@ -50,6 +50,28 @@ function InventoryItem:GetSlotNum()
     end
 end
 
+function InventoryItem:GetContainer()
+    if self.owner then
+        return self.owner.components.container or self.owner.components.inventory
+    end
+end
+
+function InventoryItem:HibernateLivingItem()
+    if self.inst.components.brain then
+        BrainManager:Hibernate(self.inst)
+    end
+
+    if self.inst.SoundEmitter then
+        self.inst.SoundEmitter:KillAllSounds()
+    end
+end
+
+function InventoryItem:WakeLivingItem()
+    if self.inst.components.brain then
+        BrainManager:Wake(self.inst)
+    end
+end
+
 function InventoryItem:OnPutInInventory(owner)
 --    print(string.format("InventoryItem:OnPutInInventory[%s]", self.inst.prefab))
 --    print("   transform=", Point(self.inst.Transform:GetWorldPosition()))
@@ -59,7 +81,7 @@ function InventoryItem:OnPutInInventory(owner)
     self.inst.Transform:SetPosition(0,0,0) -- transform is now local?
 	self.inst.Transform:UpdateTransform()
 --    print("   updated transform=", Point(self.inst.Transform:GetWorldPosition()))
-    
+    self:HibernateLivingItem()
     if self.onputininventoryfn then
         self.onputininventoryfn(self.inst, owner)
     end
@@ -72,11 +94,12 @@ function InventoryItem:OnRemoved()
     end
     self:ClearOwner()
 	self.inst:ReturnToScene()
+    self:WakeLivingItem()
 end
 
 function InventoryItem:OnDropped(randomdir)
     --print("InventoryItem:OnDropped", self.inst, randomdir)
-
+    
 	if not self.inst:IsValid() then
 		return
 	end
@@ -111,7 +134,7 @@ function InventoryItem:OnDropped(randomdir)
             local speed = 2 + math.random()
             local angle = math.random()*2*PI
             vel.x = speed*math.cos(angle)
-			vel.y = speed*5
+			vel.y = speed*3
             vel.z = speed*math.sin(angle)
         end
         if self.nobounce then
@@ -203,7 +226,9 @@ end
 
 function InventoryItem:CollectUseActions(doer, target, actions)
     if target.components.container and target.components.container.canbeopened then
-        table.insert(actions, ACTIONS.STORE)
+        if self:GetGrandOwner() == doer then
+            table.insert(actions, ACTIONS.STORE)
+        end
     end
 end
 

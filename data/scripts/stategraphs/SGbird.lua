@@ -80,7 +80,7 @@ local states=
         onenter = function(inst)
             inst.AnimState:PlayAnimation("frozen")
             inst.Physics:Stop()
-            inst.components.highlight:SetAddColour(Vector3(82/255, 115/255, 124/255))
+            --inst.components.highlight:SetAddColour(Vector3(82/255, 115/255, 124/255))
         end,
 		
     },
@@ -143,8 +143,7 @@ local states=
         name = "glide",
         tags = {"idle", "flying"},
         onenter= function(inst)
-            inst.AnimState:PlayAnimation("glide", true)
-            inst.inlimbo = true
+            inst.AnimState:PlayAnimation("glide")
             inst.Physics:SetMotorVel(0,-20+math.random()*10,0)
             inst.SoundEmitter:PlaySound(inst.sounds.flyin, "flyin")
         end,
@@ -157,7 +156,6 @@ local states=
             
             if pt.y <= .1 then
                 pt.y = 0
-                inst.inlimbo = false
                 inst.Physics:Stop()
                 inst.Physics:Teleport(pt.x,pt.y,pt.z)
                 inst.AnimState:PlayAnimation("land")
@@ -168,8 +166,9 @@ local states=
 		
         events=
         {
-            EventHandler("animloop", function(inst) 
+            EventHandler("animover", function(inst) 
 				inst.SoundEmitter:PlaySound(inst.sounds.flyin, "flyin")
+				inst.sg:GoToState("glide")
             end ),
         },     
     },    
@@ -192,20 +191,17 @@ local states=
         
         onenter = function(inst)
             inst.Physics:Stop()
-            inst.AnimState:PlayAnimation("peck", true)
-            inst.sg:SetTimeout(1+math.random()*1)
-        end,
-        
-        ontimeout= function(inst)
-            inst:PerformBufferedAction()
-            inst.sg.statemem.quit = true
+            inst.AnimState:PlayAnimation("peck")
         end,
         
         events=
         {
-            EventHandler("animloop", function(inst) 
-                if inst.sg.statemem.quit then
-                    inst.sg:GoToState("idle")
+            EventHandler("animover", function(inst) 
+                if math.random() < .3 then
+					inst:PerformBufferedAction()
+					inst.sg:GoToState("idle")
+                else
+					inst.sg:GoToState("peck")
                 end
             end ),
             
@@ -244,7 +240,6 @@ local states=
                 local x = 8+ math.random()*8
                 inst.Physics:SetMotorVel(x,15+math.random()*5,-2 + math.random()*4)
             end
-            inst.inlimbo = true
         end,
         
         timeline = 
@@ -347,7 +342,8 @@ local states=
             end
         end,
         
-        ontimeout = function(inst) inst.sg:GoToState("flyaway") end,
+            
+        ontimeout = function(inst) inst:TrackInSpawner() inst.sg:GoToState("flyaway") end,
     },
     
 }

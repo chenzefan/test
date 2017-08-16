@@ -2,11 +2,26 @@ require "mods"
 require "playerprofile"
 require "playerdeaths"
 require "saveindex"
-require "screens/mainscreen"
-require "screens/deathscreen"
-require "screens/popupdialog"
-require "screens/bigpopupdialog"
-require "screens/endgamedialog"
+require "map/extents"
+
+
+local LOAD_UPFRONT_MODE = PLATFORM == "PS4"
+
+local MainScreen = nil
+if PLATFORM == "PS4" then
+	MainScreen = require "screens/mainscreen_ps4"
+else
+	MainScreen = require "screens/mainscreen"
+end	
+
+
+local DeathScreen = require "screens/deathscreen"
+local PopupDialogScreen = require "screens/popupdialog"
+local WorldGenScreen = require "screens/worldgenscreen"
+local CharacterSelectScreen = require "screens/characterselectscreen"
+local PauseScreen = require "screens/pausescreen"
+
+local PlayerHud = require "screens/playerhud"
 
 Print (VERBOSITY.DEBUG, "[Loading frontend assets]")
 
@@ -17,19 +32,14 @@ LOADED_CHARACTER = nil
 TheSim:SetRenderPassDefaultEffect( RENDERPASS.BLOOM, "shaders/anim_bloom.ksh" )
 TheSim:SetErosionTexture( "images/erosion.tex" )
 
-BACKEND_PREFABS = {"hud", "forest", "cave", "ceiling", "maxwell", "fire", "character_fire", "shatter"}
+BACKEND_PREFABS = {"hud", "forest", "cave", "maxwell", "fire", "character_fire", "shatter"}
 FRONTEND_PREFABS = {"frontend"}
 RECIPE_PREFABS = {}
 
 --this is suuuuuper placeholdery. We need to think about how to handle all of the different types of updates for this
 local function DoAgeWorld()
 	for k,v in pairs(Ents) do
-
-		--spoil all of the spoilables
-		if v.components.perishable then
-			v.components.perishable:Perish()
-		end
-		
+ 
 		--send things to their homes
 		if v.components.homeseeker and v.components.homeseeker.home then
 			
@@ -42,13 +52,13 @@ local function DoAgeWorld()
 			end
 		end
 		
-		if v.components.fueled then
-			v.components.fueled:MakeEmpty()
-		end
 	end
 end
 
 local function LoadAssets(asset_set)
+	
+	if LOAD_UPFRONT_MODE then return end
+	
 	assert(asset_set)
 	Settings.current_asset_set = asset_set
 
@@ -67,27 +77,50 @@ local function LoadAssets(asset_set)
 	if Settings.current_asset_set == "FRONTEND" then
 		if Settings.last_asset_set == "FRONTEND" then
 			print( "\tFE assets already loaded" )			
+			for i,file in ipairs(PREFABFILES) do -- required from prefablist.lua
+				LoadPrefabFile("prefabs/"..file)
+			end
+			ModManager:RegisterPrefabs()
 		else
 			print("\tUnload BE")
-			TheSim:ForceUnloadPrefabs(RECIPE_PREFABS)
+			TheSim:UnloadPrefabs(RECIPE_PREFABS)
 			TheSim:UnloadPrefabs(BACKEND_PREFABS)
 			print("\tUnload BE done")
+			TheSim:UnregisterAllPrefabs()
 
+			RegisterAllDLC()
+			for i,file in ipairs(PREFABFILES) do -- required from prefablist.lua
+				LoadPrefabFile("prefabs/"..file)
+			end
+			ModManager:RegisterPrefabs()
 			print("\tLoad FE")
-			TheSim:ForceLoadPrefabs(FRONTEND_PREFABS)
-			print("\tLoad FE: done")
+			TheSim:LoadPrefabs(FRONTEND_PREFABS)
+			print("\tLoad FE: done")		
 		end
 	else
 		if Settings.last_asset_set == "BACKEND" then
 			print( "\tBE assets already loaded" )			
+			RegisterAllDLC()
+			for i,file in ipairs(PREFABFILES) do -- required from prefablist.lua
+				LoadPrefabFile("prefabs/"..file)
+			end
+			ModManager:RegisterPrefabs()
 		else
 			print("\tUnload FE")
-			TheSim:ForceUnloadPrefabs(FRONTEND_PREFABS)
+			TheSim:UnloadPrefabs(FRONTEND_PREFABS)
 			print("\tUnload FE done")
-	
+
+			TheSim:UnregisterAllPrefabs()
+			RegisterAllDLC()
+			for i,file in ipairs(PREFABFILES) do -- required from prefablist.lua
+				LoadPrefabFile("prefabs/"..file)
+			end
+			InitAllDLC()
+			ModManager:RegisterPrefabs()
+
 			print ("\tLOAD BE")
 			TheSim:LoadPrefabs(BACKEND_PREFABS)
-			TheSim:ForceLoadPrefabs(RECIPE_PREFABS)
+			TheSim:LoadPrefabs(RECIPE_PREFABS)
 			print ("\tLOAD BE: done")
 		end
 	end
@@ -112,7 +145,7 @@ function CalculatePlayerRewards(wilson)
 	local start_xp = wilson.profile:GetXP()
 	local reward_xp = Progression.GetXPForDays(days_survived)
 	local new_xp = math.min(start_xp + reward_xp, Progression.GetXPCap())
-        
+    local capped = Progression.IsCappedXP(start_xp)
 	local all_rewards = Progression.GetRewardsForTotalXP(new_xp)
 	for k,v in pairs(all_rewards) do
 		wilson.profile:UnlockCharacter(v)
@@ -120,19 +153,19 @@ function CalculatePlayerRewards(wilson)
 	wilson.profile:SetXP(new_xp)
 
 	print("Progression: ",days_survived, start_xp, reward_xp, new_xp)
-	return days_survived, start_xp, reward_xp, new_xp
+	return days_survived, start_xp, reward_xp, new_xp, capped
 end
 
 
 local function HandleDeathCleanup(wilson, data)
     local game_time = GetClock():ToMetricsString()
 
-    if SaveGameIndex:GetCurrentMode() == "survival" then
+    if SaveGameIndex:GetCurrentMode() == "survival" or SaveGameIndex:GetCurrentMode() == "cave" then
 	    local playtime = GetTimePlaying()
 	    playtime = math.floor(playtime*1000)
 	    SetTimingStat("time", "scenario", playtime)
 	    SendTrackingStats()
-	    local days_survived, start_xp, reward_xp, new_xp = CalculatePlayerRewards(wilson)
+	    local days_survived, start_xp, reward_xp, new_xp, capped = CalculatePlayerRewards(wilson)
 	    
 	    ProfileStatsSet("xp_gain", reward_xp)
 	    ProfileStatsSet("xp_total", new_xp)
@@ -143,7 +176,7 @@ local function HandleDeathCleanup(wilson, data)
 	    wilson.profile:Save(function()
 		    SaveGameIndex:EraseCurrent(function() 
 				    scheduler:ExecuteInTime(3, function() 
-						TheFrontEnd:PushScreen(DeathScreen(days_survived, start_xp))
+						TheFrontEnd:PushScreen(DeathScreen(days_survived, start_xp, nil, capped))
 					end)
 		    	end)
 		    end)
@@ -156,62 +189,88 @@ local function HandleDeathCleanup(wilson, data)
 					end)
 				end)
 			end)	
-	elseif SaveGameIndex:GetCurrentMode() == "cave" then
-		scheduler:ExecuteInTime(2, function()
-				TheFrontEnd:Fade(false, 2, function()
-						for k,v in pairs(Ents) do
-							if v.prefab == "cave_exit" then
-								GetPlayer().Transform:SetPosition(v.Transform:GetWorldPosition())
-								break
-							end
-						end
-						
-						DoAgeWorld()
-						
-						SaveGameIndex:SaveCurrent(function()
-							SaveGameIndex:OnFailCave(function()
-								StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = SaveGameIndex:GetCurrentSaveSlot(), playeranim="failcave"})
-							end)
-						end)
-					end)
-				end)
-
-	end
+		end
 end
 
 local function OnPlayerDeath(wilson, data)
+	print ("OnPlayerDeath")
 
 	local cause = data.cause or "unknown"
 	local will_resurrect = wilson.components.resurrectable and wilson.components.resurrectable:CanResurrect() 
 
-	
-    TheMixer:PushMix("death")
+	print ("OnPlayerDeath() ", cause, tostring(will_resurrect))
     wilson.HUD:Hide()
+	
+	if cause ~= "file_load" then
+	    TheMixer:PushMix("death")
 
-	Morgue:OnDeath({killed_by=cause, 
-					days_survived=GetClock().numcycles or 0,
-					character=GetPlayer().prefab, 
-					location= (wilson.components.area_aware and wilson.components.area_aware.current_area.story) or "unknown", 
-					world=GetWorld().meta.level_id or "unknown"})
+		Morgue:OnDeath({killed_by=cause, 
+						days_survived=GetClock().numcycles or 0,
+						character=GetPlayer().prefab, 
+						location= (wilson.components.area_aware and wilson.components.area_aware.current_area.story) or "unknown", 
+						world= (GetWorld().meta and GetWorld().meta.level_id) or "unknown"})
 
-    local game_time = GetClock():ToMetricsString()
-    
-	RecordDeathStats(cause, GetClock():GetPhase(), wilson.components.sanity.current, wilson.components.hunger.current, will_resurrect)
+	    local game_time = GetClock():ToMetricsString()
+	    
+		RecordDeathStats(cause, GetClock():GetPhase(), wilson.components.sanity.current, wilson.components.hunger.current, will_resurrect)
 
-	ProfileStatsAdd("killed_by_"..cause)
-    ProfileStatsAdd("deaths")
+		ProfileStatsAdd("killed_by_"..cause)
+	    ProfileStatsAdd("deaths")
+	end
 
-    --local res = TheSim:FindFirstEntityWithTag("resurrector")
-    
-	if will_resurrect then
-        scheduler:ExecuteInTime(4, function()  
-            TheMixer:PopMix("death")
-            if wilson.components.resurrectable:DoResurrect() then
-				ProfileStatsAdd("resurrections")
-			else
-				HandleDeathCleanup(wilson, data)
+	if will_resurrect or cause == "file_load" then
+
+		local res = wilson.components.resurrectable:FindClosestResurrector()
+		print ("OnPlayerDeath() ", tostring(res))
+
+		local delay = 4
+		if cause == "file_load" then
+			TheFrontEnd:Fade(false, 0)
+			delay = 0
+		end
+	
+	     
+		-- if the resurrector is in this file then:
+		if res then
+			
+			local resfn = function()
+			    TheMixer:PopMix("death")
+			    if wilson.components.resurrectable:DoResurrect() then
+			    	if delay == 0 then
+			    		TheFrontEnd:Fade(true, 3)
+			    	end
+					ProfileStatsAdd("resurrections")
+				else
+					HandleDeathCleanup(wilson, data)
+				end
 			end
-        end)
+			
+			if delay > 0 then
+				scheduler:ExecuteInTime(delay, resfn)
+			else
+				resfn()
+			end
+	    elseif cause ~= "file_load" then
+			-- if the resurrector is in another file then:
+			-- set start params
+			-- save this file
+			-- load file
+			-- Its in a different file
+			res = SaveGameIndex:GetResurrector()
+			if res then
+				DoAgeWorld()
+							
+				SaveGameIndex:SaveCurrent(function()
+						SaveGameIndex:GotoResurrector(function()
+
+							TheFrontEnd:Fade(false, 8.3, function()
+									StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = SaveGameIndex:GetCurrentSaveSlot(), playeranim="file_load"})
+								end)
+
+						end)
+					end, "resurrect")
+			end
+		end	       
     else
 		HandleDeathCleanup(wilson, data)
     end
@@ -235,10 +294,11 @@ function SetUpPlayerCharacterCallbacks(wilson)
             SendTrackingStats()
             SendAccumulatedProfileStats()
 
-			TheSim:ForceUnloadPrefabs(LOADED_CHARACTER)
+			--TheSim:UnloadPrefabs(LOADED_CHARACTER)
 			
-			LOADED_CHARACTER = nil
+			--LOADED_CHARACTER = nil
 			
+			EnableAllDLC()
 			StartNextInstance()
         end)        
     
@@ -250,15 +310,7 @@ function SetUpPlayerCharacterCallbacks(wilson)
 				SendAccumulatedProfileStats()
             end
         end, GetWorld()) 
-        
-    --[[wilson:ListenForEvent( "daytime", 
-        function(it, data) 
-            if not wilson.components.health:IsDead() and not wilson.is_teleporting then
-				--print("Day has arrived...")
-				--SaveGameIndex:SaveCurrent()
-            end
-        end, GetWorld()) 
-	--]]
+
     wilson:ListenForEvent("builditem", function(inst, data) ProfileStatsAdd("build_item_"..data.item.prefab) end)    
     wilson:ListenForEvent("buildstructure", function(inst, data) ProfileStatsAdd("build_structure_"..data.item.prefab) end)
 end
@@ -269,6 +321,7 @@ local function StartGame(wilson)
 	
 	start_game_time = GetTime()
 	SetUpPlayerCharacterCallbacks(wilson)
+--	wilson:DoTaskInTime(3, function() TheSim:Hook() end)
 end
 
 
@@ -279,8 +332,10 @@ local replace = {
 				cave_stairs= "cave_entrance"
 			}
 
+POPULATING = false
 function PopulateWorld(savedata, profile, playercharacter, playersavedataoverride)
-    
+    POPULATING = true
+    TheSystemService:SetStalling(true)
     playercharacter = playercharacter or "wilson"
 	Print(VERBOSITY.DEBUG, "PopulateWorld")
  	Print(VERBOSITY.DEBUG,  "[Instantiating objects...]" )
@@ -296,11 +351,39 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
 				local y = savedata.playerinfo.y or 0
                 spawnpoint = Vector3(savedata.playerinfo.x, y, savedata.playerinfo.z)
             end
-            
+
             if savedata.playerinfo.data then
                 playerdata = savedata.playerinfo.data
             end
         end
+        
+        local travel_direction = SaveGameIndex:GetDirectionOfTravel()	
+        local cave_num = SaveGameIndex:GetCaveNumber()
+        --print("travel_direction:", travel_direction, "cave#:",cave_num)
+        local spawn_ent = nil
+        local spawn_ent = nil
+        if travel_direction == "ascend" then
+			if savedata.ents["cave_entrance"] then
+				if cave_num == nil then
+					spawn_ent = savedata.ents["cave_entrance"][1]
+				else
+					for k,v in ipairs(savedata.ents["cave_entrance"]) do
+						if v.data and v.data.cavenum == cave_num then
+							spawn_ent = v
+							break
+						end
+					end
+				end
+			end
+		elseif travel_direction == "descend" then
+			if savedata.ents["cave_exit"] then
+				spawn_ent = savedata.ents["cave_exit"][1]
+			end
+		end
+        	
+        if spawn_ent and spawn_ent.x and spawn_ent.z then
+	        spawnpoint = Vector3(spawn_ent.x or 0, spawn_ent.y or 0, spawn_ent.z or 0)
+	    end
         
 		if playersavedataoverride then
 			playerdata = playersavedataoverride
@@ -321,8 +404,17 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
 		
 		
         --spawn the player character and set him up
-        LOADED_CHARACTER = {playercharacter}
-        TheSim:ForceLoadPrefabs(LOADED_CHARACTER)
+        if not LOAD_UPFRONT_MODE then
+			local old_loaded_character = LOADED_CHARACTER and LOADED_CHARACTER[1]
+			if old_loaded_character ~= playercharacter then
+				if old_loaded_character then
+					TheSim:UnLoadPrefabs(LOADED_CHARACTER)
+				end
+				LOADED_CHARACTER = {playercharacter}
+				TheSim:LoadPrefabs(LOADED_CHARACTER)
+			end
+		end
+		
         wilson = SpawnPrefab(playercharacter)
         assert(wilson, "could not spawn player character")
         wilson:SetProfile(Profile)
@@ -331,14 +423,6 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
         --this was spawned by the level file. kinda lame - we should just do everything from in here.
         local ground = GetWorld()
         if ground then
-            if GetCeiling() then
-	        	GetCeiling().MapCeiling:SetSize(savedata.map.width, savedata.map.height)
-	        	GetCeiling().MapCeiling:SetHeight(4.0)
-	        	GetCeiling().MapCeiling:SetFromString(savedata.map.tiles)
-	        	GetCeiling().MapCeiling:Finalize(TheSim:GetSetting("graphics", "static_walls") == "true", 1)
-
-	        	GetCeiling().MapCeiling:ShouldRender(0)
-	        end
 
             ground.Map:SetSize(savedata.map.width, savedata.map.height)
           	ground.Map:SetFromString(savedata.map.tiles)
@@ -390,7 +474,8 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
 				end
 			end
 			
-			if ground.topology.level_number == 2 then
+			if ground.topology.level_number == 2 and ground:HasTag("cave") then
+			    ground:AddTag("ruin")
 			    ground:AddComponent("nightmareclock")
 			    ground:AddComponent("nightmareambientsoundmixer")
 			end
@@ -431,7 +516,9 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
 						if node.area == nil then
 							node.area = 1
 						end
-						
+						local ext = ResetextentsForPoly(node.poly)
+
+						mist.entity:SetAABB(ext.radius, 2)
 						mist.components.emitter.density_factor = math.ceil(node.area / 4)/31
 						mist.components.emitter:Emit()
 					end
@@ -448,13 +535,15 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
         
         
         wilson:SetPersistData(playerdata, newents)
-        if wilson.components.health.currenthealth == 0 then
-			wilson.components.health.currenthealth = 1
-        end
+        
         if savedata.playerinfo and savedata.playerinfo.id then
             newents[savedata.playerinfo.id] = {entity=wilson, data=playerdata} 
         end
         
+        if GetWorld().components.colourcubemanager then
+		    GetWorld().components.colourcubemanager:StartBlend(0)
+            GetWorld().components.colourcubemanager:OnUpdate(0) 
+        end
         
         --set the clock (LEGACY! this is now handled via the world object's normal serialization)
         if savedata.playerinfo.day and savedata.playerinfo.dayphase and savedata.playerinfo.timeleftinera then
@@ -488,6 +577,9 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
 			end
 		end
         
+        -- Clean out any stale ones
+        SaveGameIndex:ClearCurrentResurrectors()
+
         --instantiate all the dudes
         for prefab, ents in pairs(savedata.ents) do
 			local prefab = replace[prefab] or prefab
@@ -505,6 +597,7 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
         end
         GetWorld():LoadPostPass(newents, savedata.map.persistdata)
         
+        SaveGameIndex:LoadSavedFollowers(GetPlayer())
 
 		--Run scenario scripts
         for guid, ent in pairs(Ents) do
@@ -521,20 +614,23 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
 			local player_age = GetPlayer().components.age:GetAge()
 			local world_age = GetWorld().components.age:GetAge()
 			
-			if world_age <= 0 then
-				GetWorld().components.age.saved_age = player_age
-			elseif player_age > world_age then
-				local catch_up = player_age - world_age 
-				print ("Catching up world", catch_up)
-				LongUpdate(catch_up, true)
-				
-				--this is a cheesy workaround for coming out of a cave at night, so you don't get immediately eaten
-				if SaveGameIndex:GetCurrentMode() == "survival" and not GetWorld().components.clock:IsDay() then
-					local light = SpawnPrefab("exitcavelight")
-					light.Transform:SetPosition(GetPlayer().Transform:GetWorldPosition())
-				end
-				
+			if player_age > world_age then
+	        	if travel_direction == "ascend" or travel_direction == "descend" then
+					local catch_up = player_age - world_age 
+					print ("Catching up world", catch_up, "(", player_age,"/",world_age,")" )
+					LongUpdate(catch_up, true)
+					
+					--this is a cheesy workaround for coming out of a cave at night, so you don't get immediately eaten
+					if SaveGameIndex:GetCurrentMode() == "survival" and not GetWorld().components.clock:IsDay() then
+						local light = SpawnPrefab("exitcavelight")
+						light.Transform:SetPosition(GetPlayer().Transform:GetWorldPosition())
+					end
+	        	elseif world_age <= 0 then
+        			print ("New world, reset player age.")
+	        		GetPlayer().components.age.saved_age = 0
+        		end
 			end
+
         end
 
         --Everything has been loaded! Now fix the colour cubes...
@@ -545,10 +641,14 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
     
     else
         Print(VERBOSITY.ERROR, "[MALFORMED SAVE DATA] PopulateWorld complete" )
+        TheSystemService:SetStalling(false)
+        POPULATING = false
         return
     end
 
 	Print(VERBOSITY.DEBUG, "[FINISHED LOADING SAVED GAME] PopulateWorld complete" )
+	TheSystemService:SetStalling(false)
+	POPULATING = false
 	return wilson
 end
 
@@ -558,6 +658,7 @@ local function DrawDebugGraph(graph)
 	local debugdrawmap = CreateEntity()
 	local draw = debugdrawmap.entity:AddDebugRender()
 	draw:SetZ(0.1)
+	draw:SetRenderLoop(true)
 	
 	
 	for idx,node in ipairs(graph.nodes) do
@@ -590,6 +691,8 @@ end
 
 --OK, we have our savedata and a profile. Instatiate everything and start the game!
 function DoInitGame(playercharacter, savedata, profile, next_world_playerdata, fast)	
+	local was_file_load = Settings.playeranim == "file_load"
+
 	--print("DoInitGame",playercharacter, savedata, profile, next_world_playerdata, fast)
 	TheFrontEnd:ClearScreens()
 	
@@ -632,11 +735,11 @@ function DoInitGame(playercharacter, savedata, profile, next_world_playerdata, f
 					RoadManager:SetStripEffect( v, "shaders/road.ksh" )
 				end
 				
-				RoadManager:SetStripTextures( ROAD_STRIPS.EDGES,	"images/roadedge.tex",		"images/roadnoise.tex" )
-				RoadManager:SetStripTextures( ROAD_STRIPS.CENTER,	"images/square.tex",		"images/roadnoise.tex" )
-				RoadManager:SetStripTextures( ROAD_STRIPS.CORNERS,	"images/roadcorner.tex",	"images/roadnoise.tex" )
-				RoadManager:SetStripTextures( ROAD_STRIPS.ENDS,		"images/roadendcap.tex",	"images/roadnoise.tex" )
-			
+				RoadManager:SetStripTextures( ROAD_STRIPS.EDGES,	resolvefilepath("images/roadedge.tex"),		resolvefilepath("images/roadnoise.tex") ,		resolvefilepath("images/roadnoise.tex") )
+				RoadManager:SetStripTextures( ROAD_STRIPS.CENTER,	resolvefilepath("images/square.tex"),		resolvefilepath("images/roadnoise.tex") ,		resolvefilepath("images/roadnoise.tex") )
+				RoadManager:SetStripTextures( ROAD_STRIPS.CORNERS,	resolvefilepath("images/roadcorner.tex"),	resolvefilepath("images/roadnoise.tex") ,		resolvefilepath("images/roadnoise.tex") )
+				RoadManager:SetStripTextures( ROAD_STRIPS.ENDS,		resolvefilepath("images/roadendcap.tex"),	resolvefilepath("images/roadnoise.tex") ,		resolvefilepath("images/roadnoise.tex") )
+
 				RoadManager:GenerateVB(
 						ROAD_PARAMETERS.NUM_SUBDIVISIONS_PER_SEGMENT,
 						ROAD_PARAMETERS.MIN_WIDTH, ROAD_PARAMETERS.MAX_WIDTH,
@@ -651,39 +754,16 @@ function DoInitGame(playercharacter, savedata, profile, next_world_playerdata, f
 				for k, v in pairs( ROAD_STRIPS ) do
 					RoadManager:SetStripEffect( v, "shaders/road.ksh" )
 				end
-				RoadManager:SetStripTextures( ROAD_STRIPS.EDGES,	"images/roadedge.tex",		"images/pathnoise.tex" )
-				RoadManager:SetStripTextures( ROAD_STRIPS.CENTER,	"images/square.tex",		"images/pathnoise.tex" )
-				RoadManager:SetStripTextures( ROAD_STRIPS.CORNERS,	"images/roadcorner.tex",	"images/pathnoise.tex" )
-				RoadManager:SetStripTextures( ROAD_STRIPS.ENDS,		"images/roadendcap.tex",	"images/pathnoise.tex" )
-				
+				RoadManager:SetStripTextures( ROAD_STRIPS.EDGES,	resolvefilepath("images/roadedge.tex"),		resolvefilepath("images/pathnoise.tex") ,		resolvefilepath("images/mini_pathnoise.tex") )
+				RoadManager:SetStripTextures( ROAD_STRIPS.CENTER,	resolvefilepath("images/square.tex"),		resolvefilepath("images/pathnoise.tex") ,		resolvefilepath("images/mini_pathnoise.tex") )
+				RoadManager:SetStripTextures( ROAD_STRIPS.CORNERS,	resolvefilepath("images/roadcorner.tex"),	resolvefilepath("images/pathnoise.tex") ,		resolvefilepath("images/mini_pathnoise.tex") )
+				RoadManager:SetStripTextures( ROAD_STRIPS.ENDS,		resolvefilepath("images/roadendcap.tex"),	resolvefilepath("images/pathnoise.tex"),		resolvefilepath("images/mini_pathnoise.tex")  )
+
 				RoadManager:GenerateVB(
 						ROAD_PARAMETERS.NUM_SUBDIVISIONS_PER_SEGMENT,
 						0, 0,
 						ROAD_PARAMETERS.MIN_EDGE_WIDTH*4, ROAD_PARAMETERS.MAX_EDGE_WIDTH*4,
 						0, false )						
-				--[[
-			else
-				for i = 2, #road_data do
-					local ctrl_pt = road_data[i]
-					RoadManager:AddSmoothedControlPoint( ctrl_pt[1], ctrl_pt[2] )
-				end
-				
-				for k, v in pairs( ROAD_STRIPS ) do
-					RoadManager:SetStripEffect( v, "shaders/river.ksh" )
-				end
-				RoadManager:SetStripTextures( ROAD_STRIPS.EDGES,	"images/square.tex",		"images/river_bed.tex" )
-				RoadManager:SetStripTextures( ROAD_STRIPS.CENTER,	"images/square.tex",		"images/water_river.tex" )
-				RoadManager:SetStripUVAnimStep( ROAD_STRIPS.CENTER, 0, 0.25 )
-				RoadManager:SetStripWrapMode( ROAD_STRIPS.EDGES, WRAP_MODE.CLAMP_TO_EDGE, WRAP_MODE.WRAP )
-				--RoadManager:SetStripTextures( ROAD_STRIPS.CORNERS,	"images/roadcorner.tex",	"images/pathnoise.tex" )
-				--RoadManager:SetStripTextures( ROAD_STRIPS.ENDS,		"images/roadendcap.tex",	"images/pathnoise.tex" )
-				
-				RoadManager:GenerateVB(
-						ROAD_PARAMETERS.NUM_SUBDIVISIONS_PER_SEGMENT,
-						5, 5,
-						2, 2,
-						0, false )
-				--]]
 			end
 		end
 		RoadManager:GenerateQuadTree()
@@ -710,7 +790,7 @@ function DoInitGame(playercharacter, savedata, profile, next_world_playerdata, f
 	else
 		Print(VERBOSITY.WARNING, "DoInitGame NO WILSON?")
     end
-    
+
     if Profile.persistdata.debug_world  == 1 then
     	if savedata.map.topology == nil then
     		Print(VERBOSITY.ERROR, "OI! Where is my topology info!")
@@ -721,7 +801,7 @@ function DoInitGame(playercharacter, savedata, profile, next_world_playerdata, f
     
     local function OnStart()
     	Print(VERBOSITY.DEBUG, "DoInitGame OnStart Callback... turning volume up")
-		SetHUDPause(false)
+		SetPause(false)
     end
 	
 	if not TheFrontEnd:IsDisplayingError() then
@@ -738,7 +818,8 @@ function DoInitGame(playercharacter, savedata, profile, next_world_playerdata, f
 	    ModManager:SimPostInit(wilson)
 		
 		GetPlayer().components.health:RecalculatePenalty()
-
+		GetPlayer().components.sanity:RecalculatePenalty()
+		
 		if ( SaveGameIndex:GetCurrentMode() ~= "cave" and (SaveGameIndex:GetCurrentMode() == "survival" or SaveGameIndex:GetSlotWorld() == 1) and SaveGameIndex:GetSlotDay() == 1 and GetClock():GetNormTime() == 0) then
 			if GetPlayer().components.inventory.starting_inventory then
 				for k,v in pairs(GetPlayer().components.inventory.starting_inventory) do
@@ -753,10 +834,11 @@ function DoInitGame(playercharacter, savedata, profile, next_world_playerdata, f
 	    if fast then
 	    	OnStart()
 	    else
-			SetHUDPause(true,"InitGame")
-			if Settings.playeranim == "failcave" then
-				GetPlayer().sg:GoToState("wakeup")
-				GetClock():MakeNextDay()
+			SetPause(true,"InitGame")
+			if Settings.playeranim == "file_load" then
+				print ("DoInitGame file_load!")
+				TheFrontEnd:SetFadeLevel(1)
+				GetPlayer():PushEvent("death", {cause="file_load"})
 			elseif Settings.playeranim == "failadventure" then
 				GetPlayer().sg:GoToState("failadventure")
 				GetPlayer().HUD:Show()
@@ -810,16 +892,16 @@ function DoInitGame(playercharacter, savedata, profile, next_world_playerdata, f
 			end
 			
 			TheFrontEnd:Fade(true, 1, function() 
-				SetHUDPause(false)
+				SetPause(false)
 				TheMixer:SetLevel("master", 1) 
 				TheMixer:PushMix("normal") 
 				TheFrontEnd:HideTitle()
 				--TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.HUD.READYTITLE, STRINGS.UI.HUD.READY, {{text=STRINGS.UI.HUD.START, cb = function() OnStart() end}}))
-			end, showtitle and 3, showtitle and function() SetHUDPause(false) end )
+			end, showtitle and 3, showtitle and function() SetPause(false) end )
 	    end
 	    
 	    if savedata.map.hideminimap ~= nil then
-	        hud.minimap:DoTaskInTime(0, function(inst) inst.MiniMap:ClearRevealedAreas(savedata.map.hideminimap) end)
+	        GetWorld().minimap:DoTaskInTime(0, function(inst) inst.MiniMap:ClearRevealedAreas(savedata.map.hideminimap) end)
 	    end
 	    if savedata.map.teleportaction ~= nil then
 	        local teleportato = TheSim:FindFirstEntityWithTag("teleportato")
@@ -847,7 +929,20 @@ function DoInitGame(playercharacter, savedata, profile, next_world_playerdata, f
 		TheSim:Quit()
 	end
 	
+
+
+	if not was_file_load and GetPlayer().components.health:GetPercent() <= 0 then
+		SetPause(false)
+		GetPlayer():PushEvent("death", {cause="file_load"})
+	end
+	
 	inGamePlay = true
+	
+	if PLATFORM == "PS4" then
+	    if not TheSystemService:HasFocus() or not TheInputProxy:IsAnyInputDeviceConnected() then
+	        TheFrontEnd:PushScreen(PauseScreen())
+	    end
+	end
 end
 
 ------------------------THESE FUNCTIONS HANDLE STARTUP FLOW
@@ -855,18 +950,23 @@ end
 
 local function DoLoadWorld(saveslot, playerdataoverride)
 	local function onload(savedata)
+		assert(savedata, "DoLoadWorld: Savedata is NIL on load")
+		assert(GetTableSize(savedata)>0, "DoLoadWorld: Savedata is empty on load")
+
 		DoInitGame(SaveGameIndex:GetSlotCharacter(saveslot), savedata, Profile, playerdataoverride)
 	end
 	SaveGameIndex:GetSaveData(saveslot, SaveGameIndex:GetCurrentMode(saveslot), onload)
 end
 
 local function DoGenerateWorld(saveslot, type_override)
-
 	local function onComplete(savedata )
+		assert(savedata, "DoGenerateWorld: Savedata is NIL on load")
+		assert(#savedata>0, "DoGenerateWorld: Savedata is empty on load")
+
 		local function onsaved()
 			local success, world_table = RunInSandbox(savedata)
 			if success then
-
+				LoadAssets("BACKEND")
 				DoInitGame(SaveGameIndex:GetSlotCharacter(saveslot), world_table, Profile, SaveGameIndex:GetPlayerData(saveslot))
 			end
 		end
@@ -889,7 +989,7 @@ local function DoGenerateWorld(saveslot, type_override)
 	}
 	
 	if world_gen_options.level_type == "adventure" then
-		world_gen_options["adventure_progress"] = SaveGameIndex:GetSlotWorld()
+		world_gen_options["adventure_progress"] = SaveGameIndex:GetSlotWorld(saveslot)
 	elseif world_gen_options.level_type == "cave" then
 		world_gen_options["cave_progress"] = SaveGameIndex:GetCurrentCaveLevel()
 	end
@@ -920,7 +1020,6 @@ local function LoadSlot(slot)
 			TheFrontEnd:PushScreen(CharacterSelectScreen(Profile, onSet, true, SaveGameIndex:GetSlotCharacter(slot)))
 		else			
 			--print("Load Slot: ... generating new world")
-			LoadAssets("BACKEND")
 			DoGenerateWorld(slot)
 		end
 	end
@@ -931,12 +1030,33 @@ end
 ----------------LOAD THE PROFILE AND THE SAVE INDEX, AND START THE FRONTEND
 
 local function DoResetAction()
+
+	if LOAD_UPFRONT_MODE then
+		print ("load recipes")
+
+		RECIPE_PREFABS = {}
+		for k,v in pairs(Recipes) do
+			table.insert(RECIPE_PREFABS, v.name)
+			if v.placer then
+				table.insert(RECIPE_PREFABS, v.placer)
+			end
+		end		
+			
+		TheSim:LoadPrefabs(RECIPE_PREFABS)
+		print ("load backend")
+		TheSim:LoadPrefabs(BACKEND_PREFABS)
+		print ("load frontend")
+		TheSim:LoadPrefabs(FRONTEND_PREFABS)
+		print ("load characters")
+		local chars = GetActiveCharacterList()
+		TheSim:LoadPrefabs(chars)
+	end
+
 	if Settings.reset_action then
 		if Settings.reset_action == RESET_ACTION.DO_DEMO then
 			SaveGameIndex:DeleteSlot(1, function()
 				SaveGameIndex:StartSurvivalMode(1, "wilson", {}, function() 
 					--print("Reset Action: DO_DEMO")
-					LoadAssets("BACKEND")
 					DoGenerateWorld(1)
 				end)
 			end)
@@ -951,7 +1071,6 @@ local function DoResetAction()
 			end
 		elseif Settings.reset_action == "printtextureinfo" then
 			--print("Reset Action: printtextureinfo")
-			LoadAssets("BACKEND")
 			DoGenerateWorld(1)
 		else
 			--print("Reset Action: none")
@@ -978,6 +1097,11 @@ end
 local function OnUpdatePurchaseStateComplete()
 	print("OnUpdatePurchaseStateComplete")
 	--print( "[Settings]",Settings.character, Settings.savefile)
+	
+	if TheInput:ControllerAttached() then
+		TheFrontEnd:StopTrackingMouse()
+	end
+
 	DoResetAction()
 end
 
@@ -986,6 +1110,7 @@ local function OnFilesLoaded()
 	UpdateGamePurchasedState(OnUpdatePurchaseStateComplete)
 end
 
+STATS_ENABLE = METRICS_ENABLED
 
 Profile = PlayerProfile()
 SaveGameIndex = SaveIndex()

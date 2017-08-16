@@ -8,14 +8,7 @@ local DynamicMusic = Class(function(self, inst)
     self.busy_timeout = 0
     
     self.playing_danger = false
-    
-    if GetWorld():IsCave() then
-		self.inst.SoundEmitter:PlaySound( "dontstarve/music/music_work_cave", "busy")
-	else
-		self.inst.SoundEmitter:PlaySound( "dontstarve/music/music_work", "busy")
-	end
-	
-    self.inst.SoundEmitter:SetParameter( "busy", "intensity", 0 )
+    self.is_winter = false
     
     self.inst:ListenForEvent( "gotnewitem", function() self:OnContinueBusy() end )  
     self.inst:ListenForEvent( "dropitem", function() self:OnContinueBusy() end )  
@@ -80,6 +73,21 @@ local DynamicMusic = Class(function(self, inst)
 end)
 
 
+function DynamicMusic:StartPlayingBusy()
+	if GetWorld():IsRuins() then
+		self.inst.SoundEmitter:PlaySound( "dontstarve/music/music_work_ruins", "busy")
+	elseif GetWorld():IsCave() then
+		self.inst.SoundEmitter:PlaySound( "dontstarve/music/music_work_cave", "busy")
+	elseif GetSeasonManager():IsWinter() then
+		self.is_winter = true
+		self.inst.SoundEmitter:PlaySound( "dontstarve/music/music_work_winter", "busy")
+	else
+		self.inst.SoundEmitter:PlaySound( "dontstarve/music/music_work", "busy")
+	end
+	
+	self.inst.SoundEmitter:SetParameter( "busy", "intensity", 0 )
+end
+
 function DynamicMusic:Enable()
     self.enabled = true
 
@@ -99,6 +107,11 @@ end
 function DynamicMusic:OnStartBusy()
 	
     if not self.enabled then return end
+
+	if not self.busy_started then
+		self.busy_started = true
+		self:StartPlayingBusy()
+	end
 
     local day = GetClock():IsDay()
     if day or GetWorld():IsCave() then
@@ -124,11 +137,23 @@ function DynamicMusic:OnStartDanger()
         local soundpath = nil
         
         if epic then
-            soundpath = "dontstarve/music/music_epicfight"
+            if GetWorld():IsRuins() then
+				soundpath = "dontstarve/music/music_epicfight_ruins"
+            elseif GetWorld():IsCave() then
+				soundpath = "dontstarve/music/music_epicfight_cave"
+            elseif GetSeasonManager():IsWinter() then
+				soundpath = "dontstarve/music/music_epicfight_winter"
+			else
+				soundpath = "dontstarve/music/music_epicfight"
+			end
+        elseif GetWorld():IsRuins() then
+            soundpath = "dontstarve/music/music_danger_ruins"
         elseif GetWorld():IsCave() then
             soundpath = "dontstarve/music/music_danger_cave"
-        else
-            soundpath = "dontstarve/music/music_danger"
+        elseif GetSeasonManager():IsWinter() then
+			soundpath = "dontstarve/music/music_danger_winter"
+		else
+			soundpath = "dontstarve/music/music_danger"
         end
 
         self.inst.SoundEmitter:PlaySound(soundpath, "danger")
@@ -163,6 +188,23 @@ function DynamicMusic:OnUpdate(dt)
             self:StopPlayingBusy()
             self.is_busy = false
         end
+    end
+    
+    
+    if not self.is_busy then
+		
+		if not GetWorld():IsCave() then
+		
+			if GetSeasonManager():IsWinter() ~= self.is_winter then
+				self.inst.SoundEmitter:KillSound("busy")		
+				self.is_winter = GetSeasonManager():IsWinter()
+				if self.is_winter then
+					self.inst.SoundEmitter:PlaySound( "dontstarve/music/music_work_winter", "busy")
+				else
+					self.inst.SoundEmitter:PlaySound( "dontstarve/music/music_work", "busy")
+				end
+			end
+		end
     end
 end
 

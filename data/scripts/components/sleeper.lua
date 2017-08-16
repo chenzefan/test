@@ -65,12 +65,15 @@ function DefaultWakeTest(inst)
         or (inst.components.burnable and inst.components.burnable:IsBurning() )
         or (inst.components.freezable and inst.components.freezable:IsFrozen() )
         or (inst.components.teamattacker and inst.components.teamattacker.inteam)
+        or (inst.components.health and inst.components.health.takingfiredamage)
     else
         return GetClock():IsDusk() or GetClock():IsNight()
         or (inst.components.combat and inst.components.combat.target)
         or (inst.components.burnable and inst.components.burnable:IsBurning() )
         or (inst.components.freezable and inst.components.freezable:IsFrozen() )
         or (inst.components.teamattacker and inst.components.teamattacker.inteam)
+        or (inst.components.health and inst.components.health.takingfiredamage)
+        
     end
 end
 

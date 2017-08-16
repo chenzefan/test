@@ -107,6 +107,21 @@ function Temperature:OnUpdate(dt, applyhealthdelta)
 				end
 			end
 		end
+
+		if self.inst.components.inventory.overflow and self.inst.components.inventory.overflow.components.container then
+			for k,v in pairs(self.inst.components.inventory.overflow.components.container.slots) do
+				if v.components.heater then
+					local heat = v.components.heater:GetCarriedHeat()
+					if heat > self.current and not v.components.heater.iscooler then
+						ambient_delta = ambient_delta + (heat - self.current)
+					elseif heat < self.current and v.components.heater.iscooler then
+						ambient_delta = ambient_delta + (heat - self.current)
+					end
+				end
+			end
+		end
+		
+
 	end
 	
 	if self.inst.components.beard then
@@ -119,7 +134,7 @@ function Temperature:OnUpdate(dt, applyhealthdelta)
 	local ZERO_DISTANCE = 10
 	local ZERO_DISTSQ = ZERO_DISTANCE*ZERO_DISTANCE
 
-	local ents = TheSim:FindEntities(x,y,z, ZERO_DISTANCE)
+	local ents = TheSim:FindEntities(x,y,z, ZERO_DISTANCE, {"HASHEATER"})
     for k,v in pairs(ents) do 
 		if v.components.heater and v ~= self.inst and not v:IsInLimbo() then
 			local heat = v.components.heater:GetHeat(self.inst)
@@ -151,7 +166,16 @@ function Temperature:OnUpdate(dt, applyhealthdelta)
 	
 	
     self.current = math.max( math.min( self.current + self.rate*dt, self.maxtemp), self.mintemp)
-	self.inst:PushEvent("temperaturedelta", {last = last, new = self.current})
+	
+    if (self.current < 0) ~= (last < 0)  then
+    	if self.current < 0 then
+    		self.inst:PushEvent("startfreezing")
+    	else
+    		self.inst:PushEvent("stopfreezing")
+    	end
+    end
+
+	self.inst:PushEvent("temperaturedelta")
 	
 	if applyhealthdelta and self.current < 0 and self.inst.components.health then
 		self.inst.components.health:DoDelta(-self.hurtrate*dt, true, "cold") 

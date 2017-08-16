@@ -95,6 +95,17 @@ function PrintTranslatedStringTableV1( base_dta, tbl_dta, lkp_var, file )
 end
 
 
+local function IsValidString( str )
+	for i = 1, #str do
+    	local a = string.byte( str, i, i)
+    	if a < 32 or a > 127 then
+    		return false
+    	end
+    end
+    return true
+end
+
+
 --
 -- Version 2 msgctxt based
 --
@@ -110,22 +121,23 @@ local function PrintStringTableV2( base, tbl, file )
 			local str = string.gsub(v, "\n", "\\n")
 			str = string.gsub(str, "\r", "\\r")
 			str = string.gsub(str, "\"", "\\\"")
-			
-			file:write("#. "..path)
-			file:write("\n")
-			file:write("msgctxt \""..path.."\"")
-			file:write("\n")
-			file:write("msgid \""..str.."\"")
-			file:write("\n")
-			file:write("msgstr \"\"")
-			file:write("\n\n")
+			if IsValidString( str ) then
+
+				file:write("#. "..path)
+				file:write("\n")
+				file:write("msgctxt \""..path.."\"")
+				file:write("\n")
+				file:write("msgid \""..str.."\"")
+				file:write("\n")
+				file:write("msgstr \"\"")
+				file:write("\n\n")
+			end
 
 		end
 	end
 end
 
 local function PrintTranslatedStringTableV2( base, tbl_dta, lkp_var, file )
-	
 	for k,v in pairs(tbl_dta) do
 		local path = base.."."..k
 		if type(v) == "table" then
@@ -251,10 +263,10 @@ end
 	--CreateStringsPOTv1("data\\scripts\\languages\\strings_v1.pot", "STRINGS", STRINGS)
 
 	--Create POT file for STRINGS table in new v2 format
-	CreateStringsPOTv2("languages\\strings.pot", "STRINGS", STRINGS)
+	CreateStringsPOTv2("languages/strings.pot", "STRINGS", STRINGS)
 
 	--Create english.po file for new translations (or just copy the pot file create above, not sure how from lua)
-	CreateStringsPOTv2("languages\\english.po", "STRINGS", STRINGS)
+	--CreateStringsPOTv2("languages\\english.po", "STRINGS", STRINGS)
 
 --end
 

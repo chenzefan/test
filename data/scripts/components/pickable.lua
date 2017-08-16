@@ -30,7 +30,7 @@ function Pickable:LongUpdate(dt)
 		if self.targettime > time + dt then
 	        --resechedule
 	        local time_to_pickable = self.targettime - time - dt
-			self.task = self.inst:DoTaskInTime(time_to_pickable, function() self:Regen() end, "regen")
+			self.task = self.inst:DoTaskInTime(time_to_pickable, OnRegen, "regen")
 			self.targettime = time + time_to_pickable
 	    else
 			--become pickable right away
@@ -55,7 +55,7 @@ function Pickable:Resume()
 		if not self.canbepicked and (not self.cycles_left or self.cycles_left > 0) then
 		
 			if self.pause_time then
-				self.task = self.inst:DoTaskInTime(self.pause_time, function() self:Regen() end, "regen")
+				self.task = self.inst:DoTaskInTime(self.pause_time, OnRegen, "regen")
 				self.targettime = GetTime() + self.pause_time
 			else
 				self:MakeEmpty()
@@ -210,7 +210,7 @@ function Pickable:OnLoad(data)
 		self.pause_time = data.pause_time
     else
 		if data.time then
-			self.task = self.inst:DoTaskInTime(data.time, function() self:Regen() end, "regen")
+			self.task = self.inst:DoTaskInTime(data.time, OnRegen, "regen")
 			self.targettime = GetTime() + data.time
 		end
 	end    
@@ -230,6 +230,11 @@ function Pickable:CanBePicked()
     return self.canbepicked
 end
 
+function OnRegen(inst)
+	if inst.components.pickable then
+		inst.components.pickable:Regen()
+	end
+end
 
 function Pickable:Regen()
     
@@ -283,7 +288,7 @@ function Pickable:MakeEmpty()
 				time = self.getregentimefn(self.inst)
 			end
 			
-			self.task = self.inst:DoTaskInTime(time, function() self:Regen() end, "regen")
+			self.task = self.inst:DoTaskInTime(time, OnRegen, "regen")
 			self.targettime = GetTime() + time
 		end
 	end
@@ -320,7 +325,7 @@ function Pickable:Pick(picker)
         self.canbepicked = false
         
         if not self.paused and self.regentime and (self.cycles_left == nil or self.cycles_left > 0) then
-			self.task = self.inst:DoTaskInTime(self.regentime, function() self:Regen() end, "regen")
+			self.task = self.inst:DoTaskInTime(self.regentime, OnRegen, "regen")
 			self.targettime = GetTime() + self.regentime
 		end
         

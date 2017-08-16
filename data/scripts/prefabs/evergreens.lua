@@ -103,31 +103,39 @@ local function GetBuild(inst)
 	return build
 end
 
-local function OnBurnt(inst)
-	inst:DoTaskInTime( 0.5,
-		function()
-		    if inst.components.burnable then
-			    inst.components.burnable:Extinguish()
-			end
-			inst:RemoveComponent("burnable")
-			inst:RemoveComponent("propagator")
-			inst:RemoveComponent("growable")
+local burnt_highlight_override = {.5,.5,.5}
+local function OnBurnt(inst, imm)
+	
+	local function changes()
+	    if inst.components.burnable then
+		    inst.components.burnable:Extinguish()
+		end
+		inst:RemoveComponent("burnable")
+		inst:RemoveComponent("propagator")
+		inst:RemoveComponent("growable")
 
-			inst.components.lootdropper:SetLoot({})
-			if GetBuild(inst).drop_pinecones then
-				inst.components.lootdropper:AddChanceLoot("pinecone", 0.1)
-			end
-			
-			if inst.components.workable then
-				inst.components.workable:SetWorkLeft(1)
-				inst.components.workable:SetOnWorkCallback(nil)
-				inst.components.workable:SetOnFinishCallback(chop_down_burnt_tree)
-			end
-		end)
-    
+		inst.components.lootdropper:SetLoot({})
+		if GetBuild(inst).drop_pinecones then
+			inst.components.lootdropper:AddChanceLoot("pinecone", 0.1)
+		end
+		
+		if inst.components.workable then
+			inst.components.workable:SetWorkLeft(1)
+			inst.components.workable:SetOnWorkCallback(nil)
+			inst.components.workable:SetOnFinishCallback(chop_down_burnt_tree)
+		end
+	end
+		
+	if imm then
+		changes()
+	else
+		inst:DoTaskInTime( 0.5, changes)
+	end    
 	inst.AnimState:PlayAnimation(inst.anims.burnt, true)
     inst.AnimState:SetRayTestOnBB(true);
     inst:AddTag("burnt")
+
+    inst.highlight_override = burnt_highlight_override
 end
 
 local function PushSway(inst)
@@ -263,7 +271,9 @@ end
 
 local function chop_down_tree(inst, chopper)
     inst:RemoveComponent("burnable")
+    MakeSmallBurnable(inst)
     inst:RemoveComponent("propagator")
+    MakeSmallPropagator(inst)
     inst:RemoveComponent("workable")
     inst.SoundEmitter:PlaySound("dontstarve/forest/treefall")
     local pt = Vector3(inst.Transform:GetWorldPosition())
@@ -296,6 +306,9 @@ local function chop_down_tree(inst, chopper)
     if inst.components.growable then
         inst.components.growable:StopGrowing()
     end
+
+    inst:AddTag("NOCLICK")
+    inst:DoTaskInTime(2, function() inst:RemoveTag("NOCLICK") end)
     
     local days_survived = GetClock().numcycles
     if days_survived >= TUNING.LEIF_MIN_DAY then
@@ -322,26 +335,28 @@ local function chop_down_tree(inst, chopper)
 					target.noleif = true
 					target.leifscale = growth_stages[target.components.growable.stage].leifscale or 1
 					target:DoTaskInTime(1 + math.random()*3, function() 
-						local target = target
-						local leif = SpawnPrefab(builds[target.build].leif)
-						local scale = target.leifscale
-						local r,g,b,a = target.AnimState:GetMultColour()
-						leif.AnimState:SetMultColour(r,g,b,a)
-						
-						--we should serialize this?
-						leif.components.locomotor.walkspeed = leif.components.locomotor.walkspeed*scale
-						leif.components.combat.defaultdamage = leif.components.combat.defaultdamage*scale
-						leif.components.health.maxhealth = leif.components.health.maxhealth*scale
-						leif.components.health.currenthealth = leif.components.health.currenthealth*scale
-						leif.components.combat.hitrange = leif.components.combat.hitrange*scale
-						leif.components.combat.attackrange = leif.components.combat.attackrange*scale
-						
-						leif.Transform:SetScale(scale,scale,scale) 
-						leif.components.combat:SuggestTarget(chopper)
-						leif.sg:GoToState("spawn")
-						target:Remove()
-						
-						leif.Transform:SetPosition(target.Transform:GetWorldPosition())
+                        if target then
+    						local target = target
+    						local leif = SpawnPrefab(builds[target.build].leif)
+    						local scale = target.leifscale
+    						local r,g,b,a = target.AnimState:GetMultColour()
+    						leif.AnimState:SetMultColour(r,g,b,a)
+    						
+    						--we should serialize this?
+    						leif.components.locomotor.walkspeed = leif.components.locomotor.walkspeed*scale
+    						leif.components.combat.defaultdamage = leif.components.combat.defaultdamage*scale
+    						leif.components.health.maxhealth = leif.components.health.maxhealth*scale
+    						leif.components.health.currenthealth = leif.components.health.currenthealth*scale
+    						leif.components.combat.hitrange = leif.components.combat.hitrange*scale
+    						leif.components.combat.attackrange = leif.components.combat.attackrange*scale
+    						
+    						leif.Transform:SetScale(scale,scale,scale) 
+    						leif.components.combat:SuggestTarget(chopper)
+    						leif.sg:GoToState("spawn")
+    						target:Remove()
+    						
+    						leif.Transform:SetPosition(target.Transform:GetWorldPosition())
+                        end
 					end)
 				end
 			end
@@ -366,7 +381,7 @@ end
 
 
 
-local function handler_growfromseed (inst, data)
+local function handler_growfromseed (inst)
 	inst.components.growable:SetStage(1)
 	inst.AnimState:PlayAnimation("grow_seed_to_short")
     inst.SoundEmitter:PlaySound("dontstarve/forest/treeGrow")          
@@ -396,11 +411,13 @@ local function onload(inst, data)
 		end
 
         if data.burnt then
-            OnBurnt(inst)
+            OnBurnt(inst, true)
         elseif data.stump then
-            inst:RemoveComponent("workable")
             inst:RemoveComponent("burnable")
+            MakeSmallBurnable(inst)
+            inst:RemoveComponent("workable")
             inst:RemoveComponent("propagator")
+            MakeSmallPropagator(inst)
             inst:RemoveComponent("growable")
             RemovePhysicsColliders(inst)
             inst.AnimState:PlayAnimation(inst.anims.stump)
@@ -413,6 +430,41 @@ local function onload(inst, data)
         end
     end
 end        
+
+local function OnEntitySleep(inst)
+    inst:RemoveComponent("burnable")
+    inst:RemoveComponent("propagator")
+    inst:RemoveComponent("inspectable")
+end
+
+local function OnEntityWake(inst)
+
+    if not inst:HasTag("burnt") and not inst:HasTag("fire") then
+        if not inst.components.burnable then
+            if inst:HasTag("stump") then
+                MakeSmallBurnable(inst) 
+            else
+                MakeLargeBurnable(inst)
+                inst.components.burnable:SetFXLevel(5)
+                inst.components.burnable:SetOnBurntFn(tree_burnt)
+            end
+        end
+
+        if not inst.components.propagator then
+            if inst:HasTag("stump") then
+                MakeSmallPropagator(inst)
+            else
+                MakeLargePropagator(inst)
+            end
+        end
+    end
+
+    if not inst.components.inspectable then
+        inst:AddComponent("inspectable")
+        inst.components.inspectable.getstatus = inspect_tree
+    end
+
+end
 
 local function makefn(build, stage, data)
 	
@@ -451,6 +503,7 @@ local function makefn(build, stage, data)
         MakeLargeBurnable(inst)
         inst.components.burnable:SetFXLevel(5)
         inst.components.burnable:SetOnBurntFn(tree_burnt)
+        
         MakeLargePropagator(inst)
         
         -------------------        
@@ -476,8 +529,7 @@ local function makefn(build, stage, data)
         inst.components.growable.loopstages = true
         inst.components.growable:StartGrowing()
         
-        
-        inst:ListenForEvent("growfromseed", handler_growfromseed )
+        inst.growfromseed = handler_growfromseed
 
         ---------------------        
         --PushSway(inst)
@@ -498,9 +550,11 @@ local function makefn(build, stage, data)
         end
         
         if data =="stump"  then
-            inst:RemoveComponent("workable")
             inst:RemoveComponent("burnable")
+            MakeSmallBurnable(inst)            
+            inst:RemoveComponent("workable")
             inst:RemoveComponent("propagator")
+            MakeSmallPropagator(inst)
             inst:RemoveComponent("growable")
             RemovePhysicsColliders(inst)
             inst.AnimState:PlayAnimation(inst.anims.stump)
@@ -510,6 +564,11 @@ local function makefn(build, stage, data)
             inst.components.workable:SetOnFinishCallback(dig_up_stump)
             inst.components.workable:SetWorkLeft(1)
         end
+
+
+        inst.OnEntitySleep = OnEntitySleep
+        inst.OnEntityWake = OnEntityWake
+
 
         return inst
     end

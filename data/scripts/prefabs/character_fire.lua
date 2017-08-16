@@ -32,6 +32,7 @@ local function fn(Sim)
     inst.AnimState:SetRayTestOnBB(true)
     
     inst:AddTag("fx")
+    inst:AddTag("NOCLICK")
     
     inst:AddComponent("firefx")
     inst.components.firefx.levels = firelevels

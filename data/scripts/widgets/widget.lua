@@ -1,7 +1,7 @@
 local Widget = Class(function(self, name)
     self.children = {}
     self.callbacks = {}
-    self.name = name
+    self.name = name or "widget"
     self.inst = CreateEntity()
     self.inst.widget = self
     
@@ -20,7 +20,6 @@ local Widget = Class(function(self, name)
 
     self.focus_flow = {}
     self.focus_flow_args = {}
-    
 end)
 
 
@@ -53,7 +52,7 @@ function Widget:MoveToFront()
 end
 
 function Widget:OnFocusMove(dir, down)
-
+	--print ("OnFocusMove", self.name or "?", self.focus, dir, down)
     if not self.focus then return false end
 
     for k,v in pairs (self.children) do
@@ -61,16 +60,32 @@ function Widget:OnFocusMove(dir, down)
     end 
 
     if down and self.focus_flow[dir] then
-		local dest = type(self.focus_flow[dir]) == "function" and self.focus_flow[dir]() or self.focus_flow[dir]
+		
+		local dest = self.focus_flow[dir]
+        if dest and type(dest) == "function" then dest = dest() end
         
         -- Can we pass the focus down the chain if we are disabled/hidden?
-        if dest.shown and dest.enabled then
-            dest:SetFocus(unpack(self.focus_flow_args[dir] and self.focus_flow_args[dir] or {}))
+        if dest and dest:IsVisible() and dest.enabled then
+			if self.focus_flow_args[dir] then
+				dest:SetFocus(unpack(self.focus_flow_args[dir]))
+			else
+				dest:SetFocus()
+			end
             return true
         end
     end
 
     return false
+end
+
+function Widget:IsVisible()
+	if not self.shown then return false end
+
+	if self.parent then
+		return self.parent:IsVisible()
+	end
+
+	return true	
 end
 
 function Widget:OnRawKey(key, down)
@@ -115,6 +130,20 @@ function Widget:MoveTo(from, to, time, fn)
         self.inst:AddComponent("uianim")
     end
     self.inst.components.uianim:MoveTo(from, to, time, fn)
+end
+
+function Widget:ForceStartWallUpdating()
+    if not self.inst.components.uianim then
+        self.inst:AddComponent("uianim")
+    end
+    self.inst.components.uianim:ForceStartWallUpdating(self)
+end
+
+function Widget:ForceStopWallUpdating()
+    if not self.inst.components.uianim then
+        self.inst:AddComponent("uianim")
+    end
+    self.inst.components.uianim:ForceStopWallUpdating(self)
 end
 
 function Widget:IsEnabled()
@@ -170,6 +199,10 @@ end
 
 
 function Widget:AddChild(child)
+    if child.parent then
+        child.parent.children[child] = nil
+    end
+
     self.children[child] = child
     child.parent = self
     child.inst.entity:SetParent(self.inst.entity)
@@ -186,10 +219,10 @@ function Widget:Show()
     self.inst.entity:Show(false)
     self.shown = true
 	self:OnShow()
-
 end
 
 function Widget:Kill()
+	self:StopUpdating()	
 	self:KillAllChildren()
     if self.parent then
         self.parent.children[self] = nil
@@ -221,6 +254,9 @@ function Widget:SetPosition(pos, y, z)
     if type(pos) == "number" then
         self.inst.UITransform:SetPosition(pos,y,z or 0)
     else
+        if not self.inst:IsValid() then
+			print (debugstack())
+        end
         self.inst.UITransform:SetPosition(pos.x,pos.y,pos.z)
     end
 end
@@ -240,7 +276,7 @@ end
 
 function Widget:SetScale(pos, y, z)
     if type(pos) == "number" then
-        self.inst.UITransform:SetScale(pos,y,z)
+        self.inst.UITransform:SetScale(pos, y or pos, z or pos)
     else
         self.inst.UITransform:SetScale(pos.x,pos.y,pos.z)
     end
@@ -272,6 +308,22 @@ function Widget:SetTooltip(str)
     self.tooltip = str
 end
 
+function Widget:SetTooltipColour(r,g,b,a)
+    self.tooltipcolour = {r, g, b, a}
+end
+
+function Widget:GetTooltipColour()
+    if self.focus then
+        for k,v in pairs(self.children) do
+            local col = k:GetTooltipColour()
+            if col then
+                return col
+            end
+        end
+        return self.tooltipcolour
+    end
+end
+
 function Widget:GetTooltip()
     if self.focus then
         for k,v in pairs(self.children) do
@@ -283,6 +335,28 @@ function Widget:GetTooltip()
         return self.tooltip
     end
 end
+
+function Widget:StartUpdating()
+	TheFrontEnd:StartUpdatingWidget(self)
+end
+
+function Widget:StopUpdating()
+	TheFrontEnd:StopUpdatingWidget(self)
+end
+
+--[[function Widget:Update(dt)
+    if not self.enabled then return end
+    if self.OnUpdate then
+        self:OnUpdate(dt)
+    end
+
+    for k,v in pairs(self.children) do
+		if v.OnUpdate or #v.children > 0 then
+			v:Update(dt)        
+		end
+    end
+end--]]
+
 
 function Widget:SetClickable(val)
     self.inst.entity:SetClickable(val)
@@ -342,7 +416,10 @@ function Widget:SetFocusChangeDir(dir, widget, ...)
     end
 
     self.focus_flow[dir] = widget
-    self.focus_flow_args[dir] = {...}
+    
+    if ... then
+		self.focus_flow_args[dir] = {...}
+	end
 end
 
 function Widget:GetDeepestFocus()
@@ -391,7 +468,7 @@ function Widget:SetFocusFromChild(from_child)
 end
 
 function Widget:SetFocus()
-
+    --print ("SET FOCUS, ", self)
     if self.focus_forward then
         self.focus_forward:SetFocus()
         return
@@ -413,6 +490,8 @@ function Widget:SetFocus()
         v:ClearFocus()
     end
 
+    --print(debugstack())
+
 end
 
 
@@ -433,7 +512,7 @@ function Widget:GetStr(indent)
 end
 
 function Widget:__tostring()
-    return self.name
+    return tostring(self.name)
 end
 
 return Widget

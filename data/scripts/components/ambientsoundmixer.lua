@@ -30,7 +30,11 @@ local AmbientSoundMixer = Class(function(self, inst)
 		[GROUND.MARSH] = {sound = "dontstarve/marsh/marshAMB", wintersound = "dontstarve/winter/wintermarshAMB", rainsound="dontstarve/rain/rainmarshAMB"},
 		[GROUND.CHECKER] = {sound = "dontstarve/chess/chessAMB", wintersound = "dontstarve/winter/winterchessAMB", rainsound="dontstarve/rain/rainchessAMB"},
 		[GROUND.CAVE] = {sound = "dontstarve/cave/caveAMB"},
+		
 		[GROUND.FUNGUS] = {sound = "dontstarve/cave/fungusforestAMB"},
+		[GROUND.FUNGUSRED] = {sound = "dontstarve/cave/fungusforestAMB"},
+		[GROUND.FUNGUSGREEN] = {sound = "dontstarve/cave/fungusforestAMB"},
+		
 		[GROUND.SINKHOLE] = {sound = "dontstarve/cave/litcaveAMB"},
 		[GROUND.UNDERROCK] = {sound = "dontstarve/cave/caveAMB"},
 		[GROUND.MUD] = {sound = "dontstarve/cave/fungusforestAMB"},
@@ -104,7 +108,6 @@ function AmbientSoundMixer:OnUpdate(dt)
 	self:UpdateAmbientGeoMix()
 	self:UpdateAmbientTimeMix(dt)	
 	self:UpdateAmbientVolumes()
-
 end
 
 function AmbientSoundMixer:GetDebugString()
@@ -122,7 +125,6 @@ function AmbientSoundMixer:GetDebugString()
 	return table.concat(str, "")
 	
 end
-
 
 
 
@@ -193,7 +195,6 @@ function AmbientSoundMixer:UpdateAmbientVolumes()
 end
 
 
-
 function AmbientSoundMixer:UpdateAmbientTimeMix(dt)
     --night/dusk ambient is attenuated in the light
     local player = nil
@@ -236,6 +237,13 @@ function AmbientSoundMixer:UpdateAmbientGeoMix()
 	local ground = GetWorld()
 	if player and ground then
 		local position = Vector3(player.Transform:GetWorldPosition())
+		
+		--only update if we've actually walked somewhere new
+		if self.lastpos and self.lastpos:DistSq(position) < 16 then
+			return
+		end
+		self.lastpos = position
+		
 		local x, y = ground.Map:GetTileCoordsAtPoint(position.x, position.y, position.z)
 		
 		local sound_mix = {}

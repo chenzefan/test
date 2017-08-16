@@ -7,21 +7,29 @@ ControlMinions = Class(BehaviourNode, function(self, inst)
 end)
 
 function ControlMinions:GetClosestMinion(item, minions)
-	local pt = item:GetPosition()
+	
+	
+
+	local ptx, pty, ptz = item.Transform:GetWorldPosition()
+	
+	local closest = nil
+	local closest_dist = nil
+
 	local inrange = {}
 	for k,v in pairs(minions) do
 		if v ~= item then
-			local dist = math.sqrt(distsq(pt, v:GetPosition()))
+			local x, y, z = v.Transform:GetWorldPosition()
+			local dist = math.sqrt(distsq(ptx, ptz, x, z))
 			if dist <= self.minionrange then
-				table.insert(inrange, {mn = v, distance = dist})			
+				if not closest or dist < closest_dist then
+					closest = v
+					closest_dist = dist
+				end
 			end
 		end
 	end
 
-	if #inrange > 0 then
-		table.sort(inrange, function(a,b) return (a.distance) < (b.distance) end)
-		return inrange[1].mn
-	end
+	return closest
 end
 
 function ControlMinions:CanActOn(item)
@@ -89,8 +97,8 @@ function ControlMinions:Visit()
             			end
             			local ba = mn:GetBufferedAction()
             			
-            			if ba then
-            				mn:FacePoint(Vector3(ba.target.Transform:GetWorldPosition()), true)
+            			if ba and ba.target and ba.target:IsValid() then
+            				mn:ForceFacePoint(ba.target.Transform:GetWorldPosition())
                			end
 
 					end			

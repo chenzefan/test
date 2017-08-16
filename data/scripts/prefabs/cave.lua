@@ -39,10 +39,25 @@ local cave_prefabs =
     "lichen",
     "cutlichen",
     "rook_nightmare",
+    "bishop_nightmare",
+    "knight_nightmare",
     "ruins_statue_head",
     "ruins_statue_head_nogem",
     "ruins_statue_mage",
     "ruins_statue_mage_nogem",
+    "nightmarelight",
+    "pillar_ruins",
+    "pillar_algae",
+    "pillar_cave",
+    "pillar_stalactite",
+    "worm",
+    "fissure",
+    "fissure_lower",
+    "slurper",
+    "minotaur",
+    "monkeybarrel",
+    "spider_dropper",
+
 }
 
 local assets =
@@ -65,10 +80,15 @@ local function fn(Sim)
 
 	inst.prefab = "cave"
 	--cave specifics
-	inst:AddComponent("quaker")
+    inst:AddComponent("clock")
+    inst:AddComponent("quaker")
 	inst:AddComponent("seasonmanager")
 	inst.components.seasonmanager:SetCaves()
 	inst:AddComponent("colourcubemanager")
+
+	inst:AddComponent("periodicthreat")
+	local threats = require("periodicthreats")
+	inst.components.periodicthreat:AddThreat("WORM", threats["WORM"])
 	
 	--add waves
 	--local waves = inst.entity:AddWaveComponent()

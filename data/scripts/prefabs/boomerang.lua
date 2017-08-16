@@ -66,7 +66,7 @@ local function OnHit(inst, owner, target)
     if impactfx then
 	    local follower = impactfx.entity:AddFollower()
 	    follower:FollowSymbol(target.GUID, target.components.combat.hiteffectsymbol, 0, 0, 0 )
-        impactfx:FacePoint(Vector3(inst.Transform:GetWorldPosition()))
+        impactfx:FacePoint(inst.Transform:GetWorldPosition())
     end
 end
 

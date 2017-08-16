@@ -6,9 +6,11 @@ local Text = require "widgets/text"
 local Image = require "widgets/image"
 local UIAnim = require "widgets/uianim"
 local Widget = require "widgets/widget"
+
+local PopupDialogScreen = require "screens/popupdialog"
 require "os"
 
-SlotDetailsScreen = Class(Screen, function(self, slotnum)
+local SlotDetailsScreen = Class(Screen, function(self, slotnum)
 	Screen._ctor(self, "LoadGameScreen")
     self.profile = Profile
     self.saveslot = slotnum
@@ -17,18 +19,25 @@ SlotDetailsScreen = Class(Screen, function(self, slotnum)
 	local day = SaveGameIndex:GetSlotDay(slotnum)
 	local world = SaveGameIndex:GetSlotWorld(slotnum)
 	local character = SaveGameIndex:GetSlotCharacter(slotnum) or "wilson"
+	local DLC = SaveGameIndex:GetSlotDLC(slotnum)
+	self.RoG = (DLC ~= nil and DLC.REIGN_OF_GIANTS ~= nil) and DLC.REIGN_OF_GIANTS or false
 	self.character = character
 
     
-	self.root = self:AddChild(Widget("ROOT"))
-    self.root:SetVAnchor(ANCHOR_MIDDLE)
-    self.root:SetHAnchor(ANCHOR_MIDDLE)
-    self.root:SetPosition(0,0,0)
-    self.root:SetScaleMode(SCALEMODE_PROPORTIONAL)
-	
+	self.scaleroot = self:AddChild(Widget("scaleroot"))
+    self.scaleroot:SetVAnchor(ANCHOR_MIDDLE)
+    self.scaleroot:SetHAnchor(ANCHOR_MIDDLE)
+    self.scaleroot:SetPosition(0,0,0)
+    self.scaleroot:SetScaleMode(SCALEMODE_PROPORTIONAL)
+    self.root = self.scaleroot:AddChild(Widget("root"))
+    self.root:SetScale(.9)
     self.bg = self.root:AddChild(Image("images/fepanels.xml", "panel_saveslots.tex"))
 
-    self.text = self.root:AddChild(Text(TITLEFONT, 60))
+    if JapaneseOnPS4() then
+        self.text = self.root:AddChild(Text(TITLEFONT, 40))
+    else
+        self.text = self.root:AddChild(Text(TITLEFONT, 60))
+    end
     self.text:SetPosition( 75, 135, 0)
     self.text:SetRegionSize(250,60)
     self.text:SetHAlign(ANCHOR_LEFT)
@@ -43,9 +52,17 @@ SlotDetailsScreen = Class(Screen, function(self, slotnum)
 	local atlas = (table.contains(MODCHARACTERLIST, character) and "images/saveslot_portraits/"..character..".xml") or "images/saveslot_portraits.xml"
 	self.portrait:SetTexture(atlas, character..".tex")
 	self.portrait:SetPosition(-120, 135, 0)
+
+	if character and mode and self.RoG then
+		self.dlcindicator = self.root:AddChild(Image())
+		self.dlcindicator:SetClickable(false)
+		self.dlcindicator:SetTexture("images/ui.xml", "DLCicon.tex")
+		self.dlcindicator:SetScale(.75,.75,1)
+		self.dlcindicator:SetPosition(0, 60, 0)
+	end
       
     self.menu = self.root:AddChild(Menu(nil, -70))
-	self.menu:SetPosition(0, 0, 0)
+	self.menu:SetPosition(0, -50, 0)
 	
 	self.default_focus = self.menu
 end)
@@ -65,7 +82,7 @@ function SlotDetailsScreen:BuildMenu()
 
     local menuitems = 
     {
-		{name = STRINGS.UI.SLOTDETAILSSCREEN.CONTINUE, fn = function() self:Continue() end},
+		{name = STRINGS.UI.SLOTDETAILSSCREEN.CONTINUE, fn = function() self:Continue() end, offset = Vector3(0,20,0)},
 		{name = STRINGS.UI.SLOTDETAILSSCREEN.DELETE, fn = function() self:Delete() end},
 		{name = STRINGS.UI.SLOTDETAILSSCREEN.CANCEL, fn = function() TheFrontEnd:PopScreen(self) end},
 	}
@@ -77,15 +94,25 @@ function SlotDetailsScreen:BuildMenu()
 	elseif mode == "cave" then
 		self.text:SetString(string.format("%s %d-%d",STRINGS.UI.LOADGAMESCREEN.CAVE, world, day))
 	else
-		--shouldn't actually happen...
-		self.text:SetString(string.format("%s",STRINGS.UI.LOADGAMESCREEN.NEWGAME))
+		--This should only happen if the user has run a mod that created a new type of game mode.
+		self.text:SetString(string.format("%s",STRINGS.UI.LOADGAMESCREEN.MODDED))
 	end 
     
 	self.menu:Clear()
 
     for k,v in pairs(menuitems) do
-    	self.menu:AddItem(v.name, v.fn)
+    	self.menu:AddItem(v.name, v.fn, v.offset)
     end
+
+    if self.RoG and not IsDLCInstalled(REIGN_OF_GIANTS) then
+		for i,j in pairs(self.menu.items) do
+			if j:GetText() == STRINGS.UI.SLOTDETAILSSCREEN.CONTINUE then
+				j:SetTextColour(0,0,0,.5)
+				j:SetTextFocusColour(1,0,0,.75)
+				j:SetOnClick(function() self:PushCantContinueDialog(REIGN_OF_GIANTS) end)
+			end
+		end
+	end
 end
 
 function SlotDetailsScreen:OnControl( control, down )
@@ -106,16 +133,30 @@ function SlotDetailsScreen:Delete()
 		{
 			text=STRINGS.UI.MAINSCREEN.DELETE, 
 			cb = function()
-				SaveGameIndex:DeleteSlot(self.saveslot, function() TheFrontEnd:PopScreen() TheFrontEnd:PopScreen() end)
+				TheFrontEnd:PopScreen()
+				SaveGameIndex:DeleteSlot(self.saveslot, function() TheFrontEnd:PopScreen() end)
 			end
 		},
 		-- ESC
-		{text=STRINGS.UI.MAINSCREEN.CANCEL, cb = function() TheFrontEnd:PopScreen() end},
+		{text=STRINGS.UI.MAINSCREEN.CANCEL, cb = function() TheFrontEnd:PopScreen() self.menu:SetFocus() end},
 	}
 
 	TheFrontEnd:PushScreen(
 		PopupDialogScreen(STRINGS.UI.MAINSCREEN.DELETE.." "..STRINGS.UI.MAINSCREEN.SLOT.." "..self.saveslot, STRINGS.UI.MAINSCREEN.SURE, menu_items ) )
 
+end
+
+function SlotDetailsScreen:PushCantContinueDialog(index)
+	local menu_items = 
+	{
+		-- OK
+		{text=STRINGS.UI.MAINSCREEN.OK, cb = function() TheFrontEnd:PopScreen() self.menu:SetFocus() end},
+	}
+
+	if index == REIGN_OF_GIANTS then
+		TheFrontEnd:PushScreen(
+			PopupDialogScreen(STRINGS.UI.MAINSCREEN.CANT_LOAD_TITLE, STRINGS.UI.MAINSCREEN.CANT_LOAD_ROG.." "..STRINGS.UI.MAINSCREEN.SLOT.." "..self.saveslot..".", menu_items ) )
+	end
 end
 
 function SlotDetailsScreen:Continue()
@@ -124,3 +165,10 @@ function SlotDetailsScreen:Continue()
 		StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = self.saveslot})
 	 end)
 end
+
+function SlotDetailsScreen:GetHelpText()
+	local controller_id = TheInput:GetControllerID()
+	return TheInput:GetLocalizedControl(controller_id, CONTROL_CANCEL) .. " " .. STRINGS.UI.HELP.BACK
+end
+
+return SlotDetailsScreen

@@ -40,7 +40,7 @@ function EmitterManagerClass:RemoveEmitter(inst)
 end
 
 function EmitterManagerClass:PostUpdate()
-	if IsHUDPaused() then
+	if IsPaused() then
 		return
 	end
 	

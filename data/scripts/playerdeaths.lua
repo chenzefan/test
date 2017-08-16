@@ -53,7 +53,7 @@ function PlayerDeaths:Save(callback)
     	end
  		print( "SAVING Morgue", #self.persistdata )
         local str = json.encode(self.persistdata)
-        local insz, outsz = TheSim:SetPersistentString(self:GetSaveName(), str, ENCODE_SAVES, callback)
+        local insz, outsz = SavePersistentString(self:GetSaveName(), str, ENCODE_SAVES, callback)
     else
 		if callback then
 			callback(true)
@@ -63,7 +63,8 @@ end
 
 function PlayerDeaths:Load(callback)
     TheSim:GetPersistentString(self:GetSaveName(),
-        function(str) 
+        function(load_success, str) 
+        	-- Can ignore the successfulness cause we check the string
 			self:Set( str, callback )
         end, false)    
 end

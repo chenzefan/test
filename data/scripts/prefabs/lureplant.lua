@@ -273,6 +273,7 @@ local function fn()
     anim:PlayAnimation("idle_hidden", true)
 
     inst:AddTag("lureplant")
+    inst:AddTag("hostile")
     inst:AddTag("veggie")
 
     inst:AddComponent("combat")

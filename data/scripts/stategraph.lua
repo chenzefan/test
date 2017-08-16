@@ -39,7 +39,9 @@ end
 function StateGraphWrangler:OnPushEvent(inst)
     if self.instances[inst] then
         self.haveEvents[inst] = true
+		return true
     end
+	return false
 end
 
 function StateGraphWrangler:Hibernate(inst)
@@ -385,7 +387,7 @@ function StateGraphInstance:GoToState(statename, params)
     end
 
     -- Record stats
-    if self.inst == GetPlayer() and self.currentstate and not IsAwayFromKeyBoard() then
+    if METRICS_ENABLED and self.inst == GetPlayer() and self.currentstate and not IsAwayFromKeyBoard() then
         local dt = GetTime() - self.statestarttime
         self.currentstate.totaltime = self.currentstate.totaltime and (self.currentstate.totaltime + dt) or dt  -- works even if currentstate.time is nil
         -- dprint(self.currentstate.name," time in state= ", self.currentstate.totaltime)

@@ -36,8 +36,12 @@ local function onsleep(inst, sleeper)
 
 
 	if GetClock():IsDay() then
+		local tosay = "ANNOUNCE_NODAYSLEEP"
+		if GetWorld():IsCave() then
+			tosay = "ANNOUNCE_NODAYSLEEP_CAVE"
+		end
 		if sleeper.components.talker then
-			sleeper.components.talker:Say(GetString(inst.prefab, "ANNOUNCE_NODAYSLEEP"))
+			sleeper.components.talker:Say(GetString(sleeper.prefab, tosay))
 			return
 		end
 	end
@@ -52,23 +56,36 @@ local function onsleep(inst, sleeper)
 	
 	if danger then
 		if sleeper.components.talker then
-			sleeper.components.talker:Say(GetString(inst.prefab, "ANNOUNCE_NODANGERSLEEP"))
+			sleeper.components.talker:Say(GetString(sleeper.prefab, "ANNOUNCE_NODANGERSLEEP"))
 		end
+		return
+	end
+
+	if sleeper.components.hunger.current < TUNING.CALORIES_MED then
+		sleeper.components.talker:Say(GetString(sleeper.prefab, "ANNOUNCE_NOHUNGERSLEEP"))
 		return
 	end
 	
 	sleeper.components.health:SetInvincible(true)
 	sleeper.components.playercontroller:Enable(false)
 
+	GetPlayer().HUD:Hide()
 	TheFrontEnd:Fade(false,1)
 
 	inst:DoTaskInTime(1.2, function() 
-	
+		
+		GetPlayer().HUD:Show()
 		TheFrontEnd:Fade(true,1) 
 		
 		if GetClock():IsDay() then
+
+			local tosay = "ANNOUNCE_NODAYSLEEP"
+			if GetWorld():IsCave() then
+				tosay = "ANNOUNCE_NODAYSLEEP_CAVE"
+			end
+
 			if sleeper.components.talker then				
-				sleeper.components.talker:Say(GetString(inst.prefab, "ANNOUNCE_NODAYSLEEP"))
+				sleeper.components.talker:Say(GetString(sleeper.prefab, tosay))
 				sleeper.components.health:SetInvincible(false)
 				sleeper.components.playercontroller:Enable(true)
 				return
@@ -87,8 +104,8 @@ local function onsleep(inst, sleeper)
 			sleeper.components.health:DoDelta(TUNING.HEALING_HUGE, false, "tent", true)
 		end
 		
-		if sleeper.components.tempature then
-			sleeper.components.tempature:SetTemperature(sleeper.components.tempature.maxtemp)
+		if sleeper.components.temperature then
+			sleeper.components.temperature:SetTemperature(sleeper.components.temperature.maxtemp)
 		end
 		
 		

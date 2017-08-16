@@ -25,7 +25,7 @@ function Thief:StealItem(victim, itemtosteal, attack)
             end
         end
     elseif victim.components.container then
-        local item = itemtosteal or victim.components.inventory:FindItem(function(item) return not item:HasTag("nosteal") end)
+        local item = itemtosteal or victim.components.container:FindItem(function(item) return not item:HasTag("nosteal") end)
 
         if attack then
             if victim.components.equippable and victim.components.inventoryitem and victim.components.inventoryitem.owner  then 

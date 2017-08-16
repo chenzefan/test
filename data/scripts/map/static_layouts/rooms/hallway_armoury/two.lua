@@ -75,7 +75,19 @@ return {
       visible = true,
       opacity = 1,
       properties = {},
-      objects = {}
+      objects = {
+        {
+          name = "",
+          type = "knight_nightmare",
+          shape = "rectangle",
+          x = 224,
+          y = 224,
+          width = 0,
+          height = 0,
+          visible = true,
+          properties = {}
+        }
+      }
     }
   }
 }

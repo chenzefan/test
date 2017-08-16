@@ -76,7 +76,7 @@ local states=
         onenter = function(inst)
             inst.AnimState:PlayAnimation("frozen")
             inst.Physics:Stop()
-            inst.components.highlight:SetAddColour(Vector3(82/255, 115/255, 124/255))
+            --inst.components.highlight:SetAddColour(Vector3(82/255, 115/255, 124/255))
         end,
     },
     
@@ -119,6 +119,8 @@ local states=
 			inst.SoundEmitter:PlaySound("dontstarve/creatures/werepig/transformToPig")
             inst.AnimState:SetBuild("werepig_build")
 			inst.AnimState:PlayAnimation("transform_were_pig")
+		    inst:RemoveTag("hostile")
+			
 		end,
 		
 		onexit = function(inst)
@@ -189,7 +191,7 @@ local states=
         
         timeline=
         {
-            TimeEvent(20*FRAMES, function(inst) inst:PerformBufferedAction() end),
+            TimeEvent(10*FRAMES, function(inst) inst:PerformBufferedAction() end),
         },
         
         events=

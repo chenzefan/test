@@ -32,7 +32,7 @@ local function onequip_blue(inst, owner)
     owner.AnimState:OverrideSymbol("swap_body", "torso_amulets", "blueamulet")
 
     inst.freezefn = function(attacked, data)
-        if data.attacker.components.freezable then
+        if data and data.attacker and data.attacker.components.freezable then
             data.attacker.components.freezable:AddColdness(0.67)
             data.attacker.components.freezable:SpawnShatterFX()
             inst.components.fueled:DoDelta(-(inst.components.fueled.maxfuel * 0.03))
@@ -69,10 +69,10 @@ local function induceinsanity(val, owner)
     end
 
     local pt = owner:GetPosition()
-    local ents = TheSim:FindEntities(pt.x,pt.y,pt.z, 100)
+    local ents = TheSim:FindEntities(pt.x,pt.y,pt.z, 100, nil, nil, {'rabbit', 'manrabbit'})
 
     for k,v in pairs(ents) do
-        if (v:HasTag("rabbit") or v:HasTag("manrabbit")) and v.CheckTransformState ~= nil then
+        if v.CheckTransformState ~= nil then
             v.CheckTransformState(v)
         end
     end
@@ -124,11 +124,18 @@ end
 local function getitem(player, amulet, item)
     --Amulet will only ever pick up items one at a time. Even from stacks.
     SpawnEffect(item)
+    amulet.components.finiteuses:Use(1)
+    
     if item.components.stackable then
         item = item.components.stackable:Get()
     end
+    
+    if item.components.trap and item.components.trap:IsSprung() then
+        item.components.trap:Harvest(player)
+        return
+    end
+    
     player.components.inventory:GiveItem(item)
-    amulet.components.finiteuses:Use(1)
 end
 
 local function pickup(inst, owner)
@@ -321,7 +328,7 @@ local function yellow(inst)
         inst.components.equippable:SetOnEquip( onequip_yellow )
         inst.components.equippable:SetOnUnequip( onunequip_yellow )
         inst.components.equippable.walkspeedmult = 1.2
-
+        inst.components.inventoryitem:SetOnDroppedFn(function(inst) inst.Light:Enable(false) end)
         inst.entity:AddLight()
         inst.Light:Enable(false)
         inst.Light:SetRadius(2)

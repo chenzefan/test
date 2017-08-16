@@ -8,6 +8,7 @@ end
 
 ModIndex = Class(function(self)
 	self.startingup = false
+	self.cached_data = {}
 	self.savedata =
 	{
 		known_mods = { },
@@ -40,19 +41,21 @@ end
 
 function ModIndex:BeginStartupSequence(callback)
 	self.startingup = true
-	self.hadACrash = false
 	local filename = "boot_"..self:GetModIndexName()
 	TheSim:GetPersistentString(filename,
-		function(str)
-			if str == "loading" then
-				self.badload = true
-				print("ModIndex: Detected bad load, disabling all mods.")
-				self:DisableAllMods()
-				self:Save(nil) -- write to disk that all mods were disabled!
+		function(load_success, str)
+			if load_success and str == "loading" then
+				local modsenabled = self:GetModsToLoad()
+				if #modsenabled > 0 then
+					self.badload = true
+					print("ModIndex: Detected bad load, disabling all mods.")
+					self:DisableAllMods()
+					self:Save(nil) -- write to disk that all mods were disabled!
+				end
 				callback()
 			else
-				print("ModIndex: Beginning normal load sequence.")
-				TheSim:SetPersistentString(filename, "loading", false, callback)
+				print("ModIndex: Beginning normal load sequence.\n")
+				SavePersistentString(filename, "loading", false, callback)
 			end
 		end)
 end
@@ -60,18 +63,8 @@ end
 function ModIndex:EndStartupSequence(callback)
 	self.startingup = false
 	local filename = "boot_"..self:GetModIndexName()
-	if not self.hadACrash then
-		TheSim:SetPersistentString(filename, "done", false, callback)
-		print("ModIndex: Load sequence finished successfully.")
-	end
-	 -- else, we should kill all the mods coz we didn't even reach the start screen.
-end
-
-function ModIndex:HadACrash()
-	if self.startingup then
-		print("ModIndex: There was a mod crash at an unrecoverable state in loading.")
-		self.hadACrash = true
-	end
+	SavePersistentString(filename, "done", false, callback)
+	print("ModIndex: Load sequence finished successfully.\n")
 end
 
 function ModIndex:WasLoadBad()
@@ -87,6 +80,10 @@ function ModIndex:GetModNames()
 end
 
 function ModIndex:Save(callback)
+    if PLATFORM == "PS4" then
+        return
+    end
+    
 	local newdata = { known_mods = {} }
 	newdata.known_api_version = MOD_API_VERSION
 
@@ -104,31 +101,8 @@ function ModIndex:Save(callback)
 	--print("\n\n---END SAVING MOD INDEX---\n\n")
 
 	local data = DataDumper(newdata, nil, false)
-    local insz, outsz = TheSim:SetPersistentString(self:GetModIndexName(), data, ENCODE_SAVES, callback)
+    local insz, outsz = SavePersistentString(self:GetModIndexName(), data, ENCODE_SAVES, callback)
 end
-
---[[
-
-WHERE I AM:
-The goal is for the modindex to have the authority of which mods exist and when
-to load them. The startup flow will be changed to this:
-
-+ Modindex loads
-+ Modmanager tries loading mods
- + Modindex provides list of mods to load
-  + Modindex checks for existence of mods
-+ Modmanager loads the mods. (This includes setting up the environment, etc.)
-
-Later on:
-+ Modscreen tells the mod index to update its list
-- Modindex downloads info from steam
-- Modindex triggers steam mod downloads.
-+ Modindex loads up modinfo from local (steal this from modmanager)
-+ User enables and disables mods, updating the modindex
-+ Modindex saves
-+ Game resets, back to beginning.
-
-]]
 
 function ModIndex:GetModsToLoad(usecached)
 	local cached = usecached or false
@@ -144,10 +118,16 @@ function ModIndex:GetModsToLoad(usecached)
 	else
 		if self.savedata and self.savedata.known_mods then
 			for modname, moddata in pairs(self.savedata.known_mods) do
-				if moddata.enabled then
+				if self:IsModEnabled(modname) or self:IsModForceEnabled(modname) then
 					table.insert(ret, modname)
 				end
 			end
+		end
+	end
+	for i,modname in ipairs(ret) do
+		if self:IsModStandalone(modname) then
+			print("\n\n"..ModInfoname(modname).." Loading a standalone mod! No other mods will be loaded.\n")
+			return { modname }
 		end
 	end
 	return ret
@@ -202,12 +182,13 @@ end
 function ModIndex:InitializeModInfo(modname)
 	local env = {}
 	local fn = kleiloadlua("../mods/"..modname.."/modinfo.lua")
+	local modinfo_message = ""
 	if type(fn) == "string" then
 		print("Error loading mod: "..ModInfoname(modname).."!\n "..fn.."\n")
 		--table.insert( self.failedmods, {name=modname,error=fn} )
 		env.failed = true
 	elseif not fn then
-		print("Modinfo: "..ModInfoname(modname).." had no modinfo.lua, using defaults...")
+		modinfo_message = modinfo_message.."No modinfo.lua, using defaults... "
 		env.old = true
 	else
 		local status, r = RunInEnvironment(fn,env)
@@ -218,7 +199,7 @@ function ModIndex:InitializeModInfo(modname)
 			env.failed = true
 		elseif env.api_version == nil or env.api_version < MOD_API_VERSION then
 			local old = "Mod "..modname.." was built for an older version of the game and requires updating. (api_version is version "..tostring(env.api_version)..", game is version "..MOD_API_VERSION..".)"
-			print("Warning loading mod: "..ModInfoname(modname).."!\n "..old)
+			modinfo_message = modinfo_message.."Old API! (mod: "..tostring(env.api_version).." game: "..MOD_API_VERSION..") "
 			env.old = true
 		elseif env.api_version > MOD_API_VERSION then
 			local old = "api_version for "..modname.." is in the future, please set to the current version. (api_version is version "..env.api_version..", game is version "..MOD_API_VERSION..".)"
@@ -244,6 +225,8 @@ function ModIndex:InitializeModInfo(modname)
 		end
 	end
 
+	env.modinfo_message = modinfo_message
+
 	return env
 end
 
@@ -263,17 +246,21 @@ function ModIndex:Load(callback)
 
     local filename = self:GetModIndexName()
     TheSim:GetPersistentString(filename,
-        function(str)
-			local success, savedata = RunInSandbox(str)
-			if success and string.len(str) > 0 then
-				self.savedata = savedata
-				for k,info in pairs(self.savedata.known_mods) do
-					info.was_enabled = info.enabled
+        function(load_success, str)
+        	if load_success == true then
+				local success, savedata = RunInSandbox(str)
+				if success and string.len(str) > 0 then
+					self.savedata = savedata
+					for k,info in pairs(self.savedata.known_mods) do
+						info.was_enabled = info.enabled
+					end
+					print ("loaded "..filename)
+		--print("\n\n---LOADING MOD INDEX---\n\n")
+		--dumptable(self.savedata)
+		--print("\n\n---END LOADING MOD INDEX---\n\n")
+				else
+					print ("Could not load "..filename)
 				end
-				print ("loaded "..filename)
-	--print("\n\n---LOADING MOD INDEX---\n\n")
-	--dumptable(self.savedata)
-	--print("\n\n---END LOADING MOD INDEX---\n\n")
 			else
 				print ("Could not load "..filename)
 			end
@@ -289,6 +276,15 @@ end
 
 function ModIndex:IsModForceEnabled(modname)
 	return self.modsettings.forceenable[modname]
+end
+
+function ModIndex:IsModStandalone(modname)
+	local known_mod = self.savedata.known_mods[modname]
+	return known_mod and known_mod.modinfo and known_mod.modinfo.standalone == true
+end
+
+function ModIndex:IsModInitPrintEnabled()
+	return self.modsettings.initdebugprint
 end
 
 -- Note: Installed means enabled + ran in this terminology
@@ -378,13 +374,21 @@ end
 
 -- When the user changes settings it messes directly with the index data, so make a backup
 function ModIndex:CacheSaveData()
-	self.cached_data = deepcopy(self.savedata)
+	self.cached_data = {}
+	self.cached_data.savedata = deepcopy(self.savedata)
+	self.cached_data.modsettings = deepcopy(self.modsettings)
 	return self.cached_data
 end
 
 -- If the user cancels their mod changes, restore the index to how it was prior the changes.
 function ModIndex:RestoreCachedSaveData(ext_data)
-	self.savedata = ext_data or self.cached_data
+	if ext_data then
+		self.savedata = ext_data.savedata
+		self.modsettings = ext_data.modsettings
+	elseif self.cached_data then
+		self.savedata = self.cached_data.savedata
+		self.modsettings = self.cached_data.modsettings
+	end
 end
 	
 function ModIndex:UpdateModSettings()
@@ -397,14 +401,21 @@ function ModIndex:UpdateModSettings()
 		print("WARNING: Force-enabling mod '"..ModInfoname(modname).."' from modsettings.lua! If you are not developing a mod, please use the in-game menu instead.")
 		self.modsettings.forceenable[modname] = true
 	end
+	local function EnableModDebugPrint()
+		self.modsettings.initdebugprint = true
+	end
 	
 	local env = {
 		ForceEnableMod = ForceEnableMod,
+		EnableModDebugPrint = EnableModDebugPrint,
 	}
 
 	local filename = "../mods/modsettings.lua"
 	local fn = kleiloadlua( filename )
 	assert(fn, "could not load modsettings: "..filename)
+	if type(fn)=="string" then
+		error("Error loading modsettings:\n"..fn)
+	end
 	setfenv(fn, env)
 	fn()
 end

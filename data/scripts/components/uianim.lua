@@ -16,7 +16,7 @@ function UIAnim:ScaleTo(start, dest, duration, whendone)
 		self.scale_whendone()
     end
     self.scale_whendone = whendone
-    self.inst:StartUpdatingComponent(self)
+    self.inst:StartWallUpdatingComponent(self)
 end
 
 function UIAnim:MoveTo(start, dest, duration, whendone)
@@ -31,13 +31,13 @@ function UIAnim:MoveTo(start, dest, duration, whendone)
     self.pos_whendone = whendone
     
     
-    self.inst:StartUpdatingComponent(self)
+    self.inst:StartWallUpdatingComponent(self)
     self.inst.UITransform:SetPosition(start.x, start.y, start.z)
 end
 
-function UIAnim:OnUpdate(dt)
+function UIAnim:OnWallUpdate(dt)
     if not self.inst:IsValid() then
-		self.inst:StopUpdatingComponent(self)
+		self.inst:StopWallUpdatingComponent(self)
 		return
     end
     
@@ -90,7 +90,7 @@ function UIAnim:OnUpdate(dt)
     end
     
     if not self.scale_t and not self.pos_t then
-        self.inst:StopUpdatingComponent(self)
+        self.inst:StopWallUpdatingComponent(self)
     end
 end
 

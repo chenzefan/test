@@ -32,12 +32,12 @@ end
 
 local function OnAttacked(inst, data)
     local x,y,z = inst.Transform:GetWorldPosition()
-    local ents = TheSim:FindEntities(x,y,z, 30)
+    local ents = TheSim:FindEntities(x,y,z, 30, {'bird'})
     
     local num_friends = 0
     local maxnum = 5
     for k,v in pairs(ents) do
-        if v ~= inst and v:HasTag("bird") then
+        if v ~= inst then
             v:PushEvent("gohome")
             num_friends = num_friends + 1
         end
@@ -47,6 +47,10 @@ local function OnAttacked(inst, data)
         end
         
     end
+end
+
+local function seedspawntest()
+	return GetWorld().components.seasonmanager:IsSummer()
 end
 
 local function makebird(name, soundname)
@@ -76,6 +80,11 @@ local function makebird(name, soundname)
         if data and data.trapper and data.trapper.settrapsymbols then
             data.trapper.settrapsymbols(name.."_build")
         end
+    end
+
+
+    local function canbeattacked(inst, attacked)
+        return not inst.sg:HasStateTag("flying")
     end
 
     local function fn()
@@ -135,6 +144,7 @@ local function makebird(name, soundname)
 
         inst:AddComponent("combat")
         inst.components.combat.hiteffectsymbol = "crow_body"
+        inst.components.combat.canbeattackedfn = canbeattacked
         inst:AddComponent("health")
         inst.components.health:SetMaxHealth(TUNING.BIRD_HEALTH)
         inst.components.health.murdersound = "dontstarve/wilson/hit_animal"
@@ -151,9 +161,9 @@ local function makebird(name, soundname)
         inst.components.periodicspawner:SetPrefab("seeds")
         inst.components.periodicspawner:SetDensityInRange(20, 2)
         inst.components.periodicspawner:SetMinimumSpacing(8)
-		inst.components.periodicspawner:SetSpawnTestFn( function()
-			return GetWorld().components.seasonmanager:IsSummer()
-		end)
+		inst.components.periodicspawner:SetSpawnTestFn( seedspawntest )
+
+        inst.TrackInSpawner = TrackInSpawner
         
         inst:ListenForEvent("ontrapped", OnTrapped)
         inst:ListenForEvent("onremove", StopTrackingInSpawner)

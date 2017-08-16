@@ -4,13 +4,15 @@ local Beard = Class(function(self, inst)
     self.callbacks = {}
     self.prize = nil
     self.bits = 0
-    
+        
     
     inst:ListenForEvent( "daycomplete", function(inst, data) 
-        self.daysgrowth = self.daysgrowth + 1
-        local cb = self.callbacks[self.daysgrowth]
-        if cb then
-            cb()
+        if not self.pause then
+            self.daysgrowth = self.daysgrowth + 1
+            local cb = self.callbacks[self.daysgrowth]
+            if cb then
+                cb()
+            end
         end
     end, GetWorld())
     

@@ -15,11 +15,16 @@ local GROUND_TURFS =
 	[GROUND.WOODFLOOR]	= "turf_woodfloor",
 	[GROUND.CARPET]		= "turf_carpetfloor",
 	[GROUND.CHECKER]	= "turf_checkerfloor",
+	
 	[GROUND.CAVE]		= "turf_cave",
 	[GROUND.FUNGUS]		= "turf_fungus",
+	[GROUND.FUNGUSRED]	= "turf_fungus_red",
+	[GROUND.FUNGUSGREEN]= "turf_fungus_green",
+	
 	[GROUND.SINKHOLE]	= "turf_sinkhole",
 	[GROUND.UNDERROCK]	= "turf_underrock",
 	[GROUND.MUD]		= "turf_mud",
+
 	webbing				= "turf_webbing",
 }
 
@@ -36,9 +41,9 @@ end
 function Terraformer:CollectPointActions(doer, pos, actions, right)
     if right then
 		local valid = true
-		if RoadManager then
-			valid = not RoadManager:IsOnRoad( pos.x, 0, pos.z )
-		end
+		-- if RoadManager then
+		-- 	valid = not RoadManager:IsOnRoad( pos.x, 0, pos.z )
+		-- end
 		
 		if valid and self:CanTerraformPoint(pos) then
 			table.insert(actions, ACTIONS.TERRAFORM)

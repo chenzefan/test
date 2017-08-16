@@ -49,6 +49,7 @@ end
 
 local function OnWorked(inst, worker)
     if worker.components.inventory then
+        StopTrackingInSpawner(inst)
         worker.components.inventory:GiveItem(inst, nil, Vector3(TheSim:GetScreenPos(inst.Transform:GetWorldPosition())))
         worker.SoundEmitter:PlaySound("dontstarve/common/butterfly_trap")
     end

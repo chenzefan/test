@@ -3,60 +3,63 @@ local Button = require "widgets/button"
 local Text = require "widgets/text"
 local Image = require "widgets/image"
 
-local TextButton = Class(Widget, function(self, name)
-	Widget._ctor(self, name or "TEXTBUTTON")
+local TextButton = Class(Button, function(self, name)
+	Button._ctor(self, name or "TEXTBUTTON")
 
     self.image = self:AddChild(Image("images/ui.xml", "blank.tex"))
     self.text = self:AddChild(Text(DEFAULTFONT, 30))
 
-	self.colour = {1,1,1,1}
-	self.overcolour = {0,0,1,1}
-
-	self.image:SetMouseOver(
-		function()
-			if self:IsEnabled() then
-				self.text:SetColour(self.overcolour)
-				self.image:SetSize(self.text:GetRegionSize())
-				TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/click_mouseover")
-			end
-			self:OnMouseOver()
-		end)
-
-	self.image:SetMouseOut(
-		function()
-			if self:IsEnabled() then
-				self.text:SetColour(self.colour)
-				self.image:SetSize(self.text:GetRegionSize())
-
-				if self.o_pos then
-					self:SetPosition(self.o_pos)
-				end
-			end
-			self:OnMouseOut()
-		end)
- 
-    self.image:SetLeftMouseDown(
-        function()
-			if self:IsEnabled() then
-				TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/click_move")
-				self.o_pos = self:GetLocalPosition()
-				self:SetPosition(self.o_pos + Vector3(0,-3,0))
-			end
-        end)
-
-    self.image:SetLeftMouseUp(
-        function()
-			if self:IsEnabled() then
-				if self.o_pos then
-					self:SetPosition(self.o_pos)
-					if self.onclick then
-						self.onclick()
-					end
-				end
-			end
-        end) 
+	self.colour = {0.9,0.8,0.6,1}
+	self.overcolour = {1,1,1,1}
 end)
 
+	
+function TextButton:OnGainFocus()
+	TextButton._base.OnGainFocus(self)
+    if self:IsEnabled() then
+    	self.text:SetColour(self.overcolour)
+	end
+
+    if self.image_focus == self.image_normal then
+        self.image:SetScale(1.2,1.2,1.2)
+    end
+
+end
+
+function TextButton:OnLoseFocus()
+	TextButton._base.OnLoseFocus(self)
+    if self:IsEnabled() then
+    	self.text:SetColour(self.colour)
+	end
+
+    if self.image_focus == self.image_normal then
+        self.image:SetScale(1,1,1)
+    end
+end
+
+
+function TextButton:Enable()
+	TextButton._base.Enable(self)
+    self.image:SetTexture(self.atlas, self.focus and self.image_focus or self.image_normal)
+
+    if self.image_focus == self.image_normal then
+        if self. focus then 
+            self.image:SetScale(1.2,1.2,1.2)
+        else
+            self.image:SetScale(1,1,1)
+        end
+    end
+
+end
+
+function TextButton:Disable()
+	TextButton._base.Disable(self)
+	self.image:SetTexture(self.atlas, self.image_disabled)
+end
+
+function TextButton:GetSize()
+    return self.image:GetSize()
+end
 
 function TextButton:SetTextSize(sz)
 	self.text:SetSize(sz)

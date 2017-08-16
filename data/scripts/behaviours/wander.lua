@@ -121,7 +121,11 @@ function Wander:PickNewDirection()
                 --print(self.inst, "no walkdable wander, fall back to random")
             end
             --print(self.inst, pt, string.format("wander to %s @ %2.2f %s", tostring(offset), angle/DEGREES, deflected and "(deflected)" or ""))
-            self.inst.components.locomotor:WalkInDirection(angle/DEGREES)
+            if offset then
+                self.inst.components.locomotor:GoToPoint(self.inst:GetPosition() + offset)
+            else
+                self.inst.components.locomotor:WalkInDirection(angle/DEGREES)
+            end
         end
         
         self:Wait(self.times.minwalktime+math.random()*self.times.randwalktime)

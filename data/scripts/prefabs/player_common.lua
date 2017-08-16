@@ -52,6 +52,9 @@ local function MakePlayerCharacter(name, customprefabs, customassets, customfn, 
 
         Asset("SOUND", "sound/sfx.fsb"),
         Asset("SOUND", "sound/wilson.fsb"),
+
+        Asset("ANIM", "anim/fish01.zip"),   --These are used for the fishing animations.
+        Asset("ANIM", "anim/eel01.zip"),
     }
 
     local prefabs =
@@ -59,7 +62,6 @@ local function MakePlayerCharacter(name, customprefabs, customassets, customfn, 
         "beardhair",
         "brokentool",
         "abigail",
-        "gridplacer",
         "terrorbeak",
         "crawlinghorror",
         "creepyeyes",
@@ -72,7 +74,11 @@ local function MakePlayerCharacter(name, customprefabs, customassets, customfn, 
         "book_gardening",
         "book_sleep",
         "book_brimstone",
-        "pine_needles"
+        "pine_needles",
+        "reticule",
+	    "shovel_dirt",
+	    "mining_fx"
+        
     }
 
     if starting_inventory then
@@ -117,16 +123,8 @@ local function MakePlayerCharacter(name, customprefabs, customassets, customfn, 
         minimap:SetPriority( 10 )
         
         local lightwatch = inst.entity:AddLightWatcher()
-        lightwatch:SetLightThresh(.2)
+        lightwatch:SetLightThresh(.075)
         lightwatch:SetDarkThresh(.05)
-        inst.entity:AddLabel()
-
-        inst.Label:SetFontSize(fontsize)
-        inst.Label:SetFont(font)
-        inst.Label:SetPos(0,3.8,0)
-        inst.Label:Enable(false)
-        --inst.Label:SetColour(199/255,185/255,154/255)
-		
 		
         inst:AddTag("player")
         inst:AddTag("scarytoprey")
@@ -161,7 +159,9 @@ local function MakePlayerCharacter(name, customprefabs, customassets, customfn, 
         
         inst:AddComponent("sanitymonsterspawner")
 
-        inst:AddComponent("autosaver")
+        if PLATFORM ~= "PS4" then
+            inst:AddComponent("autosaver")
+        end            
         ------
         
         inst:AddComponent("health")
@@ -214,7 +214,9 @@ local function MakePlayerCharacter(name, customprefabs, customassets, customfn, 
         inst.components.grue:SetSounds("dontstarve/charlie/warn","dontstarve/charlie/attack")
 
         -------
-        inst:AddComponent("overseer") 
+        if METRICS_ENABLED then
+			inst:AddComponent("overseer") 
+		end
         -------
 
         inst.components.combat:SetAttackPeriod(TUNING.WILSON_ATTACK_PERIOD)
@@ -295,7 +297,7 @@ local function MakePlayerCharacter(name, customprefabs, customassets, customfn, 
             inst.components.talker:Say(GetActionFailString(inst.prefab, data.action.action.id, data.reason))
         end)
 
-
+        inst.CanExamine = function() return not inst.beaver end
 
         if customfn then
             customfn(inst)

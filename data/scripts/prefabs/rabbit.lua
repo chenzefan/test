@@ -125,15 +125,13 @@ end
 
 local function OnAttacked(inst, data)
     local x,y,z = inst.Transform:GetWorldPosition()
-    local ents = TheSim:FindEntities(x,y,z, 30)
+    local ents = TheSim:FindEntities(x,y,z, 30, {'rabbit'})
     
     local num_friends = 0
     local maxnum = 5
     for k,v in pairs(ents) do
-        if v:HasTag("rabbit") then
-            v:PushEvent("gohome")
-            num_friends = num_friends + 1
-        end
+        v:PushEvent("gohome")
+        num_friends = num_friends + 1
         
         if num_friends > maxnum then
             break

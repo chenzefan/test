@@ -40,6 +40,26 @@ return {
 	ANNOUNCE_PECKED = "What I do to deserve this?",
 	ANNOUNCE_TORCH_OUT = "Oh no! The light is gone!",
 	ANNOUNCE_WORMHOLE = "It makes me feel alive!",
+	ANNOUNCE_TRAP_WENT_OFF = "Ack! Do not surprise Wolfgang!",
+    ANNOUNCE_QUAKE = "Ground is shake. Wolfgang hate shaking ground.",
+    ANNOUNCE_NODANGERSLEEP = "Wolfgang prefer fight to sleep.",
+    ANNOUNCE_UNIMPLEMENTED = "Is not ready.",
+    ANNOUNCE_NOHUNGERSLEEP = "Wolfgang say never sleep with empty stomach.",
+    ANNOUNCE_FREEDOM = "I am free! Strong freedom!",
+    ANNOUNCE_RESEARCH = "Is lot of information.",
+    ANNOUNCE_NO_TRAP = "Easy like lift weights.",
+    ANNOUNCE_HIGHRESEARCH = "Is maybe too much information.",
+    ANNOUNCE_THORNS = "Pointy is not fair!",
+    ANNOUNCE_NODAYSLEEP_CAVE = "Is creepy in cave.",
+    ANNOUNCE_BEES = "Bees! Nasty stinging bug men!",
+    ANNOUNCE_KNOCKEDOUT = "Ugh, Wolfgang must have hit head.",
+    ANNOUNCE_LOWRESEARCH = "Is tiny information.",
+    ANNOUNCE_DEERCLOPS = "Sound like big strong man coming.",
+    ANNOUNCE_MOSQUITOS = "Wolfgang need blood, get away sucking bugs!",
+    ANNOUNCE_NODAYSLEEP = "Is too bright for sleep.",
+	ANNOUNCE_CANFIX = "\nMighty brain could make this better!",
+	ANNOUNCE_ACCOMPLISHMENT= "I am doing great things with tiny arrow!",
+	ANNOUNCE_ACCOMPLISHMENT_DONE = "I have defeated the tiny arrow!",	
 	BATTLECRY =
 	{
 		GENERIC = "I will punch you!",
@@ -58,6 +78,24 @@ return {
 	},
 	DESCRIBE =
 	{
+		WORMLIGHT = "Pretty light.",
+		WORM =
+		{
+		    PLANT = "Pretty light.",
+		    DIRT = "Is dirt moving?",
+		    WORM = "Did not expect this!",
+		},
+		EEL = "I must cook this!",
+		EEL_COOKED = "I have cooked it.",
+		UNAGI = "Food makes me mighty!",
+		EYETURRET = "Mighty structure will help me fight!",
+		EYETURRET_ITEM = "I must place this.",
+		MINOTAURHORN = "Is trophy from mighty foe.",
+		MINOTAURCHEST = "Chest have big strong horns.",
+		THULECITE_PIECES = "I can smash together to make bigger piece!",
+		POND_ALGAE = "Plant is so small! Is funny to me.",
+		GREENSTAFF = "This stick has a green gem on it.",
+		POTTEDFERN = "It makes me happy.",
 
 		SLURPER = "No! No! Stay off head!",
 		SLURPER_PELT = "It's still moving!",
@@ -83,7 +121,8 @@ return {
         {
         	WORKING = "Is nasty, creepy, altar.",
         	BROKEN = "Is broken altar.",
-        },     
+        },  
+        ANCIENT_ALTAR_BROKEN = "Is broken altar.",
 
         ANCIENT_STATUE = "Ugly, ugly, ugly.",
 
@@ -98,8 +137,9 @@ return {
         BLUEAMULET = "Would make good ice cube!",
 		PURPLEAMULET = "This amulet... it frightens Wolfgang.",
 		TELESTAFF = "It gives me a headache.",
+		MINERHAT = "Lamp for put on head.",
 		MONKEY = "Ugly monkey man!",
-		MONKEYBARREL = "Barrel should not move!",
+		MONKEYBARREL = "This... thing. It smells not so good.",
 
 		HOUNDSTOOTH="Puppy tooth!",
 		ARMORSNURTLESHELL="Is sticky inside.",
@@ -137,10 +177,23 @@ return {
 		STALAGMITE_TALL_FULL="Rock reaching for the roof.",
 		STALAGMITE_TALL_LOW="Rock reaching for the roof.",
 		STALAGMITE_TALL_MED="Rock reaching for the roof.",
+
+		TURF_CARPETFLOOR = "Step stones.",
+		TURF_CHECKERFLOOR = "Step stones.",
+		TURF_DIRT = "Step stones.",
+		TURF_FOREST = "Step stones.",
+		TURF_GRASS = "Step stones.",
+		TURF_MARSH = "Step stones.",
+		TURF_ROAD = "Step stones.",
+		TURF_ROCKY = "Step stones.",
+		TURF_SAVANNA = "Step stones.",
+		TURF_WOODFLOOR = "Step stones.",
+
+		TURF_CAVE="Step stones.",
 		TURF_FUNGUS="Step stones.",
-		TURF_MUD="Step stones.",
 		TURF_SINKHOLE="Step stones.",
 		TURF_UNDERROCK="Step stones.",
+		TURF_MUD="Step stones.",
 
 		POWCAKE = "Is made of nothings!",
         CAVE_ENTRANCE = 
@@ -160,8 +213,16 @@ return {
 		ARMORMARBLE = "I tie rocks to muscles.",
 		ARMORWOOD = "Is almost strong as belly!",
 		ARMOR_SANITY = "Is like wearing scary little rag!",
+		ASH =
+		{
+			GENERIC = "Is skeleton of fire.",
+			REMAINS_EYE_BONE = "Is burned pieces of eyebone from I teleport!",
+			REMAINS_THINGIE = "Is burned pieces of some thing. Is dead now...",
+		},
 		AXE = "Chop!",
 		BABYBEEFALO = "Baby hair-cow!",
+		BACKPACK = "Is for carry more thing.",
+		BACONEGGS = "Food has yolk! And meat! More strong!",
 		BANDAGE = "I can fix me!",
 		BASALT = "Is stronger even than me!",
 		BEARDHAIR = "Gross. These are not from my face.",
@@ -185,8 +246,12 @@ return {
 		},
 		BEEFALOHAT = "Is good hat!",
 		BEEFALOWOOL = "I make clothes of hair-cow.",
+		BEEHAT = "Is hat for to protect from stinger bees.",
 		BEEHIVE = "Oh, beehive!",
+		BEEMINE = "Is ball full of anger bees.",
+		BEEMINE_MAXWELL = "Is ball full of anger mosquitos.",
 		BERRIES = "Is tasty!",
+		BERRIES_COOKED = "Is more tasty!",
 		BERRYBUSH =
 		{
 			BARREN = "I need to poop on it.",
@@ -204,6 +269,8 @@ return {
 		BIRD_EGG_COOKED = "Yum!",
 		BISHOP = "Padre!",
 		BLOWDART_FIRE = "Careful, Wolfgang.",
+		BLOWDART_SLEEP = "Dart do sleeping to enemies.",
+		BLOWDART_PIPE = "Dart do pain to enemies.",
 		BLUEGEM = "Pretty rock.",
 		BLUEPRINT = "Pretty pictures!",
 		BLUE_CAP = "Is good for me, I think.",
@@ -215,6 +282,7 @@ return {
 			PICKED = "I already took that mushy room.",
 		},
 		BOARDS = "I break log to make board!",
+		BONESTEW = "Is stew full of strong meat.",
 		BUGNET = "Catch bugs.",
 		BUSHHAT = "I am so sneaky!",
 		BUTTER = "Is buttery, and taste like insect.",
@@ -223,6 +291,7 @@ return {
 			GENERIC = "Is pretty flutterby!",
 			HELD = "My pet!",
 		},
+		BUTTERFLYMUFFIN = "Wolfgang did not know about bug muffin. I will taste.",
 		BUTTERFLYWINGS = "No fly without wings!",
 		CAMPFIRE =
 		{
@@ -235,6 +304,9 @@ return {
 		},
 		CANE = "I can walk AND hit things!",
 		CARROT = "Is food. I guess.",
+		CARROT_COOKED = "Is not more like meat after do cooking.",
+		CARROT_PLANTED = "Is hiding?",
+		CARROT_SEEDS = "Seeds is too small.",
 		CAVE_FERN = "Pretty plant!",
 		CHARCOAL = "Is like holding tiny dead tree.",
         CHESSJUNK1 = "Metal junk.",
@@ -249,6 +321,16 @@ return {
 		COOKEDMEAT = "I made meat good with fire!",
 		COOKEDMONSTERMEAT = "I still do not want to eat this.",
 		COOKEDSMALLMEAT = "It is even smaller cooked!",
+		COOKPOT =
+		{
+			COOKING_LONG = "This take long time.",
+			COOKING_SHORT = "Is almost cook!",
+			DONE = "Is time to eat!",
+			EMPTY = "Empty pot make Wolfgang think hungry thoughts.",
+		},
+		CORN = "Is corn. What expect?",
+		CORN_COOKED = "Pop pop pop! Ha ha, funny corn.",
+		CORN_SEEDS = "Is seeds for grow corn.",
 		CROW =
 		{
 			GENERIC = "I do not like birds.",
@@ -257,8 +339,13 @@ return {
 		CUTGRASS = "I made a pile of grass.",
 		CUTREEDS = "I made a clump of reeds.",
 		CUTSTONE = "I crush rock to make brick!",
+		DEADLYFEAST = "Look like evil food.",
 		DEERCLOPS = "He looks mightier than me!",
 		DEERCLOPS_EYEBALL = "Yuck yuck yuck!",
+		DEPLETED_GRASS =
+		{
+			GENERIC = "Is tuft of grass.",
+		},
 		DIRTPILE = "Dirty dirt.",
 		DIVININGROD =
 		{
@@ -268,11 +355,32 @@ return {
 			WARM = "Ha! That is good one, robot box!",
 			WARMER = "Robot box is getting angry...",
 		},
+		DIVININGRODBASE =
+		{
+			GENERIC = "What is purpose?",
+			READY = "Rod thing need key to make start.",
+			UNLOCKED = "Rod thing is on!",
+		},
+		DIVININGRODSTART = "Is funny rod thing.",
+		DRAGONFRUIT = "Is funny looking fruit.",
+		DRAGONFRUIT_COOKED = "Is cooked but still look funny.",
+		DRAGONFRUIT_SEEDS = "I use this to grow funny fruit.",
+		DRAGONPIE = "Pie made of funny red fruit.",
+		DRUMSTICK = "Leg meat for make legs more strong.",
+		DRUMSTICK_COOKED = "Eat off bone is good.",
 		DUG_BERRYBUSH = "He is cold and lonely.",
 		DUG_GRASS = "He is cold and lonely.",
 		DUG_MARSH_BUSH = "He is cold and lonely.",
 		DUG_SAPLING = "He is cold and lonely.",
+		DURIAN = "Is spiky smelly fruit.",
+		DURIAN_COOKED = "Now is hot spiky smelly fruit.",
+		DURIAN_SEEDS = "Tiny baby spiky fruit plant.",
+		EARMUFFSHAT = "Now I look like little bunny!",
 		EARMUFFHAT = "Now I look like little bunny!",
+		EGGPLANT = "Is not egg!",
+		EGGPLANT_COOKED = "Has no yolk! Yolk is strongest part!",
+		EGGPLANT_SEEDS = "Teensy fake egg plant.",
+		STUFFEDEGGPLANT = "I make yolk of other foods.",
 		EVERGREEN =
 		{
 			BURNING = "I broke it.",
@@ -294,6 +402,10 @@ return {
 			GROWING = "Grow my little friends! Grow!",
 			NEEDSFERTILIZER = "Dirt is not dirty enough to make plants.",
 		},
+		FEATHERHAT = "Is silly hat of feather. Is Wolfgang bird now?",
+		FEATHER_CROW = "Is feather of bird black.",
+		FEATHER_ROBIN = "Is feather of bird red.",
+		FEATHER_ROBIN_WINTER = "Is feather of bird white.",
 		FEM_PUPPET = "Scary chair scare her!",
 		FIREFLIES =
 		{
@@ -310,11 +422,18 @@ return {
 			NORMAL = "Is good fire!",
 			OUT = "Uh oh. It turned off.",
 		},
+		FIRESTAFF = "Is staff for make fire. Careful, Wolfgang.",
+		FISH = "Is fishy.",
+		FISHINGROD = "Is for get fishy from pond place.",
+		FISHSTICKS = "Ha ha, is funny name.",
+		FISHTACOS = "Wolfgang hope is not too spicy for Wolfgang.",
+		FISH_COOKED = "Meat from water still make Wolfgang strong.",
 		FLINT = "Is rock, but pointy-er.",
 		FLOWER = "They are very pretty.",
 		FLOWERHAT = "Is so pretty!",
 		FLOWER_EVIL = "Is not potato.",
 		FOLIAGE = "I killed the pretty plant.",
+		FOOTBALLHELMET = "Is hat for make tackling.",
 		FROG =
 		{
 			DEAD = "Is delicacy in my country.",
@@ -322,8 +441,15 @@ return {
 			SLEEPING = "Is asleep.",
 		},
 		FROGLEGS = "Is delicacy in my country!",
+		FROGGLEBUNWICH = "Is sandwich with tasty leg meat.",
+		FROGLEGS_COOKED = "Is mostly taste like chicken.",
+		FRUITMEDLEY = "Is cup of teensy fruits.",
 		GEARS = "Ah ha! Who is bigger muscles now?",
 		GHOST = "Aaaaaaaaaaah!",
+		GOLDENAXE = "Fancy axe more good for chop.",
+		GOLDENPICKAXE = "Fancy pickaxe do better smash.",
+		GOLDENPITCHFORK = "Fancy pitchfork good for stab ground.",
+		GOLDENSHOVEL = "Fancy shovel is good hole maker.",
 		GOLDNUGGET = "Money is for tiny men!",
 		GRASS =
 		{
@@ -354,8 +480,12 @@ return {
 		HOMESIGN = "Is no time for reading signs!",
 		HONEY = "Is yum!",
 		HONEYCOMB = "Bee used to live inside.",
+		HONEYHAM = "Big meat with sweet is good meat.",
+		HONEYNUGGETS = "Small meats with sweet still is good meat.",
+		HORN = "Is hair-cow horn. Wolfgang hear hair-cow.",
 		HOUND = "Woof!",
 		HOUNDMOUND = "Is house of bones.",
+		HOUNDBONE = "Wimpy woof dog was not strong enough.",
 		ICEBOX = "Box what makes cold!",
 		ICEHOUND = "Bow wow!",
 		INSANITYROCK =
@@ -363,6 +493,8 @@ return {
 			ACTIVE = "Is in my way.",
 			INACTIVE = "Hah. I step over tiny obstacle.",
 		},
+		JAMMYPRESERVES = "Oozes like tiny enemy I crush in hand.",
+		KABOBS = "Eat off stick is good.",
 		KILLERBEE =
 		{
 			GENERIC = "Angry bee!",
@@ -382,6 +514,7 @@ return {
 		},
 		LITTLE_WALRUS = "You think you are mightier than old man?",
 		LIVINGLOG = "Creepy face log!",
+		LOCKEDWES = "Is puny man trapped by statue men.",
 		LOG = "Is thick like my arm.",
 		LUREPLANT = "You cannot fool Wolfgang!",
 		LUREPLANTBULB = "Ah ha! Who is tricky now?",
@@ -392,6 +525,8 @@ return {
 			GENERIC = "Is strange plant.",
 			PICKED = "Little plant man friend!",
 		},
+		COOKEDMANDRAKE = "Little plant man is food?",
+		MANDRAKESOUP = "Little plant man is for make soup!",
 		MARBLE = "I can lift!",
 		MARBLEPILLAR = "Is too heavy to lift.",
 		MARBLETREE = "Do not try punch tree.",
@@ -415,6 +550,7 @@ return {
 		MAXWELLLOCK = "Scary lock!",
 		MAXWELLTHRONE = "Scary chair!",
 		MEAT = "Meat makes me strong!",
+		MEATBALLS = "Ball of meats make me strong!",
 		MEATRACK =
 		{
 			DONE = "Yum, meaty leather!",
@@ -425,6 +561,7 @@ return {
 		MERM = "Is fishy man!",
 		MERMHEAD = "What a handsome devil!",
 		MERMHOUSE = "The house was not strong enough.",
+		MONSTERLASAGNA = "Taste like hairs and meats with noodle.",
 		MONSTERMEAT = "It is not looking like food.",
 		MONSTERMEAT_DRIED = "Look like leather, taste like leather.",
 		MOSQUITO =
@@ -432,6 +569,7 @@ return {
 			GENERIC = "Reminds me of uncle!",
 			HELD = "No more blood for you!",
 		},
+		MOSQUITOSACK = "Uncle did not have gut like this.",
 		MOUND =
 		{
 			DUG = "I am sorry, dead peoples.",
@@ -446,6 +584,8 @@ return {
 		PANFLUTE = "I can play folk song.",
 		PAPYRUS = "Is like paper",
 		PENGUIN = "Funny walking birds!",
+		PERD = "Dumb bird is take all berries!",
+		PEROGIES = "Wolfgang love perogi!",
 		PETALS = "These smell nice.",
 		PETALS_EVIL = "They make my brain hurt.",
 		PICKAXE = "Pick!",
@@ -466,6 +606,7 @@ return {
 			GUARD = "Does he even lift?",
 			WEREPIG = "Angry piggie!",
 		},
+		PIGSKIN = "Why long butt? Ha ha, Wolfgang is funny man.",
 		PIGTORCH = "How is fire made?",
 		PINECONE = 
 		{
@@ -481,8 +622,16 @@ return {
 			GROWING = "Is still growing.",
 			READY = "Mmmm. Is tasty now.",
 		},
+		POMEGRANATE = "Look like smartypants' brain.",
+		POMEGRANATE_COOKED = "Ha ha ha! I cook brain! Not so smart now.",
+		POMEGRANATE_SEEDS = "Is piece of brain?",
 		POND = "Is all wet.",
 		POOP = "Smelly!",
+		PUMPKIN = "Is big as head of weakling man! Not Wolfgang head.",
+		PUMPKINCOOKIE = "Is tasty cookie.",
+		PUMPKIN_COOKED = "I cook your head, puny man! I am strongest Wolfgang.",
+		PUMPKIN_LANTERN = "Now is actual head! Wolfgang afraid!",
+		PUMPKIN_SEEDS = "This grow food size of wimpy head.",
 		PURPLEGEM = "Prettier rock.",
 		RABBIT =
 		{
@@ -491,6 +640,7 @@ return {
 		},
 		RABBITHOLE = "You can not hide forever, jumping meat!",
 		RAINOMETER = "Splish! Splash!",
+		RATATOUILLE = "Is food. Sort of.",
 		RAZOR = "My skin is too strong for hairs!",
 		REDGEM = "Pretty rock.",
 		RED_CAP = "Oh! Is Pretty and shiny!",
@@ -518,6 +668,16 @@ return {
 		RESEARCHLAB3 = "What has Wolfgang done?",
 		RESURRECTIONSTATUE = "I'm not going to die.",
 		RESURRECTIONSTONE = "Hop on rock!",
+		ROBIN =
+		{
+			GENERIC = "Is pretty red color bird.",
+			HELD = "Is happy bird in pocket.",
+		},
+		ROBIN_WINTER =
+		{
+			GENERIC = "Is pretty white color bird.",
+			HELD = "Is fluffy bird. Nice bird.",
+		},
 		ROBOT_PUPPET = "Scary chair scare it!",
 		ROCK_LIGHT =
 		{
@@ -543,6 +703,7 @@ return {
 			PICKED = "Ha! Ha! Ha! Tree is floppy!",
 		},
 		SEEDS = "Too small to eat.",
+		SEEDS_COOKED = "Fire make bigger, can eat now.",
 		SEWING_KIT = "Is pokey!",
 		SHOVEL = "Dirt Spoon!",
 		SILK = "Is too fancy.",
@@ -580,6 +741,8 @@ return {
 		STINGER = "Is sharp like skewer!",
 		STRAWHAT = "Is good hat!",
 		SUNKBOAT = "Is broken!",
+		SWEATERVEST = "Is vest with pattern for fancy man.",
+		TAFFY = "Is sweet candy thing.",
 		TALLBIRD = "Is tallest bird!",
 		TALLBIRDEGG = "There is bird inside.",
 		TALLBIRDEGG_COOKED = "Cooked bird. Good for breakfast!",
@@ -590,6 +753,11 @@ return {
 			HOT = "Is too hot for little bird!",
 			LONG = "I wait for bird.",
 			SHORT = "Bird comes soon.",
+		},
+		TALLBIRDNEST =
+		{
+			GENERIC = "Is big egg!",
+			PICKED = "Is nest of emptiness.",
 		},
 		TEENBIRD =
 		{
@@ -614,6 +782,7 @@ return {
         TENTACLESPIKE = "Perfect for sticking!",
 		TENTACLE_PILLAR = "Time to pole dance!",
 		TENTACLE_PILLAR = "Lots of little friends!",
+		TENTACLE_PILLAR_ARM = "Tiny tentacle baby thing! Ha!",
 		TENTACLE_GARDEN = "Hmmmm, suspicious!",
 		TOPHAT = "Is good hat!",
 		TORCH = "I attack night with fire stick.",
@@ -638,8 +807,10 @@ return {
 		TRUNK_COOKED = "Is cooked nose.",
 		TRUNK_SUMMER = "Is floppy nose.",
 		TRUNK_WINTER = "Is floppy hairy nose.",
+		TURKEYDINNER = "Is good feast of bird meat.",
 		TWIGS = "Puny twigs! I can break them!",
 		UMBRELLA = "The rain hurts my mighty skin.",
+		WAFFLES = "Why does bread have holes?",
 		WALL_HAY = "Wall is made of grass!",
 		WALL_HAY_ITEM = "Scratchy straws!",
 		WALL_STONE = "Wall is strong like me!",
@@ -657,6 +828,7 @@ return {
 		},
 		WALRUS_TUSK = "Sea cow man tooth!",
 		WASPHIVE = "Mind says no. Muscles say yes!",
+		WETGOOP = "Wolfgang ruin food!",
 		WINTERHAT = "It make ears happy in cold!",
 		WINTEROMETER = "Cold go up! Red go down!",
 		WORMHOLE =
@@ -688,9 +860,13 @@ return {
         RELIC = "Is junk?",
         RUINS_RUBBLE = "I will make better with crushing.",  
         RUINS_BAT = "Is creepy.",
+        RUINSHAT = "Is hat for king.",
         SPIDER_DROPPER = "Scary spider from above.", 
         THULECITE = "Is pretty rock.",
         YELLOWAMULET = "Is glowing yellow.",    
+		ACCOMPLISHMENT_SHRINE = "I will defeat you, tiny arrow!",  
+		LIVINGTREE = "Tree is spooky!",
+		ICESTAFF = "Is my cold stick!",              
 	},
 	DESCRIBE_GENERIC = "What is this thing?",
 	DESCRIBE_TOODARK = "Help me! It is dark!",

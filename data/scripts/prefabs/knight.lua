@@ -2,19 +2,29 @@ local assets=
 {
 	Asset("ANIM", "anim/knight.zip"),
 	Asset("ANIM", "anim/knight_build.zip"),
+    Asset("ANIM", "anim/knight_nightmare.zip"),
 	Asset("SOUND", "sound/chess.fsb"),
 }
 
 local prefabs =
 {
 	"gears",
+    "thulecite_pieces",
+    "nightmarefuel",
 }
 
-local loot = 
+SetSharedLootTable( 'knight',
 {
-	"gears",
-	"gears",
-}
+    {'gears',  1.0},
+    {'gears',  1.0},
+})
+
+SetSharedLootTable( 'knight_nightmare',
+{
+    {'gears',             1.0},
+    {'nightmarefuel',     0.6},
+    {'thulecite_pieces',  0.5},
+})
 
 local SLEEP_DIST_FROMHOME = 1
 local SLEEP_DIST_FROMTHREAT = 20
@@ -49,21 +59,29 @@ local function ShouldWake(inst)
 end
 
 local function Retarget(inst)
+
     local homePos = inst.components.knownlocations:GetLocation("home")
     local myPos = Vector3(inst.Transform:GetWorldPosition() )
-    if (homePos and distsq(homePos, myPos) > TUNING.KNIGHT_TARGET_DIST*TUNING.KNIGHT_TARGET_DIST) then
+    if (homePos and distsq(homePos, myPos) > TUNING.KNIGHT_TARGET_DIST*TUNING.KNIGHT_TARGET_DIST) and not
+    (inst.components.follower and inst.components.follower.leader) then
         return
     end
     
     local newtarget = FindEntity(inst, TUNING.KNIGHT_TARGET_DIST, function(guy)
             return (guy:HasTag("character") or guy:HasTag("monster") )
-                   and not guy:HasTag("chess")
+                   and not (guy:HasTag("chess") and (guy.components.follower and not guy.components.follower.leader))
+                    and not ((inst.components.follower and inst.components.follower.leader == GetPlayer()) and (guy.components.follower and guy.components.follower.leader == GetPlayer()))
+                   and not (inst.components.follower and inst.components.follower.leader == guy)
                    and inst.components.combat:CanTarget(guy)
     end)
     return newtarget
 end
 
 local function KeepTarget(inst, target)
+    if (inst.components.follower and inst.components.follower.leader) then
+        return true
+    end
+
     local homePos = inst.components.knownlocations:GetLocation("home")
     local targetPos = Vector3(target.Transform:GetWorldPosition() )
     return homePos and distsq(homePos, targetPos) < MAX_CHASEAWAY_DIST*MAX_CHASEAWAY_DIST
@@ -88,7 +106,10 @@ local function fn()
     MakeCharacterPhysics(inst, 50, .5)
 
     anim:SetBank("knight")
+
+    inst.kind = ""
     anim:SetBuild("knight_build")
+
     
     inst:AddComponent("locomotor")
     inst.components.locomotor.walkspeed = TUNING.KNIGHT_WALK_SPEED
@@ -96,6 +117,7 @@ local function fn()
     inst:SetStateGraph("SGknight")
 
     inst:AddTag("monster")
+    inst:AddTag("hostile")
     inst:AddTag("chess")
     inst:AddTag("knight")
 
@@ -118,12 +140,14 @@ local function fn()
     inst.components.combat:SetAttackPeriod(TUNING.KNIGHT_ATTACK_PERIOD)
 
     inst:AddComponent("lootdropper")
-    inst.components.lootdropper:SetLoot(loot)
+    inst.components.lootdropper:SetChanceLootTable('knight')
     
     inst:AddComponent("inspectable")
     inst:AddComponent("knownlocations")
     
     inst:DoTaskInTime(1*FRAMES, function() inst.components.knownlocations:RememberLocation("home", Vector3(inst.Transform:GetWorldPosition()) ) end)
+
+    inst:AddComponent("follower")
 
     MakeMediumBurnableCharacter(inst, "spring")
     MakeMediumFreezableCharacter(inst, "spring")
@@ -133,4 +157,13 @@ local function fn()
     return inst
 end
 
-return Prefab("chessboard/knight", fn, assets, prefabs) 
+local function nightmarefn()
+    local inst = fn()
+    inst.kind = "_nightmare"        
+    inst.AnimState:SetBuild("knight_nightmare")
+    inst.components.lootdropper:SetChanceLootTable('knight_nightmare')
+    return inst
+end
+
+return Prefab("chessboard/knight", fn, assets, prefabs),
+Prefab("cave/monsters/knight_nightmare", nightmarefn, assets, prefabs)

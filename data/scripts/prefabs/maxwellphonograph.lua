@@ -2,7 +2,8 @@ assets =
 {
 	Asset("ANIM", "anim/phonograph.zip"),
 	Asset("SOUND", "sound/maxwell.fsb"),
-	Asset("SOUND", "sound/music.fsb")
+	Asset("SOUND", "sound/music.fsb"),
+	Asset("SOUND", "sound/gramaphone.fsb")
 }
 
 local function play(inst)
@@ -43,8 +44,8 @@ local function fn()
 		inst.components.machine.turnonfn = play
 		inst.components.machine.turnofffn = stop
 
-	    inst.entity:SetSleepRadius(1000)
-
+		inst.entity:SetCanSleep(false)
+		
 		inst:AddComponent("playerprox")
 		inst.components.playerprox:SetDist(600, 615)
 		inst.components.playerprox:SetOnPlayerNear(function() inst.components.machine:TurnOn() end)

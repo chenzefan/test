@@ -31,7 +31,7 @@ local function fn(Sim)
     
 	inst:AddComponent("repairer")
 	inst.components.repairer.repairmaterial = "hay"
-	inst.components.repairer.value = TUNING.REPAIR_CUTGRASS
+	inst.components.repairer.healthrepairvalue = TUNING.REPAIR_CUTGRASS_HEALTH
     
     inst:AddComponent("inventoryitem")
 

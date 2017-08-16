@@ -24,9 +24,9 @@ local function band_update( inst )
 	local owner = inst.components.inventoryitem and inst.components.inventoryitem.owner
 	if owner and owner.components.leader then
 		local x,y,z = owner.Transform:GetWorldPosition()
-		local ents = TheSim:FindEntities(x,y,z, TUNING.ONEMANBAND_RANGE, {"pig"})
+		local ents = TheSim:FindEntities(x,y,z, TUNING.ONEMANBAND_RANGE, {"pig"}, {'werepig'})
 		for k,v in pairs(ents) do
-			if v.components.follower and not v.components.follower.leader and not v:HasTag("werepig") and not owner.components.leader:IsFollower(v) and owner.components.leader.numfollowers < 10 then
+			if v.components.follower and not v.components.follower.leader  and not owner.components.leader:IsFollower(v) and owner.components.leader.numfollowers < 10 then
 				owner.components.leader:AddFollower(v)
 				--owner.components.sanity:DoDelta(-TUNING.SANITY_MED)
 			end

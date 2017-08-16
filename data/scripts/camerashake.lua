@@ -52,13 +52,19 @@ ShakeTypes =
 
 CameraShake = Class(function(self, shakeType, duration, speed, scale)
     self:StopShaking()
+    --TheInputProxy:RemoveVibration(VIBRATION_CAMERA_SHAKE)
+
     self.shakeType = shakeType or ShakeType.FULL
     self.duration = duration or 1
     self.speed = speed or 0.05
     self.scale = scale or 1
+    
+    local shake_scale = math.max(0, math.min(scale/4, 1))
+    TheInputProxy:AddVibration(VIBRATION_CAMERA_SHAKE, duration, shake_scale, false)    
 end)
 
 function CameraShake:StopShaking()
+    --TheInputProxy:RemoveVibration(VIBRATION_CAMERA_SHAKE)
     self.currentTime = 0
     self.duration = 0
     self.speed = 0

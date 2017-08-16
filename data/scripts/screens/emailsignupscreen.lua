@@ -11,14 +11,14 @@ local NumericSpinner = require "widgets/numericspinner"
 local TextEdit = require "widgets/textedit"
 local Widget = require "widgets/widget"
 
-require "screens/popupdialog"
+local PopupDialogScreen = require "screens/popupdialog"
 
 local UI_ATLAS = "images/ui.xml"
 local EMAIL_VALID_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.@!#$%&'*+-/=?^_`{|}~"
 local EMAIL_MAX_LENGTH = 254 -- http://tools.ietf.org/html/rfc5321#section-4.5.3.1
 local MIN_AGE = 3 -- ages less than this prompt error message, eg. if they didn't change the date at all
 
-EmailSignupScreen = Class(Screen, function(self)
+local EmailSignupScreen = Class(Screen, function(self)
 	Screen._ctor(self, "EmailSignupScreen")
 
 	self:DoInit()
@@ -233,7 +233,7 @@ function EmailSignupScreen:DoInit()
 	
 	self.bday_message = self.root:AddChild( Text( BODYTEXTFONT, 24,  STRINGS.UI.EMAILSCREEN.BIRTHDAYREASON ) )
 	self.bday_message:SetPosition( 0, -height_offset, 0 )
-	self.bday_message:SetRegionSize( edit_width, label_height * 2 )
+	self.bday_message:SetRegionSize( 700, label_height * 2 )
 	self.bday_message:EnableWordWrap(true)
 	--self.bday_message:SetHAlign(ANCHOR_LEFT)
 
@@ -328,3 +328,5 @@ function EmailSignupScreen:DoInit()
 	self.default_focus = self.menu
 
 end
+
+return EmailSignupScreen

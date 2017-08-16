@@ -73,6 +73,7 @@ local function fn()
     anim:SetBuild("slurtle_mound")
     anim:SetBank("slurtle_mound")
     anim:PlayAnimation("idle", true)
+    inst:AddTag("hostile")
 
 	inst:AddComponent( "childspawner" )
 	inst.components.childspawner:SetRegenPeriod(120)

@@ -21,7 +21,7 @@ function c_spawn(prefab, count)
 	count = count or 1
 	local inst = nil
 	for i=1,count do
-		inst = Spawn(prefab)
+		inst = DebugSpawn(prefab)
 		inst.Transform:SetPosition(TheInput:GetWorldPosition():Get())
 	end
 	SetDebugEntity(inst)
@@ -157,6 +157,12 @@ function c_teleport(x, y, z, inst)
 	inst = inst or GetPlayer()
 	inst.Transform:SetPosition(x, y, z)
     SuUsed("c_teleport", true)
+end
+
+function c_move(inst)
+	inst = inst or c_sel()
+	inst.Transform:SetPosition(TheInput:GetWorldPosition():Get())
+    SuUsed("c_move", true)
 end
 
 function c_goto(dest, inst)
@@ -344,6 +350,11 @@ function c_countallprefabs()
 
 	print("There are ", GetTableSize(counted), " different prefabs in the world.")
 end
+
+function c_speed(speed)
+	GetPlayer().components.locomotor.bonusspeed = speed
+end
+
 function c_testruins()
 	GetPlayer().components.builder:UnlockRecipesForTech({SCIENCE = 2, MAGIC = 2})
 	c_give("log", 20)
@@ -361,4 +372,9 @@ function c_testruins()
 	c_give("minerhat")
 	c_give("lantern")
 	c_give("backpack")
+end
+
+
+function c_teststate(state)
+	c_sel().sg:GoToState(state)
 end

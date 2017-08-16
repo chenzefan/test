@@ -20,6 +20,12 @@ local LightTweener = Class(function(self, inst)
 
 	self.time = nil
 	self.timepassed = 0
+
+	self.tweening = false
+
+	self.inst:ListenForEvent("lighttweener_start", function() self.tweening = true end)
+	self.inst:ListenForEvent("lighttweener_end ", function() self.tweening = false end)
+
 end)
 
 function LightTweener:EndTween()
@@ -46,12 +52,13 @@ function LightTweener:EndTween()
 		self.light:SetColour(self.t_colour_r, self.t_colour_g, self.t_colour_b)
 	end
 
+	self.inst:StopUpdatingComponent(self)
+	self.inst:PushEvent("lighttweener_end")
+	self.tweening = false
+	
 	if self.callback then
 		self.callback(self.inst, self.light)
 	end
-
-	self.inst:PushEvent("lighttweener_end")
-	self.inst:StopUpdatingComponent(self)
 end
 
 local function UnpackColour(colour)

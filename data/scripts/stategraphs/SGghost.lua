@@ -122,4 +122,3 @@ CommonStates.AddSimpleWalkStates(states, getidleanim)
 CommonStates.AddSimpleRunStates(states, getidleanim)
     
 return StateGraph("ghost", states, events, "appear")
-

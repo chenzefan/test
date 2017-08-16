@@ -17,7 +17,7 @@ return {
       margin = 0,
       image = "../../../../tools/tiled/dont_starve/tiles.png",
       imagewidth = 512,
-      imageheight = 256,
+      imageheight = 384,
       properties = {},
       tiles = {}
     }
@@ -561,7 +561,7 @@ return {
           height = 0,
           visible = true,
           properties = {
-            ["data.setepitaph"] = "David Forsey"
+            ["data.setepitaph"] = "David"
           }
         }
       }

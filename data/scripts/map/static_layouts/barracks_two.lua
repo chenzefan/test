@@ -424,6 +424,17 @@ return {
           height = 0,
           visible = true,
           properties = {}
+        },
+        {
+          name = "",
+          type = "knight_nightmare",
+          shape = "rectangle",
+          x = 144,
+          y = 336,
+          width = 0,
+          height = 0,
+          visible = true,
+          properties = {}
         }
       }
     }

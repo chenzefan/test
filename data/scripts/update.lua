@@ -1,14 +1,4 @@
 
-local wall_update_fns = {}
-function AddWallUpdateFn(fn)
-	wall_update_fns[ fn ] = fn
-end
-
-local DebugCommands = {}
-function InjectDebugCommand(data)
-	table.insert(DebugCommands, data)
-end
-
 --this is an update that always runs on wall time (not sim time)
 function WallUpdate(dt)
 	TheSim:ProfilerPush("LuaWallUpdate")
@@ -16,35 +6,45 @@ function WallUpdate(dt)
 		local x,y,z = GetPlayer().Transform:GetWorldPosition()
 		TheSim:SetActiveAreaCenterpoint(x,y,z)
 	end
-	
-	if #DebugCommands > 0 then
-		for k,v in ipairs(DebugCommands) do
-			local fn, message = loadstring(v)
-			if not fn then
-				print ("Error running debug command:", message)
-			else
-				fn()
-			end
-		end
-		DebugCommands = {}
-	end
 
-	for k,v in pairs(wall_update_fns) do
-		if not (v and v(dt)) then
-			wall_update_fns[k] = nil
-		end
-	end	
+	TheSim:ProfilerPush("updating wall components")
+    for k,v in pairs(WallUpdatingEnts) do
+        if v.wallupdatecomponents then
+            for cmp in pairs(v.wallupdatecomponents) do
+                if cmp.OnWallUpdate then
+                    cmp:OnWallUpdate( dt )
+                end
+            end
+        end
+    end
+    
+	for k,v in pairs(NewWallUpdatingEnts) do
+		WallUpdatingEnts[k] = v
+		NewWallUpdatingEnts[k] = nil
+    end
+    
+	TheSim:ProfilerPop()
 
+
+	TheSim:ProfilerPush("mixer")
     TheMixer:Update(dt)
+	TheSim:ProfilerPop()	
 
-	if not IsHUDPaused() then
+	if not IsPaused() then
+		TheSim:ProfilerPush("camera")
 		TheCamera:Update(dt)
+		TheSim:ProfilerPop()	
 	end
     
 	CheckForUpsellTimeout(dt)
 
+	TheSim:ProfilerPush("input")
     TheInput:OnUpdate()
+	TheSim:ProfilerPop()	
+
+	TheSim:ProfilerPush("fe")
 	TheFrontEnd:Update(dt)
+	TheSim:ProfilerPop()	
 	
 	TheSim:ProfilerPop()
 end
@@ -71,6 +71,7 @@ end
 local last_tick_seen = -1
 --This is where the magic happens
 function Update( dt )
+    HandleClassInstanceTracking()
 	TheSim:ProfilerPush("LuaUpdate")    
 	CheckDemoTimeout()
     
@@ -95,13 +96,17 @@ function Update( dt )
 
 		TheSim:ProfilerPush("updating components")
         for k,v in pairs(UpdatingEnts) do
+			--TheSim:ProfilerPush(v.prefab)
             if v.updatecomponents then
                 for cmp in pairs(v.updatecomponents) do
+                    --TheSim:ProfilerPush(v:GetComponentName(cmp))
                     if cmp.OnUpdate then
                         cmp:OnUpdate( dt )
                     end
+                    --TheSim:ProfilerPop()
                 end
             end
+            --TheSim:ProfilerPop()
         end
         
 		for k,v in pairs(NewUpdatingEnts) do
@@ -131,39 +136,70 @@ end
 
 --this is for advancing the sim long periods of time (to skip nights, come back from caves, etc)
 function LongUpdate(dt, ignore_player)
-
+	--print ("LONG UPDATE", dt, ignore_player)
 	local function doupdate(dt)
 		for k,v in pairs(StaticComponentLongUpdates) do
 			v(dt)
 		end
 
 		local player = GetPlayer()
-		for k,v in pairs(Ents) do
-			local should_ignore = ignore_player and (player == v or (v.components.inventoryitem and v.components.inventoryitem:GetGrandOwner() == player))
 
+		if player and ignore_player then
+			if player.components.beard then
+				player.components.beard.pause = true
+			end
+
+			if player.components.beaverness then
+				player.components.beaverness.ignoremoon = true
+			end
+		end
+
+
+		for k,v in pairs(Ents) do
+			
+			local should_ignore = false
+			if ignore_player then
+				
+				if v.components.inventoryitem then
+					local grand_owner = v.components.inventoryitem:GetGrandOwner()
+					if grand_owner == player then
+						should_ignore = true
+					end
+					if grand_owner and grand_owner.prefab == "chester" then
+						local leader = grand_owner.components.follower.leader
+						if leader and leader == player then
+							should_ignore = true
+						end
+					end
+				end
+				
+				if v.components.follower and v.components.follower.leader == player then
+					should_ignore = true
+				end
+
+				if player == v then
+					should_ignore = true
+				end
+			end
+				
 			if not should_ignore then
 				v:LongUpdate(dt)	
 			end
 			
 		end	
+
+		if player and ignore_player then
+			if player.components.beard then
+				player.components.beard.pause = nil
+			end
+
+			if player.components.beaverness then
+				player.components.beaverness.ignoremoon = nil
+			end
+		end
+
 	end
 
-	
 	doupdate(dt)
-	--[[
-	local longest_dt = TUNING.SEG_TIME*4
-	local num_full_updates = math.floor(dt / longest_dt)
-	local leftover_dt = dt - num_full_updates*longest_dt
-	print (string.format("Advancing time with %d updates", num_full_updates + (leftover_dt > 0 and 1 or 0)))
-	
-	
-	for k = 1, num_full_updates do
-		doupdate(longest_dt)
-	end
-	if leftover_dt > 0 then
-		doupdate(leftover_dt)
-	end
-	
-	scollectgarbage("collect")
---]]
+
 end

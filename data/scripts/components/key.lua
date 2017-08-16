@@ -31,4 +31,10 @@ function Key:CollectUseActions(doer, target, actions)
 	end
 end
 
+function Key:CollectEquippedActions(doer, target, actions, right)
+	if target.components.lock and not target.components.lock:IsStuck() and target.components.lock:CompatableKey(self.keytype) then
+		table.insert(actions, ACTIONS.UNLOCK)
+	end
+end
+
 return Key

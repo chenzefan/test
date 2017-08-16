@@ -100,7 +100,7 @@ return {
         },
         {
           name = "",
-          type = "rook_nightmare",
+          type = "knight_nightmare",
           shape = "rectangle",
           x = 240,
           y = 224,

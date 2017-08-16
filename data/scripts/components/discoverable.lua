@@ -18,14 +18,14 @@ function Discoverable:Discover()
 	self.discovered = true
 
 	self.inst.MiniMapEntity:SetIcon( self.discoveredIcon )
-	self.inst.MiniMapEntity:SetRenderOnTopOfMask( false )
+	--self.inst.MiniMapEntity:SetRenderOnTopOfMask( false )
 end
 
 function Discoverable:Hide()
 	self.discovered = false
 
 	self.inst.MiniMapEntity:SetIcon( self.undiscoveredIcon )
-	self.inst.MiniMapEntity:SetRenderOnTopOfMask( true )
+	--self.inst.MiniMapEntity:SetRenderOnTopOfMask( true )
 end
 
 function Discoverable:SetIcons(undiscovered, discovered)

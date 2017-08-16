@@ -26,6 +26,14 @@ function Text:SetColour(r,g,b,a)
     end
 end
 
+function Text:SetHorizontalSqueeze( squeeze )
+    self.inst.TextWidget:SetHorizontalSqueeze(squeeze)
+end
+
+function Text:SetAlpha(a)
+    self.inst.TextWidget:SetColour(1,1,1, a)
+end
+
 function Text:SetFont(font)
     self.inst.TextWidget:SetFont(font)
 end

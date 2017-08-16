@@ -12,26 +12,49 @@ local IngredientUI = require "widgets/ingredientui"
 
 require "widgets/widgetutil"
 
-local RecipePopup = Class(Widget, function(self, parentslot)
+local TEASER_SCALE_TEXT = 1
+local TEASER_SCALE_BTN = 1.5
+
+local RecipePopup = Class(Widget, function(self, horizontal)
     Widget._ctor(self, "Recipe Popup")
     
-    self.parentslot = parentslot
-    self.bg = self:AddChild(UIAnim())
-    self.bg:GetAnimState():SetBank("crafting_submenu")
-    self.bg:GetAnimState():SetBuild("crafting_submenu")
-    self.bg:GetAnimState():PlayAnimation("off")
+    local hud_atlas = resolvefilepath( "images/hud.xml" )
+
+    self.bg = self:AddChild(Image())
+    local img = horizontal and "craftingsubmenu_fullvertical.tex" or "craftingsubmenu_fullhorizontal.tex"
     
-    self.bg:SetPosition(32,16,0)
+    if horizontal then
+		self.bg:SetPosition(240,40,0)
+    else
+		self.bg:SetPosition(210,16,0)
+    end
+    self.bg:SetTexture(hud_atlas, img)
+    
+    --
     
     self.contents = self:AddChild(Widget(""))
     self.contents:SetPosition(-75,0,0)
     
-    self.name = self.contents:AddChild(Text(UIFONT, 45))
-    self.name:SetPosition(327, 142, 0)
+    if JapaneseOnPS4() then
+        self.name = self.contents:AddChild(Text(UIFONT, 42 * 0.8))
+    else
+        self.name = self.contents:AddChild(Text(UIFONT, 42))
+	end
+    self.name:SetPosition(320, 142, 0)
+    if JapaneseOnPS4() then
+        self.name:SetRegionSize(64*3+20,90)
+        self.name:EnableWordWrap(true)
+    end
 
-    self.desc = self.contents:AddChild(Text(BODYTEXTFONT, 30))
-    self.desc:SetPosition(325, -5, 0)
-    self.desc:SetRegionSize(64*3+20,70)
+    if JapaneseOnPS4() then
+        self.desc = self.contents:AddChild(Text(BODYTEXTFONT, 33 * 0.8))
+        self.desc:SetPosition(320, -10, 0)
+        self.desc:SetRegionSize(64*3+30,90)
+	else
+        self.desc = self.contents:AddChild(Text(BODYTEXTFONT, 33))
+        self.desc:SetPosition(320, -5, 0)
+        self.desc:SetRegionSize(64*3+30,70)	
+    end
     self.desc:EnableWordWrap(true)
     
     self.ing = {}
@@ -51,11 +74,12 @@ local RecipePopup = Class(Widget, function(self, parentslot)
     self.amulet:SetPosition(415, -105, 0)
     self.amulet:SetTooltip(STRINGS.GREENAMULET_TOOLTIP)
     
-    self.teaser = self.contents:AddChild(Text(BODYTEXTFONT, 30))
+    self.teaser = self.contents:AddChild(Text(BODYTEXTFONT, 28))
     self.teaser:SetPosition(325, -100, 0)
-    self.teaser:SetRegionSize(64*3+20,70)
+    self.teaser:SetRegionSize(64*3+20,100)
     self.teaser:EnableWordWrap(true)
     self.teaser:Hide()
+    
 end)
 
 
@@ -102,106 +126,145 @@ function GetHintTextForRecipe(recipe)
     return "CANTRESEARCH"
 end
 
+function RecipePopup:Refresh()
+	
+    local recipe = self.recipe
+	local owner = self.owner
+	
+	if not owner then
+		return false
+	end
+	
+    local knows = owner.components.builder:KnowsRecipe(recipe.name)
+    local buffered = owner.components.builder:IsBuildBuffered(recipe.name)
+    local can_build = owner.components.builder:CanBuild(recipe.name) or buffered
+    local tech_level = owner.components.builder.accessible_tech_trees
+    local should_hint = not knows and ShouldHintRecipe(recipe.level, tech_level) and not CanPrototypeRecipe(recipe.level, tech_level)
+
+    local equippedBody = owner.components.inventory:GetEquippedItem(EQUIPSLOTS.BODY)
+
+    local showamulet = equippedBody and equippedBody.prefab == "greenamulet"
+    
+    local controller_id = TheInput:GetControllerID()
+    
+    if should_hint then
+        self.recipecost:Hide()
+        self.button:Hide()
+        
+        local hint_text = 
+        {
+            ["SCIENCEMACHINE"] = STRINGS.UI.CRAFTING.NEEDSCIENCEMACHINE,
+            ["ALCHEMYMACHINE"] = STRINGS.UI.CRAFTING.NEEDALCHEMYENGINE,
+            ["SHADOWMANIPULATOR"] = STRINGS.UI.CRAFTING.NEEDSHADOWMANIPULATOR,
+            ["PRESTIHATITATOR"] = STRINGS.UI.CRAFTING.NEEDPRESTIHATITATOR,
+            ["CANTRESEARCH"] = STRINGS.UI.CRAFTING.CANTRESEARCH,
+            ["ANCIENTALTAR_HIGH"] = STRINGS.UI.CRAFTING.NEEDSANCIENT_FOUR,
+        }
+        local str = hint_text[GetHintTextForRecipe(recipe)] or "Text not found."
+        self.teaser:SetScale(TEASER_SCALE_TEXT)
+        self.teaser:SetString(str)
+        self.teaser:Show()
+        showamulet = false
+    elseif knows then
+        self.teaser:Hide()
+        self.recipecost:Hide()
+        
+        
+        if TheInput:ControllerAttached() then
+			self.button:Hide()
+			self.teaser:Show()
+			if can_build then
+                self.teaser:SetScale(TEASER_SCALE_BTN)
+				self.teaser:SetString(TheInput:GetLocalizedControl(controller_id, CONTROL_ACCEPT) .. " " .. (buffered and STRINGS.UI.CRAFTING.PLACE or STRINGS.UI.CRAFTING.BUILD))
+			else
+                self.teaser:SetScale(TEASER_SCALE_TEXT)
+				self.teaser:SetString(STRINGS.UI.CRAFTING.NEEDSTUFF)
+			end
+		else
+			self.button:Show()
+			self.button:SetPosition(320, -105, 0)
+			self.button:SetScale(1,1,1)
+            
+			self.button:SetText(buffered and STRINGS.UI.CRAFTING.PLACE or STRINGS.UI.CRAFTING.BUILD)
+			if can_build then
+				self.button:Enable()
+			else
+				self.button:Disable()
+			end
+		end
+    else
+    
+        self.teaser:Hide()
+        self.recipecost:Hide()
+        
+        if TheInput:ControllerAttached() then
+			self.button:Hide()
+			self.teaser:Show()
+			
+			if can_build then
+                self.teaser:SetScale(TEASER_SCALE_BTN)
+				self.teaser:SetString(TheInput:GetLocalizedControl(controller_id, CONTROL_ACCEPT) .. " " .. STRINGS.UI.CRAFTING.PROTOTYPE)
+			else
+                self.teaser:SetScale(TEASER_SCALE_TEXT)
+				self.teaser:SetString(STRINGS.UI.CRAFTING.NEEDSTUFF)
+			end
+		else
+			self.button:Show()
+			self.button:SetPosition(320, -105, 0)
+			self.button:SetScale(1,1,1)
+            
+			self.button:SetText(STRINGS.UI.CRAFTING.PROTOTYPE)
+			if can_build then
+				self.button:Enable()
+			else
+				self.button:Disable()
+			end
+        end
+        
+        
+    end 
+
+	if not showamulet then
+        self.amulet:Hide()
+    else
+        self.amulet:Show()
+    end
+
+    self.name:SetString(STRINGS.NAMES[string.upper(self.recipe.name)])
+    self.desc:SetString(STRINGS.RECIPE_DESC[string.upper(self.recipe.name)])
+    
+    for k,v in pairs(self.ing) do
+        v:Kill()
+    end
+    self.ing = {}
+
+    local center = 330
+    local num = 0
+    for k,v in pairs(recipe.ingredients) do num = num + 1 end
+    local w = 64
+    local div = 10
+    
+    local offset = center
+    if num > 1 then 
+        offset = offset - (w/2 + div)*(num-1)
+    end
+    
+    for k,v in pairs(recipe.ingredients) do
+    
+        local has, num_found = owner.components.inventory:Has(v.type, RoundUp(v.amount * owner.components.builder.ingredientmod))
+        
+        local ing = self.contents:AddChild(IngredientUI(v.atlas, v.type..".tex", v.amount, num_found, has, STRINGS.NAMES[string.upper(v.type)], owner))
+        ing:SetPosition(Vector3(offset, 80, 0))
+        offset = offset + (w+ div)
+        self.ing[k] = ing
+    end
+end
+
+
 function RecipePopup:SetRecipe(recipe, owner)
-    --if recipe ~= self.recipe then
-        self.recipe = recipe
-        self.owner = owner
-        
-        local knows = owner.components.builder:KnowsRecipe(recipe.name)
-        local buffered = owner.components.builder:IsBuildBuffered(recipe.name)
-        local can_build = owner.components.builder:CanBuild(recipe.name) or buffered
-        local tech_level = owner.components.builder.accessible_tech_trees
-        local should_hint = not knows and ShouldHintRecipe(recipe.level, tech_level) and not CanPrototypeRecipe(recipe.level, tech_level)
-
-        local equippedBody = owner.components.inventory:GetEquippedItem(EQUIPSLOTS.BODY)
-
-        local showamulet = equippedBody and equippedBody.prefab == "greenamulet"
-        
-        self.bg:GetAnimState():PlayAnimation("off")
-        
-        if should_hint then
-            self.recipecost:Hide()
-            self.button:Hide()
-            
-            local hint_text = 
-            {
-                ["SCIENCEMACHINE"] = STRINGS.UI.CRAFTING.NEEDSCIENCEMACHINE,
-                ["ALCHEMYMACHINE"] = STRINGS.UI.CRAFTING.NEEDALCHEMYENGINE,
-                ["SHADOWMANIPULATOR"] = STRINGS.UI.CRAFTING.NEEDSHADOWMANIPULATOR,
-                ["PRESTIHATITATOR"] = STRINGS.UI.CRAFTING.NEEDPRESTIHATITATOR,
-                ["CANTRESEARCH"] = STRINGS.UI.CRAFTING.CANTRESEARCH,
-                ["ANCIENTALTAR_HIGH"] = STRINGS.UI.CRAFTING.NEEDSANCIENT_FOUR,
-            }
-            local str = hint_text[GetHintTextForRecipe(recipe)] or "Text not found."
-            self.teaser:SetString(str)
-            self.teaser:Show()
-            showamulet = false
-        elseif knows then
-            self.teaser:Hide()
-            self.recipecost:Hide()
-            self.button:Show()
-            self.button:SetPosition(320, -105, 0)
-            self.button:SetScale(1,1,1)
-            
-            self.button:SetText(buffered and STRINGS.UI.CRAFTING.PLACE or STRINGS.UI.CRAFTING.BUILD)
-            if can_build then
-                self.button:Enable()
-            else
-                self.button:Disable()
-            end
-        else
-        
-            self.teaser:Hide()
-            self.recipecost:Hide()
-            self.button:Show()
-            self.button:SetPosition(320, -105, 0)
-            self.button:SetScale(1,1,1)
-            
-            self.button:SetText(STRINGS.UI.CRAFTING.PROTOTYPE)
-            if can_build then
-                self.button:Enable()
-            else
-                self.button:Disable()
-            end
-            
-        end 
-
-		if not showamulet then
-            self.amulet:Hide()
-        else
-            self.amulet:Show()
-        end
-        
-        self.name:SetString(self.recipe.descname)
-        self.desc:SetString(self.recipe.description)
-        
-        for k,v in pairs(self.ing) do
-            v:Kill()
-        end
-        self.ing = {}
-
-        local center = 330
-        local num = 0
-        for k,v in pairs(recipe.ingredients) do num = num + 1 end
-        local w = 64
-        local div = 10
-        
-        local offset = center
-        if num > 1 then 
-            offset = offset - (w/2 + div)*(num-1)
-        end
-        
-        for k,v in pairs(recipe.ingredients) do
-        
-            local has, num_found = owner.components.inventory:Has(v.type, RoundUp(v.amount * owner.components.builder.ingredientmod))
-            
-            local ing = self.contents:AddChild(IngredientUI(v.atlas, v.type..".tex", v.amount, num_found, has, STRINGS.NAMES[string.upper(v.type)], owner))
-            ing:SetPosition(Vector3(offset, 80, 0))
-            offset = offset + (w+ div)
-            self.ing[k] = ing
-        end
-
-    --end
+    self.recipe = recipe
+    self.owner = owner
+    self:Refresh()
 end
 
 return RecipePopup

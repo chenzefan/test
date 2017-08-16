@@ -50,6 +50,7 @@ local function fn()
     inst:AddTag("eyeplant")
     inst:AddTag("veggie")
     inst:AddTag("smallcreature")
+    inst:AddTag("hostile")
 
     MakeObstaclePhysics(inst, .1)
 
@@ -73,9 +74,12 @@ local function fn()
     end)
 
     inst:ListenForEvent("gotnewitem", function(inst, data)        
+        --print ("got item", data.item)
+        --print (debugstack())
         if data.item.components.health then
-            local ba = BufferedAction(inst,data.item,ACTIONS.MURDER) 
+            inst:DoTaskInTime(0, function() local ba = BufferedAction(inst,data.item,ACTIONS.MURDER) 
             inst:PushBufferedAction(ba)
+            end)
         end
     end)
 

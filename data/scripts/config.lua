@@ -46,12 +46,17 @@ local defaults =
 
 local platform_overrides =
 {
-
+	
 	NACL=
 	{
 		force_netbookmode = true,
 	},
 	ANDROID =
+	{
+		hide_vignette = true,
+		force_netbookmode = true,
+	},
+	IOS =
 	{
 		hide_vignette = true,
 		force_netbookmode = true,

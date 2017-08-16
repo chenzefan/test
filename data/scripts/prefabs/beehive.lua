@@ -21,23 +21,18 @@ local function OnEntitySleep(inst)
 	inst.SoundEmitter:KillSound("loop")
 end
 
-local function StartSpawningFn(inst)
-	local fn = function(world)
-		
-		if inst.components.childspawner and GetSeasonManager() and GetSeasonManager():IsSummer() then
-			inst.components.childspawner:StartSpawning()
-		end
+local function StartSpawning(inst)
+	if inst.components.childspawner 
+            and (GetSeasonManager() and GetSeasonManager():IsSummer()) 
+            and not (inst.components.freezable and inst.components.freezable:IsFrozen()) then
+		inst.components.childspawner:StartSpawning()
 	end
-	return fn
 end
 
-local function StopSpawningFn(inst)
-	local fn = function(world)
-		if inst.components.childspawner then
-			inst.components.childspawner:StopSpawning()
-		end
+local function StopSpawning(inst)
+	if inst.components.childspawner then
+		inst.components.childspawner:StopSpawning()
 	end
-	return fn
 end
 
 local function OnIgnite(inst)
@@ -47,6 +42,31 @@ local function OnIgnite(inst)
     end
     inst.SoundEmitter:KillSound("loop")
     DefaultBurnFn(inst)
+end
+
+local function OnFreeze(inst)
+    print(inst, "OnFreeze")
+    inst.SoundEmitter:PlaySound("dontstarve/common/freezecreature")
+    inst.AnimState:PlayAnimation("frozen", true)
+    inst.AnimState:OverrideSymbol("swap_frozen", "frozen", "frozen")
+
+    StopSpawning(inst)
+end
+
+local function OnThaw(inst)
+    print(inst, "OnThaw")
+    inst.AnimState:PlayAnimation("frozen_loop_pst", true)
+    inst.SoundEmitter:PlaySound("dontstarve/common/freezethaw", "thawing")
+    inst.AnimState:OverrideSymbol("swap_frozen", "frozen", "frozen")
+end
+
+local function OnUnFreeze(inst)
+    print(inst, "OnUnFreeze")
+    inst.AnimState:PlayAnimation("cocoon_small", true)
+    inst.SoundEmitter:KillSound("thawing")
+    inst.AnimState:ClearOverrideSymbol("swap_frozen")
+
+    StartSpawning(inst)
 end
 
 local function OnKilled(inst)
@@ -89,11 +109,11 @@ local function fn(Sim)
 	inst.components.childspawner:SetRegenPeriod(TUNING.BEEHIVE_REGEN_TIME)
 	inst.components.childspawner:SetSpawnPeriod(TUNING.BEEHIVE_RELEASE_TIME)
 	inst.components.childspawner:SetMaxChildren(TUNING.BEEHIVE_BEES)
-	if GetSeasonManager() and GetSeasonManager():IsSummer() then
-		inst.components.childspawner:StartSpawning()
-	end
-	inst:ListenForEvent( "dusktime", StopSpawningFn(inst), GetWorld())
-	inst:ListenForEvent( "daytime", StartSpawningFn(inst), GetWorld())
+
+    StartSpawning(inst)
+
+    inst:ListenForEvent("dusktime", function() StopSpawning(inst) end, GetWorld())
+    inst:ListenForEvent("daytime", function() StartSpawning(inst) end , GetWorld())
 	
     ---------------------  
     inst:AddComponent("lootdropper")
@@ -105,6 +125,13 @@ local function fn(Sim)
     inst.components.burnable:SetOnIgniteFn(OnIgnite)
     -------------------
     
+    ---------------------
+    MakeMediumFreezableCharacter(inst)
+    inst:ListenForEvent("freeze", OnFreeze)
+    inst:ListenForEvent("onthaw", OnThaw)
+    inst:ListenForEvent("unfreeze", OnUnFreeze)
+    -------------------
+
     inst:AddComponent("combat")
     inst.components.combat:SetOnHit(
         function(inst, attacker, damage) 

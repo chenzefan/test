@@ -44,9 +44,7 @@ function Explosive:OnBurnt()
 
             if v.components.workable and not v:HasTag("busy") then --Haaaaaaack!
                 v.components.workable:WorkedBy(self.inst, self.buildingdamage)
-            end
-
-            if v.components.burnable and not v.components.fueled and self.lightonexplode then
+            elseif v.components.burnable and not v.components.fueled and self.lightonexplode then
                 v.components.burnable:Ignite()
             end
 

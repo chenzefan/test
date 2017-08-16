@@ -5,6 +5,13 @@ end)
 
 function Resurrectable:FindClosestResurrector()
 	local res = nil
+	if self.inst.components.inventory then
+		local item = self.inst.components.inventory:GetEquippedItem(EQUIPSLOTS.BODY)
+		if item and item.prefab == "amulet" then
+			return item
+		end
+	end
+
 	local closest_dist = 0
 	for k,v in pairs(Ents) do
 		if v.components.resurrector and v.components.resurrector:CanBeUsed() then
@@ -27,7 +34,15 @@ function Resurrectable:CanResurrect()
 		end
 	end
 
-	local res = self:FindClosestResurrector()
+	local res = false
+
+	if SaveGameIndex:CanUseExternalResurector() then
+		res = SaveGameIndex:GetResurrector() 
+	end
+
+	if res == nil or res == false then
+		res = self:FindClosestResurrector()
+	end
 
 	if res then
 		return true

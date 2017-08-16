@@ -9,6 +9,7 @@ local assets=
 local prefabs =
 {
 	"meat",
+    "minotaurhorn"
 }
 
 local loot = 
@@ -21,6 +22,7 @@ local loot =
     "meat",
     "meat",
     "meat",
+    "minotaurhorn",
 }
 
 local SLEEP_DIST_FROMHOME = 20
@@ -120,9 +122,9 @@ local function oncollide(inst, other)
                 inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/explo") 
                 inst.components.combat:DoAttack(other)
                 dprint("_____After HIT")
-            elseif other and other.components.workable and other.components.workable.workleft >= 0 then
+            elseif other and other.components.workable and other.components.workable.workleft > 0 then
                 SpawnPrefab("collapse_small").Transform:SetPosition(other:GetPosition():Get())
-                other.components.workable:WorkedBy(inst,1)
+                other.components.workable:Destroy(inst)
             end
     end)
 
@@ -162,7 +164,7 @@ local function MakeMinotaur()
 	local anim = inst.entity:AddAnimState()
 	local sound = inst.entity:AddSoundEmitter()
 	local shadow = inst.entity:AddDynamicShadow()
-	shadow:SetSize( 3, 1.25 )
+	shadow:SetSize( 5, 3 )
     inst.Transform:SetFourFaced()
 
     MakeCharacterPhysics(inst, 100, 2.2)
@@ -179,7 +181,9 @@ local function MakeMinotaur()
     inst:SetStateGraph("SGminotaur")
 
     inst:AddTag("monster")
+    inst:AddTag("hostile")
     inst:AddTag("minotaur")
+    inst:AddTag("epic")
 
     local brain = require "brains/minotaurbrain"
     inst:SetBrain(brain)

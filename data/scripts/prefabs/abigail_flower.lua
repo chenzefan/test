@@ -123,6 +123,9 @@ local function fn(Sim)
     inst:ListenForEvent("onputininventory", topocket)
     inst:ListenForEvent("ondropped", toground)    
 
+    inst:AddComponent("characterspecific")
+    inst.components.characterspecific:SetOwner("wendy")
+
 
     inst:DoTaskInTime(0, function() 
 		if not GetPlayer() or GetPlayer().prefab ~= "wendy" then inst:Remove() end 

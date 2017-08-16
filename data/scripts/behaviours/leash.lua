@@ -1,10 +1,10 @@
-Leash = Class(BehaviourNode, function(self, inst, homelocation, max_dist, inner_return_dist)
+Leash = Class(BehaviourNode, function(self, inst, homelocation, max_dist, inner_return_dist, running)
     BehaviourNode._ctor(self, "Leash")
     self.homepos = homelocation
     self.maxdist = max_dist
     self.inst = inst
 	self.returndist = inner_return_dist
-	self.walking = false
+	self.running = running or false
 end)
 
 
@@ -24,7 +24,7 @@ function Leash:Visit()
 		end
     elseif self.status == RUNNING then
 		if self:IsOutsideReturnDist() then
-			self.inst.components.locomotor:GoToPoint(self:GetHomePos())
+			self.inst.components.locomotor:GoToPoint(self:GetHomePos(), nil, self.running)
 		else
 			self.status = SUCCESS
 		end

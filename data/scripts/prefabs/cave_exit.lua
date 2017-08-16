@@ -1,3 +1,5 @@
+local PopupDialogScreen = require "screens/popupdialog"
+
 local assets=
 {
 	Asset("ANIM", "anim/cave_exit_rope.zip"),
@@ -22,37 +24,31 @@ end
 
 
 local function OnActivate(inst)
-	--do popup confirmation
-	--do portal presentation 
-	--decrement the depth counter
-	--save and do restart
-	SetHUDPause(true)
+
+	SetPause(true)
 	local level = GetWorld().topology.level_number or 1
-	local function startadventure()
+	local function head_upwards()
+		SaveGameIndex:GetSaveFollowers(GetPlayer())
+
 		local function onsaved()
+		    SetPause(false)
 		    StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = SaveGameIndex:GetCurrentSaveSlot()}, true)
 		end
 
-		SetHUDPause(false)
+		local cave_num =  SaveGameIndex:GetCurrentCaveNum()
 		if level == 1 then
-			SaveGameIndex:SaveCurrent(function() SaveGameIndex:LeaveCave(onsaved) end)
+			SaveGameIndex:SaveCurrent(function() SaveGameIndex:LeaveCave(onsaved) end, "ascend", cave_num)
 		else
 			-- Ascend
 			local level = level - 1
 			
-			SaveGameIndex:SaveCurrent(function() SaveGameIndex:EnterCave(onsaved,nil, inst.cavenum, level) end)
+			SaveGameIndex:SaveCurrent(function() SaveGameIndex:EnterCave(onsaved,nil, cave_num, level) end, "ascend", cave_num)
 		end
 	end
-
-	local title = STRINGS.UI.EXITCAVE.TITLE
-	local body = STRINGS.UI.EXITCAVE.BODY
-	if level > 1 then
-		title = STRINGS.UI.EXITCAVE.TITLE_LEVEL
-		body = STRINGS.UI.EXITCAVE.BODY_LEVEL
-	end
-	TheFrontEnd:PushScreen(PopupDialogScreen(title, body, 
-			{{text=STRINGS.UI.EXITCAVE.YES, cb = startadventure},
-			 {text=STRINGS.UI.EXITCAVE.NO, cb = function() SetHUDPause(false) inst.components.activatable.inactive = true TheFrontEnd:PopScreen() end}  }))
+	GetPlayer().HUD:Hide()
+	TheFrontEnd:Fade(false, 2, function()
+									head_upwards()
+								end)
 end
 
 
@@ -61,16 +57,12 @@ local function fn(Sim)
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
-    --MakeObstaclePhysics(inst, 1)
-    
+     
     local minimap = inst.entity:AddMiniMapEntity()
     minimap:SetIcon( "cave_open2.png" )
     
     anim:SetBank("exitrope")
     anim:SetBuild("cave_exit_rope")
-
-    --anim:PlayAnimation("down")
-    --anim:PushAnimation("idle_loop", true)
 
     inst:AddComponent("playerprox")
     inst.components.playerprox:SetDist(5,7)

@@ -14,6 +14,10 @@ local function onhammered(inst, worker)
 	inst.SoundEmitter:PlaySound("dontstarve/common/destroy_wood")
 	inst.components.resurrector.penalty = 0
 	inst:Remove()
+
+	-- Remove from save index
+	SaveGameIndex:DeregisterResurrector(inst)
+
 	
 	if not inst.components.resurrector.used then
 		local player = GetPlayer()
@@ -38,6 +42,7 @@ end
 
 local function doresurrect(inst, dude)
 	inst:AddTag("busy")	
+	inst.persists = false
     inst:RemoveComponent("lootdropper")
     inst:RemoveComponent("workable")
     inst:RemoveComponent("inspectable")
@@ -59,7 +64,8 @@ local function doresurrect(inst, dude)
     end
 
     TheCamera:SetDistance(12)
-
+	dude.components.hunger:Pause()
+	
     scheduler:ExecuteInTime(3, function()
         dude:Show()
 
@@ -90,6 +96,9 @@ local function doresurrect(inst, dude)
             if dude.components.playercontroller then
                 dude.components.playercontroller:Enable(true)
             end
+            
+            dude.components.hunger:Resume()
+            
             TheCamera:SetDefault()
             inst:RemoveTag("busy")
         end)

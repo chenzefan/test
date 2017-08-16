@@ -144,6 +144,7 @@ local function create_common()
     ----------
     
     inst:AddTag("monster")
+    inst:AddTag("hostile")
 	inst:AddTag("scarytoprey")    
     inst:AddTag("canbetrapped")    
     
@@ -187,6 +188,8 @@ local function create_common()
     inst.components.combat.hiteffectsymbol = "body"
     inst.components.combat:SetKeepTargetFunction(keeptargetfn)
 	inst.components.combat:SetOnHit(SummonFriends)
+    inst.components.combat:SetHurtSound("dontstarve/creatures/cavespider/hit_response")
+    
     
     ------------------
     

@@ -80,7 +80,7 @@ function Tune(overrides)
 	    TELESTAFF_USES = 5,
 	    HAMBAT_USES = 100,
 	    BATBAT_USES = 75,
-	    MULTITOOL_AXE_PICKAXE_USES = 230,
+	    MULTITOOL_AXE_PICKAXE_USES = 400,
 	    RUINS_BAT_USES = 150,
 
 	    REDAMULET_USES = 20,
@@ -116,7 +116,7 @@ function Tune(overrides)
 	    BATBAT_DRAIN = wilson_attack * 0.2,
 		-------
 	    SPIKE_DAMAGE = wilson_attack*1.5,
-		HAMBAT_DAMAGE = wilson_attack,
+		HAMBAT_DAMAGE = wilson_attack*1.75,
 	    SPEAR_DAMAGE = wilson_attack,
 	    AXE_DAMAGE = wilson_attack*.8,
 	    PICK_DAMAGE = wilson_attack*.8,
@@ -139,7 +139,6 @@ function Tune(overrides)
 
 	    TORCH_ATTACK_IGNITE_PERCENT = 1,
 
-	
 	    PIG_DAMAGE = 33,
 	    PIG_HEALTH = 250,
 	    PIG_ATTACK_PERIOD = 3,
@@ -253,7 +252,6 @@ function Tune(overrides)
 	    SLURTLE_EXPLODE_DAMAGE = 300,
 	    SLURTLESLIME_EXPLODE_DAMAGE = 50,
 
-
 	   	SNURTLE_WALK_SPEED = 4,
 	    SNURTLE_DAMAGE = 5,
 	    SNURTLE_HEALTH = 200,
@@ -261,7 +259,7 @@ function Tune(overrides)
 	    SNURTLE_DAMAGE_UNTIL_SHIELD = 10,
 	    SNURTLE_EXPLODE_DAMAGE = 300,
 	    
-
+	    LIGHTNING_DAMAGE = 20,
 
 	    FREEZING_KILL_TIME = 120,
 	    STARVE_KILL_TIME = 120,
@@ -303,6 +301,10 @@ function Tune(overrides)
 	    MUSHTREE_CHOPS_TALL = 15,
 	    
 	    ROCKS_MINE = 6,
+	    ROCKS_MINE_MED = 4,
+	    ROCKS_MINE_LOW = 2,
+	    SPILAGMITE_SPAWNER = 2,
+	    SPILAGMITE_ROCK = 4,
 	    MARBLEPILLAR_MINE = 10,
 	    MARBLETREE_MINE = 8,  
 	    
@@ -325,12 +327,16 @@ function Tune(overrides)
 	    KOALEFANT_CHASE_DIST = 30,
 	    KOALEFANT_FOLLOW_TIME = 30,
 	    
-	    KOALEFANT_SPAWN_DIST = 40,
-	    KOALEFANT_HUNT_COOLDOWN = total_day_time*1.2,
-	    KOALEFANT_HUNT_COOLDOWNDEVIATION = total_day_time*.3,
-	    KOALEFANT_TRACK_ANGLE_DEVIATION = 30,
-	    KOALEFANT_MIN_HUNT_DISTANCE = 300, -- you can't find a new koalefant without being at least this far from the last one
-	    KOALEFANT_MAX_DIRT_DISTANCE = 200, -- if you get this far away from your dirt pile, you probably aren't going to see it any time soon, so remove it and place a new one
+	    HUNT_SPAWN_DIST = 40,
+	    HUNT_COOLDOWN = total_day_time*1.2,
+	    HUNT_COOLDOWNDEVIATION = total_day_time*.3,
+
+	    HUNT_RESET_TIME = 5,
+	    HUNT_SPRING_RESET_TIME = total_day_time * 3,
+
+	    TRACK_ANGLE_DEVIATION = 30,
+	    MIN_HUNT_DISTANCE = 300, -- you can't find a new beast without being at least this far from the last one
+	    MAX_DIRT_DISTANCE = 200, -- if you get this far away from your dirt pile, you probably aren't going to see it any time soon, so remove it and place a new one
 	
 	   	BAT_DAMAGE = 20,
 	    BAT_HEALTH = 50,
@@ -373,9 +379,9 @@ function Tune(overrides)
 	    SPIDER_SPITTER_HEALTH = 175,
 	    SPIDER_SPITTER_DAMAGE_MELEE = 20,
 	    SPIDER_SPITTER_DAMAGE_RANGED = 20,
-	    SPIDER_SPITTER_ATTACK_PERIOD = 6,
-	    SPIDER_SPITTER_ATTACK_RANGE = 8,
-	    SPIDER_SPITTER_MELEE_RANGE = 3,
+	    SPIDER_SPITTER_ATTACK_PERIOD = 5,
+	    SPIDER_SPITTER_ATTACK_RANGE = 5,
+	    SPIDER_SPITTER_MELEE_RANGE = 2,
 	    SPIDER_SPITTER_HIT_RANGE = 3,
 	    SPIDER_SPITTER_WALK_SPEED = 4,
 	    SPIDER_SPITTER_RUN_SPEED = 5,
@@ -406,14 +412,16 @@ function Tune(overrides)
 	    BIRD_SPAWN_DELAY = {min=5, max=15},
 	    BIRD_SPAWN_MAX_FEATHERHAT = 7,
 	    BIRD_SPAWN_DELAY_FEATHERHAT = {min=2, max=10},
-	    
+
 		FROG_RAIN_DELAY = {min=0.1, max=2},
 		FROG_RAIN_SPAWN_RADIUS = 60,
 		FROG_RAIN_MAX = 300,
 		FROG_RAIN_LOCAL_MAX = 25,
 		FROG_RAIN_MAX_RADIUS = 50,
-		FROG_RAIN_PRECIPITATION = 999, -- 0-1, never by default
-		FROG_RAIN_MOISTURE = 999999, -- 0-4000ish, never by default
+		FROG_RAIN_PRECIPITATION = 0.8, -- 0-1, 0.8 by default (old "often" setting for Adventure)
+		FROG_RAIN_MOISTURE = 2500, -- 0-4000ish, 2500 by default (old "often" setting for Adventure)
+		SURVIVAL_FROG_RAIN_PRECIPITATION = 0.67,
+		FROG_RAIN_CHANCE = .16,
 
 	    BEE_HEALTH = 100,
 	    BEE_DAMAGE = 10,
@@ -450,6 +458,23 @@ function Tune(overrides)
 	    BEEBOX_HONEY_TIME = day_time,
 	    BEEBOX_REGEN_TIME = seg_time*4,
 	    
+	    WORM_DAMAGE = 75,
+	    WORM_ATTACK_PERIOD = 4,
+	    WORM_ATTACK_DIST = 3,
+	    WORM_HEALTH = 900,
+	    WORM_CHASE_TIME = 20,
+	    WORM_LURE_TIME = 20,
+	    WORM_LURE_VARIANCE = 10,
+	    WORM_FOOD_DIST = 15,
+	    WORM_CHASE_DIST = 50,
+	    WORM_WANDER_DIST = 30,
+	    WORM_TARGET_DIST = 20,
+	    WORM_LURE_COOLDOWN = 30,
+	    WORM_EATING_COOLDOWN = 30,
+
+	    WORMLIGHT_RADIUS = 3,
+	    WORMLIGHT_DURATION = 90,
+
 	    TENTACLE_DAMAGE = 34,
 	    TENTACLE_ATTACK_PERIOD = 2,
 	    TENTACLE_ATTACK_DIST = 4,
@@ -474,8 +499,6 @@ function Tune(overrides)
 	    
 	    LUREPLANT_HIBERNATE_TIME = total_day_time * 2,
 	    LUREPLANT_GROWTHCHANCE = 0.02,
-	    LUREPLANT_SPAWNTIME = total_day_time * 12,
-	    LUREPLANT_SPAWNTIME_VARIANCE = total_day_time * 3,
 	    
 	    TALLBIRD_HEALTH = 400,
 	    TALLBIRD_DAMAGE = 50,
@@ -509,7 +532,7 @@ function Tune(overrides)
 	    SMALLBIRD_HATCH_CRACK_TIME = 10, -- set by fire for this much time to start hatching progress
 	    SMALLBIRD_HATCH_TIME = total_day_time * 3, -- must be content for this amount of cumulative time to hatch
 	    SMALLBIRD_HATCH_FAIL_TIME = night_time * .5, -- being too hot or too cold this long will kill the egg
-	
+
 	    HATCH_UPDATE_PERIOD = 3,
 	    HATCH_CAMPFIRE_RADIUS = 4,
 	   
@@ -611,6 +634,12 @@ function Tune(overrides)
 	    KRAMPUS_DAMAGE = 50,
 	    KRAMPUS_ATTACK_PERIOD = 1.2,
 	    KRAMPUS_SPEED = 7,
+	    KRAMPUS_THRESHOLD = 30,
+	    KRAMPUS_THRESHOLD_VARIANCE = 20,
+	    KRAMPUS_INCREASE_LVL1 = 50,
+	    KRAMPUS_INCREASE_LVL2 = 100,
+	    KRAMPUS_INCREASE_RAMP = 2,
+	    KRAMPUS_NAUGHTINESS_DECAY_PERIOD = 60,
 	
 	    TERRORBEAK_SPEED = 7,
 	    TERRORBEAK_HEALTH = 400,
@@ -632,18 +661,20 @@ function Tune(overrides)
 	    FARM3_GROW_BONUS = .333,
 	    POOP_FERTILIZE = day_time,
 	    POOP_SOILCYCLES = 10,
+	    POOP_WITHEREDCYCLES = 1,
 	    GUANO_FERTILIZE = day_time * 1.5,
 	    GUANO_SOILCYCLES = 12,
+	    GUANO_WITHEREDCYCLES = 1,
 	
 	    SPOILEDFOOD_FERTILIZE = day_time/4,
 	    SPOILEDFOOD_SOILCYCLES = 2,
+	    SPOILEDFOOD_WITHEREDCYCLES = 0.5,
 	    
 	    
 	    
 	    FISHING_CATCH_CHANCE = 0.4,
 	    FISHING_LOSEROD_CHANCE = 0.4,
 	
-	    
 	    TINY_FUEL = seg_time*.25,
 	    SMALL_FUEL = seg_time * .5,
 	    MED_FUEL = seg_time * 1.5,
@@ -682,6 +713,8 @@ function Tune(overrides)
 	    ONEMANBAND_PERISHTIME = 6*seg_time,
 	    ONEMANBAND_RANGE = 12,
 	    
+	    UMBRELLA_PERISHTIME = total_day_time*6,
+
 		EARMUFF_PERISHTIME = total_day_time*5,
 		WINTERHAT_PERISHTIME = total_day_time*10,
 		BEEFALOHAT_PERISHTIME = total_day_time*10,
@@ -712,13 +745,16 @@ function Tune(overrides)
 	    BIRD_HEALTH = 25,
 	    
 	    RABBIT_RESPAWN_TIME = day_time*4,
-
+	    
+	    FULL_ABSORPTION = 1,
 	    ARMORGRASS = wilson_health*1.5,
 		ARMORGRASS_ABSORPTION = .6,
 	    ARMORWOOD = wilson_health*3,
 		ARMORWOOD_ABSORPTION = .8,
 		ARMORMARBLE = wilson_health*7,
 		ARMORMARBLE_ABSORPTION = .95,
+		ARMORSNURTLESHELL_ABSORPTION = 0.6,
+		ARMORSNURTLESHELL = wilson_health*7,
 		ARMORMARBLE_SLOW = 0.7,
 		ARMORRUINS_ABSORPTION = 0.9,
 		ARMORRUINS = wilson_health * 12,
@@ -727,6 +763,14 @@ function Tune(overrides)
 		ARMORSLURPER = wilson_health * 4,
 	    ARMOR_FOOTBALLHAT = wilson_health*3,
 		ARMOR_FOOTBALLHAT_ABSORPTION = .8,
+
+		ARMOR_RUINSHAT = wilson_health*8,
+		ARMOR_RUINSHAT_ABSORPTION = 0.9,
+		ARMOR_RUINSHAT_PROC_CHANCE = 0.33,
+		ARMOR_RUINSHAT_COOLDOWN = 5,
+		ARMOR_RUINSHAT_DURATION = 4,
+		ARMOR_RUINSHAT_DMG_AS_SANITY = 0.05,
+
 		ARMOR_SLURTLEHAT = wilson_health*5,
 		ARMOR_SLURTLEHAT_ABSORPTION = 0.9,
 	    ARMOR_BEEHAT = wilson_health*5,
@@ -750,6 +794,7 @@ function Tune(overrides)
 	    GOLD_VALUES=
 	    {
 	        MEAT = 1,
+	        RAREMEAT = 5,
 	        TRINKETS=
 	        {
 	            4,6,4,5,4,5,4,8,7,2,5,8,
@@ -772,7 +817,7 @@ function Tune(overrides)
 	    
 	    TRAP_TEETH_USES = 10,
 	    TRAP_TEETH_DAMAGE = 60,
-	    TRAP_TEETH_RADIUS = 1.25,
+	    TRAP_TEETH_RADIUS = 1.5,
 	    
 	    
 	    HEALING_TINY = 1,
@@ -818,6 +863,7 @@ function Tune(overrides)
 	    PERISH_GROUND_MULT = 1.5,
 	    PERISH_GLOBAL_MULT = 1,
 	    PERISH_WINTER_MULT = .75,
+	    PERISH_SUMMER_MULT = 1.25,
 	    
 	    STALE_FOOD_HUNGER = .667,
 	    SPOILED_FOOD_HUNGER = .5,
@@ -832,20 +878,26 @@ function Tune(overrides)
 	    TALLBIRDEGG_COOKED_HEALTH = 25;
 	    TALLBIRDEGG_COOKED_HUNGER = 30,
 		
-		REPAIR_CUTSTONE = 50,
-		REPAIR_ROCKS = 50/3,
-		REPAIR_GEMS = 1,
-		REPAIR_GEARS = 1,
-		REPAIR_THULECITE = 1.5,
+		REPAIR_CUTSTONE_HEALTH = 50,
+		REPAIR_ROCKS_HEALTH = 50/3,
+		REPAIR_GEMS_WORK = 1,
+		REPAIR_GEARS_WORK = 1,
+
+		REPAIR_THULECITE_WORK = 1.5,
+		REPAIR_THULECITE_HEALTH = 100,
+
+		REPAIR_THULECITE_PIECES_WORK = 1.5/6,
+		REPAIR_THULECITE_PIECES_HEALTH = 100/6,
 	
-		REPAIR_BOARDS = 50,
-		REPAIR_LOGS = 50/4,
-		REPAIR_STICK = 6,
-		REPAIR_CUTGRASS = 6,
+		REPAIR_BOARDS_HEALTH = 25,
+		REPAIR_LOGS_HEALTH = 25/4,
+		REPAIR_STICK_HEALTH = 13,
+		REPAIR_CUTGRASS_HEALTH = 13,
 		
 		HAYWALL_HEALTH = 100,
 		WOODWALL_HEALTH = 200,
 		STONEWALL_HEALTH = 400,
+		RUINSWALL_HEALTH = 800,
 	
 		EFFIGY_HEALTH_PENALTY = 30,
 		
@@ -874,6 +926,9 @@ function Tune(overrides)
 		DAPPERNESS_MED = 100/(day_time*6),
 		DAPPERNESS_LARGE = 100/(day_time*3),
 		DAPPERNESS_HUGE = 100/(day_time),
+
+
+		MOISTURE_SANITY_PENALTY_MAX = 100/(day_time*15),
 		
 		
 		CRAZINESS_SMALL = -100/(day_time*2),
@@ -881,8 +936,8 @@ function Tune(overrides)
 		
 		RABBIT_RUN_SPEED = 5,
 		SANITY_EFFECT_RANGE	= 10,
-		SUMMER_LENGTH = 20,
 		WINTER_LENGTH = 15,
+		SUMMER_LENGTH = 20,
 		
 		CREEPY_EYES = 
 		{
@@ -913,7 +968,10 @@ function Tune(overrides)
 		MIN_CROP_GROW_TEMP = 5,
 		CROP_HEAT_BONUS = 1,
 		CROP_RAIN_BONUS = 3,
-		
+
+		WARM_DEGREES_PER_SEC = 1,
+		THAW_DEGREES_PER_SEC = 5,
+
 		TENT_USES = 6,
 
 		BEARDLING_SANITY = .4,
@@ -964,6 +1022,7 @@ function Tune(overrides)
 		MONKEY_MELEE_RANGE = 3,
 		MONKEY_RANGED_RANGE = 17,
 		MONKEY_MOVE_SPEED = 7,
+		MONKEY_NIGHTMARE_CHASE_DIST = 40,
 
 	    LIGHTER_ATTACK_IGNITE_PERCENT = .5,
 	    LIGHTER_DAMAGE = wilson_attack*.5,
@@ -1002,6 +1061,23 @@ function Tune(overrides)
 	    WICKERBOTTOM_STALE_FOOD_HEALTH = .25,
 	    WICKERBOTTOM_SPOILED_FOOD_HEALTH = 0,
 
+	    FISSURE_CALMTIME_MIN = 600,
+	    FISSURE_CALMTIME_MAX = 1200,
+	    FISSURE_WARNTIME_MIN = 20,
+	    FISSURE_WARNTIME_MAX = 30,
+	    FISSURE_NIGHTMARETIME_MIN = 160,
+	    FISSURE_NIGHTMARETIME_MAX = 260,
+	    FISSURE_DAWNTIME_MIN = 30,
+	    FISSURE_DAWNTIME_MAX = 45,
+
+
+	    EYETURRET_DAMAGE = 65,
+	    EYETURRET_HEALTH = 1000,
+	    EYETURRET_REGEN = 12,
+	    EYETURRET_RANGE = 15,
+	    EYETURRET_ATTACK_PERIOD = 3,
+
+
 	    TRANSITIONTIME =
 	    {
 	    	CALM = 2,
@@ -1010,6 +1086,16 @@ function Tune(overrides)
 	    	DAWN = 2,
 		},
 
+		SHADOWWAXWELL_LIFETIME = total_day_time * 2.5,
+		SHADOWWAXWELL_SPEED = 6,
+		SHADOWWAXWELL_DAMAGE = 40,
+		SHADOWWAXWELL_LIFE = 75,
+		SHADOWWAXWELL_ATTACK_PERIOD = 2,
+		SHADOWWAXWELL_SANITY_PENALTY = 55,
+		SHADOWWAXWELL_HEALTH_COST = 15,
+		SHADOWWAXWELL_FUEL_COST = 2,
+
+		LIVINGTREE_CHANCE = 0.55,
 	}
 end
 

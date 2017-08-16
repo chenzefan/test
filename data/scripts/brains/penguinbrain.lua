@@ -4,6 +4,7 @@ require "behaviours/doaction"
 require "behaviours/panic"
 require "behaviours/standstill"
 require "behaviours/attackwall"
+require "behaviours/leash"
 
 local SEE_DIST = 30
 local MIN_FOLLOW_DIST = 1
@@ -24,6 +25,9 @@ local WANDER_DIST_DAY = 5
 local TOOCLOSE = 9
 
 local MIN_TIME_TILL_NEXT_DROP = 60
+
+local LEASH_RETURN_DIST = 5
+local LEASH_MAX_DIST = 10
 
 local PenguinBrain = Class(Brain, function(self, inst)
     Brain._ctor(self, inst)
@@ -111,7 +115,7 @@ local function StealAction(inst)
                                                         not item.components.inventoryitem:IsHeld() and
                                                         item:IsOnValidGround() and 
                                                         (item.HasTag == "penguin_egg" or item.prefab == "bird_egg") then
-                                                            return char:GetDistanceSqToInst(item) <= TOOCLOSE*TOOCLOSE
+                                                            return char:IsNear(item, TOOCLOSE)
                                                         end
                                                     end)
 	    
@@ -119,7 +123,7 @@ local function StealAction(inst)
                 target = lst[math.random(1,#lst)]
             end
         end
-		if target and not target:IsInLimbo() and char:GetDistanceSqToInst(target) <= TOOCLOSE*TOOCLOSE then
+		if target and not target:IsInLimbo() and char:IsNear(target, TOOCLOSE) then
             dprint("===== Steal:",target)
             if inst.components.knownlocations.ForgetLocation then
                 inst.components.knownlocations:ForgetLocation("myegg")
@@ -131,16 +135,15 @@ local function StealAction(inst)
 end
 
 
-local function MigrateAction(inst)
-    local homePos = inst.components.knownlocations.GetLocation and
-                    (inst.components.knownlocations:GetLocation("rookery") or
-                    inst.components.knownlocations:GetLocation("home")) 
-    if homePos and 
-       not inst.components.combat.target then
-        return BufferedAction(inst, nil, ACTIONS.WALKTO, nil, homePos)
+local function GetMigrateLeashPos(inst)
+    if inst.components.teamattacker.teamleader or inst.components.combat.target then
+        return nil
     end
+    local homePos = inst.components.knownlocations and
+        (inst.components.knownlocations:GetLocation("rookery") or 
+        inst.components.knownlocations:GetLocation("home"))
+    return homePos
 end
-
 
 local function EatFoodAction(inst)
 
@@ -185,7 +188,7 @@ local function LayEggAction(inst)
     local delay
     local egg = CheckMyEgg(inst)
     local nearest = GetClosestInstWithTag("scarytoprey", inst, TOOCLOSE) or GetPlayer()
-    if nearest:GetDistanceSqToInst(inst) <= TOOCLOSE*TOOCLOSE then
+    if nearest:IsNear(inst, TOOCLOSE) then
         -- IOprint("\rTOO CLOSE")
         return
     end
@@ -208,7 +211,7 @@ local function LayEggAction(inst)
                                 nearest = GetClosestInstWithTag("scarytoprey", inst, TOOCLOSE) or GetPlayer()
 
                                 if PrepareForNight(inst) or not AtRookery(inst) or                                   
-                                nearest:GetDistanceSqToInst(inst) <= TOOCLOSE*TOOCLOSE then
+                                nearest:IsNear(inst, TOOCLOSE) then
                                    return
                                 end
 
@@ -232,7 +235,7 @@ local function LayEggAction(inst)
 
                                 if PrepareForNight(inst) or not AtRookery(inst) or
                                    (GetSeasonManager():IsWinter() and GetSeasonManager():GetCurrentTemperature() <= -15) and
-                                   nearest:GetDistanceSqToInst(inst) <= TOOCLOSE*TOOCLOSE then
+                                   nearest:IsNear(inst, TOOCLOSE) then
                                    return
                                 end
 
@@ -268,7 +271,7 @@ local function PickUpEggAction(inst)
                                                         not item.components.inventoryitem:IsHeld() and
                                                         item:IsOnValidGround() and 
                                                         (item.HasTag == "penguin_egg" or item.prefab == "bird_egg") then
-                                                            return inst:GetDistanceSqToInst(item) <= 4
+                                                            return inst:IsNear(item, 2)
                                                         end
                                                     end)
 	    
@@ -370,11 +373,7 @@ function PenguinBrain:OnStart()
         AttackWall(self.inst),
 
         -- If not fighting or eating or protecting eggs, migrate to the rookery
-        WhileNode(function()
-                        return not AtRookery(self.inst) and self.inst.components.teamattacker.teamleader == nil
-                        end,
-                    "Migrating ", 
-                    DoAction(self.inst, MigrateAction, "Migrating Action", false )),
+        Leash(self.inst, GetMigrateLeashPos, LEASH_MAX_DIST, LEASH_RETURN_DIST),
         
         -- When at the rookery, lay egg - but not if it's too cold!
         WhileNode(function()

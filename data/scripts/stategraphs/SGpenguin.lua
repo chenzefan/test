@@ -484,7 +484,6 @@ local states=
                 --inst.Physics:SetMotorVel(x,15+(math.random()*5),-2 + math.random()*4)
                 inst.Physics:SetMotorVelOverride(00,15,0)
             end
-            inst.inlimbo = true
         end,
 
         events =

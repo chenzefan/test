@@ -11,10 +11,12 @@ local prefabs =
     "batwing",
 }
 
-local loot = 
+SetSharedLootTable( 'bat',
 {
-    "guano"
-}
+    {'batwing',    0.15},
+    {'guano',      0.15},
+    {'monstermeat',0.10},
+})
 
 local SLEEP_DIST_FROMHOME = 1
 local SLEEP_DIST_FROMTHREAT = 20
@@ -101,7 +103,7 @@ end
 local function OnWingDown(inst)
     inst.SoundEmitter:PlaySound("dontstarve/creatures/bat/flap")
 end
- 
+
 local function fn()
 	local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
@@ -128,6 +130,7 @@ local function fn()
     inst:SetStateGraph("SGbat")
 
     inst:AddTag("monster")
+    inst:AddTag("hostile")
     inst:AddTag("bat")
     inst:AddTag("scarytoprey")
     inst:AddTag("flying")
@@ -137,6 +140,7 @@ local function fn()
 
     inst:AddComponent("eater")
     inst.components.eater:SetCarnivore()
+    inst.components.eater.strongstomach = true
     
     inst:AddComponent("sleeper")
     inst.components.sleeper:SetResistance(3)
@@ -154,16 +158,14 @@ local function fn()
     inst.components.combat:SetAttackPeriod(TUNING.BAT_ATTACK_PERIOD)
 
     inst:AddComponent("lootdropper")
-    inst.components.lootdropper:AddChanceLoot("batwing", 0.15)
-    inst.components.lootdropper:AddChanceLoot("guano", 0.15)
-    inst.components.lootdropper:AddChanceLoot("monstermeat", 0.1)
-    
+    inst.components.lootdropper:SetChanceLootTable('bat')
+
     inst:AddComponent("inventory")
 
     inst:AddComponent("periodicspawner")
     inst.components.periodicspawner:SetPrefab("guano")
-    inst.components.periodicspawner:SetRandomTimes(40, 60)
-    inst.components.periodicspawner:SetDensityInRange(20, 2)
+    inst.components.periodicspawner:SetRandomTimes(120,240)
+    inst.components.periodicspawner:SetDensityInRange(30, 2)
     inst.components.periodicspawner:SetMinimumSpacing(8)
     inst.components.periodicspawner:Start()
     

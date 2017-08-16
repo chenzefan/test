@@ -2,11 +2,10 @@ local assets =
 {
 	Asset("PKGREF", "sound/dontstarve.fev"),
 
-    Asset("SOUND", "sound/sfx.fsb"),
-	Asset("SOUND", "sound/music.fsb"),
-	
     Asset("ATLAS", "images/global.xml"),
     Asset("IMAGE", "images/global.tex"),
+    Asset("IMAGE", "images/visited.tex"),
+    Asset("ANIM", "anim/scroll_arrow.zip"),
 	
 	Asset("SHADER", "shaders/anim_bloom.ksh"),
 	Asset("SHADER", "shaders/wall_bloom.ksh"),
@@ -17,9 +16,13 @@ local assets =
 	Asset("IMAGE", "images/circle.tex"),
 	Asset("IMAGE", "images/square.tex"),
 	
+    Asset("ATLAS", "images/fepanels.xml"),
+    Asset("IMAGE", "images/fepanels.tex"),
+	
 	--Asset("IMAGE", "images/river_bed.tex"),
 	--Asset("IMAGE", "images/water_river.tex"),
 	Asset("IMAGE", "images/pathnoise.tex"),
+	Asset("IMAGE", "images/mini_pathnoise.tex"),
 	Asset("IMAGE", "images/roadnoise.tex"),
 	Asset("IMAGE", "images/roadedge.tex"),
 	Asset("IMAGE", "images/roadcorner.tex"),
@@ -31,6 +34,7 @@ local assets =
 	Asset("IMAGE", "images/colour_cubes/identity_colourcube.tex"),
 
 	Asset("SHADER", "shaders/anim.ksh"),
+    Asset("SHADER", "shaders/anim_fade.ksh"),
 	Asset("SHADER", "shaders/anim_bloom.ksh"),
 	Asset("SHADER", "shaders/blurh.ksh"),
 	Asset("SHADER", "shaders/blurv.ksh"),
@@ -40,6 +44,7 @@ local assets =
 	Asset("SHADER", "shaders/render_depth.ksh"),
 	Asset("SHADER", "shaders/font.ksh"),
 	Asset("SHADER", "shaders/ground.ksh"),
+    Asset("SHADER", "shaders/ground_overlay.ksh"),
 	Asset("SHADER", "shaders/ground_lights.ksh"),
     Asset("SHADER", "shaders/ceiling.ksh"),
     -- Asset("SHADER", "shaders/triplanar.ksh"),
@@ -56,6 +61,7 @@ local assets =
 	Asset("SHADER", "shaders/texture.ksh"),
 	Asset("SHADER", "shaders/ui.ksh"),
 	Asset("SHADER", "shaders/ui_anim.ksh"),
+    Asset("SHADER", "shaders/combine_colour_cubes.ksh"),
 	Asset("SHADER", "shaders/postprocess.ksh"),
 	Asset("SHADER", "shaders/postprocessbloom.ksh"),
 	Asset("SHADER", "shaders/postprocessdistort.ksh"),
@@ -69,6 +75,7 @@ local assets =
     Asset("ANIM", "anim/generating_world.zip"),
     Asset("ANIM", "anim/generating_cave.zip"),
     Asset("ANIM", "anim/creepy_hands.zip"),    
+    Asset("ANIM", "anim/saving_indicator.zip"),    
     
     --oft-used panel bgs
     Asset("ATLAS", "images/globalpanels.xml"),

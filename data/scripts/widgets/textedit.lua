@@ -63,10 +63,15 @@ end
 function TextEdit:OnRawKey(key, down)
 	
 	if TextEdit._base.OnRawKey(self, key, down) then return true end
-
+	
 	if self.editing then
 		if down then
-			self.inst.TextEditWidget:OnKeyDown(key)
+			if key == KEY_ENTER then
+				self:OnProcess()
+				return true
+			else
+				self.inst.TextEditWidget:OnKeyDown(key)
+			end
 		else
 			self.inst.TextEditWidget:OnKeyUp(key)
 		end
@@ -90,12 +95,7 @@ function TextEdit:OnControl(control, down)
 	end
 
 	if not down and control == CONTROL_ACCEPT then
-		if self.editing then
-			self:OnProcess()
-		else
-			self:SetEditing(true)
-		end
-
+		self:SetEditing(true)
 		return true
 	end
 end

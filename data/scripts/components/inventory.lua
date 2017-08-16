@@ -1,19 +1,20 @@
 local MAXSLOTS = 15
-local EQUIPSLOTS = 3
 
 local Inventory = Class(function(self, inst)
     self.inst = inst
 
     self.itemslots = {}
 	self.maxslots = MAXSLOTS
-    self.numequipslots = EQUIPSLOTS
 
     self.recipes = {}
     self.recipe_count = 0
 
     self.equipslots = {}
+    self.dropondeath = true
 	inst:ListenForEvent( "death", function() 
-		self:DropEverything(true) 
+        if self.dropondeath then
+		  self:DropEverything(true) 
+        end
 	end)
 	
     self.activeitem = nil
@@ -252,7 +253,11 @@ function Inventory:SelectActiveItemFromSlot(slot)
 end
 
 function Inventory:ReturnActiveItem(slot, stack_mod)
+    
+    
+    
     if self.activeitem then
+		
         if stack_mod and self.activeitem.components.stackable and self.activeitem.components.stackable.stacksize > 1 then
             local item = self.activeitem.components.stackable:Get()
             if not self:GiveItem(item, slot) then
@@ -275,9 +280,6 @@ function Inventory:GetNumSlots()
     return self.maxslots
 end
 
-function Inventory:GetNumEquipSlots()
-    return self.numequipslots
-end
 
 function Inventory:GetItemSlot(item)
     for k,v in pairs(self.itemslots) do
@@ -383,6 +385,11 @@ function Inventory:IsFull()
 	return true
 end
 
+function Inventory:SetOverflow(over)
+	self.overflow = over
+	self.inst:PushEvent("setoverflow", {overflow=over})	
+end
+
 ---Returns the slot, and the container where the slot is (self.itemslots, self.equipslots or self.overflow)
 function Inventory:GetNextAvailableSlot(item)
 	
@@ -448,6 +455,7 @@ end
 
 function Inventory:GiveItem( inst, slot, screen_src_pos )
     --print("Inventory:GiveItem", inst, slot, screen_src_pos)
+    
     if not inst.components.inventoryitem or not inst:IsValid() then
         return
     end
@@ -483,11 +491,15 @@ function Inventory:GiveItem( inst, slot, screen_src_pos )
         slot = inst.prevslot
     end
 
-    if not slot and inst.prevslot and inst.prevcontainer and inst.prevcontainer.components then
-        if inst.prevcontainer.components.inventoryitem and inst.prevcontainer.components.inventoryitem.owner == self.inst and inst.prevcontainer:IsOpen() and inst.prevcontainer:GetItemInSlot(inst.prevslot) == nil then
-            inst.prevcontainer:GiveItem(inst, inst.prevslot)
-            --self:RemoveItem(inst)
-            return
+    if not slot and inst.prevslot and inst.prevcontainer then
+        if inst.prevcontainer.inst.components.inventoryitem and inst.prevcontainer.inst.components.inventoryitem.owner == self.inst and inst.prevcontainer:IsOpen() and inst.prevcontainer:GetItemInSlot(inst.prevslot) == nil then
+            if inst.prevcontainer:GiveItem(inst, inst.prevslot, false) then
+                return true
+            else
+                inst.prevcontainer = nil
+                inst.prevslot = nil
+                slot = nil
+            end
         end
     end
 
@@ -518,7 +530,12 @@ function Inventory:GiveItem( inst, slot, screen_src_pos )
 	        end
 		else
 	        if self.itemslots[slot] ~= nil then
-	            leftovers = self.itemslots[slot].components.stackable:Put(inst, screen_src_pos)
+                if self.itemslots[slot].components.stackable:IsFull() then
+                    leftovers = inst
+                    inst.prevslot = nil
+                else
+                    leftovers = self.itemslots[slot].components.stackable:Put(inst, screen_src_pos)
+                end
 	        else
                 inst.components.inventoryitem:OnPutInInventory(self.inst)
 	    	    self.itemslots[slot] = inst
@@ -543,7 +560,7 @@ function Inventory:GiveItem( inst, slot, screen_src_pos )
     self.inst:PushEvent("inventoryfull", {item=inst})
     
     --can't hold it!    
-    if not self.activeitem then
+    if not self.activeitem and not TheInput:ControllerAttached() then
         --print("not activeitem")
         inst.components.inventoryitem:OnPutInInventory(self.inst)
         self:SetActiveItem(inst)
@@ -640,7 +657,7 @@ function Inventory:Equip(item, old_to_active)
         item.components.equippable:Equip(self.inst)
         self.equipslots[eslot] = item
         self.inst:PushEvent("equip", {item=item, eslot=eslot})
-        if item.prefab then
+        if METRICS_ENABLED and item.prefab then
             ProfileStatsAdd("equip_"..item.prefab)
             FightStat_Equip(item.prefab,eslot)
         end
@@ -653,9 +670,12 @@ end
 function Inventory:RemoveItem(item, wholestack)
 
     local dec_stack = not wholestack and item and item.components.stackable and item.components.stackable:IsStack() and item.components.stackable:StackSize() > 1
+	
+	local prevslot = item.components.inventoryitem:GetSlotNum()
 
     if dec_stack then
         local dec = item.components.stackable:Get()
+        dec.prevslot = prevslot
         return dec
     else
         for k,v in pairs(self.itemslots) do
@@ -667,7 +687,9 @@ function Inventory:RemoveItem(item, wholestack)
                     item.components.inventoryitem:OnRemoved()
                 end
                 
+				item.prevslot = prevslot
                 return item
+                
             end
         end
 
@@ -689,15 +711,20 @@ function Inventory:RemoveItem(item, wholestack)
         if ret then
             if ret.components.inventoryitem and ret.components.inventoryitem.OnRemoved then
                 ret.components.inventoryitem:OnRemoved()
+				ret.prevslot = prevslot
                 return ret
             end
         else
             if self.overflow then
-		        return self.overflow.components.container:RemoveItem(item, wholestack)
+		        local item = self.overflow.components.container:RemoveItem(item, wholestack)
+		        item.prevslot = prevslot
+				item.prevcontainer = self.overflow.components.container
+				return item
             end
         end
 
     end
+    
     return item
 
 end
@@ -853,7 +880,7 @@ function Inventory:GetDebugString()
 	local count = 0
     for k,item in pairs(self.itemslots) do
 		count = count + 1
-		s = s..", "..item.prefab
+		s = s..", "..(item.prefab or "prefab")
 		if item.components.stackable and item.components.stackable.stacksize > 1 then
 			s = s.." x"..tostring(item.components.stackable.stacksize)
 		end
@@ -866,6 +893,8 @@ end
 
 function Inventory:UseItemFromInvTile(item)
     --local item = self:GetItemInSlot(slot)
+    if self.inst.sg:HasStateTag("busy") then return end
+    
     if item and self.inst.components.playeractionpicker then
         if self:GetActiveItem() then
             --use the active item on the inventory item

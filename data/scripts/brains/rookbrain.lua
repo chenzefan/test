@@ -53,6 +53,11 @@ local function KeepFaceTargetFn(inst, target)
 end
 
 local function ShouldGoHome(inst)
+
+    if (inst.components.follower and inst.components.follower.leader) then
+        return false
+    end
+
     local homePos = inst.components.knownlocations:GetLocation("home")
     local myPos = Vector3(inst.Transform:GetWorldPosition() )
     local dist = homePos and distsq(homePos, myPos)
@@ -69,11 +74,16 @@ function RookBrain:OnStart()
         WhileNode( function() return self.inst.components.combat.target == nil or not self.inst.components.combat:InCooldown() end,
             "RamAttack",
             ChaseAndRam(self.inst, MAX_CHASE_TIME, CHASE_GIVEUP_DIST, MAX_CHARGE_DIST) ),
-        WhileNode( function() return self.inst.components.combat.target and self.inst.components.combat:InCooldown() end, "Dodge",
+        WhileNode( function() return self.inst.components.combat.target and self.inst.components.combat:InCooldown()
+        and not (self.inst.components.follower and self.inst.components.follower.leader) end, "Dodge",
             RunAway(self.inst, function() return self.inst.components.combat.target end, RUN_AWAY_DIST, STOP_RUN_AWAY_DIST) ),
         WhileNode( function() return self.inst.components.health.takingfiredamage end, "OnFire", Panic(self.inst)),
         WhileNode(function() return ShouldGoHome(self.inst) end, "ShouldGoHome",
             DoAction(self.inst, GoHomeAction, "Go Home", false )),
+
+        Follow(self.inst, function() return self.inst.components.follower and self.inst.components.follower.leader end, 
+            5, 7, 12, false),
+
         FaceEntity(self.inst, GetFaceTargetFn, KeepFaceTargetFn),
         StandStill(self.inst)
 

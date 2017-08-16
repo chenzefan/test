@@ -13,6 +13,7 @@ local function fn(Sim)
 	inst.entity:AddAnimState()
     MakeInventoryPhysics(inst)
     
+    inst:AddTag("honeyed")
     
     inst.AnimState:SetBuild("honey")
     inst.AnimState:SetBank("honey")

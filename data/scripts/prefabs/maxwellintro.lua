@@ -329,19 +329,16 @@ local function fn(Sim)
 
     inst:AddTag("notarget")
 
-    inst.entity:AddLabel()
-    inst.Label:SetFontSize(28)
-    inst.Label:SetFont(TALKINGFONT)
-    inst.Label:SetPos(0,5,0)
-    --inst.Label:SetColour(200/255, 200/255, 200/255)
-    
-    --inst.Label:SetColour(255/255, 100/255, 100/255)
-    inst.Label:Enable(false)
-    
     inst:AddComponent("named")
     inst.components.named:SetName("Maxwell")
 
     inst:AddComponent("talker")
+    inst.components.talker.fontsize = 40
+    inst.components.talker.font = TALKINGFONT
+    --inst.components.talker.colour = Vector3(133/255, 140/255, 167/255)
+    inst.components.talker.offset = Vector3(0,-700,0)
+
+    
     inst:AddComponent("inspectable")
     inst.components.inspectable.nameoverride = "maxwell"
     

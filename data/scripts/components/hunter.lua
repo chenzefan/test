@@ -1,7 +1,7 @@
 local trace = function() end
+--local trace = function(...) print(...) end
 
 local HUNT_UPDATE = 2
-local HUNT_RESET_COOLDOWN = 5
 
 local MIN_TRACKS = 6
 local MAX_TRACKS = 12
@@ -17,7 +17,7 @@ local Hunter = Class(function(self, inst)
     self.trackspawned = 0
     self.numtrackstospawn = 0
 
-    self:StartCooldown()
+    self.inst:DoTaskInTime(0, function(inst) inst.components.hunter:StartCooldown() end)
 end)
 
 function Hunter:OnSave()
@@ -31,6 +31,10 @@ function Hunter:OnSave()
         data.lastkillpos = { x = self.lastkillpos.x, y = self.lastkillpos.y, z = self.lastkillpos.z }
     end
 
+    if self.lastdirttime then
+        data.timesincedirt = GetTime() - self.lastdirttime
+    end
+
     if self.cooldowntask then
         -- we're cooling down
         data.cooldownremaining = math.max(1, self.cooldowntime - time)
@@ -40,7 +44,7 @@ function Hunter:OnSave()
         -- we're hunting
 
         if self.lastdirt then
-			table.insert(references, self.lastdirt.GUID)
+            table.insert(references, self.lastdirt.GUID)
             data.lastdirtid = self.lastdirt.GUID
             trace("       has dirt", data.lastdirtid)
     
@@ -68,9 +72,13 @@ function Hunter:OnLoad(data)
         trace("   last kill", self.lastkillpos)
     end
 
+    if data.timesincedirt then
+        self.lastdirttime = -data.timesincedirt
+    end
+
     if data.cooldownremaining then
         trace("   cooling down", data.cooldownremaining)
-        self:StartCooldown(math.clamp(data.cooldownremaining, 1, TUNING.KOALEFANT_HUNT_COOLDOWN + TUNING.KOALEFANT_HUNT_COOLDOWNDEVIATION))
+        self:StartCooldown(math.clamp(data.cooldownremaining, 1, TUNING.HUNT_COOLDOWN + TUNING.HUNT_COOLDOWNDEVIATION))
     else
         trace("   hunting")
 
@@ -142,7 +150,7 @@ function Hunter:StartDirt()
 
     self.numtrackstospawn = math.random(MIN_TRACKS, MAX_TRACKS)
     self.trackspawned = 0
-    self.direction = self:GetNextSpawnAngle(pt, nil, TUNING.KOALEFANT_SPAWN_DIST)
+    self.direction = self:GetNextSpawnAngle(pt, nil, TUNING.HUNT_SPAWN_DIST)
     if self.direction then
         trace(string.format("   first angle: %2.2f", self.direction/DEGREES))
 
@@ -169,10 +177,10 @@ function Hunter:OnUpdate()
         end
 
         distance = math.sqrt( distsq( mypos, self.lastkillpos ) )
-		self.distance = distance
-        trace(string.format("    %2.2f", distance))
+        self.distance = distance
+        trace(string.format("    %2.2f", distance)) 
 
-        if distance > TUNING.KOALEFANT_MIN_HUNT_DISTANCE then
+        if distance > TUNING.MIN_HUNT_DISTANCE then
             self:StartDirt()
         end
     else
@@ -180,10 +188,10 @@ function Hunter:OnUpdate()
         local dirtpos = Point(self.lastdirt.Transform:GetWorldPosition())
 
         distance = math.sqrt( distsq( mypos, dirtpos ) )
-		self.distance = distance
+        self.distance = distance
         trace(string.format("    dirt %2.2f", distance))
 
-        if distance > TUNING.KOALEFANT_MAX_DIRT_DISTANCE then
+        if distance > TUNING.MAX_DIRT_DISTANCE then
             self:StartDirt()
         end
     end
@@ -196,9 +204,8 @@ function Hunter:ResetHunt()
     print("The Hunt was a dismal failure, please stand by...")
 
     --self.lastkillpos = nil
-    self:StartCooldown(HUNT_RESET_COOLDOWN)
+    self:StartCooldown(TUNING.HUNT_RESET_TIME)
     GetPlayer():PushEvent("huntlosttrail")
-
 end
 
 -- if anything fails during this step, it's basically unrecoverable, since we only have this one chance
@@ -242,16 +249,16 @@ end
 
 function Hunter:GetRunAngle(pt, angle, radius)
     local offset, result_angle = FindWalkableOffset(pt, angle, radius, 14, true)
-	if result_angle then
-		return result_angle
-	end
+    if result_angle then
+        return result_angle
+    end
 end
 
 function Hunter:GetNextSpawnAngle(pt, direction, radius)
     trace("Hunter:GetNextSpawnAngle", tostring(pt), radius)
 
     local base_angle = direction or math.random() * 2 * PI
-    local deviation = math.random(-TUNING.KOALEFANT_TRACK_ANGLE_DEVIATION, TUNING.KOALEFANT_TRACK_ANGLE_DEVIATION)*DEGREES
+    local deviation = math.random(-TUNING.TRACK_ANGLE_DEVIATION, TUNING.TRACK_ANGLE_DEVIATION)*DEGREES
 
     local start_angle = base_angle + deviation
     trace(string.format("   original: %2.2f, deviation: %2.2f, starting angle: %2.2f", base_angle/DEGREES, deviation/DEGREES, start_angle/DEGREES))
@@ -278,13 +285,13 @@ function Hunter:SpawnHuntedBeast()
     trace("Hunter:SpawnHuntedBeast")
     local pt = Vector3(GetPlayer().Transform:GetWorldPosition())
         
-    local spawn_pt = self:GetSpawnPoint(pt, TUNING.KOALEFANT_SPAWN_DIST)
+    local spawn_pt = self:GetSpawnPoint(pt, TUNING.HUNT_SPAWN_DIST)
     if spawn_pt then
-		if GetWorld().components.seasonmanager:IsSummer() then
-			self.huntedbeast = SpawnPrefab(self.beast_prefab_summer)
-		else
-			self.huntedbeast = SpawnPrefab(self.beast_prefab_winter)
-		end
+        if GetWorld().components.seasonmanager:IsWinter() then
+            self.huntedbeast = SpawnPrefab(self.beast_prefab_winter)
+        else
+            self.huntedbeast = SpawnPrefab(self.beast_prefab_summer)
+        end
         if self.huntedbeast then
             print("Kill the Beast!")
             self.huntedbeast.Physics:Teleport(spawn_pt:Get())
@@ -300,10 +307,11 @@ function Hunter:SpawnDirt()
     trace("Hunter:SpawnDirt")
     local pt = Vector3(GetPlayer().Transform:GetWorldPosition())
 
-    local spawn_pt = self:GetSpawnPoint(pt, TUNING.KOALEFANT_SPAWN_DIST)
+    local spawn_pt = self:GetSpawnPoint(pt, TUNING.HUNT_SPAWN_DIST)
     if spawn_pt then
         local spawned = SpawnPrefab(self.dirt_prefab)
         if spawned then
+            self.lastdirttime = GetTime()
             spawned.Transform:SetPosition(spawn_pt:Get())
             self.lastdirt = spawned
             return true
@@ -317,7 +325,7 @@ function Hunter:SpawnTrack(spawn_pt)
     trace("Hunter:SpawnTrack")
 
     if spawn_pt then
-        local next_angle = self:GetNextSpawnAngle(spawn_pt, self.direction, TUNING.KOALEFANT_SPAWN_DIST)
+        local next_angle = self:GetNextSpawnAngle(spawn_pt, self.direction, TUNING.HUNT_SPAWN_DIST)
         if next_angle then
             local spawned = SpawnPrefab(self.track_prefab)
             if spawned then
@@ -356,11 +364,11 @@ function Hunter:BeginHunt()
     trace("Hunter:BeginHunt")
 
     self.hunttask = self.inst:DoPeriodicTask(HUNT_UPDATE, function() self:OnUpdate() end)
-    -- if self.hunttask then
-    --     print("The Hunt Begins!")
-    -- else
-    --     print("The Hunt ... failed to begin.")
-    -- end
+    if self.hunttask then
+        trace("The Hunt Begins!")
+    else
+        trace("The Hunt ... failed to begin.")
+    end
 
 end
 
@@ -386,7 +394,7 @@ function Hunter:StopCooldown()
 end
 
 function Hunter:StartCooldown(cooldown)
-    local cooldown = cooldown or math.random(TUNING.KOALEFANT_HUNT_COOLDOWN - TUNING.KOALEFANT_HUNT_COOLDOWNDEVIATION, TUNING.KOALEFANT_HUNT_COOLDOWN + TUNING.KOALEFANT_HUNT_COOLDOWNDEVIATION)
+    local cooldown = cooldown or math.random(TUNING.HUNT_COOLDOWN - TUNING.HUNT_COOLDOWNDEVIATION, TUNING.HUNT_COOLDOWN + TUNING.HUNT_COOLDOWNDEVIATION)
     trace("Hunter:StartCooldown", cooldown)
 
     self:StopHunt()
@@ -396,27 +404,28 @@ function Hunter:StartCooldown(cooldown)
         return
     end
 
-    if cooldown then
+    if cooldown and cooldown > 0 then
         --print("The Hunt begins in", cooldown)
+        self.lastdirttime = nil
         self.cooldowntask = self.inst:DoTaskInTime(cooldown, function() self:OnCooldownEnd() end)
         self.cooldowntime = GetTime() + cooldown
     end
 end
 
 function Hunter:GetDebugString()
-	local str = ""
-	
-	str = str.." Cooldown: ".. (self.cooldowntime and string.format("%2.2f", math.max(1, self.cooldowntime - GetTime())) or "-")
-	if not self.lastdirt then
-		str = str.." No last dirt."
-		str = str.." Distance: ".. (self.distance and string.format("%2.2f", self.distance) or "-")
-		str = str.."/"..tostring(TUNING.KOALEFANT_MIN_HUNT_DISTANCE)
-	else
-		str = str.." Dirt"
-		str = str.." Distance: ".. (self.distance and string.format("%2.2f", self.distance) or "-")
-		str = str.."/"..tostring(TUNING.KOALEFANT_MAX_DIRT_DISTANCE)
-	end
-	return str
+    local str = ""
+    
+    str = str.." Cooldown: ".. (self.cooldowntime and string.format("%2.2f", math.max(1, self.cooldowntime - GetTime())) or "-")
+    if not self.lastdirt then
+        str = str.." No last dirt."
+        str = str.." Distance: ".. (self.distance and string.format("%2.2f", self.distance) or "-")
+        str = str.."/"..tostring(TUNING.MIN_HUNT_DISTANCE)
+    else
+        str = str.." Dirt"
+        str = str.." Distance: ".. (self.distance and string.format("%2.2f", self.distance) or "-")
+        str = str.."/"..tostring(TUNING.MAX_DIRT_DISTANCE)
+    end
+    return str
 end
 
 

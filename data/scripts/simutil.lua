@@ -1,17 +1,38 @@
-function GetPlayer() return TheSim:FindFirstEntityWithTag("player") end
-function GetWorld() return TheSim:FindFirstEntityWithTag("ground") end
-function GetCeiling() return TheSim:FindFirstEntityWithTag("ceiling") end
+local player = nil
+local world = nil
+local ceiling = nil
+function GetPlayer()
+    if not player then
+        player = TheSim:FindFirstEntityWithTag("player")
+    end
+    return player
+end
+function GetWorld() 
+    if not world then
+        world = TheSim:FindFirstEntityWithTag("ground") 
+    end
+    return world
+end
+function GetCeiling() 
+    if not ceiling then
+        ceiling = TheSim:FindFirstEntityWithTag("ceiling")
+    end
+    return ceiling
+end
 function GetMap() if GetWorld() then return GetWorld().Map end end
 function GetClock() if GetWorld() and GetWorld().components then return GetWorld().components.clock end end
 function GetNightmareClock() if GetWorld() and GetWorld().components then return GetWorld().components.nightmareclock end end
 function GetSeasonManager() if GetWorld() and GetWorld().components then return GetWorld().components.seasonmanager end  end
+function GetMoistureManager() if GetWorld() and GetWorld().components then return GetWorld().components.moisturemanager end  end
 
-function FindEntity(inst, radius, fn, tags)
+function FindEntity(inst, radius, fn, musttags, canttags, mustoneoftags)
     if inst and inst:IsValid() then
 		local x,y,z = inst.Transform:GetWorldPosition()
-		local ents = TheSim:FindEntities(x,y,z, radius, tags) -- or we could include a flag to the search?
+			
+		--print ("FIND", inst, radius, musttags and #musttags or 0, canttags and #canttags or 0, mustoneoftags and #mustoneoftags or 0)
+		local ents = TheSim:FindEntities(x,y,z, radius, musttags, canttags, mustoneoftags) -- or we could include a flag to the search?
 		for k, v in pairs(ents) do
-			if v ~= inst and v.entity:IsValid() and v.entity:IsVisible() and (not fn or fn(v)) then
+			if v ~= inst and v.entity:IsValid() and v.entity:IsVisible() and (not fn or fn(v, inst)) then
 				return v
 			end
 		end

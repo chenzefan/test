@@ -1,3 +1,4 @@
+local EndGameDialog = require("screens/endgamedialog")
 local assets =
 {
 	Asset("ANIM", "anim/maxwell_throne.zip"),
@@ -27,7 +28,7 @@ local function SpawnPuppet(inst, name)
     local pt = Vector3(inst.Transform:GetWorldPosition())
     local puppet = SpawnPrefab(name)
     if puppet then
-        puppet.Transform:SetPosition(pt.x + 0.1, pt.y, pt.z)
+        puppet.Transform:SetPosition(pt.x, pt.y + 0.1, pt.z)
         puppet.persists = false
     end
     return puppet

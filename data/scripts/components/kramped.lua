@@ -2,11 +2,10 @@ local Kramped = Class(function(self, inst)
     self.inst = inst
     
     self.actions = 0
-    self.threshold = 30
+    self.threshold = nil
     
     self.inst:ListenForEvent( "killed", function(inst,data) self:onkilledother(data.victim) end )
-    self.decayperiod = 60
-    self.timetodecay = self.decayperiod
+    self.timetodecay = TUNING.KRAMPUS_NAUGHTINESS_DECAY_PERIOD
     self.inst:StartUpdatingComponent(self)
 end)
 
@@ -26,6 +25,12 @@ function Kramped:onkilledother(victim)
 			if not victim.components.werebeast or not victim.components.werebeast:IsInWereState() then
 				self:OnNaughtyAction(3)
 			end
+		elseif victim.prefab == "babybeefalo" then
+			self:OnNaughtyAction(6)
+		elseif victim.prefab == "teenbird" then
+			self:OnNaughtyAction(2)
+		elseif victim.prefab == "smallbird" then
+			self:OnNaughtyAction(6)
 		elseif victim.prefab == "beefalo" then
 			self:OnNaughtyAction(4)
 		elseif victim.prefab == "crow" then
@@ -34,13 +39,15 @@ function Kramped:onkilledother(victim)
 			self:OnNaughtyAction(2)
 		elseif victim.prefab == "robin_winter" then
 			self:OnNaughtyAction(2)
-		elseif victim.prefab == "smallbird" then
-			self:OnNaughtyAction(6)
 		elseif victim.prefab == "butterfly" then
 			self:OnNaughtyAction(1)
 		elseif victim.prefab == "rabbit" then
 			self:OnNaughtyAction(1)
 		elseif victim.prefab == "tallbird" then
+			self:OnNaughtyAction(2)
+		elseif victim.prefab == "bunnyman" then
+			self:OnNaughtyAction(3)
+		elseif victim.prefab == "penguin" then
 			self:OnNaughtyAction(2)
 		end
 	end
@@ -52,7 +59,11 @@ function Kramped:OnLoad(data)
 end
 
 function Kramped:GetDebugString()
-	return string.format("Actions: %d / %d, decay in %2.2f", self.actions, self.threshold, self.timetodecay)
+	if self.actions and self.threshold and self.timetodecay then
+		return string.format("Actions: %d / %d, decay in %2.2f", self.actions, self.threshold, self.timetodecay)
+	else
+		return "Actions: 0"
+	end
 end
 
 
@@ -62,7 +73,7 @@ function Kramped:OnUpdate(dt)
 		self.timetodecay = self.timetodecay - dt
 		
 		if self.timetodecay < 0 then
-			self.timetodecay = self.decayperiod
+			self.timetodecay = TUNING.KRAMPUS_NAUGHTINESS_DECAY_PERIOD
 			self.actions = self.actions - 1
 		end
 	end
@@ -71,21 +82,27 @@ end
 
 
 function Kramped:OnNaughtyAction(how_naughty)
+	if TUNING.KRAMPUS_INCREASE_RAMP < 1 or TUNING.KRAMPUS_THRESHOLD_VARIANCE < 1 then return end
+
+	if self.threshold == nil then
+		self.threshold = TUNING.KRAMPUS_THRESHOLD + math.random(TUNING.KRAMPUS_THRESHOLD_VARIANCE)
+	end
+
 	self.actions = self.actions + (how_naughty or 1)
-	self.timetodecay = self.decayperiod
+	self.timetodecay = TUNING.KRAMPUS_NAUGHTINESS_DECAY_PERIOD
 	
-	if self.actions >= self.threshold  then
+	if self.actions >= self.threshold and self.threshold > 0 then
 		
 		local day = GetClock().numcycles
 		
 		local num_krampii = 1
-		self.threshold = 30 + math.random(20)
+		self.threshold = TUNING.KRAMPUS_THRESHOLD + math.random(TUNING.KRAMPUS_THRESHOLD_VARIANCE)
 		self.actions = 0
 		
-		if day > 50 then
-			num_krampii = math.random(2)
-		elseif day > 100 then
-			num_krampii = 1 + math.random(2)
+		if day > TUNING.KRAMPUS_INCREASE_LVL1 then
+			num_krampii = num_krampii + math.random(TUNING.KRAMPUS_INCREASE_RAMP)
+		elseif day > TUNING.KRAMPUS_INCREASE_LVL2 then
+			num_krampii = num_krampii + 1 + math.random(TUNING.KRAMPUS_INCREASE_RAMP)
 		end
 
 		for k = 1, num_krampii do

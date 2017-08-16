@@ -6,120 +6,213 @@ local Text = require "widgets/text"
 local Image = require "widgets/image"
 local Widget = require "widgets/widget"
 local UIAnim = require "widgets/uianim"
+local Menu = require "widgets/menu"
 
-DeathScreen = Class(Screen, function(self, days_survived, start_xp, escaped)
+
+
+
+local DeathScreen = Class(Screen, function(self, days_survived, start_xp, escaped, capped)
 
     Widget._ctor(self, "Progress")
     self.owner = GetPlayer()
 	self.log = true
 
-	self.root = self:AddChild(Widget("ROOT"))
+    TheInputProxy:SetCursorVisible(true)
+
+    self.black = self:AddChild(Image("images/global.xml", "square.tex"))
+    self.black:SetVRegPoint(ANCHOR_MIDDLE)
+    self.black:SetHRegPoint(ANCHOR_MIDDLE)
+    self.black:SetVAnchor(ANCHOR_MIDDLE)
+    self.black:SetHAnchor(ANCHOR_MIDDLE)
+    self.black:SetScaleMode(SCALEMODE_FILLSCREEN)
+    self.black:SetTint(0,0,0,.75)
+
+    self.root = self:AddChild(Widget("ROOT"))
     self.root:SetVAnchor(ANCHOR_MIDDLE)
     self.root:SetHAnchor(ANCHOR_MIDDLE)
     self.root:SetPosition(0,0,0)
     self.root:SetScaleMode(SCALEMODE_PROPORTIONAL)
 
 
+    if capped then
+        self:Capped(days_survived, start_xp, escaped)
+    else
+        self:NotCapped(days_survived, start_xp, escaped)
+    end
+end)
 
-    self.bg = self.root:AddChild(Image("images/hud.xml", "death_BG.tex"))
+function DeathScreen:NotCapped(days_survived, start_xp, escaped)
+    local font = BUTTONFONT
+    
+    self.bg = self.root:AddChild(Image("images/globalpanels.xml", "panel_upsell_small.tex"))
     self.progbar = self.root:AddChild(UIAnim())
     
-    self.progbar:GetAnimState():SetBank("progressbar")
+    self.progbar:GetAnimState():SetBank("progressbar") --XP Bar
     self.progbar:GetAnimState():SetBuild("progressbar")
     self.progbar:GetAnimState():PlayAnimation("anim", true)
     self.progbar:GetAnimState():SetPercent("anim", 0)
-    self.progbar:SetPosition(Vector3(-316,-35,0))
-
-
-    local font = BODYTEXTFONT
+    self.progbar:SetPosition(Vector3(-220, 5,0))
+    self.progbar:SetScale(.65,.7,.7)
     
-
-    self.title = self.root:AddChild(Text(TITLEFONT, 75))
-    self.title:SetPosition(0,190,0)
+    self.title = self.root:AddChild(Text(TITLEFONT, 60))
+    self.title:SetPosition(0,140,0)
     if escaped == nil then
-		self.title:SetString(STRINGS.UI.DEATHSCREEN.YOUAREDEAD)   	
-	else   
- 		self.title:SetString(STRINGS.UI.DEATHSCREEN.YOUESCAPED)
-	end
+        self.title:SetString(STRINGS.UI.DEATHSCREEN.YOUAREDEAD)     
+    else   
+        self.title:SetString(STRINGS.UI.DEATHSCREEN.YOUESCAPED)
+    end
+    if JapaneseOnPS4() then
+        -- not "You survived" X "days"
+        -- but X "day" "survived"
+        self.survivedtext = self.root:AddChild(Text(font, 40)) -- Day Count
+        self.survivedtext:SetPosition(-160,55,0)
 
-    self.t1 = self.root:AddChild(Text(font, 60))
-    self.t1:SetPosition(-150,70,0)
-    self.t1:SetString(STRINGS.UI.DEATHSCREEN.SURVIVEDDAYS)
+        self.t2 = self.root:AddChild(Text(font, 40))
+        self.t2:SetPosition(-80,55,0)
+        self.t2:SetString(STRINGS.UI.DEATHSCREEN.DAYS) --"Days"
 
-    self.t2 = self.root:AddChild(Text(font, 60))
-    self.t2:SetPosition(200,70,0)
-    self.t2:SetString(STRINGS.UI.DEATHSCREEN.DAYS)
+        self.t1 = self.root:AddChild(Text(font, 40))
+        self.t1:SetPosition(0,55,0)
+        self.t1:SetString(STRINGS.UI.DEATHSCREEN.SURVIVEDDAYS) --"You survived..."
+    else    
+        self.t1 = self.root:AddChild(Text(font, 40))
+        self.t1:SetPosition(-160,55,0)
+        self.t1:SetString(STRINGS.UI.DEATHSCREEN.SURVIVEDDAYS) --"You survived..."
 
-    self.survivedtext = self.root:AddChild(Text(font, 50))
-    self.survivedtext:SetPosition(75,70,0)
+        self.survivedtext = self.root:AddChild(Text(font, 40)) -- Day Count
+        self.survivedtext:SetPosition(-50,55,0)
 
-    self.leveltext = self.root:AddChild(Text(font, 50))
+        self.t2 = self.root:AddChild(Text(font, 40))
+        self.t2:SetPosition(30,55,0)
+        self.t2:SetString(STRINGS.UI.DEATHSCREEN.DAYS) --"Days"
+    end
+
+    self.leveltext = self.root:AddChild(Text(font, 35)) --Level #: 
     self.leveltext:SetHAlign(ANCHOR_LEFT)
-    self.leveltext:SetPosition(-260,-40,0)
+    self.leveltext:SetPosition(-180,3,0)
 
-    self.xptext = self.root:AddChild(Text(NUMBERFONT, 50))
+    self.xptext = self.root:AddChild(Text(font, 35)) --XP: ####
     self.xptext:SetHAlign(ANCHOR_LEFT)
-    self.xptext:SetPosition(-230,-110,0)
+    self.xptext:SetPosition(-180,-45,0)
     
-    self.menu = self.root:AddChild(Widget("menu"))
-    self.menu:SetPosition(0, -195, 0)
-
-
-    self.portrait = self.root:AddChild(Image("images/saveslot_portraits.xml", "wilson.tex"))
-    self.portrait:SetPosition(Vector3(250,-145, 0))
-    self.portrait:SetScale(1.5,1.5,1.5)
-    self.portrait:SetTint(0,0,0,1)
-    self.portrait:SetVRegPoint(ANCHOR_BOTTOM)
-    self:ShowButtons(false)
-    
-
-    self.rewardtext = self.root:AddChild(Text(font, 40))
+    self.rewardtext = self.root:AddChild(Text(font, 35)) --"Next Reward..."
     self.rewardtext:SetString(STRINGS.UI.DEATHSCREEN.NEXTREWARD)
     self.rewardtext:SetHAlign(ANCHOR_LEFT)
-    self.rewardtext:SetPosition(60,-110,0)
+    self.rewardtext:SetPosition(5,-45,0)
 
-    local but_w = 192
-    local spacing = 32
     local menu_items = 
     {
-        {name = STRINGS.UI.DEATHSCREEN.MAINMENU, fn = function() self:OnMenu(escaped) end}
+        {text = STRINGS.UI.DEATHSCREEN.MAINMENU, cb = function() self:OnMenu(escaped) end}
     }
 
     if escaped then
-        table.insert(menu_items,  {name = STRINGS.UI.DEATHSCREEN.CONTINUE, fn = function() self:OnContinue() end})
+        table.insert(menu_items,  {text = STRINGS.UI.DEATHSCREEN.CONTINUE, cb = function() self:OnContinue() end})
     else
-        table.insert(menu_items,  {name = STRINGS.UI.DEATHSCREEN.RETRY, fn = function() self:OnRetry() end})
+        table.insert(menu_items,  {text = STRINGS.UI.DEATHSCREEN.RETRY, cb = function() self:OnRetry() end})
     end
 
-    local total_width = (but_w + spacing)*(#menu_items-1)  
+    self.menu = self.root:AddChild(Menu(menu_items, 180, true))
+    self.menu:SetPosition(-((#menu_items-1)*135)/2, -140, 0)
+    self.menu:SetScale(.75,.75,.75)
 
+    local portrait_pos = {x = 155, y = -60}
+    local portrait_scale = 1.25
+    self.portrait_background = self.root:AddChild(Image("images/saveslot_portraits.xml", "background.tex"))
+    self.portrait_background:SetPosition(Vector3(portrait_pos.x, portrait_pos.y, 0))
+    self.portrait_background:SetScale(portrait_scale,portrait_scale,portrait_scale)
+    self.portrait_background:SetVRegPoint(ANCHOR_BOTTOM)
 
-    for k,v in ipairs(menu_items) do
-        local button = self.menu:AddChild(ImageButton())
-        button:SetPosition(-total_width/2 + (but_w+spacing)*(k-1), 0, 0)
-        button:SetText(v.name)
-        button:SetOnClick(v.fn)
-        button.text:SetColour(0,0,0,1)
-        button:SetFont(BUTTONFONT)
-        button:SetTextSize(40)
-    end
+    self.portrait = self.root:AddChild(Image("images/saveslot_portraits.xml", "wilson.tex"))
+    self.portrait:SetPosition(Vector3(portrait_pos.x , portrait_pos.y - 1, 0))
+    self.portrait:SetScale(portrait_scale,portrait_scale,portrait_scale)
+    self.portrait:SetTint(0,0,0,1)
+    self.portrait:SetVRegPoint(ANCHOR_BOTTOM)
+    self:ShowButtons(false)    
     
     self:ShowResults(days_survived, start_xp)
-end)
+    self.default_focus = self.menu
+end
 
-local function DoReload()
-    StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = SaveGameIndex:GetCurrentSaveSlot()})
+function DeathScreen:Capped(days_survived, start_xp, escaped)
+    local font = BUTTONFONT
+    
+    self.bg = self.root:AddChild(Image("images/globalpanels.xml", "small_dialog.tex"))
+    self.bg:SetScale(1.25, 1.3, 1)
+    self.title = self.root:AddChild(Text(TITLEFONT, 60))
+    self.title:SetPosition(0,70,0)
+    if escaped == nil then
+        self.title:SetString(STRINGS.UI.DEATHSCREEN.YOUAREDEAD)     
+    else   
+        self.title:SetString(STRINGS.UI.DEATHSCREEN.YOUESCAPED)
+    end
+
+    local line_y = 0
+
+    if JapaneseOnPS4() then
+        -- not "You survived" X "days"
+        -- but X "day" "survived"
+        self.survivedtext = self.root:AddChild(Text(font, 40)) -- Day Count
+        self.survivedtext:SetPosition(-160+60,line_y,0)
+
+        self.t2 = self.root:AddChild(Text(font, 40))
+        self.t2:SetPosition(-80+60,line_y,0)
+        self.t2:SetString(STRINGS.UI.DEATHSCREEN.DAYS) --"Days"
+
+        self.t1 = self.root:AddChild(Text(font, 40))
+        self.t1:SetPosition(0+60,line_y,0)
+        self.t1:SetString(STRINGS.UI.DEATHSCREEN.SURVIVEDDAYS) --"You survived..."
+    else    
+        self.t1 = self.root:AddChild(Text(font, 40))
+        self.t1:SetPosition(-70,line_y,0)
+        self.t1:SetString(STRINGS.UI.DEATHSCREEN.SURVIVEDDAYS) --"You survived..."
+
+        self.survivedtext = self.root:AddChild(Text(font, 40)) -- Day Count
+        self.survivedtext:SetPosition(30,line_y,0)
+
+        self.t2 = self.root:AddChild(Text(font, 40))
+        self.t2:SetPosition(90,line_y,0)
+        self.t2:SetString(STRINGS.UI.DEATHSCREEN.DAYS) --"Days"
+    end
+
+
+    local menu_items = 
+    {
+        {text = STRINGS.UI.DEATHSCREEN.MAINMENU, cb = function() self:OnMenu(escaped) end}
+    }
+
+    if escaped then
+        table.insert(menu_items,  {text = STRINGS.UI.DEATHSCREEN.CONTINUE, cb = function() self:OnContinue() end})
+    else
+        table.insert(menu_items,  {text = STRINGS.UI.DEATHSCREEN.RETRY, cb = function() self:OnRetry() end})
+    end
+
+    self.menu = self.root:AddChild(Menu(menu_items, 180, true))
+    self.menu:SetPosition(-((#menu_items-1)*135)/2, -60, 0)
+    self.menu:SetScale(.75,.75,.75)
+   
+    self:ShowResults(days_survived, start_xp)
+    self.default_focus = self.menu
+end
+
+local function DoReload(slot)
+    StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = slot or SaveGameIndex:GetCurrentSaveSlot()})
 end
 
 function DeathScreen:OnRetry()
-
+    local function OnProfileSaved()
+        self.menu:Disable()
+        local slot = SaveGameIndex:GetCurrentSaveSlot()
+        SaveGameIndex:DeleteSlot(slot, function() 
+                   TheFrontEnd:Fade(false, 2, function () 
+                        DoReload() 
+                    end )
+                end, true)
+    end
+    
     -- Record the start of a new game
     local starts = Profile:GetValue("starts") or 0
     Profile:SetValue("starts", starts+1)
-    Profile:Save()
-
-    self.menu:Disable()
-    TheFrontEnd:Fade(false, 2, DoReload)
+    Profile:Save(OnProfileSaved)        
 end
 
 function DeathScreen:OnContinue()
@@ -134,6 +227,7 @@ function DeathScreen:OnMenu(escaped)
         if escaped then
             StartNextInstance()
         else
+            EnableAllDLC()
             SaveGameIndex:DeleteSlot(SaveGameIndex:GetCurrentSaveSlot(), function() 
                 StartNextInstance()
             end)
@@ -143,17 +237,17 @@ end
 
 function DeathScreen:ShowButtons(show)
     if show then
-		self.menu:Show()
+        self.menu:Show()
+        --self.menu:SetFocus()
     else
-		self.menu:Hide()
+		--self.menu:Hide()
     end
 end
-
 
 function DeathScreen:SetStatus(xp, ignore_image)
     local level, percent = Progression.GetLevelForXP(xp)
 
-    if not ignore_image then
+    if not ignore_image and self.portrait then
         self.portrait:SetTint(0,0,0,1)
         local reward = Progression.GetRewardForLevel(level)
         if reward then
@@ -165,14 +259,16 @@ function DeathScreen:SetStatus(xp, ignore_image)
             self.portrait:Hide()
         end
     end
-    
-    
-    self.leveltext:SetString(STRINGS.UI.DEATHSCREEN.LEVEL.." "..tostring(level+1))
-    self.progbar:GetAnimState():SetPercent("anim", percent)
-    
-	self.xptext:SetString(string.format("XP: %d", xp))
-    
-    if xp >= Progression.GetXPCap() then
+    if self.leveltext then    
+        self.leveltext:SetString(STRINGS.UI.DEATHSCREEN.LEVEL.." "..tostring(level+1))
+    end
+    if self.progbar then
+        self.progbar:GetAnimState():SetPercent("anim", percent)
+    end
+    if self.xptext then
+	   self.xptext:SetString(string.format("XP: %d", xp))
+    end
+    if xp >= Progression.GetXPCap() and self.rewardtext then
 		self.rewardtext:SetString(STRINGS.UI.DEATHSCREEN.ATCAP)
 	end
 	
@@ -235,16 +331,21 @@ function DeathScreen:ShowResults(days_survived, start_xp)
                         p = p + dt*fill_rate
                         local xp = xp_for_level + math.min(end_p,p)*level_xp_size
                         self:SetStatus(xp, p >= 1)
-                        
-                        self.progbar:GetAnimState():SetPercent("anim", p)
+                        if self.progbar then
+                            self.progbar:GetAnimState():SetPercent("anim", p)
+                        end
                         Yield()
                     until p >= end_p
                     self.owner.SoundEmitter:KillSound("fillsound")
                     if end_p >= 1 then
                         self.owner.SoundEmitter:PlaySound("dontstarve/HUD/XP_bar_fill_unlock")
-                        self.progbar:GetAnimState():SetPercent("anim", 1)
-                        self.portrait:SetTint(1,1,1,1)
-                        self.portrait:ScaleTo(2, 1.5, .25)
+                        if self.progbar then
+                            self.progbar:GetAnimState():SetPercent("anim", 1)
+                        end
+                        if self.portrait then
+                            self.portrait:SetTint(1,1,1,1)
+                            self.portrait:ScaleTo((1.25 * 1.5), 1.25, .25)
+                        end
                         Sleep(1)
                     end
                 end
@@ -260,3 +361,4 @@ function DeathScreen:ShowResults(days_survived, start_xp)
     return xpreward
 end
 
+return DeathScreen

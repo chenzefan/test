@@ -21,7 +21,7 @@ local function fn()
     inst.AnimState:SetBank("shadowcreatures")
     inst.AnimState:SetBuild("shadow_skittish")
     inst.AnimState:PlayAnimation("idle_loop", true)
-    inst.AnimState:SetMultColour(1, 1, 1, 0.5)
+    inst.AnimState:SetMultColour(1, 1, 1, 0)
     
     inst.deathtask = inst:DoTaskInTime(5 + 10*math.random(), Disappear)
     inst:AddComponent("playerprox")

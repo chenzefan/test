@@ -6,9 +6,15 @@ assets =
 
 local prefabs =
 {
-	--marble drops
 	"marble",
 }
+
+SetSharedLootTable( 'statue_harp',
+{
+    {'marble',  1.0},
+    {'marble',  1.0},
+    {'marble',	0.3},
+})
 
 local function fn()
 	local inst = CreateEntity()
@@ -20,8 +26,7 @@ local function fn()
 	MakeObstaclePhysics(inst, 0.66)
 
 	inst:AddComponent("lootdropper")
-	inst.components.lootdropper:SetLoot({"marble","marble"}) --Add other loot?
-	inst.components.lootdropper:AddChanceLoot("marble", 0.33)
+	inst.components.lootdropper:SetChanceLootTable('statue_harp')
 
 	anim:SetBank("statue_small")
 	anim:SetBuild("statue_small")

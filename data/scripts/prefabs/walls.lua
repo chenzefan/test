@@ -43,17 +43,42 @@ function MakeWallType(data)
 	end
 
 
+
 	local function test_wall(inst, pt)
-		return true
+		local tiletype = GetGroundTypeAtPosition(pt)
+		local ground_OK = tiletype ~= GROUND.IMPASSABLE 
+		
+		if ground_OK then
+			local ents = TheSim:FindEntities(pt.x,pt.y,pt.z, 2, nil, {"NOBLOCK", "player", "FX", "INLIMBO", "DECOR"}) -- or we could include a flag to the search?
+
+			for k, v in pairs(ents) do
+				if v ~= inst and v.entity:IsValid() and v.entity:IsVisible() and not v.components.placer and v.parent == nil then
+					local dsq = distsq( Vector3(v.Transform:GetWorldPosition()), pt)
+					if v:HasTag("wall") then
+						if dsq < .1 then return false end
+					else
+						if  dsq< 1 then return false end
+					end
+				end
+			end
+			
+			return true
+
+		end
+		return false
+		
 	end
 
 	local function makeobstacle(inst)
 	
+	
+		inst.Physics:SetCollisionGroup(COLLISION.OBSTACLES)	
 	    inst.Physics:ClearCollisionMask()
-		inst.Physics:CollidesWith(COLLISION.WORLD)
+		--inst.Physics:CollidesWith(COLLISION.WORLD)
+		inst.Physics:SetMass(0)
 		inst.Physics:CollidesWith(COLLISION.ITEMS)
 		inst.Physics:CollidesWith(COLLISION.CHARACTERS)
-
+		inst.Physics:SetActive(true)
 	    local ground = GetWorld()
 	    if ground then
 	    	local pt = Point(inst.Transform:GetWorldPosition())
@@ -75,27 +100,31 @@ function MakeWallType(data)
 	    end
 	end
 
+	local function resolveanimtoplay(percent)
+		local anim_to_play = nil
+		if percent <= 0 then
+			anim_to_play = "0"
+		elseif percent <= .4 then
+			anim_to_play = "1_4"
+		elseif percent <= .5 then
+			anim_to_play = "1_2"
+		elseif percent < 1 then
+			anim_to_play = "3_4"
+		else
+			anim_to_play = "1"
+		end
+		return anim_to_play
+	end
+
 	local function onhealthchange(inst, old_percent, new_percent)
 		
 		if old_percent <= 0 and new_percent > 0 then makeobstacle(inst) end
 		if old_percent > 0 and new_percent <= 0 then clearobstacle(inst) end
 
-		local anim_to_play = nil
-		if new_percent <= 0 then
-			anim_to_play = "0"
-		elseif new_percent <= .4 then
-			anim_to_play = "1_4"
-		elseif new_percent <= .5 then
-			anim_to_play = "1_2"
-		elseif new_percent <= .9 then
-			anim_to_play = "3_4"
-		else
-			anim_to_play = "1"
-		end
-
-		if old_percent > new_percent and new_percent > 0 then
+		local anim_to_play = resolveanimtoplay(new_percent)
+		if new_percent > 0 then
 			inst.AnimState:PlayAnimation(anim_to_play.."_hit")		
-			inst.AnimState:PushAnimation(anim_to_play)		
+			inst.AnimState:PushAnimation(anim_to_play, false)		
 		else
 			inst.AnimState:PlayAnimation(anim_to_play)		
 		end
@@ -121,8 +150,14 @@ function MakeWallType(data)
 		inst:AddComponent("inventoryitem")
 		
 		inst:AddComponent("repairer")
-		inst.components.repairer.repairmaterial = data.name
-		inst.components.repairer.value = 50
+
+        if data.name == "ruins" then
+		    inst.components.repairer.repairmaterial = "thulecite"
+        else
+		    inst.components.repairer.repairmaterial = data.name
+        end
+
+		inst.components.repairer.healthrepairvalue = data.maxhealth / 6
 	    
 		
 		if data.flammable then
@@ -146,6 +181,14 @@ function MakeWallType(data)
 		if data.destroysound then
 			inst.SoundEmitter:PlaySound(data.destroysound)		
 		end
+
+		local healthpercent = inst.components.health:GetPercent()
+		local anim_to_play = resolveanimtoplay(healthpercent)
+		if healthpercent > 0 then
+			inst.AnimState:PlayAnimation(anim_to_play.."_hit")		
+			inst.AnimState:PushAnimation(anim_to_play, false)	
+		end	
+
 	end
 
 	local function onrepaired(inst)
@@ -175,7 +218,7 @@ function MakeWallType(data)
 		--trans:SetScale(1.3,1.3,1.3)
 		inst:AddTag("wall")
 		MakeObstaclePhysics(inst, .5)    
-
+		inst.entity:SetCanSleep(false)
 		anim:SetBank("wall")
 		anim:SetBuild("wall_"..data.name)
 	    anim:PlayAnimation("1_2", false)
@@ -186,11 +229,10 @@ function MakeWallType(data)
 		for k,v in ipairs(data.tags) do
 		    inst:AddTag(v)
 		end
-		
-		
+				
 		inst:AddComponent("repairable")
         if data.name == "ruins" then
-		    inst.components.repairable.repairmaterial = "stone"
+		    inst.components.repairable.repairmaterial = "thulecite"
         else
 		    inst.components.repairable.repairmaterial = data.name
         end
@@ -204,6 +246,7 @@ function MakeWallType(data)
 		inst.components.health.currenthealth = data.maxhealth / 2
 		inst.components.health.ondelta = onhealthchange
 		inst.components.health.nofadeout = true
+		inst.components.health.canheal = false
 		inst:AddTag("noauradamage")
 		
 		if data.flammable then
@@ -254,7 +297,7 @@ local walldata = {
 			{name = "stone", tags={"stone"}, loot = "rocks", maxloots = 2, maxhealth=TUNING.STONEWALL_HEALTH, buildsound="dontstarve/common/place_structure_stone", destroysound="dontstarve/common/destroy_stone"},
 			{name = "wood", tags={"wood"}, loot = "log", maxloots = 2, maxhealth=TUNING.WOODWALL_HEALTH, flammable = true, buildsound="dontstarve/common/place_structure_wood", destroysound="dontstarve/common/destroy_wood"},
 			{name = "hay", tags={"grass"}, loot = "cutgrass", maxloots = 2, maxhealth=TUNING.HAYWALL_HEALTH, flammable = true, buildsound="dontstarve/common/place_structure_straw", destroysound="dontstarve/common/destroy_straw"},
-			{name = "ruins", tags={"stone", "ruins"}, loot = nil, maxloots = 2, maxhealth=TUNING.STONEWALL_HEALTH, buildsound="dontstarve/common/place_structure_stone", destroysound="dontstarve/common/destroy_stone"},
+			{name = "ruins", tags={"stone", "ruins"}, loot = "thulecite_pieces", maxloots = 2, maxhealth=TUNING.RUINSWALL_HEALTH, buildsound="dontstarve/common/place_structure_stone", destroysound="dontstarve/common/destroy_stone"},
         }
 
 

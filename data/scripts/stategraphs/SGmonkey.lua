@@ -45,7 +45,7 @@ local states =
             else
                 inst.AnimState:PlayAnimation("idle_loop", true)
             end
-            inst.SoundEmitter:PlaySound("dontstarve/creatures/monkey/idle")
+            inst.SoundEmitter:PlaySound("dontstarve/creatures/monkey"..inst.soundtype.."/idle")
         end,
         
         timeline = 
@@ -109,7 +109,7 @@ local states =
             TimeEvent(8*FRAMES, function(inst) 
                 local waittime = FRAMES*8
                 for i = 0, 3 do
-                    inst:DoTaskInTime((i * waittime), function() inst.SoundEmitter:PlaySound("dontstarve/creatures/monkey/eat") end)
+                    inst:DoTaskInTime((i * waittime), function() inst.SoundEmitter:PlaySound("dontstarve/creatures/monkey"..inst.soundtype.."/eat") end)
                 end
             end)
         },
@@ -135,10 +135,10 @@ local states =
         {
             TimeEvent(8*FRAMES, function(inst) 
                 --12 fist hits
-                inst.SoundEmitter:PlaySound("dontstarve/creatures/monkey/taunt")
+                inst.SoundEmitter:PlaySound("dontstarve/creatures/monkey"..inst.soundtype.."/taunt")
                 local waittime = FRAMES*2
                 for i = 0, 11 do
-                    inst:DoTaskInTime((i * waittime), function() inst.SoundEmitter:PlaySound("dontstarve/creatures/monkey/chest_pound") end)
+                    inst:DoTaskInTime((i * waittime), function() inst.SoundEmitter:PlaySound("dontstarve/creatures/monkey"..inst.soundtype.."/chest_pound") end)
                 end
             end)
         },
@@ -167,7 +167,7 @@ local states =
         timeline = 
         {
             TimeEvent(14*FRAMES, function(inst) inst.components.combat:DoAttack()
-            inst.SoundEmitter:PlaySound("dontstarve/creatures/monkey/throw") end),
+            inst.SoundEmitter:PlaySound("dontstarve/creatures/monkey"..inst.soundtype.."/throw") end),
         },
         
         events=
@@ -191,7 +191,7 @@ CommonStates.AddWalkStates(states,
         TimeEvent(10*FRAMES, function(inst) 
             PlayFootstep(inst)
             if math.random() < 0.1 then
-                inst.SoundEmitter:PlaySound("dontstarve/creatures/monkey/idle")
+                inst.SoundEmitter:PlaySound("dontstarve/creatures/monkey"..inst.soundtype.."/idle")
             end
          end),
         TimeEvent(11*FRAMES, function(inst) PlayFootstep(inst) end),
@@ -215,7 +215,7 @@ CommonStates.AddSleepStates(states,
     sleeptimeline = 
     {
     TimeEvent(1*FRAMES, function(inst) inst.components.combat:DoAttack()
-            inst.SoundEmitter:PlaySound("dontstarve/creatures/monkey/sleep") end),
+            inst.SoundEmitter:PlaySound("dontstarve/creatures/monkey"..inst.soundtype.."/sleep") end),
     },
 
     endtimeline =
@@ -229,19 +229,19 @@ CommonStates.AddCombatStates(states,
     attacktimeline = 
     {        
         TimeEvent(17*FRAMES, function(inst) inst.components.combat:DoAttack()
-        inst.SoundEmitter:PlaySound("dontstarve/creatures/monkey/attack") end),
+        inst.SoundEmitter:PlaySound("dontstarve/creatures/monkey"..inst.soundtype.."/attack") end),
     },
 
     hittimeline =
     {
     TimeEvent(1*FRAMES, function(inst)
-            inst.SoundEmitter:PlaySound("dontstarve/creatures/monkey/hurt") end),
+            inst.SoundEmitter:PlaySound("dontstarve/creatures/monkey"..inst.soundtype.."/hurt") end),
     },
 
     deathtimeline =
     {
         TimeEvent(1*FRAMES, function(inst)
-            inst.SoundEmitter:PlaySound("dontstarve/creatures/monkey/death") end),
+            inst.SoundEmitter:PlaySound("dontstarve/creatures/monkey"..inst.soundtype.."/death") end),
     },
 })
 

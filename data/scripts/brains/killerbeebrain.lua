@@ -9,8 +9,8 @@ local beecommon = require "brains/beecommon"
 local MAX_CHASE_DIST = 25
 local MAX_CHASE_TIME = 10
 
-local RUN_AWAY_DIST = 6
-local STOP_RUN_AWAY_DIST = 10
+local RUN_AWAY_DIST = 3
+local STOP_RUN_AWAY_DIST = 6
 
 local KillerBeeBrain = Class(Brain, function(self, inst)
     Brain._ctor(self, inst)

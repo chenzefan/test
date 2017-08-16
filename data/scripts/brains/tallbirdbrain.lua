@@ -40,9 +40,7 @@ local function IsNestEmpty(inst)
 end
 
 local function GetNearbyThreatFn(inst)
-    return FindEntity(inst, START_FACE_DIST, function(guy)
-        return (guy:HasTag("character") or guy:HasTag("animal") ) and not guy:HasTag("tallbird") and not guy:HasTag("notarget")
-    end)
+    return FindEntity(inst, START_FACE_DIST, nil, nil, {'tallbird', 'notarget'}, {'character', 'animal'})
 end
 
 local function KeepFaceTargetFn(inst, target)

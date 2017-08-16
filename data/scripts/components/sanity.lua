@@ -9,9 +9,11 @@ local Sanity = Class(function(self, inst)
 	self.sane = true
 	self.fxtime = 0
 	self.dapperness = 0
-	self.inducedinsanity = nil --Set to nil if not true. 
+	self.inducedinsanity = nil
 	self.night_drain_mult = 1
 	self.neg_aura_mult = 1
+
+	self.penalty = 0
 
 	self.inst:StartUpdatingComponent(self)
 	self:Recalc(0)
@@ -34,17 +36,33 @@ function Sanity:IsCrazy()
 	end
 end
 
+function Sanity:RecalculatePenalty()
+	self.penalty = 0
+	for k,v in pairs(Ents) do
+		if v.components.sanityaura and v.components.sanityaura.penalty then
+			self.penalty = self.penalty + v.components.sanityaura.penalty
+		end
+	end
+	self:DoDelta(0)
+end
 
 function Sanity:OnSave()
-	return {current = self.current, sane = self.sane}
+	return {
+	current = self.current, 
+	sane = self.sane, 
+	penalty = self.penalty > 0 and self.penalty or nil
+	}
 end
 
 function Sanity:OnLoad(data)
 
+	if data.penalty then
+		self.penalty = data.penalty
+	end
+
 	if data.sane ~= nil then
 		self.sane = data.sane
 	end
-
 
     if data.current then
         self.current = data.current
@@ -60,9 +78,19 @@ function Sanity:OnLoad(data)
     
 end
 
-function Sanity:GetPercent()
+function Sanity:GetPenaltyPercent()
+	return (self.penalty)/ self.max
+end
+
+function Sanity:GetMaxSanity()
+	return (self.max - self.penalty)
+end
+
+function Sanity:GetPercent(usepenalty)
 	if self.inducedinsanity then 
 		return 0
+	elseif usepenalty then
+		return self.current/self:GetMaxSanity()
 	else
 	    return self.current / self.max
 	end
@@ -75,7 +103,7 @@ function Sanity:SetPercent(per)
 end
 
 function Sanity:GetDebugString()
-    return string.format("%2.2f / %2.2f at %2.4f", self.current, self.max, self.rate)
+    return string.format("%2.2f / %2.2f at %2.4f. Penalty of %2.2f", self.current, self.max, self.rate, self.penalty)
 end
 
 function Sanity:SetMax(amount)
@@ -102,8 +130,8 @@ function Sanity:DoDelta(delta, overtime)
     self.current = self.current + delta
     if self.current < 0 then 
         self.current = 0
-    elseif self.current > self.max then
-        self.current = self.max
+    elseif self.current > self:GetMaxSanity() then
+        self.current = self:GetMaxSanity()
     end
     
     local oldpercent = old/self.max
@@ -174,7 +202,7 @@ function Sanity:Recalc(dt)
 	local light_delta = 0
 	local lightval = self.inst.LightWatcher:GetLightValue()
 	
-	local day = GetClock():IsDay()
+	local day = GetClock():IsDay() and not GetWorld():IsCave()
 	
 	if day then 
 		light_delta = TUNING.SANITY_DAY_GAIN
@@ -195,9 +223,9 @@ function Sanity:Recalc(dt)
 	
 	local aura_delta = 0
 	local x,y,z = self.inst.Transform:GetWorldPosition()
-	local ents = TheSim:FindEntities(x,y,z, TUNING.SANITY_EFFECT_RANGE)
+	local ents = TheSim:FindEntities(x,y,z, TUNING.SANITY_EFFECT_RANGE, nil, {"FX", "NOCLICK", "DECOR","INLIMBO"} )
     for k,v in pairs(ents) do 
-		if v.components.sanityaura and v ~= self.inst and not v:IsInLimbo() then
+		if v.components.sanityaura and v ~= self.inst then
 			local distsq = self.inst:GetDistanceSqToInst(v)
 			local aura_val = v.components.sanityaura:GetAura(self.inst)/math.max(1, distsq)
 			if aura_val < 0 then

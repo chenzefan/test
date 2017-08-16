@@ -1,3 +1,6 @@
+local PopupDialogScreen = require "screens/popupdialog"
+local DeathScreen = require "screens/deathscreen"
+
 local assets = 
 {
 	Asset("ANIM", "anim/teleportato.zip"),
@@ -13,7 +16,7 @@ local prefabs = {
 local function TransitionToNextLevel(inst, wilson)
 	
 	wilson.sg:GoToState("teleportato_teleport")
-	local days_survived, start_xp, reward_xp, new_xp = CalculatePlayerRewards(wilson)
+	local days_survived, start_xp, reward_xp, new_xp, capped = CalculatePlayerRewards(wilson)
 	
 	local function onsave()
 		scheduler:ExecuteInTime(110*FRAMES, function() 
@@ -33,7 +36,7 @@ local function TransitionToNextLevel(inst, wilson)
 				end
 				SaveGameIndex:SaveCurrent(onsaved)
 			else
-				SaveGameIndex:CompleteLevel(function() TheFrontEnd:PushScreen(DeathScreen(days_survived, start_xp, true)) end )
+				SaveGameIndex:CompleteLevel(function() TheFrontEnd:PushScreen(DeathScreen(days_survived, start_xp, true, capped)) end )
 			end
 		end)
 	end
@@ -49,8 +52,7 @@ local function GetBodyText()
 end
 
 local function CheckNextLevelSure(inst, doer)
-	TheSim:SetTimeScale(0)
-	TheMixer:PushMix("pause")	
+	SetPause(true, "portal")
 	
 	TheFrontEnd:PushScreen(
 		PopupDialogScreen(STRINGS.UI.TELEPORTTITLE, GetBodyText(), 
@@ -58,9 +60,9 @@ local function CheckNextLevelSure(inst, doer)
 				{text=STRINGS.UI.TELEPORTYES, cb = 	function() 
 				
 											print("Lets Go!")
+											TheFrontEnd:PopScreen()
+											SetPause(false)
                                             ProfileStatsSet("teleportato_used", true)
-											TheSim:SetTimeScale(1) 
-											TheMixer:PopMix("pause") 
 											local wilson = GetPlayer()
 											wilson.is_teleporting = true
 											scheduler:ExecuteInTime(1, function()
@@ -70,15 +72,14 @@ local function CheckNextLevelSure(inst, doer)
 				{text=STRINGS.UI.TELEPORTNO, cb = function() 
 														print("Think I'll stay here")
 														TheFrontEnd:PopScreen()
-														TheSim:SetTimeScale(1) 
-														TheMixer:PopMix("pause") 
+														SetPause(false)
 														inst.components.activatable.inactive = true
 													  end}  
 			}))
 end
 
 local function OnActivate(inst, doer)
-	inst.components.activatable.inactive = false
+	--inst.components.activatable.inactive = false
 	if not inst.activatedonce then
 		inst.activatedonce = true
 		inst.AnimState:PlayAnimation("activate", false)
@@ -144,8 +145,15 @@ local function PowerUp(inst)
 
 	inst.components.activatable.inactive = true
 
+	if SaveGameIndex:GetCurrentMode(Settings.save_slot) == "adventure" then
+		inst:SetInherentSceneAltAction(ACTIONS.TRAVEL)
+	end
+	
+	inst.travel_action_fn = function(doer) CheckNextLevelSure(inst, doer) end
+
 	inst.SoundEmitter:PlaySound("dontstarve/common/teleportato/teleportato_powerup", "teleportato_on")
 	inst.SoundEmitter:PlaySound("dontstarve/common/teleportato/teleportato_idle_LP", "teleportato_idle")
+	
 end
 
 local partSymbols = {teleportato_ring = "RING", teleportato_crank = "CRANK", teleportato_box = "BOX", teleportato_potato = "POTATO" }
@@ -161,6 +169,9 @@ local function TestForPowerUp(inst)
 			end
 		end
 		if allParts == true then
+			
+			--this is a controller hack. It's... kinda gross
+			
 	        inst.components.trader:Disable()
             local rodbase = TheSim:FindFirstEntityWithTag("rodbase")
             if rodbase and rodbase.components.lock and rodbase.components.lock:IsLocked() then
@@ -277,7 +288,9 @@ local function fn(Sim)
     inst.components.container.widgetanimbank = "ui_cookpot_1x4"
     inst.components.container.widgetanimbuild = "ui_cookpot_1x4"
     inst.components.container.widgetpos = Vector3(0,0,0)
+    inst.components.container.side_align_tip = 100
     inst.components.container.widgetbuttoninfo = widgetbuttoninfo
+    inst.components.container.type = "cooker"
 
     inst:AddComponent("playerprox")
     inst.components.playerprox:SetDist(3,5)

@@ -28,6 +28,14 @@ local gemlist  =
     "purplegem",
 }
 
+
+SetSharedLootTable( 'statue_ruins_no_gem',
+{
+    {'thulecite',     1.00},
+    {'nightmarefuel', 1.00},
+    {'thulecite',     0.05},
+})
+
 local LIGHT_INTENSITY = .25
 local LIGHT_RADIUS = 2.5
 local LIGHT_FALLOFF = 5
@@ -223,8 +231,7 @@ end
 local function nogem(small)
     local inst = commonfn(small)
     
-    inst.components.lootdropper:SetLoot({"thulecite", "nightmarefuel"})
-    inst.components.lootdropper:AddChanceLoot("thulecite"  , 0.05)
+    inst.components.lootdropper:SetChanceLootTable('statue_ruins_no_gem')
 
     return inst
 end

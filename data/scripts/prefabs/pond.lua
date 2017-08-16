@@ -22,7 +22,7 @@ local function ReturnChildren(inst)
 	end
 end
 
-local function SpawnPlants(inst)
+local function SpawnPlants(inst, plantname)
 
 	if inst.decor then
 		for i,item in ipairs(inst.decor) do
@@ -41,7 +41,7 @@ local function SpawnPlants(inst)
 	end
 
 	for k, offset in pairs( plant_offsets ) do
-		local plant = SpawnPrefab( "marsh_plant" )
+		local plant = SpawnPrefab( plantname )
 		plant.entity:SetParent( inst.entity )
 		plant.Transform:SetPosition( offset[1], offset[2], offset[3] )
 		table.insert( inst.decor, plant )
@@ -81,7 +81,7 @@ local function OnSnowCoverChange(inst, thresh)
         inst.Physics:CollidesWith(COLLISION.ITEMS)
         inst.Physics:CollidesWith(COLLISION.CHARACTERS)
 
-		SpawnPlants(inst)
+		SpawnPlants(inst, inst.planttype)
 	end
 end
 
@@ -116,12 +116,12 @@ local function commonfn(pondtype)
 
 	inst.frozen = false
 
-	SpawnPlants(inst)
 
     inst:AddComponent("inspectable")
     inst.components.inspectable.nameoverride = "pond"
+    inst.no_wet_prefix = true
+
 	inst:AddComponent("fishable")
-	inst.components.fishable:AddFish("fish")
 	inst.components.fishable:SetRespawnTime(TUNING.FISH_RESPAWN_TIME)
 
 	inst.OnLoad = onload
@@ -132,6 +132,10 @@ end
 local function pondmos()
 	local inst = commonfn("_mos")
 	inst.components.childspawner.childname = "mosquito"
+	inst.components.fishable:AddFish("fish")
+	inst.planttype = "marsh_plant"
+	SpawnPlants(inst,inst.planttype )
+
 
 	inst:ListenForEvent("dusktime", function()
 	    if not GetSeasonManager() or not GetSeasonManager():IsWinter() then
@@ -150,6 +154,10 @@ end
 local function pondfrog()
 	local inst = commonfn("")
 	inst.components.childspawner.childname = "frog"
+	inst.components.fishable:AddFish("fish")
+		inst.planttype = "marsh_plant"
+	SpawnPlants(inst, inst.planttype)
+
 
 	inst:ListenForEvent("dusktime", function()
 			inst.components.childspawner:StopSpawning()    
@@ -171,6 +179,10 @@ end
 
 local function pondcave()
 	local inst = commonfn("_cave")
+	inst.components.fishable:AddFish("eel")
+		inst.planttype = "pond_algae"
+	SpawnPlants(inst, inst.planttype)
+
 	--These spawn nothing at this time.
 	return inst
 end

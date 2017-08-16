@@ -11,8 +11,13 @@ function MakeHat(name)
         --Asset("IMAGE", texture),
     }
 
-    local function onequip(inst, owner)
-        owner.AnimState:OverrideSymbol("swap_hat", fname, "swap_hat")
+    if name == "miner" then
+        table.insert(assets, Asset("ANIM", "anim/hat_miner_off.zip"))
+    end
+
+    local function onequip(inst, owner, fname_override)
+        local build = fname_override or fname
+        owner.AnimState:OverrideSymbol("swap_hat", build, "swap_hat")
         owner.AnimState:Show("HAT")
         owner.AnimState:Show("HAT_HAIR")
         owner.AnimState:Hide("HAIR_NOHAT")
@@ -136,6 +141,88 @@ function MakeHat(name)
 		return inst
     end
 
+    local function ruinshat_proc(inst, owner)
+        inst:AddTag("forcefield")
+        inst.components.armor:SetAbsorption(TUNING.FULL_ABSORPTION)
+        local fx = SpawnPrefab("forcefieldfx")
+        fx.entity:SetParent(owner.entity)
+        fx.Transform:SetPosition(0, 0.2, 0)
+        local fx_hitanim = function()
+            fx.AnimState:PlayAnimation("hit")
+            fx.AnimState:PushAnimation("idle_loop")
+        end
+        fx:ListenForEvent("blocked", fx_hitanim, owner)
+
+        inst.components.armor.ontakedamage = function(inst, damage_amount)
+            if owner then
+                local sanity = owner.components.sanity
+                if sanity then
+                    local unsaneness = damage_amount * TUNING.ARMOR_RUINSHAT_DMG_AS_SANITY
+                    sanity:DoDelta(-unsaneness, false)
+                end
+            end
+        end
+
+        inst.active = true
+
+        owner:DoTaskInTime(--[[Duration]] TUNING.ARMOR_RUINSHAT_DURATION, function()
+            fx:RemoveEventCallback("blocked", fx_hitanim, owner)
+            fx.kill_fx(fx)
+            if inst:IsValid() then
+                inst:RemoveTag("forcefield")
+                inst.components.armor.ontakedamage = nil
+                inst.components.armor:SetAbsorption(TUNING.ARMOR_RUINSHAT_ABSORPTION)
+                owner:DoTaskInTime(--[[Cooldown]] TUNING.ARMOR_RUINSHAT_COOLDOWN, function() inst.active = false end)
+            end
+        end)
+    end
+
+    local function tryproc(inst, owner)
+        if not inst.active and math.random() < --[[ Chance to proc ]] TUNING.ARMOR_RUINSHAT_PROC_CHANCE then
+           ruinshat_proc(inst, owner)
+        end
+    end
+
+    local function ruins_onunequip(inst, owner)
+        owner.AnimState:Hide("HAT")
+        owner.AnimState:Hide("HAT_HAIR")
+        owner.AnimState:Show("HAIR_NOHAT")
+        owner.AnimState:Show("HAIR")
+
+        if owner:HasTag("player") then
+            owner.AnimState:Show("HEAD")
+            owner.AnimState:Hide("HEAD_HAIR")
+        end
+
+        owner:RemoveEventCallback("attacked", inst.procfn)
+
+    end
+    
+    local function ruins_onequip(inst, owner)
+        owner.AnimState:OverrideSymbol("swap_hat", fname, "swap_hat")
+        owner.AnimState:Show("HAT")
+        owner.AnimState:Hide("HAT_HAIR")
+        owner.AnimState:Show("HAIR_NOHAT")
+        owner.AnimState:Show("HAIR")
+        
+        owner.AnimState:Show("HEAD")
+        owner.AnimState:Hide("HEAD_HAIR")
+        inst.procfn = function() tryproc(inst, owner) end
+        owner:ListenForEvent("attacked", inst.procfn)
+    end
+
+    local function ruins()
+        local inst = simple()
+        inst:AddComponent("armor")
+        inst:AddTag("metal")
+        inst.components.armor:InitCondition(TUNING.ARMOR_RUINSHAT, TUNING.ARMOR_RUINSHAT_ABSORPTION)
+
+        inst.components.equippable:SetOnEquip(ruins_onequip)
+        inst.components.equippable:SetOnUnequip(ruins_onunequip)
+
+        return inst
+    end
+
     local function feather_equip(inst, owner)
         onequip(inst, owner)
         local ground = GetWorld()
@@ -211,34 +298,63 @@ function MakeHat(name)
         
         return inst
     end
+    local function miner_turnon(inst)
+        local owner = inst.components.inventoryitem and inst.components.inventoryitem.owner
+        if inst.components.fueled:IsEmpty() then
+            if owner then
+                onequip(inst, owner, "hat_miner_off")
+            end
+        else
+            if owner then
+                onequip(inst, owner)
+            end
+
+            inst.components.fueled:StartConsuming()
+            inst.SoundEmitter:PlaySound("dontstarve/common/minerhatAddFuel")
+            inst.Light:Enable(true)
+        end
+    end
+
+    local function miner_turnoff(inst, ranout)
+        if inst.components.equippable and inst.components.equippable:IsEquipped() then
+            local owner = inst.components.inventoryitem and inst.components.inventoryitem.owner
+            if owner then
+                onequip(inst, owner, "hat_miner_off")
+            end
+        end
+        inst.components.fueled:StopConsuming()
+        inst.SoundEmitter:PlaySound("dontstarve/common/minerhatOut")
+
+        inst.Light:Enable(false)
+    end
 
     local function miner_equip(inst, owner)
-        onequip(inst, owner)
-        inst.Light:Enable(true)
-        owner.SoundEmitter:PlaySound("dontstarve/common/switch_toggle")
+        miner_turnon(inst)
     end
     local function miner_unequip(inst, owner)
         onunequip(inst, owner)
-        owner.SoundEmitter:PlaySound("dontstarve/common/switch_toggle")
-        inst.Light:Enable(false)
+        miner_turnoff(inst)
     end
     local function miner_perish(inst)
         local owner = inst.components.inventoryitem and inst.components.inventoryitem.owner
         if owner then
             owner:PushEvent("torchranout", {torch = inst})
         end
-        inst:Remove()
-        if owner and owner.components.inventory then
-            local strawhat = SpawnPrefab("strawhat")
-            owner.components.inventory:GiveItem(strawhat)
-        end
+        miner_turnoff(inst)
     end
     local function miner_drop(inst)
-        inst.Light:Enable(false)
+        miner_turnoff(inst)
+    end
+    local function miner_takefuel(inst)
+        if inst.components.equippable and inst.components.equippable:IsEquipped() then
+            miner_turnon(inst)
+        end
     end
 
     local function miner()
         local inst = simple()
+
+        inst.entity:AddSoundEmitter()        
 
         local light = inst.entity:AddLight()
         light:SetFalloff(0.4)
@@ -250,10 +366,13 @@ function MakeHat(name)
         inst.components.inventoryitem:SetOnDroppedFn( miner_drop )
         inst.components.equippable:SetOnEquip( miner_equip )
         inst.components.equippable:SetOnUnequip( miner_unequip )
+
         inst:AddComponent("fueled")
-        inst.components.fueled.fueltype = "MINERHAT"
+        inst.components.fueled.fueltype = "CAVE"
         inst.components.fueled:InitializeFuelLevel(TUNING.MINERHAT_LIGHTTIME)
         inst.components.fueled:SetDepletedFn(miner_perish)
+        inst.components.fueled.ontakefuelfn = miner_takefuel
+        inst.components.fueled.accepting = true
         return inst
     end
 
@@ -409,13 +528,16 @@ function MakeHat(name)
 		inst:AddComponent("dapperness")
 		inst.components.dapperness.dapperness = TUNING.DAPPERNESS_TINY
 
+		--[[
 		inst:AddComponent("edible")
 		inst.components.edible.healthvalue = TUNING.HEALING_SMALL
 		inst.components.edible.hungervalue = 0
 		inst.components.edible.sanityvalue = TUNING.SANITY_SMALL
 		inst.components.edible.foodtype = "VEGGIE"
+		--]]
 		
-		
+        inst:AddTag("show_spoilage")
+
 		inst:AddComponent("perishable")
 		inst.components.perishable:SetPerishTime(TUNING.PERISH_FAST)
 		inst.components.perishable:StartPerishing()
@@ -463,6 +585,9 @@ function MakeHat(name)
         fn = walrus
     elseif name == "slurtle" then
         fn = slurtle
+    elseif name == "ruins" then
+        prefabs = {"forcefieldfx"}
+        fn = ruins
     end
 
     return Prefab( "common/inventory/"..prefabname, fn or simple, assets, prefabs)
@@ -481,4 +606,5 @@ return MakeHat("straw"),
         MakeHat("bush"),
         MakeHat("flower"),
         MakeHat("walrus"),
-        MakeHat("slurtle") 
+        MakeHat("slurtle"),
+        MakeHat("ruins")

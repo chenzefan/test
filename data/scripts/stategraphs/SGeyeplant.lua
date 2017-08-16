@@ -78,7 +78,7 @@ local states=
         onenter = function(inst, playanim)
             inst.Physics:Stop()
             if inst.components.combat.target then    
-                inst:FacePoint(Vector3(inst.components.combat.target.Transform:GetWorldPosition()), true)
+                inst:ForceFacePoint(inst.components.combat.target.Transform:GetWorldPosition())
             end
             inst.AnimState:PlayAnimation("lookat", true) 
         end,
@@ -111,7 +111,7 @@ local states=
         tags = {"attack", "canrotate"},
         onenter = function(inst)
             if inst.components.combat.target then    
-                inst:FacePoint(Vector3(inst.components.combat.target.Transform:GetWorldPosition()), true)
+                inst:ForceFacePoint(inst.components.combat.target.Transform:GetWorldPosition())
             end
             inst.AnimState:PlayAnimation("atk")
         end,

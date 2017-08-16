@@ -6,10 +6,15 @@ MAIN = 1
 ENCODE_SAVES = BRANCH ~= "dev"
 CHEATS_ENABLED = BRANCH == "dev"
 SOUNDDEBUG_ENABLED = false
+MODS_ENABLED = PLATFORM ~= "PS4" and PLATFORM ~= "NACL"
+ACCOMPLISHMENTS_ENABLED = PLATFORM == "PS4"
+--DEBUG_MENU_ENABLED = false --BRANCH == "dev" or PLATFORM == "PS4"
+DEBUG_MENU_ENABLED = false --BRANCH == "dev" or PLATFORM == "PS4"
+METRICS_ENABLED = PLATFORM ~= "PS4"
 
 --debug.setmetatable(nil, {__index = function() return nil end})  -- Makes  foo.bar.blat.um  return nil if table item not present   See Dave F or Brook for details
 
-local servers = 
+local servers =
 {
 	release = "http://dontstarve-release.appspot.com",
 	dev = "http://dontstarve-dev.appspot.com",
@@ -80,6 +85,9 @@ end
 
 require("strict")
 require("debugprint")
+-- add our print loggers
+AddPrintLogger(function(...) TheSim:LuaPrint(...) end)
+
 require("config")
 
 require("mainfunctions")
@@ -111,19 +119,34 @@ require("input")
 require("upsell")
 require("stats")
 require("frontend")
+
+if METRICS_ENABLED then
 require("overseer")
+end
+
 require("fileutil")
 require("screens/scripterrorscreen")
 require("prefablist")
 require("standardcomponents")
-require("cameras\\followcamera")
 require("update")
 require("fonts")
 require("physics")
 require("modindex")
 require("mathutil")
+require("components/lootdropper")
 
 require("saveindex") -- Added by Altgames for Android focus lost handling
+
+function JapaneseOnPS4()
+	if PLATFORM=="PS4" and APP_REGION == "SCEJ" then
+		return true
+	end
+	return false
+end
+
+if TheConfig:IsEnabled("force_netbookmode") then
+	TheSim:SetNetbookMode(true)
+end
 
 
 --debug key init
@@ -133,6 +156,7 @@ end
 
 
 print ("running main.lua\n")
+TheSystemService:SetStalling(true)
 
 VERBOSITY_LEVEL = VERBOSITY.ERROR
 if CONFIGURATION ~= "Production" then
@@ -143,8 +167,6 @@ end
 VERBOSITY_LEVEL = VERBOSITY.WARNING
 
 math.randomseed(TheSim:GetRealTime())
-
-TheCamera = FollowCamera()
 
 --instantiate the mixer
 local Mixer = require("mixer")
@@ -158,11 +180,16 @@ Ents = {}
 AwakeEnts = {}
 UpdatingEnts = {}
 NewUpdatingEnts = {}
+WallUpdatingEnts = {}
+NewWallUpdatingEnts = {}
 num_updating_ents = 0
 NumEnts = 0
 
+
 TheGlobalInstance = nil
 
+global("TheCamera")
+TheCamera = nil
 global("SplatManager")
 SplatManager = nil
 global("ShadowManager")
@@ -194,15 +221,17 @@ local function ModSafeStartup()
 
 	ModManager:LoadMods()
 
-	-- Register every standard prefab with the engine
-	for i,file in ipairs(PREFABFILES) do -- required from prefablist.lua
-		LoadPrefabFile("prefabs/"..file)
-	end
-
-	ModManager:RegisterPrefabs()
-
 	-- Apply translations
 	TranslateStringTable( STRINGS )
+
+	-- Register every standard prefab with the engine
+
+	-- This one needs to be active from the get-go.
+	LoadPrefabFile("prefabs/global")
+    LoadAchievements("achievements.lua")
+
+    require("cameras/followcamera")
+    TheCamera = FollowCamera()
 
 	--- GLOBAL ENTITY ---
 	TheGlobalInstance = CreateEntity()
@@ -228,7 +257,7 @@ local function ModSafeStartup()
 	MapLayerManager = TheGlobalInstance.entity:AddMapLayerManager()
 
 end
-if PLATFORM == "NACL" then
+if not MODS_ENABLED then
 	-- No mods in nacl, and the below functions are async in nacl
 	-- so they break because Main returns before ModSafeStartup has run.
 	ModSafeStartup()
@@ -239,4 +268,6 @@ else
 		end)
 	end)
 end
+
+TheSystemService:SetStalling(false)
 

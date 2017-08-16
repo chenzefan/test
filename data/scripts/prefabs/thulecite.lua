@@ -15,7 +15,8 @@ local function fn(Sim)
 
     inst:AddComponent("repairer")
     inst.components.repairer.repairmaterial = "thulecite"
-    inst.components.repairer.value = TUNING.REPAIR_THULECITE
+    inst.components.repairer.workrepairvalue = TUNING.REPAIR_THULECITE_WORK
+    inst.components.repairer.healthrepairvalue = TUNING.REPAIR_THULECITE_HEALTH
     
     inst:AddComponent("edible")
     inst.components.edible.foodtype = "ELEMENTAL"
@@ -25,7 +26,6 @@ local function fn(Sim)
     inst:AddComponent("inspectable")
     inst:AddComponent("inventoryitem")
     inst:AddComponent("stackable")
-
 
     return inst
 end

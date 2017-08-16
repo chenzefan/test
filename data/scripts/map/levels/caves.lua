@@ -9,7 +9,7 @@ AddLevel(LEVELTYPE.CAVE, {
 		name="CAVE_LEVEL_1",
 		overrides={
 			{"world_size", 		"tiny"},
-			{"day", 			"onlynight"}, 
+			-- {"day", 			"onlynight"}, 
 			{"waves", 			"off"},
 			{"location",		"cave"},
 			{"boons", 			"never"},
@@ -25,51 +25,21 @@ AddLevel(LEVELTYPE.CAVE, {
 			"FungalBatCave",
 			"BatCaves",
 			"TentacledCave",
-			"LargeFungalComplex",
 			"SingleBatCaveTask",
 			"RabbitsAndFungs",
 			"FungalPlain",
 			"Cavern",
 		},
-		numoptionaltasks = 1,
+		numoptionaltasks = math.random(2,3),
 		optionaltasks = {
 			"CaveBase",
 			"MushBase",
 			"SinkBase",
 			"RabbitTown",
+			"RedFungalComplex",
+			"GreenFungalComplex",
+			"BlueFungalComplex",
 		},
-		-- override_triggers = {
-		-- 	["CavesStart"] = {	
-		-- 		{"ColourCube", "sinkhole_cc"}, 
-		-- 	},
-		-- 	["CavesAlternateStart"] = {	
-		-- 		{"ColourCube", "sinkhole_cc"}, 
-		-- 	},
-		-- 	["BatCaves"] = {	
-		-- 		{"ColourCube", "caves_default"}, 
-		-- 	},	
-		-- 	["Cavern"] = {	
-		-- 		{"ColourCube", "caves_default"}, 
-		-- 	},	
-		-- 	["SingleBatCaveTask"] = {	
-		-- 		{"ColourCube", "caves_default"}, 
-		-- 	},	
-		-- 	["TentacledCave"] = {	
-		-- 		{"ColourCube", "caves_default"}, 
-		-- 	},
-		-- 	["LargeFungalComplex"] = {	
-		-- 		{"ColourCube", "fungus_cc"}, 
-		-- 	},
-		-- 	["FungalBatCave"] = {	
-		-- 		{"ColourCube", "fungus_cc"}, 
-		-- 	},
-		-- 	["RabbitsAndFungs"] = {	
-		-- 		{"ColourCube", "fungus_cc"}, 
-		-- 	},
-		-- 	["FungalPlain"] = {	
-		-- 		{"ColourCube", "fungus_cc"}, 
-		-- 	},
-		-- },
 	})
 
 AddLevel(LEVELTYPE.CAVE, {
@@ -90,9 +60,6 @@ AddLevel(LEVELTYPE.CAVE, {
 		tasks={
 			"RuinsStart",
 			"TheLabyrinth",
-			--"CityInRuins",
-			--"AlterAhead",
-			--"TownSquare",
 			"Residential",
 			"Military",
 			"Sacred",
@@ -107,27 +74,5 @@ AddLevel(LEVELTYPE.CAVE, {
 			"Military2",
 			"Sacred2",
 		},
-		--override_triggers = {
-		-- 	["RuinsStart"] = {	
-		-- 		{"ColourCube", "ruins_light_cc"}, 
-		-- 		-- {"SeasonColourCube", SEASONS.CAVES}, 
-		-- 	},
-		-- },
-		-- 	["TheLabyrinth"] = {	
-		-- 		{"SeasonColourCube", "caves_ruins"}, 
-		-- 		-- {"SeasonColourCube", 	{	DAY = "images/colour_cubes/ruins_light_cc.tex",
-		-- 		-- 							DUSK = "images/colour_cubes/ruins_dim_cc.tex",
-		-- 		-- 							NIGHT = "images/colour_cubes/ruins_dark_cc.tex",
-		-- 		-- 						},
-		-- 						-- }, 
-		-- 	},
-		-- 	["CityInRuins"] = {	
-		-- 		{"SeasonColourCube", "caves_ruins"}, 
-		-- 		-- {"SeasonColourCube", 	{	DAY = "images/colour_cubes/ruins_light_cc.tex",
-		-- 		-- 							DUSK = "images/colour_cubes/ruins_dim_cc.tex",
-		-- 		-- 							NIGHT = "images/colour_cubes/ruins_dark_cc.tex",
-		-- 		-- 						},
-		-- 		-- 				},
-		-- 	},
-		-- },
+
 	})

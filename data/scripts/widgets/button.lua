@@ -59,6 +59,7 @@ function Button:OnLoseFocus()
 	if self.o_pos then
 		self:SetPosition(self.o_pos)
 	end
+	self.down = false
 end
 
 function Button:SetFont(font)
@@ -95,7 +96,7 @@ end
 
 function Button:SetText(msg)
     if msg then
-    	self.name = msg
+    	self.name = msg or "button"
         self.text:SetString(msg)
         self.text:Show()
 		self.text:SetColour(self.focus and self.textfocuscolour or self.textcol)
@@ -104,6 +105,13 @@ function Button:SetText(msg)
     end
 
 
+end
+
+function Button:GetHelpText()
+	local controller_id = TheInput:GetControllerID()
+	local t = {}
+    table.insert(t, TheInput:GetLocalizedControl(controller_id, CONTROL_ACCEPT) .. " " .. STRINGS.UI.HELP.SELECT)	
+	return table.concat(t, "  ")
 end
 
 return Button

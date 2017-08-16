@@ -9,9 +9,9 @@ local ThreeSlice = Class(Widget, function(self, atlas, cap, filler)
     self.filler = filler
     self.cap = cap
 
-
-    self.startcap = self:AddChild(Image(atlas, cap))
-    self.endcap = self:AddChild(Image(atlas, cap))
+	self.root = self:AddChild(Widget("root"))
+    self.startcap = self.root:AddChild(Image(atlas, cap))
+    self.endcap = self.root:AddChild(Image(atlas, cap))
     self.parts = {}
 end)
 
@@ -59,15 +59,15 @@ function ThreeSlice:Flow(width, height, horizontal)
 			self.endcap:SetScale(1,-1,1)
 		end
 
-		local filler = self:AddChild(Image(self.atlas, self.filler))
+		local filler = self.root:AddChild(Image(self.atlas, self.filler))
 		
 		local fillerw, fillerh = filler:GetSize()
 		local filler_size = horizontal and fillerw or fillerh
 		
 		if horizontal then
-			self:SetScale(1,height/fillerh,1)
+			self.root:SetScale(1,height/fillerh,1)
 		else
-			self:SetScale(width/fillerw,1,1)
+			self.root:SetScale(width/fillerw,1,1)
 		end
 
 
@@ -76,7 +76,7 @@ function ThreeSlice:Flow(width, height, horizontal)
 		
 		for k = 1, num_filler do
 			if filler == nil then
-				filler = self:AddChild(Image(self.atlas, self.filler))
+				filler = self.root:AddChild(Image(self.atlas, self.filler))
 			end
 			
 			if horizontal then

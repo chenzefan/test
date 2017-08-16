@@ -28,6 +28,9 @@ function Image:SetTexture(atlas, tex)
 	self.texture = tex
 	--print(atlas, tex)
     self.inst.ImageWidget:SetTexture(self.atlas, self.texture)
+
+	-- changing the texture may have changed our metrics
+	self.inst.UITransform:UpdateTransform()
 end
 
 function Image:SetMouseOverTexture(atlas, tex)
@@ -102,6 +105,22 @@ end
 
 function Image:SetEffect(filename)
 	self.inst.ImageWidget:SetEffect(filename)
+end
+
+function Image:SetEffectParams(param1, param2, param3, param4)
+	self.inst.ImageWidget:SetEffectParams(param1, param2, param3, param4)
+end
+
+function Image:EnableEffectParams(enabled)
+	self.inst.ImageWidget:EnableEffectParams(enabled)
+end
+
+function Image:SetUVScale(xScale, yScale)
+	self.inst.ImageWidget:SetUVScale(xScale, yScale)
+end
+	
+function Image:SetBlendMode(mode)
+	self.inst.ImageWidget:SetBlendMode(mode)
 end
 
 return Image

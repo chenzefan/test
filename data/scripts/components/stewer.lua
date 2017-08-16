@@ -161,9 +161,11 @@ function Stewer:GetDebugString()
 	return str
 end
 
-function Stewer:CollectSceneActions(doer, actions)
+function Stewer:CollectSceneActions(doer, actions, right)
     if self.done then
         table.insert(actions, ACTIONS.HARVEST)
+    elseif right and self:CanCook() then
+		table.insert(actions, ACTIONS.COOK)
     end
 end
 

@@ -17,8 +17,12 @@ local assets =
 local function SetStage(inst, stage)
 	if stage <= 3 then
 		inst.SoundEmitter:PlaySound("dontstarve/creatures/spider/spiderLair_grow")
-		inst.components.childspawner:SetMaxChildren(TUNING.SPIDERDEN_SPIDERS[stage])
-		inst.components.health:SetMaxHealth(TUNING.SPIDERDEN_HEALTH[stage])
+		if inst.components.childspawner then
+			inst.components.childspawner:SetMaxChildren(TUNING.SPIDERDEN_SPIDERS[stage])
+		end
+		if inst.components.health then
+			inst.components.health:SetMaxHealth(TUNING.SPIDERDEN_HEALTH[stage])
+		end
     
 		inst.AnimState:PlayAnimation(inst.anims.init)
 		inst.AnimState:PushAnimation(inst.anims.idle, true)
@@ -28,7 +32,13 @@ local function SetStage(inst, stage)
 end
 
 local function SetSmall(inst)
-    inst.anims = {hit="cocoon_small_hit", idle="cocoon_small", init="grow_sac_to_small"}
+    inst.anims = {
+    	hit="cocoon_small_hit", 
+    	idle="cocoon_small", 
+    	init="grow_sac_to_small", 
+    	freeze="frozen_small", 
+    	thaw="frozen_loop_pst_small",
+    }
     SetStage(inst, 1)
     inst.components.lootdropper:SetLoot({ "silk","silk"})
 
@@ -37,12 +47,23 @@ local function SetSmall(inst)
         inst.components.burnable:SetBurnTime(10)
     end
 
+    if inst.components.freezable then
+	    inst.components.freezable:SetShatterFXLevel(3)
+	    inst.components.freezable:SetResistance(2)
+    end
+
 	inst.GroundCreepEntity:SetRadius( 5 )
 end
 
 
 local function SetMedium(inst)
-    inst.anims = {hit="cocoon_medium_hit", idle="cocoon_medium", init="grow_small_to_medium"}
+    inst.anims = {
+    	hit="cocoon_medium_hit", 
+    	idle="cocoon_medium", 
+    	init="grow_small_to_medium", 
+    	freeze="frozen_medium", 
+    	thaw="frozen_loop_pst_medium",
+    }
     SetStage(inst, 2)
     inst.components.lootdropper:SetLoot({ "silk","silk","silk","silk"})
 
@@ -51,17 +72,33 @@ local function SetMedium(inst)
         inst.components.burnable:SetBurnTime(10)
     end
 
+    if inst.components.freezable then
+	    inst.components.freezable:SetShatterFXLevel(4)
+	    inst.components.freezable:SetResistance(3)
+    end
+
 	inst.GroundCreepEntity:SetRadius( 9 )
 end
 
 local function SetLarge(inst)
-    inst.anims = {hit="cocoon_large_hit", idle="cocoon_large", init="grow_medium_to_large"}
+    inst.anims = {
+    	hit="cocoon_large_hit", 
+    	idle="cocoon_large", 
+    	init="grow_medium_to_large", 
+    	freeze="frozen_large", 
+    	thaw="frozen_loop_pst_large",
+    }
     SetStage(inst, 3)
     inst.components.lootdropper:SetLoot({ "silk","silk","silk","silk","silk","silk", "spidereggsack"})
 
     if inst.components.burnable then
         inst.components.burnable:SetFXLevel(4)
         inst.components.burnable:SetBurnTime(15)
+    end
+
+    if inst.components.freezable then
+	    inst.components.freezable:SetShatterFXLevel(5)
+	    inst.components.freezable:SetResistance(4)
     end
 
 	inst.GroundCreepEntity:SetRadius( 9 )
@@ -170,7 +207,7 @@ local function SpawnDefenders(inst, attacker)
 end
 
 local function SpawnInvestigators(inst, data)
-    if not inst.components.health:IsDead() then
+    if not inst.components.health:IsDead() and not (inst.components.freezable and inst.components.freezable:IsFrozen()) then
         inst.AnimState:PlayAnimation(inst.anims.hit)
         inst.AnimState:PushAnimation(inst.anims.idle)
         if inst.components.childspawner then
@@ -193,7 +230,10 @@ end
 
 local function StartSpawning(inst)
     if inst.components.childspawner then
-        inst.components.childspawner:StartSpawning()
+    	local frozen = (inst.components.freezable and inst.components.freezable:IsFrozen())
+    	if not frozen and not GetClock():IsDay() then
+	        inst.components.childspawner:StartSpawning()
+    	end
     end
 end
 
@@ -214,6 +254,39 @@ end
 
 local function OnBurnt(inst)
 
+end
+
+local function OnFreeze(inst)
+	print(inst, "OnFreeze")
+    inst.SoundEmitter:PlaySound("dontstarve/common/freezecreature")
+	inst.AnimState:PlayAnimation(inst.anims.freeze, true)
+    inst.AnimState:OverrideSymbol("swap_frozen", "frozen", "frozen")
+
+    StopSpawning(inst)
+
+    if inst.components.growable then
+    	inst.components.growable:Pause()
+    end
+end
+
+local function OnThaw(inst)
+	print(inst, "OnThaw")
+	inst.AnimState:PlayAnimation(inst.anims.thaw, true)
+    inst.SoundEmitter:PlaySound("dontstarve/common/freezethaw", "thawing")
+    inst.AnimState:OverrideSymbol("swap_frozen", "frozen", "frozen")
+end
+
+local function OnUnFreeze(inst)
+	print(inst, "OnUnFreeze")
+	inst.AnimState:PlayAnimation(inst.anims.idle, true)
+    inst.SoundEmitter:KillSound("thawing")
+    inst.AnimState:ClearOverrideSymbol("swap_frozen")
+
+    StartSpawning(inst)
+
+    if inst.components.growable then
+    	inst.components.growable:Resume()
+    end
 end
 
 local function GetSmallGrowTime(inst)
@@ -266,6 +339,7 @@ local function MakeSpiderDenFn(den_level)
 		anim:PlayAnimation("cocoon_small", true)
 
 		inst:AddTag("structure")
+	    inst:AddTag("hostile")
 		inst:AddTag("spiderden")
 		inst:AddTag("hive")
 
@@ -291,6 +365,13 @@ local function MakeSpiderDenFn(den_level)
 		---------------------
 		MakeMediumBurnable(inst)
 		inst.components.burnable:SetOnIgniteFn(OnIgnite)
+		-------------------
+
+		---------------------
+		MakeMediumFreezableCharacter(inst)
+		inst:ListenForEvent("freeze", OnFreeze)
+		inst:ListenForEvent("onthaw", OnThaw)
+		inst:ListenForEvent("unfreeze", OnUnFreeze)
 		-------------------
 
 		inst:ListenForEvent("dusktime", function() StartSpawning(inst) end, GetWorld())

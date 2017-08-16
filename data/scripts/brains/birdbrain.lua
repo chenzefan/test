@@ -10,7 +10,7 @@ end)
 local function ShouldFlyAway(inst)
     local busy = inst.sg:HasStateTag("sleeping") or inst.sg:HasStateTag("busy") or inst.sg:HasStateTag("flying")
     if not busy then
-        local threat = FindEntity(inst, 5, function(guy) return (guy:HasTag("player") or guy:HasTag("monster") or guy:HasTag("scarytoprey")) and not guy:HasTag("notarget") end)
+        local threat = FindEntity(inst, 5, nil, nil, {'notarget'}, {'player', 'monster', 'scarytoprey'})
         return threat ~= nil or GetClock():IsNight()
     end
 end

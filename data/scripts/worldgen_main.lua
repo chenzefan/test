@@ -1,3 +1,5 @@
+package.path = package.path .. ";scripts/?.lua"
+
 --local BAD_CONNECT = 219000 -- 
 --SEED = 372000 -- Force roads test level 3
 if SEED == nil then
@@ -5,12 +7,12 @@ if SEED == nil then
 end
 MODS_ENABLED = PLATFORM ~= "PS4" and PLATFORM ~= "NACL"
 
-print ("SEED = ", SEED)
+
 math.randomseed(SEED)
 
 --print ("worldgen_main.lua MAIN = 1")
 
-MAIN = 1
+WORLDGEN_MAIN = 1
 
 --install our crazy loader! MUST BE HERE FOR NACL
 local loadfn = function(modulename)
@@ -38,11 +40,19 @@ if TheSim then
     end
 end
 
-package.path = package.path .. ";scripts/?.lua"
 
 
 require("simutil")
+
+-- THE FOLLOWING IS BROKEN - You cannot get to TheSim from world gen thread.
+--require("dlcsupport")
+
 require("strict")
+require("debugprint")
+
+-- add our print loggers
+AddPrintLogger(function(...) WorldSim:LuaPrint(...) end)
+
 require("json")
 require("vector3")
 require("tuning")
@@ -55,18 +65,21 @@ require("util")
 require("prefabs")
 require("profiler")
 require("dumper")
-require("map/tasks")
 
 require("mods")
 require("modindex")
 
 local moddata = json.decode(GEN_MODDATA)
-KnownModIndex:RestoreCachedSaveData(moddata.index)
-ModManager:LoadMods(true)
+if moddata then
+	KnownModIndex:RestoreCachedSaveData(moddata.index)
+	ModManager:LoadMods(true)
+end
 
+require("map/tasks")
 
 print ("running worldgen_main.lua\n")
 
+print ("SEED = ", SEED)
 
 local basedir = "./"
 
@@ -440,16 +453,19 @@ function GenerateNew(debug, parameters)
 		print("\n#######\n#\n# Generating "..level.name.."("..parameters.current_level..")".."\n#\n#######\n")
 	elseif parameters.level_type and string.upper(parameters.level_type) == "TEST" then
 		print("\n#######\n#\n# Generating TEST Mode Level\n#\n#######\n")
-	else
-		if parameters.world_gen_choices.preset ~= nil then
-			for i,v in ipairs(levels.sandbox_levels) do
-				if v.id == parameters.world_gen_choices.preset then
-					parameters.world_gen_choices.level_id = i
-					break
-				end
+	elseif parameters.level_type and string.upper(parameters.level_type) == "SURVIVAL" then
+		if parameters.world_gen_choices.preset == nil then
+			parameters.world_gen_choices.preset = "SURVIVAL_DEFAULT"
+		end
+		print("WORLDGEN PRESET: ",parameters.world_gen_choices.preset)
+		for i,v in ipairs(levels.sandbox_levels) do
+			if v.id == parameters.world_gen_choices.preset then
+				parameters.world_gen_choices.level_id = i
+				break
 			end
 		end
 		
+		print("WORLDGEN LEVEL ID: ", parameters.world_gen_choices.level_id )
 		if parameters.world_gen_choices.level_id == nil or parameters.world_gen_choices.level_id > #levels.sandbox_levels then
 			parameters.world_gen_choices.level_id = 1
 		end
@@ -457,6 +473,10 @@ function GenerateNew(debug, parameters)
 		level = levels.sandbox_levels[parameters.world_gen_choices.level_id]
 
 		print("\n#######\n#\n# Generating Normal Mode "..level.name.." Level\n#\n#######\n")
+	else
+		-- Probably got here from a mod, up to the mod to tell us what to load.
+		level = levels.custom_levels[parameters.world_gen_choices.level_id]
+		print("\n#######\n#\n# Special: Generating "..parameters.level_type.." mode "..level.name.." Level\n#\n#######\n")
 	end
 
 	local modfns = ModManager:GetPostInitFns("LevelPreInit", level.id)
@@ -500,16 +520,19 @@ function GenerateNew(debug, parameters)
 	local max_map_height = 1024 -- 1024--256 
 	
 	local try = 1
-	local maxtries = 25
+	local maxtries = 5
 	
 	while savedata == nil do
-		savedata = Gen.Generate(prefab, max_map_width, max_map_height, choose_tasks, parameters.world_gen_choices, parameters.level_type)	
+		savedata = Gen.Generate(prefab, max_map_width, max_map_height, choose_tasks, parameters.world_gen_choices, parameters.level_type, level)
 		
 		if savedata == nil then
 			print("An error occured during world gen we will retry! [",try," of ",maxtries,"]")
 			try = try + 1
 			
-			assert(try <= maxtries, "Maximum world gen retries reached!")
+			if try >= maxtries then
+				return nil
+			end
+			--assert(try <= maxtries, "Maximum world gen retries reached!")
 			collectgarbage("collect")
 			WorldSim:ResetAll()
 		elseif GEN_PARAMETERS == "" or parameters.show_debug == true then			

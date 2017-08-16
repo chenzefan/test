@@ -19,7 +19,6 @@ local events=
                     inst.sg:GoToState("hithibernate")
                 end
             else
-                print("hitout")
                 inst.sg:GoToState("hitout")
             end
         end 

@@ -7,6 +7,7 @@ local Heater = Class(function(self, inst)
 	self.carriedheat = 0
 	self.carriedheatfn = nil
 	self.iscooler = false
+	self.inst.entity:AddTag("HASHEATER")
 end)
 
 

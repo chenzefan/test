@@ -17,6 +17,10 @@ local EquipSlot = Class(ItemSlot, function(self, equipslot, atlas, bgim, owner)
     end, self.owner)
 end)
 
+function EquipSlot:Click()
+    self:OnControl(CONTROL_ACCEPT, true)
+end
+
 function EquipSlot:OnControl(control, down)
     if down then
         if control == CONTROL_ACCEPT then

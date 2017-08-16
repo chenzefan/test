@@ -13,12 +13,19 @@ local prefabs =
     "purplegem",
 }
 
-local loot = 
+SetSharedLootTable( 'bishop',
 {
-	"gears",
-    "gears",
-    "purplegem",
-}
+    {'gears',       1.0},
+    {'gears',       1.0},
+    {'purplegem',   1.0},
+})
+
+SetSharedLootTable( 'bishop_nightmare',
+{
+    {'purplegem',         1.0},
+    {'nightmarefuel',     0.6},
+    {'thulecite_pieces',  0.5},
+})
 
 local SLEEP_DIST_FROMHOME = 1
 local SLEEP_DIST_FROMTHREAT = 20
@@ -55,19 +62,27 @@ end
 local function Retarget(inst)
     local homePos = inst.components.knownlocations:GetLocation("home")
     local myPos = Vector3(inst.Transform:GetWorldPosition() )
-    if (homePos and distsq(homePos, myPos) > TUNING.BISHOP_TARGET_DIST*TUNING.BISHOP_TARGET_DIST) then
+    if (homePos and distsq(homePos, myPos) > TUNING.BISHOP_TARGET_DIST*TUNING.BISHOP_TARGET_DIST) and not
+    (inst.components.follower and inst.components.follower.leader) then
         return
     end
     
     local newtarget = FindEntity(inst, TUNING.BISHOP_TARGET_DIST, function(guy)
             return (guy:HasTag("character") or guy:HasTag("monster") )
-                   and not guy:HasTag("chess")
+                   and not (inst.components.follower and inst.components.follower.leader == guy)
+                   and not ((inst.components.follower and inst.components.follower.leader == GetPlayer()) and (guy.components.follower and guy.components.follower.leader == GetPlayer()))
+                   and not  (guy:HasTag("chess") and (guy.components.follower and not guy.components.follower.leader))
                    and inst.components.combat:CanTarget(guy)
     end)
     return newtarget
 end
 
 local function KeepTarget(inst, target)
+
+    if (inst.components.follower and inst.components.follower.leader) then
+        return true
+    end
+
     local homePos = inst.components.knownlocations:GetLocation("home")
     local targetPos = Vector3(target.Transform:GetWorldPosition() )
     return homePos and distsq(homePos, targetPos) < MAX_CHASEAWAY_DIST*MAX_CHASEAWAY_DIST
@@ -114,12 +129,17 @@ local function MakeBishop(nightmare)
     MakeCharacterPhysics(inst, 50, .5)
 
     anim:SetBank("bishop")
+
+    inst:AddComponent("lootdropper")
+    
     if nightmare then
+        inst.components.lootdropper:SetChanceLootTable('bishop_nightmare')
         inst.kind = "_nightmare"
         inst.soundpath   = "dontstarve/creatures/bishop_nightmare/"
         inst.effortsound = "dontstarve/creatures/bishop_nightmare/rattle"
         anim:SetBuild("bishop_nightmare") -- name of flash file
     else
+        inst.components.lootdropper:SetChanceLootTable('bishop')
         inst.kind = ""
         inst.soundpath   = "dontstarve/creatures/bishop/"
         inst.effortsound = "dontstarve/creatures/bishop/idle"
@@ -132,6 +152,7 @@ local function MakeBishop(nightmare)
     inst:SetStateGraph("SGbishop")
 
     inst:AddTag("monster")
+    inst:AddTag("hostile")
     inst:AddTag("chess")
     inst:AddTag("bishop")
 
@@ -154,8 +175,7 @@ local function MakeBishop(nightmare)
     inst.components.combat:SetDefaultDamage(TUNING.BISHOP_DAMAGE)
     inst.components.combat:SetAttackPeriod(TUNING.BISHOP_ATTACK_PERIOD)
 
-    inst:AddComponent("lootdropper")
-    inst.components.lootdropper:SetLoot(loot)
+
     
     inst:AddComponent("inventory")
     
@@ -165,6 +185,7 @@ local function MakeBishop(nightmare)
     inst:DoTaskInTime(1*FRAMES, function() inst.components.knownlocations:RememberLocation("home", Vector3(inst.Transform:GetWorldPosition()) ) end)
     inst:DoTaskInTime(1, EquipWeapon)
 
+    inst:AddComponent("follower")
     
     MakeMediumBurnableCharacter(inst, "waist")
     MakeMediumFreezableCharacter(inst, "waist")

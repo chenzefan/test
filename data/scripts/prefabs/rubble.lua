@@ -68,8 +68,6 @@ local function common_fn()
 
 	inst.components.workable:SetOnWorkCallback(workcallback)         
 
-    inst:AddComponent("named")
-    inst.components.named:SetName(STRINGS.NAMES["RUBBLE"])
 	inst:AddComponent("inspectable")
     inst.components.inspectable.nameoverride = "rubble"
 	MakeSnowCovered(inst, .01)    

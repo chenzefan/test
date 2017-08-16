@@ -12,6 +12,13 @@ local prefabs =
     "yellowgem",
 }    
 
+SetSharedLootTable( 'smashables',
+{
+    {'rocks',      0.80},
+    {'cutstone',   0.10},
+    {'trinket_6',  0.05}, -- frayed wires
+})
+
 local function makeassetlist(buildname)
     return {
         Asset("ANIM", "anim/"..buildname..".zip")
@@ -90,6 +97,9 @@ local function makefn(name, asset, smashsound, rubble, tag)
         local anim = inst.entity:AddAnimState()
         inst.entity:AddSoundEmitter()
         
+        local minimap = inst.entity:AddMiniMapEntity()
+        minimap:SetIcon("relic.png")
+
         MakeObstaclePhysics(inst, .25)   
 
         anim:SetBank(asset)
@@ -146,11 +156,9 @@ local function makefn(name, asset, smashsound, rubble, tag)
                     inst.components.lootdropper:AddChanceLoot("thulecite"  , 0.05)
                 end
             else
+                inst.components.lootdropper:SetChanceLootTable('smashables')
                 inst.components.lootdropper.numrandomloot = 1
                 inst.components.lootdropper.chancerandomloot = 0.01  -- drop some random item 1% of the time
-                inst.components.lootdropper:AddChanceLoot("rocks"         , 0.80)
-                inst.components.lootdropper:AddChanceLoot("cutstone"      , 0.10)
-                inst.components.lootdropper:AddChanceLoot("trinket_6"     , 0.05) -- frayed wires
                 inst.components.lootdropper:AddRandomLoot("gears"         , 0.01)
                 inst.components.lootdropper:AddRandomLoot("greengem"      , 0.01)
                 inst.components.lootdropper:AddRandomLoot("yellowgem"     , 0.01)

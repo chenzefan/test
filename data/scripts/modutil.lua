@@ -15,8 +15,10 @@ end
 
 
 local function initprint(...)
-	local modname = getfenv(3).modname
-	print(ModInfoname(modname), ...)
+	if KnownModIndex:IsModInitPrintEnabled() then
+		local modname = getfenv(3).modname
+		print(ModInfoname(modname), ...)
+	end
 end
 
 -- Based on @no_signal's AddWidgetPostInit :)
@@ -45,7 +47,11 @@ end
 
 local function AddGlobalClassPostConstruct(package, classname, postfn)
 	require(package)
-	local classdef = _G[classname]
+	local classdef = rawget(_G, classname)
+	if classdef == nil then
+		classdef = require(package)
+	end
+
 	assert(type(classdef) == "table", "Class '"..classname.."' wasn't loaded to global from '"..package.."'.")
 	DoAddClassPostConstruct(classdef, postfn)
 end
@@ -106,9 +112,16 @@ local function InsertPostInitFunctions(env)
 	end
 
 	env.AddAction = function(action)
+		assert(action.id ~= nil, "Must specify an ID for your custom action! Example: myaction.id = \"MYACTION\"")
 		initprint("AddAction", action.id)
-		table.insert(ACTIONS, action)
+		ACTIONS[action.id] = action
 		STRINGS.ACTIONS[action.id] = action.str
+	end
+
+	env.postinitdata.MinimapAtlases = {}
+	env.AddMinimapAtlas = function( atlaspath )
+		initprint("AddMinimapAtlas", atlaspath)
+		table.insert(env.postinitdata.MinimapAtlases, atlaspath)
 	end
 
 	env.postinitdata.StategraphActionHandler = {}
@@ -229,6 +242,10 @@ local function InsertPostInitFunctions(env)
 		LanguageTranslator:LoadPOFile(path, lang)
 	end
 
+	env.RemapSoundEvent = function(name, new_name)
+		initprint("RemapSoundEvent", name, new_name)
+		TheSim:RemapSoundEvent(name, new_name)
+	end
 
 end
 

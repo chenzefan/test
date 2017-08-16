@@ -1,4 +1,5 @@
 require "util"
+require "strings"
 local Screen = require "widgets/screen"
 local Button = require "widgets/button"
 local AnimButton = require "widgets/animbutton"
@@ -12,7 +13,7 @@ local Spinner = require "widgets/spinner"
 local NumericSpinner = require "widgets/numericspinner"
 local Widget = require "widgets/widget"
 
-require "screens/popupdialog"
+local PopupDialogScreen = require "screens/popupdialog"
 
 
 local show_graphics = PLATFORM ~= "NACL"
@@ -110,7 +111,7 @@ local function GetDisplayModeInfo( display_id, mode_idx )
 	return w, h, hz
 end
 
-OptionsScreen = Class(Screen, function(self, in_game)
+local OptionsScreen = Class(Screen, function(self, in_game)
 	Screen._ctor(self, "OptionsScreen")
 	self.in_game = in_game
 	--TheFrontEnd:DoFadeIn(2)
@@ -125,7 +126,8 @@ OptionsScreen = Class(Screen, function(self, in_game)
 		smalltextures = graphicsOptions:IsSmallTexturesMode(),
 		distortion = graphicsOptions:IsDistortionEnabled(),
 		hudSize = Profile:GetHUDSize(),
-		netbookmode = TheSim:IsNetbookMode()
+		netbookmode = TheSim:IsNetbookMode(),
+		vibration = Profile:GetVibrationEnabled()
 	}
 
 	--[[if PLATFORM == "WIN32_STEAM" and not self.in_game then
@@ -137,7 +139,6 @@ OptionsScreen = Class(Screen, function(self, in_game)
 		self.options.display = graphicsOptions:GetFullscreenDisplayID()
 		self.options.refreshrate = graphicsOptions:GetFullscreenDisplayRefreshRate()
 		self.options.fullscreen = graphicsOptions:IsFullScreen()
-
 		self.options.mode_idx = graphicsOptions:GetCurrentDisplayModeID( self.options.display )
 	end
 
@@ -164,8 +165,9 @@ OptionsScreen = Class(Screen, function(self, in_game)
 	
 	
 
-	self.menu = self.root:AddChild(Menu(nil, -60, false))
-	self.menu:SetPosition(240 , -220 ,0)
+	self.menu = self.root:AddChild(Menu(nil, -80, false))
+	self.menu:SetPosition(260, -260 ,0)
+	self.menu:SetScale(.8)
 
 	self.grid = self.root:AddChild(Grid())
 	self.grid:InitSize(2, 7, 400, -70)
@@ -173,7 +175,7 @@ OptionsScreen = Class(Screen, function(self, in_game)
 	self:DoInit()
 	self:InitializeSpinners()
 
-	self.default_focus = self.menu
+	self.default_focus = self.grid
 
 end)
 
@@ -181,14 +183,73 @@ end)
 function OptionsScreen:OnControl(control, down)
     if OptionsScreen._base.OnControl(self, control, down) then return true end
     
-    if not down and control == CONTROL_CANCEL then
-		if self:IsDirty() then
-			self:RevertChanges() 
+    if not down then
+	    if control == CONTROL_CANCEL then
+			if self:IsDirty() then
+				self:ConfirmRevert() --revert and go back, or stay
+			else
+				self:Back() --just go back
+			end
+			return true
+	    elseif control == CONTROL_ACCEPT and TheInput:ControllerAttached() and not TheFrontEnd.tracking_mouse then
+	    	if self:IsDirty() then
+	    		self:ApplyChanges() --apply changes and go back, or stay
+	    	end
+	    end
+	end
+end
+
+
+function OptionsScreen:ApplyChanges()
+	if self:IsDirty() then
+		if self:IsGraphicsDirty() then
+			self:ConfirmGraphicsChanges()
 		else
-			self:Accept()
+			self:ConfirmApply()
 		end
-		return true
-    end
+	end
+end
+
+
+function OptionsScreen:Back()
+	TheFrontEnd:PopScreen()					
+end
+
+function OptionsScreen:ConfirmRevert()
+
+	TheFrontEnd:PushScreen(
+		PopupDialogScreen( STRINGS.UI.OPTIONS.BACKTITLE, STRINGS.UI.OPTIONS.BACKBODY,
+		  { 
+		  	{ 
+		  		text = STRINGS.UI.OPTIONS.YES, 
+		  		cb = function()
+					self:RevertChanges()
+					TheFrontEnd:PopScreen()
+					self:Back()
+				end
+			},
+			
+			{ 
+				text = STRINGS.UI.OPTIONS.NO, 
+				cb = function()
+					TheFrontEnd:PopScreen()					
+				end
+			}
+		  }
+		)
+	)		
+end
+
+function OptionsScreen:GetHelpText()
+	local t = {}
+	local controller_id = TheInput:GetControllerID()
+	if self:IsDirty() then
+		table.insert(t, TheInput:GetLocalizedControl(controller_id, CONTROL_ACCEPT) .. " " .. STRINGS.UI.HELP.APPLY)
+		table.insert(t, TheInput:GetLocalizedControl(controller_id, CONTROL_CANCEL) .. " " .. STRINGS.UI.HELP.BACK)
+	else
+		table.insert(t, TheInput:GetLocalizedControl(controller_id, CONTROL_CANCEL) .. " " .. STRINGS.UI.HELP.BACK)
+	end
+	return table.concat(t, "  ")
 end
 
 
@@ -203,12 +264,15 @@ function OptionsScreen:Save(cb)
 	Profile:SetBloomEnabled( self.options.bloom )
 	Profile:SetDistortionEnabled( self.options.distortion )
 	Profile:SetHUDSize( self.options.hudSize )
+	Profile:SetVibrationEnabled( self.options.vibration )
 	
 	Profile:Save( function() if cb then cb() end end)	
 end
 
 function OptionsScreen:RevertChanges()
-	self:Restore()
+	self.working = deepcopy( self.options )
+	self:Apply()
+	self:InitializeSpinners()
 	self:UpdateMenu()							
 end
 
@@ -221,56 +285,90 @@ function OptionsScreen:IsDirty()
 	return false
 end
 
-function OptionsScreen:Restore()
-	self.working = deepcopy( self.options )
-	self:Apply()
-	self:ApplyAndConfirm( true )
-	self:InitializeSpinners()
+function OptionsScreen:IsGraphicsDirty()
+	return self.working.display ~= self.options.display or
+		self.working.w ~= self.options.w or
+		self.working.h ~= self.options.h or
+		self.working.fullscreen ~= self.options.fullscreen
 end
 
-function OptionsScreen:ApplyAndConfirm( force )
-	if not self.applying then
-		self.applying = true
-
-		if show_graphics then
-			local gOpts = TheFrontEnd:GetGraphicsOptions()
-			local w, h, hz = gOpts:GetDisplayMode( self.working.display, self.working.mode_idx )
-			local mode_idx = GetDisplayModeIdx( self.working.display, w, h, self.working.refreshrate) or 0
-			gOpts:SetDisplayMode( self.working.display, mode_idx, self.working.fullscreen )
-		end
-
-		if not force then
-			TheFrontEnd:PushScreen(
-				PopupDialogScreen( STRINGS.UI.OPTIONS.ACCEPTTITLE, STRINGS.UI.OPTIONS.ACCEPTBODY,
-				  { { text = STRINGS.UI.OPTIONS.ACCEPT, cb =
-						function()
-							self:Apply()
-							self:Save()
-							self:UpdateMenu()
-							TheFrontEnd:PopScreen()							
-						end
-					},
-					{ text = STRINGS.UI.OPTIONS.CANCEL, cb =
-						function()
-							self:Restore()
-							self:UpdateMenu()		
-							TheFrontEnd:PopScreen()					
-						end
-					}
-				  },
-				  { timeout = 10, cb =
-					function()
-						TheFrontEnd:PopScreen()
-						self:Restore()
-					end
-				  }
-				)
-			)
-		end
-		self:InitializeSpinners()
-		self.applying = false
+function OptionsScreen:ChangeGraphicsMode()
+	if show_graphics then
+		local gOpts = TheFrontEnd:GetGraphicsOptions()
+		local w, h, hz = gOpts:GetDisplayMode( self.working.display, self.working.mode_idx )
+		local mode_idx = GetDisplayModeIdx( self.working.display, w, h, self.working.refreshrate) or 0
+		gOpts:SetDisplayMode( self.working.display, mode_idx, self.working.fullscreen )
 	end
+
 end
+
+function OptionsScreen:ConfirmGraphicsChanges(fn)
+
+	if not self.applying then
+		self:ChangeGraphicsMode()
+
+		TheFrontEnd:PushScreen(
+			PopupDialogScreen( STRINGS.UI.OPTIONS.ACCEPTGRAPHICSTITLE, STRINGS.UI.OPTIONS.ACCEPTGRAPHICSBODY,
+			  { { text = STRINGS.UI.OPTIONS.ACCEPT, cb =
+					function()
+
+						self:Apply()
+						self:Save(
+							function() 
+								self.applying = false
+								self:UpdateMenu()
+								TheFrontEnd:PopScreen()
+							end)
+					end
+				},
+				{ text = STRINGS.UI.OPTIONS.CANCEL, cb =
+					function()
+						self.applying = false
+						self:RevertChanges()
+						self:ChangeGraphicsMode()
+						TheFrontEnd:PopScreen()					
+					end
+				}
+			  },
+			  { timeout = 10, cb =
+				function()
+					self.applying = false
+					self:RevertChanges()
+					self:ChangeGraphicsMode()
+					TheFrontEnd:PopScreen()
+				end
+			  }
+			)
+		)
+	end
+
+
+end
+
+function OptionsScreen:ConfirmApply( )
+	
+	TheFrontEnd:PushScreen(
+		PopupDialogScreen( STRINGS.UI.OPTIONS.ACCEPTTITLE, STRINGS.UI.OPTIONS.ACCEPTBODY,
+		  { 
+		  	{ 
+		  		text = STRINGS.UI.OPTIONS.ACCEPT, 
+		  		cb = function()
+					self:Apply()
+					self:Save(function() TheFrontEnd:PopScreen() self:Back() end)
+				end
+			},
+			
+			{ 
+				text = STRINGS.UI.OPTIONS.CANCEL, 
+				cb = function()
+					TheFrontEnd:PopScreen()					
+				end
+			}
+		  }
+		)
+	)	
+end
+
 
 
 function OptionsScreen:ApplyVolume()
@@ -279,8 +377,10 @@ function OptionsScreen:ApplyVolume()
 	TheMixer:SetLevel("set_ambience", self.working.ambientvolume / 10 )
 end
 
-function OptionsScreen:Apply( force )
+function OptionsScreen:Apply( )
 	self:ApplyVolume()
+	
+	TheInputProxy:EnableVibration(self.working.vibration)
 	
 	local gopts = TheFrontEnd:GetGraphicsOptions()
 	gopts:SetBloomEnabled( self.working.bloom )
@@ -315,7 +415,7 @@ function OptionsScreen:CreateSpinnerGroup( text, spinner )
 	local label_width = 200
 	spinner:SetTextColour(0,0,0,1)
 	local group = Widget( "SpinnerGroup" )
-	local label = group:AddChild( Text( BODYTEXTFONT, 30, text ) )
+	local label = group:AddChild( Text( BUTTONFONT, 30, text ) )
 	label:SetPosition( -label_width/2, 0, 0 )
 	label:SetRegionSize( label_width, 50 )
 	label:SetHAlign( ANCHOR_RIGHT )
@@ -331,10 +431,14 @@ end
 
 function OptionsScreen:UpdateMenu()
 	self.menu:Clear()
+	if TheInput:ControllerAttached() then return end
+
 	if self:IsDirty() then
-		self.menu:AddItem(STRINGS.UI.OPTIONS.APPLY, function() self:ApplyAndConfirm() end)
-		self.menu:AddItem(STRINGS.UI.OPTIONS.REVERT, function() self:RevertChanges() end)
+		self.menu.horizontal = true
+		self.menu:AddItem(STRINGS.UI.OPTIONS.APPLY, function() self:ApplyChanges() end, Vector3(50, 0, 0))
+		self.menu:AddItem(STRINGS.UI.OPTIONS.REVERT, function() self:RevertChanges() end,  Vector3(-50, 0, 0))
 	else
+		self.menu.horizontal = false
 		self.menu:AddItem(STRINGS.UI.OPTIONS.CLOSE, function() self:Accept() end)
 	end
 end
@@ -342,7 +446,6 @@ end
 
 function OptionsScreen:DoInit()
 
-	
 	self:UpdateMenu()
 	--self.menu:SetScale(.8,.8,.8)
 
@@ -460,6 +563,14 @@ function OptionsScreen:DoInit()
 			--this:Apply()
 			self:UpdateMenu()
 		end
+
+	self.vibrationSpinner = Spinner( enableDisableOptions )
+	self.vibrationSpinner.OnChanged =
+		function( _, data )
+			this.working.vibration = data
+			--this:Apply()
+			self:UpdateMenu()
+		end
 		
 	local left_spinners = {}
 	local right_spinners = {}
@@ -478,6 +589,7 @@ function OptionsScreen:DoInit()
 		table.insert( right_spinners, { STRINGS.UI.OPTIONS.AMBIENT, self.ambientVolume } )
 		table.insert( right_spinners, { STRINGS.UI.OPTIONS.HUDSIZE, self.hudSize} )
 		table.insert( right_spinners, { STRINGS.UI.OPTIONS.NETBOOKMODE, self.netbookModeSpinner} )
+		table.insert( right_spinners, { STRINGS.UI.OPTIONS.VIBRATION, self.vibrationSpinner} )
 
 	else
 		table.insert( left_spinners, { STRINGS.UI.OPTIONS.BLOOM, self.bloomSpinner } )
@@ -487,6 +599,7 @@ function OptionsScreen:DoInit()
 		table.insert( right_spinners, { STRINGS.UI.OPTIONS.MUSIC, self.musicVolume } )
 		table.insert( right_spinners, { STRINGS.UI.OPTIONS.AMBIENT, self.ambientVolume } )
 		table.insert( right_spinners, { STRINGS.UI.OPTIONS.HUDSIZE, self.hudSize} )
+		table.insert( right_spinners, { STRINGS.UI.OPTIONS.VIBRATION, self.vibrationSpinner} )
 	end
 
 
@@ -499,18 +612,6 @@ function OptionsScreen:DoInit()
 	for k,v in ipairs(right_spinners) do
 		self.grid:AddItem(self:CreateSpinnerGroup(v[1], v[2]), 2, k)	
 	end
-
-	if show_graphics then
-		self.grid:GetItemInSlot(1, 7):SetFocusChangeDir(MOVE_RIGHT, self.menu)
-		self.grid:GetItemInSlot(1, 6):SetFocusChangeDir(MOVE_RIGHT, self.menu)
-		self.grid:GetItemInSlot(2, 5):SetFocusChangeDir(MOVE_DOWN, self.menu)
-		self.menu:SetFocusChangeDir(MOVE_UP, self.grid, 2, 5)
-		self.menu:SetFocusChangeDir(MOVE_LEFT, self.grid, 1, 7)
-	else
-		self.grid:GetItemInSlot(2, 4):SetFocusChangeDir(MOVE_DOWN, self.menu)
-		self.menu:SetFocusChangeDir(MOVE_UP, self.grid, 2, 4)
-	end
-
 
 end
 
@@ -547,6 +648,7 @@ function OptionsScreen:InitializeSpinners()
 	end
 	
 	self.hudSize:SetSelectedIndex( self.working.hudSize or 5)
+	self.vibrationSpinner:SetSelectedIndex( EnabledOptionsIndex( self.working.vibration ) )
 end
 
 function OptionsScreen:UpdateDisplaySpinner()
@@ -608,3 +710,4 @@ function OptionsScreen:UpdateResolutionsSpinner()
 	end
 end
 
+return OptionsScreen

@@ -14,6 +14,7 @@ end
 
 
 local function fn(Sim)
+    --Carrot you eat is defined in veggies.lua
 	local inst = CreateEntity()
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()

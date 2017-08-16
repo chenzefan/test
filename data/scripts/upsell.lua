@@ -46,7 +46,7 @@ function ShowUpsellScreen(shouldquit)
 		upsell_status = "SHOWING"
 		local trigger = json.encode{upsell={timedout=shouldquit}}
 		TheSim:SendUITrigger(trigger)
-		SetHUDPause(true,"upsell")
+		SetPause(true,"upsell")
 	end
 end
 
@@ -56,7 +56,7 @@ function CheckForUpsellTimeout(dt)
 		waitingforpurchasetimeout = waitingforpurchasetimeout + dt
 		if waitingforpurchasetimeout > 30 then
 			--print ("Upsell callback timed out. Very odd.")
-			SetHUDPause(false)
+			SetPause(false)
     		
 			local player = GetPlayer()
     		if player then
@@ -90,7 +90,7 @@ function HandleUpsellClose()
 			end
 
 			upsell_status = nil
-			SetHUDPause(false)
+			SetPause(false)
 
 			if DEMO_QUITTING or ( not is_purchased and GetTimePlaying() > TUNING.DEMO_TIME ) then
 				local player = GetPlayer()

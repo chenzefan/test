@@ -21,8 +21,6 @@ local function MakeMushroom(data)
         data.pickloot
     }    
 
-
-
 	local function dig_up(inst, chopper)
 		if inst.components.pickable and inst.components.pickable:CanBePicked() then
 			inst.components.lootdropper:SpawnLootPrefab(data.pickloot)
@@ -44,6 +42,10 @@ local function MakeMushroom(data)
     end
 
     local function onpickedfn( inst )
+        if inst.growtask then
+            inst.growtask:Cancel()
+            inst.growtask = nil
+        end
         inst.AnimState:PlayAnimation("picked")
         inst.rain = 10 + math.random(10)
     end

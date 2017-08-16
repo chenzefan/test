@@ -36,9 +36,7 @@ local states =
         events=
         {
             EventHandler("animover", function(inst) 
-                if inst.components.hunger and 
-                inst.components.hunger:GetPercent() < .5 and
-                math.random() < 0.15 then
+                if math.random() < 0.15 then
                     inst.sg:GoToState("rumble")
                 else
                     inst.sg:GoToState("idle")

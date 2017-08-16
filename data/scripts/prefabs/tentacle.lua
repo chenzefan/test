@@ -11,10 +11,18 @@ local prefabs =
     "tentaclespots",
 }
 
+SetSharedLootTable( 'tentacle',
+{
+    {'monstermeat',   1.0},
+    {'monstermeat',   1.0},
+    {'tentaclespike', 0.5},
+    {'tentaclespots', 0.2},
+})
+
 local function retargetfn(inst)
     return FindEntity(inst, TUNING.TENTACLE_ATTACK_DIST, function(guy) 
         if guy.components.combat and guy.components.health and not guy.components.health:IsDead() then
-            return (guy:HasTag("character") or guy:HasTag("monster") or guy:HasTag("animal")) and not guy:HasTag("prey") and not (guy.prefab == inst.prefab)
+            return (guy.components.combat.target == inst or guy:HasTag("character") or guy:HasTag("monster") or guy:HasTag("animal")) and not guy:HasTag("prey") and not (guy.prefab == inst.prefab)
         end
     end)
 end
@@ -42,6 +50,7 @@ local function fn(Sim)
  	inst.entity:AddSoundEmitter()
 
     inst:AddTag("monster")    
+    inst:AddTag("hostile")
     inst:AddTag("wet")
     inst:AddTag("WORM_DANGER")
 
@@ -64,9 +73,7 @@ local function fn(Sim)
     
     inst:AddComponent("inspectable")
     inst:AddComponent("lootdropper")
-    inst.components.lootdropper:SetLoot({"monstermeat", "monstermeat"})
-    inst.components.lootdropper:AddChanceLoot("tentaclespike", 0.5)
-    inst.components.lootdropper:AddChanceLoot("tentaclespots", 0.2)
+    inst.components.lootdropper:SetChanceLootTable('tentacle')
     
     inst:SetStateGraph("SGtentacle")
 

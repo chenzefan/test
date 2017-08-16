@@ -63,7 +63,7 @@ function FireFX:SetPercentInLevel(percent)
     
 end
 
-function FireFX:SetLevel(lev)
+function FireFX:SetLevel(lev, immediate)
     if lev ~= self.level and lev > 0 then
     
         if self.inst.SoundEmitter and self.playignitesound then
@@ -78,7 +78,7 @@ function FireFX:SetLevel(lev)
             
         if not self.level then
             self.level = math.min(lev, #self.levels)
-            if self.levels[self.level] and self.levels[self.level].pre then
+            if self.levels[self.level] and self.levels[self.level].pre and not immediate then
                 self.inst.AnimState:PlayAnimation(self.levels[self.level].pre)
                 self.inst.AnimState:PushAnimation(self.levels[self.level].anim, true)
             else

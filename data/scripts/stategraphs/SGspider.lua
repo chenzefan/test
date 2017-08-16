@@ -21,7 +21,7 @@ local events=
         end 
     end),
     EventHandler("doattack", function(inst, data) 
-        if not inst.components.health:IsDead() and not inst.sg:HasStateTag("busy") then 
+        if not inst.components.health:IsDead() and not inst.sg:HasStateTag("busy") and data and data.target  then 
             if inst:HasTag("spider_warrior") and
             inst:GetDistanceSqToInst(data.target) > TUNING.SPIDER_WARRIOR_MELEE_RANGE*TUNING.SPIDER_WARRIOR_MELEE_RANGE then
                 --Do leap attack
@@ -352,7 +352,6 @@ local states=
         name = "hit",
         
         onenter = function(inst)
-            inst.SoundEmitter:PlaySound(SoundPath(inst, "hit_response"))
             inst.AnimState:PlayAnimation("hit")
             inst.Physics:Stop()            
         end,

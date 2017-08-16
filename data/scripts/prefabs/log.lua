@@ -36,7 +36,7 @@ local function fn(Sim)
     
 	inst:AddComponent("repairer")
 	inst.components.repairer.repairmaterial = "wood"
-	inst.components.repairer.value = TUNING.REPAIR_LOGS
+	inst.components.repairer.healthrepairvalue = TUNING.REPAIR_LOGS_HEALTH
 
 
 	--inst:ListenForEvent("burnt", function(inst) inst.entity:Retire() end)

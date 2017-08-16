@@ -113,6 +113,16 @@ function PeriodicSpawner:Stop()
     end
 end
 
+--[[
+function PeriodicSpawner:OnEntitySleep()
+	self:Stop()
+end
+
+function PeriodicSpawner:OnEntityWake()
+	self:Start()
+end
+--]]
+
 function PeriodicSpawner:LongUpdate(dt)
 	if self.target_time then
 		if self.task then

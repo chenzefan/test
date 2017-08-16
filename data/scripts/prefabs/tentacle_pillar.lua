@@ -45,14 +45,14 @@ local function OnLoad(inst, data)
             --MakeObstaclePhysics(inst, 3, 1)
             -- inst.Physics:SetCollisionGroup(COLLISION.GROUND)
             inst.SoundEmitter:KillSound("loop")
-            inst.AnimState:PlayAnimation("idle_hole","loop")
+            inst.AnimState:PlayAnimation("idle_hole",true)
 	        inst.AnimState:SetTime(math.random()*2)    
             inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_hiddenidle_LP","loop") 
             inst:RemoveTag("wet")
             inst:AddTag("rocky")
         else
             inst.SoundEmitter:KillSound("loop")
-            inst.AnimState:PlayAnimation("idle","loop")
+            inst.AnimState:PlayAnimation("idle",true)
 	        inst.AnimState:SetTime(math.random()*2)    
             inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_idle_LP","loop") 
             inst:RemoveTag("rocky")
@@ -212,7 +212,7 @@ local function PillarEmerges(inst,withArms)
         -- dprint("NEXT Emerge at: ",inst.nextEmerge)
 
         inst.AnimState:PlayAnimation("emerge") 
-        inst.AnimState:PushAnimation("idle", "loop")
+        inst.AnimState:PushAnimation("idle", true)
         inst:ListenForEvent("animover", PillarChange)
         inst:AddTag("pillaremerging")
         inst:RemoveTag("rocky")
@@ -267,7 +267,7 @@ local function OnKilled(inst)
     inst.SoundEmitter:KillSound("loop")
     inst.AnimState:PlayAnimation("retract",false)
     inst:ListenForEvent("animover", PillarChange)
-    inst.AnimState:PushAnimation("idle_hole","loop")
+    inst.AnimState:PushAnimation("idle_hole",true)
     inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_die")
     inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_die_VO")
 
@@ -440,7 +440,7 @@ local function OnHit(inst, attacker, damage)
     if not inst.components.health:IsDead() and not inst.retracted then
         inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_hurt_VO")
         inst.AnimState:PlayAnimation("hit")
-        inst.AnimState:PushAnimation("idle", "loop")
+        inst.AnimState:PushAnimation("idle", true)
         -- :Shake(shakeType, duration, speed, scale)
         if attacker == GetPlayer() then
     	    TheCamera:Shake("SIDE", 0.5, 0.05, .2)
@@ -450,7 +450,7 @@ local function OnHit(inst, attacker, damage)
         inst.retractedHits = inst.retractedHits or 0
         inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_hiddenhurt_VO")
         inst.AnimState:PlayAnimation("hit_hole")
-        inst.AnimState:PushAnimation("idle_hole", "loop")
+        inst.AnimState:PushAnimation("idle_hole", true)
         if attacker:HasTag("character") then
             inst.retractedHits = inst.retractedHits + 1
             -- dprint("HITS:",inst.retractedHits)
@@ -521,7 +521,12 @@ local function fn(Sim)
     inst:ListenForEvent("death", OnDeath)
     inst:ListenForEvent("minhealth", OnKilled)
     inst:AddComponent("inspectable")
-    return inst
+    
+    -- HACK: this should really be in th ec side checking the maximum size of the anim or the _current_ size of the anim instead
+    -- of frame 0
+    inst.entity:SetAABB(60, 20)
+
+   return inst
 end
 
 local function Garden(Sim)   -- prefab with garden of arms
@@ -532,14 +537,14 @@ local function Garden(Sim)   -- prefab with garden of arms
         inst.retracted = true
 	    inst.AnimState:SetTime(math.random()*2)    
         inst:DoTaskInTime(2*FRAMES, function()
-                            inst.AnimState:PlayAnimation("idle_hole","loop")
+                            inst.AnimState:PlayAnimation("idle_hole",true)
                             inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_hiddenidle_LP","loop") 
                             end)
     else
 	    inst.AnimState:SetTime(math.random()*2)    
         inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_idle_LP","loop")
         inst:DoTaskInTime(2*FRAMES, function()
-                            inst.AnimState:PlayAnimation("idle","loop")
+                            inst.AnimState:PlayAnimation("idle",true)
                             inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_hiddenidle_LP","loop") 
                             end)
     end

@@ -54,7 +54,7 @@ function Catcher:OnUpdate()
     
     local canact = false
     for k,v in pairs(self.watchlist) do
-        if k.components.projectile and k.components.projectile:IsThrown() then
+        if k and k:IsValid() and k.components.projectile and k.components.projectile:IsThrown() then
             local distsq = k:GetDistanceSqToInst(self.inst)
             if distsq <= self.catchdistance*self.catchdistance then
                 if self:ReadyToCatch() then

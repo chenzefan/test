@@ -35,25 +35,30 @@ local function ConvertStaticLayoutToLayout(layoutsrc, additionalProps)
 	
 	-- See \tools\tiled\dont_starve\tiles.png for tiles
 	layout.ground_types = {
+							--Translates tile type index from constants.lua into tiled tileset. 
+							--Order they appear here is the order they will be used in tiled.
 							GROUND.IMPASSABLE, GROUND.ROAD, GROUND.ROCKY, GROUND.DIRT, 
 							GROUND.SAVANNA, GROUND.GRASS, GROUND.FOREST, GROUND.MARSH, 
 							GROUND.WOODFLOOR, GROUND.CARPET, GROUND.CHECKER,
-							GROUND.CAVE, GROUND.FUNGUS, GROUND.SINKHOLE,
+							GROUND.CAVE, GROUND.FUNGUS, GROUND.SINKHOLE, 
 							GROUND.WALL_ROCKY, GROUND.WALL_DIRT, GROUND.WALL_MARSH, 
 							GROUND.WALL_CAVE, GROUND.WALL_FUNGUS, GROUND.WALL_SINKHOLE, 
 							GROUND.UNDERROCK, GROUND.MUD, GROUND.WALL_MUD, GROUND.WALL_WOOD,
 							GROUND.BRICK, GROUND.BRICK_GLOW, GROUND.TILES, GROUND.TILES_GLOW, 
 							GROUND.TRIM, GROUND.TRIM_GLOW, GROUND.WALL_HUNESTONE, GROUND.WALL_HUNESTONE_GLOW,
-							GROUND.WALL_STONEEYE, GROUND.WALL_STONEEYE_GLOW,
+							GROUND.WALL_STONEEYE, GROUND.WALL_STONEEYE_GLOW, GROUND.FUNGUSRED, GROUND.FUNGUSGREEN,
 						}
 	layout.ground = {}
+
+	-- so we can support both 16 wide grids and 64 wide grids from tiled
+	local tilefactor = math.ceil(64/staticlayout.tilewidth)
 	
 	-- See \tools\tiled\dont_starve\objecttypes.xml for objects
 	layout.layout = {}
 	
 	for layer_idx, layer in ipairs(staticlayout.layers) do
 		if layer.type == "tilelayer" and layer.name == "BG_TILES" then 
-			local val_per_row = layer.width * 3				
+			local val_per_row = layer.width * (tilefactor-1)
 			local i = val_per_row
 
 			while i < #layer.data do		
@@ -61,7 +66,7 @@ local function ConvertStaticLayoutToLayout(layoutsrc, additionalProps)
 				local j = 1
 				while j < layer.width and i+j < #layer.data do
 					table.insert(data, layer.data[i+j])
-					j = j + 4
+					j = j + tilefactor
 				end
 				table.insert(layout.ground, data)	
 				i = i + val_per_row + layer.width
@@ -74,9 +79,9 @@ local function ConvertStaticLayoutToLayout(layoutsrc, additionalProps)
 				
 				-- TODO: Check the object properties for other options to substitute here
 				local x = obj.x+obj.width/2
-				x = x/64.0-(staticlayout.width/4)/2
+				x = x/64.0-(staticlayout.width/tilefactor)/2
 				local y = obj.y+obj.height/2
-				y = y/64.0-(staticlayout.height/4)/2
+				y = y/64.0-(staticlayout.height/tilefactor)/2
 
 				local width = obj.width/64.0
 				local height = obj.height/64.0

@@ -81,7 +81,7 @@ local function onupdate(inst, dt)
 
 end
 
-local function onload(inst, data)
+local function onpreload(inst, data)
 	if data then
 		if data.level then
 			inst.level = data.level
@@ -93,8 +93,13 @@ local function onload(inst, data)
 			inst.components.health:DoDelta(0)
 			inst.components.hunger:DoDelta(0)
 			inst.components.sanity:DoDelta(0)
-			
 		end
+	end
+
+end
+
+local function onload(inst, data)
+	if data then
 
 		if data.charge_time then
 			inst.AnimState:SetBloomEffectHandle( "shaders/anim.ksh" )
@@ -185,6 +190,8 @@ local fn = function(inst)
 	inst:DoPeriodicTask(1/10, function() dorainsparks(inst, 1/10) end)
 	inst.OnSave = onsave
 	inst.OnLoad = onload
+	inst.OnPreLoad = onpreload
+	
 end
 
 

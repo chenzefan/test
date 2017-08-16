@@ -90,6 +90,7 @@ function Propagator:OnUpdate(dt)
         
         for k,v in pairs(ents) do
             if not v:IsInLimbo() then
+
 			    if v ~= self.inst and v.components.propagator and v.components.propagator.acceptsheat then
                     v.components.propagator:AddHeat(self.heatoutput*dt)
 			    end

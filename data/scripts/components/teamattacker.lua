@@ -44,8 +44,8 @@ end
 
 function TeamAttacker:ShouldGoHome()
     local homePos = self.inst.components.knownlocations:GetLocation("home")
-    local myPos = Vector3(self.inst.Transform:GetWorldPosition() )
-    return (homePos and distsq(homePos, myPos) > self.leashdistance*self.leashdistance)
+    local x,y,z = self.inst.Transform:GetWorldPosition()
+    return (homePos and distsq(homePos.x, homePos.z, x, z) > self.leashdistance*self.leashdistance)
 end
 
 function TeamAttacker:LeaveTeam()

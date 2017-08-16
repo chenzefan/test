@@ -5,6 +5,7 @@ LEVELTYPE = {
 	ADVENTURE = 3,
 	TEST = 4,
 	UNKNOWN = 5,
+	CUSTOM = 6,
 }
 
 
@@ -26,6 +27,10 @@ Level = Class( function(self, data)
 	self.teleportmaxwell = data.teleportmaxwell or nil
 	self.min_playlist_position = data.min_playlist_position or 0
 	self.max_playlist_position = data.max_playlist_position or 999
+	self.ordered_story_setpieces = data.ordered_story_setpieces
+	self.required_prefabs = data.required_prefabs
+	self.background_node_range = data.background_node_range
+	self.blocker_blank_room_name = data.blocker_blank_room_name
 end)
 
 function Level:ApplyModsToTasks(tasklist)

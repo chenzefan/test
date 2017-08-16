@@ -24,10 +24,10 @@ end
 
 local function onhit(inst, attacker, target)
     local impactfx = SpawnPrefab("impact")
-    if impactfx then
+    if impactfx and attacker then
 	    local follower = impactfx.entity:AddFollower()
 	    follower:FollowSymbol(target.GUID, target.components.combat.hiteffectsymbol, 0, 0, 0 )
-        impactfx:FacePoint(Vector3(attacker.Transform:GetWorldPosition()))
+        impactfx:FacePoint(attacker.Transform:GetWorldPosition())
     end
     inst:Remove()
 end
@@ -105,9 +105,9 @@ end
 local function firethrown(inst)
     inst.AnimState:PlayAnimation("dart_red")
 end
-local function firecanattack(inst, target)
-    return target.components.burnable and not target.components.burnable:IsBurning()
-end
+-- local function firecanattack(inst, target)
+--     return target.components.burnable and not target.components.burnable:IsBurning()
+-- end
 local function fireattack(inst, attacker, target)
     target.SoundEmitter:PlaySound("dontstarve/wilson/blowdart_impact_fire")
     target:PushEvent("attacked", {attacker = attacker, damage = 0})
@@ -134,7 +134,7 @@ local function fire()
     inst:AddTag("firedart")
     inst.AnimState:PlayAnimation("idle_red")
     inst.components.weapon:SetOnAttack(fireattack)
-    inst.components.weapon:SetCanAttack(firecanattack)
+    --inst.components.weapon:SetCanAttack(firecanattack)
     inst.components.projectile:SetOnThrownFn(firethrown)
     
     return inst
@@ -149,6 +149,7 @@ end
 local function pipethrown(inst)
     inst.AnimState:PlayAnimation("dart_pipe")
 end
+
 local function pipe()
     local inst = common()
 
@@ -161,6 +162,31 @@ local function pipe()
     return inst
 end
 
+local function OnWalrusDartMiss(inst, owner, target)
+    inst:Remove()
+end
+
+-- walrus blowdart is for use by walrus creature, not player
+local function walrus()
+    local inst = common()
+    inst.persists = false
+
+    inst:AddTag("noclick")
+
+    RemovePhysicsColliders(inst)
+
+    inst.AnimState:PlayAnimation("idle_pipe")
+
+    inst.components.projectile:SetOnThrownFn(pipethrown)
+    inst.components.projectile:SetRange(TUNING.WALRUS_DART_RANGE)
+    inst.components.projectile:SetHoming(false)
+    inst.components.projectile:SetOnMissFn(OnWalrusDartMiss)
+    inst.components.projectile:SetLaunchOffset(Vector3(3, 2, 0))
+    
+    return inst
+end
+
 return Prefab( "common/inventory/blowdart_sleep", sleep, assets, prefabs),
        Prefab( "common/inventory/blowdart_fire", fire, assets, prefabs),
-       Prefab( "common/inventory/blowdart_pipe", pipe, assets, prefabs) 
+       Prefab( "common/inventory/blowdart_pipe", pipe, assets, prefabs),
+       Prefab( "common/inventory/blowdart_walrus", walrus, assets, prefabs) 

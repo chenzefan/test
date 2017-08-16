@@ -5,12 +5,13 @@ local assets =
 }
 
 local function growtree(inst)
+	print ("GROWTREE")
     inst.growtask = nil
     inst.growtime = nil
 	local tree = SpawnPrefab("evergreen_short") 
     if tree then 
 		tree.Transform:SetPosition(inst.Transform:GetWorldPosition() ) 
-        tree:PushEvent("growfromseed")
+        tree:growfromseed()--PushEvent("growfromseed")
         inst:Remove()
 	end
 end
@@ -20,6 +21,7 @@ local function plant(inst, growtime)
     inst.AnimState:PlayAnimation("idle_planted")
     inst.SoundEmitter:PlaySound("dontstarve/wilson/plant_tree")
     inst.growtime = GetTime() + growtime
+    print ("PLANT", growtime)
     inst.growtask = inst:DoTaskInTime(growtime, growtree)
 end
 
@@ -63,21 +65,23 @@ local function stopgrowing(inst)
     inst.growtime = nil
 end
 
+
+local notags = {'NOBLOCK', 'player', 'FX'}
 local function test_ground(inst, pt)
 	local tiletype = GetGroundTypeAtPosition(pt)
-	local ground_OK = tiletype ~= GROUND.ROCKY and tiletype ~= GROUND.ROAD and tiletype ~= GROUND.IMPASSABLE
+	local ground_OK = tiletype ~= GROUND.ROCKY and tiletype ~= GROUND.ROAD and tiletype ~= GROUND.IMPASSABLE and
+						tiletype ~= GROUND.UNDERROCK and tiletype ~= GROUND.WOODFLOOR and 
+						tiletype ~= GROUND.CARPET and tiletype ~= GROUND.CHECKER and tiletype < GROUND.UNDERGROUND
 	
 	if ground_OK then
-	    local ents = TheSim:FindEntities(pt.x,pt.y,pt.z, 4) -- or we could include a flag to the search?
-	    
+	    local ents = TheSim:FindEntities(pt.x,pt.y,pt.z, 4, nil, notags) -- or we could include a flag to the search?
+		local min_spacing = inst.components.deployable.min_spacing or 2
+
 	    for k, v in pairs(ents) do
-			if v ~= inst and v.entity:IsValid() and v.entity:IsVisible() and not v:HasTag("player") then
-	            if v.Physics then
-					local min_spacing = 2
-					if distsq( Vector3(v.Transform:GetWorldPosition()), pt) < min_spacing*min_spacing then
-						return false
-					end
-	            end
+			if v ~= inst and v.entity:IsValid() and v.entity:IsVisible() and not v.components.placer and v.parent == nil then
+				if distsq( Vector3(v.Transform:GetWorldPosition()), pt) < min_spacing*min_spacing then
+					return false
+				end
 			end
 		end
 		return true
@@ -89,6 +93,13 @@ local function describe(inst)
     if inst.growtime then
         return "PLANTED"
     end
+end
+
+local function displaynamefn(inst)
+    if inst.growtime then
+        return STRINGS.NAMES.PINECONE_SAPLING
+    end
+    return STRINGS.NAMES.PINECONE
 end
 
 local function OnSave(inst, data)
@@ -138,6 +149,8 @@ local function fn(Sim)
     inst.components.deployable.test = test_ground
     inst.components.deployable.ondeploy = ondeploy
     
+    inst.displaynamefn = displaynamefn
+
     inst.OnSave = OnSave
     inst.OnLoad = OnLoad
 

@@ -35,10 +35,10 @@ end
 
 local function fire()
     local inst = common()
-    inst.AnimState:PlayAnimation("ice_spin_loop", true)
+    inst.AnimState:PlayAnimation("fire_spin_loop", true)
 	inst.AnimState:SetBloomEffectHandle( "shaders/anim.ksh" )
     --colour projectile
-    inst.AnimState:SetMultColour(10, 0, 0, 1)
+    --inst.AnimState:SetMultColour(0, 0, 0, 1)
     return inst
 end
 

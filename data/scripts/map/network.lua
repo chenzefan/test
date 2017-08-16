@@ -320,8 +320,9 @@ function Graph:AddEdgeByNode(id, node1, node2, lock)
 	
 	--print(self.id.."::AddEdgeByNode: Edge ",id,"added")
 	
-	table.insert(self.nodes[node1.id].edges, edge)
-	table.insert(self.nodes[node2.id].edges, edge)
+	-- The Edge constructor adds itself to its nodes, this isn't necessary (I hope)
+	--table.insert(self.nodes[node1.id].edges, edge)
+	--table.insert(self.nodes[node2.id].edges, edge)
 	--self.nodes[node2.id].edges[id] = self.edges[id]
 	
 	assert(self.nodes[node1.id])
@@ -552,6 +553,45 @@ function Graph:CrosslinkRandom(crossLinkFactor)
 	end
 end
 
+function Graph:MakeLoop()
+	-- This assumes the graph is linear, and connects one end with the other
+	local first = nil
+	local last = nil
+	for nodeid,node in pairs(self.nodes) do
+		--print(self.id, nodeid, #node.edges)
+		if #node.edges == 1 then
+			if not first then
+				first = node
+			else
+				last = node
+				break
+			end
+		end
+	end
+
+	if not first or not last then
+		print("Warning: Tried to make "..self.id.." into a loop but couldn't find end nodes.")
+		return
+	end
+
+	if first.data.entrance then
+		if first.edges[1].node1 == first then
+			first = first.edges[1].node2
+		else
+			first = first.edges[1].node1
+		end
+	end
+	if last.data.entrance then
+		if last.edges[1].node1 == last then
+			last = last.edges[1].node2
+		else
+			last = last.edges[1].node1
+		end
+	end
+
+	self:AddEdge({node1id=first.id, node2id=last.id})
+end
+
 function Graph:RemoveNode(id)
 	assert(id)
 	assert(self.nodes[id])
@@ -693,11 +733,11 @@ function Graph:ProcessInsanityWormholes(entities, width, height)
 		local nextNode = nil
 		for edgeId,edge in pairs(task:GetEdges(false)) do
 		    --print("internal edge",edge.node1.id, edge.node2.id)
-			if edge.node1.id == node.id then
+			if edge.node1.id == node.id and not edge.node2.data.blocker_blank then
 			    --print("\tlink!!")
 				assert(nextNode == nil, "We already have a node from this task!")
 				nextNode = edge.node2
-			elseif edge.node2.id == node.id then
+			elseif edge.node2.id == node.id and not edge.node1.data.blocker_blank then
 			    --print("\tlink!!")
 				assert(nextNode == nil, "We already have a node from this task!")
 				nextNode = edge.node1

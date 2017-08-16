@@ -12,6 +12,35 @@ local prefabs =
 	"yellowgem",
 }
 
+SetSharedLootTable( 'stalagmite_tall_full_rock',
+{
+    {'rocks',     	1.00},
+    {'rocks',     	1.00},
+    {'goldnugget', 	1.00},
+    {'flint',      	1.00},
+    {'goldnugget', 	0.25},
+    {'flint',      	0.60},
+    {'redgem',     	0.05},
+    {'log',       	0.05},
+})
+
+SetSharedLootTable( 'stalagmite_tall_med_rock',
+{
+    {'rocks',     	1.00},
+    {'rocks',     	1.00},
+    {'flint', 		1.00},
+    {'goldnugget',  0.15},
+    {'flint', 		0.60},
+})
+
+SetSharedLootTable( 'stalagmite_tall_low_rock',
+{
+    {'rocks',     	1.00},
+    {'flint',     	1.00},
+    {'goldnugget', 	0.15},
+    {'flint',  		0.30},
+})
+
 local function workcallback(inst, worker, workleft)
 	local pt = Point(inst.Transform:GetWorldPosition())
 	if workleft <= 0 then
@@ -38,9 +67,12 @@ local function commonfn()
     inst.type = math.random(2)  -- left or right handed rock
 	
     local minimap = inst.entity:AddMiniMapEntity()
-	minimap:SetIcon("stalagmite.png")
+	minimap:SetIcon("stalagmite_tall.png")
 
-	MakeObstaclePhysics(inst, 1.)
+	MakeObstaclePhysics(inst, 1)
+
+    local color = 0.5 + math.random() * 0.5
+    anim:SetMultColour(color, color, color, 1)
 
 	anim:SetBank("rock_stalagmite_tall")
 	anim:SetBuild("rock_stalagmite_tall")
@@ -50,41 +82,43 @@ local function commonfn()
 	inst:AddComponent("inspectable")
 	inst.components.inspectable.nameoverride = "stalagmite_tall"
 
+	inst:AddComponent("named")
+	inst.components.named:SetName(STRINGS.NAMES["STALAGMITE"])
+
 	inst:AddComponent("workable")
 	inst.components.workable:SetWorkAction(ACTIONS.MINE)
 	inst.components.workable:SetWorkLeft(TUNING.ROCKS_MINE)
 
 	inst.components.workable:SetOnWorkCallback(workcallback)
 
+
+
 	return inst
 end
 
 local function fullrock()
 	local inst = commonfn()
-	inst.components.lootdropper:SetLoot({"rocks", "rocks", "goldnugget", "flint"})
-	inst.components.lootdropper:AddChanceLoot("goldnugget", 0.25)
-	inst.components.lootdropper:AddChanceLoot("flint", 0.6)
+	inst.components.lootdropper:SetChanceLootTable('stalagmite_tall_full_rock')
+
 	inst.AnimState:PlayAnimation("full_"..inst.type)
 	return inst
 end
 
 local function medrock()
 	local inst = commonfn()
-	isnt.components.workable:SetWorkLeft(TUNING.ROCKS * (2/3))
+	inst.components.workable:SetWorkLeft(TUNING.ROCKS_MINE_MED)
 	inst.AnimState:PlayAnimation("med_" .. inst.type)
-	inst.components.lootdropper:SetLoot({"rocks", "flint"})
-	inst.components.lootdropper:AddChanceLoot("goldnugget", 0.15)
-	inst.components.lootdropper:AddChanceLoot("flint", 0.6)
+	inst.components.lootdropper:SetChanceLootTable('stalagmite_tall_med_rock')
+
 	return inst
 end
 
 local function lowrock()
 	local inst = commonfn()
-	isnt.components.workable:SetWorkLeft(TUNING.ROCKS * (1/3))
+	inst.components.workable:SetWorkLeft(TUNING.ROCKS_MINE_LOW)
 	inst.AnimState:PlayAnimation("low_" .. inst.type)
-	inst.components.lootdropper:SetLoot({"rocks", "flint"})
-	inst.components.lootdropper:AddChanceLoot("goldnugget", 0.15)
-	inst.components.lootdropper:AddChanceLoot("flint", 0.3)
+	inst.components.lootdropper:SetChanceLootTable('stalagmite_tall_low_rock')
+
 	return inst
 end
 

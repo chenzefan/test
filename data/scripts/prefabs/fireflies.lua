@@ -29,6 +29,7 @@ local function updatelight(inst)
         end
         inst.lighton = true
     else
+        inst:AddTag("NOCLICK")
         if inst.lighton then
             fadeout(inst)
         end
@@ -59,11 +60,14 @@ local function onnear(inst)
 end
 
 local function fn(Sim)
+
+
 	local inst = CreateEntity()
+
+    inst:AddTag("NOBLOCK")
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
     
-    inst.entity:SetSleepRadius(16)
     inst.entity:AddPhysics()
  
     local light = inst.entity:AddLight()
@@ -104,6 +108,10 @@ local function fn(Sim)
     inst:AddComponent("inventoryitem")
     inst.components.inventoryitem:SetOnDroppedFn(ondropped)
     inst.components.inventoryitem.canbepickedup = false
+
+    inst:AddComponent("fuel")
+    inst.components.fuel.fuelvalue = TUNING.LARGE_FUEL
+    inst.components.fuel.fueltype = "CAVE"
 
     inst.components.playerprox:SetDist(3,5)
     inst.components.playerprox:SetOnPlayerNear(onnear)

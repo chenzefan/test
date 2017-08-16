@@ -1,12 +1,12 @@
 require "class"
-require "screens/scripterrorscreen"
+local ScriptErrorScreen = require "screens/scripterrorscreen"
 require "modutil"
 require "prefabs"
 
-MOD_API_VERSION = 3
+MOD_API_VERSION = 5
 
 local function modprint(...)
-	--print(unpack(arg))
+	--print(unpack({...}))
 end
 
 local runmodfn = function(fn,mod,modtype)
@@ -67,7 +67,7 @@ function ModWrangler:GetModRecords()
 	return self.records
 end
 
-function CreateEnvironment(modname)
+function CreateEnvironment(modname, isworldgen)
 
 	local modutil = require("modutil")
 	require("recipe") -- for Ingredient
@@ -75,7 +75,6 @@ function CreateEnvironment(modname)
 	local env = 
 	{
 		TUNING=TUNING,
-		CHARACTERLIST = CHARACTERLIST,
 		modname = modname,
 		pairs = pairs,
 		ipairs = ipairs,
@@ -93,14 +92,20 @@ function CreateEnvironment(modname)
 		Ingredient = Ingredient,
 	}
 
+	if isworldgen == false then
+		env.CHARACTERLIST = GetActiveCharacterList()
+	end
+
 	env.env = env
 
 	--install our crazy loader!
 	env.modimport = function(modulename)
 		print("modimport: "..env.MODROOT..modulename)
         local result = kleiloadlua(env.MODROOT..modulename)
-		if type(result) == "string" then
-			error("Error in modimport: "..ModInfoname(modname).."!\n"..result)
+		if result == nil then
+			error("Error in modimport: "..modulename.." not found!")
+		elseif type(result) == "string" then
+			error("Error in modimport: "..ModInfoname(modname).." importing "..modulename.."!\n"..result)
 		else
         	setfenv(result, env.env)
             result()
@@ -114,6 +119,9 @@ end
 
 
 function ModWrangler:LoadMods(worldgen)
+	if not MODS_ENABLED then
+		return
+	end
 
 	self.worldgen = worldgen or false
 
@@ -123,13 +131,17 @@ function ModWrangler:LoadMods(worldgen)
 	local moddirs = KnownModIndex:GetModsToLoad(self.worldgen)
 	
 	for i,modname in ipairs(moddirs) do
-		modprint("Loading mod "..modname)
 		table.insert(self.modnames, modname)
 
 		local initenv = KnownModIndex:GetModInfo(modname)
-		local env = CreateEnvironment(modname)
+		local env = CreateEnvironment(modname,  self.worldgen)
 		env.modinfo = initenv
 		table.insert( self.mods, env )
+		local loadmsg = "Loading mod: "..ModInfoname(modname)
+		if initenv.modinfo_message and initenv.modinfo_message ~= "" then
+			loadmsg = loadmsg .. " ("..initenv.modinfo_message..")"
+		end
+		print(loadmsg)
 	end
 
 	-- Sort the mods by priority, so that "library" mods can load first
@@ -232,6 +244,10 @@ function ModWrangler:DisplayBadMods()
 end
 
 function ModWrangler:RegisterPrefabs()
+	if not MODS_ENABLED then
+		return
+	end
+
 	for i,modname in ipairs(self.enabledmods) do
 		local mod = self:GetMod(modname)
 
@@ -245,10 +261,11 @@ function ModWrangler:RegisterPrefabs()
 		-- into the main world.
 		if mod.PrefabFiles then
 			for i,prefab_path in ipairs(mod.PrefabFiles) do
-				print("Mod: "..ModInfoname(mod.modname), "  Registering prefab: "..prefab_path)
+				print("Mod: "..ModInfoname(mod.modname), "  Registering prefab file: prefabs/"..prefab_path)
 				local ret = runmodfn( mod.LoadPrefabFile, mod, "LoadPrefabFile" )("prefabs/"..prefab_path)
 				if ret then
 					for i,prefab in ipairs(ret) do
+						print("Mod: "..ModInfoname(mod.modname), "    "..prefab.name)
 						mod.Prefabs[prefab.name] = prefab
 					end
 				end
@@ -271,10 +288,10 @@ function ModWrangler:RegisterPrefabs()
 	end
 end
 
-function ModWrangler:ForceUnloadPrefabs()
+function ModWrangler:UnloadPrefabs()
 	for i, modname in ipairs( self.loadedprefabs ) do
 		print("unloading prefabs for mod "..ModInfoname(modname))
-		TheSim:ForceUnloadPrefabs({modname})
+		TheSim:UnloadPrefabs({modname})
 	end
 end
 

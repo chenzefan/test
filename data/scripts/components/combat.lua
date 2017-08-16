@@ -16,6 +16,8 @@ local Combat = Class(function(self, inst)
     self.keeptargettimeout = 0
     self.hiteffectsymbol = "marker"
     self.canattack = true
+    self.lasttargetGUID = nil
+    self.inst:AddTag("hascombatcomponent")
 end)
 
 function Combat:SetAttackPeriod(period)
@@ -101,6 +103,10 @@ function Combat:SetKeepTargetFunction(fn)
     self.keeptargetfn = fn
 end
 
+function tryretarget(inst)
+	inst.components.combat:TryRetarget()
+end
+
 function Combat:TryRetarget()
     if self.targetfn then
     
@@ -114,15 +120,6 @@ function Combat:TryRetarget()
 					self:SuggestTarget(newtarget)
 				end			
             end
-        end
-        
-        if self.retargetperiod then
-        
-			if self.retargettask then
-				self.retargettask:Cancel()
-				self.retargettask = nil
-			end
-            self.retargettask = self.inst:DoTaskInTime(self.retargetperiod, function() self:TryRetarget() end)
         end
     end
 end
@@ -138,7 +135,7 @@ function Combat:SetRetargetFunction(period, fn)
     
     
     if period and fn then
-        self.retargettask = self.inst:DoTaskInTime(period, function() self:TryRetarget() end)
+        self.retargettask = self.inst:DoPeriodicTask(period, tryretarget)
     end
 end
 
@@ -157,7 +154,7 @@ function Combat:OnEntityWake()
 
 
 	if self.retargetperiod then
-		self.retargettask = self.inst:DoTaskInTime(self.retargetperiod, function() self:TryRetarget() end)
+		self.retargettask = self.inst:DoPeriodicTask(self.retargetperiod, tryretarget)
 	end
 end
 
@@ -171,7 +168,9 @@ function Combat:OnUpdate(dt)
         self.keeptargettimeout = self.keeptargettimeout - dt
         if self.keeptargettimeout < 0 then
             self.keeptargettimeout = 1
-            if not self.keeptargetfn(self.inst, self.target) then    
+            if not self.target:IsValid() or 
+				not self.keeptargetfn(self.inst, self.target) or not 
+                (self.target and self.target.components.combat and self.target.components.combat:CanBeAttacked(self.inst)) then    
                 self.inst:PushEvent("losttarget")            
                 self:SetTarget(nil)
             end
@@ -179,6 +178,9 @@ function Combat:OnUpdate(dt)
     end
 end
 
+function Combat:IsRecentTarget(target)
+	return target and (target == self.target or target.GUID == self.lasttargetGUID)
+end
 
 function Combat:SetTarget(target)
     local new = target ~= self.target
@@ -186,14 +188,20 @@ function Combat:SetTarget(target)
 
     if new and (not target or self:IsValidTarget(target) ) and not (target and target.sg and target.sg:HasStateTag("hiding") and target:HasTag("player")) then
 
-        if self.target == player and new ~= player then
+        if METRICS_ENABLED and self.target == player and new ~= player then
             FightStat_GaveUp(self.inst)
         end
 
+		if self.target then
+			self.lasttargetGUID = self.target.GUID
+		else
+			self.lasttargetGUID = nil
+		end
+		
         self.target = target
         self.inst:PushEvent("newcombattarget", {target=target})
 
-        if player == target or target and target.components.follower and target.components.follower.leader == player then
+        if METRICS_ENABLED and (player == target or target and target.components.follower and target.components.follower.leader == player) then
             FightStat_Targeted(self.inst)
         end
         
@@ -211,8 +219,9 @@ end
 
 function Combat:IsValidTarget(target)
     if not target 
-	   or not target.components.combat
 	   or not target.entity:IsValid()
+       or not target.components
+       or not target.components.combat
        or not target.entity:IsVisible()
        or not target.components.health
        or target == self.inst
@@ -247,6 +256,8 @@ function Combat:GetDebugString()
         str = str.. " Retarget set"
     end
 	str = str..string.format(" can attack:%s", tostring(self:CanAttack(self.target)))
+
+    str = str..string.format(" can be attacked: %s", tostring(self:CanBeAttacked()))
     
     return str
 end
@@ -264,12 +275,16 @@ function Combat:GiveUp()
         
     end
 
-    if GetPlayer() == self.target then
+    if METRICS_ENABLED and GetPlayer() == self.target then
         FightStat_GaveUp(self.inst)
     end
 
     self.inst:PushEvent("giveuptarget", {target = self.target})
+    if self.target then
+		self.lasttargetGUID = self.target.GUID
+    end
     self.target = nil
+    
 end
 
 function Combat:GetBattleCryString(target)
@@ -291,6 +306,9 @@ function Combat:BattleCry()
     end
 end
 
+function Combat:SetHurtSound(sound)
+    self.hurtsound = sound
+end
 
 function Combat:GetAttacked(attacker, damage, weapon)
     --print ("ATTACKED", self.inst, attacker, damage)
@@ -299,18 +317,15 @@ function Combat:GetAttacked(attacker, damage, weapon)
     local init_damage = damage
 
     self.lastattacker = attacker
-    if self.inst.components.health and damage then
-    
+    if self.inst.components.health and damage then   
         if self.inst.components.inventory then
             damage = self.inst.components.inventory:ApplyDamage(damage, attacker)
         end
-
-        if GetPlayer() == self.inst then
+        if METRICS_ENABLED and GetPlayer() == self.inst then
             local prefab = (attacker and (attacker.prefab or attacker.inst.prefab)) or "NIL"
             ProfileStatsAdd("hitsby_"..prefab,math.floor(damage))
             FightStat_AttackedBy(attacker,damage,init_damage-damage)
         end
-    
         if damage > 0 and self.inst.components.health:IsInvincible() == false then
             self.inst.components.health:DoDelta(-damage, nil, attacker and attacker.prefab or "NIL")
             if self.inst.components.health:GetPercent() <= 0 then
@@ -318,15 +333,15 @@ function Combat:GetAttacked(attacker, damage, weapon)
 					attacker:PushEvent("killed", {victim = self.inst})
 				end
 
-                if attacker and attacker == GetPlayer() then
+                if METRICS_ENABLED and attacker and attacker == GetPlayer() then
                     ProfileStatsAdd("kill_"..self.inst.prefab)
                     FightStat_AddKill(self.inst,damage,weapon)
                 end
-                if attacker and attacker.components.follower and attacker.components.follower.leader == GetPlayer() then
+                if METRICS_ENABLED and attacker and attacker.components.follower and attacker.components.follower.leader == GetPlayer() then
                     ProfileStatsAdd("kill_by_minion"..self.inst.prefab)
                     FightStat_AddKillByFollower(self.inst,damage,weapon)
                 end
-                if attacker and attacker.components.mine then
+                if METRICS_ENABLED and attacker and attacker.components.mine then
                     ProfileStatsAdd("kill_by_trap_"..self.inst.prefab)
                     FightStat_AddKillByMine(self.inst,damage)
                 end
@@ -347,6 +362,11 @@ function Combat:GetAttacked(attacker, damage, weapon)
             self.inst.SoundEmitter:PlaySound(hitsound)
             --print (hitsound)
         end
+
+        if self.hurtsound then
+            self.inst.SoundEmitter:PlaySound(self.hurtsound)
+        end
+
     end
     
     if not blocked then
@@ -378,6 +398,8 @@ function Combat:GetImpactSound(target, weapon)
     if target.components.inventory and target.components.inventory:IsWearingArmor() then
         if target.components.inventory:ArmorHasTag("grass") then
             hitsound = hitsound.."straw_"
+        elseif target.components.inventory:ArmorHasTag("forcefield") then
+            hitsound = hitsound.."forcefield_"        
         elseif target.components.inventory:ArmorHasTag("sanity") then
             hitsound = hitsound.."sanity_"
         elseif target.components.inventory:ArmorHasTag("sanity") then
@@ -412,7 +434,7 @@ function Combat:GetImpactSound(target, weapon)
             hitsound = hitsound.."stone_"
         end
         specialtype = "object"
-    elseif target:HasTag("hive") then
+    elseif target:HasTag("hive") or target:HasTag("eyeturret") then
         hitsound = hitsound.."hive_"
     elseif target:HasTag("ghost") then
         hitsound = hitsound.."ghost_"
@@ -500,7 +522,7 @@ function Combat:CanAttack(target)
 		return false
 	end
     
-    if self.inst.sg:HasStateTag("busy") then
+    if self.inst.sg and self.inst.sg:HasStateTag("busy") then
 		return false
     end
 
@@ -535,7 +557,7 @@ function Combat:ForceAttack()
     if self.target and self:TryAttack() then
         return true
     else
-       self.inst:PushEvent("doattack")
+        self.inst:PushEvent("doattack")
     end
 end
 
@@ -632,7 +654,7 @@ end
 
 function Combat:CanHitTarget(targ, weapon)
     --print("CanHitTarget", self.inst)
-    if targ and targ:IsValid() and not targ:IsInLimbo() then
+    if self.inst and self.inst:IsValid() and targ and targ:IsValid() and not targ:IsInLimbo() and (targ.components.combat and targ.components.combat:CanBeAttacked(self.inst)) then
         local rangesq = self:CalcHitRangeSq(targ)
         if targ.components.combat and self.inst:GetDistanceSqToInst(targ) <= rangesq then
             return true
@@ -670,11 +692,11 @@ function Combat:DoAttack(target_override, weapon, projectile)
             local damage = self:CalcDamage(targ, weapon)
             targ.components.combat:GetAttacked(self.inst, damage, weapon)
 
-            if self.inst:HasTag( "player" ) then
+            if METRICS_ENABLED and self.inst:HasTag( "player" ) then
                 ProfileStatsAdd("hitson_"..targ.prefab,math.floor(damage))
                 FightStat_Attack(targ,weapon,projectile,damage)
             end
-            if self.inst.components.follower
+            if METRICS_ENABLED and self.inst.components.follower
 					and self.inst.components.follower.leader == GetPlayer() then
                 FightStat_AttackByFollower(targ,weapon,projectile,damage)
             end

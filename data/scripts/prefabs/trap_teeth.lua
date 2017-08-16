@@ -29,7 +29,9 @@ local function OnExplode(inst, target)
     if target then
         inst.SoundEmitter:PlaySound("dontstarve/common/trap_teeth_trigger")
 	    target.components.combat:GetAttacked(inst, TUNING.TRAP_TEETH_DAMAGE)
-        FightStat_TrapSprung(inst,target,TUNING.TRAP_TEETH_DAMAGE)
+        if METRICS_ENABLED then
+			FightStat_TrapSprung(inst,target,TUNING.TRAP_TEETH_DAMAGE)
+		end
     end
     if inst.components.finiteuses then
 	    inst.components.finiteuses:Use(1)
@@ -42,14 +44,35 @@ local function OnReset(inst)
 	inst.AnimState:PushAnimation("idle", false)
 end
 
+local function OnResetMax(inst)
+    inst.SoundEmitter:PlaySound("dontstarve/common/trap_teeth_reset")
+	inst.AnimState:PlayAnimation("idle")
+	--inst.AnimState:PushAnimation("idle", false)
+end
+
+
 local function SetSprung(inst)
     inst.AnimState:PlayAnimation("trap_idle")
 end
 
+local function SetInactive(inst)
+    inst.AnimState:PlayAnimation("inactive")
+end
+
 local function OnDropped(inst)
-    if inst.components.mine then
-        inst.components.mine:Reset()
-    end
+	inst.components.mine:Deactivate()
+end
+
+local function ondeploy(inst, pt, deployer)
+	inst.components.mine:Reset()
+	inst.Physics:Teleport(pt:Get())
+end
+
+--legacy save support - mines used to start out activated
+local function onload(inst, data)
+	if not data or not data.mine then
+		inst.components.mine:Reset()
+	end
 end
 
 local function MakeTeethTrapNormal()
@@ -79,13 +102,20 @@ local function MakeTeethTrapNormal()
 	inst.components.mine:SetOnExplodeFn(OnExplode)
 	inst.components.mine:SetOnResetFn(OnReset)
 	inst.components.mine:SetOnSprungFn(SetSprung)
-	inst.components.mine:StartTesting()
+	inst.components.mine:SetOnDeactivateFn(SetInactive)
+	--inst.components.mine:StartTesting()
 	
 	inst:AddComponent("finiteuses")
 	inst.components.finiteuses:SetMaxUses(TUNING.TRAP_TEETH_USES)
 	inst.components.finiteuses:SetUses(TUNING.TRAP_TEETH_USES)
 	inst.components.finiteuses:SetOnFinished( onfinished_normal )
 	
+    inst:AddComponent("deployable")
+    inst.components.deployable.ondeploy = ondeploy
+    inst.components.deployable.min_spacing = .75
+	
+	inst.components.mine:Deactivate()
+	inst.OnLoad = onload
 	return inst
 end
 
@@ -98,14 +128,18 @@ local function MakeTeethTrapMaxwell()
 	inst:RemoveComponent("inventoryitem")
 
 	inst.components.mine:SetAlignment("nobody")
-
+	inst.components.mine:SetOnResetFn(OnResetMax)
 	inst.components.finiteuses:SetMaxUses(1)
 	inst.components.finiteuses:SetUses(1)
 	inst.components.finiteuses:SetOnFinished( onfinished_maxwell )
+	
+	inst.components.mine:Reset()
+	inst.AnimState:PlayAnimation("idle")
 
 	return inst
 end
 
 return Prefab( "common/inventory/trap_teeth", MakeTeethTrapNormal, assets),
+		MakePlacer("common/trap_teeth_placer", "trap_teeth", "trap_teeth", "idle"),
 	   Prefab( "common/inventory/trap_teeth_maxwell", MakeTeethTrapMaxwell, assets) 
 

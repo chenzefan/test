@@ -43,7 +43,7 @@ function EventProcessor:HandleEvent(event, ...)
     local handlers = self.events[event]
     if handlers then
         for k,v in pairs(handlers) do
-            k.fn(unpack(arg))
+            k.fn(...)
         end
     end
 end

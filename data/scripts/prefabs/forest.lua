@@ -79,6 +79,7 @@ local forest_prefabs =
 	"lureplant",
 	"purpleamulet",
 	"monkey",
+	"livingtree",
 }
 
 local function fn(Sim)
@@ -90,13 +91,15 @@ local function fn(Sim)
 	
 	--add waves
 	local waves = inst.entity:AddWaveComponent()
-	waves:SetRegionSize( 32, 16 )
-	waves:SetRegionNumWaves( 6 )
+	waves:SetRegionSize( 40, 20 )
+	waves:SetRegionNumWaves( 8 )
 	waves:SetWaveTexture( "images/wave.tex" )
 
 	-- See source\game\components\WaveRegion.h
 	waves:SetWaveEffect( "shaders/waves.ksh" ) -- texture.ksh
+	--waves:SetWaveEffect( "shaders/texture.ksh" ) -- 
 	waves:SetWaveSize( 2048, 512 )
+    inst:AddComponent("clock")
 
 	inst:AddComponent("seasonmanager")
     inst:AddComponent("birdspawner")

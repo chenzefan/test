@@ -47,7 +47,7 @@ local function fn(Sim)
     
 	inst:AddComponent("repairer")
 	inst.components.repairer.repairmaterial = "wood"
-	inst.components.repairer.value = TUNING.REPAIR_LOGS*3
+	inst.components.repairer.healthrepairvalue = TUNING.REPAIR_LOGS_HEALTH*3
 
 	inst:ListenForEvent("onignite", function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/leif/livinglog_burn") end)
     

@@ -197,7 +197,6 @@ end
 
 local function SpawnHuntingParty(inst, target, houndsonly)
     trace("SpawnHuntingParty", inst, target, houndsonly)
-
     local leader = GetMember(inst, "walrus")
     if not houndsonly and not leader and CanSpawn(inst, "walrus") then
         leader = SpawnMember(inst, "walrus")
@@ -211,7 +210,7 @@ local function SpawnHuntingParty(inst, target, houndsonly)
         companion.Transform:SetPosition(GetSpawnPoint(inst))
         trace("spawn", companion)
     end
-
+  
     if companion and leader then
         companion.components.follower:SetLeader(leader)
     end
@@ -221,18 +220,18 @@ local function SpawnHuntingParty(inst, target, houndsonly)
         trace("hound", i)
 
         local hound = existing_hounds[i]
-        if not hound then
+        if not hound and CanSpawn(inst, "icehound") then
             trace("spawn new hound")
             hound = SpawnMember(inst, "icehound")
+            hound:AddTag("pet_hound")
             hound.Transform:SetPosition(GetSpawnPoint(inst))
 
-            hound:AddTag("pet_hound")
             hound.sg:GoToState("idle")
         else
             trace("use old hound")
         end
 
-        if companion then
+        if companion and hound then
             if not hound.components.follower then
                 hound:AddComponent("follower")
             end
@@ -262,7 +261,6 @@ end
 -- assign value to forward declared local above
 OnMemberNewTarget = function (inst, member, data)
     trace("OnMemberNewTarget", inst, member, data)
-
     if member:IsNear(inst, AGGRO_SPAWN_PARTY_RADIUS) then
         CheckSpawnHuntingParty(inst, data.target, false)
     end
@@ -292,6 +290,7 @@ local function OnSeasonChange(inst)
 end
 
 local function OnSave(inst, data)
+
     trace("OnSave", inst, GetTime())
 
     data.children = {}
@@ -320,9 +319,12 @@ local function OnSave(inst, data)
         end
     end
 
+    return data.children
+
 end
         
 local function OnLoad(inst, data)
+
     trace("OnLoad", inst, GetTime())
     if data then
     -- children loaded by OnLoadPostPass
@@ -341,7 +343,6 @@ local function OnLoad(inst, data)
             end
         end
     end
-
 end
 
 local function OnLoadPostPass(inst, newents, data)
@@ -351,13 +352,14 @@ local function OnLoadPostPass(inst, newents, data)
         for k,v in pairs(data.children) do
             local child = newents[v]
             if child then
+                print("Child Name: ", child.entity.prefab)
                 child = child.entity
                 trace("    ", child.prefab)
                 TrackMember(inst, child)
             end
         end
 
-        end
+    end
 end
 
 

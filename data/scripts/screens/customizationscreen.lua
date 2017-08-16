@@ -9,27 +9,59 @@ local HoverText = require "widgets/hoverer"
 
 
 local NumericSpinner = require "widgets/numericspinner"
-require "screens/popupdialog"
-local Toggle = require "widgets/toggle"
+
+local PopupDialogScreen = require "screens/popupdialog"
 
 local levels = require "map/levels"
-local customise = require("map/customise")
+local customise = nil
 local options = {}
-
-for k,v in pairs(customise.GROUP) do
-	for kk, vv in pairs(v.items) do
-		table.insert(options, {name = kk, image = vv.image, options = vv.desc or v.desc, default = vv.value, group = k, atlas = vv.atlas})
-	end
-end
 
 local per_side = 7
 
-CustomizationScreen = Class(Screen, function(self, profile, cb, defaults)
+local CustomizationScreen = Class(Screen, function(self, profile, cb, defaults, RoGEnabled)
     Widget._ctor(self, "CustomizationScreen")
+	self.left_spinners = {}
+	self.right_spinners = {}
+
     self.profile = profile
+    self.defaults = defaults
+
 	self.cb = cb
+
+	-- Build the options menu so that the spinners are shown in an order that makes sense/in order of how impactful the changes are
+	if #options == 0 or self.RoGEnabled ~= RoGEnabled then
+		self.RoGEnabled = RoGEnabled
+		customise = require("map/customise")
+		options = {}
+		local numgroup = 1
+		local numitem = 1
+		for k,v in pairs(customise.GROUP) do
+			local nextgroup = v
+			local nextgroupname = k
+			for i, j in pairs(customise.GROUP) do
+				if j.order < nextgroup.order and j.order == numgroup or nextgroup.order < numgroup then
+					nextgroup = j
+					nextgroupname = i
+				end
+			end
+			for kk, vv in pairs(nextgroup.items) do
+				local nextitem = vv
+				local nextitemname = kk
+				for ii, jj in pairs(nextgroup.items) do
+					if jj.order < nextitem.order and jj.order == numitem or nextitem.order < numitem then
+						nextitem = jj
+						nextitemname = ii
+					end
+				end
+				table.insert(options, {name = nextitemname, image = nextitem.image, options = nextitem.desc or nextgroup.desc, default = nextitem.value, group = nextgroupname})
+				numitem = numitem + 1
+			end
+			numgroup = numgroup + 1
+			numitem = 1
+		end
+	end
 	
-	if defaults then
+	if defaults and self.RoGEnabled == RoGEnabled then
 		self.options = deepcopy(defaults)
 		self.options.tweak = self.options.tweak or {}
 		self.options.preset = self.options.preset or {}
@@ -60,21 +92,29 @@ CustomizationScreen = Class(Screen, function(self, profile, cb, defaults)
     
     --menu buttons
     
-	self.applybutton = self.root:AddChild(ImageButton())
-    self.applybutton:SetPosition(left_col, -185, 0)
-    self.applybutton:SetText(STRINGS.UI.CUSTOMIZATIONSCREEN.APPLY)
-    self.applybutton.text:SetColour(0,0,0,1)
-    self.applybutton:SetOnClick( function() self:Apply() end )
-    self.applybutton:SetFont(BUTTONFONT)
-    self.applybutton:SetTextSize(40)    
-    
-	self.cancelbutton = self.root:AddChild(ImageButton())
-    self.cancelbutton:SetPosition(left_col, -260, 0)
-    self.cancelbutton:SetText(STRINGS.UI.CUSTOMIZATIONSCREEN.CANCEL)
-    self.cancelbutton.text:SetColour(0,0,0,1)
-    self.cancelbutton:SetOnClick( function() self:Cancel() end )
-    self.cancelbutton:SetFont(BUTTONFONT)
-    self.cancelbutton:SetTextSize(40)
+    if not TheInput:ControllerAttached() then
+		self.applybutton = self.root:AddChild(ImageButton())
+	    self.applybutton:SetPosition(left_col, -185, 0)
+	    self.applybutton:SetText(STRINGS.UI.CUSTOMIZATIONSCREEN.APPLY)
+	    self.applybutton.text:SetColour(0,0,0,1)
+	    self.applybutton:SetOnClick( function() self:Apply() end )
+	    self.applybutton:SetFont(BUTTONFONT)
+	    self.applybutton:SetTextSize(40)    
+	    
+		self.cancelbutton = self.root:AddChild(ImageButton())
+	    self.cancelbutton:SetPosition(left_col, -260, 0)
+	    self.cancelbutton:SetText(STRINGS.UI.CUSTOMIZATIONSCREEN.CANCEL)
+	    self.cancelbutton.text:SetColour(0,0,0,1)
+	    self.cancelbutton:SetOnClick( function() 
+				if self:PendingChanges() then
+					self:ConfirmRevert()
+	    		else
+	    			self:Cancel()
+	    		end
+	    	end )
+	    self.cancelbutton:SetFont(BUTTONFONT)
+	    self.cancelbutton:SetTextSize(40)
+	end
 
 	--set up the preset spinner
 
@@ -84,6 +124,7 @@ CustomizationScreen = Class(Screen, function(self, profile, cb, defaults)
 	end
     
     self.presetpanel = self.root:AddChild(Widget("presetpanel"))
+    self.presetpanel:SetScale(.9)
     self.presetpanel:SetPosition(left_col,50,0)
     self.presetpanelbg = self.presetpanel:AddChild(Image("images/globalpanels.xml", "presetbox.tex"))
     self.presetpanelbg:SetScale(1,.9, 1)
@@ -108,10 +149,10 @@ CustomizationScreen = Class(Screen, function(self, profile, cb, defaults)
 	self.presetspinner.OnChanged =
 		function( _, data )
 		
-			if self.dirty then
+			if self.presetdirty then
 				TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.CUSTOMIZATIONSCREEN.LOSECHANGESTITLE, STRINGS.UI.CUSTOMIZATIONSCREEN.LOSECHANGESBODY, 
-					{{text=STRINGS.UI.CUSTOMIZATIONSCREEN.YES, cb = function() self.options.tweak = {} self:MakeClean() TheFrontEnd:PopScreen() end},
-					{text=STRINGS.UI.CUSTOMIZATIONSCREEN.NO, cb = function() self:MakeDirty() TheFrontEnd:PopScreen() end}  }))
+					{{text=STRINGS.UI.CUSTOMIZATIONSCREEN.YES, cb = function() self.options.tweak = {} self:MakePresetClean() TheFrontEnd:PopScreen() end},
+					{text=STRINGS.UI.CUSTOMIZATIONSCREEN.NO, cb = function() self:MakePresetDirty() TheFrontEnd:PopScreen() end}  }))
 			else
 				self:LoadPreset(data)
 				self.options.tweak = {}				
@@ -123,15 +164,16 @@ CustomizationScreen = Class(Screen, function(self, profile, cb, defaults)
 	
 	self.option_offset = 0
     self.optionspanel = self.root:AddChild(Widget("optionspanel"))
-    self.optionspanel:SetPosition(right_col,0,0)
+    self.optionspanel:SetScale(.9)
+    self.optionspanel:SetPosition(right_col,20,0)
     self.optionspanelbg = self.optionspanel:AddChild(Image("images/globalpanels.xml", "panel_customization.tex"))
 
-	self.rightbutton = self.optionspanel:AddChild(AnimButton("scroll_arrow"))
+	self.rightbutton = self.optionspanel:AddChild(ImageButton("images/ui.xml", "scroll_arrow.tex", "scroll_arrow_over.tex", "scroll_arrow_disabled.tex"))
     self.rightbutton:SetPosition(340, 0, 0)
     self.rightbutton:SetOnClick( function() self:Scroll(per_side) end)
 	--self.rightbutton:Hide()
 	
-	self.leftbutton = self.optionspanel:AddChild(AnimButton("scroll_arrow"))
+	self.leftbutton = self.optionspanel:AddChild(ImageButton("images/ui.xml", "scroll_arrow.tex", "scroll_arrow_over.tex", "scroll_arrow_disabled.tex"))
     self.leftbutton:SetPosition(-340, 0, 0)
     self.leftbutton:SetScale(-1,1,1)
     self.leftbutton:SetOnClick( function() self:Scroll(-per_side) end)	
@@ -139,19 +181,231 @@ CustomizationScreen = Class(Screen, function(self, profile, cb, defaults)
 	
 	self.optionwidgets = {}
 	
-	local preset = self.options.preset or self.presets[1].data
+	local preset = (self.defaults and self.defaults.preset) or self.presets[1].data
+
 	self:LoadPreset(preset)
-	if next(self.options.tweak) then
-		self:MakeDirty()
+	if self.defaults and next(self.defaults.tweak) then
+		self:MakePresetDirty()
 	end
 
 	self.hover = self:AddChild(HoverText(self))
 	self.hover:SetScaleMode(SCALEMODE_PROPORTIONAL)
 	self.hover.isFE = true
+
+
+	self.default_focus = self.presetspinner
 end)
 
+function CustomizationScreen:SetValueForOption(option, value)
+	-- do we have a spinner for this guy?
+ 	for idx,v in ipairs(options) do
+		if (options[idx].name == option) then
+			local localindex = idx - self.option_offset
+			if localindex > 0 and localindex <= per_side * 2 then
+				-- we're on screen so must have a spinner
+				local spinner
+				if localindex <= per_side then
+					spinner = self.left_spinners[localindex]
+				else
+					spinner = self.right_spinners[localindex-per_side]
+				end
+				spinner:SetSelected(value)
+			end
+		end
+	end
+	-- we don't...do it manually
+	local overrides = {}
+	for k,v in pairs(self.presets) do
+		if self.preset == v.data then
+			for k,v in pairs(v.overrides) do
+				overrides[v[1]] = v[2]
+			end
+		end
+	end
+
+ 	for idx,v in ipairs(options) do
+		if (options[idx].name == option) then
+			local default_value = overrides[options[idx].name] or options[idx].default
+			local localindex = idx - self.option_offset
+			if value ~= default_value then 
+				if not self.options.tweak[options[idx].group] then
+					self.options.tweak[options[idx].group] = {}
+				end
+				self.options.tweak[options[idx].group][options[idx].name] = value
+				if localindex > 0 and localindex <= per_side * 2 then
+					-- hilite changed
+					local bg = self.optionwidgets[localindex].bg
+					bg:Show()
+				end
+			else
+				if not self.options.tweak[options[idx].group] then
+					self.options.tweak[options[idx].group] = {}
+				end
+				self.options.tweak[options[idx].group][options[idx].name] = nil
+				if localindex > 0 and localindex <= per_side * 2 then
+					-- unhilite change
+					local bg = self.optionwidgets[localindex].bg
+					bg:Hide()
+				end
+				
+			end
+		end
+	end
+end
+
+
+function CustomizationScreen:GetValueForOption(option)
+	local overrides = {}
+	for k,v in pairs(self.presets) do
+		if self.preset == v.data then
+			for k,v in pairs(v.overrides) do
+				overrides[v[1]] = v[2]
+			end
+		end
+	end
+
+ 	for idx,v in ipairs(options) do
+		if (options[idx].name == option) then
+			local value = overrides[options[idx].name] or options[idx].default
+			if self.options.tweak[options[idx].group] then
+				local possiblevalue = self.options.tweak[options[idx].group][options[idx].name]
+				value = possiblevalue or value
+			end
+			return value
+		end
+	end
+	return nil
+end
+
+
+function CustomizationScreen:SetOptionEnabled(option, enabled)
+	local newEnabled = false
+	local oldEnabled = false
+	-- do we have a spinner for this guy?
+ 	for idx,v in ipairs(options) do
+		if (options[idx].name == option) then
+			local localindex = idx - self.option_offset
+			if localindex > 0 and localindex <= per_side * 2 then
+				-- we're on screen so must have a spinner
+				local spinner
+				if localindex <= per_side then
+					spinner = self.left_spinners[localindex]
+				else
+					spinner = self.right_spinners[localindex-per_side]
+				end
+				oldEnabled = spinner.enabled
+				if enabled then
+					spinner:Enable()		
+				else
+					spinner:Disable()
+				end
+				newEnabled = spinner.enabled
+			end
+		end
+	end
+	return newEnabled ~= oldEnabled
+end
+
+function CustomizationScreen:ValidateOptionCombinations()
+	local dirty = false
+	local seasonOption = self:GetValueForOption("season")
+	if (seasonOption == "onlysummer") then
+		-- set the season start and disable the spinner
+		local oldValue = self:GetValueForOption( "season_start" )
+		if oldValue ~= "summer" then
+			if not self.oldSeasonStart then -- already overriding
+				self.oldSeasonStart = oldValue
+			end
+			self:SetValueForOption("season_start","summer")
+		end
+		dirty = self:SetOptionEnabled("season_start",false)
+	elseif (seasonOption == "onlywinter") then
+		-- set the season start and disable the spinner
+		local oldValue = self:GetValueForOption( "season_start" )
+		if oldValue ~= "winter" then
+			if not self.oldSeasonStart then -- already overriding
+				self.oldSeasonStart = oldValue
+			end
+			self:SetValueForOption("season_start","winter")
+		end
+		dirty = self:SetOptionEnabled("season_start",false)
+	else
+		if self.oldSeasonStart then
+			self:SetValueForOption("season_start",self.oldSeasonStart)
+			self.oldSeasonStart = nil
+		end
+		dirty = self:SetOptionEnabled("season_start", true)
+	end
+	if dirty then
+		self:HookupFocusMoves()
+	end
+
+
+end
+
+function CustomizationScreen:HookupFocusMoves()
+	local GetFirstEnabledSpinnerAbove = function(k, tbl)
+		for i=k-1,1,-1 do
+			if tbl[i].enabled then
+				return tbl[i]
+			end
+		end
+		return nil
+	end
+	local GetFirstEnabledSpinnerBelow = function(k, tbl)
+		for i=k+1,#tbl do
+			if tbl[i].enabled then
+				return tbl[i]
+			end
+		end
+		return nil
+	end
+
+	for k = 1, #self.left_spinners do
+		local abovespinner = GetFirstEnabledSpinnerAbove(k, self.left_spinners)
+		if abovespinner then
+			self.left_spinners[k]:SetFocusChangeDir(MOVE_UP, abovespinner)
+		end
+		
+		self.left_spinners[k]:SetFocusChangeDir(MOVE_LEFT, self.presetspinner)
+
+		local belowspinner = GetFirstEnabledSpinnerBelow(k, self.left_spinners)
+		if belowspinner	then
+			self.left_spinners[k]:SetFocusChangeDir(MOVE_DOWN, belowspinner)
+		end
+
+		if self.right_spinners[k] then
+			self.left_spinners[k]:SetFocusChangeDir(MOVE_RIGHT, self.right_spinners[k])
+		end
+
+	end
+
+	self.presetspinner:SetFocusChangeDir(MOVE_RIGHT, self.left_spinners[math.floor(#self.left_spinners/2)])
+
+
+	for k = 1, #self.right_spinners do
+		local abovespinner = GetFirstEnabledSpinnerAbove(k, self.right_spinners)
+		if abovespinner then
+			self.right_spinners[k]:SetFocusChangeDir(MOVE_UP, abovespinner)
+		end
+
+		local belowspinner = GetFirstEnabledSpinnerBelow(k, self.right_spinners)
+		if belowspinner	then
+			self.right_spinners[k]:SetFocusChangeDir(MOVE_DOWN,belowspinner)
+		end
+
+		if self.left_spinners[k] then
+			self.right_spinners[k]:SetFocusChangeDir(MOVE_LEFT, self.left_spinners[k])
+		end
+
+	end
+end
 
 function CustomizationScreen:RefreshOptions()
+
+	local focus = self:GetDeepestFocus()
+	local old_column = focus and focus.column
+	local old_idx = focus and focus.idx
 	
 	for k,v in pairs(self.optionwidgets) do
 		v.root:Kill()
@@ -161,13 +415,18 @@ function CustomizationScreen:RefreshOptions()
 	--these are in kind of a weird format, so convert it to something useful...
 	local overrides = {}
 	for k,v in pairs(self.presets) do
-		if self.preset == v.data then
+		if self.preset.data == v.data then
 			for k,v in pairs(v.overrides) do
 				overrides[v[1]] = v[2]
+			end
 		end
 	end
-	end
-	
+
+
+
+	self.left_spinners = {}
+	self.right_spinners = {}
+
 	for k = 1, per_side*2 do
 	
 		local idx = self.option_offset+k
@@ -212,12 +471,7 @@ function CustomizationScreen:RefreshOptions()
 							self.options.tweak[options[idx].group] = nil
 						end
 					end
-					
-					if next(self.options.tweak) then
-						self:MakeDirty()
-					else
-						self:MakeClean()
-					end
+					self:MakePresetDirty()
 				end
 				
 			if self.options.tweak[options[idx].group] and self.options.tweak[options[idx].group][options[idx].name] then
@@ -235,14 +489,37 @@ function CustomizationScreen:RefreshOptions()
 			
 			if k <= per_side then
 				opt:SetPosition(-150, (per_side-1)*spacing*.5 - (k-1)*spacing - 10, 0)
+				table.insert(self.left_spinners, spinner)
+				spinner.column = "left"
+				spinner.idx = #self.left_spinners
 			else
 				opt:SetPosition(150, (per_side-1)*spacing*.5 - (k-1-per_side)*spacing- 10, 0)
+				table.insert(self.right_spinners, spinner)
+				spinner.column = "right"
+				spinner.idx = #self.right_spinners
 			end
 			
 			table.insert(self.optionwidgets, {root = opt, bg = bg})
 		end
 	end
 	
+	-- call this before the focus moves so we can check if spinners are accessible
+	self:ValidateOptionCombinations()
+
+	--hook up all of the focus moves
+	self:HookupFocusMoves()
+
+	if old_column and old_idx then
+		local list = old_column == "right" and self.right_spinners or self.left_spinners
+		if #list == 0 then
+			self.presetspinner:SetFocus()
+		else
+			list[math.min(#list, old_idx)]:SetFocus()	
+		end
+		
+	else
+		self.presetspinner:SetFocus()
+	end
 	
 end
 
@@ -251,7 +528,6 @@ function CustomizationScreen:Scroll(dir)
 		(dir < 0 and self.option_offset + dir >= 0) then
 	
 		self.option_offset = self.option_offset + dir
-		self:RefreshOptions()
 	end
 	
 	if self.option_offset > 0 then
@@ -266,50 +542,160 @@ function CustomizationScreen:Scroll(dir)
 		self.rightbutton:Hide()
 	end
 	
-	
+	self:RefreshOptions()
+
 end
 
-function CustomizationScreen:MakeDirty()
-	self.dirty = true
+function CustomizationScreen:MakePresetDirty()
+	self.presetdirty = true
 	
 	for k,v in pairs(self.presets) do
-		if self.current_preset == v.data then
+		if self.preset.data == v.data then
 			self.presetdesc:SetString(STRINGS.UI.CUSTOMIZATIONSCREEN.CUSTOMDESC)
 			self.presetspinner:UpdateText(v.text .. " " .. STRINGS.UI.CUSTOMIZATIONSCREEN.CUSTOM)
 		end
 	end
+	self:ValidateOptionCombinations()
 end
 
-function CustomizationScreen:MakeClean()
-	self.dirty = false
+function CustomizationScreen:MakePresetClean()
 	self:LoadPreset(self.presetspinner:GetSelectedData())
 end
 
 function CustomizationScreen:LoadPreset(preset)
-	self.current_preset = preset
-	self.dirty = false
 	for k,v in pairs(self.presets) do
 		if preset == v.data then
 			self.presetdesc:SetString(v.desc)
-			self.presetspinner:UpdateText(v.text)
+			self.presetspinner:SetSelectedIndex(k)
+			self.presetdirty = false
+			self.preset = v
+			self.options.preset = v.data
+			self:RefreshOptions()	
+			return
 		end
 	end
-	self.preset = preset
-	self.options.preset = preset
-	self:RefreshOptions()	
 end
 
 function CustomizationScreen:Cancel()
 	self.cb()
 end
 
+function CustomizationScreen:OnControl(control, down)
+    
+    if CustomizationScreen._base.OnControl(self, control, down) then return true end
+    if not down then
+    	if control == CONTROL_CANCEL then 
+    		
+			if self:PendingChanges() then
+				self:ConfirmRevert()
+    		else
+    			self:Cancel()
+    		end
+		elseif control == CONTROL_ACCEPT and (TheInput:ControllerAttached() and not TheFrontEnd.tracking_mouse) then
+    		if self:PendingChanges() then
+    			self:Apply()
+    		end
+    	elseif control == CONTROL_PAGELEFT then
+    		if self.leftbutton.shown then
+    			TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/click_move")
+    			self:Scroll(-per_side)
+    		end
+
+    	elseif control == CONTROL_PAGERIGHT then
+    		if self.rightbutton.shown then
+    			TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/click_move")
+    			self:Scroll(per_side)
+    		end
+    	else
+    		return false
+    	end 
+
+    	return true
+    end
+
+end
+
+
 function CustomizationScreen:Apply()
 	self.cb(self.options)
 end
 
-function CustomizationScreen:ApplySettings()
-end	
+function CustomizationScreen:GetHelpText()
+    local controller_id = TheInput:GetControllerID()
+    local t = {}
+    
+    if self.leftbutton.shown then 
+    	table.insert(t,  TheInput:GetLocalizedControl(controller_id, CONTROL_PAGELEFT) .. " " .. STRINGS.UI.HELP.SCROLLBACK)
+    end
 
-function CustomizationScreen:OnUpdate(dt)
-	self.hover:Update()
+    if self.rightbutton.shown then
+    	table.insert(t,  TheInput:GetLocalizedControl(controller_id, CONTROL_PAGERIGHT) .. " " .. STRINGS.UI.HELP.SCROLLFWD)
+    end
+
+	if self:PendingChanges() then
+		table.insert(t,  TheInput:GetLocalizedControl(controller_id, CONTROL_ACCEPT) .. " " .. STRINGS.UI.HELP.ACCEPT)
+	end
+
+	table.insert(t,  TheInput:GetLocalizedControl(controller_id, CONTROL_CANCEL) .. " " .. STRINGS.UI.HELP.BACK)
+    
+
+    return table.concat(t, "  ")
 end
+
+
+function CustomizationScreen:ConfirmRevert()
+
+	TheFrontEnd:PushScreen(
+		PopupDialogScreen( STRINGS.UI.CUSTOMIZATIONSCREEN.BACKTITLE, STRINGS.UI.CUSTOMIZATIONSCREEN.BACKBODY,
+		  { 
+		  	{ 
+		  		text = STRINGS.UI.CUSTOMIZATIONSCREEN.YES, 
+		  		cb = function()
+					TheFrontEnd:PopScreen()
+					self:Cancel()
+				end
+			},
+			
+			{ 
+				text = STRINGS.UI.CUSTOMIZATIONSCREEN.NO, 
+				cb = function()
+					TheFrontEnd:PopScreen()					
+				end
+			}
+		  }
+		)
+	)		
+end
+
+function CustomizationScreen:PendingChanges()
+	if not self.defaults then
+		return self.presetdirty or self.presetspinner:GetSelectedIndex() ~= 1
+	end
+	
+	if self.defaults.preset ~= self.options.preset then return true end
+
+	local tables_to_compare = {}
+	for k,v in pairs(self.options.tweak) do
+		tables_to_compare[k] = true
+	end
+
+	for k,v in pairs(self.defaults.tweak) do
+		tables_to_compare[k] = true
+	end
+
+	for k,v in pairs(tables_to_compare) do
+		local t1 = self.options.tweak[k]
+		local t2 = self.defaults.tweak[k]
+
+		if not t1 or not t2 or not type(t1) == "table" or not type(t2) == "table" then return true end
+
+		for k,v in pairs(t1) do
+			if t2[k] ~= v then return true end
+		end
+		for k,v in pairs(t2) do
+			if t1[k] ~= v then return true end
+		end
+	end
+end 
+
+return CustomizationScreen

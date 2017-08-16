@@ -11,8 +11,10 @@ local assets =
 
 local max_scale = 10
 
+local init = false
 local function InitEnvelopes()
-	if EnvelopeManager then
+	if EnvelopeManager and not init then
+		init = true
 		EnvelopeManager:AddColourEnvelope(
 			colour_envelope_name,
 			{	{ 0,	{ 1, 1, 1, 0 } },
@@ -31,6 +33,7 @@ end
 
 local max_lifetime = 31
 local ground_height = 0.4
+local emitter_radius = 25
 
 local function fn(Sim)
 	local inst = CreateEntity()
@@ -59,6 +62,7 @@ local function fn(Sim)
 	emitter:SetColourEnvelope( config.colour_envelope_name )
 	emitter:SetScaleEnvelope( config.scale_envelope_name );
 	
+	emitter:SetRadius(emitter_radius)
 	-----------------------------------------------------	
 
 	inst:AddComponent("emitter")

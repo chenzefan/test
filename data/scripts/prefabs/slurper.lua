@@ -1,26 +1,3 @@
---[[
-	The Slurper is a mob that lives in the ruins. 
-	He will attach to the head of monsters that can wear hats. 
-	While attached as a hat, the slurper will slowly drain hunger.
-	Slurper is only aggressive if it is very hungry.
-
-	If a slurper is full it will sleep. 
-	If a slurper is hungry it will agressily try to find food.
-
-	Hunger > 90% -> Get off head if you're on one.
-	Hunger > 70% -> Sleep.
-	Hunger <= 70% -> Wake up and wander the world.
-	Hunger < 50% -> Start to signal that you're hungry. (need animation!)
-	Hunger < 35% -> Seek out food (attack things)
-
-	Pretty simple right now - will improve later.
-
-	Gain hunger through something other than attacking?
-	What does the slurper drop?
-	Slurper should give a positive to the thing it is draining hunger from.
-		Can't be armour.
-]]
-
 local assets = 
 {
 	Asset("ANIM", "anim/slurper_basic.zip"),
@@ -30,7 +7,7 @@ local assets =
 
 local prefabs = 
 {
-
+	"slurper_pelt"
 }
 
 
@@ -47,14 +24,19 @@ local slurp_channels =
 	"set_sfx/sfx"
 }	
 
+SetSharedLootTable( 'slurper',
+{
+    {'lightbulb',  	 1.0},
+    {'lightbulb',  	 1.0},
+    {'slurper_pelt', 0.5},
+})
+
 local function slurphunger(inst, owner)
     if (owner.components.hunger and owner.components.hunger.current > 0 )then
-        owner.components.hunger:DoDelta(-1)        
+        owner.components.hunger:DoDelta(-3)        
     elseif (owner.components.health and not owner.components.hunger) then
     	owner.components.health:DoDelta(-5,false,"slurper")
     end
-
-    inst.components.hunger:DoDelta(3)
 end
 
 local function OnAttacked(inst, data)
@@ -62,19 +44,16 @@ local function OnAttacked(inst, data)
 end
 
 local function CanHatTarget(inst, target)
-	return (target and (target:HasTag("player") or target:HasTag("manrabbit") or target:HasTag("pigman"))) and
-	inst.components.hunger:GetPercent() < 0.9
-
+	local compatibletarget = target and target.components.inventory and (target:HasTag("player") or target:HasTag("manrabbit") or target:HasTag("pig"))
+	if not compatibletarget then return false end
+	local hat = target.components.inventory:GetEquippedItem(EQUIPSLOTS.HEAD)
+	if hat and hat.prefab == inst.prefab then return false end
+	return true
 end
 
 local function Retarget(inst)
 	--Find us a tasty target with a hunger component and the ability to equip hats.
 	--Otherwise just find a target that can equip hats.
-
-	--Not hungry, don't find a target.
-	if inst.components.hunger and inst.components.hunger:GetPercent() > 0.35 then
-		return
-	end
 
 	--Too far, don't find a target
     local homePos = inst.components.knownlocations:GetLocation("home")
@@ -93,17 +72,10 @@ end
 local function KeepTarget(inst, target)
     local homePos = inst.components.knownlocations:GetLocation("home")
     local myPos = Vector3(inst.Transform:GetWorldPosition() )
-    if (homePos and distsq(homePos, myPos) > 50*50) then
+    if (homePos and distsq(homePos, myPos) > 30*30) then
     	--You've chased too far. Go home.
         return false
     end
-
-    -- if target.components.inventory then
-    -- 	local helm = target.components.inventory:GetEquippedItem(EQUIPSLOTS.HEAD)
-    -- 	if helm and helm.prefab == inst.prefab then
-    -- 		return false
-    -- 	end
-    -- end
 
     return true
 end
@@ -143,6 +115,8 @@ local function OnEquip(inst, owner)
 	inst.shouldburp = true
 	inst.task = inst:DoPeriodicTask(2, function() slurphunger(inst, owner) end)
 
+	inst.cansleep = false
+
 end
 
 local function OnUnequip(inst, owner)
@@ -176,35 +150,35 @@ local function OnUnequip(inst, owner)
 		season:SetAppropriateDSP()
 	end
 
+	inst.components.knownlocations:RememberLocation("home", Vector3(inst.Transform:GetWorldPosition()) )
+
+	inst:DoTaskInTime(10, function() inst.cansleep = true end)
+
 end
 
 local function SleepTest(inst)
-	return inst.components.hunger:GetPercent() > 0.7
-        and not (inst.components.combat and inst.components.combat.target)
+
+    local homePos = inst.components.knownlocations:GetLocation("home")
+    local myPos = Vector3(inst.Transform:GetWorldPosition())
+    
+	return not (inst.components.combat and inst.components.combat.target)
         and not (inst.components.burnable and inst.components.burnable:IsBurning() )
         and not (inst.components.freezable and inst.components.freezable:IsFrozen() )
         and not (inst.components.inventoryitem and inst.components.inventoryitem.owner)
+        and (homePos and distsq(homePos, myPos) < 5 * 5)
+        and inst.cansleep == true
 end
 
 local function WakeTest(inst)
-	return (inst.components.hunger and inst.components.hunger:GetPercent() <= 0.7)
-        or (inst.components.combat and inst.components.combat.target)
+    local homePos = inst.components.knownlocations:GetLocation("home")
+    local myPos = Vector3(inst.Transform:GetWorldPosition() )
+
+	return (inst.components.combat and inst.components.combat.target)
         or (inst.components.burnable and inst.components.burnable:IsBurning() )
         or (inst.components.freezable and inst.components.freezable:IsFrozen() )
         or (inst.components.inventoryitem and inst.components.inventoryitem.owner)
-
-end
-
-local function HungerChange(inst, data)
-	if data.newpercent >= 0.9 and data.oldpercent < 0.9 then
-		--You've drained a lot of hunger. Yum. Might aswell get off whoever you're draining from.
-		inst.components.combat:SetTarget(nil)
-
-		local owner = inst.components.inventoryitem.owner 
-		if owner and owner.components.inventory then
-			owner.components.inventory:DropItem(inst)
-		end
-	end
+        or (homePos and distsq(homePos, myPos) > 5*5)
+        or inst.cansleep == false
 end
 
 local function fn()
@@ -254,15 +228,9 @@ local function fn()
     inst:AddComponent("health")
     inst.components.health:SetMaxHealth(200)
     inst.components.health.canmurder = false
-    
-    inst:AddComponent("hunger")
-    inst.components.hunger:SetMax(200)
-    inst.components.hunger:SetRate(100/TUNING.TOTAL_DAY_TIME)
-    inst.components.hunger:SetKillRate(0)
 
     inst:AddComponent("lootdropper")
-    inst.components.lootdropper:SetLoot({"lightbulb", "lightbulb"})
-    inst.components.lootdropper:AddChanceLoot("slurper_pelt", 0.5)
+    inst.components.lootdropper:SetChanceLootTable('slurper')
 	-- inst:AddComponent("eater")
 	-- inst.components.eater:SetVegetarian()
 	-- inst.components.eater:SetOnEatFn(oneat)
@@ -289,9 +257,9 @@ local function fn()
 
     inst.HatTest = CanHatTarget
 
-    inst:DoTaskInTime(1*FRAMES, function() inst.components.knownlocations:RememberLocation("home", Vector3(inst.Transform:GetWorldPosition()) ) end)
+    inst.cansleep = true
 
-    inst:ListenForEvent("hungerdelta", HungerChange)
+    inst:DoTaskInTime(1*FRAMES, function() inst.components.knownlocations:RememberLocation("home", Vector3(inst.Transform:GetWorldPosition()) ) end)
 
 	return inst
 end

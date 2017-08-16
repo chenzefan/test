@@ -1,6 +1,7 @@
 local assets =
 {
 	Asset("ANIM", "anim/monkey_barrel.zip"),
+    Asset("SOUND", "sound/monkey.fsb"),
 }
 
 local prefabs =
@@ -10,7 +11,25 @@ local prefabs =
     "cave_banana"
 }
 
+SetSharedLootTable( 'monkey_barrel',
+{
+    {'poop',        1.0},
+    {'poop',        1.0},
+    {'cave_banana', 1.0},
+    {'cave_banana', 1.0},
+    {'trinket_4',   .01},
+})
+
+local function shake(inst)
+    local anim = ((math.random() > .5) and "move1") or "move2"
+    inst.AnimState:PlayAnimation(anim)
+    inst.AnimState:PushAnimation("idle")
+    inst.SoundEmitter:PlaySound("dontstarve/creatures/monkey/barrel_rattle")
+end
+
 local function onhammered(inst, worker)
+    inst.shake:Cancel()
+    inst.shake = nil
     inst.components.lootdropper:DropLoot()
     SpawnPrefab("collapse_small").Transform:SetPosition(inst.Transform:GetWorldPosition())
     inst.SoundEmitter:PlaySound("dontstarve/common/destroy_wood")
@@ -23,8 +42,11 @@ local function onhit(inst, worker)
     end
     inst.AnimState:PlayAnimation("hit")
     inst.AnimState:PushAnimation("idle", false)
-end
 
+    inst.shake:Cancel()
+    inst.shake = nil
+    inst.shake = inst:DoPeriodicTask(GetRandomWithVariance(10, 3), shake)
+end
 
 local function ReturnChildren(inst)
 	for k,child in pairs(inst.components.childspawner.childrenoutside) do
@@ -42,18 +64,10 @@ local function ReturnChildren(inst)
     end
 end
 
-local function OnKilled(inst)
-    inst:RemoveComponent("childspawner")
-    inst.AnimState:PlayAnimation("break")
-    inst.AnimState:PushAnimation("idle_broken")
-    inst.Physics:ClearCollisionMask()
-    inst:DoTaskInTime(0.66, function()
-        inst.components.lootdropper:DropLoot(Vector3(inst.Transform:GetWorldPosition()))
-    end)
-end
-
 local function OnIgniteFn(inst)
 	inst.AnimState:PlayAnimation("shake", true)
+    inst.shake:Cancel()
+    inst.shake = nil
     if inst.components.childspawner then
         inst.components.childspawner:ReleaseAllChildren()
         inst:RemoveComponent("childspawner")
@@ -88,18 +102,16 @@ local function fn()
 	inst.components.childspawner.childname = "monkey"
     inst.components.childspawner:StartSpawning()
     inst.components.childspawner.ongohome = ongohome
+    inst.components.childspawner:SetSpawnedFn(shake)
 
 	inst:AddComponent("lootdropper")
-	inst.components.lootdropper:SetLoot({"poop", "poop", "cave_banana", "cave_banana"})
-    inst.components.lootdropper:AddChanceLoot("trinket_4", 0.01)
+    inst.components.lootdropper:SetChanceLootTable('monkey_barrel')
 
     inst:AddComponent("workable")
     inst.components.workable:SetWorkAction(ACTIONS.HAMMER)
     inst.components.workable:SetWorkLeft(4)
     inst.components.workable:SetOnFinishCallback(onhammered)
     inst.components.workable:SetOnWorkCallback(onhit)
-
-    inst:ListenForEvent("death", OnKilled)
 
 	inst:ListenForEvent("warnquake", function()  --Monkeys all return on a quake start
         if inst.components.childspawner then
@@ -125,6 +137,7 @@ local function fn()
 
     MakeLargeBurnable(inst)
 
+    inst.shake = inst:DoPeriodicTask(GetRandomWithVariance(10, 3), shake )
 	return inst
 end
 

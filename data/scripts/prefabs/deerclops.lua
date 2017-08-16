@@ -2,30 +2,30 @@ local brain = require "brains/deerclopsbrain"
 
 local assets =
 {
-	Asset("ANIM", "anim/deerclops_basic.zip"),
-	Asset("ANIM", "anim/deerclops_actions.zip"),
-	Asset("ANIM", "anim/deerclops_build.zip"),
-	Asset("SOUND", "sound/deerclops.fsb"),
+    Asset("ANIM", "anim/deerclops_basic.zip"),
+    Asset("ANIM", "anim/deerclops_actions.zip"),
+    Asset("ANIM", "anim/deerclops_build.zip"),
+    Asset("SOUND", "sound/deerclops.fsb"),
 }
 
 local prefabs =
 {
-	"meat",
-	"deerclops_eyeball",
+    "meat",
+    "deerclops_eyeball",
 }
 
 local TARGET_DIST = 30
 
 
 local function CalcSanityAura(inst, observer)
-	
-	if inst.components.combat.target then
-		return -TUNING.SANITYAURA_HUGE
-	else
-		return -TUNING.SANITYAURA_LARGE
-	end
-	
-	return 0
+    
+    if inst.components.combat.target then
+        return -TUNING.SANITYAURA_HUGE
+    else
+        return -TUNING.SANITYAURA_LARGE
+    end
+    
+    return 0
 end
 
 local function RetargetFn(inst)
@@ -42,8 +42,16 @@ local function KeepTargetFn(inst, target)
     return inst.components.combat:CanTarget(target)
 end
 
-local function AfterWorking(inst)
-    inst.structuresDestroyed = inst.structuresDestroyed + 1
+local function AfterWorking(inst, data)
+    if data.target then
+        local recipe = GetRecipe(data.target.prefab)
+        if recipe then
+            inst.structuresDestroyed = inst.structuresDestroyed + 1
+            if inst.structuresDestroyed >= 2 then
+                inst.components.knownlocations:ForgetLocation("targetbase")
+            end
+        end
+    end
 end
 
 local function ShouldSleep(inst)
@@ -84,28 +92,45 @@ local function OnAttacked(inst, data)
     inst.components.combat:SetTarget(data.attacker)
 end
 
+local function oncollide(inst, other)
+    if not other:HasTag("tree") then return end
+    
+    local v1 = Vector3(inst.Physics:GetVelocity())
+    if v1:LengthSq() < 1 then return end
+
+    inst:DoTaskInTime(2*FRAMES, function()
+        if other and other.components.workable and other.components.workable.workleft > 0 then
+            SpawnPrefab("collapse_small").Transform:SetPosition(other:GetPosition():Get())
+            other.components.workable:Destroy(inst)
+        end
+    end)
+
+end
 
 local loot = {"meat", "meat", "meat", "meat", "meat", "meat", "meat", "meat", "deerclops_eyeball"}
 
 local function fn(Sim)
     
-	local inst = CreateEntity()
-	local trans = inst.entity:AddTransform()
-	local anim = inst.entity:AddAnimState()
-	local sound = inst.entity:AddSoundEmitter()
-	local shadow = inst.entity:AddDynamicShadow()
+    local inst = CreateEntity()
+    local trans = inst.entity:AddTransform()
+    local anim = inst.entity:AddAnimState()
+    local sound = inst.entity:AddSoundEmitter()
+    local shadow = inst.entity:AddDynamicShadow()
     local s  = 1.65
     inst.Transform:SetScale(s,s,s)
-	shadow:SetSize( 6, 3.5 )
+    shadow:SetSize( 6, 3.5 )
     inst.Transform:SetFourFaced()
     
     inst.structuresDestroyed = 0
     inst.shouldGoAway = false
-	
-	MakeCharacterPhysics(inst, 1000, .5)
+    
+    MakeCharacterPhysics(inst, 1000, .5)
+    inst.Physics:SetCollisionCallback(oncollide)
 
-	inst:AddTag("epic")
+
+    inst:AddTag("epic")
     inst:AddTag("monster")
+    inst:AddTag("hostile")
     inst:AddTag("deerclops")
     inst:AddTag("scarytoprey")
     inst:AddTag("largecreature")
@@ -162,14 +187,14 @@ local function fn(Sim)
     ------------------------------------------
 
     inst:AddComponent("inspectable")
-	inst.components.inspectable:RecordViews()
+    inst.components.inspectable:RecordViews()
     ------------------------------------------
     inst:AddComponent("knownlocations")
     inst:SetBrain(brain)
     
     inst:ListenForEvent("working", AfterWorking)
-	inst:ListenForEvent("entitysleep", OnEntitySleep)
-	inst:ListenForEvent("seasonChange", function() OnSeasonChange(inst) end, GetWorld() )
+    inst:ListenForEvent("entitysleep", OnEntitySleep)
+    inst:ListenForEvent("seasonChange", function() OnSeasonChange(inst) end, GetWorld() )
     inst:ListenForEvent("attacked", OnAttacked)
 
     inst.OnSave = OnSave

@@ -50,9 +50,13 @@ function TileBG:SetNumTiles(numtiles)
         self.bgs[k] = self:AddChild(Image(self.atlas, self.tileim))
     end
 
+    local sep_w, sep_h = 0, 0
     self.seps = {}
-    for k = 1,numtiles-1 do
-        self.seps[k] = self:AddChild(Image(self.atlas, self.sepim))
+    if self.sepim then
+        for k = 1,numtiles-1 do
+            self.seps[k] = self:AddChild(Image(self.atlas, self.sepim))
+        end
+        sep_w, sep_h = self.seps[1]:GetSize()
     end
     
     local end_w, end_h = 0, 0
@@ -62,7 +66,7 @@ function TileBG:SetNumTiles(numtiles)
     end
     
     local tile_w, tile_h = self.bgs[1]:GetSize()
-    local sep_w, sep_h = self.seps[1]:GetSize()
+    
 
     if self.horizontal then
         self.w = end_w*2 + tile_w*numtiles + sep_w*(numtiles-1)
@@ -104,29 +108,33 @@ function TileBG:SetNumTiles(numtiles)
             self.slotpos[k] = Vector3(x,0,0)
         end
 
-        for k = 1, numtiles-1 do
-            local x = -self.w/2 + end_w + tile_w*k + sep_w/2
-            if k > 1 then
-                x = x + (k-1)*sep_w
+        if self.sepim then
+            for k = 1, numtiles-1 do
+                local x = -self.w/2 + end_w + tile_w*k + sep_w/2
+                if k > 1 then
+                    x = x + (k-1)*sep_w
+                end
+                self.seps[k]:SetPosition(x,0,0)
             end
-            self.seps[k]:SetPosition(x,0,0)
         end
     else
         for k = 1, numtiles do
-            local y = -self.h/2 + end_h + tile_h/2 + tile_h*(k-1)
+            local y = self.h/2 - end_h - tile_h/2 - tile_h*(k-1)
             if k > 1 then
-                y = y + (k-1)*sep_h
+                y = y - (k-1)*sep_h
             end
             self.bgs[k]:SetPosition(0,y,0)
             self.slotpos[k] = Vector3(0,y,0)
         end
 
-        for k = 1, numtiles-1 do
-            local y = -self.h/2 + end_h + tile_h*k + sep_h/2
-            if k > 1 then
-                y = y + (k-1)*sep_h
+        if self.sepim then
+            for k = 1, numtiles-1 do
+                local y = -self.h/2 + end_h + tile_h*k + sep_h/2
+                if k > 1 then
+                    y = y + (k-1)*sep_h
+                end
+                self.seps[k]:SetPosition(0,y,0)
             end
-            self.seps[k]:SetPosition(0,y,0)
         end
     end
     

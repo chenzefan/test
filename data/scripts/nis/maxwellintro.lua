@@ -12,7 +12,7 @@ local maxwell_intro_nis =
         dat.maxwell = SpawnPrefab("maxwell")
         local pt = Vector3(dat.wilson.Transform:GetWorldPosition()) + TheCamera:GetRightVec()*4
         dat.maxwell.Transform:SetPosition(pt.x,pt.y,pt.z)
-        dat.maxwell:FacePoint(Vector3(dat.wilson.Transform:GetWorldPosition()))
+        dat.maxwell:FacePoint(dat.wilson.Transform:GetWorldPosition())
 
         dat.maxwell:Hide()
         --zoom in

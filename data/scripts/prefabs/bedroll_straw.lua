@@ -16,8 +16,10 @@ local function onsleep(inst, sleeper)
 		br:Remove()
 	end
 	
+	GetPlayer().HUD:Hide()
 	TheFrontEnd:Fade(false,1)
 	inst:DoTaskInTime(1.2, function() 
+		GetPlayer().HUD:Show()
 		TheFrontEnd:Fade(true,1) 
 		
 		sleeper.sg:GoToState("wakeup")	
@@ -29,8 +31,8 @@ local function onsleep(inst, sleeper)
 			sleeper.components.sanity:DoDelta(TUNING.SANITY_LARGE, false)
 		end
 		
-		if sleeper.components.tempature then
-			sleeper.components.tempature:SetTemperature(15)
+		if sleeper.components.temperature then
+			sleeper.components.temperature:SetTemperature(15)
 		end
 		
 		
