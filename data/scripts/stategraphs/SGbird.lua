@@ -34,6 +34,16 @@ local events=
     EventHandler("trapped", function(inst) inst.sg:GoToState("trapped") end),
 }
 
+
+local function DropNote(inst)
+    local note =  TheSim:FindFirstEntityWithTag("note") 
+    
+    if not note then
+        local note = SpawnPrefab("note")
+        note.Transform:SetPosition(inst:GetPosition():Get())
+    end
+end
+
 local states=
 {
     State{
@@ -224,7 +234,11 @@ local states=
             if inst.components.periodicspawner and math.random() <= TUNING.CROW_LEAVINGS_CHANCE then
                 inst.components.periodicspawner:TrySpawn()
             end
-           
+
+            if math.random() <= TUNING.CROW_LEAVINGS_CHANCE then
+                DropNote(inst)
+            end
+            
             if inst.sg.statemem.vert then
                 inst.AnimState:PlayAnimation("takeoff_vertical_pre")
             else

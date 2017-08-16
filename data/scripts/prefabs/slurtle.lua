@@ -171,8 +171,6 @@ local function makeslurtle()
     inst.components.combat:SetDefaultDamage(TUNING.SLURTLE_DAMAGE)
     inst.components.combat:SetAttackPeriod(TUNING.SLURTLE_ATTACK_PERIOD)
 
-    inst.components.lootdropper:SetChanceLootTable('slurtle')
-
     inst:ListenForEvent("attacked", Slurtle_OnAttacked)
 
     return inst
@@ -193,8 +191,6 @@ local function makesnurtle()
     inst.components.locomotor.walkspeed = TUNING.SNURTLE_WALK_SPEED
     inst.components.explosive.explosivedamage = TUNING.SNURTLE_EXPLODE_DAMAGE
     inst.components.health:SetMaxHealth(TUNING.SNURTLE_HEALTH)
-
-    inst.components.lootdropper:SetChanceLootTable('snurtle')
 
     inst:ListenForEvent("attacked", Snurtle_OnAttacked)
 

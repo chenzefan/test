@@ -303,6 +303,8 @@ local function MakePlayerCharacter(name, customprefabs, customassets, customfn, 
             customfn(inst)
         end
 
+        inst:AddComponent("notereader")
+        
         return inst
     end
     

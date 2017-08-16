@@ -292,9 +292,10 @@ local states=
         tags = {"busy"},
 
         onenter = function(inst)
+
+
             inst.Physics:Stop()
             inst.AnimState:PlayAnimation("spin_pre")
-            inst.components.burnable:Extinguish()
         end,
 
         events = 
@@ -322,8 +323,7 @@ local states=
 
             local fx = SpawnPrefab("mossling_spin_fx")
             fx.entity:SetParent(inst.entity)
-            fx.Transform:SetPosition(0,0.1,0)
-            inst.components.burnable:Extinguish()		
+            fx.Transform:SetPosition(0,0.1,0)		
         end,
 
         onupdate = function(inst)
