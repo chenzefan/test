@@ -1,10 +1,10 @@
 Starting up
-Don't Starve: 71214
-Build Date: 2013-01-08_14-07-02
+Don't Starve: 71493
+Build Date: 2013-01-14_16-16-11
+THREAD - started 'GAClient' (3052)
+HttpClient::ClientThread::Main()
 cGame::InitializeOnMainThread
 WindowManager::Initialize
-THREAD - started 'GAClient' (12156)
-HttpClient::ClientThread::Main()
 WM_SIZE
 WindowManager::SetFullscreen(0, 800, 600, 60)
 SystemEvent::Resize {800, 600}
@@ -18,49 +18,6 @@ c:\jenkins\workspace\jobs\DontStarve_Release_Make_Steam_Package\workspace\data\s
 
 LOADING LUA SUCCESS
 Reset() returning
-SimLuaProxy::QueryServer()
-/anon/new - POST/{"character":"wilson","name":"Test name","size":"small"}
- SAVE SUCCESS: latest
-SendProfileStats::{"stats":{"time_played":1366}}
-c:\jenkins\workspace\jobs\DontStarve_Release_Make_Steam_Package\workspace\data\scripts\main.lua(514,1)	Saved	latest	nil
-ReleaseAll
-ReleaseAll Finished
-cGame::StartPlaying
-LOADING LUA
-DoLuaFile data/scripts/main.lua
-DoLuaFile loading buffer data/scripts/main.lua
-c:\jenkins\workspace\jobs\DontStarve_Release_Make_Steam_Package\workspace\data\scripts\main.lua(105,1)	running main.lua
-
-LOADING LUA SUCCESS
-Reset() returning
-ORPHANED UNKNOWN RESOURCES:
-data/fonts/belisaplumilla100.zip - 2
-data/fonts/belisaplumilla50.zip - 2
-data/fonts/stint-ucr20.zip - 2
-data/fonts/buttonfont.zip - 2
-data/fonts/stint-ucr50.zip - 2
-data/fonts/opensans50.zip - 2
-ORPHANED UNKNOWN RESOURCES:
-data/shaders/blurv.ksh - 1
-data/shaders/postprocessbloom.ksh - 1
-data/shaders/blurh.ksh - 1
-data/shaders/minimap.ksh - 1
-data/shaders/postprocess.ksh - 1
-Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
-Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
-Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
-Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
-Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
-Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
-Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
-Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
-Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
-Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
-Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
-Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
-Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
-Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
-Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
 ORPHANED UNKNOWN RESOURCES:
 data/fonts/belisaplumilla100.zip - 1
 data/fonts/belisaplumilla50.zip - 1
@@ -68,3 +25,17 @@ data/fonts/stint-ucr20.zip - 1
 data/fonts/buttonfont.zip - 1
 data/fonts/stint-ucr50.zip - 1
 data/fonts/opensans50.zip - 1
+ORPHANED UNKNOWN RESOURCES:
+data/shaders/blurv.ksh - 1
+data/shaders/postprocessbloom.ksh - 1
+data/shaders/blurh.ksh - 1
+data/shaders/postprocess.ksh - 1
+ORPHANED UNKNOWN RESOURCES:
+data/fonts/belisaplumilla100.zip - 1
+data/fonts/belisaplumilla50.zip - 1
+data/fonts/stint-ucr20.zip - 1
+data/fonts/buttonfont.zip - 1
+data/fonts/stint-ucr50.zip - 1
+data/fonts/opensans50.zip - 1
+HttpClient::ClientThread::Main() complete
+Shutting down
