@@ -65,7 +65,7 @@ local states=
         onenter = function(inst, cb)
             inst.Physics:Stop()
             inst.AnimState:PlayAnimation("hit")
-            inst.SoundEmitter:PlaySound("dontstarve/creatures/spiderqueen/hit")
+            inst.SoundEmitter:PlaySound("dontstarve/creatures/spiderqueen/hurt")
         end,
 
         events=

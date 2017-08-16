@@ -31,7 +31,7 @@ local function onload(inst, data, newents)
 
 		if data.setepitaph then	
 			--this handles custom epitaphs set in the tile editor		
-	    	inst.components.inspectable:SetDescription("It says '"..data.setepitaph.."'.")
+	    	inst.components.inspectable:SetDescription("'"..data.setepitaph.."'")
 	    	inst.setepitaph = data.setepitaph
 		end
 	end

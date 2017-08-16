@@ -15,6 +15,7 @@ Task = Class(function(self, id, data)
 	end
 	
 	self.entrance_room = data.entrance_room
+	self.entrance_room_chance = data.entrance_room_chance
 	self.room_choices = data.room_choices
 	self.room_choices_special = data.room_choices_special
 	self.room_bg = data.room_bg

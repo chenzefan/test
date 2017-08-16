@@ -93,7 +93,13 @@ local turfs =
 	{name="dirt",			anim="dirt",		tile=GROUND.DIRT},
 	{name="woodfloor",		anim="woodfloor",	tile=GROUND.WOODFLOOR},
 	{name="carpetfloor",	anim="carpet",		tile=GROUND.CARPET},
-	{name="checkerfloor",		anim="checker",		tile=GROUND.CHECKER},
+	{name="checkerfloor",	anim="checker",		tile=GROUND.CHECKER},
+
+	{name="cave",			anim="cave",		tile=GROUND.CAVE},
+	{name="fungus",			anim="fungus",		tile=GROUND.FUNGUS},
+	{name="sinkhole",		anim="sinkhole",	tile=GROUND.SINKHOLE},
+	{name="underrock",		anim="rock",		tile=GROUND.UNDERROCK},
+	{name="mud",			anim="mud",			tile=GROUND.MUD},
 }
 
 local prefabs= {}

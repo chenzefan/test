@@ -40,7 +40,7 @@ end
 local function UpdateImages(inst, range)
 	inst.currentTempRange = range
 	inst.AnimState:PlayAnimation(tostring(range), true)
-	inst.components.inventoryitem:ChangeImageName(inst, "heat_rock"..tostring(range))
+	inst.components.inventoryitem:ChangeImageName("heat_rock"..tostring(range))
 	if range == 5 then
 		inst.AnimState:SetBloomEffectHandle( "data/shaders/anim.ksh" )
 		inst.Light:Enable(true)

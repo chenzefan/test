@@ -264,6 +264,21 @@ local states=
             end ),
         },        
     },
+    State{
+        name = "hit",
+        tags = {"busy"},
+        
+        onenter = function(inst)
+            inst.SoundEmitter:PlaySound("dontstarve/creatures/werepig/hurt")
+            inst.AnimState:PlayAnimation("hit")
+            inst.Physics:Stop()            
+        end,
+        
+        events=
+        {
+            EventHandler("animover", function(inst) inst.sg:GoToState("idle") end ),
+        },        
+    },    
 }
 
 CommonStates.AddSleepStates(states,
@@ -274,7 +289,6 @@ CommonStates.AddSleepStates(states,
 	},
 })
 
-CommonStates.AddSimpleState(states,"hit", "hit", {"busy"})
 CommonStates.AddFrozenStates(states)
 CommonStates.AddSimpleActionState(states, "eat", "eat", 20*FRAMES, {"busy"})
     

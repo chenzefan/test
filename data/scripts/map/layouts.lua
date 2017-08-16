@@ -121,9 +121,16 @@ local ExampleLayout =
 
 
 		["ResurrectionStone"] = StaticLayout.Get("map/static_layouts/resurrectionstone"),
-		-- Need to have a separate import of the same object so that we can reference it twice
-		-- from levels.lua -> set_pieces. This needs to be fixed.
-		["ResurrectionStone_2"] = StaticLayout.Get("map/static_layouts/resurrectionstone"),
+		["ResurrectionStoneLit"] = StaticLayout.Get("map/static_layouts/resurrectionstonelit"),
+		["ResurrectionStoneWinter"] = StaticLayout.Get("map/static_layouts/resurrectionstone_winter", {
+				areas = {
+					item_area = function() return nil end,							
+					resource_area = function() 
+							local choices = {{"cutgrass","cutgrass","twigs", "twigs"}, {"cutgrass","cutgrass","cutgrass","log", "log"}}
+							return choices[math.random(1,#choices)] 
+						end,
+					},
+			}),
 
 		["WesUnlock"] = StaticLayout.Get("map/static_layouts/wes_unlock", {
 							fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN,
@@ -223,6 +230,9 @@ local ExampleLayout =
 -- Start Nodes 
 --------------------------------------------------------------------------------
 		["DefaultStart"] = StaticLayout.Get("map/static_layouts/default_start"),
+		["CaveStart"] = StaticLayout.Get("map/static_layouts/cave_start"),
+		["CaveTestStart"] = StaticLayout.Get("map/static_layouts/cave_test_start"),
+		["DefaultPlusStart"] = StaticLayout.Get("map/static_layouts/default_plus_start"),
 		["NightmareStart"] = StaticLayout.Get("map/static_layouts/nightmare"),
 		["BargainStart"] = StaticLayout.Get("map/static_layouts/bargain_start"),
 		["ThisMeansWarStart"] = StaticLayout.Get("map/static_layouts/thismeanswar_start"),
@@ -340,12 +350,52 @@ local ExampleLayout =
 							scale = 4.0,
 						},
 		["InsaneFlint"] = StaticLayout.Get("map/static_layouts/insane_flint"),
+		["PigGuardsEasy"] = StaticLayout.Get("map/static_layouts/pigguards_easy", {
+							start_mask = PLACE_MASK.NORMAL,
+							fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
+							layout_position = LAYOUT_POSITION.CENTER
+						}),
 		["PigGuards"] = StaticLayout.Get("map/static_layouts/pigguards", {
 							start_mask = PLACE_MASK.NORMAL,
 							fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
 							layout_position = LAYOUT_POSITION.CENTER
 						}),
+		["PigGuardsB"] = StaticLayout.Get("map/static_layouts/pigguards_b", {
+							start_mask = PLACE_MASK.NORMAL,
+							fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
+							layout_position = LAYOUT_POSITION.CENTER
+						}),
+		["TallbirdBlockerSmall"] = StaticLayout.Get("map/static_layouts/tallbird_blocker_small", {
+							start_mask = PLACE_MASK.NORMAL,
+							fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
+							layout_position = LAYOUT_POSITION.CENTER,
+						}),
 		["TallbirdBlocker"] = StaticLayout.Get("map/static_layouts/tallbird_blocker", {
+							start_mask = PLACE_MASK.NORMAL,
+							fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
+							layout_position = LAYOUT_POSITION.CENTER,
+						}),
+		["TallbirdBlockerB"] = StaticLayout.Get("map/static_layouts/tallbird_blocker_b", {
+							start_mask = PLACE_MASK.NORMAL,
+							fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
+							layout_position = LAYOUT_POSITION.CENTER,
+						}),
+		["TentacleBlockerSmall"] = StaticLayout.Get("map/static_layouts/tentacles_blocker_small", {
+							start_mask = PLACE_MASK.NORMAL,
+							fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
+							layout_position = LAYOUT_POSITION.CENTER,
+						}),
+		["TentacleBlocker"] = StaticLayout.Get("map/static_layouts/tentacles_blocker", {
+							start_mask = PLACE_MASK.NORMAL,
+							fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
+							layout_position = LAYOUT_POSITION.CENTER,
+						}),
+		["SpiderBlockerEasy"] = StaticLayout.Get("map/static_layouts/spider_blocker_easy", {
+							start_mask = PLACE_MASK.NORMAL,
+							fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
+							layout_position = LAYOUT_POSITION.CENTER,
+						}),
+		["SpiderBlockerEasyB"] = StaticLayout.Get("map/static_layouts/spider_blocker_easy_b", {
 							start_mask = PLACE_MASK.NORMAL,
 							fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
 							layout_position = LAYOUT_POSITION.CENTER,
@@ -355,7 +405,30 @@ local ExampleLayout =
 							fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
 							layout_position = LAYOUT_POSITION.CENTER,
 						}),
+		["SpiderBlockerB"] = StaticLayout.Get("map/static_layouts/spider_blocker_b", {
+							start_mask = PLACE_MASK.NORMAL,
+							fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
+							layout_position = LAYOUT_POSITION.CENTER,
+						}),
+		["SpiderBlockerC"] = StaticLayout.Get("map/static_layouts/spider_blocker_c", {
+							start_mask = PLACE_MASK.NORMAL,
+							fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
+							layout_position = LAYOUT_POSITION.CENTER,
+						}),
 		["ChessBlocker"] = StaticLayout.Get("map/static_layouts/chess_blocker", {
+							start_mask = PLACE_MASK.NORMAL,
+							fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
+							layout_position = LAYOUT_POSITION.CENTER,
+						}),
+		["ChessBlockerB"] = StaticLayout.Get("map/static_layouts/chess_blocker_b", {
+							start_mask = PLACE_MASK.NORMAL,
+							fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
+							layout_position = LAYOUT_POSITION.CENTER,
+							areas={
+								flower_area = ExtendedArray({}, "flower_evil", 15),
+							},
+						}),
+		["ChessBlockerC"] = StaticLayout.Get("map/static_layouts/chess_blocker_c", {
 							start_mask = PLACE_MASK.NORMAL,
 							fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
 							layout_position = LAYOUT_POSITION.CENTER,
@@ -363,16 +436,25 @@ local ExampleLayout =
 				
 		["MaxwellHome"] = StaticLayout.Get("map/static_layouts/maxwellhome", {
 							areas = 
-							{
-								sav_area = function() return PickSome(2, {"grass","poop"}) end,							
-								rock_area = function() return PickSome(3, {"rock1", "rock2", "rocks", "flint"}) end,
-								forest_area = function() return PickSome(3, {"evergreen_sparse_normal", "evergreen_sparse_short", "evergreen_stump"}) end,
-								swamp_area = function() return PickSome(2, {"marsh_tree", "marsh_bush", "reeds"}) end,
+							{								
+								barren_area = function(area) return PickSomeWithDups( 0.5 * area
+									, {"marsh_tree", "marsh_bush", "rock1", "rock2", "evergreen_burnt", "evergreen_stump"}) end,
+								gold_area = function() return PickSomeWithDups(math.random(15,20), {"goldnugget"}) end,
+								livinglog_area = function() return PickSomeWithDups(math.random(5, 10), {"livinglog"}) end,
+								nightmarefuel_area = function() return PickSomeWithDups(math.random(5, 10), {"nightmarefuel"}) end,
+								deadlyfeast_area = function() return PickSomeWithDups(math.random(25,30), {"monstermeat", "green_cap", "red_cap", "spoiled_food", "meat"}) end,
+								marblegarden_area = function(area) return PickSomeWithDups(1.5*area, {"marbletree", "flower_evil"}) end,
 							},
 							start_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
 							fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
 							layout_position = LAYOUT_POSITION.CENTER,
 							disable_transform = true
+						}),
+
+		["PermaWinterNight"] = StaticLayout.Get("map/static_layouts/nightmare_begin_blocker", {
+							start_mask = PLACE_MASK.NORMAL,
+							fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
+							layout_position = LAYOUT_POSITION.CENTER,
 						}),
 				
 --------------------------------------------------------------------------------
@@ -386,6 +468,11 @@ local ExampleLayout =
 		["InsaneWormhole"] = StaticLayout.Get("map/static_layouts/insanity_wormhole_1"),
 		["SaneWormhole"] = StaticLayout.Get("map/static_layouts/sanity_wormhole_1"),
 		["SaneWormholeOneShot"] = StaticLayout.Get("map/static_layouts/sanity_wormhole_oneshot"),
+		["WormholeOneShot"] = StaticLayout.Get("map/static_layouts/wormhole_oneshot", {
+			areas= {
+				bones_area = {"houndbone"},
+			},
+		}),
 		
 --------------------------------------------------------------------------------
 -- Eyebone 
@@ -422,6 +509,7 @@ local ExampleLayout =
 		["TeleportatoPotatoLayout"] = StaticLayout.Get("map/static_layouts/teleportato_potato_layout"),
 		["TeleportatoCrankLayout"] = StaticLayout.Get("map/static_layouts/teleportato_crank_layout"),
 		["TeleportatoBaseLayout"] = StaticLayout.Get("map/static_layouts/teleportato_base_layout"),
+		["TeleportatoBaseAdventureLayout"] = StaticLayout.Get("map/static_layouts/teleportato_base_layout_adv"),
 		["AdventurePortalLayout"] = StaticLayout.Get("map/static_layouts/adventure_portal_layout"),
 
 --------------------------------------------------------------------------------

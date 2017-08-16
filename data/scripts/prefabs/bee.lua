@@ -56,7 +56,7 @@ local function OnWorked(inst, worker)
 end
 
 local function OnDropped(inst)
-    inst.sg:GoToState("idle")
+    inst.sg:GoToState("catchbreath")
     if inst.components.workable then
         inst.components.workable:SetWorkLeft(1)
     end
@@ -81,6 +81,7 @@ end
 
 local function OnPickedUp(inst)
     inst.SoundEmitter:KillSound("buzz")
+    inst.sg:GoToState("idle")
 end
 
 local function KillerRetarget(inst)
@@ -127,6 +128,7 @@ local function commonfn()
     
 	inst:AddComponent("inventoryitem")
 	inst:AddComponent("stackable")
+	inst.components.inventoryitem.nobounce = true
 	inst.components.inventoryitem:SetOnDroppedFn(OnDropped)
 	inst.components.inventoryitem:SetOnPutInInventoryFn(OnPickedUp)
 	inst.components.inventoryitem.canbepickedup = false

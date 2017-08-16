@@ -9,7 +9,6 @@ local MAX_CHASEAWAY_DIST = 32
 local START_FACE_DIST = 6
 local KEEP_FACE_DIST = 8
 local WARN_BEFORE_ATTACK_TIME = 2
-local LAY_EGG_TIME = 35*TUNING.SEG_TIME
 
 
 local function GoHomeAction(inst)
@@ -28,7 +27,8 @@ end
 
 local function LayEggAction(inst)
     if inst.components.homeseeker and 
-       inst.components.homeseeker:HasHome() then 
+       inst.components.homeseeker:HasHome() and
+	   inst.components.homeseeker.home.readytolay then 
         return BufferedAction(inst, inst.components.homeseeker.home, ACTIONS.LAYEGG, nil, nil, nil, 0.2)
     end
 end
@@ -41,7 +41,7 @@ end
 
 local function GetNearbyThreatFn(inst)
     return FindEntity(inst, START_FACE_DIST, function(guy)
-        return (guy:HasTag("character") or guy:HasTag("animal") ) and not guy:HasTag("tallbird")
+        return (guy:HasTag("character") or guy:HasTag("animal") ) and not guy:HasTag("tallbird") and not guy:HasTag("notarget")
     end)
 end
 
@@ -70,16 +70,7 @@ function TallbirdBrain:OnStart()
             WhileNode(function() return clock and not clock:IsDay() end, "IsNight",
 				DoAction(self.inst, function() return GoHomeAction(self.inst) end, "GoHome", true)
 			),
-            EventNode(self.inst, "gohome", 
-			    DoAction(self.inst, function() return GoHomeAction(self.inst) end, "GoHome", true) ),
-			SequenceNode{
-				ConditionNode(function() return IsNestEmpty(self.inst) end, "NestEmpty"),
-				ParallelNodeAny{
-					WaitNode(LAY_EGG_TIME),
-					Wander(self.inst, function() return self.inst.components.knownlocations:GetLocation("home") end, MAX_CHASEAWAY_DIST),
-				},
-				DoAction(self.inst, function() return LayEggAction(self.inst) end, "LayEgg", true),
-			},
+			DoAction(self.inst, function() return LayEggAction(self.inst) end, "LayEgg", true),
 			Wander(self.inst, function() return self.inst.components.knownlocations:GetLocation("home") end, MAX_WANDER_DIST),
       },1)
     

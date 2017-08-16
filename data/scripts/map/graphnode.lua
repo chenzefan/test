@@ -126,8 +126,8 @@ function Node:ConvertGround(spawnFn, entitiesOut, width, height, world_gen_choic
 	-- Get the list of special items for this node
 	local add_fn = {fn=function(...) self:AddEntity(...) end,args={entitiesOut=entitiesOut, width=width, height=height, rand_offset = false, debug_prefab_list=prefab_list}}
 
-	if self.data.terrain_contents.countspecialprefabs ~= nil then
-		for k,count in pairs(self.data.terrain_contents.countspecialprefabs) do
+	if self.data.terrain_contents.countstaticlayouts ~= nil then
+		for k,count in pairs(self.data.terrain_contents.countstaticlayouts) do
 			if type(count) == "function" then
 				count = count()
 			end
@@ -138,12 +138,12 @@ function Node:ConvertGround(spawnFn, entitiesOut, width, height, world_gen_choic
 		end
 	end
 	
-
 	if self.data.terrain_contents_extra and self.data.terrain_contents_extra.static_layouts then
 		for i,layout in pairs(self.data.terrain_contents_extra.static_layouts) do
 			obj_layout.Convert(self.id, layout, add_fn)	
 		end
 	end
+
 end
 
 function Node:PopulateVoronoi(spawnFn, entitiesOut, width, height, world_gen_choices)
@@ -198,7 +198,7 @@ function Node:PopulateVoronoi(spawnFn, entitiesOut, width, height, world_gen_cho
 				current_pos_idx = current_pos_idx + 1
 			end
 			if current_pos_idx > #points_x then
-				print(self.id.." Didnt get enough points for all counted prefabs, bailed at "..#current_pos_idx )
+				print(self.id.." Didnt get enough points for all counted prefabs, bailed at "..current_pos_idx )
 				return
 			end
 		end
@@ -216,7 +216,7 @@ function Node:PopulateVoronoi(spawnFn, entitiesOut, width, height, world_gen_cho
 			self:AddEntity(prefabname, points_x, points_y, current_pos_idx, entitiesOut, width, height, prefab_list, data)
 			current_pos_idx = current_pos_idx + 1
 			if current_pos_idx > #points_x then
-				print(self.id.." Didnt get enough points for all extra contents, bailed at "..#current_pos_idx )
+				print(self.id.." Didnt get enough points for all extra contents, bailed at "..current_pos_idx )
 				return
 			end
 		end

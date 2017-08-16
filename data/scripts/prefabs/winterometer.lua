@@ -1,23 +1,10 @@
 require "prefabutil"
 
-local function onhammered(inst, worker)
-	inst.components.lootdropper:DropLoot()
-	SpawnPrefab("collapse_small").Transform:SetPosition(inst.Transform:GetWorldPosition())
-	inst.SoundEmitter:PlaySound("dontstarve/common/destroy_wood")
-	inst:Remove()
-end
-
-local function onhit(inst, worker)
-end
-
-
-local assets = 
-{
-	Asset("ANIM", "data/anim/winter_meter.zip"),
-	Asset("IMAGE", "data/inventoryimages/winterometer.tex"),
-}
 local function CheckTemp(inst)
-	local temp = GetSeasonManager():GetCurrentTemperature()
+    if not inst.task then
+	    inst.task = inst:DoPeriodicTask(1, CheckTemp)
+	end
+	local temp = GetSeasonManager() and GetSeasonManager():GetCurrentTemperature() or 30
 	local high_temp = 35
 	local low_temp = 0
 	
@@ -26,6 +13,36 @@ local function CheckTemp(inst)
 	inst.AnimState:SetPercent("meter", 1-percent)
 end
 
+local function onhammered(inst, worker)
+	inst.components.lootdropper:DropLoot()
+	SpawnPrefab("collapse_small").Transform:SetPosition(inst.Transform:GetWorldPosition())
+	inst.SoundEmitter:PlaySound("dontstarve/common/destroy_wood")
+	inst:Remove()
+end
+
+local function onhit(inst, worker)
+    if inst.task then
+        inst.task:Cancel()
+        inst.task = nil
+    end
+	inst.AnimState:PlayAnimation("hit")
+	--the global animover handler will restart the check task
+end
+
+local function onbuilt(inst)
+    if inst.task then
+        inst.task:Cancel()
+        inst.task = nil
+    end
+	inst.AnimState:PlayAnimation("place")
+	--the global animover handler will restart the check task
+end
+
+local assets = 
+{
+	Asset("ANIM", "data/anim/winter_meter.zip"),
+	Asset("IMAGE", "data/inventoryimages/winterometer.tex"),
+}
 local function fn(Sim)
 	local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
@@ -51,8 +68,10 @@ local function fn(Sim)
 	inst.components.workable:SetOnWorkCallback(onhit)		
 	MakeSnowCovered(inst, .01)
 	
-	inst:DoPeriodicTask(1, CheckTemp, .1)
-	--CheckTemp(inst)
+	CheckTemp(inst)
+
+	inst:ListenForEvent("onbuilt", onbuilt)
+	inst:ListenForEvent("animover", CheckTemp)
 	
 	return inst
 end

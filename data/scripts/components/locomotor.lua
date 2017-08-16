@@ -101,11 +101,6 @@ end
 function LocoMotor:GetSpeedMultiplier()
 	local inv_mult = 1.0
 	if self.inst.components.inventory then
-	
-		local active_item = self.inst.components.inventory:GetActiveItem()
-		if active_item and active_item.components.equippable then
-			inv_mult = inv_mult * active_item.components.equippable:GetWalkSpeedMult()
-		end
 		for k,v in pairs (self.inst.components.inventory.equipslots) do
 			if v.components.equippable then
 				inv_mult = inv_mult * v.components.equippable:GetWalkSpeedMult()
@@ -558,8 +553,8 @@ function LocoMotor:OnUpdate(dt)
 			local destpos = self.dest:GetPoint()
 			local mypos = Point(self.inst.Transform:GetWorldPosition())
 			local dsq = distsq(destpos, mypos)
-			if dsq <= .5 then
-				speed_mult = math.max(.25, math.sqrt(dsq))
+			if dsq <= .25 then
+				speed_mult = math.max(.5, math.sqrt(dsq))
 			end
 		end
 		

@@ -22,4 +22,4 @@ local fn = function(inst)
 end
 
 
-return MakePlayerCharacter("willow", "data/fonts/opensans50.zip", prefabs, assets, fn)
+return MakePlayerCharacter("willow", prefabs, assets, fn)

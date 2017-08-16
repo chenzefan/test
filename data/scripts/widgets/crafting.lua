@@ -82,6 +82,8 @@ Crafting = Class(Widget, function(self, crafttabs, owner)
     self.upbutton:SetScale(Vector3(1, -1, 1))
     self.upbutton:SetPosition(0, self.bg.length/2 + but_h/2 - slot_h/2,0)
     self.upbutton:SetOnClick(function() self:ScrollDown() end)
+    self.upbutton:SetDisabledImage("data/images/craft_end_normal_disabled.tex")
+    self.downbutton:SetDisabledImage("data/images/craft_end_normal_disabled.tex")
     
     --self.inst:ListenForEvent("mousescrollup", function(inst, data) self:ScrollUp() end, self.owner)
     --self.inst:ListenForEvent("mousescrolldown", function(inst, data) self:ScrollDown() end, self.owner)
@@ -132,45 +134,28 @@ function Crafting:UpdateRecipes()
         local shown_num = 0
 
         local num = math.min(num_slots, #self.valid_recipes)
-		if num < num_slots then
-			-- Because we want an empty slot at the top for small lists
-			-- we need to fill in one extra box (the top one will be empty)
-			num = num + 1
+
+		if self.idx > #self.valid_recipes+2-num_slots then
+			self.idx = #self.valid_recipes+2-num_slots -- the +2 is because of the blank at either end, effectively "two more recipes"
+		end
+		if self.idx < 0 then
+			self.idx = 0
 		end
 
-		if #self.valid_recipes < num_slots-1 then
-			-- If we have a small number of items, the list is fixed/doesn't scroll
-			self.idx = -1
-		end
-
-		-- In the r >= n case, we just loop all the recipes
-		local loop_count = math.max(#self.valid_recipes, num_slots)
-		if #self.valid_recipes == num_slots - 1 then
-			-- In the r == n-1 case, we want the modulo to loop back to the first item
-			loop_count = #self.valid_recipes
-		elseif #self.valid_recipes < num_slots - 1 then
-			-- In the r < n-1 case, we want extra slots to be blank, so modulo looping
-            -- shouldn't really happen at all.
-			loop_count = num_slots
-		end
-
-        for k = 1,num do
-			local recipe_idx = (self.idx + (k-1) ) % loop_count + 1
+        for k = 0,num do  -- 0 is one blank before the first recipe
+			local recipe_idx = (self.idx + k )
             
             local recipe = self.valid_recipes[recipe_idx]
-            
+			
             if recipe then
 				
                 local show = (not self.filter) or self.filter(recipe.name) 
                 if show then
-					if k == 1 and num == num_slots-1 then
-						-- When we have slots-1 recipes, we want to repeat the last item
-						-- in the top slot, so that it appears to loop correctly.
-						self.craftslots.slots[num_slots]:SetRecipe( recipe.name )
-					else
-						self.craftslots.slots[num_slots - k+1]:SetRecipe( recipe.name )
+					local slot = self.craftslots.slots[num_slots - k]
+					if slot then
+						slot:SetRecipe( recipe.name )
+						shown_num = shown_num + 1
 					end
-                    shown_num = shown_num + 1
                 end
             end
         end
@@ -180,6 +165,23 @@ function Crafting:UpdateRecipes()
 			--self:MoveTo(Vector3(self.inst.UITransform:GetLocalPosition()), Vector3(-64,0,0), .33)
 			self.crafttabs.tabs:DeselectAll()
         end
+        
+        
+        
+		if self.idx > 0 then
+			self.upbutton:Enable()
+		else
+			self.upbutton:Disable()
+		end
+
+		--print (num_slots, self.idx, #self.valid_recipes)
+		
+		if (num_slots-2)+self.idx < #self.valid_recipes then
+			self.downbutton:Enable()
+		else
+			self.downbutton:Disable()
+		end
+        
     end
 end
 
@@ -215,10 +217,6 @@ IngredientUI = Class(Widget, function(self, image, quantity, on_hand, has_enough
     end
     
     self:SetTooltip(name)
-    
-    --self:SetMouseOver(function() owner.HUD:SetHoverText(name) end)
-    --self:SetMouseOut(function() owner.HUD:SetHoverText(nil) end)
-    
     
     self.ing = self:AddChild(Image(image))
     if quantity then
@@ -304,10 +302,10 @@ RecipePopup = Class(Widget, function(self, parentslot)
 	self.contents = self:AddChild(Widget(""))
 	self.contents:SetPosition(-75,0,0)
 	
-    self.name = self.contents:AddChild(Text(UIFONT, 50))
+    self.name = self.contents:AddChild(Text(UIFONT, 45))
     self.name:SetPosition(327, 142, 0)
 
-    self.desc = self.contents:AddChild(Text(BODYTEXTFONT, 25))
+    self.desc = self.contents:AddChild(Text(BODYTEXTFONT, 30))
     self.desc:SetPosition(325, -5, 0)
     self.desc:SetRegionSize(64*3+20,70)
     self.desc:EnableWordWrap(true)
@@ -320,7 +318,7 @@ RecipePopup = Class(Widget, function(self, parentslot)
     self.button:SetDisabledImage("data/images/button_disabled.tex")
     self.button:SetScale(.7,.7,.7)
     self.button:SetFont(BUTTONFONT)
-    self.button:SetTextSize(50)
+    self.button:SetTextSize(45)
 	self.button.text:SetColour(0,0,0,1)
     self.button:SetOnClick(function() if not DoRecipeClick(self.owner, self.recipe) then self.owner.HUD.controls.crafttabs:Close() end end)
     
@@ -333,7 +331,7 @@ RecipePopup = Class(Widget, function(self, parentslot)
     
     
     
-    self.teaser = self.contents:AddChild(Text(BODYTEXTFONT, 25))
+    self.teaser = self.contents:AddChild(Text(BODYTEXTFONT, 30))
     self.teaser:SetPosition(325, -100, 0)
     self.teaser:SetRegionSize(64*3+20,70)
     self.teaser:EnableWordWrap(true)
@@ -645,6 +643,14 @@ function CraftTabs:Close()
 end
 
 function CraftTabs:Update()
+
+
+	local x = TheInput:GetMouseScreenPos().x
+	local w,h = TheSim:GetScreenSize()
+	if x > w*.33 then
+		self:Close()
+	end
+
 	if self.needtoupdate then
 		self:DoUpdateRecipes()
 	end

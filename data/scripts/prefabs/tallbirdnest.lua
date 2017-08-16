@@ -18,21 +18,35 @@ local function StopNesting(inst)
         inst.nesttask:Cancel()
         inst.nesttask = nil
     end
+    inst.nesttime = nil
 end
 
-local function DoNesting(inst)
+local function ForceLay(inst)
 	if inst.components.childspawner and inst.components.pickable then
-		for k,v in pairs(inst.components.childspawner.childrenoutside) do
-			if distsq(Vector3(v.Transform:GetWorldPosition()), Vector3(inst.Transform:GetWorldPosition()) ) < TALLBIRD_LAY_DIST*TALLBIRD_LAY_DIST then
-			    inst.components.pickable:Regen()
-			    break
-			end
-		end
+	    for k,v in pairs(inst.components.childspawner.childrenoutside) do
+		    if distsq(Vector3(v.Transform:GetWorldPosition()), Vector3(inst.Transform:GetWorldPosition()) ) < TALLBIRD_LAY_DIST*TALLBIRD_LAY_DIST then
+		        inst.components.pickable:Regen()
+		        break
+		    end
+	    end
 	end
 end
 
-local function StartNesting(inst)
-    inst.nesttask = inst:DoPeriodicTask(NEST_TIME, DoNesting)
+local function DoNesting(inst)
+    StopNesting(inst)
+    if inst.components.pickable and not inst.components.pickable:CanBePicked() then
+        inst.readytolay = true
+        if inst:IsAsleep() then
+            ForceLay(inst)
+        end
+    end
+end
+
+local function StartNesting(inst, time)
+    StopNesting(inst)
+    time = time or (NEST_TIME+math.random() )
+    inst.nesttime = GetTime() + time
+    inst.nesttask = inst:DoTaskInTime(time, DoNesting)
 end
 
 local function onpicked(inst, picker)
@@ -46,6 +60,7 @@ local function onpicked(inst, picker)
 			end
 		end
 	end
+	inst:DoTaskInTime(0, StartNesting)
 end
 
 local function onmakeempty(inst)
@@ -58,24 +73,37 @@ local function onregrow(inst)
 	inst.components.childspawner.noregen = false
 	StopNesting(inst)
 	inst.thief = nil
+	inst.readytolay = nil
 end
 
 local function onvacate(inst)
 	if inst.components.pickable then
-		inst.components.pickable:Pick(nil)
+		inst.components.pickable:MakeEmpty()
+        StartNesting(inst)
 	end
 end
 
 local function onsleep(inst)
-    if inst.components.pickable and not inst.components.pickable:CanBePicked() then
-        StartNesting(inst)
+    if inst.components.pickable and not inst.components.pickable:CanBePicked() and inst.readytolay then
+        ForceLay(inst)
     end
 end
 
-local function onwake(inst)
-	StopNesting(inst)
+local function OnSave(inst, data)
+    data.readytolay = inst.readytolay
+    if inst.nesttime and inst.nesttime > GetTime() then
+        data.timetonest = inst.nesttime - GetTime()
+    end
 end
 
+local function OnLoad(inst, data)
+    if data then
+        inst.readytolay = data.readytolay
+        if data.timetonest then
+            StartNesting(inst, data.timetonest)
+        end
+    end
+end
 
 local function fn(Sim)
 	local inst = CreateEntity()
@@ -103,7 +131,8 @@ local function fn(Sim)
     -------------------
 	inst:AddComponent("childspawner")
 	inst.components.childspawner.childname = "tallbird"
-	inst.components.childspawner:SetRegenPeriod(10*TUNING.SEG_TIME)
+	inst.components.childspawner.spawnoffscreen = true
+	inst.components.childspawner:SetRegenPeriod(5*16*TUNING.SEG_TIME)
 	inst.components.childspawner:SetSpawnPeriod(0)
 	inst.components.childspawner:SetSpawnedFn(onvacate)
 	inst.components.childspawner:SetMaxChildren(1)
@@ -112,8 +141,8 @@ local function fn(Sim)
    
     inst:AddComponent("inspectable")
 	inst:ListenForEvent("entitysleep", onsleep)
-	inst:ListenForEvent("entitywake", onwake)
-    
+	inst.OnSave = OnSave
+	inst.OnLoad = OnLoad
    
     return inst
 end

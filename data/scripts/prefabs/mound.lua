@@ -78,7 +78,7 @@ local function fn(Sim)
     
     inst:AddComponent("workable")
     inst.components.workable:SetWorkAction(ACTIONS.DIG)
-    inst.components.workable:SetWorkLeft(4)
+    inst.components.workable:SetWorkLeft(1)
 
         
     inst.components.workable:SetOnFinishCallback(onfinishcallback)      

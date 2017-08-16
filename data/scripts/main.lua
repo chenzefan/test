@@ -2,8 +2,20 @@
 MAIN = 1
 USE_TELNET = false
 ENCODE_SAVES = BRANCH ~= "dev"
-CHEATS_ENABLED = BRANCH ~= "release"
+CHEATS_ENABLED = BRANCH == "dev"
 SOUNDDEBUG_ENABLED = false
+
+TheSim:SetReverbPreset("default")
+
+if PLATFORM == "NACL" then
+	VisitURL = function(url, notrack)
+		if notrack then
+			TheSim:SendJSMessage("VisitURLNoTrack:"..url)
+		else
+			TheSim:SendJSMessage("VisitURL:"..url)
+		end
+	end
+end
 
 --used for A/B testing and preview features. Gets serialized into and out of save games
 GameplayOptions = 
@@ -211,11 +223,20 @@ end
 
 function SpawnSaveRecord(saved, newents)
     --print(string.format("SpawnSaveRecord [%s, %s, %s]", tostring(saved.id), tostring(saved.prefab), tostring(saved.data)))
+    
     local inst = SpawnPrefab(saved.prefab)
+    
     if inst then
 		inst.Transform:SetPosition(saved.x or 0, saved.y or 0, saved.z or 0)
-        if newents and saved.id then
-            newents[saved.id] = {entity=inst, data=saved.data} 
+        if newents then
+            
+            --this is kind of weird, but we can't use non-saved ids because they might collide
+            if saved.id  then
+				newents[saved.id] = {entity=inst, data=saved.data} 
+			else
+				newents[inst] = {entity=inst, data=saved.data} 
+			end
+			
         end
 
 		-- Attach scenario. This is a special component that's added based on save data, not prefab setup.
@@ -454,7 +475,14 @@ RoadManager = TheGlobalInstance.entity:AddRoadManager()
 RoadManager:SetGlobalEffect( "data/shaders/road.ksh" )
 RoadManager:SetGlobalTextures( "data/images/roadedge.tex", "data/images/square.tex", "data/images/roadcorner.tex", "data/images/roadendcap.tex" )
 EnvelopeManager = TheGlobalInstance.entity:AddEnvelopeManager()
+
 PostProcessor = TheGlobalInstance.entity:AddPostProcessor()
+local IDENTITY_COLOURCUBE = "data/images/colour_cubes/identity_colourcube.tex"
+PostProcessor:SetColourCubeData( 0, IDENTITY_COLOURCUBE, IDENTITY_COLOURCUBE )
+PostProcessor:SetColourCubeData( 1, IDENTITY_COLOURCUBE, IDENTITY_COLOURCUBE )
+
+
+
 FontManager = TheGlobalInstance.entity:AddFontManager()
 MapLayerManager = TheGlobalInstance.entity:AddMapLayerManager()
 Roads = nil
@@ -473,7 +501,7 @@ function SetHUDPause(val)
 			Print(VERBOSITY.INFO,"unpause")
 			TheSim:SetTimeScale(1)
 			TheMixer:PopMix("pause")
-			ShowHUD(true)
+			--ShowHUD(true)
 		end
 	end
 end
@@ -505,11 +533,23 @@ function SaveGame(savename, callback)
     
     --save the entities
     local nument = 0
+    local saved_ents = {}
+    local references = {}
     for k,v in pairs(Ents) do
-        if v.persists and v.prefab and v.Transform and v.entity:GetParent() == nil and not (v.components.health and v.components.health:IsDead() ) and v:IsValid() then
+        if v.persists and v.prefab and v.Transform and v.entity:GetParent() == nil and v:IsValid() then
             local x, y, z = v.Transform:GetWorldPosition()
-            local record = v:GetSaveRecord()
+            local record, new_references = v:GetSaveRecord()
             record.prefab = nil
+            
+            if new_references then
+				references[v.GUID] = true
+				for k,v in pairs(new_references) do
+					references[v] = true
+				end
+			end
+			
+			saved_ents[v.GUID] = record
+			
 			if save.ents[v.prefab] == nil then
 				save.ents[v.prefab] = {}
 			end
@@ -517,6 +557,14 @@ function SaveGame(savename, callback)
 			record.prefab = nil
             nument = nument + 1
         end
+    end
+    
+    for k,v in pairs(references) do
+		if saved_ents[k] then
+			saved_ents[k].id = k
+		else
+			print ("Can't find", k, Ents[k])
+		end
     end
 
     --save out the map
@@ -559,9 +607,17 @@ function SaveGame(savename, callback)
 		
 	assert(save.ents, "Entites missing from savedata on save")
     
-    local data = DataDumper(save, nil, PLATFORM == "NACL")
+    
+    local data = ""
+    if BRANCH == "dev" then
+        data = DataDumper(save, nil, false)
+    else
+        data = fastdump(save)
+    end
+
     local insz, outsz = TheSim:SetPersistentString(savename, data, ENCODE_SAVES, callback)
     print ("Saved", savename, outsz)
+    
     
     if player.HUD then
 		player:PushEvent("ontriggersave")
@@ -637,7 +693,6 @@ function Start()
 	end
 
 	---The screen manager
-	TheSim:LoadPrefabs{"frontend"}
 	TheFrontEnd = FrontEnd()	
 	require ("gamelogic")
 
@@ -729,3 +784,11 @@ function DisplayError(error)
 end
 
 ModManager:LoadMods()
+
+function Wade()
+	print ("Hi Wade!")
+	if not CHEATS_ENABLED then
+		CHEATS_ENABLED = true
+		require "debugkeys"
+	end
+end

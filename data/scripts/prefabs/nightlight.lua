@@ -35,6 +35,12 @@ local function getsanityaura(inst, observer)
     return 0
 end
 
+local function onbuilt(inst)
+	inst.SoundEmitter:PlaySound("dontstarve/common/nightmareAddFuel")
+	inst.AnimState:PlayAnimation("place")
+	inst.AnimState:PushAnimation("idle", false)
+end
+
 local function fn(Sim)
 
 	local inst = CreateEntity()
@@ -73,7 +79,7 @@ local function fn(Sim)
     inst.components.fueled.accepting = true
     inst.components.fueled.fueltype = "NIGHTMARE"
     inst.components.fueled:SetSections(4)
-    inst.components.fueled.ontakefuelfn = function() inst.SoundEmitter:PlaySound("dontstarve/common/fireAddFuel") end
+    inst.components.fueled.ontakefuelfn = function() inst.SoundEmitter:PlaySound("dontstarve/common/nightmareAddFuel") end
     
     inst.components.fueled:SetUpdateFn( function()
         if inst.components.burnable and inst.components.fueled then
@@ -100,10 +106,7 @@ local function fn(Sim)
     
     inst:AddComponent("inspectable")
     
-    --inst:ListenForEvent( "onbuilt", function()
-        --anim:PlayAnimation("place")
-        --anim:PushAnimation("idle",false)
-    --end)
+    inst:ListenForEvent( "onbuilt", onbuilt)
     
     return inst
 end

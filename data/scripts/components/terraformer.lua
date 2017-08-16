@@ -15,6 +15,11 @@ local GROUND_TURFS =
 	[GROUND.WOODFLOOR]	= "turf_woodfloor",
 	[GROUND.CARPET]		= "turf_carpetfloor",
 	[GROUND.CHECKER]	= "turf_checkerfloor",
+	[GROUND.CAVE]		= "turf_cave",
+	[GROUND.FUNGUS]		= "turf_fungus",
+	[GROUND.SINKHOLE]	= "turf_sinkhole",
+	[GROUND.UNDERROCK]	= "turf_underrock",
+	[GROUND.MUD]		= "turf_mud",
 	webbing				= "turf_webbing",
 }
 

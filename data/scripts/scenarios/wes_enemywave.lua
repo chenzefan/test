@@ -9,7 +9,7 @@ local function OnEnemyKilled(inst, enemy, scenariorunner)
 	inst.wave[enemy] = nil
 	if not next(inst.wave) then
 		inst.onguardsdead(inst)
-		GetPlayer().components.sanity:SetPercent(50)
+		GetPlayer().components.sanity:SetPercent(1)
 		scenariorunner:ClearScenario()
 	end	
 end
@@ -24,7 +24,7 @@ local function ListenForDeath(inst, scenariorunner)
 end
 
 local function TrapInRocks(inst)
-    GetPlayer().components.sanity:SetPercent(0)
+    GetPlayer().components.sanity:SetPercent(0.5)
 end
 
 local function StartWave(inst)

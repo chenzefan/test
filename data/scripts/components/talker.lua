@@ -68,7 +68,7 @@ function Talker:Say(script, time)
     
     local lines = nil
     if type(script) == "string" then
-        lines = {Line(script, time or 3)}
+        lines = {Line(script, time or 2.5)}
     else
         lines = script
     end

@@ -93,6 +93,7 @@ local plantables =
 	{name="berrybush2", bank = "berrybush", inspectoverride = "dug_berrybush", anim = "idle_dead", minspace=2},
 	{name="sapling", minspace=1},
 	{name="grass", build="grass1", minspace=1},
+    {name="marsh_bush", minspace=1},
 	--"reeds",
 }
 

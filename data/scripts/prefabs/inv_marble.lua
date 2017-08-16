@@ -8,6 +8,7 @@ local function fn(Sim)
 	local inst = CreateEntity()
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
+	inst.entity:AddSoundEmitter()
 	MakeInventoryPhysics(inst)
 
 	inst.AnimState:SetBank("marble")

@@ -1,7 +1,5 @@
 require("stategraphs/commonstates")
 
-local WALK_SPEED = 4
-
 
 local actionhandlers = 
 {
@@ -25,7 +23,11 @@ local events=
                 end
             else
                 if not inst.sg:HasStateTag("hopping") then
-                    inst.sg:GoToState("hop")
+					if inst.components.locomotor:WantsToRun() then
+						inst.sg:GoToState("aggressivehop")
+					else
+						inst.sg:GoToState("hop")
+					end
                 end
             end
         end),
@@ -46,14 +48,29 @@ local states=
             else
                 inst.AnimState:PlayAnimation("idle", true)
             end
-            inst.sg:SetTimeout(2*math.random()+.5)
+            inst.sg:SetTimeout(1*math.random()+.5)
         end,
         
         ontimeout= function(inst)
             if inst.components.locomotor:WantsToMoveForward() then
                 inst.sg:GoToState("hop")
             else
-                inst.SoundEmitter:PlaySound("dontstarve/frog/grunt")
+                
+                
+                local num_frogs = 0
+                local x,y,z = inst.Transform:GetWorldPosition()
+                local ents = TheSim:FindEntities(x,y,z, 10, "frog")
+                
+                local volume = 1
+                for k,v in pairs(ents) do
+                    if volume > .5 and v ~= inst then
+                        volume = volume - .1
+                        if volume <= .5 then
+                            break
+                        end
+                    end
+                end
+                inst.SoundEmitter:PlaySound("dontstarve/frog/grunt", nil, volume)
                 inst.sg:GoToState("idle")
             end
         end,
@@ -76,15 +93,43 @@ local states=
     },    
     
     State{
+        name = "aggressivehop",
+        tags = {"moving", "canrotate", "hopping", "running"},
+        
+        timeline=
+        {
+            TimeEvent(5*FRAMES, function(inst) 
+                inst.components.locomotor:RunForward()
+            end ),
+            TimeEvent(20*FRAMES, function(inst) 
+                inst.SoundEmitter:PlaySound("dontstarve/frog/walk")
+                inst.Physics:Stop() 
+            end ),
+        },
+        
+        onenter = function(inst) 
+            inst.Physics:Stop() 
+            inst.AnimState:PlayAnimation("jump_pre")
+            inst.AnimState:PushAnimation("jump")
+            inst.AnimState:PushAnimation("jump_pst", false)
+        end,
+        
+        events=
+        {
+            EventHandler("animqueueover", function (inst) inst.sg:GoToState("idle") end),
+        },
+    },
+    
+    State{
         name = "hop",
         tags = {"moving", "canrotate", "hopping"},
         
         timeline=
         {
             TimeEvent(5*FRAMES, function(inst) 
-                inst.Physics:SetMotorVel(WALK_SPEED,0,0)
+                inst.components.locomotor:WalkForward()
             end ),
-            TimeEvent(15*FRAMES, function(inst) 
+            TimeEvent(20*FRAMES, function(inst) 
                 inst.SoundEmitter:PlaySound("dontstarve/frog/walk")
                 inst.Physics:Stop() 
             end ),
@@ -126,6 +171,38 @@ local states=
             EventHandler("animqueueover", function(inst) inst.sg:GoToState("idle") end),
         },
     },
+    
+    State{
+        name = "fall",
+        tags = {"busy"},
+        onenter = function(inst)
+            inst.inlimbo = true
+			inst.Physics:SetDamping(0)
+            inst.Physics:SetMotorVel(0,-20+math.random()*10,0)
+            inst.AnimState:PlayAnimation("fall_idle", true)
+        end,
+        
+        onupdate = function(inst)
+            local pt = Point(inst.Transform:GetWorldPosition())
+            if pt.y < 2 then
+				inst.Physics:SetMotorVel(0,0,0)
+            end
+            
+            if pt.y <= .1 then
+                pt.y = 0
+                inst.inlimbo = false
+
+				-- TODO: 20% of the time, they should explode on impact!
+
+                inst.Physics:Stop()
+				inst.Physics:SetDamping(5)
+                inst.Physics:Teleport(pt.x,pt.y,pt.z)
+	            inst.DynamicShadow:Enable(true)
+                inst.SoundEmitter:PlaySound("dontstarve/frog/splat")
+                inst.sg:GoToState("idle", "jump_pst")
+            end
+        end,
+    },    
     
    
     State{

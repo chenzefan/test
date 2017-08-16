@@ -29,5 +29,12 @@ function Fuel:CollectUseActions(doer, target, actions)
     end
 end
 
+-- function Fuel:CollectInventoryActions(doer, target, actions)
+--     if target and target.components and target.components.fueled and target.components.fueled:CanAcceptFuelItem(self.inst) then
+--         print("collect inventory actions")
+--         table.insert(actions, ACTIONS.ADDFUEL)
+--     end
+-- end
+
 
 return Fuel

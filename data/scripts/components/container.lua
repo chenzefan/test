@@ -49,6 +49,18 @@ function Container:DropEverything()
     end
 end
 
+function Container:DropItem(itemtodrop)
+    local item = self:RemoveItem(itemtodrop)
+    if item then 
+        local pos = Vector3(self.inst.Transform:GetWorldPosition())
+        item.Transform:SetPosition(pos:Get())
+        if item.components.inventoryitem then
+            item.components.inventoryitem:OnDropped(true)
+        end
+        self.inst:PushEvent("dropitem", {item = item})                  
+    end
+end
+
 function Container:CanTakeItemInSlot(item, slot)
 	if not (item and item.components.inventoryitem and item.components.inventoryitem.cangoincontainer) then
 		return false
@@ -72,7 +84,7 @@ end
 
 function Container:GiveItem(item, slot, src_pos)
     --print("Container:GiveItem", item.prefab)
-    if item.components.inventoryitem and self:CanTakeItemInSlot(item, slot) then
+    if item and item.components.inventoryitem and self:CanTakeItemInSlot(item, slot) then
 		
 		--try to burn off stacks if we're just dumping it in there
 		if item.components.stackable and slot == nil and self.acceptsstacks then
@@ -172,13 +184,15 @@ end
 
 
 function Container:Close()
+	
 	if self.open then
+		local old_opener = self.opener
 		if self.opener and self.opener.HUD then
 			local opener = self.opener
 			self.opener = nil
 			opener.HUD:CloseContainer(self.inst)
 		end
-		self:OnClose()
+		self:OnClose(old_opener)
 	end
 end
 
@@ -188,12 +202,18 @@ function Container:Open(doer)
 		if doer and doer.HUD then
 			doer.HUD:OpenContainer(self.inst, self.side_widget)
 		end
+
 		self:OnOpen()
 	end
 end
 
 function Container:OnOpen()
     self.open = true
+    
+	if self.opener and self.opener.components.inventory then
+		self.opener.components.inventory.opencontainers[self.inst] = true
+	end
+    
     self.inst:PushEvent("onopen")    
     if self.onopenfn then
         self.onopenfn(self.inst)
@@ -204,8 +224,13 @@ function Container:IsOpen()
 	return self.open
 end
 
-function Container:OnClose()
+function Container:OnClose(old_opener)
     self.open = false
+    
+	if old_opener and old_opener.components.inventory then
+		old_opener.components.inventory.opencontainers[self.inst] = nil
+	end
+    
     if self.onclosefn then
         self.onclosefn(self.inst)
     end

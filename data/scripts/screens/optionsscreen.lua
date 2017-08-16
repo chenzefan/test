@@ -16,10 +16,11 @@ local spinner_images = {
 	bgtexture = "data/images/spinner.tex",
 }
 
-local text_font = DEFAULTFONT--NUMBERFONT
+local show_graphics = PLATFORM ~= "NACL"
+local text_font = UIFONT--NUMBERFONT
 
 local enableDisableOptions = { { text = STRINGS.UI.OPTIONS.DISABLED, data = false }, { text = STRINGS.UI.OPTIONS.ENABLED, data = true } }
-local spinnerFont = { font = text_font, size = 30 }
+local spinnerFont = { font = BUTTONFONT, size = 30 }
 local spinnerHeight = 64
 
 local function GetResolutionString( w, h )
@@ -48,10 +49,10 @@ local function GetDisplays()
 	return displays
 end
 
-local function GetRefreshRates( display_id, resolution_id )
+local function GetRefreshRates( display_id, mode_idx )
 	local gOpts = TheFrontEnd:GetGraphicsOptions()
 	
-	local w, h, bpp, hz = gOpts:GetDisplayMode( display_id, resolution_id )
+	local w, h, hz = gOpts:GetDisplayMode( display_id, mode_idx )
 	local num_refresh_rates = gOpts:GetNumRefreshRates( display_id, w, h )
 	
 	local refresh_rates = {}
@@ -70,11 +71,9 @@ local function GetDisplayModes( display_id )
 	
 	local res_data = {}
 	for i = 0, num_modes - 1 do
-		local w, h, bpp, hz = gOpts:GetDisplayMode( display_id, i )
-		if ( bpp == 24 or bpp == 32 ) then
-			local res_str = GetResolutionString( w, h )
-			res_data[ res_str ] = { w = w, h = h, bpp = bpp, hz = hz, idx = i }
-		end
+		local w, h, hz = gOpts:GetDisplayMode( display_id, i )
+		local res_str = GetResolutionString( w, h )
+		res_data[ res_str ] = { w = w, h = h, hz = hz, idx = i }
 	end
 
 	local valid_resolutions = {}
@@ -86,11 +85,35 @@ local function GetDisplayModes( display_id )
 
 	local result = {}
 	for k, v in pairs( valid_resolutions ) do
-		table.insert( result, { text = v.text, data = v.data.idx } )
+		table.insert( result, { text = v.text, data = v.data } )
 	end
 
 	return result
 end
+
+local function GetDisplayModeIdx( display_id, w, h, hz )
+	local gOpts = TheFrontEnd:GetGraphicsOptions()
+	local num_modes = gOpts:GetNumDisplayModes( display_id )
+	
+	for i = 0, num_modes - 1 do
+		local tw, th, thz = gOpts:GetDisplayMode( display_id, i )
+		if tw == w and th == h and thz == hz then
+			return i
+		end
+	end
+	
+	return nil
+end
+
+local function GetDisplayModeInfo( display_id, mode_idx )
+	local gOpts = TheFrontEnd:GetGraphicsOptions()
+	local w, h, hz = gOpts:GetDisplayMode( display_id, mode_idx )
+
+	return w, h, hz
+end
+
+
+
 
 OptionsScreen = Class(Screen, function(self, in_game)
 	Screen._ctor(self, "OptionsScreen")
@@ -112,17 +135,36 @@ OptionsScreen = Class(Screen, function(self, in_game)
 		self.options.steamcloud = TheSim:GetSetting("STEAM", "DISABLECLOUD") ~= "true"
 	end--]]
 
-	if PLATFORM ~= "NACL" then
+	if show_graphics then
 
 		self.options.display = graphicsOptions:GetFullscreenDisplayID()
 		self.options.refreshrate = graphicsOptions:GetFullscreenDisplayRefreshRate()
 		self.options.fullscreen = graphicsOptions:IsFullScreen()
 
-		local mode_id = graphicsOptions:GetCurrentDisplayModeID( self.options.display )
-		self.options.resolution = mode_id
+		self.options.mode_idx = graphicsOptions:GetCurrentDisplayModeID( self.options.display )
 	end
 
 	self.working = deepcopy( self.options )
+	
+	
+    self.bg = self:AddChild(Image("data/images/bg_red.tex"))
+    self.bg:SetVRegPoint(ANCHOR_MIDDLE)
+    self.bg:SetHRegPoint(ANCHOR_MIDDLE)
+    self.bg:SetVAnchor(ANCHOR_MIDDLE)
+    self.bg:SetHAnchor(ANCHOR_MIDDLE)
+    self.bg:SetScaleMode(SCALEMODE_FILLSCREEN)
+    
+	self.root = self:AddChild(Widget("ROOT"))
+    self.root:SetVAnchor(ANCHOR_MIDDLE)
+    self.root:SetHAnchor(ANCHOR_MIDDLE)
+    self.root:SetPosition(0,0,0)
+    self.root:SetScaleMode(SCALEMODE_PROPORTIONAL)
+    
+	local shield = self.root:AddChild( Image( "data/images/panel.tex" ) )
+	shield:SetPosition( 0,0,0 )
+	shield:SetSize( 1000, 700 )		
+	
+	
 	self:DoInit()
 	self:InitializeSpinners()
 end)
@@ -152,6 +194,16 @@ end
 
 function OptionsScreen:RevertChanges()
 	self:Restore()
+	self:UpdateMenu()							
+end
+
+function OptionsScreen:IsDirty()
+	for k,v in pairs(self.working) do
+		if v ~= self.options[k] then
+			return true	
+		end
+	end
+	return false
 end
 
 function OptionsScreen:Restore()
@@ -165,31 +217,34 @@ function OptionsScreen:ApplyAndConfirm( force )
 	if not self.applying then
 		self.applying = true
 
-		if PLATFORM ~= "NACL" then
-			local gopts = TheFrontEnd:GetGraphicsOptions()
-			gopts:SetDisplayMode( self.working.display, self.working.resolution, self.working.fullscreen )
+		if show_graphics then
+			local gOpts = TheFrontEnd:GetGraphicsOptions()
+			local w, h, hz = gOpts:GetDisplayMode( self.working.display, self.working.mode_idx )
+			local mode_idx = GetDisplayModeIdx( self.working.display, w, h, self.working.refreshrate)
+			gOpts:SetDisplayMode( self.working.display, mode_idx, self.working.fullscreen )
 		end
 
 		if not force then
-			local this = self
 			TheFrontEnd:PushScreen(
 				PopupDialogScreen( STRINGS.UI.OPTIONS.ACCEPTTITLE, STRINGS.UI.OPTIONS.ACCEPTBODY,
 				  { { text = STRINGS.UI.OPTIONS.ACCEPT, cb =
 						function()
-							this:Save()
+							self:Apply()
+							self:Save()
+							self:UpdateMenu()							
 						end
 					},
 					{ text = STRINGS.UI.OPTIONS.CANCEL, cb =
 						function()
-							print( "CANCEL" )
-							this:Restore()
+							self:Restore()
+							self:UpdateMenu()							
 						end
 					}
 				  },
 				  { timeout = 10, cb =
 					function()
 						TheFrontEnd:PopScreen()
-						this:Restore()
+						self:Restore()
 					end
 				  }
 				)
@@ -215,6 +270,9 @@ function OptionsScreen:Close()
 	TheFrontEnd:PopScreen()
 end	
 
+
+
+
 local function MakeMenu(offset, menuitems)
 	local menu = Widget("OptionsMenu")	
 	local pos = Vector3(0,0,0)
@@ -235,22 +293,19 @@ function OptionsScreen:AddSpinners( data, user_offset )
 	local master_group = self.root:AddChild( Widget( "SpinnerGroup" ) )
 
 	local offset = { 0, 0, 0 }
-	if user_offset then
-		offset[1] = offset[1] + user_offset[1]
-		offset[2] = offset[2] + user_offset[2]
-		offset[3] = offset[3] + user_offset[3]
-	end
-	master_group:SetPosition( offset[1], offset[2], offset[2] )
 
+	master_group:SetPosition( user_offset.x,user_offset.y, user_offset.z)
 	local label_width = 200
 	for idx, entry in ipairs( data ) do
+		
 		local text = entry[1]
 		local spinner = entry[2]
+		spinner:SetTextColour(0,0,0,1)
 
 		local group = master_group:AddChild( Widget( "SpinnerGroup" ) )
 		group:SetPosition( 0, ( idx - 1 ) * -75 + 25, 0 )
 
-		local label = group:AddChild( Text( DEFAULTFONT, 30, text ) )
+		local label = group:AddChild( Text( BODYTEXTFONT, 30, text ) )
 		label:SetPosition( 0.5 * label_width, 0, 0 )
 		label:SetRegionSize( label_width, 50 )
 		label:SetHAlign( ANCHOR_RIGHT )
@@ -262,50 +317,49 @@ function OptionsScreen:AddSpinners( data, user_offset )
 	return master_group
 end
 
-function OptionsScreen:DoInit()
-    self.bg = self:AddChild(Image("data/images/bg_red.tex"))
-    self.bg:SetVRegPoint(ANCHOR_MIDDLE)
-    self.bg:SetHRegPoint(ANCHOR_MIDDLE)
-    self.bg:SetVAnchor(ANCHOR_MIDDLE)
-    self.bg:SetHAnchor(ANCHOR_MIDDLE)
-    self.bg:SetScaleMode(SCALEMODE_FILLSCREEN)
-    
-	self.root = self:AddChild(Widget("ROOT"))
-    self.root:SetVAnchor(ANCHOR_MIDDLE)
-    self.root:SetHAnchor(ANCHOR_MIDDLE)
-    self.root:SetPosition(0,0,0)
-    self.root:SetScaleMode(SCALEMODE_PROPORTIONAL)
-    
-	local shield = self.root:AddChild( Image( "data/images/panel.tex" ) )
-	shield:SetPosition( 0,0,0 )
-	shield:SetSize( 1000, 700 )	
-    
-    
-	local menu_items = {
-		{ text = STRINGS.UI.OPTIONS.REVERT, cb = function() self:RevertChanges() end },
-		{ text = STRINGS.UI.OPTIONS.CLOSE, cb = function() self:Accept() end },
-	}
-	
-	if PLATFORM ~= "NACL" then
-		table.insert(menu_items, 1, { text = STRINGS.UI.OPTIONS.APPLY, cb = function() self:ApplyAndConfirm() end })
+
+function OptionsScreen:UpdateMenu()
+
+
+	if self.menu then
+		self.menu:Kill()
+		self.menu = nil
 	end
+	
+	local menu_items = {}
+
+	
+	if self:IsDirty() then
+		table.insert(menu_items, { text = STRINGS.UI.OPTIONS.APPLY, cb = function() self:ApplyAndConfirm() end })
+		table.insert(menu_items, { text = STRINGS.UI.OPTIONS.REVERT, cb = function() self:RevertChanges() end })
+	else
+		table.insert(menu_items, { text = STRINGS.UI.OPTIONS.CLOSE, cb = function() self:Accept() end })
+	end
+	
 
 	local menu_spacing = 60
 	local bottom_offset = 60
-	self.menu = self.root:AddChild( MakeMenu( Vector3(0, -menu_spacing, 0), menu_items) )
-	self.menu:SetPosition(RESOLUTION_X/2 -200 ,-RESOLUTION_Y/2 + bottom_offset + menu_spacing * (#menu_items-1),0)
+	self.menu = self.root:AddChild( MakeMenu( Vector3(0, menu_spacing, 0), menu_items) )
+	self.menu:SetPosition(220 , -200 ,0)
+end
 
+function OptionsScreen:DoInit()
+
+	self:UpdateMenu()
+	--self.menu:SetScale(.8,.8,.8)
 
 	local this = self
 	
-	if PLATFORM ~= "NACL" then
+	if show_graphics then
 		local gOpts = TheFrontEnd:GetGraphicsOptions()
 	
 		self.fullscreenSpinner = self.root:AddChild(Spinner( enableDisableOptions, 150, spinnerHeight, spinnerFont, spinner_images ))
+		
 		self.fullscreenSpinner.OnChanged =
-			function( self, data )
+			function( _, data )
 				this.working.fullscreen = data
 				this:UpdateResolutionsSpinner()
+				self:UpdateMenu()				
 			end
 		
 		if gOpts:IsFullScreenEnabled() then
@@ -317,112 +371,107 @@ function OptionsScreen:DoInit()
 		local valid_displays = GetDisplays()
 		self.displaySpinner = self.root:AddChild(Spinner( valid_displays, 150, spinnerHeight, spinnerFont, spinner_images ))
 		self.displaySpinner.OnChanged =
-			function( self, data )
+			function( _, data )
 				this.working.display = data
 				this:UpdateResolutionsSpinner()
 				this:UpdateRefreshRatesSpinner()
+				self:UpdateMenu()
 			end
 		
-		local refresh_rates = GetRefreshRates( self.working.display, self.working.resolution )
+		local refresh_rates = GetRefreshRates( self.working.display, self.working.mode_idx )
 		self.refreshRateSpinner = self.root:AddChild(Spinner( refresh_rates, 150, spinnerHeight, spinnerFont, spinner_images ))
 		self.refreshRateSpinner.OnChanged =
-			function( self, data )
+			function( _, data )
 				this.working.refreshrate = data
+				self:UpdateMenu()
 			end
 
-		local modes = GetDisplayModes( self.working.display, self.working.refreshrate )
+		local modes = GetDisplayModes( self.working.display )
 		self.resolutionSpinner = self.root:AddChild(Spinner( modes, 150, spinnerHeight, spinnerFont, spinner_images ))
 		self.resolutionSpinner.OnChanged =
-			function( self, data )
-				this.working.resolution = data
+			function( _, data )
+				this.working.mode_idx = data.idx
 				this:UpdateRefreshRatesSpinner()
+				self:UpdateMenu()
 			end						
 	end
 	
 
 	self.bloomSpinner = self.root:AddChild(Spinner( enableDisableOptions, 150, spinnerHeight, spinnerFont, spinner_images ))
 	self.bloomSpinner.OnChanged =
-		function( self, data )
+		function( _, data )
 			this.working.bloom = data
-			this:Apply()
+			--this:Apply()
+			self:UpdateMenu()
 		end
 		
 	self.distortionSpinner = self.root:AddChild(Spinner( enableDisableOptions, 150, spinnerHeight, spinnerFont, spinner_images ))
 	self.distortionSpinner.OnChanged =
-		function( self, data )
-			print( "DISTORTION", data )
+		function( _, data )
 			this.working.distortion = data
-			this:Apply()
+			--this:Apply()
+			self:UpdateMenu()
 		end
 
 	self.fxVolume = self.root:AddChild(NumericSpinner( 0, 10, 50, spinnerHeight, spinnerFont, spinner_images ))
 	self.fxVolume.OnChanged =
-		function( self, data )
+		function( _, data )
 			this.working.fxvolume = data
-			this:Apply()
+			--this:Apply()
+			self:UpdateMenu()
 		end
 
 	self.musicVolume = self.root:AddChild(NumericSpinner( 0, 10, 50, spinnerHeight, spinnerFont, spinner_images ))
 	self.musicVolume.OnChanged =
-		function( self, data )
+		function( _, data )
 			this.working.musicvolume = data
-			this:Apply()
+			--this:Apply()
+			self:UpdateMenu()
 		end
 
 	self.ambientVolume = self.root:AddChild(NumericSpinner( 0, 10, 50, spinnerHeight, spinnerFont, spinner_images ))
 	self.ambientVolume.OnChanged =
-		function( self, data )
+		function( _, data )
 			this.working.ambientvolume = data
-			this:Apply()
+			--this:Apply()
+			self:UpdateMenu()
 		end
 		
 	self.hudSize = self.root:AddChild(NumericSpinner( 0, 10, 50, spinnerHeight, spinnerFont, spinner_images ))
 	self.hudSize.OnChanged =
-		function( self, data )
+		function( _, data )
 			this.working.hudSize = data
-			this:Apply()
+			--this:Apply()
+			self:UpdateMenu()
 		end
 		
+	local left_spinners = {}
+	local right_spinners = {}
+	
+	if show_graphics then
+		table.insert( left_spinners , { STRINGS.UI.OPTIONS.BLOOM, self.bloomSpinner } )
+		table.insert( left_spinners , { STRINGS.UI.OPTIONS.DISTORTION, self.distortionSpinner } )
+		table.insert( left_spinners, { STRINGS.UI.OPTIONS.FULLSCREEN, self.fullscreenSpinner } )
+		table.insert( left_spinners, { STRINGS.UI.OPTIONS.DISPLAY, self.displaySpinner } )
+		table.insert( left_spinners, { STRINGS.UI.OPTIONS.RESOLUTION, self.resolutionSpinner } )
+		table.insert( left_spinners, { STRINGS.UI.OPTIONS.REFRESHRATE, self.refreshRateSpinner } )
 		
-	local gfx_spinners = {}
-	local sound_spinners = {}
-	
-	local gfx_pos = nil
-	local sound_pos = nil
-	local bg_pos = nil
-	local bg_size = nil
-	
-	
-	if PLATFORM ~= "NACL" then
-		table.insert( gfx_spinners , { STRINGS.UI.OPTIONS.BLOOM, self.bloomSpinner } )
-		table.insert( gfx_spinners , { STRINGS.UI.OPTIONS.DISTORTION, self.distortionSpinner } )
+		table.insert( right_spinners, { "FX:", self.fxVolume } )
+		table.insert( right_spinners, { "Music:", self.musicVolume } )
+		table.insert( right_spinners, { "Ambient:", self.ambientVolume } )
+		table.insert( right_spinners, { "HUD size:", self.hudSize} )
 
-		table.insert( gfx_spinners, { STRINGS.UI.OPTIONS.FULLSCREEN, self.fullscreenSpinner } )
-		table.insert( gfx_spinners, { STRINGS.UI.OPTIONS.DISPLAY, self.displaySpinner } )
-		table.insert( gfx_spinners, { STRINGS.UI.OPTIONS.RESOLUTION, self.resolutionSpinner } )
-		table.insert( gfx_spinners, { STRINGS.UI.OPTIONS.REFRESHRATE, self.refreshRateSpinner } )
-
-		gfx_pos = { -RESOLUTION_X/2+175, 150, 0 }
-		sound_pos = { 0, 0, 0 }
-		
 	else
-		table.insert( sound_spinners, { "Bloom:", self.bloomSpinner } )
-		table.insert( sound_spinners, { "Distortion:", self.distortionSpinner } )
-		
-		gfx_pos = { -RESOLUTION_X/2+175, 0, 0 }
-		sound_pos = { 0, 0, 0 }
+		table.insert( left_spinners, { "Bloom:", self.bloomSpinner } )
+		table.insert( left_spinners, { "Distortion:", self.distortionSpinner } )
+		table.insert( left_spinners, { "FX:", self.fxVolume } )
+		table.insert( left_spinners, { "Music:", self.musicVolume } )
+		table.insert( left_spinners, { "Ambient:", self.ambientVolume } )
+		table.insert( left_spinners, { "HUD size:", self.hudSize} )
 	end
 
-	table.insert( sound_spinners, { "FX:", self.fxVolume } )
-	table.insert( sound_spinners, { "Music:", self.musicVolume } )
-	table.insert( sound_spinners, { "Ambient:", self.ambientVolume } )
-	table.insert( sound_spinners, { "HUD size:", self.hudSize} )
-
-
-	local gfx_group = self:AddSpinners( gfx_spinners, gfx_pos )
-	local sound_group = self:AddSpinners( sound_spinners, sound_pos )
-	
-	
+	local gfx_group = self:AddSpinners( left_spinners, Vector3(-500,150,0) )
+	local sound_group = self:AddSpinners( right_spinners, Vector3(-50,150,0) )
 end
 
 local function EnabledOptionsIndex( enabled )
@@ -434,7 +483,7 @@ local function EnabledOptionsIndex( enabled )
 end
 
 function OptionsScreen:InitializeSpinners()
-	if PLATFORM ~= "NACL" then
+	if show_graphics then
 		self.fullscreenSpinner:SetSelectedIndex( EnabledOptionsIndex( self.working.fullscreen ) )
 		self:UpdateDisplaySpinner()
 		self:UpdateResolutionsSpinner()
@@ -459,7 +508,7 @@ function OptionsScreen:InitializeSpinners()
 end
 
 function OptionsScreen:UpdateDisplaySpinner()
-	if PLATFORM ~= "NACL" then
+	if show_graphics then
 		local graphicsOptions = TheFrontEnd:GetGraphicsOptions()
 		local display_id = graphicsOptions:GetFullscreenDisplayID() + 1
 		self.displaySpinner:SetSelectedIndex( display_id )
@@ -467,11 +516,12 @@ function OptionsScreen:UpdateDisplaySpinner()
 end
 
 function OptionsScreen:UpdateRefreshRatesSpinner()
-	if PLATFORM ~= "NACL" then
+	if show_graphics then
 		local current_refresh_rate = self.working.refreshrate
 		
-		local refresh_rates = GetRefreshRates( self.working.display, self.working.resolution )
+		local refresh_rates = GetRefreshRates( self.working.display, self.working.mode_idx )
 		self.refreshRateSpinner:SetOptions( refresh_rates )
+		self.refreshRateSpinner:SetSelectedIndex( 1 )
 		
 		for idx, refresh_rate_data in ipairs( refresh_rates ) do
 			if refresh_rate_data.data == current_refresh_rate then
@@ -485,8 +535,8 @@ function OptionsScreen:UpdateRefreshRatesSpinner()
 end
 
 function OptionsScreen:UpdateResolutionsSpinner()
-	if PLATFORM ~= "NACL" then
-		local resolutions = GetDisplayModes( self.working.display, self.working.refreshrate )
+	if show_graphics then
+		local resolutions = GetDisplayModes( self.working.display )
 		self.resolutionSpinner:SetOptions( resolutions )
 	
 		if self.fullscreenSpinner:GetSelected().data then
@@ -495,9 +545,13 @@ function OptionsScreen:UpdateResolutionsSpinner()
 			self.resolutionSpinner:Enable()
 
 			local spinner_idx = 1
-			if self.working.resolution then
-				for idx, res_data in pairs( GetDisplayModes( self.working.display, self.working.refreshrate ) ) do
-					if res_data.data == self.working.resolution then
+			if self.working.mode_idx then
+				local gOpts = TheFrontEnd:GetGraphicsOptions()
+				local mode_idx = gOpts:GetCurrentDisplayModeID( self.options.display )
+				local w, h, hz = GetDisplayModeInfo( self.working.display, mode_idx )
+				
+				for idx, option in pairs( self.resolutionSpinner.options ) do
+					if option.data.w == w and option.data.h == h then
 						spinner_idx = idx
 						break
 					end

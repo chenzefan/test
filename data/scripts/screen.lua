@@ -19,16 +19,20 @@ function Screen:OnGainFocus()
 	TheSim:SetUIRoot(self.inst.entity)
 	self.active = true
 	self:Enable()
-	self:Show()
+	--self:Show()
 end
 
 function Screen:OnCreate()
 end
 
 function Screen:LogView()
+	--[[
+
+	This is causing issues on some platforms...
 	if self.log ~= nil then
 		TheSim:LogView("Screen", self.name)
 	end
+	--]]
 end	
 
 function Screen:OnDestroy()

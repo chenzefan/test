@@ -35,6 +35,9 @@ local function fn(Sim)
 	inst.entity:AddAnimState()
     MakeInventoryPhysics(inst)
     
+    local minimap = inst.entity:AddMiniMapEntity()
+    minimap:SetIcon("krampus_sack.png")
+
     inst.AnimState:SetBank("backpack1")
     inst.AnimState:SetBuild("swap_krampus_sack")
     inst.AnimState:PlayAnimation("anim")

@@ -17,7 +17,7 @@ local function fn()
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
 	inst.entity:AddSoundEmitter()
-    
+    inst:AddTag("NOCLICK")
     inst.AnimState:SetBank("shadowcreatures")
     inst.AnimState:SetBuild("shadow_skittish")
     inst.AnimState:PlayAnimation("idle_loop", true)

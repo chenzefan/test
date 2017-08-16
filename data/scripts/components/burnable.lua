@@ -11,6 +11,12 @@ local function DoneBurning(inst)
         if burnable.onburnt then
             burnable.onburnt(inst)
         end
+
+        if inst.components.explosive then
+            --explosive explode
+            inst.components.explosive:OnBurnt()
+        end
+
         burnable:Extinguish()
     end
 end
@@ -113,6 +119,11 @@ function Burnable:Ignite()
         self.inst:PushEvent("onignite")
         if self.onignite then
             self.onignite(self.inst)
+        end
+
+        if self.inst.components.explosive then
+            --explosive on ignite
+            self.inst.components.explosive:OnIgnite()
         end
         
         if self.inst.components.fueled then

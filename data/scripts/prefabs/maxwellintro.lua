@@ -10,12 +10,18 @@ local FONTS = {
 	{ filename = "data/fonts/opensans50.zip", alias = DIALOGFONT },
 }
 
+local prefabs = 
+{
+    "diviningrodstart",
+}
+
 AddFontAssets( assets, FONTS )
 
 local SPEECH =
 {
 	NULL_SPEECH=
 	{
+	    voice = "dontstarve/maxwell/talk_LP",
 		appearanim = "appear",
 		idleanim= "idle",
 		dialogpreanim = "dialog_pre",
@@ -52,6 +58,8 @@ local SPEECH =
 	},
 	SANDBOX_1 =
 	{
+		appearsound = "dontstarve/maxwell/disappear",
+	    voice = "dontstarve/maxwell/talk_LP",
 		appearanim = "appear",
 		idleanim= "idle",
 		dialogpreanim = "dialog_pre",
@@ -76,54 +84,46 @@ local SPEECH =
 
 	ADVENTURE_1 =
 	{
-		appearanim = "appear",
-		idleanim= "idle",
-		dialogpreanim = "dialog_pre",
-		dialoganim="dial_loop",
-		dialogpostanim = "dialog_pst",
-		disappearanim = "disappear",
+		delay = 2,
+	    voice = "dontstarve/maxwell/talk_LP_world1",
+		appearanim = "appear2",
+		idleanim= "idle2_loop",
+		dialogpreanim = "dialog2_pre",
+		dialoganim="dialog2_loop",
+		dialogpostanim = "dialog2_pst",
+		disappearanim = "disappear2",
 		disableplayer = true,
 		skippable = true,
 		{
 			string = STRINGS.MAXWELL_ADVENTUREINTROS.LEVEL_1.ONE,
-			wait = 3,
+			wait = 2.5,
 			anim = nil,
 			sound = nil,
 		},
 		{
 			string = STRINGS.MAXWELL_ADVENTUREINTROS.LEVEL_1.TWO, 
-			wait = 3, 
+			wait = 3.5, 
 			anim = nil, 
 			sound = nil,
 		},
 		{
 			string = STRINGS.MAXWELL_ADVENTUREINTROS.LEVEL_1.THREE, 
-			wait = 3, 
+			wait = 3.5, 
 			anim = nil, 
 			sound = nil, 
-		},
-		{
-			string = STRINGS.MAXWELL_ADVENTUREINTROS.LEVEL_1.FOUR, 
-			wait = 3,
-			anim = nil,
-			sound = nil,
-		},
-		{
-			string = STRINGS.MAXWELL_ADVENTUREINTROS.LEVEL_1.FIVE, 
-			wait = 3,
-			anim = nil,
-			sound = nil,
 		},
 	},
 
 	ADVENTURE_2 =
 	{		
-		appearanim = "appear",
-		idleanim= "idle",
-		dialogpreanim = "dialog_pre",
-		dialoganim="dial_loop",
-		dialogpostanim = "dialog_pst",
-		disappearanim = "disappear",
+		delay = 2,
+	    voice = "dontstarve/maxwell/talk_LP_world2",
+		appearanim = "appear2",
+		idleanim= "idle2_loop",
+		dialogpreanim = "dialog2_pre",
+		dialoganim="dialog2_loop",
+		dialogpostanim = "dialog2_pst",
+		disappearanim = "disappear2",
 		disableplayer = true,
 		skippable = true,
 		{
@@ -134,38 +134,22 @@ local SPEECH =
 		},
 		{
 			string = STRINGS.MAXWELL_ADVENTUREINTROS.LEVEL_2.TWO, 
-			wait = 3, 
+			wait = 2.5, 
 			anim = nil, 
-			sound = nil,
-		},
-		{
-			string = STRINGS.MAXWELL_ADVENTUREINTROS.LEVEL_2.THREE, 
-			wait = 3, 
-			anim = nil, 
-			sound = nil, 
-		},
-		{
-			string = STRINGS.MAXWELL_ADVENTUREINTROS.LEVEL_2.FOUR, 
-			wait = 3,
-			anim = nil,
-			sound = nil,
-		},
-		{
-			string = STRINGS.MAXWELL_ADVENTUREINTROS.LEVEL_2.FIVE, 
-			wait = 3,
-			anim = nil,
 			sound = nil,
 		},
 	},
 
 	ADVENTURE_3 =
 	{		
-		appearanim = "appear",
-		idleanim= "idle",
-		dialogpreanim = "dialog_pre",
-		dialoganim="dial_loop",
-		dialogpostanim = "dialog_pst",
-		disappearanim = "disappear",
+		delay = 2,
+	    voice = "dontstarve/maxwell/talk_LP_world3",
+		appearanim = "appear3",
+		idleanim= "idle3_loop",
+		dialogpreanim = "dialog3_pre",
+		dialoganim="dialog3_loop",
+		dialogpostanim = "dialog3_pst",
+		disappearanim = "disappear3",
 		disableplayer = true,
 		skippable = true,
 		{
@@ -176,49 +160,77 @@ local SPEECH =
 		},
 		{
 			string = STRINGS.MAXWELL_ADVENTUREINTROS.LEVEL_3.TWO, 
-			wait = 3, 
+			wait = 3.5, 
 			anim = nil, 
 			sound = nil,
-		},
-		{
-			string = STRINGS.MAXWELL_ADVENTUREINTROS.LEVEL_3.THREE, 
-			wait = 3, 
-			anim = nil, 
-			sound = nil, 
 		},
 	},
 
 	ADVENTURE_4 =
 	{		
-		appearanim = "appear",
-		idleanim= "idle",
-		dialogpreanim = "dialog_pre",
-		dialoganim="dial_loop",
-		dialogpostanim = "dialog_pst",
-		disappearanim = "disappear",
+		delay = 2,
+	    voice = "dontstarve/maxwell/talk_LP_world4",
+		appearanim = "appear4",
+		idleanim= "idle4_loop",
+		dialogpreanim = "dialog4_pre",
+		dialoganim="dialog4_loop",
+		dialogpostanim = "dialog4_pst",
+		disappearanim = "disappear4",
 		disableplayer = true,
 		skippable = true,
 		{
 			string = STRINGS.MAXWELL_ADVENTUREINTROS.LEVEL_4.ONE,
-			wait = 3,
+			wait = 1.5,
 			anim = nil,
 			sound = nil,
 		},
 		{
 			string = STRINGS.MAXWELL_ADVENTUREINTROS.LEVEL_4.TWO, 
-			wait = 3, 
+			wait = 3.5, 
 			anim = nil, 
 			sound = nil,
 		},
 		{
 			string = STRINGS.MAXWELL_ADVENTUREINTROS.LEVEL_4.THREE, 
-			wait = 3, 
+			wait = 3.5, 
+			anim = nil, 
+			sound = nil,
+		},
+	},
+
+	ADVENTURE_TWOLANDS =
+	{		
+		delay = 2,
+	    voice = "dontstarve/maxwell/talk_LP_world4",
+		appearanim = "appear4",
+		idleanim= "idle4_loop",
+		dialogpreanim = "dialog4_pre",
+		dialoganim="dialog4_loop",
+		dialogpostanim = "dialog4_pst",
+		disappearanim = "disappear4",
+		disableplayer = true,
+		skippable = true,
+		{
+			string = STRINGS.MAXWELL_ADVENTUREINTROS.TWOLANDS.ONE,
+			wait = 1.5,
+			anim = nil,
+			sound = nil,
+		},
+		{
+			string = STRINGS.MAXWELL_ADVENTUREINTROS.TWOLANDS.TWO, 
+			wait = 3.5, 
+			anim = nil, 
+			sound = nil,
+		},
+		{
+			string = STRINGS.MAXWELL_ADVENTUREINTROS.TWOLANDS.THREE, 
+			wait = 3.5, 
 			anim = nil, 
 			sound = nil, 
 		},
 		{
-			string = STRINGS.MAXWELL_ADVENTUREINTROS.LEVEL_4.FOUR, 
-			wait = 3,
+			string = STRINGS.MAXWELL_ADVENTUREINTROS.TWOLANDS.FOUR, 
+			wait = 2.5,
 			anim = nil,
 			sound = nil,
 		},
@@ -226,54 +238,40 @@ local SPEECH =
 
 	ADVENTURE_5 =
 	{		
-		appearanim = "appear",
-		idleanim= "idle",
-		dialogpreanim = "dialog_pre",
-		dialoganim="dial_loop",
-		dialogpostanim = "dialog_pst",
-		disappearanim = "disappear",
+		delay = 2,
+	    voice = "dontstarve/maxwell/talk_LP_world5",
+		appearanim = "appear5",
+		idleanim= "idle5_loop",
+		dialogpreanim = "dialog5_pre",
+		dialoganim="dialog5_loop",
+		dialogpostanim = "dialog5_pst",
+		disappearanim = "disappear5",
 		disableplayer = true,
 		skippable = true,
 		{
 			string = STRINGS.MAXWELL_ADVENTUREINTROS.LEVEL_5.ONE,
-			wait = 2,
+			wait = 3.5,
 			anim = nil,
 			sound = nil,
 		},
 		{
 			string = STRINGS.MAXWELL_ADVENTUREINTROS.LEVEL_5.TWO, 
-			wait = 2, 
+			wait = 3.5, 
 			anim = nil, 
 			sound = nil,
 		},
 		{
 			string = STRINGS.MAXWELL_ADVENTUREINTROS.LEVEL_5.THREE, 
-			wait = 2, 
+			wait = 3.5, 
 			anim = nil, 
 			sound = nil, 
-		},
-		{
-			string = STRINGS.MAXWELL_ADVENTUREINTROS.LEVEL_5.FOUR, 
-			wait = 2.5,
-			anim = nil,
-			sound = nil,
-		},
-		{
-			string = STRINGS.MAXWELL_ADVENTUREINTROS.LEVEL_5.FIVE, 
-			wait = 1,
-			anim = nil,
-			sound = nil,
-		},
-		{
-			string = STRINGS.MAXWELL_ADVENTUREINTROS.LEVEL_5.SIX, 
-			wait = 1.5,
-			anim = nil,
-			sound = nil,
 		},
 	},
 
 	ADVENTURE_6 =
 	{		
+		delay = 2,
+	    voice = "dontstarve/maxwell/talk_LP_world6",
 		appearanim = "appear",
 		idleanim= "idle",
 		dialogpreanim = "dialog_pre",
@@ -295,6 +293,32 @@ local SPEECH =
 			sound = nil,
 		},
 	},
+
+	ADVENTURE_6_TELEPORTFAIL =
+	{		
+		delay = 2,
+	    voice = "dontstarve/maxwell/talk_LP_world5",
+		appearanim = "appear5",
+		idleanim= "idle5_loop",
+		dialogpreanim = "dialog5_pre",
+		dialoganim="dialog5_loop",
+		dialogpostanim = "dialog5_pst",
+		disappearanim = "disappear5",
+		disableplayer = true,
+		skippable = true,
+		{
+			string = STRINGS.MAXWELL_ADVENTUREINTROS.LEVEL_6.TELEPORTFAIL,
+			wait = 3,
+			anim = nil,
+			sound = nil,
+		},
+		{
+			string = STRINGS.MAXWELL_ADVENTUREINTROS.LEVEL_6.TELEPORTFAIL2,
+			wait = 3,
+			anim = nil,
+			sound = nil,
+		},
+	},
 }
 
 local function fn(Sim)	
@@ -307,12 +331,14 @@ local function fn(Sim)
     inst.Transform:SetTwoFaced()
 
     anim:SetBank("maxwell")
-    anim:SetBuild("maxwell_basic") 
+    anim:SetBuild("maxwell_build")
 
     inst.entity:AddLabel()
-    inst.Label:SetFontSize(25)
-    inst.Label:SetFont(DIALOGFONT)
+    inst.Label:SetFontSize(28)
+    inst.Label:SetFont(TALKINGFONT)
     inst.Label:SetPos(0,5,0)
+    --inst.Label:SetColour(200/255, 200/255, 200/255)
+    
     --inst.Label:SetColour(255/255, 100/255, 100/255)
     inst.Label:Enable(false)
     
@@ -325,10 +351,20 @@ local function fn(Sim)
     
     inst:AddComponent("maxwelltalker")
     inst.components.maxwelltalker.speeches = SPEECH
-    
-	--inst.task = inst:StartThread(function()	inst.components.maxwelltalker:DoTalk(inst) end) 
+ 
+    if TheSim:FindFirstEntityWithTag("diviningrod") == nil then
+        inst:DoTaskInTime(0, function()
+            if SaveGameIndex:GetCurrentMode(Settings.save_slot) == "adventure" then
+                local rod = SpawnPrefab("diviningrodstart")
+                if rod then
+                    local pt = Vector3(inst.Transform:GetWorldPosition()) - TheCamera:GetDownVec()*2
+                    rod.Transform:SetPosition(pt:Get() )
+                end
+            end
+        end)
+    end
 
     return inst
 end
 
-return Prefab("common/characters/maxwellintro", fn, assets)
+return Prefab("common/characters/maxwellintro", fn, assets, prefabs)

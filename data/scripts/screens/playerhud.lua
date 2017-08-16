@@ -94,37 +94,45 @@ local Controls = Class(Widget, function(self, owner)
     self.inv = self.bottom_root:AddChild(Inv(self.owner))
     
     self.crafttabs = self.left_root:AddChild(CraftTabs(self.owner))
-    local scale = .65
+    local scale = .75
     self.crafttabs:SetScale(scale,scale,scale)
     
 
 
 	self.sidepanel = self.topright_root:AddChild(Widget("sidepanel"))
-	self.sidepanel:SetScale(.9,.9,.9)
+	self.sidepanel:SetScale(1,1,1)
 	self.sidepanel:SetPosition(-80, -60, 0)
     self.status = self.sidepanel:AddChild(Status(self.owner))
     self.status:SetPosition(0,-110,0)
-    self.status:SetScale(.9,.9,.9)
+    --self.status:SetScale(.9,.9,.9)
     self.clock = self.sidepanel:AddChild(UIClock(self.owner))
-    self.hover = self:AddChild(HoverText(self.owner))
+    
+
+    if GetWorld() and GetWorld():IsCave() then
+    	self.clock:Hide()
+    	self.status:SetPosition(-10,-20,0)
+    end
+    
 
 	self.containers = {}
 
     local MAPSCALE = .5
-	self.minimapBtn = self.bottomright_root:AddChild(Button())
+	
+	self.maproot = self.bottomright_root:AddChild(Widget("mapstuff"))
+	self.maproot:SetPosition(-60,70,0)
+	self.minimapBtn = self.maproot:AddChild(Button())
 
 	local btn = self.minimapBtn
-	btn.text:SetFont(UIFONT)
-	btn.text:SetSize(50)
     btn:SetScale(MAPSCALE,MAPSCALE,MAPSCALE)
-    
 	btn:SetOnClick( function() self:ToggleMap() end )
-	btn:SetMouseOver( function() btn:SetText(STRINGS.UI.HUD.MAP) btn:ScaleTo(MAPSCALE*1.5,MAPSCALE*1.5,MAPSCALE*1.5) end )
-	btn:SetMouseOut( function() btn:SetText() btn:ScaleTo(MAPSCALE,MAPSCALE,MAPSCALE) end )
-	btn:SetPosition( Point( -50,50,0 ) )
+	btn:SetMouseOver( function()  btn:ScaleTo(MAPSCALE*1.1,MAPSCALE*1.1,MAPSCALE*1.1) end )
+	btn:SetMouseOut( function() btn:ScaleTo(MAPSCALE,MAPSCALE,MAPSCALE) end )
+	
+	btn:SetTooltip(STRINGS.UI.HUD.MAP)
 	btn:SetImage( "data/images/map_button.tex" )
-    
-    self.pauseBtn = self.bottomright_root:AddChild(Button())
+
+
+	self.pauseBtn = self.maproot:AddChild(Button())
 	
     self.pauseBtn:SetOnClick(
 		function()
@@ -135,25 +143,62 @@ local Controls = Class(Widget, function(self, owner)
 	
 	self.pauseBtn:SetMouseOver(
 		function()
-			self.pauseBtn:ScaleTo( MAPSCALE*1.3, MAPSCALE*1.3, MAPSCALE*1.3 )
+			self.pauseBtn:ScaleTo( .4, .4, .4 )
 		end )
 		
 	self.pauseBtn:SetMouseOut(
 		function()
-			self.pauseBtn:ScaleTo( MAPSCALE, MAPSCALE, MAPSCALE )
+			self.pauseBtn:ScaleTo( .33, .33, .33 )
 		end )
 		
-	self.pauseBtn.text:SetFont(UIFONT)
-	self.pauseBtn.text:SetSize(50)
+	self.pauseBtn:SetTooltip(STRINGS.UI.HUD.PAUSE)
+		
 	self.pauseBtn:SetImage( "data/images/pause.tex" )	
-	self.pauseBtn:SetScale(MAPSCALE,MAPSCALE,MAPSCALE)
-	self.pauseBtn:SetPosition( Point( -117, 35, 0 ) )
+	self.pauseBtn:SetScale(.33,.33,.33)
+	self.pauseBtn:SetPosition( Point( 0,-50,0 ) )
         
     if true or not IsGamePurchased() then
 		self.demotimer = self.top_root:AddChild(DemoTimer(self.owner))
 		self.demotimer:SetPosition(320, -25, 0)
 	end
 	
+
+	self.alphawarning = self.top_root:AddChild(Text(TITLEFONT, 40))
+	self.alphawarning:SetRegionSize(400, 50)
+	self.alphawarning:SetPosition(0, -28, 0) 
+	self.alphawarning:SetString(STRINGS.UI.HUD.CAVEWARNING)
+	self.alphawarning:Hide()
+	if GetWorld():IsCave() then
+		self.alphawarning:Show()
+	end
+
+
+	self.rotleft = self.maproot:AddChild(Button())
+	self.rotleft:SetImage( "data/images/turnarrow_icon.tex" )
+	--self.rotleft:SetMouseOverImage( "data/images/turnarrow_icon_over.tex" )
+	
+	self.rotleft:SetMouseOver( function() self.rotleft:SetScale( -.8, .8, .8 ) end )
+	self.rotleft:SetMouseOut( function() self.rotleft:SetScale( -.7, .7, .7 ) end )	
+	
+    self.rotleft:SetPosition(-40,-40,0)
+    self.rotleft:SetOnClick(function() GetPlayer().components.playercontroller:RotLeft() end)
+    self.rotleft:SetScale(-.7,.7,.7)
+    self.rotleft:SetTooltip(STRINGS.UI.HUD.ROTLEFT)
+
+	self.rotright = self.maproot:AddChild(Button())
+	self.rotright:SetImage( "data/images/turnarrow_icon.tex" )
+	--self.rotright:SetMouseOverImage( "data/images/turnarrow_icon_over.tex" )
+	
+	self.rotright:SetMouseOver( function() self.rotright:SetScale( .8, .8, .8 ) end )
+	self.rotright:SetMouseOut( function() self.rotright:SetScale( .7, .7, .7 ) end )	
+	
+    self.rotright:SetPosition(40,-40,0)
+    self.rotright:SetOnClick(function() GetPlayer().components.playercontroller:RotRight() end)
+    self.rotright:SetScale(.7,.7,.7)
+	self.rotright:SetTooltip(STRINGS.UI.HUD.ROTRIGHT)
+
+    
+    
 	
 	self.containerroot = self:AddChild(Widget(""))
     self.containerroot:SetHAnchor(ANCHOR_MIDDLE)
@@ -169,6 +214,13 @@ local Controls = Class(Widget, function(self, owner)
 	self.containerroot_side:SetMaxPropUpscale(MAX_HUD_SCALE)
 	self.containerroot_side = self.containerroot_side:AddChild(Widget(""))
 	
+    self.hover = self:AddChild(HoverText(self.owner))
+    
+    self.mousefollow = self:AddChild(Widget("follower"))
+    self.mousefollow:FollowMouse(true)
+    self.mousefollow:SetScaleMode(SCALEMODE_PROPORTIONAL)
+    self.hover:SetScaleMode(SCALEMODE_PROPORTIONAL)
+
     self:SetHUDSize(Profile:GetHUDSize())
 end)
 
@@ -213,7 +265,15 @@ end
 function Controls:SetHUDSize( size )
 	local min_scale = .75
 	local max_scale = 1.1
-	local scale = easing.linear(size, min_scale, max_scale-min_scale, 10)
+	
+	--testing high res displays
+	local w,h = TheSim:GetScreenSize()
+	
+	local res_scale_x = math.max(1, w / 1920)
+	local res_scale_y = math.max(1, h / 1200)
+	local res_scale = math.min(res_scale_x, res_scale_y)	
+	
+	local scale = easing.linear(size, min_scale, max_scale-min_scale, 10) * res_scale
 	self.topright_root:SetScale(scale,scale,scale)
 	self.bottom_root:SetScale(scale,scale,scale)
 	self.top_root:SetScale(scale,scale,scale)
@@ -221,6 +281,9 @@ function Controls:SetHUDSize( size )
 	self.left_root:SetScale(scale,scale,scale)
 	self.containerroot:SetScale(scale,scale,scale)
 	self.containerroot_side:SetScale(scale,scale,scale)
+	self.hover:SetScale(scale,scale,scale)
+	
+	self.mousefollow:SetScale(scale,scale,scale)
 end
 
 function Controls:OnKeyDown( key )
@@ -276,33 +339,35 @@ function Controls:Update(dt)
 	end
     
     
-    --this is kind of a weird place to do all of this, but the anim *is* a hud asset...
-    if TheCamera and TheCamera.distance and not TheCamera.dollyzoom then
-        local dist_percent = (TheCamera.distance - TheCamera.mindist) / (TheCamera.maxdist - TheCamera.mindist)
-        local cutoff = .6
-        if dist_percent > cutoff then
-            if not self.clouds_on then
-				TheCamera.should_push_down = true
-                self.clouds_on = true
-                self.clouds:Show()
-                self.owner.SoundEmitter:PlaySound("dontstarve/common/clouds", "windsound")
-                TheMixer:PushMix("high")
-            end
-            
-            local p = easing.outCubic( dist_percent-cutoff , 0, 1, 1 - cutoff) 
-            self.clouds:GetAnimState():SetMultColour(1,1,1, p )
-            self.owner.SoundEmitter:SetVolume("windsound",p)
-        else
-            if self.clouds_on then
-				TheCamera.should_push_down = false
-                self.clouds_on = false
-                self.clouds:Hide()
-                self.owner.SoundEmitter:KillSound("windsound")
-                TheMixer:PopMix("high")
-            end
-        end
-    end
-    
+    if not GetWorld():IsCave() then
+	    --this is kind of a weird place to do all of this, but the anim *is* a hud asset...
+	    if TheCamera and TheCamera.distance and not TheCamera.dollyzoom then
+	        local dist_percent = (TheCamera.distance - TheCamera.mindist) / (TheCamera.maxdist - TheCamera.mindist)
+	        local cutoff = .6
+	        if dist_percent > cutoff then
+	            if not self.clouds_on then
+					TheCamera.should_push_down = true
+	                self.clouds_on = true
+	                self.clouds:Show()
+	                self.owner.SoundEmitter:PlaySound("dontstarve/common/clouds", "windsound")
+	                TheMixer:PushMix("high")
+	            end
+	            
+	            local p = easing.outCubic( dist_percent-cutoff , 0, 1, 1 - cutoff) 
+	            self.clouds:GetAnimState():SetMultColour(1,1,1, p )
+	            self.owner.SoundEmitter:SetVolume("windsound",p)
+	        else
+	            if self.clouds_on then
+					TheCamera.should_push_down = false
+	                self.clouds_on = false
+	                self.clouds:Hide()
+	                self.owner.SoundEmitter:KillSound("windsound")
+	                TheMixer:PopMix("high")
+	            end
+	        end
+	    end
+	end
+	
     if self.demotimer then
 		if IsGamePurchased() then
 			self.demotimer:Kill()
@@ -326,6 +391,13 @@ function Controls:ToggleMap()
 			self.minimap:Update()
             self.minimapBtn:Show()
             self.pauseBtn:Hide()
+            self.hover:Hide()
+            self.rotleft:Hide()
+            self.rotright:Hide()
+            
+            if self.inv.hovertile then
+				self.inv.hovertile:Hide()
+			end
         else
 			self.containerroot:Show()
 			self.containerroot_side:Show()
@@ -333,6 +405,14 @@ function Controls:ToggleMap()
             SetHUDPause(false)
 			self.minimap:Hide()
 			self.pauseBtn:Show()
+			self.hover:Show()
+            if self.inv.hovertile then
+				self.inv.hovertile:Show()
+			end
+            self.rotleft:Show()
+            self.rotright:Show()
+
+			
         end
     end
 end
@@ -424,8 +504,15 @@ function PlayerHud:SetMainCharacter(maincharacter)
     if maincharacter then
 		maincharacter.HUD = self
 		self.owner = maincharacter
+		
+		
+		--FIXME: THIS IS A HACK TO GET AROUND AN ISSUE WHEN SHADER CONSTANTS AREN'T BEING SET PROPERLY WHEN YOU HAVE TEXT ON DIFFERENT RENDER LAYERS
+		self.garbagetext = self.root:AddChild(Text(TITLEFONT, 40))
+		self.garbagetext:SetString(" ")
+
 
 		self.controls = self.root:AddChild(Controls(self.owner))
+		self.controls.inv:Refresh()
 		--self.inst.entity:SetParent(self.inst.entity)
 
 		self.inst:ListenForEvent("badaura", function(inst, data) return self.bloodover:Flash() end, self.owner)

@@ -19,6 +19,10 @@ local assets=
     Asset("IMAGE", "data/inventoryimages/drumstick.tex"),
     Asset("IMAGE", "data/inventoryimages/drumstick_cooked.tex"),
 	Asset("ANIM", "data/anim/meat_rack_food.zip"),
+
+    Asset("ANIM", "data/anim/batwing.zip"),
+    Asset("IMAGE", "data/inventoryimages/batwing.tex"),
+    Asset("IMAGE", "data/inventoryimages/batwing_cooked.tex"),
 }
 
 
@@ -46,6 +50,13 @@ local monsterprefabs =
 local drumstickprefabs = 
 {
     "drumstick_cooked",
+    "spoiled_food",
+}
+
+local batwingprefabs = 
+{
+    "batwing_cooked",
+    "meat_dried",
     "spoiled_food",
 }
 
@@ -280,6 +291,43 @@ local function drumstick_cooked()
     return inst
 end
 
+local function batwing()
+    local inst = common()
+    inst.AnimState:SetBank("batwing")
+    inst.AnimState:SetBuild("batwing")
+    inst.AnimState:PlayAnimation("raw")
+
+    inst.components.edible.healthvalue = TUNING.HEALING_SMALL
+    inst.components.edible.hungervalue = TUNING.CALORIES_SMALL
+    inst.components.edible.sanityvalue = -TUNING.SANITY_SMALL
+    
+    inst.components.perishable:SetPerishTime(TUNING.PERISH_FAST)
+
+    inst:AddComponent("dryable")
+    inst.components.dryable:SetProduct("smallmeat_dried")
+    inst.components.dryable:SetDryTime(TUNING.DRY_MED)
+    
+    inst:AddTag("batwing")
+    inst:AddComponent("cookable")
+    inst.components.cookable.product = "batwing_cooked"
+        
+    return inst
+end
+
+local function batwing_cooked()
+    local inst = common()
+    inst.AnimState:SetBank("batwing")
+    inst.AnimState:SetBuild("batwing")
+    inst.AnimState:PlayAnimation("cooked")
+    inst:AddTag("batwing")
+
+    inst.components.edible.healthvalue = TUNING.HEALING_MEDSMALL
+    inst.components.edible.hungervalue = TUNING.CALORIES_MEDSMALL
+    inst.components.perishable:SetPerishTime(TUNING.PERISH_MED)
+
+    return inst
+end
+
 
 return  Prefab( "common/inventory/meat", raw, assets, prefabs),
         Prefab( "common/inventory/cookedmeat", cooked, assets),
@@ -291,5 +339,7 @@ return  Prefab( "common/inventory/meat", raw, assets, prefabs),
         Prefab( "common/inventory/cookedsmallmeat", cookedsmallmeat, assets),
         Prefab( "common/inventory/smallmeat_dried", driedsmallmeat, assets),
         Prefab( "common/inventory/drumstick", drumstick, assets, drumstickprefabs),
-        Prefab( "common/inventory/drumstick_cooked", drumstick_cooked, assets)
+        Prefab( "common/inventory/drumstick_cooked", drumstick_cooked, assets),
+        Prefab("common/inventory/batwing", batwing, assets),
+        Prefab("common/inventory/batwing_cooked", batwing_cooked, assets)
 

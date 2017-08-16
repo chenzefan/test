@@ -1,3 +1,5 @@
+require "recipes"
+
 assets = 
 {
 	Asset("ANIM", "data/anim/blueprint.zip"),
@@ -23,9 +25,12 @@ end
 local function selectrecipe_any(recipes)
 	if next(recipes) then
 		return recipes[math.random(1, #recipes)]
-	else
-		print("No valid recipes. Removing Blueprint.")
-		inst:Remove()
+	end
+end
+
+local function OnTeach(inst, learner)
+	if learner.SoundEmitter then
+		learner.SoundEmitter:PlaySound("dontstarve/HUD/get_gold")    
 	end
 end
 
@@ -40,9 +45,11 @@ local function fn()
 	inst.AnimState:PlayAnimation("idle")
     inst:AddComponent("inspectable")    
     inst:AddComponent("inventoryitem")
-    inst.components.inventoryitem:ChangeImageName(inst, "blueprint")
+    inst.components.inventoryitem:ChangeImageName("blueprint")
     inst:AddComponent("named")
     inst:AddComponent("teacher")
+    inst.components.teacher.onteach = OnTeach
+    
     inst.OnLoad = onload
     inst.OnSave = onsave
 
@@ -60,13 +67,41 @@ local function MakeAnyBlueprint()
     	end
     end
     local r = selectrecipe_any(recipes)
-    if not inst.recipetouse then
-	    inst.recipetouse = r.name
+    
+    if r then
+		if not inst.recipetouse then
+			inst.recipetouse = r.name
+		end
+		inst.components.teacher:SetRecipe(inst.recipetouse)
+		inst.components.named:SetName(STRINGS.NAMES[string.upper(inst.recipetouse)].." Blueprint")
 	end
-    inst.components.teacher:SetRecipe(inst.recipetouse)
-    inst.components.named:SetName(STRINGS.NAMES[string.upper(inst.recipetouse)].." Blueprint")
-
+	
     return inst
+end
+
+local function MakeAnySpecificBlueprint(specific_item)
+	local ctor = function()
+		local inst = fn()
+
+		local recipes = {}
+	    local player = GetPlayer()   
+	    for k,v in pairs(GetAllRecipes()) do
+	    	if v and ((specific_item ~= nil and v.name == specific_item) or
+	    			 (specific_item == nil and not player.components.builder:KnowsRecipe(v.name)) )then	    		
+	    		table.insert(recipes, v)  		
+	    	end
+	    end
+	    local r = selectrecipe_any(recipes)
+		if r then
+		    if not inst.recipetouse then
+			    inst.recipetouse = r.name
+			end
+		    inst.components.teacher:SetRecipe(inst.recipetouse)
+		    inst.components.named:SetName(STRINGS.NAMES[string.upper(inst.recipetouse)].." Blueprint")
+		end
+	    return inst
+	end
+	return ctor
 end
 
 local function MakeSpecificBlueprint(recipetab)
@@ -81,12 +116,13 @@ local function MakeSpecificBlueprint(recipetab)
 	    	end
 	    end
 	    local r = selectrecipe_any(recipes)
-	    if not inst.recipetouse then
-		    inst.recipetouse = r.name
+	    if r then
+			if not inst.recipetouse then
+			    inst.recipetouse = r.name
+			end
+			inst.components.teacher:SetRecipe(inst.recipetouse)
+			inst.components.named:SetName(STRINGS.NAMES[string.upper(inst.recipetouse)].." Blueprint")
 		end
-	    inst.components.teacher:SetRecipe(inst.recipetouse)
-	    inst.components.named:SetName(STRINGS.NAMES[string.upper(inst.recipetouse)].." Blueprint")
-
 	    return inst
 	end
 	return ctor
@@ -97,5 +133,8 @@ local prefabs = {}
 table.insert(prefabs, Prefab("common/inventory/blueprint", MakeAnyBlueprint, assets))
 for k,v in pairs(RECIPETABS) do
 	table.insert(prefabs, Prefab("common/inventory/"..string.lower(v.str).."_blueprint", MakeSpecificBlueprint(v), assets))
+end
+for k,v in pairs(GetAllRecipes()) do
+	table.insert(prefabs, Prefab("common/inventory/"..string.lower(k).."_blueprint", MakeAnySpecificBlueprint(k), assets))
 end
 return unpack(prefabs)

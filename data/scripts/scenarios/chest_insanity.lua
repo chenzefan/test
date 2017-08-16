@@ -7,7 +7,7 @@ loot =
     },
     {
         item = "nightsword",
-        initfn = function(inst) inst.components.finiteuses:SetUses(TUNING.NIGHTSWORD_USES*math.random()) end,
+        --initfn = function(inst) inst.components.finiteuses:SetUses(TUNING.NIGHTSWORD_USES*math.random()) end,
         count = 1
     },
     {

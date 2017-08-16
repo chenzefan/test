@@ -375,7 +375,6 @@ CommonStates.AddSleepStates = function(states, timelines, fns)
             tags = {"busy", "sleeping"},
 
             onenter = function(inst)
-                print("In forced sleep state.")
                 inst.components.locomotor:StopMoving()            
                 inst.AnimState:PlayAnimation("sleep_loop", true)
             end
@@ -461,7 +460,15 @@ CommonStates.AddCombatStates = function(states, timelines, anims)
             if inst.components.locomotor then
                 inst.components.locomotor:StopMoving()
             end
-            inst.AnimState:PlayAnimation(anims and anims.hit or "hit")
+            local hitanim = "hit"
+            if anims and anims.hit then
+                if type(anims.hit) == "function" then
+                    hitanim = anims.hit(inst)
+                else
+                    hitanim = anims.hit
+                end
+            end
+            inst.AnimState:PlayAnimation(hitanim)
             if inst.SoundEmitter and inst.sounds then
                 if inst.sounds.hit then
                     inst.SoundEmitter:PlaySound(inst.sounds.hit)

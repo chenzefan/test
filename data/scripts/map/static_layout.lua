@@ -36,7 +36,11 @@ local function ConvertStaticLayoutToLayout(layoutsrc, additionalProps)
 	-- See \tools\tiled\dont_starve\tiles.png for tiles
 	layout.ground_types = {GROUND.IMPASSABLE, GROUND.ROAD, GROUND.ROCKY, GROUND.DIRT, 
 							GROUND.SAVANNA, GROUND.GRASS, GROUND.FOREST, GROUND.MARSH, 
-							GROUND.WOODFLOOR, GROUND.CARPET, GROUND.CHECKER}
+							GROUND.WOODFLOOR, GROUND.CARPET, GROUND.CHECKER,
+							GROUND.CAVE, GROUND.FUNGUS, GROUND.SINKHOLE,
+							GROUND.WALL_ROCKY, GROUND.WALL_DIRT, GROUND.WALL_MARSH, 
+							GROUND.WALL_CAVE, GROUND.WALL_FUNGUS, GROUND.WALL_SINKHOLE, 
+						}
 	layout.ground = {}
 	
 	-- See \tools\tiled\dont_starve\objecttypes.xml for objects
@@ -77,7 +81,11 @@ local function ConvertStaticLayoutToLayout(layoutsrc, additionalProps)
 					for k,v in pairs(obj.properties) do
 						local keys = k:split(".")
 						local number_v = tonumber(v)
-						ParseNestedKey(properties,keys,number_v or v)
+						if v == "true" or v == "false" then
+							ParseNestedKey(properties,keys, v == "true")
+						else
+							ParseNestedKey(properties,keys,number_v or v)
+						end
 					end
 					
 					--print("Static Layout Properties for ", layoutsrc)

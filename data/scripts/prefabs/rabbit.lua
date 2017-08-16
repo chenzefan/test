@@ -17,6 +17,24 @@ local prefabs =
     "beardhair",
 }
 
+local rabbitsounds = 
+{
+    scream = "dontstarve/rabbit/scream",
+    hurt = "dontstarve/rabbit/scream_short",
+}
+
+local beardsounds = 
+{
+    scream = "dontstarve/rabbit/beardscream",
+    hurt = "dontstarve/rabbit/beardscream_short",
+}
+
+local wintersounds = 
+{
+    scream = "dontstarve/rabbit/winterscream",
+    hurt = "dontstarve/rabbit/winterscream_short",
+}
+
 local function onpickup(inst)
 end
 
@@ -29,7 +47,8 @@ local function BecomeRabbit(inst)
 	    inst.israbbit = true
 	    inst.iswinterrabbit = false
 		inst.components.sanityaura.aura = 0
-		inst.components.inventoryitem:ChangeImageName(inst, "rabbit")
+		inst.components.inventoryitem:ChangeImageName("rabbit")
+		inst.sounds = rabbitsounds
 	end
 end
 
@@ -44,7 +63,8 @@ local function BecomeBeardling(inst)
 		inst.components.sanityaura.aura = -TUNING.SANITYAURA_MED		
 	    inst.israbbit = false
 	    inst.iswinterrabbit = false
-	    inst.components.inventoryitem:ChangeImageName(inst, "beard_monster")
+	    inst.components.inventoryitem:ChangeImageName("beard_monster")
+		inst.sounds = beardsounds
 	end
 end
 
@@ -55,7 +75,8 @@ local function DonWinterFur(inst)
 		inst.israbbit = false
 	    inst.iswinterrabbit = true
 		inst.components.sanityaura.aura = 0
-		inst.components.inventoryitem:ChangeImageName(inst, "rabbit_winter")
+		inst.components.inventoryitem:ChangeImageName("rabbit_winter")
+		inst.sounds = wintersounds
 	end
 end
 
@@ -63,7 +84,7 @@ local function CheckTransformState(inst)
 	if not inst.components.health:IsDead() then
 		local player = GetPlayer()
 		if player.components.sanity:GetPercent() > TUNING.BEARDLING_SANITY then
-			if GetWorld().components.seasonmanager:IsSummer() then
+			if not GetSeasonManager() or GetSeasonManager():IsSummer() then
 				BecomeRabbit(inst)
 			else
 				DonWinterFur(inst)
@@ -191,15 +212,18 @@ local function fn(Sim)
 	inst.OnEntitySleep = OnSleep    
     
     inst.OnSave = function(inst, data)
-        data.israbbit = inst.israbbit
-        data.iswinterrabbit = inst.iswinterrabbit
+        if not inst.israbbit then
+			data.israbbit = inst.israbbit
+		end
+        data.iswinterrabbit = inst.iswinterrabbit or nil
     end        
     
     inst.OnLoad = function(inst, data)
         if data then
-		        if data.israbbit == false and data.iswinterrabbit == false then
+				local israbbit = data.israbbit or true
+		        if not israbbit and not data.iswinterrabbit then
 					BecomeBeardling(inst)
-				else if data.israbbit == false and data.iswinterrabbit == true then
+				else if not israbbit and data.iswinterrabbit then
 					DonWinterFur(inst)					
 		        end
 		    end

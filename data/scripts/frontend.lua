@@ -17,10 +17,17 @@ FrontEnd = Class(function(self, name)
 	
     
     self.title = Text(TITLEFONT, 100)
+    self.title:SetPosition(0, -30, 0)
     self.title:Hide()
     self.title:SetVAnchor(ANCHOR_MIDDLE)
     self.title:SetHAnchor(ANCHOR_MIDDLE)
 	
+    self.subtitle = Text(TITLEFONT, 70)
+    self.subtitle:SetPosition(0, 70, 0)
+    self.subtitle:Hide()
+    self.subtitle:SetVAnchor(ANCHOR_MIDDLE)
+    self.subtitle:SetHAnchor(ANCHOR_MIDDLE)
+
 	self.gameinterface = CreateEntity()
 	self.gameinterface.entity:AddSoundEmitter()
 	self.gameinterface.entity:AddGraphicsOptions()
@@ -34,13 +41,16 @@ FrontEnd = Class(function(self, name)
 	self.displayingerror = false
 end)
 
-function FrontEnd:ShowTitle(text)
+function FrontEnd:ShowTitle(text,subtext)
 	self.title:SetString(text)
 	self.title:Show()
+	self.subtitle:SetString(subtext)
+	self.subtitle:Show()
 end
 
-function FrontEnd:HideTitle(string)
+function FrontEnd:HideTitle()
 	self.title:Hide()
+	self.subtitle:Hide()
 end
 
 function FrontEnd:OnKeyPause()

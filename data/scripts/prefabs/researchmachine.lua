@@ -14,13 +14,21 @@ end
 
 local function createmachine(level, name, soundprefix, placementsounddelay)
 	
-	local function onturnon(inst)		
-		inst.AnimState:PlayAnimation("proximity_loop", true)
+	local function onturnon(inst)
+	    if inst:HasTag("level3") then
+	        inst.AnimState:PlayAnimation("proximity_pre")
+	        inst.AnimState:PushAnimation("proximity_loop",true)
+	    else
+		    inst.AnimState:PlayAnimation("proximity_loop", true)
+		end
 		inst.SoundEmitter:PlaySound("dontstarve/common/researchmachine_"..soundprefix.."_idle_LP","idlesound")
 	end
 
 	local function onturnoff(inst)
-		inst.AnimState:PlayAnimation("idle", true)
+	    if inst:HasTag("level3") then
+	        inst.AnimState:PushAnimation("proximity_pst", false)
+		end
+	    inst.AnimState:PushAnimation("idle", true)
 		inst.SoundEmitter:KillSound("idlesound")
 	end
 
@@ -48,6 +56,7 @@ local function createmachine(level, name, soundprefix, placementsounddelay)
 
 		inst:AddTag("researchmachine")
         inst:AddTag("structure")
+        inst:AddTag("level"..level)
 		
 		inst:AddComponent("inspectable")
 		inst:AddComponent("researchpointconverter")

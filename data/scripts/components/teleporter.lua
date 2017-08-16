@@ -79,7 +79,10 @@ function Teleporter:Target(otherTeleporter)
 end
 
 function Teleporter:OnSave()
-	return { target=self.targetTeleporter.GUID }
+	if self.targetTeleporter ~= nil then
+		return { target=self.targetTeleporter.GUID }, {self.targetTeleporter.GUID}
+	end
+	return {}
 end
 
 function Teleporter:LoadPostPass(newents, savedata)

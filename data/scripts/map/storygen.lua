@@ -50,6 +50,7 @@ Story = Class(function(self, id, tasks, terrain, gen_params)
 	self.id = id
 	self.loop_blanks = 1
 	self.gen_params = gen_params
+	self.impassible_value = GROUND_VALUES[gen_params.impassible_value or GROUND.IMPASSABLE]
 
 	self.tasks = {}
 	for k,task in pairs(tasks) do
@@ -67,6 +68,8 @@ Story = Class(function(self, id, tasks, terrain, gen_params)
 	self:GenerateNodesFromTasks()
 
 	self:AddBGNodes(2)
+
+	self:InsertAdditionalSetPieces()
 	
 	self:ProcessExtraTags()
 end)
@@ -114,16 +117,20 @@ function Story:PlaceTeleportatoParts()
 		for id,task in pairs(tasks) do
 			if task.story_depth == math.ceil(partnum*partSpread) then
 				local success = AddPartToTask(part, task)
-				assert( success or task.id == "TEST_TASK"or task.id == "MaxHome", "Could not add an exit part to task "..task.id)
+				-- Not sure why we need this, was causeing crash
+				--assert( success or task.id == "TEST_TASK"or task.id == "MaxHome", "Could not add an exit part to task "..task.id)
 				return success
 			end
 		end
 		return false
 	end
 
-	local parts = {"TeleportatoRingLayout",  "TeleportatoBoxLayout", "TeleportatoCrankLayout",  "TeleportatoPotatoLayout", "TeleportatoBaseLayout"}
+	local parts = {"TeleportatoRingLayout",  "TeleportatoBoxLayout", "TeleportatoCrankLayout",  "TeleportatoPotatoLayout"}
 	if self.gen_params.level_type ~= "adventure" then
 		table.insert(parts, "AdventurePortalLayout")
+		table.insert(parts, "TeleportatoBaseLayout")
+	elseif self.gen_params.level_type == "adventure" then
+		table.insert(parts, "TeleportatoBaseAdventureLayout")
 	end
 	local maxdepth = -1
 	for id,task in pairs(self.rootNode:GetChildren()) do
@@ -142,6 +149,50 @@ function Story:ProcessExtraTags()
 	self:PlaceTeleportatoParts()
 end
 
+
+function Story:InsertAdditionalSetPieces()
+
+	local tasks = self.rootNode:GetChildren()
+	for id, task in pairs(tasks) do
+		if task.set_pieces ~= nil and #task.set_pieces >0 then
+			for i,setpiece_data  in ipairs(task.set_pieces) do
+
+
+				local is_entrance = function(room)
+					-- return true if the room is an entrance
+					return room.data.entrance ~= nil and room.data.entrance == true
+				end
+				local is_background_ok = function(room)
+					-- return true if the piece is not backround restricted, or if it is but we are on a background
+					return setpiece_data.restrict_to ~= "background" or room.data.type == "background"
+				end
+
+				local choicekeys = shuffledKeys(task.nodes)
+				local choice = nil
+				for i, choicekey in ipairs(choicekeys) do
+					if not is_entrance(task.nodes[choicekey]) and is_background_ok(task.nodes[choicekey]) then
+						choice = choicekey
+						break
+					end
+				end
+
+				if choice == nil then
+					print("Warning! Couldn't find a spot in "..task.id.." for "..setpiece_data.name)
+					break
+				end
+
+				--print("Placing "..setpiece_data.name.." in "..task.id..":"..task.nodes[choice].id)
+
+				if task.nodes[choice].data.terrain_contents.countstaticlayouts == nil then
+					task.nodes[choice].data.terrain_contents.countstaticlayouts = {}
+				end
+				--print ("Set peice", name, choice, room_choices._et[choice].contents, room_choices._et[choice].contents.countstaticlayouts[name])
+				task.nodes[choice].data.terrain_contents.countstaticlayouts[setpiece_data.name] = 1
+			end 
+			
+		end
+	end
+end
 
 function Story:LinkNodesByKeys(startParentNode, unusedTasks)
 	print_lockandkey_ex("\n\n### START PARENT NODE:",startParentNode.id)
@@ -358,9 +409,6 @@ function Story:GenerateNodesFromTasks()
 		start_node_data.data.terrain_contents = start_node_data.data.contents		
 	else
 		start_node_data.data = {
-								shape=self.terrain.base["Clearing"].shape(), 
-								position={x=0,y=0}, 
-								size=  3 + math.random(2) , 	
 								value = GROUND_VALUES[GROUND.GRASS],								
 								terrain_contents={
 									countprefabs = {
@@ -378,8 +426,8 @@ function Story:GenerateNodesFromTasks()
 	start_node_data.data.colour = {r=0,g=1,b=1,a=.80}
 	
 	if self.gen_params.start_setpeice ~= nil then
-		start_node_data.data.terrain_contents.countspecialprefabs = {}
-		start_node_data.data.terrain_contents.countspecialprefabs[self.gen_params.start_setpeice] = 1
+		start_node_data.data.terrain_contents.countstaticlayouts = {}
+		start_node_data.data.terrain_contents.countstaticlayouts[self.gen_params.start_setpeice] = 1
 		
 		if start_node_data.data.terrain_contents.countprefabs ~= nil then
 			start_node_data.data.terrain_contents.countprefabs.spawnpoint = nil
@@ -411,17 +459,10 @@ function Story:AddBGNodes(random_count)
 
 	for taskid, task in pairs(tasksnodes) do
 
-		local new_room = deepcopy(self.terrain.base[task.data.background])
-		assert(new_room, "Couldn't find room with name "..task.data.background)
-		new_room.type = task.data.background
+		local background_template = deepcopy(self.terrain.base[task.data.background])
+		assert(background_template, "Couldn't find room with name "..task.data.background)
 
-		self:RunTaskSubstitution(task, new_room.contents.distributeprefabs)
-
-		local size = new_room.size
-		if type(size) == "function" then
-			size = size()
-		end
-
+		self:RunTaskSubstitution(task, background_template.contents.distributeprefabs)
 
 		for nodeid,node in pairs(task:GetNodes(false)) do
 
@@ -430,6 +471,8 @@ function Story:AddBGNodes(random_count)
 				local count = math.random(0,random_count)
 				local prevNode = nil
 				for i=1,count do
+
+					local new_room = deepcopy(background_template)
 
 					-- this has to be inside the inner loop so that things like teleportato tags
 					-- only get processed for a single node.
@@ -441,9 +484,6 @@ function Story:AddBGNodes(random_count)
 										id=room_id, 
 										data={
 												type="background",
-												shape=new_room.shape(), 
-												position=new_room.position, 
-												size = size, 
 												colour = new_room.colour,
 												value = new_room.value,
 												tags = extra_tags,
@@ -477,12 +517,9 @@ function Story:SeperateStoryByBlanks(startnode, endnode )
 											id="LOOP_BLANK_SUB "..tostring(self.loop_blanks), 
 											data={
 													type="blank",
-													tags = {"RoadPoison"},					 
-													shape=function() return SHAPES.CIRCLE end,
-													position = {x=0,y=0},
-													size=5,
+													tags = {"RoadPoison", "ForceDisconnected"},					 
 													colour={r=0.3,g=.8,b=.5,a=.50},
-													value = GROUND_VALUES[GROUND.IMPASSABLE]
+													value = self.impassible_value
 												  }										
 										})
 
@@ -525,8 +562,13 @@ function Story:RunTaskSubstitution(task, items )
 
 	for k,v in pairs(task.substitutes) do 
 		if items[k] ~= nil then 
-			items[v] = items[k]
-			items[k] = nil
+			if v.percent == 1 or v.percent == nil then
+				items[v.name] = items[k]
+				items[k] = nil
+			else
+				items[v.name] = items[k] * v.percent
+				items[k] = items[k] * (1.0-v.percent)
+			end
 		end
 	end
 
@@ -540,26 +582,45 @@ function Story:GenerateNodesFromTask(task, crossLinkFactor)
 	local room_choices = Stack:Create()
 
 	if task.entrance_room then
-		local new_room = deepcopy(self.terrain.special[task.entrance_room])
-		assert(new_room, "Couldn't find entrance room with name "..task.entrance_room)
-		if new_room.contents.fn then					
-			new_room.contents.fn(new_room)
-		end
-		new_room.type = task.entrance_room
-		new_room.entrance = true
-		room_choices:push(new_room)
+		local r = math.random()
+		if task.entrance_room_chance == nil or task.entrance_room_chance > r then
+			if type(task.entrance_room) == "table" then
+				task.entrance_room = GetRandomItem(task.entrance_room)
+			end
+			--print("\tAdding entrance: ",task.entrance_room,"rolled:",r,"needed:",task.entrance_room_chance)
+			local new_room = deepcopy(self.terrain.special[task.entrance_room])
+			assert(new_room, "Couldn't find entrance room with name "..task.entrance_room)
 
+			if new_room.contents == nil then
+				new_room.contents = {}
+			end
+
+			if new_room.contents.fn then					
+				new_room.contents.fn(new_room)
+			end
+			new_room.type = task.entrance_room
+			new_room.entrance = true
+			room_choices:push(new_room)
+		--else
+		--	print("\tHad entrance but didn't use it. rolled:",r,"needed:",task.entrance_room_chance)
+		end
 	end
 	
-	for room, count in pairs(task.room_choices) do
-		--print("Story:GenerateNodesFromTask adding "..count.." of "..room)
-		for id = 1, count do
-			--print("Story:GenerateNodesFromTask adding "..id)
-			--dumptable(TERRAIN[room])
-			local new_room = deepcopy(self.terrain.base[room])
-			assert(new_room, "Couldn't find room with name "..room)
-			new_room.type = room
-			room_choices:push(new_room)
+	if task.room_choices ~= nil then
+		for room, count in pairs(task.room_choices) do
+			--print("Story:GenerateNodesFromTask adding "..count.." of "..room)
+			for id = 1, count do
+				--print("Story:GenerateNodesFromTask adding "..id)
+				--dumptable(TERRAIN[room])
+				local new_room = deepcopy(self.terrain.base[room])
+				assert(new_room, "Couldn't find room with name "..room)
+				if new_room.contents == nil then
+					new_room.contents = {}
+				end
+			
+				new_room.type = room
+				room_choices:push(new_room)
+			end
 		end
 	end
 
@@ -570,6 +631,9 @@ function Story:GenerateNodesFromTask(task, crossLinkFactor)
 				local new_room = deepcopy(self.terrain.special[room])
 
 				assert(new_room, "Couldn't find special room with name "..room)
+				if new_room.contents == nil then
+					new_room.contents = {}
+				end			
 				
 				-- Do any special processing for this room
 				if new_room.contents.fn then					
@@ -581,25 +645,8 @@ function Story:GenerateNodesFromTask(task, crossLinkFactor)
 		end
 	end
 
-	if task.set_pieces ~= nil and #task.set_pieces >0 then
-		local used = {}
-		for i,name  in ipairs(task.set_pieces) do
 
-			local choice = math.random(room_choices:getn())
-			while room_choices._et[choice].entrance ~= nil and room_choices._et[choice].entrance == true do
-				choice = math.random(room_choices:getn())
-			end
-
-			if room_choices._et[choice].contents.countspecialprefabs == nil then
-				room_choices._et[choice].contents.countspecialprefabs = {}
-			end
-			--print ("Set peice", name, choice, room_choices._et[choice].contents, room_choices._et[choice].contents.countspecialprefabs[name])
-			room_choices._et[choice].contents.countspecialprefabs[name] = 1
-		end 
-		
-	end
-
-	local task_node = Graph(task.id, {parent=self.rootNode, default_bg=task.room_bg, colour = task.colour, background=task.background_room})
+	local task_node = Graph(task.id, {parent=self.rootNode, default_bg=task.room_bg, colour = task.colour, background=task.background_room, set_pieces=task.set_pieces})
 	task_node.substitutes = task.substitutes
 	--print ("Adding Voronoi Child", self.rootNode.id, task.id, task.room_bg, INV_GROUND_VALUES[task.room_bg], task.colour.r, task.colour.g, task.colour.b, task.colour.a )
 
@@ -613,10 +660,6 @@ function Story:GenerateNodesFromTask(task, crossLinkFactor)
 	while room_choices:getn() > 0 do
 		local next_room = room_choices:pop()
 		local room_id = task.id..":"..roomID..":"..next_room.type	-- TODO: add room names for special rooms
-		local size = next_room.size
-		if type(size) == "function" then
-			size = size()
-		end
 
 		self:RunTaskSubstitution(task, next_room.contents.distributeprefabs)
 		
@@ -627,9 +670,6 @@ function Story:GenerateNodesFromTask(task, crossLinkFactor)
 										id=room_id, 
 										data={
 												type= next_room.entrance and "blocker" or next_room.type, 
-												shape=next_room.shape(), 
-												position=next_room.position, 
-												size = size, 
 												colour = next_room.colour,
 												value = next_room.value,
 												tags = extra_tags,

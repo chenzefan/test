@@ -77,8 +77,8 @@ function PauseScreen:CreateButtons()
 	local player = GetPlayer()
 	local can_save = player and player:IsValid() and player.components.health and not player.components.health:IsDead() and IsGamePurchased()
 
-	PauseScreen.button_w = 200
-	PauseScreen.space_between = 20
+	PauseScreen.button_w = 150
+	PauseScreen.space_between = 15
 	PauseScreen.buttons = {
 		{text=STRINGS.UI.PAUSEMENU.OPTIONS, cb=function() 
 			TheFrontEnd:PushScreen( OptionsScreen(true))
@@ -110,11 +110,11 @@ function PauseScreen:CreateMenu()
     self.bg = self.proot:AddChild(Image("data/images/small_dialog.tex"))
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
     self.bg:SetHRegPoint(ANCHOR_MIDDLE)
-	self.bg:SetScale(1.6,1.2,1.2)
+	self.bg:SetScale(1.2,1.2,1.2)
 	
 	--title	
     self.title = self.proot:AddChild(Text(TITLEFONT, 50))
-    self.title:SetPosition(0, 70, 0)
+    self.title:SetPosition(0, 50, 0)
     self.title:SetString(STRINGS.UI.PAUSEMENU.TITLE)
 
 	--create the menu itself
@@ -126,7 +126,7 @@ function PauseScreen:CreateMenu()
 		total_w = total_w + PauseScreen.space_between*(#PauseScreen.buttons-1) 
 	end
 	
-	self.menu:SetPosition(-(total_w / 2) + PauseScreen.button_w/2, -60,0) 
+	self.menu:SetPosition(-(total_w / 2) + PauseScreen.button_w/2, -40,0) 
 	
 	local pos = Vector3(0,0,0)
 	for k,v in ipairs(PauseScreen.buttons) do

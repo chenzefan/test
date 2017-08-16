@@ -86,6 +86,9 @@ function dumptable(obj, indent, recurse_levels)
 end
 
 function tabletodictstring(obj, fn)
+	if obj == nil then
+		return "{ }"
+	end
 	local s = "{ "
 	local first = true
 	for k,v in pairs(obj) do
@@ -101,6 +104,9 @@ function tabletodictstring(obj, fn)
 	return s
 end
 function tabletoliststring(obj, fn)
+	if obj == nil then
+		return "[ ]"
+	end
 	local s = "[ "
 	local first = true
 	for i,v in ipairs(obj) do

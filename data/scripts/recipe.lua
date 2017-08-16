@@ -11,6 +11,7 @@ Recipes = {}
 
 Recipe = Class(function(self, name, ingredients, tab, level, placer, min_spacing)
     self.name = name
+    self.placer = placer
     self.descname = STRINGS.NAMES[string.upper(name)]
     self.description = STRINGS.RECIPE_DESC[string.upper(name)]
     self.ingredients = ingredients
@@ -22,13 +23,6 @@ Recipe = Class(function(self, name, ingredients, tab, level, placer, min_spacing
 	self.level = level or 0
 	self.placer = placer
 	self.min_spacing = min_spacing or 3.2
-
-	if TheSim then
-		TheSim:LoadPrefabs{name}
-		if placer then
-			TheSim:LoadPrefabs{placer}
-		end
-	end
 
 	num = num + 1    
     Recipes[name] = self

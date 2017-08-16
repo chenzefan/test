@@ -33,7 +33,8 @@ local function onhit(inst, worker)
 end
 
 local function StartSpawning(inst)
-	if inst.components.childspawner and not GetWorld().components.seasonmanager:IsWinter() then
+	
+	if inst.components.childspawner and GetSeasonManager() and not GetSeasonManager():IsWinter() then
 		inst.components.childspawner:StartSpawning()
 	end
 end
@@ -91,7 +92,7 @@ local function fn()
 	inst.components.childspawner:SetMaxChildren(4)
 	StartSpawning(inst)
 	inst:ListenForEvent("dusktime", function()
-	    if not GetSeasonManager():IsWinter() then
+	    if GetSeasonManager() and not GetSeasonManager():IsWinter() then
 		    inst.components.childspawner:ReleaseAllChildren()
 		end
 	end, GetWorld())

@@ -148,7 +148,7 @@ local function fn(Sim)
 
     inst:AddComponent("lootdropper")
     inst.components.lootdropper:SetLoot(loot)
-    inst.components.lootdropper:AddChanceLoot("horn", 0.25)
+    inst.components.lootdropper:AddChanceLoot("horn", 0.33)
     
     inst:AddComponent("inspectable")
     inst.components.inspectable.getstatus = GetStatus

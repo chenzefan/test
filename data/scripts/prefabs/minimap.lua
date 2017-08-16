@@ -16,6 +16,20 @@ local MINIMAP_GROUND_PROPERTIES =
 	{ GROUND.WOODFLOOR,  { name = "map_edge",      noise_texture = "data/levels/textures/mini_woodfloor_noise.tex" } },
 	{ GROUND.CARPET,  	 { name = "map_edge",      noise_texture = "data/levels/textures/mini_carpet_noise.tex" } },
 	{ GROUND.CHECKER,  	 { name = "map_edge",      noise_texture = "data/levels/textures/mini_checker_noise.tex" } },
+
+	-- { GROUND.WALL_MARSH, { name = "map_edge",      noise_texture = "data/levels/textures/mini_marsh_wall_noise.tex" } },
+	-- { GROUND.WALL_ROCKY, { name = "map_edge",      noise_texture = "data/levels/textures/mini_rocky_wall_noise.tex" } },
+	-- { GROUND.WALL_DIRT,  { name = "map_edge",      noise_texture = "data/levels/textures/mini_dirt_wall_noise.tex" } },
+
+	{ GROUND.CAVE,  	 { name = "map_edge",      noise_texture = "data/levels/textures/mini_cave_noise.tex" } },
+	{ GROUND.FUNGUS,  	 { name = "map_edge",      noise_texture = "data/levels/textures/mini_fungus_noise.tex" } },
+	{ GROUND.SINKHOLE, 	 { name = "map_edge",      noise_texture = "data/levels/textures/mini_sinkhole_noise.tex" } },
+	{ GROUND.UNDERROCK,  { name = "map_edge",      noise_texture = "data/levels/textures/mini_rock_noise.tex" } },
+	{ GROUND.MUD, 	 	 { name = "map_edge",      noise_texture = "data/levels/textures/mini_mud_noise.tex" } },
+
+	-- { GROUND.WALL_CAVE,    { name = "map_edge",      noise_texture = "data/levels/textures/mini_cave_wall_noise.tex" } },
+	-- { GROUND.WALL_FUNGUS,  { name = "map_edge",      noise_texture = "data/levels/textures/mini_fungus_wall_noise.tex" } },
+	-- { GROUND.WALL_SINKHOLE,{ name = "map_edge",      noise_texture = "data/levels/textures/mini_sinkhole_wall_noise.tex" } },
 }
 
 local assets =

@@ -1,14 +1,24 @@
+local CAMPAIGN_LENGTH = 5
+
+
 Level = Class( function(self, data)
-	self.name = data.name
+	self.id = data.id or "UNKNOWN_ID"
+	self.name = data.name or ""
+	self.desc = data.desc or ""
 	self.tasks = data.tasks or {}
 	self.overrides = data.overrides or {}
 	self.substitutes = data.substitutes or {}
 	self.override_triggers = data.override_triggers
 	self.set_pieces = data.set_pieces or {}
-	self.numoptionaltasks = data.numoptionaltasks
-	self.maxwell = data.maxwell
+	self.numoptionaltasks = data.numoptionaltasks or 0
+	self.nomaxwell = data.nomaxwell or false
+	self.override_level_string = data.override_level_string or false
 	self.optionaltasks = data.optionaltasks or {}
 	self.hideminimap = data.hideminimap or false
+	self.teleportaction = data.teleportaction or nil
+	self.teleportmaxwell = data.teleportmaxwell or nil
+	self.min_playlist_position = data.min_playlist_position or 0
+	self.max_playlist_position = data.max_playlist_position or 999
 end)
 
 
@@ -20,8 +30,9 @@ function Level:GetOverridesForTasks(tasklist)
 	for name, override in pairs(self.substitutes) do
 
 		local substitute = resources.GetSubstitute(name)
-		--print ("GetOverridesForTasks", name, substitute)
+
 		if name ~= substitute then
+			print("Substituting [".. substitute.."] for [".. name.."]")
 			for task_idx,val in ipairs(tasklist) do
 				local chance = 	math.random()
 				if chance < override.perstory then 
@@ -29,7 +40,7 @@ function Level:GetOverridesForTasks(tasklist)
 						tasklist[task_idx].substitutes = {}
 					end
 					--print(task_idx, "Overriding", name, "with", substitute, "for:", self.name, chance, override.perstory )
-					tasklist[task_idx].substitutes[name] = substitute
+					tasklist[task_idx].substitutes[name] = {name = substitute, percent = override.pertask}
 				-- else
 				-- 	print("NOT overriding ", name, "with", substitute, "for:", self.name, chance, override.perstory)
 
@@ -91,7 +102,7 @@ function Level:GetTasksForLevel(sampletasks)
 					if tasklist[choice].set_pieces == nil then
 						tasklist[choice].set_pieces = {}
 					end
-					table.insert(tasklist[choice].set_pieces, name)
+					table.insert(tasklist[choice].set_pieces, {name=name, restrict_to=choicedata.restrict_to})
 					idx[choices[idx_choice]] = nil
 					table.remove(choices, choice)
 					break
@@ -126,71 +137,77 @@ end
 
 local test_level = Level({
 	name="TEST_LEVEL",
-	maxwell=STRINGS.MAXWELL_TEST,
+	desc="",
 	overrides={
-		{"world_size", "medium"},
+		{"world_size", 	"tiny"},
+		{"day", 		"onlyday"}, 
+		{"waves", 		"off"},
+		{"location",	"cave"},
+		{"boons", 			"never"},
+		{"poi", 			"never"},
+		{"traps", 			"never"},
+		{"protected", 		"never"},
+		{"start_setpeice", 	"CaveStart"},
+		{"start_node",	"BGSinkholeRoom"},
 	},
 	tasks={
-		"TEST_TASK",
-		"TEST_TASK1",
+			"CavesStart",
+			"CavesAlternateStart",
+			"FungalBatCave",
+			"BatCaves",
+			"TentacledCave",
+			"LargeFungalComplex",
+			"SingleBatCaveTask",
+			"RabbitsAndFungs",
+			"FungalPlain",
+			"Cavern",
 	},
 	numoptionaltasks = 0,
 	optionaltasks = {
 	}
 })
 
+local cave_levels = {
+
+	Level{
+		name="CAVE_LEVEL_1",
+		overrides={
+			{"world_size", 	"tiny"},
+			{"day", 		"onlynight"}, 
+			{"waves", 		"off"},
+			{"location",	"cave"},
+			{"boons", 			"never"},
+			{"poi", 			"never"},
+			{"traps", 			"never"},
+			{"protected", 		"never"},
+			{"start_setpeice", 	"CaveStart"},
+			{"start_node",		"BGSinkholeRoom"},
+		},
+		tasks={
+			"CavesStart",
+			"CavesAlternateStart",
+			"FungalBatCave",
+			"BatCaves",
+			"TentacledCave",
+			"LargeFungalComplex",
+			"SingleBatCaveTask",
+			"RabbitsAndFungs",
+			"FungalPlain",
+			"Cavern",
+		},
+		numoptionaltasks = 0,
+		optionaltasks = {}
+	}
+}
+
 local free_levels ={
-		Level({ 
-			name=STRINGS.UI.SANDBOXMENU.PRESETLEVELS[1],
-			maxwell="SANDBOX_1",
-			overrides={
+	Level({ 
+		id="SURVIVAL_DEFAULT",
+		name=STRINGS.UI.CUSTOMIZATIONSCREEN.PRESETLEVELS[1],
+		desc=STRINGS.UI.CUSTOMIZATIONSCREEN.PRESETLEVELDESC[1],
+		overrides={
 				{"start_setpeice", 	"DefaultStart"},		
 				{"start_node",		"Clearing"},
-			},
-			tasks = {
-				"Make a pick",
-				"Dig that rock",
-				"Great Plains",
-				"Squeltch",
-				"Beeeees!",
-				"Speak to the king",
-				"Forest hunters",
-			},
-			numoptionaltasks = 4,
-			optionaltasks = {
-				"Befriend the pigs",
-				"For a nice walk",
-				"Kill the spiders",
-				"Killer bees!",
-				"Make a Beehat",
-				"The hunters",
-				"Magic meadow",
-				"Frogs and bugs",
-			},
-		set_pieces = {
-			["ResurrectionStone"] = { count=2, tasks={"Make a pick", "Dig that rock", "Great Plains", "Squeltch", "Beeeees!", "Speak to the king", "Forest hunters" } },
-			["WormholeGrass"] = { count=8, tasks={"Make a pick", "Dig that rock", "Great Plains", "Squeltch", "Beeeees!", "Speak to the king", "Forest hunters", "Befriend the pigs", "For a nice walk", "Kill the spiders", "Killer bees!", "Make a Beehat", "The hunters", "Magic meadow", "Frogs and bugs"} },
-		},
-		}),
-	Level({
-			name=STRINGS.UI.SANDBOXMENU.PRESETLEVELS[2],
-			maxwell="SANDBOX_1",
-		overrides={
-			{"world_size", 		"medium"},
-			--{"day", 			"longdusk"}, 
-			
-			{"start_setpeice", 	"WinterStartEasy"},	
-			{"start_node",		"Clearing"},
-
-			{"season", 			"preonlywinter"}, 
-			{"season_start", 	"summer"},
-			
-			{"deerclops", 		"never"},
-			{"hounds", 			"never"},
-			{"mactusk", 		"always"},
-			
-			{"carrot", 			"often"},
-			{"berrybush", 		"never"},
 		},
 		tasks = {
 				"Make a pick",
@@ -211,221 +228,91 @@ local free_levels ={
 				"The hunters",
 				"Magic meadow",
 				"Frogs and bugs",
-				"WalrusDesolate",
 		},
-		-- set_pieces = {
-		-- 	["MacTuskTown"] = {"Forest hunters", "Dig that rock"},
-		-- },
+		set_pieces = {
+			["ResurrectionStone"] = { count=2, tasks={"Make a pick", "Dig that rock", "Great Plains", "Squeltch", "Beeeees!", "Speak to the king", "Forest hunters" } },
+			["WormholeGrass"] = { count=8, tasks={"Make a pick", "Dig that rock", "Great Plains", "Squeltch", "Beeeees!", "Speak to the king", "Forest hunters", "Befriend the pigs", "For a nice walk", "Kill the spiders", "Killer bees!", "Make a Beehat", "The hunters", "Magic meadow", "Frogs and bugs"} },
+		},
 	}),
---[[  		Level({ 
-			name=STRINGS.UI.SANDBOXMENU.PRESETLEVELS[2],
-			maxwell=STRINGS.MAXWELL_QUEST_SURVIVE[2],
-			overrides={
-					{"world_size", "medium"},
-			},
-			tasks = {
+	Level({
+		id="SURVIVAL_DEFAULT_PLUS",
+		name=STRINGS.UI.CUSTOMIZATIONSCREEN.PRESETLEVELS[2],
+		desc= STRINGS.UI.CUSTOMIZATIONSCREEN.PRESETLEVELDESC[2],
+		overrides={				
+				{"start_setpeice", 	"DefaultPlusStart"},	
+				{"start_node",		{"DeepForest", "Forest", "SpiderForest", "Plain", "Rocky", "Marsh"}},
+				{"boons", 			"often"},
+				
+				{"spiders", 		"often"},
+				{"berrybush", 		"rare"},
+				{"carrot", 			"rare"},
+				{"rabbits", 		"rare"},
+				
+				
+		},
+		tasks = {
 				"Make a pick",
+				"Dig that rock",
+				"Great Plains",
+				"Squeltch",
+				"Beeeees!",
 				"Speak to the king",
-				"Dig that rock",
-				"Pigs in the city",
-				"Great Plains",
-				"Squeltch",
-				"Beeeees!",
+				"Tentacle-Blocked The Deep Forest",
+		},
+		numoptionaltasks = 4,
+		optionaltasks = {
 				"Forest hunters",
-			},
-			numoptionaltasks = 5,
-			optionaltasks = {
+				"Befriend the pigs",
 				"For a nice walk",
 				"Kill the spiders",
 				"Killer bees!",
 				"Make a Beehat",
 				"The hunters",
 				"Magic meadow",
-				"Frogs and bugs",
-			},
-		}),
-		Level({ 
-			name=STRINGS.UI.SANDBOXMENU.PRESETLEVELS[3],
-			maxwell=STRINGS.MAXWELL_QUEST_SURVIVE[3],
-			overrides={
-					{"world_size", "huge"},
-			},
-			tasks = {
-				"Make a pick",
-				"The Pigs are back in town",
-				"Dig that rock",
-				"Pigs in the city",
-				"Great Plains",
-				"Squeltch",
-				"Beeeees!",
-				"Forest hunters",
-			},
-			numoptionaltasks = 6,
-			optionaltasks = {
-				"For a nice walk",
-				"Kill the spiders",
-				"Killer bees!",
-				"Make a Beehat",
-				"The hunters",
-				"Magic meadow",
-				"Frogs and bugs",
-			},
-		}),
-		Level({ -- Too much water - swamp etc
-			name=STRINGS.UI.SANDBOXMENU.PRESETLEVELS[4],
-			maxwell=STRINGS.MAXWELL_QUEST_SURVIVE[4],
-			overrides={
-				{"weather", "alwayswet"}, 
-			},
-			tasks = {
+				"Hounded Greater Plains",
 				"Merms ahoy",
-				"Make a pick",
-				"Great Plains",
-				"Killer bees!",
-				"The hunters",
-				"Magic meadow",
 				"Frogs and bugs",
-			},
-			numoptionaltasks = 2,
-			optionaltasks = {
-				"Dig that rock",
-				"Befriend the pigs",
-				"Great Plains",
-			},
-		}),
-		Level({ -- Dry and hot
-			name=STRINGS.UI.SANDBOXMENU.PRESETLEVELS[5],
-			maxwell=STRINGS.MAXWELL_QUEST_SURVIVE[5],
-			overrides={
-				{"day", "onlyday"}, 
-				{"season", "onlysummer"}, 
-				{{"trees", "grass", "rock", "sapling", "lucky_draw"}, "rare"}, -- lucky_draw == nothing restricted
-			},
-			tasks = {
-				"Make a pick",
-				"Dig that rock",
-				"Befriend the pigs",
-				"Great Plains",
-				"Greater Plains",
-				"Beeeees!",
-				"Forest hunters",
-			},
-			numoptionaltasks = 2,
-			optionaltasks = {
-				"Speak to the king",
-				"For a nice walk",
-				"Kill the spiders",
-				"Killer bees!",
-				"Make a Beehat",
-				"The hunters",
-			},
-		}),
-		Level({ -- Winter focus
-			name=STRINGS.UI.SANDBOXMENU.PRESETLEVELS[6],
-			maxwell=STRINGS.MAXWELL_QUEST_SURVIVE[6],
-			overrides={
-				{"season", "onlywinter"}, 
-			},
-			tasks = {
-				"Make a pick",
-				"Dig that rock",
-				"Befriend the pigs",
-				"Great Plains",
-				"Greater Plains",
-				"Squeltch",
-			},
-			numoptionaltasks = 2,
-			optionaltasks = {
-				"Kill the spiders",
-				"Killer bees!",
-				"Make a Beehat",
-				"The hunters",
-				"Magic meadow",
-				"Frogs and bugs",
-			},
-		}),
-		Level({ -- Island hopping
-			name=STRINGS.UI.SANDBOXMENU.PRESETLEVELS[7],
-			maxwell=STRINGS.MAXWELL_QUEST_SURVIVE[7],
-			overrides={
-			},
-			tasks = {
-				"Make a pick",
-				"Dig that rock",
-				"Befriend the pigs",
-				"Great Plains",
-				"Squeltch",
-				"Beeeees!",
-				"Forest hunters",
-			},
-			numoptionaltasks = 4,
-			optionaltasks = {
-				"Speak to the king",
-				"For a nice walk",
-				"Kill the spiders",
-				"Killer bees!",
-				"Make a Beehat",
-				"The hunters",
-				"Magic meadow",
-				"Frogs and bugs",
-			},
-		}),
-		Level({ -- Focus on sanity play
-			name=STRINGS.UI.SANDBOXMENU.PRESETLEVELS[8],
-			maxwell=STRINGS.MAXWELL_QUEST_SURVIVE[8],
-			overrides={
-			},
-			tasks = {
-				"Make a pick",
-				"Dig that rock",
-				"Befriend the pigs",
-				"Great Plains",
-				"Squeltch",
-				"Beeeees!",
-				"Forest hunters",
-			},
-			numoptionaltasks = 4,
-			optionaltasks = {
-				"Speak to the king",
-				"For a nice walk",
-				"Kill the spiders",
-				"Killer bees!",
-				"Make a Beehat",
-				"The hunters",
-				"Magic meadow",
-				"Frogs and bugs",
-			},
-		}),
-		Level({ -- Focus on nighttime play
-			name=STRINGS.UI.SANDBOXMENU.PRESETLEVELS[9],
-			maxwell=STRINGS.MAXWELL_QUEST_SURVIVE[9],
-			overrides={
-				{"day", "onlynight"}, 
-				{"start_node", "NightmareStart"},
-			},
-			tasks = {
-				"Make a pick",
-				"Dig that rock",
-				"Befriend the pigs",
-				"Great Plains",
-				"Squeltch",
-				"Beeeees!",
-				"Forest hunters",
-			},
-			numoptionaltasks = 4,
-			optionaltasks = {
-				"Speak to the king",
-				"For a nice walk",
-				"Kill the spiders",
-				"Killer bees!",
-				"Make a Beehat",
-				"The hunters",
-				--"Mine Forest",
-				"Magic meadow",
-				"Frogs and bugs",
-			},
-		}),
---]]	}
+		},
+		set_pieces = {
+				["ResurrectionStone"] = { count=2, tasks={ "Speak to the king", "Forest hunters" } },
+				["WormholeGrass"] = { count=8, tasks={"Make a pick", "Dig that rock", "Great Plains", "Squeltch", "Beeeees!", "Speak to the king", "Forest hunters", "Befriend the pigs", "For a nice walk", "Kill the spiders", "Killer bees!", "Make a Beehat", "The hunters", "Magic meadow", "Frogs and bugs"} },
+		},
+	}),
+
+	-- Level({ 
+	-- 	id="SURVIVAL_CAVEPREVIEW",
+	-- 	name=STRINGS.UI.CUSTOMIZATIONSCREEN.PRESETLEVELS[3],
+	-- 	desc=STRINGS.UI.CUSTOMIZATIONSCREEN.PRESETLEVELDESC[3],
+	-- 	overrides={
+	-- 			{"start_setpeice", 	"CaveTestStart"},		
+	-- 			{"start_node",		"Clearing"},
+	-- 	},
+	-- 	tasks = {
+	-- 			"Make a pick",
+	-- 			"Dig that rock",
+	-- 			"Great Plains",
+	-- 			"Squeltch",
+	-- 			"Beeeees!",
+	-- 			"Speak to the king",
+	-- 			"Forest hunters",
+	-- 	},
+	-- 	numoptionaltasks = 4,
+	-- 	optionaltasks = {
+	-- 			"Befriend the pigs",
+	-- 			"For a nice walk",
+	-- 			"Kill the spiders",
+	-- 			"Killer bees!",
+	-- 			"Make a Beehat",
+	-- 			"The hunters",
+	-- 			"Magic meadow",
+	-- 			"Frogs and bugs",
+	-- 	},
+	-- 	set_pieces = {
+	-- 		["ResurrectionStone"] = { count=2, tasks={"Make a pick", "Dig that rock", "Great Plains", "Squeltch", "Beeeees!", "Speak to the king", "Forest hunters" } },
+	-- 		["WormholeGrass"] = { count=8, tasks={"Make a pick", "Dig that rock", "Great Plains", "Squeltch", "Beeeees!", "Speak to the king", "Forest hunters", "Befriend the pigs", "For a nice walk", "Kill the spiders", "Killer bees!", "Make a Beehat", "The hunters", "Magic meadow", "Frogs and bugs"} },
+	-- 	},
+	-- }),
+}
 
 local function GetRandomSubstituteList( substitutes, num_choices )	
 	local subs = {}
@@ -445,29 +332,32 @@ local function GetRandomSubstituteList( substitutes, num_choices )
 end
 
 local SUBS_1= {
-			["evergreen"] = 		{perstory=0.5, weight=1},
-			["evergreen_short"] = 	{perstory=1, weight=1},
-			["evergreen_normal"] = 	{perstory=1, weight=1},
-			["evergreen_tall"] = 	{perstory=1, weight=1},
-			["sapling"] = 			{perstory=0.6, weight=1},
-			["beefalo"] = 			{perstory=1, weight=1},
-			["rabbithole"] = 		{perstory=1, weight=1},
-			["rock1"] = 			{perstory=0.5, weight=1},
-			["rock2"] = 			{perstory=0.5, weight=1},
-			["grass"] = 			{perstory=0.5, weight=1},
-			["spiderden"] =			{perstory=1, weight=1},
+			["evergreen"] = 		{perstory=0.5, 	pertask=1, 		weight=1},
+			["evergreen_short"] = 	{perstory=1, 	pertask=1, 		weight=1},
+			["evergreen_normal"] = 	{perstory=1, 	pertask=1, 		weight=1},
+			["evergreen_tall"] = 	{perstory=1, 	pertask=1, 		weight=1},
+			["sapling"] = 			{perstory=0.6, 	pertask=0.95,	weight=1},
+			["beefalo"] = 			{perstory=1, 	pertask=1, 		weight=1},
+			["rabbithole"] = 		{perstory=1, 	pertask=1, 		weight=1},
+			["rock1"] = 			{perstory=0.3, 	pertask=1, 		weight=1},
+			["rock2"] = 			{perstory=0.5, 	pertask=0.8, 	weight=1},
+			["grass"] = 			{perstory=0.5, 	pertask=0.9, 	weight=1},
+			["flint"] = 			{perstory=0.5, 	pertask=1,		weight=1},
+			["spiderden"] =			{perstory=1, 	pertask=1, 		weight=1},
 		}
 
 local story_levels = {
-	--note to self: list, not dict, for now?
 	Level({
+		id="RAINY", -- A Cold Reception
 		name=STRINGS.UI.SANDBOXMENU.ADVENTURELEVELS[1],
-		maxwell= "ADVENTURE_1",
+		min_playlist_position=1,
+		max_playlist_position=3,
 		overrides={
-			{"world_size", 		"medium"},
+			{"world_size", 		"default"},
 			{"day", 			"longdusk"}, 
 			{"weather", 		"squall"},		
 			{"weather_start", 	"wet"},		
+			{"frograin",		"often"},
 			
 			{"start_setpeice", 	"WinterStartEasy"},	
 			{"start_node", 		"Forest"},	
@@ -478,42 +368,76 @@ local story_levels = {
 			{"deerclops", 		"never"},
 			{"hounds", 			"never"},
 			{"mactusk", 		"always"},
+			{"leifs",			"always"},
 			
 			{"trees", 			"often"},
-			{"carrot", 			"often"},
+			{"carrot", 			"default"},
 			{"berrybush", 		"never"},
 		},
-		substitutes = GetRandomSubstituteList(SUBS_1, 1),
+		substitutes = GetRandomSubstituteList(SUBS_1, 3),
 		tasks = {
 				"Make a pick",
-				"Dig that rock",
+				"Easy Blocked Dig that rock",
 				"Great Plains",
-				"Squeltch",
-				"Beeeees!",
-				"Speak to the king",
-				"Forest hunters",
+				"Guarded Speak to the king",
 		},
 		numoptionaltasks = 4,
 		optionaltasks = {
+				"Waspy Beeeees!",
+				"Guarded Squeltch",
+				"Guarded Forest hunters",
 				"Befriend the pigs",
-				"For a nice walk",
-				"Kill the spiders",
+				"Guarded For a nice walk",
+				"Walled Kill the spiders",
 				"Killer bees!",
 				"Make a Beehat",
-				"The hunters",
-				"Magic meadow",
-				"Frogs and bugs",
-				"WalrusDesolate",
+				"Waspy The hunters",
+				"Hounded Magic meadow",
+				"Wasps and Frogs and bugs",
+				"Guarded Walrus Desolate",
 		},
-		-- set_pieces = {
-		-- 	["MacTuskTown"] = {"Forest hunters", "Dig that rock"},
-		-- },
+		set_pieces = {
+			["WesUnlock"] = { restrict_to="background", tasks={
+														"Easy Blocked Dig that rock",
+														"Great Plains",
+														"Guarded Speak to the king",
+														"Waspy Beeeees!",
+														"Guarded Squeltch",
+														"Guarded Forest hunters",
+														"Befriend the pigs",
+														"Guarded For a nice walk",
+														"Walled Kill the spiders",
+														"Killer bees!",
+														"Make a Beehat",
+														"Waspy The hunters",
+														"Hounded Magic meadow",
+														"Wasps and Frogs and bugs",
+														"Guarded Walrus Desolate"} },
+			["ResurrectionStoneWinter"] = { count=1, tasks={"Make a pick",
+														"Easy Blocked Dig that rock",
+														"Great Plains",
+														"Guarded Speak to the king",
+														"Waspy Beeeees!",
+														"Guarded Squeltch",
+														"Guarded Forest hunters",
+														"Befriend the pigs",
+														"Guarded For a nice walk",
+														"Walled Kill the spiders",
+														"Killer bees!",
+														"Make a Beehat",
+														"Waspy The hunters",
+														"Hounded Magic meadow",
+														"Wasps and Frogs and bugs",
+														"Guarded Walrus Desolate"} },
+		},
 	}),
 	Level({
+		id="WINTER",
 		name=STRINGS.UI.SANDBOXMENU.ADVENTURELEVELS[2],
-		maxwell="ADVENTURE_2",
+		min_playlist_position=1,
+		max_playlist_position=4,
 		overrides={
-			{"world_size", 		"medium"},
+			--{"world_size", 		"medium"},
 			{"day", 			"longdusk"}, 
 			
 			{"start_setpeice", 	"WinterStartMedium"},		
@@ -524,14 +448,13 @@ local story_levels = {
 			
 			{"season", 			"onlywinter"},
 			{"season_start", 	"winter"},
-			{"weather", 		"always"},		
+			{"weather", 		{"always", "often"}},		
 			
 			{"deerclops", 		"often"},
 			{"hounds", 			"never"},
 			{"mactusk", 		"always"},
 			
-			{"carrot", 			"rare"},
-			{"berrybush", 		"rare"},
+			{{"carrot","berrybush"},{"never","rare"}},
 		},
 		substitutes = GetRandomSubstituteList(SUBS_1, 1),
 		tasks = {
@@ -542,21 +465,33 @@ local story_levels = {
 		},
 		numoptionaltasks = 2,
 		optionaltasks = {
-			"WalrusDesolate",
-			"Rock-Blocked Kill the spiders",
+			"Walrus Desolate",
+			"Walled Kill the spiders",
 			"The Deep Forest",
 			"Forest hunters",
 		},
 		set_pieces = {
-			["MacTuskTown"] = { tasks={"Resource-rich Tier2", "Insanity-Blocked Necronomicon", "Hounded Greater Plains"} },
+			["WesUnlock"] = { restrict_to="background", tasks={ "Hounded Greater Plains", "Walrus Desolate", "Walled Kill the spiders",
+																"The Deep Forest", "Forest hunters" }},
+			["MacTuskTown"] = { tasks={"Insanity-Blocked Necronomicon", "Hounded Greater Plains", "Sanity-Blocked Great Plains"} },
+			["ResurrectionStoneWinter"] = { count=1, tasks={"Resource-rich Tier2",
+														"Sanity-Blocked Great Plains",
+														"Hounded Greater Plains",
+														"Insanity-Blocked Necronomicon", 
+														"Walrus Desolate",
+														"Walled Kill the spiders",
+														"The Deep Forest",
+														"Forest hunters"} },
 		},
 	}),
 	-- Weather: start with very short winter, then endless summer.
 	Level({
+		id="HUB",
 		name=STRINGS.UI.SANDBOXMENU.ADVENTURELEVELS[3],
-		maxwell="ADVENTURE_3",
+		min_playlist_position=1,
+		max_playlist_position=4,
 		overrides={
-			{"world_size", 		"medium"},
+			--{"world_size", 		"medium"},
 			{"day",			 	"longdusk"}, 
 			
 			{"start_setpeice", 	"PreSummerStart"},
@@ -564,12 +499,12 @@ local story_levels = {
 					
 			{"season", 			"preonlysummer"}, 
 			{"season_start", 	"winter"},
-			{"spiders", 		"often"},
+			{"spiders",			"often"},
 
 			{"branching",		"default"},
 			{"loop",			"never"},
 		},
-		substitutes = GetRandomSubstituteList(SUBS_1, 1),
+		substitutes = GetRandomSubstituteList(SUBS_1, 3),
 	-- Enemies: Lots of hound mounds and maxwell traps everywhere. Frequent hound invasions.
 		tasks = {
 			"Resource-Rich",
@@ -589,14 +524,55 @@ local story_levels = {
 		},
 		set_pieces = {
 			["SimpleBase"] = { tasks={"Lots-o-Spiders", "Lots-o-Tentacles", "Lots-o-Tallbirds", "Lots-o-Chessmonsters"}},
-			--["WesUnlock"] = { tasks={ "The hunters", "Trapped Forest hunters", "Wasps and Frogs and bugs", "Tentacle-Blocked The Deep Forest", "Hounded Greater Plains", "Merms ahoy" }},
+			["WesUnlock"] = { restrict_to="background", tasks={ "The hunters", "Trapped Forest hunters", "Wasps and Frogs and bugs", "Tentacle-Blocked The Deep Forest", "Hounded Greater Plains", "Merms ahoy" }},
+			["ResurrectionStone"] = { count=1, tasks={"Resource-Rich",
+														"Lots-o-Spiders",
+														"Lots-o-Tentacles",
+														"Lots-o-Tallbirds",
+														"Lots-o-Chessmonsters", "The hunters",
+														"Trapped Forest hunters",
+														"Wasps and Frogs and bugs",
+														"Tentacle-Blocked The Deep Forest",
+														"Hounded Greater Plains",
+														"Merms ahoy"} },
 		},
 	}),
 	Level({
+		id="ISLANDHOP",
 		name=STRINGS.UI.SANDBOXMENU.ADVENTURELEVELS[4],
-		maxwell="ADVENTURE_4",
+		min_playlist_position=1,
+		max_playlist_position=4,
 		overrides={
-			{"world_size", 		"medium"},
+			{"islands", 		"always"},	
+			{"roads", 			"never"},	
+			{"start_node",		"BGGrass"},
+			{"start_setpeice", 	"ThisMeansWarStart"},
+			{"weather", 		{"rare", "default", "often"}},
+		},
+		substitutes = GetRandomSubstituteList(SUBS_1, 3),
+		tasks = {
+			"IslandHop_Start",
+			"IslandHop_Hounds",
+			"IslandHop_Forest",
+			"IslandHop_Savanna",
+			"IslandHop_Rocky",
+			"IslandHop_Merm",
+		},
+		numoptionaltasks = 0,
+		optionaltasks = {
+		},
+		set_pieces = {
+			["WesUnlock"] = { restrict_to="background", tasks={ "IslandHop1", "IslandHop2", "IslandHop3", "IslandHop4", "IslandHop5", "IslandHop6" } },
+		},
+	}),	
+	Level({
+		id="TWOLANDS",
+		name=STRINGS.UI.SANDBOXMENU.ADVENTURELEVELS[5],
+		override_level_string=true,
+		min_playlist_position=3,
+		max_playlist_position=4,
+		overrides={
+			--{"world_size", 		"medium"},
 			{"day", 			"longday"}, 
 			{"season", 			"onlysummer"},
 			{"season_start",	"summer"},
@@ -607,7 +583,7 @@ local story_levels = {
 			{"start_setpeice", 	"BargainStart"},		
 			{"start_node",		"Clearing"},
 		},
-		substitutes = GetRandomSubstituteList(SUBS_1, 1),
+		substitutes = GetRandomSubstituteList(SUBS_1, 3),
 		tasks = {
 			-- Part 1 - Easy peasy - lots of stuff
 			"Land of Plenty",
@@ -616,85 +592,121 @@ local story_levels = {
 			"The other side",	
 		},
 		override_triggers = {
+			["START"] = {	-- Quick (localised) fix for area-aware bug #677
+									{"weather", "never"}, 
+									{"day", "longday"},
+							 	},
 			["Land of Plenty"] = {	
 									{"weather", "never"}, 
 									{"day", "longday"},
 							 	},
 			["The other side"] = {	
-									{"weather", "always"}, 
+									{"weather", "often"}, 
 									{"day", "longdusk"},
 							 	},
 		},
 		set_pieces = {
 			["MaxPigShrine"] = {tasks={"Land of Plenty"}},
 			["MaxMermShrine"] = {tasks={"The other side"}},
+			["ResurrectionStone"] = { count=2, tasks={"Land of Plenty", "The other side" } },
 		},
 	}),
+
 	Level({
-		name=STRINGS.UI.SANDBOXMENU.ADVENTURELEVELS[5],
-		maxwell="ADVENTURE_5",
+		id="DARKNESS",
+		name=STRINGS.UI.SANDBOXMENU.ADVENTURELEVELS[6],
+		min_playlist_position=CAMPAIGN_LENGTH,
+		max_playlist_position=CAMPAIGN_LENGTH,
 		overrides={
 			{"branching",		"never"},
-
+			{"day", 			"onlynight"}, 
 			{"season_start", 	"summer"},
-			{"weather", 		"always"},
+			{"season", 			"onlysummer"},
+			{"weather", 		"often"}, -- always
+
+			{"boons",			"always"},
 			
 			{"roads", 			"never"},
-			{"carrot", 			"never"},
+			--{"carrot", 			"rare"},
 			{"berrybush", 		"never"},
-			{"spiders", 		"always"},
+			{"spiders", 		"often"},
+
+			{"fireflies",		"always"},
 			
-			{"start_setpeice", 	"ThisMeansWarStart"},
-			{"start_node",		"Marsh"},
+			{"start_setpeice", 	"NightmareStart"},--ThisMeansWarStart"},
+			{"start_node",		"BGGrass"},
+
+			{"maxwelllight_area",	"always"},
 		},
-		substitutes = GetRandomSubstituteList(SUBS_1, 1),
+		substitutes = MergeMaps( {["pighouse"] = {perstory=1,weight=1,pertask=1}},
+								 GetRandomSubstituteList(SUBS_1, 3) ),
 		tasks = {
 			"Swamp start",
 			"Battlefield",
-			"Rock-Blocked Kill the spiders",
+			"Walled Kill the spiders",
 			"Sanity-Blocked Spider Queendom",
-			"Chessworld",
 		},
-		numoptionaltasks = 4,
+		numoptionaltasks = 2,
 		optionaltasks = {
 			"Killer Bees!",
+			"Chessworld",
 			"Tentacle-Blocked The Deep Forest",
 			"Tentacle-Blocked Spider Swamp",
 			"Trapped Forest hunters",
 			"Waspy The hunters",
 			"Hounded Magic meadow",
 		},
-		override_triggers = {
-			[5] = {	
-				{"season", 		"onlywinter"},
-				{"season_start","winter"}, 
-				{"weather", 	"always"},
-				{"day", 		"onlynight"}, 
-			},
-		},	
+		-- override_triggers = {
+		-- 	[5] = {	
+		-- 		{"season", 		"onlywinter"},
+		-- 		{"season_start","winter"}, 
+		-- 		{"weather", 	"always"},
+		-- 		{"day", 		"onlynight"}, 
+		-- 		--{"start_setpeice", 	"PermaWinterNight"},
+		-- 	},
+		--},	
 		set_pieces = {
-			["RuinedBase"] = {tasks={"Swamp start", "Battlefield", "Rock-Blocked Kill the spiders", "Killer Bees!"}},
+			["RuinedBase"] = {tasks={"Swamp start", "Battlefield", "Walled Kill the spiders", "Killer Bees!"}},
+			["ResurrectionStoneLit"] = { count=4, tasks={"Swamp start", "Battlefield", "Walled Kill the spiders", "Sanity-Blocked Spider Queendom","Killer Bees!",
+														"Chessworld",
+														"Tentacle-Blocked The Deep Forest",
+														"Tentacle-Blocked Spider Swamp",
+														"Trapped Forest hunters",
+														"Waspy The hunters",
+														"Hounded Magic meadow", } },
 		},
 
 	}),
-	
  	Level({
-		name=STRINGS.UI.SANDBOXMENU.ADVENTURELEVELS[6],
-		maxwell="ADVENTURE_6",
+		id="ENDING",
+		name=STRINGS.UI.SANDBOXMENU.ADVENTURELEVELS[7],
+		nomaxwell=true,
+		min_playlist_position=CAMPAIGN_LENGTH+1, -- IMPORTANT! This should be the only level allowed to play after the campaign
+		max_playlist_position=CAMPAIGN_LENGTH+1,
 		overrides={
 			{"day", 			"onlynight"}, 
 			{"season", 			"onlysummer"},
 			{"weather", 		"never"},
 			{"creepyeyes", 		"always"},
-		},
+			{"waves", 			"off"},
+			{"boons",			"never"},
+		},	
 		tasks = {
 			"MaxHome",
 		},
 		numoptionaltasks =0,
 		hideminimap = true,
+		teleportaction = "restart",
+		teleportmaxwell = "ADVENTURE_6_TELEPORTFAIL",
+		
 		optionaltasks = {
+		},
+		override_triggers = {
+			["MaxHome"] = {	
+				{"areaambient", "VOID"}, 
+			},
 		},
 	}),
 	
 }
-levels = { story_levels=story_levels, sandbox_levels=free_levels, free_level=free_levels[1], test_level=test_level }
+levels = { story_levels=story_levels, sandbox_levels=free_levels, cave_levels = cave_levels, free_level=free_levels[1], test_level=test_level, CAMPAIGN_LENGTH=CAMPAIGN_LENGTH }

@@ -8,7 +8,6 @@ local function OnBlocked(owner)
     owner.SoundEmitter:PlaySound("dontstarve/wilson/hit_armour")
 end
 
-
 local function onequip(inst, owner) 
     owner.AnimState:OverrideSymbol("swap_body", "armor_marble", "swap_body")
     inst:ListenForEvent("blocked", OnBlocked, owner)
@@ -30,14 +29,12 @@ local function fn()
     inst.AnimState:SetBuild("armor_marble")
     inst.AnimState:PlayAnimation("anim")
     
+    inst:AddTag("marble")
+    
     inst:AddComponent("inspectable")
     
     inst:AddComponent("inventoryitem")
-    --TODO: Ask matt about foley sounds for marble armor
-    --inst.components.inventoryitem.foleysound = "dontstarve/movement/foley/logarmour"
-
-    inst:AddComponent("fuel")
-    inst.components.fuel.fuelvalue = TUNING.LARGE_FUEL
+	inst.components.inventoryitem.foleysound = "dontstarve/movement/foley/marblearmour"
     
     inst:AddComponent("armor")
     inst.components.armor:InitCondition(TUNING.ARMORMARBLE, TUNING.ARMORMARBLE_ABSORPTION)

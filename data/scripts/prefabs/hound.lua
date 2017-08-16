@@ -48,7 +48,7 @@ local function retargetfn(inst)
         dist = TUNING.HOUND_FOLLOWER_TARGET_DIST
     end
     return FindEntity(inst, dist, function(guy) 
-		return not guy:HasTag("wall") and not (guy:HasTag("hound") or guy:HasTag("houndfriend")) and inst.components.combat:CanTarget(guy)
+		return not guy:HasTag("wall") and not guy:HasTag("houndmound") and not (guy:HasTag("hound") or guy:HasTag("houndfriend")) and inst.components.combat:CanTarget(guy)
     end)
 end
 
@@ -85,8 +85,7 @@ local function DoReturn(inst)
                 trace("hound warped home", x, y, z)
             end
         else
-            inst.components.homeseeker.home:PushEvent("onwenthome", {doer = inst})
-            inst:Remove()
+            inst.components.homeseeker.home.components.childspawner:GoHome(inst)
         end
     end
 end

@@ -120,7 +120,7 @@ end
 function Growable:OnSave()
     local data = 
     {
-        stage = self.stage
+        stage = self.stage ~= 1 and self.stage or nil --1 is kind of by default
     }
     local time = GetTime()
     if self.targettime and self.targettime > time then
@@ -131,7 +131,7 @@ end
    
 function Growable:OnLoad(data)
     if data then    
-        self:SetStage(data.stage)
+        self:SetStage(data.stage or self.stage)
         if data.time then
             self:StartGrowing(data.time)
         end

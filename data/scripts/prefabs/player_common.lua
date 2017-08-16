@@ -10,8 +10,20 @@ local function OnInsane(inst)
 	inst.SoundEmitter:PlaySound("dontstarve/sanity/gonecrazy_stinger")
 end
 
-local function MakePlayerCharacter(name, font, customprefabs, customassets, customfn)
+local function giveupstring(combat, target)
+    local str = ""
+    if target and target:HasTag("prey") then
+        str = GetString(combat.inst.prefab, "COMBAT_QUIT", "prey")
+    else
+        str = GetString(combat.inst.prefab, "COMBAT_QUIT")
+    end
+    return str
+end
 
+local function MakePlayerCharacter(name, customprefabs, customassets, customfn, starting_inventory, font, fontsize)
+
+    font = font or TALKINGFONT
+    fontsize = fontsize or 28
     local assets =
     {
         Asset("ANIM", "data/anim/player_basic.zip"),
@@ -23,6 +35,7 @@ local function MakePlayerCharacter(name, font, customprefabs, customassets, cust
         Asset("ANIM", "data/anim/player_actions_blowdart.zip"),
         Asset("ANIM", "data/anim/player_actions_eat.zip"),
         Asset("ANIM", "data/anim/player_actions_item.zip"),
+        Asset("ANIM", "data/anim/player_cave_enter.zip"),
         Asset("ANIM", "data/anim/player_actions_uniqueitem.zip"),
         Asset("ANIM", "data/anim/player_actions_bugnet.zip"),
         Asset("ANIM", "data/anim/player_actions_fishing.zip"),
@@ -36,6 +49,7 @@ local function MakePlayerCharacter(name, font, customprefabs, customassets, cust
 		Asset("ANIM", "data/anim/player_teleport.zip"),
         Asset("ANIM", "data/anim/wilson_fx.zip"),
         Asset("ANIM", "data/anim/player_one_man_band.zip"),
+        Asset("ANIM", "data/anim/player_slurtle_armor.zip"),
         
 
 		Asset("ANIM", "data/anim/shadow_hands.zip"),
@@ -43,13 +57,6 @@ local function MakePlayerCharacter(name, font, customprefabs, customassets, cust
         Asset("SOUND", "data/sound/sfx.fsb"),
         Asset("SOUND", "data/sound/wilson.fsb"),
     }
-
-    local FONTS = 
-    {
-        { filename = font or "data/fonts/opensans50.zip", alias = DIALOGFONT },
-    }
-
-    AddFontAssets( assets, FONTS )
 
     local prefabs =
     {
@@ -65,6 +72,12 @@ local function MakePlayerCharacter(name, font, customprefabs, customassets, cust
         "shadowhand",
 		"frostbreath",
     }
+    
+    if starting_inventory then
+		for k,v in pairs(starting_inventory) do
+			table.insert(prefabs, v)
+		end
+    end
     
     if customprefabs then
         for k,v in ipairs(customprefabs) do
@@ -82,6 +95,7 @@ local function MakePlayerCharacter(name, font, customprefabs, customassets, cust
 
         local inst = CreateEntity()
         inst.entity:SetCanSleep(false)
+        
         
         local trans = inst.entity:AddTransform()
         local anim = inst.entity:AddAnimState()
@@ -105,11 +119,13 @@ local function MakePlayerCharacter(name, font, customprefabs, customassets, cust
         lightwatch:SetDarkThresh(.05)
         inst.entity:AddLabel()
 
-        inst.Label:SetFontSize(25)
-        inst.Label:SetFont(DIALOGFONT)
-        inst.Label:SetPos(0,3,0)
+        inst.Label:SetFontSize(fontsize)
+        inst.Label:SetFont(font)
+        inst.Label:SetPos(0,3.8,0)
         inst.Label:Enable(false)
-        
+        --inst.Label:SetColour(199/255,185/255,154/255)
+		
+		
         inst:AddTag("player")
         inst:AddTag("scarytoprey")
         inst:AddTag("character")
@@ -132,8 +148,11 @@ local function MakePlayerCharacter(name, font, customprefabs, customassets, cust
 
         inst:AddComponent("combat")
         inst.components.combat:SetDefaultDamage(TUNING.UNARMED_DAMAGE)
+        inst.components.combat.GetGiveUpString = giveupstring
+        inst.components.combat.hiteffectsymbol = "torso"
 
         inst:AddComponent("inventory")
+        inst.components.inventory.starting_inventory = starting_inventory
         
         inst:AddComponent("dynamicmusic")
         inst:AddComponent("playercontroller")
@@ -159,8 +178,6 @@ local function MakePlayerCharacter(name, font, customprefabs, customassets, cust
         
         -------
         
-        inst:AddComponent("hounded")
-        inst:AddComponent("basehassler")
         inst:AddComponent("kramped")
         inst:AddComponent("hunter")
         inst:AddComponent("talker")

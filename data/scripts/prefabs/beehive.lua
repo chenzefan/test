@@ -12,9 +12,19 @@ local assets =
 	Asset("SOUND", "data/sound/bee.fsb"),
 }
 
+
+local function OnEntityWake(inst)
+    inst.SoundEmitter:PlaySound("dontstarve/bee/bee_hive_LP", "loop")
+end
+
+local function OnEntitySleep(inst)
+	inst.SoundEmitter:KillSound("loop")
+end
+
 local function StartSpawningFn(inst)
 	local fn = function(world)
-		if inst.components.childspawner and GetWorld().components.seasonmanager:IsSummer() then
+		
+		if inst.components.childspawner and GetSeasonManager() and GetSeasonManager():IsSummer() then
 			inst.components.childspawner:StartSpawning()
 		end
 	end
@@ -67,6 +77,7 @@ local function fn(Sim)
 	anim:PlayAnimation("cocoon_small", true)
 
     inst:AddTag("structure")
+	inst:AddTag("hive")
     
     -------------------
 	inst:AddComponent("health")
@@ -78,7 +89,7 @@ local function fn(Sim)
 	inst.components.childspawner:SetRegenPeriod(TUNING.BEEHIVE_REGEN_TIME)
 	inst.components.childspawner:SetSpawnPeriod(TUNING.BEEHIVE_RELEASE_TIME)
 	inst.components.childspawner:SetMaxChildren(TUNING.BEEHIVE_BEES)
-	if GetWorld().components.seasonmanager:IsSummer() then
+	if GetSeasonManager() and GetSeasonManager():IsSummer() then
 		inst.components.childspawner:StartSpawning()
 	end
 	inst:ListenForEvent( "dusktime", StopSpawningFn(inst), GetWorld())
@@ -115,7 +126,8 @@ local function fn(Sim)
     ---------------------
     
     inst:AddComponent("inspectable")
-    inst.SoundEmitter:PlaySound("dontstarve/bee/bee_hive_LP", "loop")
+	inst.OnEntitySleep = OnEntitySleep
+	inst.OnEntityWake = OnEntityWake
     
     
     

@@ -71,6 +71,7 @@ function Dryer:StartDrying(dryable)
 	    self.product = dryable.components.dryable:GetProduct()
 	    self.targettime = GetTime() + cooktime
 	    self.task = self.inst:DoTaskInTime(cooktime, DoDry)
+	    dryable:Remove()
 		return true
 	end
 end

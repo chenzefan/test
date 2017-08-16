@@ -3,6 +3,7 @@ local assets=
 {
     Asset("ANIM", "data/anim/chester_eyebone.zip"),
     Asset("IMAGE", "data/inventoryimages/chester_eyebone.tex"),
+    Asset("IMAGE", "data/inventoryimages/chester_eyebone_closed.tex")
 }
 
 local SPAWN_DIST = 30
@@ -52,19 +53,17 @@ local function StopRespawn(inst)
 end
 
 local function RebindChester(inst, chester)
-    trace("chester_eyebone - RebindChester")
-     chester = chester or TheSim:FindFirstEntityWithTag("chester")
+    chester = chester or TheSim:FindFirstEntityWithTag("chester")
     if chester then
-        trace("   exists")
 
         inst.AnimState:PlayAnimation("idle_loop", true)
+        inst.components.inventoryitem:ChangeImageName("chester_eyebone")
         inst:ListenForEvent("death", function() inst:OnChesterDeath() end, chester)
 
         if chester.components.follower.leader ~= inst then
-            trace("   set to follow")
             chester.components.follower:SetLeader(inst)
         end
-
+        return true
     end
 end
 
@@ -81,90 +80,58 @@ local function RespawnChester(inst)
 end
 
 local function StartRespawn(inst, time)
-    trace("chester_eyebone - StartRespawn", time)
-
     StopRespawn(inst)
 
-    local respawntime = time or TUNING.CHESTER_RESPAWN_TIME
+    local respawntime = time or 0
     if respawntime then
-        trace("    respawn in", respawntime)
         inst.respawntask = inst:DoTaskInTime(respawntime, function() RespawnChester(inst) end)
         inst.respawntime = GetTime() + respawntime
         inst.AnimState:PlayAnimation("dead", true)
+        inst.components.inventoryitem:ChangeImageName("chester_eyebone_closed")
     end
 end
 
 local function OnChesterDeath(inst)
-    trace("chester_eyebone - OnChesterDeath")
+    StartRespawn(inst, TUNING.CHESTER_RESPAWN_TIME)
+end
 
-    StartRespawn(inst)
+local function FixChester(inst)
+	inst.fixtask = nil
+	--take an existing chester if there is one
+	if not RebindChester(inst) then
+        inst.AnimState:PlayAnimation("dead", true)
+        inst.components.inventoryitem:ChangeImageName("chester_eyebone_closed")
+		
+		if inst.components.inventoryitem.owner then
+			local time_remaining = 0
+			local time = GetTime()
+			if inst.respawntime and inst.respawntime > time then
+				time_remaining = inst.respawntime - time		
+			end
+			StartRespawn(inst, time_remaining)
+		end
+	end
 end
 
 local function OnPutInInventory(inst)
-    trace("chester_eyebone - OnPutInInventory")
-
-    if not inst.loading and not inst.respawntask then
-        -- picked up for the first time, spawn chester
-        RespawnChester(inst)
-    end
+	if not inst.fixtask then
+		inst.fixtask = inst:DoTaskInTime(1, function() FixChester(inst) end)	
+	end
 end
 
 local function OnSave(inst, data)
     trace("chester_eyebone - OnSave")
-
-    -- Hack #2
-    -- Data isn't returned to OnLoad if it's empty, so force there to be a data object during OnLoad 
-    -- so I can tell the difference between loading a save vs. initial instantiation (see Hack #1)
-    data.from_save = true
-
     local time = GetTime()
     if inst.respawntime and inst.respawntime > time then
         data.respawntimeremaining = inst.respawntime - time
-        trace("   data.respawntimeremaining", data.respawntimeremaining)
     end
 end
 
-local function OnLoadPostPass(inst)
-    trace("chester_eyebone - OnLoadPostPass")
-
-    if inst.loading then
-        inst.loading = nil
-
-        if inst.respawntimeremaining then
-            -- pick up the respawn process
-            trace("   inst.respawntimeremaining", inst.respawntimeremaining)
-            StartRespawn(inst, inst.respawntimeremaining)
-            inst.respawntimeremaining = nil
-        else
-            -- if chester already exists, pick him up
-            RebindChester(inst)
-        end
-    end
-end
 
 local function OnLoad(inst, data)
-    trace("chester_eyebone - OnLoad")
-
-    -- Hack #1
-    -- because OnPutInInventory can be called during load, but can't operate correctly because chester isn't spawned yet
-    -- set a flag so that OnPutInInventory knows not to do anything during load.  Reset during OnLoadPostPass
-    inst.loading = true
-
-    if data then
-        if data.respawntimeremaining then
-            inst.respawntimeremaining = data.respawntimeremaining
-        end
-        -- OnLoadPostPass will be called, we're all good here
-    else
-        -- Hack #3
-        -- because i don't know if i'm being loaded with a missing data (see Hack #2), or instantiated for the first time, make sure that OnLoadPostPass happens
-        -- in order to reset inst.loading.  it's ok to call it multiple times if it turns out we ARE loading from file
-        inst:DoTaskInTime(.1, function() OnLoadPostPass(inst) end)
-    end
-end
-
-local function OnDropped(inst)
-    trace("chester_eyebone - OnDropped")
+    if data and data.respawntimeremaining then
+		inst.respawntime = data.respawntimeremaining + GetTime()
+	end
 end
 
 local function GetStatus(inst)
@@ -173,6 +140,7 @@ local function GetStatus(inst)
         return "WAITING"
     end
 end
+
 
 local function fn(Sim)
     local inst = CreateEntity()
@@ -192,20 +160,24 @@ local function fn(Sim)
     inst.AnimState:SetBank("eyebone")
     inst.AnimState:SetBuild("chester_eyebone")
     inst.AnimState:PlayAnimation("idle_loop", true)
+
+    inst:AddComponent("inventoryitem")
+    inst.components.inventoryitem:SetOnPutInInventoryFn(OnPutInInventory)
     
+
+    inst.components.inventoryitem:ChangeImageName("chester_eyebone")    
     inst:AddComponent("inspectable")
     inst.components.inspectable.getstatus = GetStatus
 
     inst:AddComponent("leader")
 
-    inst:AddComponent("inventoryitem")
-    inst.components.inventoryitem:SetOnPutInInventoryFn(OnPutInInventory)
-    inst.components.inventoryitem:SetOnDroppedFn(OnDropped)
+    
 
     inst.OnLoad = OnLoad
     inst.OnSave = OnSave
-    inst.OnLoadPostPass = OnLoadPostPass
     inst.OnChesterDeath = OnChesterDeath
+
+	inst.fixtask = inst:DoTaskInTime(1, function() FixChester(inst) end)
 
     return inst
 end

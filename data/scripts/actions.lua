@@ -2,12 +2,13 @@ require "class"
 require "bufferedaction"
 require "screens/characterselectscreen"
 
-Action = Class(function(self, priority, instant) 
+Action = Class(function(self, priority, instant, rmb) 
     self.priority = priority or 0
     self.fn = function() return false end
     self.strfn = nil
     self.testfn = nil
     self.instant = instant or false
+    self.rmb = rmb or nil
 end)
 
 ACTIONS=
@@ -20,7 +21,7 @@ ACTIONS=
     PICK = Action(),
     PICKUP = Action(1),
     MINE = Action(),
-    DIG = Action(),
+    DIG = Action(nil, nil, true),
     GIVE = Action(),
     COOK = Action(),
     DRY = Action(),
@@ -28,6 +29,7 @@ ACTIONS=
     LIGHT = Action(-4),
     EXTINGUISH = Action(0),
     LOOKAT = Action(-3, true),
+    TALKTO = Action(3, true),
     WALKTO = Action(-4),
     BAIT = Action(),
     CHECKTRAP = Action(2),
@@ -61,6 +63,11 @@ ACTIONS=
     INVESTIGATE = Action(),
     UNLOCK = Action(),
     TEACH = Action(),
+    TURNON = Action(2),
+    TURNOFF = Action(2),
+    SEW = Action(),
+    STEAL = Action(),
+    USEITEM = Action(1, true),
 }
 
 for k,v in pairs(ACTIONS) do
@@ -78,6 +85,15 @@ ACTIONS.EAT.fn = function(act)
     end
 end
 
+ACTIONS.STEAL.fn = function(act)
+    local obj = act.target
+    local attack = false
+    if act.attack then attack = act.attack end    
+
+    if (obj.components.inventoryitem and obj.components.inventoryitem:IsHeld()) then
+        return act.doer.components.thief:StealItem(obj.components.inventoryitem.owner, obj, attack)
+    end
+end
 
 ACTIONS.EQUIP.fn = function(act)
     if act.doer.components.inventory then
@@ -86,25 +102,33 @@ ACTIONS.EQUIP.fn = function(act)
 end
 
 ACTIONS.UNEQUIP.fn = function(act)
-    if act.doer.components.inventory and act.invobject then
+    if act.doer.components.inventory and act.invobject and act.invobject.components.inventoryitem.cangoincontainer then
 		act.doer.components.inventory:GiveItem(act.invobject)
     	--return act.doer.components.inventory:Unequip(act.invobject)
     	return true
+    elseif act.doer.components.inventory and act.invobject and not act.invobject.components.inventoryitem.cangoincontainer then
+        act.doer.components.inventory:DropItem(act.invobject, true, true)
+        return true
     end
 end
 
 ACTIONS.PICKUP.fn = function(act)
-    if act.doer.components.inventory then    
+    if act.doer.components.inventory and act.target.components.inventoryitem then    
 	    act.doer:PushEvent("onpickup", {item = act.target})
 
         --special case for trying to carry two backpacks
-        if act.target.components.inventoryitem and not act.target.components.inventoryitem.cangoincontainer and act.target.components.equippable and act.doer.components.inventory:GetEquippedItem(act.target.components.equippable.equipslot) then
-            act.doer.components.inventory:DropItem(act.doer.components.inventory:GetEquippedItem(act.target.components.equippable.equipslot))
+        if not act.target.components.inventoryitem.cangoincontainer and act.target.components.equippable and act.doer.components.inventory:GetEquippedItem(act.target.components.equippable.equipslot) then
+            local item = act.doer.components.inventory:GetEquippedItem(act.target.components.equippable.equipslot)
+            if item.components.inventoryitem and item.components.inventoryitem.cangoincontainer then
+                act.doer.components.inventory:SelectActiveItemFromEquipSlot(act.target.components.equippable.equipslot)
+            else
+                act.doer.components.inventory:DropItem(act.doer.components.inventory:GetEquippedItem(act.target.components.equippable.equipslot))
+            end
             act.doer.components.inventory:Equip(act.target)
             return true
         end
 
-        if act.target.components.equippable and not act.doer.components.inventory:GetEquippedItem(act.target.components.equippable.equipslot) then
+        if act.doer:HasTag("player") and act.target.components.equippable and not act.doer.components.inventory:GetEquippedItem(act.target.components.equippable.equipslot) then
             act.doer.components.inventory:Equip(act.target)
         else
 	       act.doer.components.inventory:GiveItem(act.target, nil, Vector3(TheSim:GetScreenPos(act.target.Transform:GetWorldPosition())))
@@ -120,6 +144,13 @@ ACTIONS.REPAIR.fn = function(act)
 		return act.target.components.repairable:Repair(act.doer, act.invobject)
 	end
 end
+
+ACTIONS.SEW.fn = function(act)
+	if act.target and act.target.components.fueled and act.invobject and act.invobject.components.sewing then
+		return act.invobject.components.sewing:DoSewing(act.target, act.doer)
+	end
+end
+
 
 ACTIONS.RUMMAGE.fn = function(act)
     local targ = act.target or act.invobject
@@ -170,6 +201,21 @@ ACTIONS.LOOKAT.fn = function(act)
 	        return true
 	    end
 	end
+end
+
+ACTIONS.TALKTO.fn = function(act)
+    local targ = act.target or act.invobject
+    if targ and targ.components.talkable then
+        act.doer.components.locomotor:Stop()
+
+        if act.target.components.maxwelltalker then
+            if not act.target.components.maxwelltalker:IsTalking() then
+                act.target:PushEvent("talkedto")
+                act.target.task = act.target:StartThread(function() act.target.components.maxwelltalker:DoTalk(act.target) end)
+            end
+        end
+        return true
+    end
 end
 
 ACTIONS.BAIT.fn = function(act)
@@ -356,6 +402,7 @@ ACTIONS.ADDFUEL.fn = function(act)
 	        if act.target.components.fueled:TakeFuelItem(fuel) then
 	            return true
 	        else
+                print("False")
 	            act.doer.components.inventory:GiveItem(fuel)
 	        end
 	    end
@@ -372,7 +419,7 @@ end
 ACTIONS.STORE.fn = function(act)
     if act.target.components.container and act.invobject.components.inventoryitem and act.doer.components.inventory then
         
-        if not act.invobject.components.inventoryitem.cangoincontainer then
+        if not act.target.components.container:CanTakeItemInSlot(act.invobject) then
 			return false, "NOTALLOWED"
         end
 
@@ -451,12 +498,9 @@ end
 
 
 ACTIONS.LIGHT.fn = function(act)
-    if act.target.components.burnable then
-        local is_empty = act.target.components.fueled and act.target.components.fueled:GetPercent() <= 0
-        if not is_empty then
-			act.target.components.burnable:Ignite()
-			return true
-		end
+    if act.invobject and act.invobject.components.lighter then
+		act.invobject.components.lighter:Light(act.target)
+		return true
     end
 end
 
@@ -596,8 +640,7 @@ end
 ACTIONS.MURDER.fn = function(act)
     local murdered = act.invobject
     if murdered and murdered.components.health then
-        
-        local slot = act.doer.components.inventory:GetItemSlot(murdered)
+                
         murdered.components.inventoryitem:RemoveFromOwner(true)
 
         if murdered.components.health.murdersound then
@@ -614,7 +657,7 @@ ACTIONS.MURDER.fn = function(act)
                 local loots = murdered.components.lootdropper:GenerateLoot()
                 for k, v in pairs(loots) do
                     local loot = SpawnPrefab(v)
-                    act.doer.components.inventory:GiveItem(loot, slot)
+                    act.doer.components.inventory:GiveItem(loot)
                 end      
             end
         end
@@ -634,17 +677,50 @@ ACTIONS.HEAL.fn = function(act)
 end
 
 ACTIONS.UNLOCK.fn = function(act)
-    if act.target.components.lock 
-    and act.target.components.lock:CompatableKey(act.invobject.components.key.keytype) then
-        act.target.components.lock:UnLock(act.invobject)
+    if act.target.components.lock then
+        if act.target.components.lock:IsLocked() then
+            act.target.components.lock:Unlock(act.invobject, act.doer)
+        --else
+            --act.target.components.lock:Lock(act.doer)
+        end
         return true
     end
 end
+
+--ACTIONS.UNLOCK.strfn = function(act)
+    --if act.target.components.lock and not act.target.components.lock:IsLocked() then
+        --return "LOCK"
+    --end
+--end
 
 ACTIONS.TEACH.fn = function(act)
     if act.invobject and act.invobject.components.teacher then
         local target = act.target or act.doer
         return act.invobject.components.teacher:Teach(target)
+    end
+end
+
+ACTIONS.TURNON.fn = function(act)
+    local tar = act.target or act.invobject
+    if tar and tar.components.machine and not tar.components.machine:IsOn() then
+        tar.components.machine:TurnOn(tar)
+        return true
+    end
+end
+
+ACTIONS.TURNOFF.fn = function(act)
+    local tar = act.target or act.invobject
+    if tar and tar.components.machine and tar.components.machine:IsOn() then
+            tar.components.machine:TurnOff(tar)
+        return true
+    end
+end
+
+ACTIONS.USEITEM.fn = function(act)
+    if act.invobject and act.invobject.components.useableitem then
+        if act.invobject.components.useableitem:CanInteract() then
+            act.invobject.components.useableitem:StartUsingItem()
+        end
     end
 end
 

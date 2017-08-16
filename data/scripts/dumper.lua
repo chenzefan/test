@@ -73,6 +73,7 @@ for _,lib in pairs{'_G', 'string', 'table', 'math',
   end
 end
 
+
 function DataDumper(value, varname, fastmode, ident)
   local defined, dumplua = {}
   -- Local variables for speed optimization

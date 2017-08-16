@@ -51,9 +51,19 @@ local states=
             EventHandler("harvesttrap", function(inst) inst.sg:GoToState("idle") end),
             EventHandler("animover", function(inst) inst.sg:GoToState("full") end),
         },
-        
-        
     },
+    
+	State{
+        name = "empty",
+        onenter = function(inst, target)
+            inst.AnimState:PlayAnimation("side")
+         end,
+        
+        events=
+        {
+            EventHandler("harvesttrap", function(inst) inst.sg:GoToState("idle") end),
+        },
+    },    
     
     State{
         name = "sprung",
@@ -66,7 +76,11 @@ local states=
             EventHandler("animover", function(inst)
 				inst.SoundEmitter:PlaySound(inst.sounds.close)    
 				inst.components.trap:DoSpring()
-				inst.sg:GoToState("full")
+				if inst.components.trap.lootprefabs then
+					inst.sg:GoToState("full")
+				else
+					inst.sg:GoToState("empty")
+				end
 			end),
         }
     },    

@@ -42,7 +42,7 @@ local veggies = {"carrot", "corn", "pumpkin", "eggplant"}
 AddIngredients(ingredients, {veggie=1}, veggies, true)
 
 local mushrooms = {"red_cap", "green_cap", "blue_cap"}
-AddIngredients(ingredients, {veggie=.5}, mushrooms, false)
+AddIngredients(ingredients, {veggie=.5}, mushrooms, true)
 
 AddIngredients(ingredients, {meat=1}, {"meat"}, true, true)
 AddIngredients(ingredients, {meat=1, monster=1}, {"monstermeat"}, true, true)

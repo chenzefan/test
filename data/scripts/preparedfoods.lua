@@ -253,6 +253,18 @@ local foods=
 		sanity = -TUNING.SANITY_MEDLARGE,
 		cooktime = .5,
 	},
+
+	powcake =
+	{
+		test = function(cooker, names, tags) return names.twigs and names.honey and (names.corn or names.corn_cooked) end,
+		priority = 10,
+		foodtype = "VEGGIE",
+		health = -TUNING.HEALING_SMALL,
+		hunger = 0,
+		perishtime = 9000000,
+		sanity = 0,
+		cooktime = 0.5,
+	},
 	
 	wetgoop =
 	{

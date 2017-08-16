@@ -17,7 +17,7 @@ local function fn(Sim)
     
     
     inst:AddComponent("edible")
-    inst.components.edible.healthvalue = TUNING.HEALING_MED
+    inst.components.edible.healthvalue = TUNING.HEALING_MEDSMALL
     inst.components.edible.hungervalue = TUNING.CALORIES_TINY
     inst.components.edible.foodtype = "VEGGIE"
 

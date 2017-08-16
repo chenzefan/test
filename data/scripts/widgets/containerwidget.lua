@@ -92,16 +92,25 @@ end
 
 
 function ContainerWidget:RightClickInvSlot(slot)
+	
 	if self.owner and self.owner.components.inventory then
+		
 		local item = self.container.components.container:GetItemInSlot(slot.num)
 		if item then
-			if item.components.equippable then
-				item = self.container.components.container:RemoveItem(item, true)
-				self.owner.components.inventory:Equip(item)
-	        else
-				local actions = self.owner.components.playeractionpicker:GetInventoryActions(item, true)
+		
+			if self.owner.components.inventory:GetActiveItem() then
+				local actions = self.owner.components.playeractionpicker:GetUseItemActions(item, self.owner.components.inventory:GetActiveItem(), true)
 				if actions then
-	                self.owner.components.locomotor:PushAction(actions[1], true)
+					self.owner.components.locomotor:PushAction(actions[1], true)
+				end
+			else
+				if item.components.equippable then
+					self.owner.components.inventory:Equip(item)
+				else
+					local actions = self.owner.components.playeractionpicker:GetInventoryActions(item, true)
+					if actions then
+						self.owner.components.locomotor:PushAction(actions[1], true)
+					end
 				end
 			end
 	    end

@@ -18,14 +18,14 @@ function Tool:SetAction(act)
     self.action = act
 end
 
-function Tool:CollectUseActions(doer, target, actions)
-    if target:IsActionValid(self.action) then
+function Tool:CollectUseActions(doer, target, actions, right)
+    if target:IsActionValid(self.action, right) then
         table.insert(actions, self.action)
     end
 end
 
-function Tool:CollectEquippedActions(doer, target, actions)
-    if target:IsActionValid(self.action) then
+function Tool:CollectEquippedActions(doer, target, actions, right)
+    if target:IsActionValid(self.action, right) then
         table.insert(actions, self.action)
     end
 end

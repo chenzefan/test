@@ -41,6 +41,9 @@ Graph = Class(function(self, id, args)
 
     self.colour = args.colour or {r=1,g=0,b=0,a=1}
 
+	-- a list of layouts to be distributed amongst children
+	self.set_pieces = args.set_pieces
+
 	self.MIN_WORMHOLE_ID = 2300000
 end)
 
@@ -509,7 +512,8 @@ function Graph:CrosslinkRandom(crossLinkFactor)
 		return
 	end
 	
-	while crossLinkFactor > 0 do	
+	local iterations = 0
+	while crossLinkFactor > 0 and iterations < 20 do	
 		local n1 = self:GetRandomNode()
 		local n2 = self:GetRandomNode()
 		if n1 ~= n2 and n1:IsConnectedTo(n2)~= true and not n1.data.entrance and not n2.data.entrance then
@@ -518,6 +522,7 @@ function Graph:CrosslinkRandom(crossLinkFactor)
 			crosslink.hidden = true
 			crossLinkFactor = crossLinkFactor -1
 		end
+		iterations = iterations + 1
 	end
 end
 
@@ -658,7 +663,7 @@ end
 function Graph:ProcessInsanityWormholes(entities, width, height)
 	--print("*** PROCESSSING INSANITY WORMHOLES ***")
 
-	local IsNodeAWormhole = function(node) return IsNodeTagged(node, "InsanityWormhole") end
+	local IsNodeAWormhole = function(node) return IsNodeTagged(node, "OneshotWormhole") end
 
 	local NeighborNodes = function(task, node)
 		local prevNode = nil
@@ -699,7 +704,7 @@ function Graph:ProcessInsanityWormholes(entities, width, height)
 
 		local add_fn = {fn=function(...) node:AddEntity(...) end,args={entitiesOut=entities, width=width, height=height, rand_offset = false, debug_prefab_list=prefab_list}}
 		
-		local layout = obj_layout.LayoutForDefinition("SaneWormholeOneShot") 
+		local layout = obj_layout.LayoutForDefinition("WormholeOneShot") 
 		local prefabs = obj_layout.ConvertLayoutToEntitylist(layout)
 
 		for i,p in ipairs(prefabs) do
@@ -715,7 +720,7 @@ function Graph:ProcessInsanityWormholes(entities, width, height)
 
 	local ProcessWormholes = function(task, node)
 		local prevNode, nextNode = NeighborNodes(task,node)
-		print("Wormhole connecting nodes", prevNode.id, nextNode.id)
+		--print("Wormhole connecting nodes", prevNode.id, nextNode.id)
 
 		local id1 = self.MIN_WORMHOLE_ID
 		local id2 = self.MIN_WORMHOLE_ID + 1
@@ -793,6 +798,9 @@ function Graph:ApplyWormhole(entities, width, height, x1, y1, x2, y2)
 	
 		table.insert(entities["wormhole"], firstMarkerData)
 		table.insert(entities["wormhole"], secondMarkerData)
+	else
+		self.error = true
+		self.error_string = "ApplyWormhole nil wormhole"
 	end 
 end
 
@@ -803,11 +811,21 @@ function Graph:SwapWormholesAndRoadsExtra(entities, width, height)
 	--self:SwapWormholesAndRoads(entities, width, height)
 	
     local wx1,wy1,wx2,wy2 = WorldSim:GetWormholesExtra()
-    if wx1 ~= nil and #wx1 ~= 0 then
+    if wx1 ~= nil and wy1 ~= nil and wx2 ~= nil and wy2 ~= nil and 
+    	#wx1 ~= 0 and #wx1 == #wy1 and #wx1 == #wx2 and #wx1 == #wy2  then
+    	
     	for i=1,#wx1 do
     		self:ApplyWormhole(entities, width, height, wx1[i], wy1[i], wx2[i], wy2[i])
+    		if self.error == true then
+    			return
+    		end
     	end
-    end
+ 	else
+		if wx1 ~= nil and #wx1 ~= 0 then 
+			self.error = true
+			self.error_string = "GetWormholesExtra failed"
+		end
+   	end
 
 end
 
@@ -815,15 +833,20 @@ function Graph:ApplyPoisonTag()
 	local nodes = self:GetNodes(true)
 	for k,node in pairs(nodes) do
 		-- TODO: Need to handle BG nodes
-		if IsNodeTagged(node, "RoadPoison") then --or string.find(node.id, "LOOP_BLANK_SUB")~=nil then
+		if IsNodeTagged(node, "ForceDisconnected") then --or string.find(node.id, "LOOP_BLANK_SUB")~=nil then
 			WorldSim:ClearNodeLinks(node.id)
 			
 			-- TODO: Move this to a more generic location
 			WorldSim:SetNodeType(node.id, 1) -- BLANK
 		end
+		local flags = 0
 		if IsNodeTagged(node, "ForceConnected") then 
-			WorldSim:SetSiteFlags(node.id, 0x000002)
+			flags = flags + 0x000002
 		end
+		if IsNodeTagged(node, "RoadPoison") then 
+			flags = flags + 0x000004
+		end
+		WorldSim:SetSiteFlags(node.id, flags)
 	end
 	-- Process the graph and unlink any poisoned nodes
 	local children = self:GetChildren()

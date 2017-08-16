@@ -69,6 +69,7 @@ local function create_chester()
     inst:AddTag("character")
     inst:AddTag("scarytoprey")
     inst:AddTag("chester")
+    inst:AddTag("notraptrigger")
 
     inst.entity:AddTransform()
 
@@ -88,7 +89,7 @@ local function create_chester()
     inst.DynamicShadow:SetSize( 2, 1.5 )
 
     --print("   Physics")
-    MakeCharacterPhysics(inst, 75, .75)
+    MakeCharacterPhysics(inst, 75, .5)
     
     --print("   Collision")
     inst.Physics:SetCollisionGroup(COLLISION.CHARACTERS)

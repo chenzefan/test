@@ -1,10 +1,16 @@
 local function makeassetlist()
     return {
 		Asset("ANIM", "data/anim/teleportato_parts.zip"),
+		Asset("ANIM", "data/anim/teleportato_parts_build.zip"),
+		Asset("ANIM", "data/anim/teleportato_adventure_parts_build.zip"),
 		Asset("IMAGE", "data/inventoryimages/teleportato_ring.tex"),
 		Asset("IMAGE", "data/inventoryimages/teleportato_box.tex"),
 		Asset("IMAGE", "data/inventoryimages/teleportato_crank.tex"),
 		Asset("IMAGE", "data/inventoryimages/teleportato_potato.tex"),
+		Asset("IMAGE", "data/inventoryimages/teleportato_ring_adv.tex"),
+		Asset("IMAGE", "data/inventoryimages/teleportato_box_adv.tex"),
+		Asset("IMAGE", "data/inventoryimages/teleportato_crank_adv.tex"),
+		Asset("IMAGE", "data/inventoryimages/teleportato_potato_adv.tex"),
     }
 end
 
@@ -17,7 +23,6 @@ local function makefn(name, frame)
 		MakeInventoryPhysics(inst)
 		
 		anim:SetBank("parts")
-		anim:SetBuild("teleportato_parts")
 		
 		anim:PlayAnimation(frame, false)
 		
@@ -25,6 +30,13 @@ local function makefn(name, frame)
 
         inst:AddComponent("inventoryitem")
 
+        if SaveGameIndex:GetCurrentMode(Settings.save_slot) == "adventure" then
+	        anim:SetBuild("teleportato_adventure_parts_build")
+	        inst.components.inventoryitem:ChangeImageName(name.."_adv")
+	    else
+	        anim:SetBuild("teleportato_parts_build")
+	    end
+	    
 		inst:AddComponent("tradable")
         
 		inst:AddTag("irreplaceable")

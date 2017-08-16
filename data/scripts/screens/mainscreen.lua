@@ -11,6 +11,7 @@ require "screens/playerhud"
 require "screens/optionsscreen"
 require "screens/emailsignupscreen"
 require "screens/loadgamescreen"
+require "screens/creditsscreen"
 
 
 MainScreen = Class(Screen, function(self, profile)
@@ -29,7 +30,6 @@ end
 
 function MainScreen:OnGainFocus()
 	self._base.OnGainFocus(self)
-	
 	--TheFrontEnd:DoFadeIn(2)
 end
 
@@ -38,15 +38,14 @@ end
 
 
 function MainScreen:OnKeyUp( key )
-	
 	if CHEATS_ENABLED then
 		if key == KEY_ENTER then
 			if TheInput:IsKeyDown(KEY_CTRL) then
-				SaveGameIndex:DeleteSlot(1, function() 
-															TheSim:SetInstanceParameters(json.encode{reset_action="loadslot", save_slot = 1})
-										    				TheSim:Reset()
-										    			end)
-
+				SaveGameIndex:DeleteSlot(1,
+					function() 
+						TheSim:SetInstanceParameters(json.encode{reset_action="loadslot", save_slot = 1})
+						TheSim:Reset()
+					end)
 			elseif not SaveGameIndex:GetCurrentMode(1) then
 				local function onsaved()
 				    local params = json.encode{reset_action="loadslot", save_slot = 1}
@@ -58,7 +57,7 @@ function MainScreen:OnKeyUp( key )
     			TheSim:SetInstanceParameters(json.encode{reset_action="loadslot", save_slot = 1})
     			TheSim:Reset()
     		end
-		elseif key >= KEY_1 and key <= KEY_6 then
+		elseif key >= KEY_1 and key <= KEY_7 then
 			local level_num = key - KEY_1 + 1
 			
 			local function onstart()
@@ -67,9 +66,13 @@ function MainScreen:OnKeyUp( key )
 			end
 			SaveGameIndex:FakeAdventure(onstart, 1, level_num)    		
 		elseif key == KEY_0 then
-	    		TheSim:SetInstanceParameters(json.encode{reset_action="test", save_slot = 1})
-	    		TheSim:Reset()
+	    		local function onstart()
+	    			TheSim:SetInstanceParameters(json.encode{reset_action="loadslot", save_slot = 1})
+	    			TheSim:Reset()
+	    		end
+	    		SaveGameIndex:DeleteSlot(1, function() SaveGameIndex:EnterCave(onstart, 1, 1) end)
 	    	end
+	    	
 	elseif key == KEY_ESCAPE then
 		self:MainMenu()
 	end
@@ -134,7 +137,6 @@ function MainScreen:EmailSignup()
 end
 
 function MainScreen:Forums()
-	TheSim:SendJSMessage("MainScreen:Forum")
 	VisitURL("http://forums.kleientertainment.com/forumdisplay.php?20")
 end
 
@@ -146,18 +148,14 @@ function MainScreen:Logout()
 	TheSim:SendJSMessage("MainScreen:Logout")
 end
 
- 
- 
 function MainScreen:Quit()
 	TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.MAINSCREEN.ASKQUIT, STRINGS.UI.MAINSCREEN.ASKQUITDESC, {{text=STRINGS.UI.MAINSCREEN.YES, cb = function() RequestShutdown() end },{text=STRINGS.UI.MAINSCREEN.NO, cb = function() end}  }))
 end
-
 
 local function get_timezone()
   local now = os.time()
   return os.difftime(now, os.time(os.date("!*t", now)))
 end
-
 
 local function GetDaysToUpdate()
     --require("date")
@@ -166,11 +164,10 @@ local function GetDaysToUpdate()
     local klei_tz = 28800--The time zone offset for vancouver
     local update_times =
 		{
-			os.time{year=2013, day=26, month=2, hour=13} - klei_tz,
-			os.time{year=2013, day=12, month=3, hour=13} - klei_tz,
-			os.time{year=2013, day=26, month=3, hour=13} - klei_tz,
 			os.time{year=2013, day=9, month=4, hour=13} - klei_tz,
-			os.time{year=2013, day=23, month=4, hour=13} - klei_tz,
+			os.time{year=2013, day=18, month=4, hour=13} - klei_tz,
+			os.time{year=2013, day=21, month=5, hour=13} - klei_tz,
+			os.time{year=2013, day=11, month=6, hour=13} - klei_tz,
 		}
     table.sort(update_times)
     
@@ -237,8 +234,6 @@ function MainScreen:UpdateDaysUntil()
 		self.daysuntilanim:Hide()
 		self.daysuntiltext:Hide()
 	end
-
-
 end
 
 
@@ -303,7 +298,7 @@ function MainScreen:DoInit( )
     self.daysuntilanim:GetAnimState():SetBank("build_status")
     self.daysuntilanim:SetPosition(20,0,0)
     
-    self.daysuntiltext = self.bottom_left_stuff:AddChild(Text(NUMBERFONT, 30))
+    self.daysuntiltext = self.bottom_left_stuff:AddChild(Text(UIFONT, 30))
     self.daysuntiltext:SetHAlign(ANCHOR_MIDDLE)
     self.daysuntiltext:SetPosition(0,-80,0)
 	self.daysuntiltext:SetRegionSize( 200, 50 )
@@ -317,28 +312,29 @@ function MainScreen:DoInit( )
 	self.motd:SetScale(.9,.9,.9)
 	self.motd:SetPosition(-RESOLUTION_X/2+left_buffer, RESOLUTION_Y/2-200, 0)
 	
-	self.motdbg = self.motd:AddChild( Image( "data/images/panel.tex" ) )
-	self.motdbg:SetScale(.75,.75,.75)
+	self.motdbg = self.motd:AddChild( Image( "data/images/panel_allblack.tex" ) )
+	self.motdbg:SetScale(.75*.9,.75,.75)
 	self.motd.motdtitle = self.motdbg:AddChild(Text(TITLEFONT, 50))
     self.motd.motdtitle:SetPosition(0, 130, 0)
 	self.motd.motdtitle:SetRegionSize( 350, 60)
 	self.motd.motdtitle:SetString(STRINGS.UI.MAINSCREEN.MOTDTITLE)
 
 	self.motd.motdtext = self.motd:AddChild(Text(NUMBERFONT, 30))
-    self.motd.motdtext:SetHAlign(ANCHOR_LEFT)
+    self.motd.motdtext:SetHAlign(ANCHOR_MIDDLE)
     self.motd.motdtext:SetVAlign(ANCHOR_TOP)
     self.motd.motdtext:SetPosition(0, -20, 0)
-	self.motd.motdtext:SetRegionSize( 280, 160)
+	self.motd.motdtext:SetRegionSize( 250, 160)
 	self.motd.motdtext:SetString(STRINGS.UI.MAINSCREEN.MOTD)
 	
 	self.motd.button = self.motd:AddChild(AnimButton("button"))
     self.motd.button:SetPosition(0, -100, 0)
-    self.motd.button:SetText(STRINGS.UI.MAINSCREEN.FORUM)
+    self.motd.button:SetText(STRINGS.UI.MAINSCREEN.MOTDBUTTON)
     self.motd.button.text:SetColour(0,0,0,1)
-    self.motd.button:SetOnClick( function() self:Forums() end )
+    self.motd.button:SetOnClick( function() VisitURL("http://bit.ly/ds-soundtrack") end )
     self.motd.button:SetFont(BUTTONFONT)
     self.motd.button:SetTextSize(40)    
 	self.motd.motdtext:EnableWordWrap(true)   
+	
     
 	self.playerid = self.fixed_root:AddChild(Text(NUMBERFONT, 35))
 	self.playerid:SetPosition(RESOLUTION_X/2 -400, RESOLUTION_Y/2 -60, 0)    
@@ -372,25 +368,23 @@ function MainScreen:ShowMenu(menu_items)
 			self.purchasebutton = nil
 		end
 		
-		self.purchasebutton = self:AddChild(Button())
+		self.purchasebutton = self.fixed_root:AddChild(Button())
 		self.purchasebutton:SetImage("data/images/special_button.tex")
 		self.purchasebutton:SetMouseOverImage("data/images/special_button_over.tex")
 		self.purchasebutton:SetScale(.5,.5,.5)
-		self.purchasebutton:SetHAnchor(ANCHOR_MIDDLE)
-		self.purchasebutton:SetPosition(400, menu_spacing * #menu_items + 80, 0)
+		self.purchasebutton:SetPosition(RESOLUTION_X/2 -200 ,-RESOLUTION_Y/2 + bottom_offset + menu_spacing * (#menu_items) + 40,0)
 		self.purchasebutton.text:SetColour(0,0,0,1)
 		self.purchasebutton:SetFont(BUTTONFONT)
 		self.purchasebutton:SetTextSize(80)
 
 		if not IsGamePurchased() then
 			self.purchasebutton:SetOnClick( function() self:Buy() end)
-			self.purchasebutton:SetText( STRINGS.UI.MAINSCREEN.BUY )
+			self.purchasebutton:SetText( STRINGS.UI.MAINSCREEN.BUYNOW )
 		else
 			self.purchasebutton:SetOnClick( function() self:SendGift() end)
 			self.purchasebutton:SetText( STRINGS.UI.MAINSCREEN.GIFT )
 		end	
 	end
-
 end
 
 
@@ -410,7 +404,11 @@ function MainScreen:UnlockEverything()
 	TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.MAINSCREEN.UNLOCKEVERYTHING, STRINGS.UI.MAINSCREEN.SURE, {{text=STRINGS.UI.MAINSCREEN.YES, cb = function() self.profile:UnlockEverything() end},{text=STRINGS.UI.MAINSCREEN.NO, cb = function() end}  }))
 end
 
-
+function MainScreen:OnCreditsButton()
+	TheFrontEnd:GetSound():KillSound("FEMusic")
+	TheFrontEnd:PushScreen( CreditsScreen() )
+end
+	
 function MainScreen:CheatMenu()
 	local menu_items = {}
 	table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.UNLOCKEVERYTHING, cb= function() self:UnlockEverything() end})
@@ -424,10 +422,10 @@ local function DoGenerateDEMOWorld()
 	SubmitCompletedLevel() -- close off any open games on the server
 
 	local function onComplete(savedata )
-		local function onsaved(playerdata)
+		local function onsaved()
 			local success, world_table = RunInSandbox(savedata)
 			if success then
-				DoInitGame(SaveGameIndex:GetSlotCharacter(saveslot), world_table, Profile, playerdata)
+				DoInitGame(SaveGameIndex:GetSlotCharacter(saveslot), world_table, Profile)
 			end
 		end
 
@@ -473,12 +471,14 @@ function MainScreen:MainMenu()
 	
 	if PLATFORM == "NACL" then
 		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.ACCOUNTINFO, cb= function() self:ProductKeys() end})
-		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.VISITFORUM, cb= function() self:Forums() end})
 	end
 	
 	if PLATFORM == "WIN32_STEAM" then
 		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.MOREGAMES, cb= function() VisitURL("http://store.steampowered.com/search/?developer=Klei%20Entertainment") end})
 	end
+		
+	table.insert(menu_items, {text=STRINGS.UI.MAINSCREEN.CREDITS, cb= function() self:OnCreditsButton() end})
+	table.insert(menu_items, {text=STRINGS.UI.MAINSCREEN.FORUM, cb= function() self:Forums() end})
 	
 	if PLATFORM == "NACL" then
 		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.LOGOUT, cb= function() self:OnExitButton() end})
@@ -486,7 +486,7 @@ function MainScreen:MainMenu()
 		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.EXIT, cb= function() self:OnExitButton() end})
 	end
 
-	if BRANCH ~= "release" then
+	if CHEATS_ENABLED then
 		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.CHEATS, cb= function() self:CheatMenu() end})
 	end
 	

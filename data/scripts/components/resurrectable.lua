@@ -35,6 +35,7 @@ function Resurrectable:CanResurrect()
 end
 
 function Resurrectable:DoResurrect()
+    self.inst:PushEvent("resurrect")
 	if self.inst.components.inventory then
 		local item = self.inst.components.inventory:GetEquippedItem(EQUIPSLOTS.BODY)
 		if item and item.prefab == "amulet" then

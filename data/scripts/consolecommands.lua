@@ -228,3 +228,7 @@ end
 function c_gonext(name)
 	c_goto(c_findnext(name))
 end
+
+function c_printtextureinfo( filename )
+	TheSim:PrintTextureInfo( filename )
+end

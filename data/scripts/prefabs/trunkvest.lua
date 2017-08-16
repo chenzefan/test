@@ -6,16 +6,23 @@ local assets=
     Asset("IMAGE", "data/inventoryimages/trunkvest_winter.tex"),
 }
 
+local function onperish(inst)
+	inst:Remove()
+end
+
 local function onequip_summer(inst, owner) 
     owner.AnimState:OverrideSymbol("swap_body", "armor_trunkvest_summer", "swap_body")
+    inst.components.fueled:StartConsuming()
 end
 
 local function onequip_winter(inst, owner) 
     owner.AnimState:OverrideSymbol("swap_body", "armor_trunkvest_winter", "swap_body")
+    inst.components.fueled:StartConsuming()
 end
 
 local function onunequip(inst, owner) 
     owner.AnimState:ClearOverrideSymbol("swap_body")
+    inst.components.fueled:StopConsuming()
 end
 
 local function create_common(inst)
@@ -39,6 +46,12 @@ local function create_common(inst)
     inst.components.equippable:SetOnUnequip( onunequip )
     
 	inst:AddComponent("insulator")
+	
+    inst:AddComponent("fueled")
+    inst.components.fueled.fueltype = "USAGE"
+    inst.components.fueled:InitializeFuelLevel(TUNING.TRUNKVEST_PERISHTIME)
+    inst.components.fueled:SetDepletedFn(onperish)
+	
     
     return inst
 end

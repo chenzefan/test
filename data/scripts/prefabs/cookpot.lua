@@ -128,6 +128,10 @@ local function onfar(inst)
 	inst.components.container:Close()
 end
 
+local function onbuilt(inst)
+	inst.AnimState:PlayAnimation("place")
+	inst.AnimState:PushAnimation("idle_empty")
+end
 
 local function fn(Sim)
 	local inst = CreateEntity()
@@ -193,6 +197,7 @@ local function fn(Sim)
 	inst.components.workable:SetOnWorkCallback(onhit)
 
 	MakeSnowCovered(inst, .01)    
+	inst:ListenForEvent( "onbuilt", onbuilt)
     return inst
 end
 

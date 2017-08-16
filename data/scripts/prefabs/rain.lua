@@ -100,7 +100,7 @@ local function fn(Sim)
 			inst.num_particles_to_emit = inst.num_particles_to_emit - 1
 		end
 		
-		if TheMap ~= nil then
+		if GetWorld().Map ~= nil then
 			while inst.num_splashes_to_emit > 0 do
 				local x, y, z = GetPlayer().Transform:GetWorldPosition()
 				local dx, dz = raindrop_offset()
@@ -108,7 +108,7 @@ local function fn(Sim)
 				x = x + dx
 				z = z + dz
 
-				if TheMap:GetTileAtPoint( x, y, z ) ~= GROUND.IMPASSABLE then
+				if GetWorld().Map:GetTileAtPoint( x, y, z ) ~= GROUND.IMPASSABLE then
 					local raindrop = SpawnPrefab( "raindrop" )
 					raindrop.Transform:SetPosition( x, y, z )
 					

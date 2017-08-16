@@ -145,6 +145,10 @@ function Spinner:SetTextSize(sz)
 	self.text:SetSize(sz)
 end
 
+function Spinner:GetWidth()
+	return self.scaled_arrow_width + self.textsize.width
+end
+
 function Spinner:Layout()
 	self.leftimage:SetPosition( 0, 0, 0 )
 	local x = 0.5 * self.scaled_arrow_width + 0.5 * self.textsize.width
@@ -248,6 +252,16 @@ function Spinner:SetSelectedIndex( idx )
 	
 	self:UpdateState()
 	self.updating = false
+end
+
+function Spinner:SetSelected( data )
+	
+	for k,v in pairs(self.options) do
+		if v.data == data then
+			self:SetSelectedIndex(k)			
+			return
+		end
+	end
 end
 
 function Spinner:UpdateText( msg )

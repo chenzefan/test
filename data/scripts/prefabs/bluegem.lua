@@ -21,12 +21,12 @@ local function StopSparkling(inst)
     end
 end
 
-
 local function fn(Sim)
 	local inst = CreateEntity()
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
-    
+    inst.entity:AddSoundEmitter()
+        
     inst.AnimState:SetBank("icegem")
     inst.AnimState:SetBuild("ice_gem")
     inst.AnimState:PlayAnimation("idle")
@@ -34,6 +34,10 @@ local function fn(Sim)
     
     inst:AddComponent("stackable")
 	inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM
+
+    inst:AddComponent("edible")
+    inst.components.edible.foodtype = "ELEMENTAL"
+    inst.components.edible.hungervalue = 3
 
     inst:AddComponent("inspectable")
     

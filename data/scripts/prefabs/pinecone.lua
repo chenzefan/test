@@ -5,13 +5,30 @@ local assets =
     Asset("IMAGE", "data/inventoryimages/pinecone.tex"),
 }
 
-local function ondeploy (inst, pt) 
+local function growtree(inst)
+    inst.growtask = nil
+    inst.growtime = nil
 	local tree = SpawnPrefab("evergreen_short") 
     if tree then 
-		tree.Transform:SetPosition(pt.x, pt.y, pt.z) 
+		tree.Transform:SetPosition(inst.Transform:GetWorldPosition() ) 
         tree:PushEvent("growfromseed")
-        inst.components.stackable:Get():Remove()
-	end 
+        inst:Remove()
+	end
+end
+
+local function plant(inst, growtime)
+    inst:RemoveComponent("inventoryitem")
+    inst.AnimState:PlayAnimation("idle_planted")
+    inst.SoundEmitter:PlaySound("dontstarve/wilson/plant_tree")
+    inst.growtime = GetTime() + growtime
+    inst.growtask = inst:DoTaskInTime(growtime, growtree)
+end
+
+local function ondeploy (inst, pt) 
+    inst = inst.components.stackable:Get()
+    inst.Transform:SetPosition(pt:Get() )
+    local timeToGrow = GetRandomWithVariance(TUNING.PINECONE_GROWTIME.base, TUNING.PINECONE_GROWTIME.random)
+    plant(inst, timeToGrow)
 	
 	--tell any nearby leifs to chill out
 	local ents = TheSim:FindEntities(pt.x,pt.y,pt.z, TUNING.LEIF_PINECONE_CHILL_RADIUS, {"leif"})
@@ -39,6 +56,14 @@ local function ondeploy (inst, pt)
 	
 end
 
+local function stopgrowing(inst)
+    if inst.growtask then
+        inst.growtask:Cancel()
+        inst.growtask = nil
+    end
+    inst.growtime = nil
+end
+
 local function test_ground(inst, pt)
 	local tiletype = GetGroundTypeAtPosition(pt)
 	local ground_OK = tiletype ~= GROUND.ROCKY and tiletype ~= GROUND.ROAD and tiletype ~= GROUND.IMPASSABLE
@@ -61,11 +86,29 @@ local function test_ground(inst, pt)
 	return false
 end
 
+local function describe(inst)
+    if inst.growtime then
+        return "PLANTED"
+    end
+end
+
+local function OnSave(inst, data)
+    if inst.growtime then
+        data.growtime = inst.growtime - GetTime()
+    end
+end
+
+local function OnLoad(inst, data)
+    if data and data.growtime then
+        plant(inst, data.growtime)
+    end
+end
 
 local function fn(Sim)
 	local inst = CreateEntity()
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
+	inst.entity:AddSoundEmitter()
     MakeInventoryPhysics(inst)
 
     inst.AnimState:SetBank("pinecone")
@@ -76,11 +119,13 @@ local function fn(Sim)
 	inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM
 
     inst:AddComponent("inspectable")
+    inst.components.inspectable.getstatus = describe
     
     inst:AddComponent("fuel")
     inst.components.fuel.fuelvalue = TUNING.SMALL_FUEL
     
 	MakeSmallBurnable(inst, TUNING.SMALL_BURNTIME)
+	inst:ListenForEvent("onignite", stopgrowing)
     MakeSmallPropagator(inst)
     
     inst:AddComponent("inventoryitem")
@@ -89,11 +134,13 @@ local function fn(Sim)
     inst.components.deployable.test = test_ground
     inst.components.deployable.ondeploy = ondeploy
     
+    inst.OnSave = OnSave
+    inst.OnLoad = OnLoad
 
     return inst
 end
 
 return Prefab( "common/inventory/pinecone", fn, assets),
-	   MakePlacer( "common/pinecone_placer", "evergreen_short", "evergreen_new", "idle_short" )
+	   MakePlacer( "common/pinecone_placer", "pinecone", "pinecone", "idle_planted" )
 
 

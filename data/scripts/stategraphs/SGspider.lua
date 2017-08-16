@@ -11,19 +11,25 @@ local events=
 {
     EventHandler("attacked", function(inst) 
         if not inst.components.health:IsDead() then 
-            if inst:HasTag("spider_warrior") then
-                if not inst.sg:HasStateTag("attack") then -- don't interrupt attack
+            if inst:HasTag("spider_warrior") or inst:HasTag("spider_spitter") then
+                if not inst.sg:HasStateTag("attack") then -- don't interrupt attack or exit shield
                     inst.sg:GoToState("hit") -- can still attack
                 end
-            else
+            elseif not inst.sg:HasStateTag("shield") then
                 inst.sg:GoToState("hit_stunlock")  -- can't attack during hit reaction
             end
         end 
     end),
     EventHandler("doattack", function(inst, data) 
         if not inst.components.health:IsDead() and not inst.sg:HasStateTag("busy") then 
-            if inst:HasTag("spider_warrior") and inst:GetDistanceSqToInst(data.target) > TUNING.SPIDER_WARRIOR_MELEE_RANGE*TUNING.SPIDER_WARRIOR_MELEE_RANGE then
+            if inst:HasTag("spider_warrior") and
+            inst:GetDistanceSqToInst(data.target) > TUNING.SPIDER_WARRIOR_MELEE_RANGE*TUNING.SPIDER_WARRIOR_MELEE_RANGE then
+                --Do leap attack
                 inst.sg:GoToState("warrior_attack", data.target) 
+            elseif inst:HasTag("spider_spitter") and
+            inst:GetDistanceSqToInst(data.target) > TUNING.SPIDER_SPITTER_MELEE_RANGE*TUNING.SPIDER_SPITTER_MELEE_RANGE then
+                --Do spit attack
+                inst.sg:GoToState("spitter_attack", data.target)
             else
                 inst.sg:GoToState("attack", data.target) 
             end
@@ -51,7 +57,15 @@ local events=
 }
 
 local function SoundPath(inst, event)
-    local creature = inst:HasTag("spider_warrior") and "spiderwarrior" or "spider"
+    local creature = "spider"
+
+    if inst:HasTag("spider_warrior") then
+        creature = "spiderwarrior"
+    elseif inst:HasTag("spider_hider") or inst:HasTag("spider_spitter") then
+        creature = "cavespider"
+    else
+        creature = "spider"
+    end
     return "dontstarve/creatures/" .. creature .. "/" .. event
 end
 
@@ -250,6 +264,7 @@ local states=
         timeline=
         {
             TimeEvent(10*FRAMES, function(inst) inst.SoundEmitter:PlaySound(SoundPath(inst, "Attack")) end),
+            TimeEvent(10*FRAMES, function(inst) inst.SoundEmitter:PlaySound(SoundPath(inst, "attack_grunt")) end),
             TimeEvent(25*FRAMES, function(inst) inst.components.combat:DoAttack(inst.sg.statemem.target) end),
         },
         
@@ -261,7 +276,7 @@ local states=
 
     State{
         name = "warrior_attack",
-        tags = {"attack", "canrotate", "busy"},
+        tags = {"attack", "canrotate", "busy", "jumping"},
         
         onenter = function(inst, target)
             inst.components.locomotor:Stop()
@@ -279,6 +294,7 @@ local states=
         
         timeline =
         {
+            TimeEvent(0*FRAMES, function(inst) inst.SoundEmitter:PlaySound(SoundPath(inst, "attack_grunt")) end),
             TimeEvent(0*FRAMES, function(inst) inst.SoundEmitter:PlaySound(SoundPath(inst, "Jump")) end),
             TimeEvent(8*FRAMES, function(inst) inst.Physics:SetMotorVelOverride(20,0,0) end),
             TimeEvent(9*FRAMES, function(inst) inst.SoundEmitter:PlaySound(SoundPath(inst, "Attack")) end),
@@ -291,6 +307,42 @@ local states=
         },
         
         events=
+        {
+            EventHandler("animover", function(inst) inst.sg:GoToState("taunt") end),
+        },
+    },
+
+    State{
+        name = "spitter_attack",
+        tags = {"attack", "canrotate", "busy", "spitting"},
+
+        onenter = function(inst, target)
+            if inst.weapon and inst.components.inventory then 
+                inst.components.inventory:Equip(inst.weapon)
+            end
+            if inst.components.locomotor then
+                inst.components.locomotor:StopMoving()
+            end
+            inst.AnimState:PlayAnimation("spit")
+        end,
+
+        onexit = function(inst)
+            if inst.components.inventory then
+                inst.components.inventory:Unequip(EQUIPSLOTS.HANDS)
+            end
+        end,
+
+        timeline =
+        {
+            TimeEvent(7*FRAMES, function(inst) 
+            inst.SoundEmitter:PlaySound(SoundPath(inst, "spit_web")) end),
+
+            TimeEvent(21*FRAMES, function(inst) inst.components.combat:DoAttack()
+            inst.SoundEmitter:PlaySound(SoundPath(inst, "spit_voice"))
+             end),
+        },
+
+        events =
         {
             EventHandler("animover", function(inst) inst.sg:GoToState("taunt") end),
         },
@@ -325,7 +377,48 @@ local states=
         {
             EventHandler("animover", function(inst) inst.sg:GoToState("idle") end ),
         },
-    },    
+    },  
+
+    State{
+        name = "shield",
+        tags = {"busy", "shield"},
+
+        onenter = function(inst)
+            --If taking fire damage, spawn fire effect. 
+            inst.components.health:SetAbsorbAmount(TUNING.SPIDER_HIDER_SHELL_ABSORB)
+            inst.Physics:Stop()
+            inst.AnimState:PlayAnimation("hide")
+            inst.AnimState:PushAnimation("hide_loop")
+        end,
+
+        onexit = function(inst)
+            inst.components.health:SetAbsorbAmount(0)
+        end,
+
+        timeline = 
+        {
+            --TimeEvent(1*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/slurtle/hide") end ),
+        },
+    },
+
+    State{
+        name = "shield_end",
+        tags = {"busy", "shield"},
+
+        onenter = function(inst)
+            inst.AnimState:PlayAnimation("unhide")            
+        end,
+
+        timeline = 
+        {
+            --TimeEvent(1*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/slurtle/emerge") end ),
+        },
+
+        events=
+        {
+            EventHandler("animqueueover", function(inst) inst.sg:GoToState("idle") end ),
+        },
+    }, 
     
 }
 

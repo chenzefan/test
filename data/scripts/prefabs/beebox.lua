@@ -80,7 +80,7 @@ end
 local function onharvest(inst, picker)
 	--print(inst, "onharvest")
     updatelevel(inst)
-	if inst.components.childspawner then
+	if inst.components.childspawner and not GetSeasonManager():IsWinter() then
 	    inst.components.childspawner:ReleaseAllChildren(picker)
 	end
 end
@@ -110,6 +110,20 @@ end
 local function OnLoad(inst, data)
 	--print(inst, "OnLoad")
 	updatelevel(inst)
+end
+
+local function onbuilt(inst)
+	inst.AnimState:PlayAnimation("place")
+	inst.AnimState:PushAnimation("idle", false)
+end
+
+
+local function OnEntityWake(inst)
+    inst.SoundEmitter:PlaySound("dontstarve/bee/bee_box_LP", "loop")
+end
+
+local function OnEntitySleep(inst)
+	inst.SoundEmitter:KillSound("loop")
 end
 
 local function fn(Sim)
@@ -154,8 +168,6 @@ local function fn(Sim)
         end
     end
     
-    inst.SoundEmitter:PlaySound("dontstarve/bee/bee_hive_LP", "loop")
-    
     inst:AddComponent("lootdropper")
     inst:AddComponent("workable")
     inst.components.workable:SetWorkAction(ACTIONS.HAMMER)
@@ -168,9 +180,12 @@ local function fn(Sim)
 	
     updatelevel(inst)
     
-	MakeSnowCovered(inst, .01)    
+	MakeSnowCovered(inst, .01)
+	inst:ListenForEvent( "onbuilt", onbuilt)
 
 	inst.OnLoad = OnLoad
+	inst.OnEntitySleep = OnEntitySleep
+	inst.OnEntityWake = OnEntityWake
 
 	return inst
 end

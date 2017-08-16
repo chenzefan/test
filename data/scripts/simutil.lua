@@ -1,6 +1,7 @@
 function GetPlayer() return TheSim:FindFirstEntityWithTag("player") end
 function GetWorld() return TheSim:FindFirstEntityWithTag("ground") end
-
+function GetCeiling() return TheSim:FindFirstEntityWithTag("ceiling") end
+function GetMap() return GetWorld().Map end
 function GetClock() return GetWorld().components.clock end
 function GetSeasonManager() return GetWorld().components.seasonmanager end
 
@@ -22,12 +23,26 @@ end
 
 
 function FindEntity(inst, radius, fn, tags)
-    local x,y,z = inst.Transform:GetWorldPosition()
-    local ents = TheSim:FindEntities(x,y,z, radius, tags) -- or we could include a flag to the search?
-    for k, v in pairs(ents) do
-        if v ~= inst and v.entity:IsValid() and v.entity:IsVisible() and (not fn or fn(v)) then
-            return v
-        end
+    if inst and inst:IsValid() then
+		local x,y,z = inst.Transform:GetWorldPosition()
+		local ents = TheSim:FindEntities(x,y,z, radius, tags) -- or we could include a flag to the search?
+		for k, v in pairs(ents) do
+			if v ~= inst and v.entity:IsValid() and v.entity:IsVisible() and (not fn or fn(v)) then
+				return v
+			end
+		end
+	end
+end
+
+function GetRandomInstWithTag(tag, inst, radius)
+    local trans = inst.Transform
+    local tags = {tag}
+    local x,y,z = trans:GetWorldPosition()
+    local ents = TheSim:FindEntities(x,y,z, radius, tags)
+    if #ents > 0 then
+        return ents[math.random(1,#ents)]
+    else
+        return nil
     end
 end
 
@@ -41,6 +56,18 @@ function GetClosestInstWithTag(tag, inst, radius)
         end
 end
 
+
+function DeleteCloseEntsWithTag(inst, tag, distance)
+    local trans = inst.Transform
+    local tags = {tag}
+    local x,y,z = trans:GetWorldPosition()
+    local ents = TheSim:FindEntities(x,y,z, distance, tags)
+    --print("Found", GetTableSize(ents), "close",tag,"things")
+    for k,v in pairs(ents) do
+       -- print("\n Removing", v)
+        v:Remove()
+    end
+end
 
 function fadeout(inst, time)
    
@@ -200,25 +227,4 @@ function FindWalkableOffset(position, start_angle, radius, attempts, check_los, 
 	end
 
 	return FindValidPositionByFan(start_angle, radius, attempts, test)
-end
-
-
--- Used to help players help us test adventure levels.
-function TestAdventureLevel(levelnum)
-	if SaveGameIndex:GetCurrentMode() ~= "survival" then
-		print("Can only being a test adventure from the Survival level!")
-		return
-	end
-	if levelnum < 1 or levelnum > 5 then
-		print("Level number must be 1 to 5!")
-		return
-	end
-
-	SaveGameIndex:SaveCurrent(function()
-		SaveGameIndex:FakeAdventure(function()
-		    local params = json.encode{reset_action="loadslot", save_slot = SaveGameIndex:GetCurrentSaveSlot()}
-		    TheSim:SetInstanceParameters(params)
-		    TheSim:Reset()
-		end, SaveGameIndex:GetCurrentSaveSlot(), levelnum)
-	end)
 end

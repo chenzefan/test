@@ -3,7 +3,7 @@ local assets =
 	Asset("ANIM", "data/anim/skeletons.zip"),
 }
 
-local animstates = {1, 3} --not going to use the spear skeleton until anim to take spear is made
+local animstates = {1, 3, 4, 5, 6} --not going to use the spear skeleton until anim to take spear is made
 
 local function onsave(inst, data)
 	data.anim = inst.animnum

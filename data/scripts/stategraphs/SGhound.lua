@@ -22,7 +22,7 @@ local states=
         name = "idle",
         tags = {"idle", "canrotate"},
         onenter = function(inst, playanim)
-            inst.SoundEmitter:PlaySound("dontstarve/creatures/hound_small/pant")
+            inst.SoundEmitter:PlaySound("dontstarve/creatures/hound/pant")
             inst.Physics:Stop()
             if playanim then
                 inst.AnimState:PlayAnimation(playanim)
@@ -52,7 +52,7 @@ local states=
         timeline=
         {
 
-			TimeEvent(14*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/hound_small/attack") end),
+			TimeEvent(14*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/hound/attack") end),
             TimeEvent(16*FRAMES, function(inst) inst.components.combat:DoAttack(inst.sg.statemem.target) end),
         },
 
@@ -75,7 +75,7 @@ local states=
 
 		timeline=
         {
-			TimeEvent(14*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/hound_small/attack") end),
+			TimeEvent(14*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/hound/bite") end),
         },
 
         events=
@@ -91,7 +91,7 @@ local states=
         onenter = function(inst, cb)
             inst.Physics:Stop()
             inst.AnimState:PlayAnimation("hit")
-            inst.SoundEmitter:PlaySound("dontstarve/creatures/hound_small/hurt")
+            inst.SoundEmitter:PlaySound("dontstarve/creatures/hound/hurt")
         end,
 
         events=
@@ -111,8 +111,8 @@ local states=
 
 		timeline=
         {
-			TimeEvent(13*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/hound_small/bark") end),
-			TimeEvent(24*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/hound_small/bark") end),
+			TimeEvent(13*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/hound/bark") end),
+			TimeEvent(24*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/hound/bark") end),
         },
 
         events=
@@ -126,7 +126,7 @@ local states=
         tags = {"busy"},
 
         onenter = function(inst)
-			inst.SoundEmitter:PlaySound("dontstarve/creatures/hound_small/death")
+			inst.SoundEmitter:PlaySound("dontstarve/creatures/hound/death")
             inst.AnimState:PlayAnimation("death")
             inst.Physics:Stop()
             RemovePhysicsColliders(inst)            
@@ -139,7 +139,7 @@ local states=
 CommonStates.AddSleepStates(states,
 {
 	sleeptimeline = {
-        TimeEvent(30*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/hound_small/sleep") end),
+        TimeEvent(30*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/hound/sleep") end),
 	},
 })
 
@@ -147,7 +147,7 @@ CommonStates.AddSleepStates(states,
 CommonStates.AddRunStates(states,
 {
 	runtimeline = {
-		TimeEvent(0, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/hound_small/growl") end),
+		TimeEvent(0, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/hound/growl") end),
 		TimeEvent(0*FRAMES, PlayFootstep ),
 		TimeEvent(4*FRAMES, PlayFootstep ),
 	},

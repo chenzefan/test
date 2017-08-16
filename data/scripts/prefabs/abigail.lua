@@ -35,7 +35,11 @@ local function fn(Sim)
     --inst.AnimState:SetMultColour(1,1,1,.6)
     
     inst:AddTag("monster")
+    inst:AddTag("girl")
+    inst:AddTag("ghost")
     inst:AddTag("noauradamage")
+    inst:AddTag("notraptrigger")
+    inst:AddTag("abigail")
 
     inst:AddComponent("locomotor") -- locomotor must be constructed before the stategraph
     inst.components.locomotor.walkspeed = TUNING.ABIGAIL_SPEED

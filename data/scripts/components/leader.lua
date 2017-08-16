@@ -105,7 +105,7 @@ function Leader:OnSave()
     end
     
     if saved then
-        return {followers = followers}
+        return {followers = followers}, followers
     end
     
 end

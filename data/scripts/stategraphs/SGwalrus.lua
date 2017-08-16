@@ -122,6 +122,7 @@ local states=
         
         onenter = function(inst)
             PlayCreatureSound(inst, "attack")
+            inst.SoundEmitter:PlaySound("dontstarve/wilson/attack_whoosh")
             inst.components.combat:StartAttack()
             inst.Physics:Stop()
             inst.AnimState:PlayAnimation("atk")
@@ -189,7 +190,7 @@ local states=
         tags = {"busy"},
         
         onenter = function(inst)
-            PlayCreatureSound(inst, "attack")
+            PlayCreatureSound(inst, "hurt")
             inst.AnimState:PlayAnimation("hit")
             inst.Physics:Stop()            
         end,

@@ -181,7 +181,7 @@ function Herd:OnSave()
         end
     end
     
-    return data
+    return data, data.members
 end
 
 

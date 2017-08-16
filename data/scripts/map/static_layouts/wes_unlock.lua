@@ -122,17 +122,6 @@ return {
       objects = {
         {
           name = "",
-          type = "spawnpoint",
-          shape = "rectangle",
-          x = 699,
-          y = 34,
-          width = 0,
-          height = 0,
-          visible = true,
-          properties = {}
-        },
-        {
-          name = "",
           type = "lockedwes",
           shape = "rectangle",
           x = 608,
@@ -169,72 +158,6 @@ return {
           properties = {
             ["scenario"] = "statue_enemywave"
           }
-        },
-        {
-          name = "",
-          type = "insanityrock",
-          shape = "rectangle",
-          x = 320,
-          y = 512,
-          width = 0,
-          height = 0,
-          visible = true,
-          properties = {}
-        },
-        {
-          name = "",
-          type = "insanityrock",
-          shape = "rectangle",
-          x = 352,
-          y = 512,
-          width = 0,
-          height = 0,
-          visible = true,
-          properties = {}
-        },
-        {
-          name = "",
-          type = "insanityrock",
-          shape = "rectangle",
-          x = 384,
-          y = 512,
-          width = 0,
-          height = 0,
-          visible = true,
-          properties = {}
-        },
-        {
-          name = "",
-          type = "insanityrock",
-          shape = "rectangle",
-          x = 898,
-          y = 511,
-          width = 0,
-          height = 0,
-          visible = true,
-          properties = {}
-        },
-        {
-          name = "",
-          type = "insanityrock",
-          shape = "rectangle",
-          x = 866,
-          y = 511,
-          width = 0,
-          height = 0,
-          visible = true,
-          properties = {}
-        },
-        {
-          name = "",
-          type = "insanityrock",
-          shape = "rectangle",
-          x = 834,
-          y = 511,
-          width = 0,
-          height = 0,
-          visible = true,
-          properties = {}
         }
       }
     }

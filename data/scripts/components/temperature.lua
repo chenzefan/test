@@ -24,11 +24,20 @@ function Temperature:OnSave()
 			 
 end
 
+function Temperature:OnProgress()
+	self.current = 30
+end
+
+
 function Temperature:OnLoad(data)
 
 	self.current = data.current or self.current
 	self:OnUpdate(0)
 	
+end
+
+function Temperature:SetTempature(value)
+	self.current = value
 end
 
 function Temperature:GetDebugString()
@@ -41,9 +50,13 @@ end
 
 function Temperature:OnUpdate(dt)
 
+	if (self.inst.components.health and self.inst.components.health.invincible == true) or self.inst.is_teleporting == true then
+		return
+	end
+
     local last = self.current
 
-	local ambient_delta = GetWorld().components.seasonmanager:GetCurrentTemperature() - self.current
+	local ambient_delta = GetSeasonManager() and (GetSeasonManager():GetCurrentTemperature() - self.current) or 30
 
 	--figure out our insulation
 	local total_insulation = 0

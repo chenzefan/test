@@ -6,6 +6,24 @@ local assets=
 	Asset("ANIM", "data/anim/ui_chest_3x2.zip"),
 	
     Asset("IMAGE", "data/inventoryimages/treasurechest.tex"),
+
+	Asset("ANIM", "data/anim/pandoras_chest.zip"),
+	Asset("ANIM", "data/anim/skull_chest.zip"),
+}
+
+local chests = {
+	treasure_chest = {
+		bank="chest",
+		build="treasure_chest",
+	},
+	skull_chest = {
+		bank="skull_chest",
+		build="skull_chest",
+	},
+	pandoras_chest = {
+		bank="pandoras_chest",
+		build="pandoras_chest",
+	},
 }
 
 
@@ -47,43 +65,48 @@ for y = 2, 0, -1 do
 	end
 end
 		
-local function fn(Sim)
-	local inst = CreateEntity()
-	inst.entity:AddTransform()
-	inst.entity:AddAnimState()
-	inst.entity:AddSoundEmitter()
-	local minimap = inst.entity:AddMiniMapEntity()
-	minimap:SetIcon( "treasurechest.png" )
-    
-    inst:AddTag("structure")
-    inst.AnimState:SetBank("chest")
-    inst.AnimState:SetBuild("treasure_chest")
-    inst.AnimState:PlayAnimation("closed")
-    
-    inst:AddComponent("inspectable")
-    inst:AddComponent("container")
-    inst.components.container:SetNumSlots(#slotpos)
-    
-    inst.components.container.onopenfn = onopen
-    inst.components.container.onclosefn = onclose
-    
-    inst.components.container.widgetslotpos = slotpos
-    inst.components.container.widgetanimbank = "ui_chest_3x3"
-    inst.components.container.widgetanimbuild = "ui_chest_3x3"
-    inst.components.container.widgetpos = Vector3(0,200,0)
-    
-    inst:AddComponent("lootdropper")
-    inst:AddComponent("workable")
-    inst.components.workable:SetWorkAction(ACTIONS.HAMMER)
-    inst.components.workable:SetWorkLeft(2)
-	inst.components.workable:SetOnFinishCallback(onhammered)
-	inst.components.workable:SetOnWorkCallback(onhit) 
-	
-    inst:ListenForEvent( "onbuilt", onbuilt)
-	MakeSnowCovered(inst, .01)	
-	return inst
+local function chest(style)
+	local fn = function(Sim)
+		local inst = CreateEntity()
+		inst.entity:AddTransform()
+		inst.entity:AddAnimState()
+		inst.entity:AddSoundEmitter()
+		local minimap = inst.entity:AddMiniMapEntity()
+		minimap:SetIcon( "treasurechest.png" )
+		
+		inst:AddTag("structure")
+		inst.AnimState:SetBank(chests[style].bank)
+		inst.AnimState:SetBuild(chests[style].build)
+		inst.AnimState:PlayAnimation("closed")
+		
+		inst:AddComponent("inspectable")
+		inst:AddComponent("container")
+		inst.components.container:SetNumSlots(#slotpos)
+		
+		inst.components.container.onopenfn = onopen
+		inst.components.container.onclosefn = onclose
+		
+		inst.components.container.widgetslotpos = slotpos
+		inst.components.container.widgetanimbank = "ui_chest_3x3"
+		inst.components.container.widgetanimbuild = "ui_chest_3x3"
+		inst.components.container.widgetpos = Vector3(0,200,0)
+		
+		inst:AddComponent("lootdropper")
+		inst:AddComponent("workable")
+		inst.components.workable:SetWorkAction(ACTIONS.HAMMER)
+		inst.components.workable:SetWorkLeft(2)
+		inst.components.workable:SetOnFinishCallback(onhammered)
+		inst.components.workable:SetOnWorkCallback(onhit) 
+		
+		inst:ListenForEvent( "onbuilt", onbuilt)
+		MakeSnowCovered(inst, .01)	
+		return inst
+	end
+	return fn
 end
 
-return	Prefab( "common/treasurechest", fn, assets),
-		MakePlacer("common/treasurechest_placer", "chest", "treasure_chest", "closed") 
+return	Prefab( "common/treasurechest", chest("treasure_chest"), assets),
+		MakePlacer("common/treasurechest_placer", "chest", "treasure_chest", "closed"),
+		Prefab( "common/pandoraschest", chest("pandoras_chest"), assets),
+		Prefab( "common/skullchest", chest("skull_chest"), assets)
 

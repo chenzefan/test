@@ -10,38 +10,20 @@ PlayerProfile = Class(function(self)
         unlocked_worldgen = {},
         unlocked_characters = {},        
         render_quality = RENDER_QUALITY.DEFAULT,
+        characterinthrone = "waxwell"
     }
-    
-    self:SetupSaveSlots()
     
     self.dirty = true
 
 end)
 
-function PlayerProfile:SetupSaveSlots()
-	if self.persistdata.save_slots == nil then
-		self.persistdata.save_slots = {}
-	end
-    
-    for i =1, 4 do
-    	if self.persistdata.save_slots[i] == nil then
-    		self.persistdata.save_slots[i] = {}
-	        self.persistdata.save_slots[i].current_world_level = 0 --story mode progress
-	        self.persistdata.save_slots[i].next_world_playerdata = nil --for travelling between worlds
-	        self.persistdata.save_slots[i].progress = nil --day for display
-	        self.persistdata.save_slots[i].type = "free"
-	        self.persistdata.save_slots[i].character = "wilson"
-    	end
-    end
-    
-    self.dirty = true
-end
 
 function PlayerProfile:Reset()
 	
     self.persistdata.xp = 0
 	self.persistdata.unlocked_worldgen = {}
 	self.persistdata.unlocked_characters = {}
+	self.persistdata.characterinthrone = "waxwell"
 	self.dirty = true
 	self:Save()
 end
@@ -72,7 +54,7 @@ function PlayerProfile:UnlockEverything()
 	end
 
 	self.persistdata.unlocked_characters = {}
-	local characters = {'willow', 'wendy', 'wolfgang', 'wilton', 'wx78', 'wickerbottom', 'wes'}
+	local characters = {'willow', 'wendy', 'wolfgang', 'wilton', 'wx78', 'wickerbottom', 'wes', 'waxwell'}
 	for k,v in pairs(characters) do
 		self:UnlockCharacter(v)
 	end
@@ -85,26 +67,8 @@ function PlayerProfile:SetValue(name, value)
     self.persistdata[name] = value
 end
 
-function PlayerProfile:SetSaveSlotValue(idx, name, value)
-    self.dirty = true
-    self:SetupSaveSlots()
-    self.persistdata.save_slots[idx][name] = value
-end
-
 function PlayerProfile:GetValue(name)
 	return self.persistdata[name]
-end
-
-function PlayerProfile:GetSaveSlotValue(idx, name)
-    self:SetupSaveSlots()
-    
-	if self.persistdata.save_slots then
-		if self.persistdata.save_slots[idx] then
-			return self.persistdata.save_slots[idx][name]
-		end
-	end
-	
-	return nil
 end
 
 function PlayerProfile:SetVolume(ambient, sfx, music)

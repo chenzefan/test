@@ -122,21 +122,21 @@ local function plot(level)
 				-- front row
 				{ farmrock = {
 						{ right + 1.1, 0, rock_front + 0.21 },
-						{ right + 2.4, 0, rock_front + 0.21 },
+						{ right + 2.4, 0, rock_front + 0.25 },
 					}
 				},
 
 				{ farmrocktall = { { right + 0.5, 0, rock_front + 0.195 }, } },
 				
 				{ farmrockflat = {
-						{ right + 0.0, 0, rock_front + 0.19 },
+						{ right + 0.0, 0, rock_front - 0.0 },
 						{ right + 1.8, 0, rock_front + 0.22 },
 					}
 				},
 
 				-- back row
 				{ farmrockflat = {
-						{ left - 0.0, 0, back - 0.20 },
+						
 						{ left - 1.3, 0, back - 0.19 },
 					}
 				},
@@ -148,6 +148,7 @@ local function plot(level)
 				},
 
 				{ farmrocktall = {
+						{ left + 0.0, 0, back - 0.15 },
 						{ left - 3.0, 0, back - 0.20 },
 						{ left - 1.9, 0, back - 0.205 },
 					}

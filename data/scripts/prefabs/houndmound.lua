@@ -24,7 +24,7 @@ local function GetSpecialHoundChance()
 	end
 end
 
-local function SpawnGuardHound(inst)
+local function SpawnGuardHound(inst, attacker)
     local prefab = "hound"
     if math.random() < GetSpecialHoundChance() then
         if GetSeasonManager():IsWinter() then
@@ -33,7 +33,7 @@ local function SpawnGuardHound(inst)
 	        prefab = "firehound"
 	    end
 	end
-    local defender = inst.components.childspawner:SpawnChild(prefab)
+    local defender = inst.components.childspawner:SpawnChild(attacker, prefab)
     if defender and attacker and defender.components.combat then
         defender.components.combat:SetTarget(attacker)
         defender.components.combat:BlankOutAttacks(1.5 + math.random()*2)
@@ -49,13 +49,33 @@ local function SpawnGuards(inst)
     end
 end
 
+local function SpawnAllGuards(inst, attacker)
+    if not inst.components.health:IsDead() and inst.components.childspawner then
+        local num_to_release = inst.components.childspawner.childreninside
+        for k = 1,num_to_release do
+            SpawnGuardHound(inst)
+        end
+    end
+end
+
 local function OnKilled(inst)
     if inst.components.childspawner then
         inst.components.childspawner:ReleaseAllChildren()
     end
     inst.SoundEmitter:KillSound("loop")
+    inst.components.lootdropper:DropLoot(Vector3(inst.Transform:GetWorldPosition()))
 end
 
+
+
+local function OnEntityWake(inst)
+    inst.components.childspawner:StartSpawning()
+    inst.SoundEmitter:PlaySound("dontstarve/creatures/hound/mound_LP", "loop")
+end
+
+local function OnEntitySleep(inst)
+	inst.SoundEmitter:KillSound("loop")
+end
 
 local function fn(Sim)
 	local inst = CreateEntity()
@@ -88,20 +108,23 @@ local function fn(Sim)
 	inst.components.childspawner:SetSpawnPeriod(TUNING.HOUNDMOUND_RELEASE_TIME)
 
 	inst.components.childspawner:SetMaxChildren(TUNING.HOUNDMOUND_HOUNDS)
-    inst.components.childspawner:StartSpawning()
-
+ 
     ---------------------
-    --inst:AddComponent("lootdropper")
+    inst:AddComponent("lootdropper")
+    inst.components.lootdropper:SetLoot({"houndstooth", "houndstooth", "houndstooth"})
+    inst.components.lootdropper:AddChanceLoot("redgem", 0.01)
+    inst.components.lootdropper:AddChanceLoot("bluegem", 0.01)
 
-    --inst:AddComponent("combat")
-    --inst.components.combat:SetOnHit(SpawnDefenders)
-    --inst:ListenForEvent("death", OnKilled)
+    inst:AddComponent("combat")
+    inst.components.combat:SetOnHit(SpawnAllGuards)
+
 
     ---------------------
     inst:AddComponent("inspectable")
-    
+	inst.OnEntitySleep = OnEntitySleep
+	inst.OnEntityWake = OnEntityWake
 	MakeSnowCovered(inst)
-    inst.SoundEmitter:PlaySound("dontstarve/creatures/hound/mound_LP", "loop")
+    
 	return inst
 end
 

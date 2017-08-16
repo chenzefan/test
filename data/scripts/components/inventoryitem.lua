@@ -9,6 +9,7 @@ local InventoryItem = Class(function(self, inst)
     self.inst:ListenForEvent("stacksizechange", function(inst, data) if self.owner then self.owner:PushEvent("stacksizechange", {item=self.inst, src_pos = data.src_pos}) end end)
 	self.keepondeath = false
     self.imagename = nil
+    self.onactiveitemfn = nil
 end)
 
 function InventoryItem:GetDebugString()
@@ -25,6 +26,10 @@ end
 
 function InventoryItem:SetOnDroppedFn(fn)
     self.ondropfn = fn
+end
+
+function InventoryItem:SetOnActiveItemFn(fn)
+    self.onactiveitemfn = fn 
 end
 
 function InventoryItem:SetOnPickupFn(fn)
@@ -138,9 +143,9 @@ function InventoryItem:IsHeldBy(guy)
     return self.owner == guy
 end
 
-function InventoryItem:ChangeImageName(inst, newname)
+function InventoryItem:ChangeImageName(newname)
     self.imagename = newname
-    inst:PushEvent("imagechange")
+    self.inst:PushEvent("imagechange")
 end
 
 function InventoryItem:GetImage()

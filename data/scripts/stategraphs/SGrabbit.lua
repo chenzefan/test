@@ -168,7 +168,7 @@ local states=
         tags = {"moving", "running", "canrotate"},
         
         onenter = function(inst) 
-            inst.SoundEmitter:PlaySound("dontstarve/rabbit/scream")
+            inst.SoundEmitter:PlaySound(inst.sounds.scream)
             inst.AnimState:PlayAnimation("run_pre")
             inst.AnimState:PushAnimation("run", true)
             inst.components.locomotor:RunForward()
@@ -187,11 +187,10 @@ local states=
         tags = {"busy"},
         
         onenter = function(inst)
-            inst.SoundEmitter:PlaySound("dontstarve/rabbit/scream")
+            inst.SoundEmitter:PlaySound(inst.sounds.scream)
             inst.AnimState:PlayAnimation("death")
             inst.Physics:Stop()
             RemovePhysicsColliders(inst)        
-            print("dropping death loot")    
             inst.components.lootdropper:DropLoot(Vector3(inst.Transform:GetWorldPosition()))            
         end,
 
@@ -232,9 +231,24 @@ local states=
         
         ontimeout = function(inst) inst.sg:GoToState("idle") end,
     },
+    State{
+        name = "hit",
+        tags = {"busy"},
+        
+        onenter = function(inst)
+            inst.SoundEmitter:PlaySound(inst.sounds.hurt)
+            inst.AnimState:PlayAnimation("hit")
+            inst.Physics:Stop()            
+        end,
+        
+        events=
+        {
+            EventHandler("animover", function(inst) inst.sg:GoToState("idle") end ),
+        },        
+    },    
+
 }
 CommonStates.AddSleepStates(states)
-CommonStates.AddSimpleState(states, "hit", "hit", {"busy"})
 CommonStates.AddFrozenStates(states)
 
   

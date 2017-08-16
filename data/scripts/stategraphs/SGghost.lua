@@ -41,17 +41,17 @@ local states=
         
         onenter = function(inst)
             inst.AnimState:PlayAnimation("angry", true)
-            --if inst.Light then
-				inst.Light:SetColour(255/255, 32/255, 32/255)
-				--inst.Light:SetIntensity(3)
-			--end
+			inst.Light:SetColour(255/255, 32/255, 32/255)
+            if inst:HasTag("girl") then
+                inst.SoundEmitter:PlaySound("dontstarve/ghost/ghost_girl_attack_LP", "angry")
+            else
+                inst.SoundEmitter:PlaySound("dontstarve/ghost/ghost_attack_LP", "angry")
+            end
         end,
         
         onexit = function(inst)
-            --if inst.Light then
-				inst.Light:SetColour(180/255, 195/255, 225/255)
-				--inst.Light:SetIntensity(2)
-			--end
+			inst.Light:SetColour(180/255, 195/255, 225/255)
+            inst.SoundEmitter:KillSound("angry")
         end,
     },
     
@@ -60,6 +60,12 @@ local states=
         tags = {"busy"},
         
         onenter = function(inst)
+            if inst:HasTag("girl") then
+                inst.SoundEmitter:PlaySound("dontstarve/ghost/ghost_girl_howl")
+            else
+                inst.SoundEmitter:PlaySound("dontstarve/ghost/ghost_howl")
+            end
+                
             inst.AnimState:PlayAnimation("hit")
             inst.Physics:Stop()            
         end,

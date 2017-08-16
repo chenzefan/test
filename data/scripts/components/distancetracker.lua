@@ -12,10 +12,10 @@ function DistanceTracker:OnUpdate(dt)
 	end
 	self.previous_pos = mypos
 
-	local meters_to_furlongs = 1.0 / 201.168
-	local furlongs_travelled = distance * meters_to_furlongs
+	--local meters_to_furlongs = 1.0 / 201.168
+	--local furlongs_travelled = distance * meters_to_furlongs
 
-	TheSim:SendGameStat( "furlongs_travelled", distance )
+	--TheSim:SendGameStat( "furlongs_travelled", distance )
 end
 
 return DistanceTracker

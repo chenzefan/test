@@ -4,6 +4,13 @@ local StaticLayout = require("map/static_layout")
 
 local Rare = {
 	["skeleton_dapper"] = StaticLayout.Get("map/static_layouts/skeleton_dapper"),
+
+--------------------------------------------------------------------------------
+-- Prebuilt bases
+--------------------------------------------------------------------------------
+	["skeleton_researchlab1"] = StaticLayout.Get("map/static_layouts/skeleton_researchlab1"),
+	["skeleton_researchlab2"] = StaticLayout.Get("map/static_layouts/skeleton_researchlab2"),
+	["skeleton_researchlab3"] = StaticLayout.Get("map/static_layouts/skeleton_researchlab3"),
 }
 
 local Forest = {
@@ -46,14 +53,6 @@ local Any = {
 	["skeleton_construction"] = StaticLayout.Get("map/static_layouts/skeleton_construction"),
 	["skeleton_fisher"] = StaticLayout.Get("map/static_layouts/skeleton_fisher"),
 	["skeleton_graverobber"] = StaticLayout.Get("map.static_layouts/skeleton_graverobber"),
-
---------------------------------------------------------------------------------
--- Prebuilt bases
---------------------------------------------------------------------------------
-	["skeleton_researchlab1"] = StaticLayout.Get("map/static_layouts/skeleton_researchlab1"),
-	["skeleton_researchlab2"] = StaticLayout.Get("map/static_layouts/skeleton_researchlab2"),
-	["skeleton_researchlab3"] = StaticLayout.Get("map/static_layouts/skeleton_researchlab3"),
-
 }
 
 -- TODO: Add winter/summer, nighttime/dusk/day filters

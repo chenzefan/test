@@ -35,6 +35,7 @@ local function fn(Sim)
     anim:SetBuild("axe")
     anim:PlayAnimation("idle")
     
+    inst:AddTag("sharp")
     
     inst:AddComponent("weapon")
     inst.components.weapon:SetDamage(TUNING.AXE_DAMAGE)

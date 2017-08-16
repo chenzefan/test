@@ -23,7 +23,7 @@ end)
 function ModWrangler:AddMod(modname)
 	print("enabling mod "..modname)
 	--add the file overwrite to this 
-	package.path = "mods\\"..modname.."\\scripts\\?.lua;"..package.path
+	package.path = "mods/"..modname.."/scripts/?.lua;"..package.path
 	table.insert(self.modnames, modname)
 end
 
@@ -50,7 +50,7 @@ function CreateEnvironment(modname)
 		tostring = tostring,
 		Class = Class,
 		GLOBAL = _G,
-		MODROOT = "mods\\"..modname.."\\"
+		MODROOT = "mods/"..modname.."/"
 	}
 
 	env.env = env
@@ -95,7 +95,7 @@ function ModWrangler:LoadMods()
 
 	for i,modname in ipairs(self.modnames) do
 		local env = CreateEnvironment(modname)
-		local fn = kleiloadlua("mods\\"..modname.."\\modmain.lua")
+		local fn = kleiloadlua("mods/"..modname.."/modmain.lua")
 		if type(fn) == "string" then
 			print("Error loading mod: "..modname.."!\n"..fn)
 			table.insert( self.failedmods, {name=modname,error=fn} )
@@ -160,7 +160,7 @@ function ModWrangler:SetPostEnv()
 		modnames = modnames.."\""..mod.modname.."\" "
 	end
 
-	if #self.mods > 0 then
+	if #self.mods > 0 and TheSim:ShouldWarnModsLoaded() then
 		TheFrontEnd:PushScreen(
 			ScriptErrorScreen(
 				STRINGS.UI.MAINSCREEN.MODTITLE, 

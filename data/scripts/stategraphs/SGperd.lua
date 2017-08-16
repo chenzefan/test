@@ -82,6 +82,7 @@ local states=
         
         onenter = function(inst)
             inst.SoundEmitter:PlaySound("dontstarve/creatures/perd/attack")
+            inst.SoundEmitter:PlaySound("dontstarve/wilson/attack_whoosh")
             inst.components.combat:StartAttack()
             inst.Physics:Stop()
             inst.AnimState:PlayAnimation("atk")
@@ -147,6 +148,21 @@ local states=
             --EventHandler("animover", function(inst) inst.sg:GoToState("idle") end ),
         --},        
     --},
+    State{
+        name = "hit",
+        tags = {"busy"},
+        
+        onenter = function(inst)
+            inst.SoundEmitter:PlaySound("dontstarve/creatures/perd/hurt")
+            inst.AnimState:PlayAnimation("hit")
+            inst.Physics:Stop()
+        end,
+        
+        events=
+        {
+            EventHandler("animover", function(inst) inst.sg:GoToState("idle") end ),
+        },        
+    },    
 }
 
 CommonStates.AddWalkStates(states,
@@ -188,7 +204,6 @@ CommonStates.AddSleepStates(states,
 })
 
 CommonStates.AddIdle(states,"gobble_idle")
-CommonStates.AddSimpleState(states, "hit", "hit", {"busy"})
 
 CommonStates.AddSimpleActionState(states, "gohome", "hit", 4*FRAMES, {"busy"})
 CommonStates.AddSimpleActionState(states, "pick", "take", 9*FRAMES, {"busy"})

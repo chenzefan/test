@@ -163,7 +163,8 @@ local function NormalRetargetFn(inst)
     return FindEntity(inst, TUNING.PIG_TARGET_DIST,
         function(guy)
             if not guy.LightWatcher or guy.LightWatcher:IsInLight() then
-                return guy:HasTag("monster") and guy.components.health and not guy.components.health:IsDead() and inst.components.combat:CanTarget(guy)
+                return guy:HasTag("monster") and guy.components.health and not guy.components.health:IsDead() and inst.components.combat:CanTarget(guy) and not 
+                (inst.components.follower.leader ~= nil and guy:HasTag("abigail"))
             end
         end)
 end
@@ -372,10 +373,10 @@ local function common()
     inst.entity:AddLightWatcher()
     inst.entity:AddLabel()
 
-    inst.Label:SetFontSize(25)
-    inst.Label:SetFont(DEFAULTFONT)
-    inst.Label:SetPos(0,3,0)
-    inst.Label:SetColour(.73, .05, .02)
+    inst.Label:SetFontSize(24)
+    inst.Label:SetFont(TALKINGFONT)
+    inst.Label:SetPos(0,3.8,0)
+    --inst.Label:SetColour(180/255, 50/255, 50/255)
     inst.Label:Enable(false)
 
     MakeCharacterPhysics(inst, 50, .5)
@@ -475,10 +476,12 @@ local function common()
     end        
     
     inst.OnLoad = function(inst, data)    
-        inst.build = data.build or builds[1]
-        if not inst.components.werebeast:IsInWereState() then
-			inst.AnimState:SetBuild(inst.build)
-        end
+		if data then
+			inst.build = data.build or builds[1]
+			if not inst.components.werebeast:IsInWereState() then
+				inst.AnimState:SetBuild(inst.build)
+			end
+		end
     end           
     
     inst:ListenForEvent("attacked", OnAttacked)    

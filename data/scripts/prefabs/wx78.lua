@@ -14,4 +14,4 @@ local fn = function(inst)
 end
 
 
-return MakePlayerCharacter("wx78", "data/fonts/opensans50.zip", nil, assets, fn)
+return MakePlayerCharacter("wx78", nil, assets, fn)

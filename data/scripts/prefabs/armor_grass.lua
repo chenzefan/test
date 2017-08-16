@@ -30,11 +30,12 @@ local function fn(Sim)
     inst.AnimState:SetBuild("armor_grass")
     inst.AnimState:PlayAnimation("anim")
     
+    inst:AddTag("grass")
+    
     inst:AddComponent("inspectable")
     
     inst:AddComponent("inventoryitem")
-    --TODO: Ask matt about foley sounds for grass armor
-    --inst.components.inventoryitem.foleysound = "dontstarve/movement/foley/logarmour"
+	inst.components.inventoryitem.foleysound = "dontstarve/movement/foley/grassarmour"
 
     inst:AddComponent("fuel")
     inst.components.fuel.fuelvalue = TUNING.LARGE_FUEL

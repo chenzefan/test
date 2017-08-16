@@ -21,9 +21,17 @@ end
 
 function Teacher:Teach(target)
 	if target.components.builder then
-		target.components.builder:UnlockRecipe(self.recipe)
-		self.inst:Remove()
-		return true
+		if self.recipe then
+			target.components.builder:UnlockRecipe(self.recipe)
+			if self.onteach then 
+				self.onteach(self.inst, target)
+			end
+			self.inst:Remove()
+			return true
+		else
+			self.inst:Remove()
+			return false
+		end
 	end
 end
 

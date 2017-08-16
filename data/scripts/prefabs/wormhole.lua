@@ -17,6 +17,11 @@ local function OnActivate(inst, doer)
 	if doer:HasTag("player") then
 		doer.components.health:SetInvincible(true)
 		doer.components.playercontroller:Enable(false)
+		
+		if inst.components.teleporter.targetTeleporter ~= nil then
+			DeleteCloseEntsWithTag(inst.components.teleporter.targetTeleporter, "WORM_DANGER", 15)
+		end
+
 		TheFrontEnd:SetFadeLevel(1)
 		doer:DoTaskInTime(4, function() 
 			TheFrontEnd:Fade(true,2)
@@ -24,6 +29,8 @@ local function OnActivate(inst, doer)
 			if doer.components.sanity then
 				doer.components.sanity:DoDelta(-TUNING.SANITY_MED)
 			end
+		end)
+		doer:DoTaskInTime(5, function()
 			doer:PushEvent("wormholespit")
 			doer.components.health:SetInvincible(false)
 			doer.components.playercontroller:Enable(true)

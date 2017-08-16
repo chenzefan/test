@@ -31,6 +31,8 @@ local function fn(Sim)
     anim:SetBuild("tentacle_spike")
     anim:PlayAnimation("idle")
     
+    inst:AddTag("sharp")
+
     inst:AddComponent("weapon")
     inst.components.weapon:SetDamage(TUNING.SPIKE_DAMAGE)
     

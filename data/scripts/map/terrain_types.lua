@@ -6,9 +6,6 @@ local TERRAIN =
 
 	-- Lots of Trees, rarely haunted
 		["BurntForest"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=3,
 					colour={r=.090,g=.10,b=.010,a=.50},
 					value = GROUND_VALUES[GROUND.FOREST],
 					tags = {"ExitPiece", "Chester_Eyebone"},
@@ -23,9 +20,6 @@ local TERRAIN =
 								}
 						   },
 		["CrappyDeepForest"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size= function () return 4 + math.random(3) end,
 					colour={r=0,g=.9,b=0,a=.50},
 					value = GROUND_VALUES[GROUND.FOREST],
 					tags = {"ExitPiece", "Chester_Eyebone"},
@@ -45,9 +39,6 @@ local TERRAIN =
 					
 					},
 		["DeepForest"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size= function () return 4 + math.random(3) end,
 					colour={r=0,g=.9,b=0,a=.50},
 					value = GROUND_VALUES[GROUND.FOREST],
 					tags = {"ExitPiece", "Chester_Eyebone"},
@@ -67,9 +58,6 @@ local TERRAIN =
 					},
 	-- Trees, very few rocks, very few rabbit holes
 		["Forest"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size= function () return 3 + math.random(3) end,
 					colour={r=.5,g=0.6,b=.080,a=.10},
 					value = GROUND_VALUES[GROUND.FOREST],
 					tags = {"ExitPiece", "Chester_Eyebone"},
@@ -90,9 +78,6 @@ local TERRAIN =
 					            }
 					},
 		["CrappyForest"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size= function () return 3 + math.random(3) end,
 					colour={r=.5,g=0.6,b=.080,a=.10},
 					value = GROUND_VALUES[GROUND.FOREST],
 					tags = {"ExitPiece", "Chester_Eyebone"},
@@ -113,9 +98,6 @@ local TERRAIN =
 					            }
 					},
 		["SpiderForest"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size= function () return 3 + math.random(3) end,
 					colour={r=.80,g=0.34,b=.80,a=.50},
 					value = GROUND_VALUES[GROUND.FOREST],
 					tags = {"ExitPiece", "Chester_Eyebone"},
@@ -139,9 +121,6 @@ local TERRAIN =
 					            }
 					},
 		["BurntClearing"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size= function () return 2 + math.random(2) end,
 					colour={r=.8,g=0.5,b=.7,a=.50},
 					value = GROUND_VALUES[GROUND.FOREST],
 					tags = {"ExitPiece", "Chester_Eyebone"},
@@ -160,14 +139,11 @@ local TERRAIN =
 					},
 	-- Trees on the outside, empty in the middle
 		["Clearing"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size= function () return 2 + math.random(2) end,
 					colour={r=.8,g=0.5,b=.6,a=.50},
 					value = GROUND_VALUES[GROUND.FOREST],
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
-									countspecialprefabs={["MushroomRingLarge"]=function()  
+									countstaticlayouts={["MushroomRingLarge"]=function()  
 																				if math.random(0,1000) > 985 then 
 																					return 1 
 																				end
@@ -176,6 +152,7 @@ local TERRAIN =
 					                distributepercent = .1,
 					                distributeprefabs=
 					                {
+										pighouse=0.015,
                                         fireflies = 1,
 					                    evergreen = 1.5,
 					                    grass = .1,
@@ -189,9 +166,6 @@ local TERRAIN =
 					},
 	-- Trees on the outside, flowers in the middle
 		["FlowerPatch"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size= function () return 1 + math.random(2) end,
 					colour={r=.5, g=1,b=.8,a=.50},
 					value = GROUND_VALUES[GROUND.GRASS],
 					tags = {"ExitPiece", "Chester_Eyebone"},
@@ -206,9 +180,6 @@ local TERRAIN =
 					            }
 					},
 		["EvilFlowerPatch"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size= function () return 1 + math.random(2) end,
 					colour={r=.8,g=1,b=.4,a=.50},
 					value = GROUND_VALUES[GROUND.GRASS],
 					tags = {"ExitPiece", "Chester_Eyebone"},
@@ -224,9 +195,6 @@ local TERRAIN =
 					},
 	-- Very few Trees, very few rocks, rabbit holes, some beefalow, some grass
 		["Plain"] = {
-					shape =  function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size= function () return 4 + math.random(4) end,
 					colour={r=.8,g=.4,b=.4,a=.50},
 					value = GROUND_VALUES[GROUND.SAVANNA],
 					tags = {"ExitPiece", "Chester_Eyebone"},
@@ -242,11 +210,7 @@ local TERRAIN =
 					            }
 					},
 	-- Rabbit holes, Beefalow hurds if bigger
-		["BarePlain"] = {
-					shape =  function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size= function () return  1 end,--4 + math.random(5) end,
-					colour={r=.5,g=.5,b=.45,a=.50},
+		["BarePlain"] = {					colour={r=.5,g=.5,b=.45,a=.50},
 					value = GROUND_VALUES[GROUND.SAVANNA],
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
@@ -261,9 +225,6 @@ local TERRAIN =
 					},
 	-- No trees, lots of rocks, rare tallbird nest, very rare spiderden
 		["Rocky"] = {
-					shape =  function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size=  function () return 3 + math.random(1) end,
 					colour={r=.55,g=.75,b=.75,a=.50},
 					value = GROUND_VALUES[GROUND.DIRT],
 					tags = {"ExitPiece", "Chester_Eyebone"},
@@ -281,14 +242,11 @@ local TERRAIN =
 					},
 	-- No trees, no rocks, very rare spiderden
 		["Marsh"] = {
-					shape =  function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size=  function () return 3 + math.random(1) end,
 					colour={r=.45,g=.75,b=.45,a=.50},
 					value = GROUND_VALUES[GROUND.MARSH],
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
-									countspecialprefabs={["MushroomRingMedium"]=function()  
+									countstaticlayouts={["MushroomRingMedium"]=function()  
 																				if math.random(0,1000) > 985 then 
 																					return 1 
 																				end
@@ -309,9 +267,6 @@ local TERRAIN =
 					            }
 					},
 		["SpiderMarsh"] = {
-					shape =  function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size=  function () return 3 + math.random(1) end,
 					colour={r=.45,g=.75,b=.45,a=.50},
 					value = GROUND_VALUES[GROUND.MARSH],
 					tags = {"ExitPiece", "Chester_Eyebone"},
@@ -338,9 +293,6 @@ local TERRAIN =
 					            }
 					},
 		["SlightlyMermySwamp"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=5,
 					colour={r=0.5,g=.18,b=.35,a=.50},
 					value = GROUND_VALUES[GROUND.MARSH],
 					contents =  {
@@ -357,9 +309,6 @@ local TERRAIN =
 					            }
 					 },
 		["Nothing"] = {
-					shape =  function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size=  function () return 3 + math.random(1) end,
 					colour={r=.45,g=.45,b=.35,a=.50},
 					value = GROUND_VALUES[GROUND.IMPASSABLE],
 					contents =  {
@@ -369,9 +318,6 @@ local TERRAIN =
      encoded in forest_map.lua for each ground type. 
 	 --]]
 		["BGBadlands"] = {
-					shape =  function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size=  function () return 3 + math.random(1) end,
 					colour={r=.76,g=.66,b=.1,a=.50},
 					value = GROUND_VALUES[GROUND.DIRT],
 					tags = {"ExitPiece", "Chester_Eyebone"},
@@ -390,9 +336,6 @@ local TERRAIN =
 					            }
 					},
 		["BGRocky"] = {
-					shape =  function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size=  function () return 3 + math.random(1) end,
 					colour={r=.66,g=.66,b=.66,a=.50},
 					value = GROUND_VALUES[GROUND.ROCKY],
 					tags = {"ExitPiece", "Chester_Eyebone"},
@@ -408,11 +351,8 @@ local TERRAIN =
 					            }
 					},
 		["BGNoise"] = {
-					shape =  function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size=  function () return 3 + math.random(1) end,
 					colour={r=.66,g=.66,b=.66,a=.50},
-					value = nil, --causes perlin noise
+					value = GROUND_VALUES[GROUND.GROUND_NOISE],
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
 					                distributepercent = .15,
@@ -439,14 +379,11 @@ local TERRAIN =
 					            }
 					},
 		["BGChessRocky"] = {
-					shape =  function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size=  function () return 3 + math.random(1) end,
 					colour={r=.66,g=.66,b=.66,a=.50},
 					value = GROUND_VALUES[GROUND.ROCKY],
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
-									countspecialprefabs = {
+									countstaticlayouts = {
 										["ChessSpot1"] = function() return math.random(0,3) end,
 										["ChessSpot2"] = function() return math.random(0,3) end,
 										["ChessSpot3"] = function() return math.random(0,3) end,
@@ -462,9 +399,6 @@ local TERRAIN =
 					            }
 					},
 		["BGDirt"] = {
-					shape =  function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size=  function () return 3 + math.random(1) end,
 					colour={r=1.0,g=.8,b=.66,a=.50},
 					value = GROUND_VALUES[GROUND.DIRT],
 					tags = {"ExitPiece", "Chester_Eyebone"},
@@ -478,9 +412,6 @@ local TERRAIN =
 					            }
 					},
 		["BGSavanna"] = {
-					shape =  function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size=  function () return 3 + math.random(1) end,
 					colour={r=.8,g=.8,b=.2,a=.50},
 					value = GROUND_VALUES[GROUND.SAVANNA],
 					tags = {"ExitPiece", "Chester_Eyebone"},
@@ -496,9 +427,6 @@ local TERRAIN =
 					            }
 					},
 		["BGGrassBurnt"] = {
-					shape =  function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size=  function () return 3 + math.random(1) end,
 					colour={r=.5,g=.8,b=.5,a=.50},
 					value = GROUND_VALUES[GROUND.GRASS],
 					tags = {"ExitPiece", "Chester_Eyebone"},
@@ -523,9 +451,6 @@ local TERRAIN =
 					            }
 					},
 		["BGGrass"] = {
-					shape =  function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size=  function () return 3 + math.random(1) end,
 					colour={r=.5,g=.8,b=.5,a=.50},
 					value = GROUND_VALUES[GROUND.GRASS],
 					tags = {"ExitPiece", "Chester_Eyebone"},
@@ -551,9 +476,6 @@ local TERRAIN =
 					            }
 					},
 		["BGCrappyForest"] = {
-					shape =  function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size=  function () return 3 + math.random(1) end,
 					colour={r=.1,g=.8,b=.1,a=.50},
 					value = GROUND_VALUES[GROUND.FOREST],
 					tags = {"ExitPiece", "Chester_Eyebone"},
@@ -577,9 +499,6 @@ local TERRAIN =
 					            }
 					},
 		["BGForest"] = {
-					shape =  function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size=  function () return 3 + math.random(1) end,
 					colour={r=.1,g=.8,b=.1,a=.50},
 					value = GROUND_VALUES[GROUND.FOREST],
 					tags = {"ExitPiece", "Chester_Eyebone"},
@@ -604,14 +523,11 @@ local TERRAIN =
 					            }
 					},
 		["BGDeepForest"] = {
-					shape =  function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size=  function () return 3 + math.random(1) end,
 					colour={r=.1,g=.8,b=.1,a=.50},
 					value = GROUND_VALUES[GROUND.FOREST],
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
-									countspecialprefabs={["MushroomRingSmall"]=function() 
+									countstaticlayouts={["MushroomRingSmall"]=function() 
 																				if math.random(0,1000) > 985 then 
 																					return 1 
 																				end
@@ -640,14 +556,11 @@ local TERRAIN =
 					            }
 					},
 		["BGMarsh"] = {
-					shape =  function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size=  function () return 3 + math.random(1) end,
 					colour={r=.6,g=.2,b=.8,a=.50},
 					value = GROUND_VALUES[GROUND.MARSH],
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
-									countspecialprefabs={["MushroomRingMedium"] = function()  
+									countstaticlayouts={["MushroomRingMedium"] = function()  
 																				if math.random(0,1000) > 985 then 
 																					return 1 
 																				end
@@ -668,10 +581,109 @@ local TERRAIN =
 					                },
 					            }
 					},
+		["BGFungusRoom"] = {
+					colour={r=.36,g=.32,b=.38,a=.50},
+					value = GROUND_VALUES[GROUND.FUNGUS],
+					--tags = {"ForceConnected"},
+					contents =  {
+									countstaticlayouts={["MushroomRingMedium"] = function()  
+																				if math.random(0,200) > 185 then 
+																					return 1 
+																				end
+																				return 0 
+																			   end},
+					                distributepercent = .15,
+					                distributeprefabs=
+					                {
+										spiderhole=0.001,
+										fireflies=0.01,
+										flower_cave=0.01,
+										tentacle=0.001,
+					                    blue_mushroom = .01,
+					                    slurtlehole = 0.003,
+					                    mushtree_tall =0.02,	
+					                },
+					            }
+					},
+		["BGCaveRoom"] = {
+					colour={r=.25,g=.28,b=.25,a=.50},
+					value = GROUND_VALUES[GROUND.CAVE],
+					--tags = {"ForceConnected"},
+					contents =  {
+					                distributepercent = .175,
+					                distributeprefabs=
+					                {
+										spiderhole=0.001,
+										flint=0.05,
+										fireflies=0.001,
+										stalagmite=0.05,
+										--stalagmite_gold=0.02,
+					                    blue_mushroom = .005,
+					                    slurtlehole = 0.001,
+					                },
+					            }
+					},
+		["BGSinkholeRoom"] = {
+					colour={r=.15,g=.18,b=.15,a=.50},
+					value = GROUND_VALUES[GROUND.SINKHOLE],
+					--tags = {"ForceConnected"},
+					contents =  {
+					                distributepercent = .175,
+					                distributeprefabs=
+					                {
+										grass=0.0025,
+										sapling=0.15,
+										evergreen=0.0025,
+										berrybush=0.005,
+										spiderden=0.01,
+										fireflies=0.01,
+					                    blue_mushroom = .005,
+					                    green_mushroom = .003,
+					                    red_mushroom = .004,
+					                    mandrake=0.001,
+					                    slurtlehole = 0.001,
+					                },
+									prefabdata = {
+										spiderden = function() if math.random() < 0.1 then
+																	return { growable={stage=3}}
+																else
+																	return { growable={stage=2}}
+																end
+															end,
+									},
+					            }
+					},
+		["BGNoisyFungus"] =    {
+					colour={r=0.3,g=0.2,b=0.1,a=0.3},
+					value = GROUND_VALUES[GROUND.FUNGUS_NOISE], 
+					--tags = {"ForceConnected"},
+					contents =  {
+					                distributepercent = .1,
+					                distributeprefabs=
+					                {
+					                    spiderhole= 0.1,
+					                    mushtree_tall = 1.5,
+										--mushroomtree_normal = 0.5,
+										--mushroomtree_short = 0.5,
+					                    slurtlehole = 0.001,
+					                }
+					            }
+					},
+		["BGNoisyCave"] =    {
+					colour={r=0.3,g=0.2,b=0.1,a=0.3},
+					value = GROUND_VALUES[GROUND.CAVE_NOISE], 
+					contents =  {
+					                distributepercent = .1,
+					                distributeprefabs=
+					                {
+					                	stalagmite = 1,
+					                	--stalagmite_gold = 0.05,
+					                    spiderhole= 0.1,
+					                    slurtlehole = 0.01,
+					                }
+					            }
+					},
 		["BGImpassable"] = {
-					shape =  function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size=  function () return 3 + math.random(1) end,
 					colour={r=.6,g=.35,b=.8,a=.50},
 					value = GROUND_VALUES[GROUND.IMPASSABLE],
 					contents =  { }

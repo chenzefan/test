@@ -23,9 +23,16 @@ local function onequip(inst, owner)
     inst.SoundEmitter:PlaySound("dontstarve/wilson/torch_swing")
     inst.SoundEmitter:SetParameter( "torch", "intensity", 1 )
 
-	inst.fire = SpawnPrefab( "torchfire" )
-	local follower = inst.fire.entity:AddFollower()
-	follower:FollowSymbol( owner.GUID, "swap_object", 0, -110, 1 )
+    inst.fire = SpawnPrefab( "torchfire" )
+    local follower = inst.fire.entity:AddFollower()
+    follower:FollowSymbol( owner.GUID, "swap_object", 0, -110, 1 )
+    
+    --take a percent of fuel next frame instead of this one, so we can remove the torch properly if it runs out at that point
+	inst:DoTaskInTime(0, function()
+ 	    if inst.components.fueled.currentfuel < inst.components.fueled.maxfuel then
+		    inst.components.fueled:DoDelta(-inst.components.fueled.maxfuel*.01)
+	    end
+	end)
 end
 
 local function onunequip(inst,owner) 
@@ -93,6 +100,7 @@ local function fn(Sim)
     -----------------------------------
     
     inst:AddComponent("burnable")
+    inst.components.burnable.canlight = false
     inst.components.burnable.fxprefab = nil
     --inst.components.burnable:AddFXOffset(Vector3(0,1.5,-.01))
     
@@ -130,6 +138,7 @@ local function fn(Sim)
             end
         end)
     inst.components.fueled:InitializeFuelLevel(TUNING.TORCH_FUEL)
+    inst.components.fueled:SetDepletedFn(function(inst) inst:Remove() end)
     
     return inst
 end

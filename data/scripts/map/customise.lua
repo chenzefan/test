@@ -155,6 +155,8 @@ local GROUP = {
 							["branching"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/world_branching.tex", desc = branching_descriptions}, 
 							["loop"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/world_loop.tex", desc = loop_descriptions}, 
 --							["world_complexity"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/world_complexity.tex", desc = complexity_descriptions}, 
+							["boons"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/skeletons.tex", desc = freqency_descriptions}, 
+							["touchstone"] = {value = "default", enable = false, spinner = nil, image = "data/images/customisation/resurrection.tex", desc = freqency_descriptions}, 
 						}
 					},
 }

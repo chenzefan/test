@@ -14,7 +14,6 @@ function Crop:SetOnMatureFn(fn)
 end
 
 function Crop:OnSave()
-    --print("Crop:OnSave")
     local data = 
     {
         prefab = self.product_prefab,
@@ -24,17 +23,25 @@ function Crop:OnSave()
     }
     return data
 end   
-   
 
-function Crop:LoadPostPass(newents, data)
-    --print("Crop:LoadPostPass")
-
-    if data then
-        --print(string.format("   [%s]", tostring(data.prefab)))
-        self:StartGrowing(data.prefab, 1 / data.rate, self.grower, data.percent)
+function Crop:OnLoad(data)
+	if data then
+		self.product_prefab = data.prefab or self.product_prefab
+		self.growthpercent = data.percent or self.growthpercent
+		self.rate = data.rate or self.rate
+		self.matured = data.matured or self.matured
+	end
+	
+	self:DoGrow(0)
+    if self.product_prefab and self.matured then
+		self.inst.AnimState:PlayAnimation("grow_pst")
+        if self.onmatured then
+            self.onmatured(self.inst)
+        end
     end
-    
-end
+	
+end   
+  
 
 function Crop:Fertilize(fertilizer)
 	
@@ -83,8 +90,10 @@ function Crop:DoGrow(dt)
     if self.growthpercent >= 1 then
         self.inst.AnimState:PlayAnimation("grow_pst")
         self:Mature()
-        self.task:Cancel()
-        self.task = nil
+        if self.task then
+            self.task:Cancel()
+            self.task = nil
+        end
     end
 end
 
@@ -96,6 +105,19 @@ function Crop:GetDebugString()
         s = s .. string.format("%2.2f%% (done in %2.2f)", self.growthpercent, (1 - self.growthpercent)/self.rate)
     end
     return s
+end
+
+function Crop:Resume()
+    
+    if not self.matured then
+    
+		if self.task then
+			scheduler:KillTask(self.task)
+		end
+		self.inst.AnimState:SetPercent("grow", self.growthpercent)
+		local dt = 2
+		self.task = self.inst:DoPeriodicTask(dt, function() self:DoGrow(dt) end)
+	end
 end
 
 function Crop:StartGrowing(prod, grow_time, grower, percent)
@@ -151,5 +173,6 @@ function Crop:CollectSceneActions(doer, actions)
     end
 
 end
+
 
 return Crop

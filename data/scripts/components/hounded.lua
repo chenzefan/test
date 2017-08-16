@@ -150,7 +150,7 @@ function Hounded:OnUpdate(dt)
 			self.announcewarningsoundinterval = self.announcewarningsoundinterval - 1
 			if self.announcewarningsoundinterval <= 0 then
 				self.announcewarningsoundinterval = 10 + math.random(5)
-					self.inst.components.talker:Say(GetString(self.inst.prefab, "ANNOUNCE_HOUNDS"))
+					GetPlayer().components.talker:Say(GetString(GetPlayer().prefab, "ANNOUNCE_HOUNDS"))
 			end
 		
 			local inst = CreateEntity()
@@ -175,10 +175,10 @@ function Hounded:OnUpdate(dt)
 				radius = HOUND_SPAWN_DIST + 30
 			end
 
-			local offset = Vector3(self.inst.Transform:GetWorldPosition()) +  Vector3(radius * math.cos( theta ), 0, -radius * math.sin( theta ))
+			local offset = Vector3(GetPlayer().Transform:GetWorldPosition()) +  Vector3(radius * math.cos( theta ), 0, -radius * math.sin( theta ))
 			
 			inst.Transform:SetPosition(offset.x,offset.y,offset.z)
-			inst.SoundEmitter:PlaySound("dontstarve/creatures/hound_small/distant")
+			inst.SoundEmitter:PlaySound("dontstarve/creatures/hound/distant")
 			inst:DoTaskInTime(1.5, function() inst:Remove() end)
 			
 		end
@@ -253,7 +253,7 @@ function Hounded:GetSpecialHoundChance()
 end
 
 function Hounded:ReleaseHound(dt)
-	local pt = Vector3(self.inst.Transform:GetWorldPosition())
+	local pt = Vector3(GetPlayer().Transform:GetWorldPosition())
 		
 	local spawn_pt = self:GetSpawnPoint(pt)
 	
@@ -276,7 +276,7 @@ function Hounded:ReleaseHound(dt)
 		if hound then
 			hound.Physics:Teleport(spawn_pt:Get())
 			hound:FacePoint(pt)
-			hound.components.combat:SuggestTarget(self.inst)
+			hound.components.combat:SuggestTarget(GetPlayer())
 		end
 	end
 	

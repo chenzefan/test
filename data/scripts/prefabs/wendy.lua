@@ -55,4 +55,4 @@ local function custom_init(inst)
 end
 
 
-return MakePlayerCharacter("wendy", "data/fonts/opensans50.zip", prefabs, assets, custom_init)
+return MakePlayerCharacter("wendy", prefabs, assets, custom_init)

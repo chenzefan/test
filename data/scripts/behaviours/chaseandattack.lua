@@ -79,7 +79,7 @@ function ChaseAndAttack:Visit()
             if (running and dsq > r*r) or (not running and dsq > combat:CalcAttackRangeSq() ) then
                 --self.inst.components.locomotor:RunInDirection(angle)
                 self.inst.components.locomotor:GoToPoint(hp, nil, true)
-            else
+            elseif not (self.inst.sg and self.inst.sg:HasStateTag("jumping")) then
                 self.inst.components.locomotor:Stop()
                 if self.inst.sg:HasStateTag("canrotate") then
                     self.inst:FacePoint(hp)
@@ -91,6 +91,7 @@ function ChaseAndAttack:Visit()
             else
                 if not self.startruntime then
                     self.startruntime = GetTime()
+                    self.inst.components.combat:BattleCry()
                 end
             end
 

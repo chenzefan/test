@@ -131,14 +131,14 @@ local function create_common(Sim)
     
     ----------
     
-    inst:AddTag("monster")    
+    inst:AddTag("monster")
+	inst:AddTag("scarytoprey")    
     inst:AddTag("canbetrapped")    
     
     MakeCharacterPhysics(inst, 10, .5)
 
     
     inst:AddTag("spider")
-    inst:AddTag("monster")
     inst.AnimState:SetBank("spider")
     inst.AnimState:PlayAnimation("idle")
     

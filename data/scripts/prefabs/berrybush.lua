@@ -11,13 +11,40 @@ local function makeemptyfn(inst)
 	inst.AnimState:PlayAnimation("empty")
 end
 
+local function pickanim(inst)
+	if inst.components.pickable then
+		if inst.components.pickable:CanBePicked() then
+			local percent = 0
+			if inst.components.pickable then
+				percent = inst.components.pickable.cycles_left / inst.components.pickable.max_cycles
+			end
+			if percent >= .9 then
+				return "berriesmost"
+			elseif percent >= .33 then
+				return "berriesmore"
+			else
+				return "berries"
+			end
+		else
+			if inst.components.pickable:IsBarren() then
+				return "idle_dead"
+			else
+				return "idle"
+			end
+		end
+	end
+
+	return "idle"
+end
+
+
 local function shake(inst)
     if inst.components.pickable and inst.components.pickable:CanBePicked() then
         inst.AnimState:PlayAnimation("shake")
     else
         inst.AnimState:PlayAnimation("shake_empty")
     end
-	inst.AnimState:PushAnimation("idle", false)
+	inst.AnimState:PushAnimation(pickanim(inst), false)
 end
 
 local function spawnperd(inst)
@@ -29,20 +56,6 @@ local function spawnperd(inst)
 		perd.sg:GoToState("appear")
 		perd.components.homeseeker:SetHome(inst)
 		shake(inst)
-	end
-end
-
-local function pickfullanim(inst)
-	local percent = 0
-	if inst.components.pickable then
-	    percent = inst.components.pickable.cycles_left / inst.components.pickable.max_cycles
-	end
-	if percent >= .9 then
-		inst.AnimState:PlayAnimation("berriesmost")
-	elseif percent >= .33 then
-		inst.AnimState:PlayAnimation("berriesmore")
-	else
-		inst.AnimState:PlayAnimation("berries")
 	end
 end
 
@@ -82,7 +95,7 @@ local function getregentimefn(inst)
 end
 
 local function onregenfn(inst)
-	pickfullanim(inst)
+	inst.AnimState:PlayAnimation(pickanim(inst))
 end
 
 local function makebarrenfn(inst)
@@ -90,7 +103,7 @@ local function makebarrenfn(inst)
 end
 
 local function makefullfn(inst)
-	pickfullanim(inst)
+	inst.AnimState:PlayAnimation(pickanim(inst))
 end
 
 local function createbush(bushname)

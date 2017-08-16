@@ -95,7 +95,11 @@ function Spawner:OnSave()
     
     data.spawnsleft = self.spawnsleft
     
-    return data
+    local refs = nil
+    if data.childid then
+		refs = {data.childid}
+    end
+    return data, refs
 end   
    
 

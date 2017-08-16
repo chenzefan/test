@@ -124,6 +124,10 @@ local function fn(Sim)
     local shadow = inst.entity:AddDynamicShadow()
     local sound = inst.entity:AddSoundEmitter()
 
+	local minimap = inst.entity:AddMiniMapEntity()
+	minimap:SetIcon( "marshtree.png" )
+	minimap:SetPriority(-1)
+
     MakeObstaclePhysics(inst, .25)   
     inst:AddTag("tree")
 

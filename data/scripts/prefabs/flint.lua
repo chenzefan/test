@@ -18,11 +18,16 @@ local function fn(Sim)
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
     MakeInventoryPhysics(inst)
+    inst.entity:AddSoundEmitter()
     
     inst.AnimState:SetRayTestOnBB(true);    
     inst.AnimState:SetBank("flint")
     inst.AnimState:SetBuild("flint")
     inst.AnimState:PlayAnimation("idle")
+
+    inst:AddComponent("edible")
+    inst.components.edible.foodtype = "ELEMENTAL"
+    inst.components.edible.hungervalue = 1
     
     inst:AddComponent("stackable")
 	inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM

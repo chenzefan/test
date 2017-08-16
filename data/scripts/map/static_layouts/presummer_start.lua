@@ -80,8 +80,8 @@ return {
           name = "",
           type = "marsh_tree",
           shape = "rectangle",
-          x = 283,
-          y = 234,
+          x = 241,
+          y = 259,
           width = 0,
           height = 0,
           visible = true,
@@ -159,8 +159,8 @@ return {
           name = "",
           type = "marsh_tree",
           shape = "rectangle",
-          x = 268,
-          y = 367,
+          x = 297,
+          y = 414,
           width = 0,
           height = 0,
           visible = true,
@@ -251,8 +251,8 @@ return {
           name = "",
           type = "sapling",
           shape = "rectangle",
-          x = 448,
-          y = 80,
+          x = 429,
+          y = 96,
           width = 0,
           height = 0,
           visible = true,
@@ -283,6 +283,17 @@ return {
           properties = {
             ["scenario"] = "chest_presummer"
           }
+        },
+        {
+          name = "",
+          type = "diviningrodstart",
+          shape = "rectangle",
+          x = 308,
+          y = 299,
+          width = 0,
+          height = 0,
+          visible = true,
+          properties = {}
         }
       }
     }

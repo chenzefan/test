@@ -4,6 +4,7 @@ local Progression = require "progressionconstants"
 
 
 DeathScreen = Class(Screen, function(self, days_survived, start_xp, escaped)
+
     Widget._ctor(self, "Progress")
     self.owner = GetPlayer()
 	self.log = true
@@ -26,10 +27,10 @@ DeathScreen = Class(Screen, function(self, days_survived, start_xp, escaped)
     self.progbar:SetPosition(Vector3(-316,-35,0))
 
 
-    local font = BUTTONFONT
+    local font = BODYTEXTFONT
     
 
-    self.title = self.root:AddChild(Text(font, 75))
+    self.title = self.root:AddChild(Text(TITLEFONT, 75))
     self.title:SetPosition(0,190,0)
     if escaped == nil then
 		self.title:SetString(STRINGS.UI.DEATHSCREEN.YOUAREDEAD)   	
@@ -41,7 +42,7 @@ DeathScreen = Class(Screen, function(self, days_survived, start_xp, escaped)
     self.t1:SetPosition(-150,70,0)
     self.t1:SetString(STRINGS.UI.DEATHSCREEN.SURVIVEDDAYS)
 
-    self.t2 = self.root:AddChild(Text(NUMBERFONT, 60))
+    self.t2 = self.root:AddChild(Text(font, 60))
     self.t2:SetPosition(200,70,0)
     self.t2:SetString(STRINGS.UI.DEATHSCREEN.DAYS)
 
@@ -50,7 +51,7 @@ DeathScreen = Class(Screen, function(self, days_survived, start_xp, escaped)
 
     self.leveltext = self.root:AddChild(Text(font, 50))
     self.leveltext:SetHAlign(ANCHOR_LEFT)
-    self.leveltext:SetPosition(-270,-40,0)
+    self.leveltext:SetPosition(-260,-40,0)
 
     self.xptext = self.root:AddChild(Text(NUMBERFONT, 50))
     self.xptext:SetHAlign(ANCHOR_LEFT)
@@ -60,8 +61,9 @@ DeathScreen = Class(Screen, function(self, days_survived, start_xp, escaped)
     self.menu:SetPosition(0, -195, 0)
 
 
-    self.portrait = self.root:AddChild(Image("data/portraits/wilson.tex"))
-    self.portrait:SetPosition(Vector3(250,-130, 0))
+    self.portrait = self.root:AddChild(Image("data/images/saveslot_portraits/wilson.tex"))
+    self.portrait:SetPosition(Vector3(250,-145, 0))
+    self.portrait:SetScale(1.5,1.5,1.5)
     self.portrait:SetTint(0,0,0,1)
     self.portrait:SetVRegPoint(ANCHOR_BOTTOM)
     self:ShowButtons(false)
@@ -156,7 +158,9 @@ function DeathScreen:SetStatus(xp, ignore_image)
         local reward = Progression.GetRewardForLevel(level)
         if reward then
             self.portrait:Show()
-            self.portrait:SetTexture("data/portraits/"..reward..".tex")
+
+			--print("data/images/saveslot_portraits/"..reward..".tex")
+            self.portrait:SetTexture("data/images/saveslot_portraits/"..reward..".tex")
         else
             self.portrait:Hide()
         end
@@ -166,12 +170,12 @@ function DeathScreen:SetStatus(xp, ignore_image)
     self.leveltext:SetString(STRINGS.UI.DEATHSCREEN.LEVEL.." "..tostring(level+1))
     self.progbar:GetAnimState():SetPercent("anim", percent)
     
+	self.xptext:SetString(string.format("XP: %d", xp))
+    
     if xp >= Progression.GetXPCap() then
-		self.xptext:SetString(string.format("XP: %d - AT CAP!", xp))
-		self.rewardtext:Hide()
-    else
-	    self.xptext:SetString(string.format("XP: %d", xp))
+		self.rewardtext:SetString(STRINGS.UI.DEATHSCREEN.ATCAP)
 	end
+	
 end
 
 function DeathScreen:ShowResults(days_survived, start_xp)
@@ -240,7 +244,7 @@ function DeathScreen:ShowResults(days_survived, start_xp)
                         self.owner.SoundEmitter:PlaySound("dontstarve/HUD/XP_bar_fill_unlock")
                         self.progbar:GetAnimState():SetPercent("anim", 1)
                         self.portrait:SetTint(1,1,1,1)
-                        self.portrait:ScaleTo(2, 1, .25)
+                        self.portrait:ScaleTo(2, 1.5, .25)
                         Sleep(1)
                     end
                 end

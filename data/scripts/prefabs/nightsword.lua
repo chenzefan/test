@@ -34,6 +34,7 @@ local function fn(Sim)
     inst.AnimState:SetMultColour(1, 1, 1, 0.6)
     
     inst:AddTag("shadow")
+    inst:AddTag("sharp")
     
     inst:AddComponent("weapon")
     inst.components.weapon:SetDamage(TUNING.NIGHTSWORD_DAMAGE)

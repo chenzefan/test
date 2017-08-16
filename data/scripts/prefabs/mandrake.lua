@@ -1,5 +1,4 @@
 require "fonthelper"
-local brain = require "brains/mandrakebrain"
 
 local assets =
 {
@@ -15,7 +14,7 @@ local prefabs =
 }
 
 
-local function MakeFollower(inst)
+local function MakeFollower(inst, leader)
 	inst:AddTag("picked") 
 	inst:RemoveComponent("pickable")
     inst:AddComponent("health")
@@ -28,7 +27,7 @@ local function MakeFollower(inst)
     inst.Physics:CollidesWith(COLLISION.WORLD)
     inst.Physics:CollidesWith(COLLISION.OBSTACLES)
     inst.Physics:CollidesWith(COLLISION.CHARACTERS)
-	inst:SetBrain(brain)	
+    inst:RestartBrain()
 
     inst:RemoveComponent("burnable")
     inst:RemoveComponent("propagator")
@@ -36,19 +35,17 @@ local function MakeFollower(inst)
 	
     inst.DynamicShadow:Enable(true)
     inst:AddComponent("follower")
-	local player = GetPlayer()
-	if player and player.components.leader then
-		player.components.leader:AddFollower(inst)
+	if leader and leader.components.leader then
+		leader.components.leader:AddFollower(inst)
 	end
 	
 end
 
 local function MakeItem(inst)
+    inst:StopBrain()
+	inst:RemoveTag("picked") 
 	inst:AddTag("item") 
-	inst:RemoveComponent("pickable")
-	inst:RemoveComponent("combat")
-	inst:RemoveComponent("follower")
-    inst:RemoveComponent("health")
+    inst.Physics:SetSphere(.5)
     inst.Physics:SetCollisionGroup(COLLISION.ITEMS)
     inst.Physics:ClearCollisionMask()
     inst.Physics:CollidesWith(COLLISION.WORLD)
@@ -56,7 +53,7 @@ local function MakeItem(inst)
     inst.Physics:SetMass(1)
     inst.Physics:SetFriction(.1)
     inst.Physics:SetDamping(0)
-    inst.Physics:SetRestitution(.75)
+    inst.Physics:SetRestitution(.5)
 	inst.DynamicShadow:Enable(false)
 	if inst.components.inventoryitem then
 	    inst.components.inventoryitem.canbepickedup = true
@@ -65,6 +62,12 @@ local function MakeItem(inst)
         inst.components.inventoryitem:SetOnDroppedFn(function(inst) inst.sg:GoToState("item") end)
     end
     
+    inst:DoTaskInTime(0, function(inst)
+	    inst:RemoveComponent("pickable")
+	    inst:RemoveComponent("combat")
+	    inst:RemoveComponent("follower")
+        inst:RemoveComponent("health")
+    end)
     inst:RemoveComponent("burnable")
     inst:RemoveComponent("propagator")
 	MakeSmallBurnable(inst)
@@ -74,6 +77,7 @@ end
 
 local function MakePlanted(inst)
 	inst:RemoveTag("picked") 
+    inst:StopBrain()
 	
 	if not inst.components.pickable then
         inst:AddComponent("pickable")
@@ -83,10 +87,17 @@ local function MakePlanted(inst)
     inst.Physics:CollidesWith(COLLISION.WORLD)
 	inst.DynamicShadow:Enable(false)
     inst.components.pickable.canbepicked = true
-    inst.components.pickable.onpickedfn = function(inst) inst.sg:GoToState("picked") end
-	local player = GetPlayer()
-	if player and player.components.leader and player.components.leader:IsFollower(inst) then
-		player.components.leader:RemoveFollower(inst)
+    inst.components.pickable.onpickedfn = function(inst, picker)
+        inst.sg:GoToState("picked")
+        if GetClock():IsDay() then
+            MakeItem(inst)
+        else
+            MakeFollower(inst, picker)
+        end
+    end
+	local leader = inst.components.follower and inst.components.follower.leader
+	if leader and leader.components.leader and leader.components.leader:IsFollower(inst) then
+		leader.components.leader:RemoveFollower(inst)
 	end
 	inst:RemoveComponent("combat")
 	inst:RemoveComponent("follower")
@@ -116,16 +127,24 @@ local function OnEaten(inst, eater)
 end
 
 local function OnEaten_cooked(inst, eater)
-    GetClock():MakeNextDay()
-	DoAreaEffect(inst, eater, TUNING.MANDRAKE_SLEEP_RANGE_COOKED, TUNING.MANDRAKE_SLEEP_TIME, true)
 	eater.SoundEmitter:PlaySound("dontstarve/creatures/mandrake/death")
+	TheFrontEnd:Fade(false,0.1)
+	eater:DoTaskInTime(0.5, function() 
+        DoAreaEffect(inst, eater, TUNING.MANDRAKE_SLEEP_RANGE_COOKED, TUNING.MANDRAKE_SLEEP_TIME, true)
+		TheFrontEnd:Fade(true,1)
+		GetClock():MakeNextDay()
+	end)
 end
 
 local function OnCooked(inst, cooker, chef)
     inst.persists = false
-    GetClock():NextPhase()
-	DoAreaEffect(inst, chef, TUNING.MANDRAKE_SLEEP_RANGE_COOKED, TUNING.MANDRAKE_SLEEP_TIME, true)
 	chef.SoundEmitter:PlaySound("dontstarve/creatures/mandrake/death")
+	TheFrontEnd:Fade(false,0.1)
+	chef:DoTaskInTime(0.5, function()
+        DoAreaEffect(inst, chef, TUNING.MANDRAKE_SLEEP_RANGE_COOKED, TUNING.MANDRAKE_SLEEP_TIME, true)
+		TheFrontEnd:Fade(true,1) 
+        GetClock():NextPhase()
+	end)
 end
 
 local function commonfn()
@@ -161,6 +180,7 @@ local function defaultfn()
 	local inst = commonfn()
 	
     inst:AddTag("character")
+    inst:AddTag("small")
     
     inst.AnimState:PlayAnimation("ground")
 
@@ -174,6 +194,8 @@ local function defaultfn()
     inst.components.locomotor.walkspeed = 6
 
     inst:SetStateGraph("SGMandrake")
+    local brain = require "brains/mandrakebrain"
+	inst:SetBrain(brain)
 
 	inst.components.inventoryitem.canbepickedup = false
     inst.components.stackable:SetOnDeStack(MakeItem)
@@ -195,31 +217,31 @@ local function defaultfn()
 		elseif inst:HasTag("item") then
 		    data.item = true
 		end
-    end        
+    end
     
     inst.OnLoad = function(inst, data)
         if data then
     		if data.picked then
-    			MakeFollower(inst)
-    			inst.sg:GoToState("idle")
+                if GetClock():IsDay() then
+                    MakePlanted(inst)
+                    inst.sg:GoToState("plant")
+                else
+    			    MakeFollower(inst)
+    			    inst.sg:GoToState("idle")
+                end
     		elseif data.item then
     		    MakeItem(inst)
-    	        inst.AnimState:PlayAnimation("object")
+    			inst.sg:GoToState("item")
     		end
         end
     end
    
     MakePlanted(inst)
     
-    inst.userfunctions = 
-    {
-        MakePlanted = MakePlanted,
-        MakeItem = MakeItem,
-        MakeFollower = MakeFollower,
-    }
-    
+	inst:ListenForEvent("death", MakeItem)
     inst:ListenForEvent( "daytime", function()
         if inst.components.health and not inst.components.health:IsDead() then
+            MakePlanted(inst)
             inst.sg:GoToState("plant")
         end
     end, GetWorld())

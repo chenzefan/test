@@ -1,9 +1,9 @@
 --This prefab is an empty object. The only function it serves is to spawn a maxwell head
 --when the player approaches and tell that head which speech to say.
 
-assets = {}
+local assets = {}
 
-prefabs = 
+local prefabs = 
 {
 	"maxwellhead",
 }

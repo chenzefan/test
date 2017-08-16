@@ -31,7 +31,8 @@ function Grower:OnSave()
     local data = {crops = {}}
 
     for k,v in pairs(self.crops) do
-        table.insert(data.crops, k:GetSaveRecord())
+        local save_record = k:GetSaveRecord()
+        table.insert(data.crops, save_record)
     end
     data.cycles_left = self.cycles_left
     return data
@@ -63,6 +64,7 @@ function Grower:OnLoad(data, newents)
             child.Transform:SetPosition(v.x or 0, v.y or 0, v.z or 0)
             child.persists = false
             self.crops[child] = true
+			child.components.crop:Resume()            
         end
     end
     
@@ -100,7 +102,6 @@ function Grower:PlantItem(item)
 		plant1.Transform:SetPosition(pos:Get())
 	    
 		self.crops[plant1] = true
-		print(pos, plant1)
 	end
     
     self.isempty = false

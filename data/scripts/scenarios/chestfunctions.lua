@@ -9,10 +9,14 @@ local function AddChestItems(chest, loot)
 			end
 			if spawn then
 				local item = SpawnPrefab(itemtype.item or itemtype)
-				if item.initfn then
-					item.initfn(item)
+				if item ~= nil then
+					if itemtype.initfn then
+						itemtype.initfn(item)
+					end
+					chest.components.container:GiveItem( item )
+				else
+					print("Cant spawn", itemtype.item or itemtype)
 				end
-				chest.components.container:GiveItem( item )
 			end
 		end
 	end

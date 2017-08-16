@@ -69,6 +69,7 @@ function Projectile:Throw(owner, target)
     self.inst.Physics:SetMotorVel(self.speed,0,0)
     self.inst:StartUpdatingComponent(self)
     self.inst:PushEvent("onthrown", {thrower = owner, target = target})
+    target:PushEvent("hostileprojectile")
     if self.onthrown then
         self.onthrown(self.inst, owner, target)
     end
@@ -159,7 +160,7 @@ end
 
 function Projectile:OnSave()
     if self:IsThrown() then
-        return {target = self.target.GUID, owner = self.owner.GUID}
+        return {target = self.target.GUID, owner = self.owner.GUID}, {self.target.GUID, self.owner.GUID}
     end
 end
 

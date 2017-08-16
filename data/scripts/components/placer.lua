@@ -15,8 +15,8 @@ end
 function Placer:OnUpdate(dt)
 	local pt = Input:GetMouseWorldPos()
 	
-	if self.snap_to_tile and TheMap then
-		local pt2 = Vector3(TheMap:GetTileCenterPoint(pt:Get()))
+	if self.snap_to_tile and GetWorld().Map then
+		local pt2 = Vector3(GetWorld().Map:GetTileCenterPoint(pt:Get()))
 		pt = pt2
 	elseif self.snap_to_meters then
 		pt = Vector3(math.floor(pt.x)+.5, 0, math.floor(pt.z)+.5)

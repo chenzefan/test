@@ -403,6 +403,21 @@ function Widget:StopFollowMouse()
     self.followhandler = nil
 end
 
+
+function Widget:GetScale()
+
+	local sx, sy, sz = self.inst.UITransform:GetScale()
+
+	if self.parent then
+		local scale = self.parent:GetScale()
+		sx = sx*scale.x
+		sy = sy*scale.y
+		sz = sz*scale.z
+	end
+	
+	return Vector3(sx,sy,sz)
+end
+
 function Widget:OnGainFocus()
 	--print("Widget:OnGainFocus()")
 	if self.dogainfocus then

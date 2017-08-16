@@ -26,7 +26,7 @@ local function fn()
 	inst:AddComponent("inspectable")
 
 	inst:AddComponent("inventoryitem")
-	inst.components.inventoryitem:ChangeImageName(inst, "bonestew")
+	inst.components.inventoryitem:ChangeImageName("bonestew")
 
 	return inst
 end

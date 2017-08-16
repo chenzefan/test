@@ -262,6 +262,17 @@ return {
           height = 0,
           visible = true,
           properties = {}
+        },
+        {
+          name = "",
+          type = "diviningrodstart",
+          shape = "rectangle",
+          x = 303,
+          y = 285,
+          width = 0,
+          height = 0,
+          visible = true,
+          properties = {}
         }
       }
     }

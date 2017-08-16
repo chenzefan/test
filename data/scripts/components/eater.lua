@@ -26,6 +26,10 @@ function Eater:SetBird()
 	self.foodprefs = {"SEEDS"}
 end
 
+function Eater:SetElemental()
+    self.foodprefs = {"ELEMENTAL"}
+end
+
 function Eater:TimeSinceLastEating()
 	if self.lasteattime then
 		return GetTime() - self.lasteattime

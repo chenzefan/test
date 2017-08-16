@@ -101,6 +101,7 @@ local function fn()
 
     inst:AddTag("character")
     inst:AddTag("merm")
+    inst:AddTag("wet")
 
     local brain = require "brains/mermbrain"
     inst:SetBrain(brain)

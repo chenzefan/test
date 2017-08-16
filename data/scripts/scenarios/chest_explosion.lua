@@ -3,7 +3,7 @@ loot =
 {
     {
         item = "firestaff",
-        initfn = function(inst) inst.components.finiteuses:SetUses(TUNING.ICESTAFF_USES*math.random()) end,
+        --initfn = function(inst) inst.components.finiteuses:SetUses(TUNING.ICESTAFF_USES*math.random()) end,
         count = 1
     },
     {

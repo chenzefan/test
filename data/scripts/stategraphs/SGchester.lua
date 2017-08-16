@@ -28,6 +28,10 @@ local states=
         onenter = function(inst, pushanim)
             inst.Physics:Stop()
             inst.AnimState:PlayAnimation("idle_loop")
+            
+            if not inst.sg.mem.pant_ducking or inst.sg:InNewState() then
+				inst.sg.mem.pant_ducking = 1
+			end
         end,
         
         events=
@@ -37,7 +41,13 @@ local states=
 
         timeline=
         {
-            TimeEvent(7*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/chester/pant") end),
+            TimeEvent(7*FRAMES, function(inst) 
+				inst.sg.mem.pant_ducking = inst.sg.mem.pant_ducking or 1
+				inst.SoundEmitter:PlaySound("dontstarve/creatures/chester/pant", nil, inst.sg.mem.pant_ducking) 
+				if inst.sg.mem.pant_ducking and inst.sg.mem.pant_ducking > .35 then
+					inst.sg.mem.pant_ducking = inst.sg.mem.pant_ducking - .05
+				end
+			end),
         },        
    },
     
@@ -93,6 +103,11 @@ local states=
         
         onenter = function(inst)
             inst.AnimState:PlayAnimation("idle_loop_open")
+            
+            if not inst.sg.mem.pant_ducking or inst.sg:InNewState() then
+				inst.sg.mem.pant_ducking = 1
+			end
+            
         end,
 
         events=
@@ -102,7 +117,15 @@ local states=
 
         timeline=
         {
-            TimeEvent(3*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/chester/pant") end),
+        
+        
+            TimeEvent(3*FRAMES, function(inst) 
+				inst.sg.mem.pant_ducking = inst.sg.mem.pant_ducking or 1
+				inst.SoundEmitter:PlaySound("dontstarve/creatures/chester/pant", nil, inst.sg.mem.pant_ducking) 
+				if inst.sg.mem.pant_ducking and inst.sg.mem.pant_ducking > .35 then
+					inst.sg.mem.pant_ducking = inst.sg.mem.pant_ducking - .05
+				end
+			end),
         },        
     },
 

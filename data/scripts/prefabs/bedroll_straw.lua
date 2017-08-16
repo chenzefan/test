@@ -1,6 +1,6 @@
 local assets=
 {
-	Asset("ANIM", "data/anim/swap_bedroll.zip"),
+	Asset("ANIM", "data/anim/swap_bedroll_straw.zip"),
     Asset("IMAGE", "data/inventoryimages/bedroll_straw.tex"),
 }
 
@@ -22,6 +22,7 @@ local function onsleep(inst, sleeper)
 		TheFrontEnd:Fade(true,1) 
 		
 		if sleeper.components.hunger then
+			-- Check SGwilson, state "bedroll", if you change this value
 			sleeper.components.hunger:DoDelta(-TUNING.CALORIES_HUGE)
 		end
 
@@ -34,14 +35,18 @@ local function onsleep(inst, sleeper)
 	end)
 end
 
+local function onuse()
+	GetPlayer().AnimState:OverrideSymbol("swap_bedroll", "swap_bedroll_straw", "bedroll_straw")
+end
+
 local function fn(Sim)
 	local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
     MakeInventoryPhysics(inst)
     
-    anim:SetBank("swap_bedroll")
-    anim:SetBuild("swap_bedroll")
+    anim:SetBank("swap_bedroll_straw")
+    anim:SetBuild("swap_bedroll_straw")
     anim:PlayAnimation("idle")
     
     inst:AddComponent("inspectable")
@@ -58,7 +63,7 @@ local function fn(Sim)
     inst:AddComponent("sleepingbag")
 	inst.components.sleepingbag.onsleep = onsleep
     
-    
+    inst.onuse = onuse
     
     return inst
 end

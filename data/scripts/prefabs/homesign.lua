@@ -42,9 +42,10 @@ local function fn(Sim)
     inst.components.workable:SetWorkLeft(4)
 	inst.components.workable:SetOnFinishCallback(onhammered)
 	inst.components.workable:SetOnWorkCallback(onhit)
-    
+ 	MakeSnowCovered(inst, .01)	
+   
     return inst
 end
 
-return Prefab( "common/objects/homesign", fn, assets, prefabs),
+return Prefab( "common/objects/homesign", fn, assets),
 		MakePlacer( "common/homesign_placer", "sign_home", "sign_home", "idle" )

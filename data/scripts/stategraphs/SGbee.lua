@@ -22,7 +22,6 @@ local events=
     CommonHandlers.OnSleep(),
     CommonHandlers.OnFreeze(),
     
-    
     EventHandler("locomote", function(inst) 
         if not inst.sg:HasStateTag("busy") then
 			local is_moving = inst.sg:HasStateTag("moving")
@@ -96,14 +95,13 @@ local states=
         onenter = function(inst)
             inst.components.locomotor:WalkForward()
             inst.AnimState:PushAnimation("walk_loop", true)
-            if inst:HasTag("worker") then   --only workers get out of breath
-                inst.sg:SetTimeout(2.5+math.random())
-            end
+            inst.sg:SetTimeout(2.5+math.random())
         end,
         
         ontimeout = function(inst)
             if (inst.components.combat and not inst.components.combat.target)
-               and not inst:GetBufferedAction() then
+               and not inst:GetBufferedAction() and
+               inst:HasTag("worker") then
                 inst.sg:GoToState("catchbreath")
             else
                 inst.sg:GoToState("moving")

@@ -137,7 +137,8 @@ local states=
         tags = {"attack", "busy"},
         
         onenter = function(inst)
-            inst.SoundEmitter:PlaySound("dontstarve/pig/grunt")
+            inst.SoundEmitter:PlaySound("dontstarve/pig/attack")
+            inst.SoundEmitter:PlaySound("dontstarve/wilson/attack_whoosh")
             inst.components.combat:StartAttack()
             inst.Physics:Stop()
             inst.AnimState:PlayAnimation("atk")
@@ -145,7 +146,7 @@ local states=
         
         timeline=
         {
-            TimeEvent(13*FRAMES, function(inst) inst.components.combat:DoAttack() end),
+            TimeEvent(13*FRAMES, function(inst) inst.components.combat:DoAttack() inst.sg:RemoveStateTag("attack") inst.sg:RemoveStateTag("busy") end),
         },
         
         events=
@@ -194,6 +195,21 @@ local states=
             EventHandler("animover", function(inst) inst.sg:GoToState("idle") end ),
         },        
     },
+    State{
+        name = "hit",
+        tags = {"busy"},
+        
+        onenter = function(inst)
+            inst.SoundEmitter:PlaySound("dontstarve/pig/oink")
+            inst.AnimState:PlayAnimation("hit")
+            inst.Physics:Stop()            
+        end,
+        
+        events=
+        {
+            EventHandler("animover", function(inst) inst.sg:GoToState("idle") end ),
+        },        
+    },    
 }
 
 CommonStates.AddWalkStates(states,
@@ -220,7 +236,6 @@ CommonStates.AddSleepStates(states,
 })
 
 CommonStates.AddIdle(states,"funnyidle")
-CommonStates.AddSimpleState(states,"hit", "hit", {"busy"})
 CommonStates.AddSimpleState(states,"refuse", "pig_reject", {"busy"})
 CommonStates.AddFrozenStates(states)
 

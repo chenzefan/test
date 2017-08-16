@@ -71,6 +71,7 @@ local function fn(Sim)
     inst:AddTag("epic")    
     inst:AddTag("largecreature")
     inst:AddTag("spiderqueen")    
+    inst:AddTag("spider")    
     
     MakeCharacterPhysics(inst, 1000, 1)
 

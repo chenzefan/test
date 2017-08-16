@@ -41,6 +41,8 @@ local function fn(Sim)
     inst.AnimState:PlayAnimation("anim")
     --inst.AnimState:SetMultColour(1, 1, 1, 0.6)
     
+    inst:AddTag("sanity")
+    
     inst:AddComponent("inspectable")
     
     inst:AddComponent("inventoryitem")

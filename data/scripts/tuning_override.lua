@@ -18,33 +18,41 @@ local TUNING_OVERRIDES =
 {
 	["hounds"] = 	{
 							doit = 	function(difficulty)
-										local Hounded = require("components/hounded")
-										if difficulty == "never" then
-											GetPlayer().components.hounded:SpawnModeNever()
-										elseif difficulty == "always" then
-											GetPlayer().components.hounded:SpawnModeHeavy()
-										elseif difficulty == "often" then
-											GetPlayer().components.hounded:SpawnModeMed()
-										elseif difficulty == "rare" then
-											GetPlayer().components.hounded:SpawnModeLight()
+										--local Hounded = require("components/hounded")
+
+										local hounded = GetWorld().components.hounded
+										if hounded then
+											if difficulty == "never" then
+												hounded:SpawnModeNever()
+											elseif difficulty == "always" then
+												hounded:SpawnModeHeavy()
+											elseif difficulty == "often" then
+												hounded:SpawnModeMed()
+											elseif difficulty == "rare" then
+												hounded:SpawnModeLight()
+											end
 										end
 									end,
 				},
 	["deerclops"] = 	{
 							doit = 	function(difficulty)
-										local BaseHassler = require("components/basehassler")
-										if difficulty == "never" then
-											GetPlayer().components.basehassler:SetAttacksPerWinter(0)
-											GetPlayer().components.basehassler:SetAttackDuringSummer(false)
-										elseif difficulty == "rare" then
-											GetPlayer().components.basehassler:SetAttacksPerWinter(1)
-											GetPlayer().components.basehassler:SetAttackDuringSummer(false)
-										elseif difficulty == "often" then
-											GetPlayer().components.basehassler:SetAttacksPerWinter(2)
-											GetPlayer().components.basehassler:SetAttackDuringSummer(false)
-										elseif difficulty == "always" then
-											GetPlayer().components.basehassler:SetAttacksPerWinter(3)
-											GetPlayer().components.basehassler:SetAttackDuringSummer(true)
+										--local BaseHassler = require("components/basehassler")
+										
+										local basehassler = GetWorld().components.basehassler
+										if basehassler then
+											if difficulty == "never" then
+												basehassler:SetAttacksPerWinter(0)
+												basehassler:SetAttackDuringSummer(false)
+											elseif difficulty == "rare" then
+												basehassler:SetAttacksPerWinter(1)
+												basehassler:SetAttackDuringSummer(false)
+											elseif difficulty == "often" then
+												basehassler:SetAttacksPerWinter(2)
+												basehassler:SetAttackDuringSummer(false)
+											elseif difficulty == "always" then
+												basehassler:SetAttacksPerWinter(3)
+												basehassler:SetAttackDuringSummer(true)
+											end
 										end
 									end,
 				},
@@ -114,7 +122,9 @@ local TUNING_OVERRIDES =
 										
 										local summersegs = lookup[data].summer
 										local wintersegs = lookup[data].winter or summersegs
-										GetSeasonManager():SetSegs(summersegs, wintersegs)
+										if GetSeasonManager() then
+											GetSeasonManager():SetSegs(summersegs, wintersegs)
+										end
 										GetClock():SetSegs(summersegs.day, summersegs.dusk, summersegs.night)
 										
 --										if lookup[data].winter ~= nil then
@@ -126,6 +136,11 @@ local TUNING_OVERRIDES =
 					},
 	["season"] = 	{
 					doit = 	function(difficulty)
+					
+							if not GetSeasonManager() then
+								return
+							end
+							
 							if difficulty == "preonlywinter" then
 								GetSeasonManager():EndlessWinter(10,10)
 							elseif difficulty == "preonlysummer" then
@@ -153,6 +168,10 @@ local TUNING_OVERRIDES =
 					},
 	["season_start"] = 	{
 					doit = 	function(data)
+					
+							if not GetSeasonManager() then
+								return 
+							end
 							if data == "summer" then
 								GetSeasonManager():StartSummer() -- TEMP to make sure its working
 								GetSeasonManager().ground_snow_level = 0
@@ -165,6 +184,10 @@ local TUNING_OVERRIDES =
 					},
 	["weather"] = 	{
 					doit = 	function(data)
+							if not GetSeasonManager() then
+								return
+							end
+					
 							local tuning_vars = {	
 												["default"] = function() end,											
 												["never"] =  function() 
@@ -188,8 +211,23 @@ local TUNING_OVERRIDES =
 
 						end
 					},
+	["frograin"] = {
+					doit = 	function(difficulty)
+						local tuning_vars = {
+							["default"] =  {FROG_RAIN_PRECIPITATION=999, FROG_RAIN_MOISTURE=99999}, -- never
+							["rare"] =  {FROG_RAIN_PRECIPITATION=0.95, FROG_RAIN_MOISTURE=3000},
+							["sometimes"] =  {FROG_RAIN_PRECIPITATION=0.9, FROG_RAIN_MOISTURE=2800},
+							["often"] =  {FROG_RAIN_PRECIPITATION=0.8, FROG_RAIN_MOISTURE=2500},
+							["always"] =  {FROG_RAIN_PRECIPITATION=0.7, FROG_RAIN_MOISTURE=2000},
+							["force"] =  {FROG_RAIN_PRECIPITATION=0.01, FROG_RAIN_MOISTURE=400},
+						}
+						OverrideTuningVariables(tuning_vars[difficulty])
+					end
+					},
 	["lightning"] = 	{
 					doit = 	function(data)
+							if not GetSeasonManager() then return end
+							
 							local tuning_vars = {	
 												["default"] = function() end,											
 												["never"] =  function() 
@@ -225,6 +263,62 @@ local TUNING_OVERRIDES =
 										OverrideTuningVariables(tuning_vars[difficulty])
 									end,
 							},
+	["areaambient"] = 	{
+							doit = 	function(data)
+										local ambient = GetWorld()
+										-- HACK HACK HACK
+										ambient.components.ambientsoundmixer:SetOverride(GROUND.ROAD, "VOID")
+										ambient.components.ambientsoundmixer:SetOverride(GROUND.ROCKY, "VOID")
+										ambient.components.ambientsoundmixer:SetOverride(GROUND.DIRT, "VOID")
+										ambient.components.ambientsoundmixer:SetOverride(GROUND.WOODFLOOR, "VOID")
+										ambient.components.ambientsoundmixer:SetOverride(GROUND.GRASS, "VOID")
+										ambient.components.ambientsoundmixer:SetOverride(GROUND.SAVANNA, "VOID")
+										ambient.components.ambientsoundmixer:SetOverride(GROUND.FOREST, "VOID")
+										ambient.components.ambientsoundmixer:SetOverride(GROUND.MARSH, "VOID")
+										ambient.components.ambientsoundmixer:SetOverride(GROUND.IMPASSABLE, "VOID")
+										ambient.components.ambientsoundmixer:UpdateAmbientGeoMix()
+									end,
+						}, 
+	["areaambientdefault"] = 	{
+							doit = 	function(data)
+										local ambient = GetWorld()
+
+										if data== "cave" then
+											-- Clear out the above ground (forest) sounds
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.ROAD, "SINKHOLE")
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.ROCKY, "SINKHOLE")
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.DIRT, "SINKHOLE")
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.WOODFLOOR, "SINKHOLE")
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.SAVANNA, "SINKHOLE")
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.GRASS, "SINKHOLE")
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.FOREST, "SINKHOLE")
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.CHECKER, "SINKHOLE")
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.MARSH, "SINKHOLE")
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.IMPASSABLE, "SINKHOLE")
+										else
+											-- Clear out the cave sounds
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.CAVE, "ROCKY")
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.FUNGUS, "ROCKY")
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.SINKHOLE, "ROCKY")
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.UNDERROCK, "ROCKY")
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.MUD, "ROCKY")
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.UNDERGROUND, "ROCKY")
+										end
+
+										ambient.components.ambientsoundmixer:UpdateAmbientGeoMix()
+									end,
+						}, 
+	["waves"] = 	{
+							doit = 	function(data)
+										
+										if data == "off" then
+											local ground = GetWorld()
+											if ground.WaveComponent then
+												ground.WaveComponent:SetRegionNumWaves( 0 )
+											end
+										end
+									end,
+						}, 
 
 }
 

@@ -4,13 +4,18 @@ local mushassets=
 }
 
 
+local cookedassets = 
+{
+	Asset("ANIM", "data/anim/mushrooms.zip"),
+}
 
 local function MakeMushroom(data)
 
     local capassets = 
     {
-        Asset("ANIM", "data/anim/flower_petals.zip"),
+		Asset("ANIM", "data/anim/mushrooms.zip"),
         Asset("IMAGE", "data/inventoryimages/"..data.pickloot..".tex"),
+        Asset("IMAGE", "data/inventoryimages/"..data.pickloot.."_cooked.tex"),
     }
 
     local prefabs =
@@ -79,8 +84,12 @@ local function MakeMushroom(data)
 
 
     local function GetStatus(inst)
-        if inst.components.pickable and inst.components.pickable.canbepicked and not inst.components.caninteractwith then
+        if inst.components.pickable and inst.components.pickable.canbepicked and not inst.components.pickable.caninteractwith then
             return "INGROUND"
+        elseif inst.components.pickable and inst.components.pickable.canbepicked and inst.components.pickable.caninteractwith then
+            return "GENERIC"
+        else 
+            return "PICKED"
         end
     end
 
@@ -129,7 +138,7 @@ local function MakeMushroom(data)
         inst.components.pickable.onpickedfn = onpickedfn
         inst.components.pickable.onregenfn = onregenfn
         inst.components.pickable:SetMakeEmptyFn(makeemptyfn)
-        inst.components.pickable.quickpick = true
+        --inst.components.pickable.quickpick = true
         
         inst.rain = 0
 
@@ -202,8 +211,6 @@ local function MakeMushroom(data)
         inst:AddComponent("tradable")
         inst:AddComponent("inspectable")
         
-        inst:AddComponent("fuel")
-        inst.components.fuel.fuelvalue = TUNING.TINY_FUEL
         MakeSmallBurnable(inst, TUNING.TINY_BURNTIME)
         MakeSmallPropagator(inst)
         inst:AddComponent("inventoryitem")
@@ -220,24 +227,70 @@ local function MakeMushroom(data)
         inst.components.perishable:StartPerishing()
         inst.components.perishable.onperishreplacement = "spoiled_food"
 
+        inst:AddComponent("cookable")
+        inst.components.cookable.product = data.pickloot.."_cooked"
+
         return inst
     end
+    
+
+    local function cookedfn(Sim)
+        local inst = CreateEntity()
+        inst.entity:AddTransform()
+        inst.entity:AddAnimState()
+
+        MakeInventoryPhysics(inst)
+        
+        inst.AnimState:SetBank("mushrooms")
+        inst.AnimState:SetBuild("mushrooms")
+        inst.AnimState:PlayAnimation(data.pickloot.."_cooked")
+        
+        inst:AddComponent("stackable")
+        inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM
+
+        inst:AddComponent("tradable")
+        inst:AddComponent("inspectable")
+        
+        inst:AddComponent("fuel")
+        inst.components.fuel.fuelvalue = TUNING.TINY_FUEL
+        MakeSmallBurnable(inst, TUNING.TINY_BURNTIME)
+        MakeSmallPropagator(inst)
+        inst:AddComponent("inventoryitem")
+
+        --this is where it gets interesting
+        inst:AddComponent("edible")
+        inst.components.edible.healthvalue = data.cookedhealth
+        inst.components.edible.hungervalue = data.cookedhunger
+        inst.components.edible.sanityvalue = data.cookedsanity
+        inst.components.edible.foodtype = "VEGGIE"
+        
+        inst:AddComponent("perishable")
+        inst.components.perishable:SetPerishTime(TUNING.PERISH_MED)
+        inst.components.perishable:StartPerishing()
+        inst.components.perishable.onperishreplacement = "spoiled_food"
+
+        return inst
+    end    
 
 
     return Prefab( "forest/objects/"..data.name, mushfn, mushassets, prefabs),
-           Prefab( "common/inventory/"..data.pickloot, capfn, capassets)
+           Prefab( "common/inventory/"..data.pickloot, capfn, capassets),
+           Prefab( "common/inventory/"..data.pickloot.."_cooked", cookedfn, cookedassets)
 end
 
-local data = { {name = "red_mushroom", animname="red", pickloot="red_cap", open_time = "day", sanity = 0, health = -TUNING.HEALING_MED, hunger = TUNING.CALORIES_SMALL}, 
-               {name = "green_mushroom", animname="green", pickloot="green_cap", open_time = "dusk", sanity = -TUNING.SANITY_HUGE, health= 0, hunger = TUNING.CALORIES_SMALL},
-               {name = "blue_mushroom", animname="blue", pickloot="blue_cap", open_time = "night", sanity = -TUNING.SANITY_MED, health= TUNING.HEALING_MED, hunger = TUNING.CALORIES_SMALL} }
-
+local data = { {name = "red_mushroom", animname="red", pickloot="red_cap", open_time = "day",	sanity = 0, health = -TUNING.HEALING_MED, hunger = TUNING.CALORIES_SMALL,
+																								cookedsanity = -TUNING.SANITY_SMALL, cookedhealth = TUNING.HEALING_TINY, cookedhunger = 0}, 
+               {name = "green_mushroom", animname="green", pickloot="green_cap", open_time = "dusk",	sanity = -TUNING.SANITY_HUGE, health= 0, hunger = TUNING.CALORIES_SMALL,
+																										cookedsanity = TUNING.SANITY_MED, cookedhealth = -TUNING.HEALING_TINY, cookedhunger = 0}, 
+               {name = "blue_mushroom", animname="blue", pickloot="blue_cap", open_time = "night",	sanity = -TUNING.SANITY_MED, health= TUNING.HEALING_MED, hunger = TUNING.CALORIES_SMALL, 
+																									cookedsanity = TUNING.SANITY_SMALL, cookedhealth = -TUNING.HEALING_SMALL, cookedhunger = 0}}
 local prefabs = {}
 
 for k,v in pairs(data) do
-    local shroom, cap = MakeMushroom(v)
+    local shroom, cap, cooked = MakeMushroom(v)
     table.insert(prefabs, shroom)
     table.insert(prefabs, cap)
+    table.insert(prefabs, cooked)
 end
 
 

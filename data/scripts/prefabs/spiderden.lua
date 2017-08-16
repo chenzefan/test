@@ -228,6 +228,17 @@ local function GetLargeGrowTime(inst)
 	return TUNING.SPIDERDEN_GROW_TIME[3]+ math.random()*TUNING.SPIDERDEN_GROW_TIME[3]
 end
 
+
+
+local function OnEntityWake(inst)
+    inst.SoundEmitter:PlaySound("dontstarve/creatures/spider/spidernest_LP", "loop")
+end
+
+local function OnEntitySleep(inst)
+	inst.SoundEmitter:KillSound("loop")
+end
+
+
 local growth_stages = {
     {name="small", time = GetSmallGrowTime, fn = SetSmall },
     {name="med", time = GetMedGrowTime , fn = SetMedium },
@@ -256,6 +267,7 @@ local function MakeSpiderDenFn(den_level)
 
 		inst:AddTag("structure")
 		inst:AddTag("spiderden")
+		inst:AddTag("hive")
 
 		-------------------
 		inst:AddComponent("health")
@@ -306,11 +318,12 @@ local function MakeSpiderDenFn(den_level)
 		--inst.spawn_weight = global_spawn_weight
 
 		inst:AddComponent("inspectable")
-		inst.SoundEmitter:PlaySound("dontstarve/creatures/spider/spidernest_LP", "loop")
+		
 		MakeSnowCovered(inst)
 
 		inst:SetPrefabName("spiderden")
-		
+		inst.OnEntitySleep = OnEntitySleep
+		inst.OnEntityWake = OnEntityWake
 		return inst
 	end
 

@@ -1,9 +1,9 @@
-assets = 
+local assets = 
 {
 	Asset("ANIM", "data/anim/resurrection_stone.zip"),
 }
 
-prefabs =
+local prefabs =
 {
 	"rocks",
 	"marble",
@@ -23,6 +23,7 @@ end
 
 local function makeactive(inst)
 	inst.AnimState:PlayAnimation("idle_activate", true)
+	inst.components.activatable.inactive = false
 end
 
 local function makeused(inst)
@@ -57,7 +58,6 @@ local function doresurrect(inst, dude)
         end
 
         if dude.components.health then
-			dude.components.health:RemovePenalty()
             dude.components.health:Respawn(TUNING.RESURRECT_HEALTH)
         end
         

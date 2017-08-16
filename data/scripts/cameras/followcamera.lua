@@ -36,19 +36,43 @@ function FollowCamera:SetDefault()
     self.paused = false
     self.shake = nil
     self.controllable = true
+    self.cutscene = false
+
+
+    if GetWorld() and GetWorld():IsCave() then
+        self.mindist = 15
+        self.maxdist = 35
+        self.mindistpitch = 25
+        self.maxdistpitch = 40
+        self.distancetarget = 25
+    end
+
 end
 
-
 function FollowCamera:GetRightVec()
-    return Vector3(math.cos((self.heading + 90)*DEGREES), 0, math.sin((self.heading+ 90)*DEGREES))
+    return Vector3(math.cos((self.headingtarget + 90)*DEGREES), 0, math.sin((self.headingtarget+ 90)*DEGREES))
 end
 
 function FollowCamera:GetDownVec()
-    return Vector3(math.cos((self.heading)*DEGREES), 0, math.sin((self.heading)*DEGREES))
+    return Vector3(math.cos((self.headingtarget)*DEGREES), 0, math.sin((self.headingtarget)*DEGREES))
 end
 
 function FollowCamera:SetPaused(val)
 	self.paused = val
+end
+
+function FollowCamera:SetMinDistance(distance)
+    self.mindist = distance
+end
+
+function FollowCamera:SetGains(pan, heading, distance)
+    self.distancegain = distance
+    self.pangain = pan
+    self.headinggain = heading
+end
+
+function FollowCamera:IsControllable()
+    return self.controllable
 end
 
 function FollowCamera:SetControllable(val)
@@ -114,7 +138,7 @@ function FollowCamera:GetHeadingTarget()
 end
 
 function FollowCamera:SetHeadingTarget(r)
-    self.headingtarget = r    
+    self.headingtarget = r
 end
 
 function FollowCamera:ZoomIn()
@@ -131,10 +155,8 @@ function FollowCamera:ZoomOut()
     self.distancetarget = self.distancetarget + self.zoomstep
     if self.distancetarget > self.maxdist then
         self.distancetarget = self.maxdist
-    end
-    
-	self.time_since_zoom = 0
-	
+    end    
+	self.time_since_zoom = 0	
 end
 
 
@@ -155,57 +177,94 @@ function FollowCamera:Snap()
     self:Apply()
 end
 
+function FollowCamera:CutsceneMode(b)
+    self.cutscene = b
+end
+
+function FollowCamera:SetCustomLocation(loc)
+    self.targetpos = loc
+end
+
 function FollowCamera:Update(dt)
 
 	if self.paused then
 		return
 	end
-	
-	
-	if self.time_since_zoom then
-		self.time_since_zoom = self.time_since_zoom + dt
-	
-		if self.should_push_down and self.time_since_zoom > .25 then
-			self.distancetarget = self.distance - self.zoomstep
-		end
-	end
 
-    if self.target then
-        self.targetpos = Vector3(self.target.Transform:GetWorldPosition()) + self.targetoffset
-    else
-        self.targetpos = self.targetoffset
-    end
+    if self.cutscene then
 
-    self.currentpos = lerp(self.currentpos, self.targetpos, dt*self.pangain)
-    
-    if self.shake then
-        local shakeOffset = self.shake:Update(dt)
-        if shakeOffset then
-            local upOffset = Vector3(0, shakeOffset.y, 0)
-            local rightOffset = self:GetRightVec() * shakeOffset.x
-            self.currentpos = self.currentpos + upOffset + rightOffset
-        else
-            self.shake = nil
+        self.currentpos = lerp(self.currentpos, self.targetpos + self.targetoffset, dt*self.pangain)
+
+
+        if self.shake then
+            local shakeOffset = self.shake:Update(dt)
+            if shakeOffset then
+                local upOffset = Vector3(0, shakeOffset.y, 0)
+                local rightOffset = self:GetRightVec() * shakeOffset.x
+                self.currentpos = self.currentpos + upOffset + rightOffset
+            else
+                self.shake = nil
+            end
         end
-    end
-    
-    if math.abs(self.heading - self.headingtarget) > .01 then
-        self.heading = lerp(self.heading, self.headingtarget, dt*self.headinggain)    
+
+        if math.abs(self.heading - self.headingtarget) > .01 then
+            self.heading = lerp(self.heading, self.headingtarget, dt*self.headinggain)    
+        end
+
+        if math.abs(self.distance - self.distancetarget) > .01 then
+            self.distance = lerp(self.distance, self.distancetarget, dt*self.distancegain)    
+        end
+
+        local percent_d = (self.distance - self.mindist)/ (self.maxdist - self.mindist)
+        self.pitch = lerp(self.mindistpitch, self.maxdistpitch, percent_d)
+
     else
-        self.heading = self.headingtarget
+    	if self.time_since_zoom then
+    		self.time_since_zoom = self.time_since_zoom + dt
+    	
+    		if self.should_push_down and self.time_since_zoom > .25 then
+    			self.distancetarget = self.distance - self.zoomstep
+    		end
+    	end
+
+        if self.target then
+            self.targetpos = Vector3(self.target.Transform:GetWorldPosition()) + self.targetoffset
+        else
+            self.targetpos = self.targetoffset
+        end
+
+        self.currentpos = lerp(self.currentpos, self.targetpos, dt*self.pangain)
+        
+        if self.shake then
+            local shakeOffset = self.shake:Update(dt)
+            if shakeOffset then
+                local upOffset = Vector3(0, shakeOffset.y, 0)
+                local rightOffset = self:GetRightVec() * shakeOffset.x
+                self.currentpos = self.currentpos + upOffset + rightOffset
+            else
+                self.shake = nil
+            end
+        end
+        
+        if math.abs(self.heading - self.headingtarget) > .01 then
+            self.heading = lerp(self.heading, self.headingtarget, dt*self.headinggain)    
+        else
+            self.heading = self.headingtarget
+        end
+
+
+        if math.abs(self.distance - self.distancetarget) > .01 then
+            self.distance = lerp(self.distance, self.distancetarget, dt*self.distancegain)    
+        else
+            self.distance = self.distancetarget
+        end
+        
+        local percent_d = (self.distance - self.mindist)/ (self.maxdist - self.mindist)
+        self.pitch = lerp(self.mindistpitch, self.maxdistpitch, percent_d)
     end
-
-
-    if math.abs(self.distance - self.distancetarget) > .01 then
-        self.distance = lerp(self.distance, self.distancetarget, dt*self.distancegain)    
-    else
-        self.distance = self.distancetarget
-    end
-
-    
-    local percent_d = (self.distance - self.mindist)/ (self.maxdist - self.mindist)
-    self.pitch = lerp(self.mindistpitch, self.maxdistpitch, percent_d)
     self:Apply()
+
+    
 end
 
 

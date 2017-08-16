@@ -15,7 +15,7 @@ local AmbientSoundMixer = Class(function(self, inst)
 	self.ambient_vol = 1
 	self.daynightparam = 1.0
 	self.playing_sounds = {}
-		
+	self.override = {}
 	
 	self.ambient_sounds =
 	{
@@ -28,9 +28,16 @@ local AmbientSoundMixer = Class(function(self, inst)
 		[GROUND.GRASS] = {sound = "dontstarve/meadow/meadowAMB", wintersound = "dontstarve/winter/wintermeadowAMB", rainsound="dontstarve/rain/rainmeadowAMB"},
 		[GROUND.FOREST] = {sound = "dontstarve/forest/forestAMB", wintersound = "dontstarve/winter/winterforestAMB", rainsound="dontstarve/rain/rainforestAMB"},
 		[GROUND.MARSH] = {sound = "dontstarve/marsh/marshAMB", wintersound = "dontstarve/winter/wintermarshAMB", rainsound="dontstarve/rain/rainmarshAMB"},
+		[GROUND.CHECKER] = {sound = "dontstarve/chess/chessAMB", wintersound = "dontstarve/winter/winterchessAMB", rainsound="dontstarve/rain/rainchessAMB"},
+		[GROUND.CAVE] = {sound = "dontstarve/cave/caveAMB"},
+		[GROUND.FUNGUS] = {sound = "dontstarve/cave/fungusforestAMB"},
+		[GROUND.SINKHOLE] = {sound = "dontstarve/cave/litcaveAMB"},
+		[GROUND.UNDERROCK] = {sound = "dontstarve/cave/caveAMB"},
+		[GROUND.MUD] = {sound = "dontstarve/cave/caveAMB"},
+		[GROUND.UNDERGROUND] = {sound = "dontstarve/cave/caveAMB"},
+		["VOID"] = {sound = "dontstarve/chess/void", wintersound = "dontstarve/chess/void", rainsound="dontstarve/chess/void"},
 	}
-	
-	
+
 	for k,v in pairs(self.ambient_sounds) do
 		if v.sound and not self.playing_sounds[v.sound] then
 			self.playing_sounds[v.sound] = {sound = v.sound, volume = 0, playing= false}
@@ -63,6 +70,9 @@ local AmbientSoundMixer = Class(function(self, inst)
     
 end)
 
+function AmbientSoundMixer:SetOverride(src, target)
+	self.override[src] = target
+end
 
 function AmbientSoundMixer:OnUpdate(dt)
 	self:UpdateAmbientGeoMix()
@@ -189,7 +199,7 @@ end
 
 --update the ambient mix based upon the player's surroundings
 function AmbientSoundMixer:UpdateAmbientGeoMix()
-
+	
 	local is_winter = GetSeasonManager():IsWinter()
 	local MAX_AMB = 3
 	local player = GetPlayer()
@@ -202,21 +212,27 @@ function AmbientSoundMixer:UpdateAmbientGeoMix()
 		
 		
 		local num_waves = 0
+
+
 		for xx = -half_tiles, half_tiles do
 			for yy = -half_tiles, half_tiles do
-				local tile = ground.Map:GetTile(x + xx, y +yy)		
+				local tile = ground.Map:GetTile(x + xx, y +yy)
+				-- HACK HACK HACK	
+				if self.override[tile] ~= nil then
+					tile = self.override[tile]
+				end
+
 				if tile and tile == GROUND.IMPASSABLE then
 					num_waves = num_waves + 1
 				elseif tile and self.ambient_sounds[tile] then
 					local sound = nil
-					if is_winter then
+					
+					if is_winter and self.ambient_sounds[tile].wintersound then
 						sound = self.ambient_sounds[tile].wintersound
+					elseif GetSeasonManager():IsRaining() and self.ambient_sounds[tile].rainsound then
+						sound = self.ambient_sounds[tile].rainsound
 					else
-						if GetSeasonManager():IsRaining() then
-							sound = self.ambient_sounds[tile].rainsound
-						else
-							sound = self.ambient_sounds[tile].sound
-						end
+						sound = self.ambient_sounds[tile].sound
 					end
 
 					if sound then
@@ -229,8 +245,10 @@ function AmbientSoundMixer:UpdateAmbientGeoMix()
 				end
 			end
 		end
+
 		
 		self.num_waves = num_waves
+		if GetWorld():HasTag("cave") then self.num_waves = 0 end
 		
 		local sorted_mix = {}
 		for k,v in pairs(sound_mix) do
@@ -258,6 +276,11 @@ function AmbientSoundMixer:UpdateAmbientGeoMix()
 			end
 		end
 	end
+end
+
+
+function AmbientSoundMixer:SetReverbPreset(reverb)
+	TheSim:SetReverbPreset(reverb)
 end
 
 

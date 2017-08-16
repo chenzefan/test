@@ -128,6 +128,10 @@ local function OnDay(inst)
     end
 end
 
+local function onbuilt(inst)
+	inst.AnimState:PlayAnimation("place")
+	inst.AnimState:PushAnimation("idle")
+end
 
 local function fn(Sim)
 	local inst = CreateEntity()
@@ -176,6 +180,7 @@ local function fn(Sim)
 	
 	MakeSnowCovered(inst, .01)
 
+	inst:ListenForEvent( "onbuilt", onbuilt)
     inst:DoTaskInTime(math.random(), function() 
         --print(inst, "spawn check day")
         if GetClock():IsDay() then 

@@ -19,6 +19,8 @@ local ChildSpawner = Class(function(self, inst)
 	self.maxchildren = 0
 	
 	self.childname = ""
+	self.rarechild = nil
+	self.rarechildchance = 0.1
 
     self.onvacate = nil
     self.onoccupied = nil
@@ -34,7 +36,7 @@ local ChildSpawner = Class(function(self, inst)
     self.timetonextregen = 0
     self.regenperiod = 20
 	self.regenvariance = 2
-    
+    self.spawnoffscreen = false
 end)
 
 function ChildSpawner:StartRegen()
@@ -44,6 +46,11 @@ function ChildSpawner:StartRegen()
 		self.timetonextregen = self.regenperiod + (math.random()*2-1)*self.regenvariance
 		self.inst:StartUpdatingComponent(self)	
 	end
+end
+
+function ChildSpawner:SetRareChild(childname, chance)
+	self.rarechild = childname
+	self.rarechildchance = chance
 end
 
 function ChildSpawner:StopRegen()
@@ -145,23 +152,26 @@ end
 
 function ChildSpawner:OnSave()
     local data = {}
+	local references = {}
 
     for k,v in pairs(self.childrenoutside) do
         if not data.childrenoutside then
             data.childrenoutside = {v.GUID}
+            
         else
             table.insert(data.childrenoutside, v.GUID)
         end
+        
+        table.insert(references, v.GUID)
     end
     data.childreninside = self.childreninside
 
 	data.spawning = self.spawning
 	data.regening = self.regening
-	data.timetonextregen = self.timetonextregen
-	data.timetonextspawn = self.timetonextspawn
+	data.timetonextregen = math.floor(self.timetonextregen)
+	data.timetonextspawn = math.floor(self.timetonextspawn)
 	
-	
-    return data
+    return data, references
 end
 
 function ChildSpawner:GetDebugString()
@@ -247,7 +257,6 @@ function ChildSpawner:LoadPostPass(newents, savedata)
     end
 end
 
-
 function ChildSpawner:SpawnChild(target, prefab)
     if not self:CanSpawn() then
         return
@@ -268,7 +277,13 @@ function ChildSpawner:SpawnChild(target, prefab)
 
 	pos = pos + offset
 
-    local child = SpawnPrefab(prefab or self.childname)
+	local childtospawn = prefab or self.childname
+
+	if self.rarechild and math.random() < self.rarechildchance then
+		childtospawn = self.rarechild
+	end
+	
+    local child = SpawnPrefab(childtospawn)
     
     if child ~= nil then
         
@@ -295,6 +310,7 @@ end
 function ChildSpawner:GoHome( child )
     if self.childrenoutside[child] then
         self.inst:PushEvent("childgoinghome", {child = child})
+        child:PushEvent("goinghome", {home = self.inst})
         if self.ongohome then
             self.ongohome(self.inst, child)
         end
@@ -313,7 +329,7 @@ function ChildSpawner:CanSpawn()
         return false
     end
     
-    if self.inst:IsAsleep() then
+    if self.inst:IsAsleep() and not self.spawnoffscreen then
 		return false
     end
     

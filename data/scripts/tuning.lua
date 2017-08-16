@@ -68,6 +68,7 @@ function Tune(overrides)
 	    BOOMERANG_DISTANCE = 12,
 	    NIGHTSWORD_USES = 100,
 	    ICESTAFF_USES = 20,
+	    FIRESTAFF_USES = 20,
 	    HAMBAT_USES = 100,
 	
 	    
@@ -174,18 +175,42 @@ function Tune(overrides)
 	    BISHOP_ATTACK_DIST = 6,
 	    BISHOP_WALK_SPEED = 5,
 	    BISHOP_TARGET_DIST = 12,
+
+	    SLURTLE_DAMAGE = 25,
+	    SLURTLE_HEALTH = 600,
+	    SLURTLE_ATTACK_PERIOD = 4,
+	    SLURTLE_ATTACK_DIST = 2.5,
+	    SLURTLE_WALK_SPEED = 3,
+	    SLURTLE_TARGET_DIST = 10,
+	    SLURTLE_SHELL_ABSORB = 0.95,
+	    SLURTLE_DAMAGE_UNTIL_SHIELD = 150,
+
+	    SLURTLE_EXPLODE_DAMAGE = 300,
+	    SLURTLESLIME_EXPLODE_DAMAGE = 50,
+
+
+	   	SNURTLE_WALK_SPEED = 4,
+	    SNURTLE_DAMAGE = 5,
+	    SNURTLE_HEALTH = 200,
+	    SNURTLE_SHELL_ABSORB = 0.8,
+	    SNURTLE_DAMAGE_UNTIL_SHIELD = 10,
+	    SNURTLE_EXPLODE_DAMAGE = 300,
 	    
+
+
 	    FREEZING_KILL_TIME = 120,
 	    STARVE_KILL_TIME = 120,
 	    HUNGRY_THRESH = .333,
 	    
 	    GRUEDAMAGE = wilson_health*.667,
 	    
+	    MARSHBUSH_DAMAGE = wilson_health*.02,
+	    
 	    GHOST_SPEED = 2,
 	    GHOST_HEALTH = 200,
 	    GHOST_RADIUS = 1.5,
 	    GHOST_DAMAGE = wilson_health*0.1,
-	    GHOST_DMG_PERIOD = 0.5,
+	    GHOST_DMG_PERIOD = 1.2,
 	    GHOST_DMG_PLAYER_PERCENT = 1,
 
 	    ABIGAIL_SPEED = 4,
@@ -202,6 +227,9 @@ function Tune(overrides)
 	        {base=1*day_time, random=0.5*day_time}   --old
 	    },
 	    
+	    PINECONE_GROWTIME = {base=0.75*day_time, random=0.25*day_time},
+	    
+	    MUSHTREE_CHOPS_TALL = 10,
 	    
 	    EVERGREEN_CHOPS_SMALL = 5,
 	    EVERGREEN_CHOPS_NORMAL = 10,
@@ -237,6 +265,13 @@ function Tune(overrides)
 	    KOALEFANT_MIN_HUNT_DISTANCE = 300, -- you can't find a new koalefant without being at least this far from the last one
 	    KOALEFANT_MAX_DIRT_DISTANCE = 200, -- if you get this far away from your dirt pile, you probably aren't going to see it any time soon, so remove it and place a new one
 	
+	   	BAT_DAMAGE = 20,
+	    BAT_HEALTH = 50,
+	    BAT_ATTACK_PERIOD = 1,
+	    BAT_ATTACK_DIST = 1.5,
+	    BAT_WALK_SPEED = 8,
+	    BAT_TARGET_DIST = 12,
+
 	    SPIDER_HEALTH = 100,
 	    SPIDER_DAMAGE = 20,
 	    SPIDER_ATTACK_PERIOD = 3,
@@ -260,6 +295,23 @@ function Tune(overrides)
 	    
 	    SPIDER_WARRIOR_WALK_SPEED = 4,
 	    SPIDER_WARRIOR_RUN_SPEED = 5,
+
+	    SPIDER_HIDER_HEALTH = 150,
+	    SPIDER_HIDER_DAMAGE = 20,
+	    SPIDER_HIDER_ATTACK_PERIOD = 3,
+	    SPIDER_HIDER_WALK_SPEED = 3,
+	    SPIDER_HIDER_RUN_SPEED = 5,
+	    SPIDER_HIDER_SHELL_ABSORB = 0.75,
+
+	    SPIDER_SPITTER_HEALTH = 175,
+	    SPIDER_SPITTER_DAMAGE_MELEE = 20,
+	    SPIDER_SPITTER_DAMAGE_RANGED = 20,
+	    SPIDER_SPITTER_ATTACK_PERIOD = 6,
+	    SPIDER_SPITTER_ATTACK_RANGE = 8,
+	    SPIDER_SPITTER_MELEE_RANGE = 3,
+	    SPIDER_SPITTER_HIT_RANGE = 3,
+	    SPIDER_SPITTER_WALK_SPEED = 4,
+	    SPIDER_SPITTER_RUN_SPEED = 5,
 	
 	    LEIF_HEALTH = 2000,
 	    LEIF_DAMAGE = 150,
@@ -288,6 +340,14 @@ function Tune(overrides)
 	    BIRD_SPAWN_MAX_FEATHERHAT = 7,
 	    BIRD_SPAWN_DELAY_FEATHERHAT = {min=2, max=10},
 	    
+		FROG_RAIN_DELAY = {min=0.1, max=2},
+		FROG_RAIN_SPAWN_RADIUS = 60,
+		FROG_RAIN_MAX = 300,
+		FROG_RAIN_LOCAL_MAX = 25,
+		FROG_RAIN_MAX_RADIUS = 50,
+		FROG_RAIN_PRECIPITATION = 999, -- 0-1, never by default
+		FROG_RAIN_MOISTURE = 999999, -- 0-4000ish, never by default
+
 	    BEE_HEALTH = 100,
 	    BEE_DAMAGE = 10,
 	    BEE_ATTACK_PERIOD = 2,
@@ -440,6 +500,8 @@ function Tune(overrides)
 	    FARM3_GROW_BONUS = .333,
 	    POOP_FERTILIZE = day_time,
 	    POOP_SOILCYCLES = 10,
+	    GUANO_FERTILIZE = day_time * 1.5,
+	    GUANO_SOILCYCLES = 12,
 	
 	    SPOILEDFOOD_FERTILIZE = day_time/4,
 	    SPOILEDFOOD_SOILCYCLES = 2,
@@ -453,6 +515,7 @@ function Tune(overrides)
 	    TINY_FUEL = seg_time*.25,
 	    SMALL_FUEL = seg_time * .5,
 	    MED_FUEL = seg_time * 1.5,
+	    MED_LARGE_FUEL = seg_time * 3,
 	    LARGE_FUEL = seg_time * 6,
 	    
 	    TINY_BURNTIME = seg_time*.1,
@@ -478,13 +541,27 @@ function Tune(overrides)
 	    TORCH_RAIN_RATE = 1.5,
 	    TORCH_FUEL = night_time*1.25,
 	    MINERHAT_LIGHTTIME = (night_time+dusk_time)*2.6,
+	    LANTERN_LIGHTTIME = (night_time+dusk_time)*2.6,
 	    SPIDERHAT_PERISHTIME = 4*seg_time,
 	    SPIDERHAT_RANGE = 12,
 	    ONEMANBAND_PERISHTIME = 6*seg_time,
 	    ONEMANBAND_RANGE = 12,
 	    
+		EARMUFF_PERISHTIME = total_day_time*5,
+		WINTERHAT_PERISHTIME = total_day_time*10,
+		BEEFALOHAT_PERISHTIME = total_day_time*10,
+		
+		TRUNKVEST_PERISHTIME = total_day_time*15,
+		SWEATERVEST_PERISHTIME = total_day_time*10,
+
+		WALRUSHAT_PERISHTIME = total_day_time*25,
+		FEATHERHAT_PERISHTIME = total_day_time*8,
+		TOPHAT_PERISHTIME = total_day_time*8,
+	    
 	    GRASS_REGROW_TIME = total_day_time*3,
 	    SAPLING_REGROW_TIME = total_day_time*4,
+	    MARSHBUSH_REGROW_TIME = total_day_time*4,
+	    FLOWER_CAVE_REGROW_TIME = total_day_time*3,
 	    
 	    BERRY_REGROW_TIME = total_day_time*3,
 	    BERRY_REGROW_INCREASE = total_day_time*.5,
@@ -508,6 +585,8 @@ function Tune(overrides)
 		ARMORMARBLE_SLOW = 0.7,
 	    ARMOR_FOOTBALLHAT = wilson_health*3,
 		ARMOR_FOOTBALLHAT_ABSORPTION = .8,
+		ARMOR_SLURTLEHAT = wilson_health*5,
+		ARMOR_SLURTLEHAT_ABSORPTION = 0.9,
 	    ARMOR_BEEHAT = wilson_health*5,
 		ARMOR_BEEHAT_ABSORPTION = .8,
 		ARMOR_SANITY = wilson_health * 5,
@@ -665,6 +744,16 @@ function Tune(overrides)
 		    {maxsanity=.2, maxeyes=6},
 		},
 		
+		DIVINING_DISTANCES = 
+		{
+		    {maxdist=50, describe="hot", pingtime=1},
+		    {maxdist=100, describe="warmer", pingtime=2},
+		    {maxdist=200, describe="warm", pingtime=4},
+		    {maxdist=400, describe="cold", pingtime=8},
+		},
+		DIVINING_MAXDIST = 300,
+		DIVINING_DEFAULTPING = 8,
+		
 		--expressed in 'additional time before you freeze to death'
 		INSULATION_TINY = seg_time,
 		INSULATION_SMALL = seg_time*2,
@@ -687,6 +776,21 @@ function Tune(overrides)
 		BIRD_RAIN_FACTOR = .25,
 		
 		RESURRECT_HEALTH = 50,
+		
+		SEWINGKIT_USES = 5,
+		SEWINGKIT_REPAIR_VALUE = total_day_time*5,
+
+		
+		RABBIT_CARROT_LOYALTY = seg_time*8,
+	    BUNNYMAN_DAMAGE = 40,
+	    BUNNYMAN_HEALTH = 200,
+	    BUNNYMAN_ATTACK_PERIOD = 2,
+	    BUNNYMAN_RUN_SPEED = 6,
+	    BUNNYMAN_WALK_SPEED = 3,
+		BUNNYMAN_PANIC_THRESH = .333,
+		BUNNYMAN_HEALTH_REGEN_PERIOD = 5,
+		BUNNYMAN_HEALTH_REGEN_AMOUNT = (200/120)*5,
+		BUNNYMAN_SEE_MEAT_DIST = 8,
 	}
 end
 

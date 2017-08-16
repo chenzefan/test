@@ -29,6 +29,7 @@ local events=
         end 
     end),
     EventHandler("onignite", function(inst) if inst.components.health:GetPercent() > 0 then inst.sg:GoToState("distress_pre") end end),
+    EventHandler("trapped", function(inst) inst.sg:GoToState("trapped") end),
 }
 
 local states=
@@ -313,6 +314,19 @@ local states=
             end
         end,
     },    
+    
+    State{
+        name = "trapped",
+        tags = {"busy"},
+        
+        onenter = function(inst) 
+            inst.Physics:Stop()
+            inst.AnimState:PlayAnimation("stunned_loop", true)
+            inst.sg:SetTimeout(1)
+        end,
+        
+        ontimeout = function(inst) inst.sg:GoToState("flyaway") end,
+    },
     
     State{
         name = "stunned",

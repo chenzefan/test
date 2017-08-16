@@ -36,10 +36,6 @@ end
 
 
 
-function Hunger:GetPercent()
-    return self.current / self.max
-end
-
 function Hunger:Pause()
     self.burning = false
 end
@@ -63,6 +59,10 @@ function Hunger:IsStarving()
 end
 
 function Hunger:DoDelta(delta, overtime)
+    if self.inst.components.health.invincible == true or self.inst.is_teleporting == true then
+        return
+    end
+
     local old = self.current
     self.current = self.current + delta
     if self.current < 0 then 

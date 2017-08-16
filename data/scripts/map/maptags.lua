@@ -13,8 +13,11 @@ local function MakeTags()
 			["ForceConnected"] = function(tagdata)
 								return "TAG", "ForceConnected"
 							end,
-			["InsanityWormhole"] = function(tagdata)
-								return "TAG", "InsanityWormhole"
+			["ForceDisconnected"] = function(tagdata)
+								return "TAG", "ForceDisconnected"
+							end,
+			["OneshotWormhole"] = function(tagdata)
+								return "TAG", "OneshotWormhole"
 							end,
 			["ExitPiece"] = function(tagdata)
 								return "TAG", "ExitPiece"

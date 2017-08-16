@@ -72,23 +72,23 @@ local function makefn(stage)
 	    local color = 0.75 + math.random() * 0.25
 	    anim:SetMultColour(color, color, color, 1)
 
+		inst:AddComponent("pickable")
+		inst.components.pickable.picksound = "dontstarve/wilson/pickup_reeds"
+		
+		inst.components.pickable:SetUp("cutgrass", TUNING.GRASS_REGROW_TIME)
+		inst.components.pickable.onregenfn = onregenfn
+		inst.components.pickable.onpickedfn = onpickedfn
+		inst.components.pickable.makeemptyfn = makeemptyfn
+		inst.components.pickable.makebarrenfn = makebarrenfn
+		inst.components.pickable.makefullfn = makefullfn
+		inst.components.pickable.max_cycles = 20
+		inst.components.pickable.cycles_left = 20   
+		inst.components.pickable.ontransplantfn = ontransplantfn
 
-	    if stage == 0 then
-		    inst:AddComponent("pickable")
-		    inst.components.pickable.picksound = "dontstarve/wilson/pickup_reeds"
-		    
-		    inst.components.pickable:SetUp("cutgrass", TUNING.GRASS_REGROW_TIME)
-			inst.components.pickable.onregenfn = onregenfn
-			inst.components.pickable.onpickedfn = onpickedfn
-		    inst.components.pickable.makeemptyfn = makeemptyfn
-		    inst.components.pickable.makebarrenfn = makebarrenfn
-		    inst.components.pickable.makefullfn = makefullfn
-		    inst.components.pickable.max_cycles = 20
-			inst.components.pickable.cycles_left = 20   
-			inst.components.pickable.ontransplantfn = ontransplantfn
-		else
-			inst.AnimState:PushAnimation("picked")	
+	    if stage == 1 then
+			inst.components.pickable:MakeBarren()
 		end
+
 		inst:AddComponent("lootdropper")
 	    inst:AddComponent("inspectable")    
 	    

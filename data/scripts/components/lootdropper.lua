@@ -4,6 +4,8 @@ local LootDropper = Class(function(self, inst)
     self.randomloot = nil
     self.totalrandomweight = nil
     self.chanceloot = nil
+    self.ifnotchanceloot = nil
+    self.droppingchanceloot = false
     self.loot = nil
     
 end)
@@ -30,6 +32,13 @@ function LootDropper:AddChanceLoot( prefab, chance)
 		self.chanceloot = {}
 	end
     table.insert(self.chanceloot, {prefab=prefab,chance=chance} )
+end
+
+function LootDropper:AddIfNotChanceLoot(prefab)
+	if not self.ifnotchanceloot then
+		self.ifnotchanceloot = {}
+	end
+	table.insert(self.ifnotchanceloot, {prefab=prefab})
 end
 
 function LootDropper:PickRandomLoot()
@@ -60,9 +69,19 @@ function LootDropper:GenerateLoot()
 		for k,v in pairs(self.chanceloot) do
 			if math.random() < v.chance then
 				table.insert(loots, v.prefab)
+				self.droppingchanceloot = true
 			end
 		end
 	end
+
+	if not self.droppingchanceloot and self.ifnotchanceloot then
+		self.inst:PushEvent("ifnotchanceloot")
+		for k,v in pairs(self.ifnotchanceloot) do
+			table.insert(loots, v.prefab)
+		end
+	end
+
+
     
     if self.loot then
 		for k,v in ipairs(self.loot) do

@@ -5,7 +5,7 @@ local YOFFSETDOWN = 60
 HoverText = Class(Widget, function(self, owner)
     Widget._ctor(self, "HoverText")
 	self.owner = owner
-
+    self.isFE = false
     self:SetClickable(false)
     --self:MakeNonClickable()
     self.text = self:AddChild(Text(UIFONT, 30))
@@ -17,10 +17,16 @@ end)
 
 function HoverText:Update()
 	
-    local str = self.owner.HUD.controls:GetTooltip() or self.owner.components.playercontroller:GetHoverTextOverride()
+    local str = nil
+    if self.isFE == false then 
+        str = self.owner.HUD.controls:GetTooltip() or self.owner.components.playercontroller:GetHoverTextOverride()
+    else
+        str = self.owner:GetTooltip()
+    end
+
     local secondarystr = nil
-    
-    if not str then
+ 
+    if not str and self.isFE == false then
         local lmb = self.owner.components.playeractionpicker:GetLeftMouseAction()
         if lmb then
             
@@ -75,6 +81,9 @@ end
 
 function HoverText:UpdatePosition(x,y)
 
+
+	local scale = self:GetScale()
+	
     local scr_w, scr_h = TheSim:GetScreenSize()
 
     local w = 0
@@ -91,11 +100,14 @@ function HoverText:UpdatePosition(x,y)
         h = math.max(h, h1)
     end
 
+	w = w*scale.x
+	h = h*scale.y
+	
     x = math.max(x, w/2)
     x = math.min(x, scr_w - w/2)
 
-    y = math.max(y, h/2 + YOFFSETDOWN)
-    y = math.min(y, scr_h - h/2 - YOFFSETUP)
+    y = math.max(y, h/2 + YOFFSETDOWN*scale.y)
+    y = math.min(y, scr_h - h/2 - YOFFSETUP*scale.x)
 
     self:SetPosition(x,y,0)
 end

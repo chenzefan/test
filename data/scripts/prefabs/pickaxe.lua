@@ -36,6 +36,7 @@ local function fn(Sim)
     anim:SetBuild("pickaxe")
     anim:PlayAnimation("idle")
     
+    inst:AddTag("sharp")
     
     -----
     inst:AddComponent("tool")

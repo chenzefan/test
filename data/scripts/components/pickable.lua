@@ -11,6 +11,7 @@ local Pickable = Class(function(self, inst)
     self.cycles_left = nil
     self.transplanted = false
     self.caninteractwith = true
+    self.numtoharvest = 1
     
     self.paused = false
     self.pause_time = 0
@@ -74,10 +75,11 @@ function Pickable:GetDebugString()
 	end
 end
 
-function Pickable:SetUp(product, regen)
+function Pickable:SetUp(product, regen, number)
     self.canbepicked = true
     self.product = product
     self.regentime = regen
+    self.numtoharvest = number or 1
 end
 
 function Pickable:SetOnPickedFn(fn)
@@ -113,21 +115,34 @@ end
 
 
 function Pickable:OnSave()
+	
 	local data = { 
-		picked = not self.canbepicked, 
-		cycles_left = self.cycles_left, 
-		max_cycles = self.max_cycles, 
-		transplanted = self.transplanted,
-		paused = self.paused,
-		pause_time = self.pause_time 
+		picked = not self.canbepicked and true or nil, 
+		transplanted = self.transplanted and true or nil,
+		paused = self.paused and true or nil,
+		--pause_time = self.pause_time 
 	}
-		
-    local time = GetTime()
-    if self.targettime and self.targettime > time then
-        data.time = self.targettime - time
-    end
-    
-    return data
+
+	if self.cycles_left ~= self.max_cycles then
+		data.cycles_left = self.cycles_left
+		data.max_cycles = self.max_cycles 
+	end
+	
+	if self.pause_time and self.pause_time > 0 then
+		data.pause_time = self.pause_time
+	end
+	
+	if self.targettime then
+	    local time = GetTime()
+		if self.targettime > time then
+	        data.time = math.floor(self.targettime - time)
+	    end
+	end
+	
+    if next(data) then
+		return data
+	end
+	
 end
 
 function Pickable:OnLoad(data)
@@ -159,6 +174,12 @@ function Pickable:OnLoad(data)
 			self.targettime = GetTime() + data.time
 		end
 	end    
+
+	if data.makealwaysbarren == 1 then
+		if self.makebarrenfn then
+			self:MakeBarren()
+		end
+	end
 end
 
 function Pickable:IsBarren()
@@ -239,8 +260,21 @@ function Pickable:Pick(picker)
 			end
 		end
 		
+		local loot = nil
+        if picker and picker.components.inventory and self.product then
+            loot = SpawnPrefab(self.product)
+
+            if loot then
+	            if self.numtoharvest > 1 and loot.components.stackable then
+	            	loot.components.stackable:SetStackSize(self.numtoharvest)
+	            end
+		        picker:PushEvent("picksomething", {object = self.inst, loot= loot})
+                picker.components.inventory:GiveItem(loot, nil, Vector3(TheSim:GetScreenPos(self.inst.Transform:GetWorldPosition())))
+            end
+        end
+        
         if self.onpickedfn then
-            self.onpickedfn(self.inst, picker)
+            self.onpickedfn(self.inst, picker, loot)
         end
         
         self.canbepicked = false
@@ -249,14 +283,6 @@ function Pickable:Pick(picker)
 			self.task = self.inst:DoTaskInTime(self.regentime, function() self:Regen() end, "regen")
 			self.targettime = GetTime() + self.regentime
 		end
-        
-        if picker and picker.components.inventory and self.product then
-            local loot = SpawnPrefab(self.product)
-            if loot then
-		        picker:PushEvent("picksomething", {object = self.inst, loot= loot})
-                picker.components.inventory:GiveItem(loot, nil, Vector3(TheSim:GetScreenPos(self.inst.Transform:GetWorldPosition())))
-            end
-        end
         
     end
 end

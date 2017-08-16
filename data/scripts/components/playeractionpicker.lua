@@ -35,6 +35,9 @@ function PlayerActionPicker:GetSceneActions(targetobject, right)
 		table.insert(actions, targetobject.inherentsceneaction)
 	end
 
+    if #actions == 0 and targetobject.components.inspectable then
+        table.insert(actions, ACTIONS.WALKTO)
+    end
 
     return self:SortActionList(actions, targetobject)
 end
@@ -102,10 +105,11 @@ function PlayerActionPicker:GetInventoryActions(useitem, right)
         end
         
         local acts = self:SortActionList(actions, nil, useitem)
-        
-        for k,v in pairs(acts) do
-            if v.action == ACTIONS.DROP then
-                v.options.wholestack = not TheInput:IsKeyDown(KEY_CTRL)
+        if acts ~= nil then
+            for k,v in pairs(acts) do
+                if v.action == ACTIONS.DROP then
+                    v.options.wholestack = not TheInput:IsKeyDown(KEY_CTRL)
+                end
             end
         end
         
@@ -197,7 +201,6 @@ function PlayerActionPicker:GetClickActions( target_ent, position )
 end
 
 function PlayerActionPicker:GetRightClickActions( target_ent, position )
-    
     local actions = nil
     local useitem = self.inst.components.inventory:GetActiveItem()
     local equipitem = self.inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
@@ -311,10 +314,8 @@ function PlayerActionPicker:DoGetMouseActions( )
 
 		if (target and target:IsValid() and target.Transform and (target:HasTag("player") or TheSim:GetLightAtPoint(target.Transform:GetWorldPosition()) > TUNING.DARK_CUTOFF)) or TheSim:GetLightAtPoint(position.x,position.y,position.z) > TUNING.DARK_CUTOFF then    
 			local acts = self:GetRightClickActions(target, position)
-			
 			if acts[1] and (not action or acts[1].action ~= action.action) then
 				second_action = acts[1]
-			
 				if not highlightdude and self.inst.components.playercontroller.enabled then
 					highlightdude = acts[1].target
 				end

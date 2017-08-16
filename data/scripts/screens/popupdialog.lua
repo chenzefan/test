@@ -5,7 +5,7 @@ require "image"
 require "uianim"
 
 
-PopupDialogScreen = Class(Screen, function(self, title, text, buttons, timeout, portrate_hack)
+PopupDialogScreen = Class(Screen, function(self, title, text, buttons, timeout)
 	Screen._ctor(self, "PopupDialogScreen")
 
 	--darken everything behind the dialog
@@ -33,25 +33,15 @@ PopupDialogScreen = Class(Screen, function(self, title, text, buttons, timeout, 
 		self.bg:SetScale(2,1.2,1.2)
 	end
 	
-	if portrate_hack ~= nil and portrate_hack ~= "MISSING NAME" then
-		print("portrate_hack", portrate_hack)
-		self.portrait = self.proot:AddChild(Image())
-		self.portrait:SetVRegPoint(ANCHOR_MIDDLE)
-   		self.portrait:SetHRegPoint(ANCHOR_MIDDLE)
-		self.portrait:SetPosition(RESOLUTION_X/3,RESOLUTION_Y/2+40,0)
-		self.portrait:SetClickable(false)		
-		self.portrait:SetTexture("data/portraits/"..portrate_hack..".tex")
-	end
-
 	--title	
     self.title = self.proot:AddChild(Text(TITLEFONT, 50))
-    self.title:SetPosition(0, 70, 0)
+    self.title:SetPosition(0, 65, 0)
     self.title:SetString(title)
 
 	--text
-    self.text = self.proot:AddChild(Text(DIALOGFONT, 24))
+    self.text = self.proot:AddChild(Text(BODYTEXTFONT, 30))
 
-    self.text:SetPosition(0, 15, 0)
+    self.text:SetPosition(0, 0, 0)
     self.text:SetString(text)
     self.text:EnableWordWrap(true)
     self.text:SetRegionSize(480, 70)
@@ -68,7 +58,7 @@ PopupDialogScreen = Class(Screen, function(self, title, text, buttons, timeout, 
 		total_w = total_w + space_between*(#buttons-1) 
 	end
 	
-	self.menu:SetPosition(-(total_w / 2) + button_w/2, -60,0) 
+	self.menu:SetPosition(-(total_w / 2) + button_w/2, -65,0) 
 	
 	local pos = Vector3(0,0,0)
 	for k,v in ipairs(buttons) do

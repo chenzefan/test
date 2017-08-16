@@ -225,6 +225,8 @@ end
 
 
 local function OnGrowSeasonChange(inst)
+	if not GetSeasonManager() then return end
+	
 	if inst.components.pickable then
 		if GetSeasonManager():IsWinter() then
 			inst.components.pickable:Pause()
@@ -235,6 +237,8 @@ local function OnGrowSeasonChange(inst)
 end
 
 function MakeNoGrowInWinter(inst)
+	if not GetSeasonManager() then return end
+	
 	inst:ListenForEvent("seasonChange", function() OnGrowSeasonChange(inst) end, GetWorld())
 	if GetSeasonManager():IsWinter() then
 		OnGrowSeasonChange(inst)
@@ -253,6 +257,7 @@ local function OnSnowCoverChange(inst, thresh)
 end
 
 function MakeSnowCovered(inst, thresh)
+	if not GetSeasonManager() then return end
 	thresh = thresh or .02
 	inst.AnimState:OverrideSymbol("snow", "snow", "snow")
 	inst:ListenForEvent("snowcoverchange", function() OnSnowCoverChange(inst, thresh) end, GetWorld())

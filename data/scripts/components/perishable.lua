@@ -25,7 +25,7 @@ local function Update(inst, dt)
 			modifier = TUNING.PERISH_GROUND_MULT 
 		end
 		
-		if GetSeasonManager():GetCurrentTemperature() < 0 then
+		if GetSeasonManager() and GetSeasonManager():GetCurrentTemperature() < 0 then
 			modifier = modifier * TUNING.PERISH_WINTER_MULT
 		end
 		
@@ -176,7 +176,7 @@ function Perishable:OnSave()
 
     return data
 end   
-   
+      
 function Perishable:OnLoad(data)
 
     if data and data.time then

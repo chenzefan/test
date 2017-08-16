@@ -40,7 +40,11 @@ function Workable:WorkedBy(worker, numworks)
     end
 end
 
-function Workable:IsActionValid(action)
+function Workable:IsActionValid(action, right)
+    if action == ACTIONS.HAMMER and not right then
+		return false
+    end
+    
     return self.workleft > 0 and action == self.action
     
 end

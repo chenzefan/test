@@ -56,6 +56,7 @@ local MULTIPLY = {
 	["rare"] = 0.5,
 	["default"] = 1,
 	["often"] = 1.5,
+	["mostly"] = 2.2,
 	["always"] = 3,		
 	}
 
@@ -70,13 +71,17 @@ local TRANSLATE_TO_PREFABS = {
 	["frogs"] = 	{"pond"},
 	["bees"] = 		{"killerbee", "beehive"},
 	["grass"] = 	{"grass"},
+	["rock"] = 		{"rock1", "rock2", "rock_flintless"}, 
 	["rocks"] = 	{"rocks"}, 
 	["sapling"] = 	{"sapling"},
 	["reeds"] = 	{"reeds"},	
-	["trees"] = 	{"evergreen"},	
+	["trees"] = 	{"evergreen", "evergreen_sparse"},	
 	["evergreen"] = {"evergreen"},	
 	["carrot"] = 	{"carrot_planted"},
 	["berrybush"] = {"berrybush", "berrybush2"},
+	["maxwelllight"] = {"maxwelllight"},
+	["maxwelllight_area"] = {"maxwelllight_area"},
+	["fireflies"] = {"fireflies"},
 	}
 
 local customise = require("map/customise")
@@ -169,6 +174,12 @@ local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choi
 	local islandpercent = nil
 	local story_gen_params = {}
 
+  	local defalt_impassible_tile = GROUND.IMPASSABLE
+  	if prefab == "cave" then
+  		defalt_impassible_tile =  GROUND.WALL_ROCKY
+  	end
+
+  	story_gen_params.impassible_value = defalt_impassible_tile
 	story_gen_params.level_type = level_type
 	
 	if current_gen_params["tweak"] ~=nil and current_gen_params["tweak"]["misc"] ~= nil then
@@ -222,10 +233,12 @@ local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choi
 	local min_size = 350
 	if current_gen_params["tweak"] ~= nil and current_gen_params["tweak"]["misc"] ~= nil and current_gen_params["tweak"]["misc"]["world_size"] ~= nil then
 		local sizes ={
+			["tiny"] = 150,
+			["small"] = 250,
 			["default"] = 350,
-			["medium"] = 475,
-			["large"] = 625,
-			["huge"] = 800,
+			["medium"] = 400,
+			["large"] = 425,
+			["huge"] = 450,
 			}
 			
 		min_size = sizes[current_gen_params["tweak"]["misc"]["world_size"]]
@@ -246,6 +259,20 @@ local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choi
 
 	topology_save.root:ApplyPoisonTag()
   		
+  	if prefab == "cave" then
+	  	local nodes = topology_save.root:GetNodes(true)
+	  	for k,node in pairs(nodes) do
+	  		-- BLAH HACK
+	  		if node.data ~= nil and 
+	  			node.data.type ~= nil and 
+	  			string.find(k, "Room") ~= nil then
+
+	  			WorldSim:SetNodeType(k, 5)
+	  		end
+	  	end
+  	end
+  	WorldSim:SetImpassibleTileType(defalt_impassible_tile)
+  	
 	WorldSim:ConvertToTileMap(min_size)
 
 	WorldSim:SeparateIslands()
@@ -254,16 +281,34 @@ local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choi
 	
 	local join_islands = string.upper(level_type) ~= "ADVENTURE"
 
-	WorldSim:ForceConnectivity()
+	WorldSim:ForceConnectivity(join_islands)
     
 	topology_save.root:SwapWormholesAndRoadsExtra(entities, map_width, map_height)
+	if topology_save.root.error == true then
+	    print ("ERROR: Node ", topology_save.root.error_string)
+	    return nil
+	end
 	
-    WorldSim:SetRoadParameters(
-		ROAD_PARAMETERS.NUM_SUBDIVISIONS_PER_SEGMENT,
-		ROAD_PARAMETERS.MIN_WIDTH, ROAD_PARAMETERS.MAX_WIDTH,
-		ROAD_PARAMETERS.MIN_EDGE_WIDTH, ROAD_PARAMETERS.MAX_EDGE_WIDTH )
+	if prefab ~= "cave" then
+    	WorldSim:SetRoadParameters(
+			ROAD_PARAMETERS.NUM_SUBDIVISIONS_PER_SEGMENT,
+			ROAD_PARAMETERS.MIN_WIDTH, ROAD_PARAMETERS.MAX_WIDTH,
+			ROAD_PARAMETERS.MIN_EDGE_WIDTH, ROAD_PARAMETERS.MAX_EDGE_WIDTH )
 	
-	WorldSim:DrawRoads(join_islands) 
+		WorldSim:DrawRoads(join_islands) 
+	else
+		-- TEMP NASTY HACK
+	  	local nodes = topology_save.root:GetNodes(true)
+	  	for k,node in pairs(nodes) do
+	  		if node.data.type == "SinkholeRoom"  or node.data.type == "BGSinkhole" then
+	  			WorldSim:RunCA(k, 6, CA_SEED_MODE.SEED_CENTROID, 1)
+	  		elseif node.data.type == "CaveRoom" or node.data.type =="BGCave" then
+	  			WorldSim:RunCA(k, 6, CA_SEED_MODE.SEED_WALLS, 1)
+	  		elseif node.data.type == "FungusRoom" or node.data.type =="BGFungus" then
+	  			WorldSim:RunCA(k, 6, CA_SEED_MODE.SEED_RANDOM, 2)
+	  		end
+	  	end
+    end
     
     print("Encoding...")
     
@@ -342,12 +387,13 @@ local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choi
 --   		return nil
 --   	end
    	
-   	local current_pos_idx = 1
-   	for i,k in ipairs(double_check) do
-   		if entities[k] == nil then
-   			print("PANIC: missing teleportato part! ",k)
-			return nil
-		end			
+   	if prefab == "forest" then	   	
+	   	for i,k in ipairs(double_check) do
+	   		if entities[k] == nil then
+	   			print("PANIC: missing teleportato part! ",k)
+				return nil
+			end			
+		end
 	end
    	
    	save.map.topology.overrides = runtime_overrides
@@ -397,41 +443,45 @@ local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choi
 
     save.playerinfo.day = 0
     save.map.roads = {}
-    
-    if world_gen_choices["tweak"] == nil or world_gen_choices["tweak"]["misc"] == nil or world_gen_choices["tweak"]["misc"]["roads"] ~= nil or world_gen_choices["tweak"]["misc"]["roads"] ~= "never" then
-	    local num_roads, road_weight, points_x, points_y = WorldSim:GetRoad(0, join_islands)
-	    local current_road = 1
-	    local min_road_length = math.random(3,5)
-	   	print("Building roads... Min Length:"..min_road_length)
-	   	
-	    
-	    if #points_x>=min_road_length then
-	    	save.map.roads[current_road] = {3}
-			for current_pos_idx = 1, #points_x  do
-					local x = math.floor((points_x[current_pos_idx] - map_width/2.0)*TILE_SCALE*10)/10.0
-					local y = math.floor((points_y[current_pos_idx] - map_height/2.0)*TILE_SCALE*10)/10.0
-					
-					table.insert(save.map.roads[current_road], {x, y})
+    if prefab == "forest" then	   	
+
+	    local current_pos_idx = 1
+	    if (world_gen_choices["tweak"] == nil or world_gen_choices["tweak"]["misc"] == nil or world_gen_choices["tweak"]["misc"]["roads"] == nil) or world_gen_choices["tweak"]["misc"]["roads"] ~= "never" then
+		    local num_roads, road_weight, points_x, points_y = WorldSim:GetRoad(0, join_islands)
+		    local current_road = 1
+		    local min_road_length = math.random(3,5)
+		   	--print("Building roads... Min Length:"..min_road_length, world_gen_choices["tweak"]["misc"]["roads"])
+		   	
+		    
+		    if #points_x>=min_road_length then
+		    	save.map.roads[current_road] = {3}
+				for current_pos_idx = 1, #points_x  do
+						local x = math.floor((points_x[current_pos_idx] - map_width/2.0)*TILE_SCALE*10)/10.0
+						local y = math.floor((points_y[current_pos_idx] - map_height/2.0)*TILE_SCALE*10)/10.0
+						
+						table.insert(save.map.roads[current_road], {x, y})
+				end
+				current_road = current_road + 1
 			end
-			current_road = current_road + 1
-		end
-		
-	    for current_road = current_road, num_roads  do
-	    	
-	    	num_roads, road_weight, points_x, points_y = WorldSim:GetRoad(current_road-1, join_islands)
-	    	    
-	    	if #points_x>=min_road_length then    	
-		    	save.map.roads[current_road] = {road_weight}
-			    for current_pos_idx = 1, #points_x  do
-					local x = math.floor((points_x[current_pos_idx] - map_width/2.0)*TILE_SCALE*10)/10.0
-					local y = math.floor((points_y[current_pos_idx] - map_height/2.0)*TILE_SCALE*10)/10.0
-					
-					table.insert(save.map.roads[current_road], {x, y})
+			
+		    for current_road = current_road, num_roads  do
+		    	
+		    	num_roads, road_weight, points_x, points_y = WorldSim:GetRoad(current_road-1, join_islands)
+		    	    
+		    	if #points_x>=min_road_length then    	
+			    	save.map.roads[current_road] = {road_weight}
+				    for current_pos_idx = 1, #points_x  do
+						local x = math.floor((points_x[current_pos_idx] - map_width/2.0)*TILE_SCALE*10)/10.0
+						local y = math.floor((points_y[current_pos_idx] - map_height/2.0)*TILE_SCALE*10)/10.0
+						
+						table.insert(save.map.roads[current_road], {x, y})
+					end
 				end
 			end
 		end
 	end
-    print("Done forest map gen!")
+
+	print("Done "..prefab.." map gen!")
 
 	return save
 end

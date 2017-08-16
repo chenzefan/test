@@ -11,9 +11,12 @@ FACING_UP = 1
 FACING_LEFT = 2
 FACING_DOWN = 3
 
+-- Careful inserting into here. You will have to update game\render\RenderLayer.h
 LAYER_BACKGROUND = 1
-LAYER_WORLD = 2
-LAYER_FRONTEND = 4
+LAYER_WORLD_BACKGROUND = 2
+LAYER_WORLD = 3
+LAYER_WORLD_CEILING = 4
+LAYER_FRONTEND = 6
 
 ANCHOR_MIDDLE = 0
 ANCHOR_LEFT = 1
@@ -131,7 +134,7 @@ MOUSEBUTTON_SCROLLDOWN = 4
 
 CHARACTERLIST =
 {
-	'wilson', 'willow', 'wendy', 'wolfgang', 'wx78', 'wickerbottom', 'wes'
+	'wilson', 'willow', 'wolfgang', 'wendy', 'wx78', 'wickerbottom', 'wes', 'waxwell',
 }
 
 EQUIPSLOTS=
@@ -161,6 +164,7 @@ GROUND =
 {
 	INVALID = -1,
     IMPASSABLE = 1,
+    
     ROAD = 2,
     ROCKY = 3,
     DIRT = 4,
@@ -172,13 +176,47 @@ GROUND =
 	WOODFLOOR = 10,
 	CARPET = 11,
 	CHECKER = 12,
+
+	-- CAVES
+	CAVE = 13,
+	FUNGUS = 14,
+	SINKHOLE = 15,
+    UNDERROCK = 16,
+    MUD = 17,
+
+    -- Noise
+	GROUND_NOISE = 125,
+	CAVE_NOISE = 126,
+	FUNGUS_NOISE = 127,
+
 	UNDERGROUND = 128,
+	
+	WALL_ROCKY = 151,
+	WALL_DIRT = 152,
+	WALL_MARSH = 153,
+	WALL_CAVE = 154,
+	WALL_FUNGUS = 155,
+	WALL_SINKHOLE = 156,
+--	STILL_WATER_SHALLOW = 130,
+--	STILL_WATER_DEEP = 131,
+--	MOVING_WATER_SHALLOW = 132,
+--	MOVING_WATER_DEEP = 133,
+--	SALT_WATER_SHALLOW = 134,
+--	SALT_WATER_DEEP = 135,
+}
+
+CA_SEED_MODE =
+{
+	SEED_RANDOM = 0,
+	SEED_CENTROID = 1,
+	SEED_SITE = 2,
+	SEED_WALLS = 3
 }
 
 COLLISION =
 {
-    GROUND = 32,
-    LIMITS = 64,
+    GROUND = 32, -- See BpWorld.cpp (ground and cave walls)
+    LIMITS = 64, -- See BpWorld.cpp (ocean walls)
     WORLD = 96,
     ITEMS = 128,
     OBSTACLES = 256,
@@ -239,6 +277,7 @@ SEASONS =
 {
 	SUMMER = "summer",
 	WINTER = "winter",
+	CAVES = "caves",
 }
 
 RENDER_QUALITY = 

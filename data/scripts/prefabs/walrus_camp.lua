@@ -89,7 +89,7 @@ end
 
 local function UpdateCampOccupied(inst)
     trace("UpdateCampOccupied", inst, inst:GetPosition())
-    if inst.data.occupied and GetSeasonManager():IsSummer() then
+    if inst.data.occupied and GetSeasonManager() and GetSeasonManager():IsSummer() then
         for k,v in pairs(inst.data.children) do
             if k:IsValid() and not k:IsAsleep() then
                 -- don't go away while there are children alive in the world
@@ -103,7 +103,7 @@ local function UpdateCampOccupied(inst)
         end
         inst.data.children = {}
         SetOccupied(inst, false)
-    elseif not inst.data.occupied and GetSeasonManager():IsWinter() then
+    elseif not inst.data.occupied and GetSeasonManager() and GetSeasonManager():IsWinter() then
         SetOccupied(inst, true)
     end
 end
@@ -345,7 +345,7 @@ local function OnLoad(inst, data)
 end
 
 local function OnLoadPostPass(inst, newents, data)
-    trace("OnLoadPostPass", inst, newents, data and data.children and #data.children)
+--    print("OnLoadPostPass", inst, newents, data and data.children and #data.children)
 
     if data and data.children and #data.children > 0 then
         for k,v in pairs(data.children) do
@@ -402,7 +402,7 @@ local function create(Sim)
     inst.OnEntitySleep = OnEntitySleep
     inst.OnEntityWake = OnEntityWake
 
-    SetOccupied(inst, GetSeasonManager():IsWinter())
+	SetOccupied(inst, GetSeasonManager() and GetSeasonManager():IsWinter() or false)
 
     inst:ListenForEvent("seasonChange", function() OnSeasonChange(inst) end, GetWorld())
 

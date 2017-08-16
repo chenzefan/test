@@ -9,6 +9,8 @@ local FireFX = Class(function(self, inst)
     self.bigignitesoundthresh = 3
     self.usedayparamforsound = false
     self.current_radius = 1
+    self.lightsound = nil
+    self.extinguishsound = nil
 end)
 
 
@@ -67,9 +69,9 @@ function FireFX:SetLevel(lev)
         if self.inst.SoundEmitter and self.playignitesound then
             if not self.level or lev > self.level then
                 if lev >= self.bigignitesoundthresh then
-                    self.inst.SoundEmitter:PlaySound("dontstarve/common/fireBurstLarge")
+                    self.inst.SoundEmitter:PlaySound(self.lightsound or "dontstarve/common/fireBurstLarge")
                 else
-                    self.inst.SoundEmitter:PlaySound("dontstarve/common/fireBurstSmall")
+                    self.inst.SoundEmitter:PlaySound(self.lightsound or "dontstarve/common/fireBurstSmall")
                 end
             end
         end
@@ -117,7 +119,7 @@ function FireFX:Extinguish()
     
 	local should_play_extinguish = not self.extinguishsoundtest or self.extinguishsoundtest()
     if should_play_extinguish then
-		self.inst.SoundEmitter:PlaySound("dontstarve/common/fireOut")
+		self.inst.SoundEmitter:PlaySound(self.extinguishsound or "dontstarve/common/fireOut")
         if self.levels[self.level] and self.levels[self.level].pst then
             self.inst.AnimState:PlayAnimation(self.levels[self.level].pst)
             return true

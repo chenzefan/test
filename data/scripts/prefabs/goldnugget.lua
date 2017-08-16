@@ -26,6 +26,10 @@ local function fn(Sim)
     inst.AnimState:SetBank("goldnugget")
     inst.AnimState:SetBuild("gold_nugget")
     inst.AnimState:PlayAnimation("idle")
+
+    inst:AddComponent("edible")
+    inst.components.edible.foodtype = "ELEMENTAL"
+    inst.components.edible.hungervalue = 2
     
     inst:AddComponent("inspectable")
     

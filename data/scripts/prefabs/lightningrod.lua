@@ -80,6 +80,11 @@ local function getstatus(inst)
 	end
 end
 
+local function onbuilt(inst)
+	inst.AnimState:PlayAnimation("place")
+	inst.AnimState:PushAnimation("idle")
+end
+
 local function fn(Sim)
 	local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
@@ -115,11 +120,12 @@ local function fn(Sim)
 	inst.components.inspectable.getstatus = getstatus
     
 	MakeSnowCovered(inst, .01)
+	inst:ListenForEvent( "onbuilt", onbuilt)
 	
     inst.OnSave = OnSave
     inst.OnLoad = OnLoad
     return inst
 end
 
-return Prefab( "common/objects/lightning_rod", fn, assets, prefabs ),
+return Prefab( "common/objects/lightning_rod", fn, assets),
 	   MakePlacer("common/lightning_rod_placer", "lightning_rod", "lightning_rod", "idle") 

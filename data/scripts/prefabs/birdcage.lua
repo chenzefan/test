@@ -23,7 +23,12 @@ local bird_symbols=
 
 local function ShouldAcceptItem(inst, item)
 	local seed_name = string.lower(item.prefab .. "_seeds")
-	local can_accept = item.components.edible and (Prefabs[seed_name] or item.prefab == "seeds" or item.components.edible.foodtype == "MEAT")
+	local can_accept = item.components.edible and (Prefabs[seed_name] or item.prefab == "seeds" or item.components.edible.foodtype == "MEAT") 
+	
+	if item.prefab == "egg" or item.prefab == "bird_egg" or item.prefab == "rottenegg" or item.prefab == "monstermeat" then
+		can_accept = false
+	end
+	
 	return can_accept
 end
 
@@ -34,6 +39,11 @@ local function OnRefuseItem(inst, item)
 end
 
 local function OnGetItemFromPlayer(inst, giver, item)
+
+	if inst.components.sleeper:IsAsleep() then
+		inst.components.sleeper:WakeUp()
+	end
+
     if item.components.edible then
 		local seed_name = string.lower(item.prefab .. "_seeds")
 		local can_accept = Prefabs[seed_name] or item.prefab == "seeds" or item.components.edible.foodtype == "MEAT"
@@ -152,6 +162,38 @@ local function testfn(inst, guy)
 	return guy:HasTag("bird")
 end
 		
+local function onbuilt(inst)
+	inst.AnimState:PlayAnimation("place")
+	inst.AnimState:PushAnimation("idle")
+end
+
+
+
+local function ShouldSleep(inst)
+	if inst.components.occupiable:IsOccupied() then
+	   return GetClock():IsNight()
+	else
+		return false
+	end
+end
+
+local function ShouldWake(inst)
+    return GetClock():IsDay()
+end
+
+local function GoToSleep(inst)
+	StopIdling(inst)
+	inst.AnimState:PlayAnimation("sleep_pre")
+	inst.AnimState:PushAnimation("sleep_loop", true)
+end
+
+local function WakeUp(inst)
+	inst.AnimState:PlayAnimation("sleep_pst")
+	inst.AnimState:PushAnimation("idle_bird", true)
+	StartIdling(inst)
+end
+
+
 local function fn(Sim)
 	local inst = CreateEntity()
 	inst.entity:AddTransform()
@@ -170,7 +212,12 @@ local function fn(Sim)
     inst:AddComponent("inspectable")
     
     inst:AddComponent("lootdropper")
+
     inst:AddComponent("sleeper")
+    inst.components.sleeper:SetSleepTest(ShouldSleep)
+    inst.components.sleeper:SetWakeTest(ShouldWake)
+    inst:ListenForEvent("gotosleep", function(inst) GoToSleep(inst) end)
+    inst:ListenForEvent("onwakeup", function(inst) WakeUp(inst) end)
     
     inst:AddComponent("occupiable")
     inst.components.occupiable.occupytestfn = testfn
@@ -189,6 +236,7 @@ local function fn(Sim)
 	inst.components.trader.onrefuse = OnRefuseItem
 	inst.components.trader:Disable()
 	MakeSnowCovered(inst, .01)	
+	inst:ListenForEvent( "onbuilt", onbuilt)
     return inst
 end
 

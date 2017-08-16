@@ -9,6 +9,86 @@ function HandleContainerUIClick(character, inventory, container, slot_number)
 	local inspect_mod = TheInput:IsKeyDown(KEY_SHIFT)
     local stack_mod = TheInput:IsKeyDown(KEY_CTRL)
 
+
+	--this mess is to automatically shuffle items between your inventory and open containers/backpacks
+	if inspect_mod and stack_mod and character and inventory and container_item then
+		local dest_inst = container ~= inventory and character or nil
+		for k,v in pairs(inventory.opencontainers) do
+			if k ~= container.inst and (not dest_inst or not k.components.equippable) then
+				local dest = k.components.inventory or k.components.container
+				if dest then
+					if dest:CanTakeItemInSlot(container_item) then
+						if dest:IsFull() and dest.acceptsstacks then
+							--check the container to see if an item of that type is in it already and can be put in.
+							for c,v in pairs(dest.slots) do
+								if v.prefab == container_item.prefab then
+									dest_inst = k
+								end
+							end
+						else
+							dest_inst = k
+						end
+					end
+				end
+			end	
+		end
+		
+		if dest_inst then
+			local dest = dest_inst.components.inventory or dest_inst.components.container
+			if dest then
+				local item = nil
+				if container_item.components.stackable then				
+					item = container_item.components.stackable:Get(math.floor(container_item.components.stackable:StackSize() / 2))
+					if item.components.stackable.stacksize < 1 then
+						item = nil
+						return
+					end
+				else
+					item = container:RemoveItemBySlot(slot_number)
+				end
+				if not dest:GiveItem(item) then
+					container:GiveItem(item, slot_number)
+				end
+				return
+			end
+		end
+	elseif inspect_mod and not stack_mod and character and inventory and container_item then
+		local dest_inst = container ~= inventory and character or nil
+		for k,v in pairs(inventory.opencontainers) do
+			if k ~= container.inst and (not dest_inst or not k.components.equippable) then
+				local dest = k.components.inventory or k.components.container
+				if dest then
+				if dest:CanTakeItemInSlot(container_item) then
+						if dest:IsFull() and dest.acceptsstacks then
+							--check the container to see if an item of that type is in it already and can be put in.
+							for c,v in pairs(dest.slots) do
+								if v.prefab == container_item.prefab then
+									dest_inst = k
+								end
+							end
+						else
+							dest_inst = k
+						end
+					end
+				end
+			end	
+		end
+		
+		if dest_inst then
+			local dest = dest_inst.components.inventory or dest_inst.components.container
+			if dest then
+				local item = container:RemoveItemBySlot(slot_number)
+				if not dest:GiveItem(item) then
+					container:GiveItem(item, slot_number)
+				end
+				return
+			end
+		end
+	end
+
+	--if that's no an option...
+
+
 	if inspect_mod and container_item then
         character.components.locomotor:PushAction(BufferedAction(character, container_item, ACTIONS.LOOKAT), true)
 		return

@@ -32,6 +32,8 @@ local function fn(Sim)
     anim:SetBuild("spear")
     anim:PlayAnimation("idle")
     
+    inst:AddTag("sharp")
+
     inst:AddComponent("weapon")
     inst.components.weapon:SetDamage(TUNING.SPEAR_DAMAGE)
     

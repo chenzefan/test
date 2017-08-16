@@ -59,6 +59,11 @@ local function onharvested(inst)
     inst.AnimState:PlayAnimation("idle_empty")
 end
 
+local function onbuilt(inst)
+	inst.AnimState:PlayAnimation("place")
+	inst.AnimState:PushAnimation("idle_empty", false)
+end
+
 local function fn(Sim)
 	local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
@@ -92,8 +97,9 @@ local function fn(Sim)
     
     inst.components.inspectable.getstatus = getstatus
 	MakeSnowCovered(inst, .01)	
+	inst:ListenForEvent( "onbuilt", onbuilt)
     return inst
 end
 
-return Prefab( "common/objects/meatrack", fn, assets, prefabs ),
+return Prefab( "common/objects/meatrack", fn, assets ),
 	   MakePlacer("common/meatrack_placer", "meat_rack", "meat_rack", "idle_empty") 

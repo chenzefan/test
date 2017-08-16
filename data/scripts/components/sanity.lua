@@ -11,6 +11,7 @@ local Sanity = Class(function(self, inst)
 	self.rate = 0
 	self.sane = true
 	self.fxtime = 0
+	self.dapperness = 0
 end)
 
 
@@ -105,6 +106,9 @@ end
 
 
 function Sanity:OnUpdate(dt)
+	if self.inst.components.health.invincible == true or self.inst.is_teleporting == true then
+		return
+	end
 	
 	local speed = easing.outQuad( 1 - self:GetPercent(), 0, .2, 1) 
 	self.fxtime = self.fxtime + dt*speed
@@ -121,7 +125,7 @@ function Sanity:OnUpdate(dt)
 end
 
 function Sanity:Recalc(dt)
-	local total_dapperness = 0
+	local total_dapperness = self.dapperness or 0
 	local mitigates_rain = false
 	for k,v in pairs (self.inst.components.inventory.equipslots) do
 		if v.components.dapperness then
@@ -166,8 +170,8 @@ function Sanity:Recalc(dt)
 
 
 	local rain_delta = 0
-    if GetSeasonManager():IsRaining() and not mitigates_rain then
-    	rain_delta = -TUNING.DAPPERNESS_MED* GetSeasonManager():GetPrecipitationRate()
+    if GetSeasonManager() and GetSeasonManager():IsRaining() and not mitigates_rain then
+    	rain_delta = -TUNING.DAPPERNESS_MED*1.5* GetSeasonManager():GetPrecipitationRate()
     end
 
 	self.rate = (dapper_delta + light_delta + aura_delta + rain_delta)	

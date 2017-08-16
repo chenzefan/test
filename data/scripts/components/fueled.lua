@@ -16,6 +16,12 @@ local Fueled = Class(function(self, inst)
 end)
 
 
+function Fueled:MakeEmpty()
+	if self.currentfuel > 0 then
+		self:DoDelta(-self.currentfuel)
+	end
+end
+
 function Fueled:OnSave()
     if self.currentfuel ~= self.maxfuel then
         return {fuel = self.currentfuel}
@@ -65,10 +71,13 @@ function Fueled:TakeFuelItem(item)
     if self:CanAcceptFuelItem(item) then
         local oldsection = self:GetCurrentSection()
     
-        self.currentfuel = self.currentfuel + (item.components.fuel.fuelvalue * self.bonusmult)
-        if self.currentfuel > self.maxfuel then
-            self.currentfuel = self.maxfuel
-        end
+        -- self.currentfuel = self.currentfuel + (item.components.fuel.fuelvalue * self.bonusmult)
+        -- if self.currentfuel > self.maxfuel then
+        --     self.currentfuel = self.maxfuel
+        -- end
+
+        self:DoDelta(item.components.fuel.fuelvalue * self.bonusmult)
+
         if item.components.fuel then
             item.components.fuel:Taken(self.inst)
         end
@@ -174,7 +183,7 @@ function Fueled:DoUpdate( dt )
     end
     
     if self.updatefn then
-        self.updatefn()
+        self.updatefn(self.inst)
     end
 
 end

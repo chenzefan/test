@@ -1,27 +1,20 @@
 local assets=
 {
 	Asset("ANIM", "data/anim/umbrella.zip"),
-	--Asset("ANIM", "data/anim/goldenpitchfork.zip"),
 	Asset("ANIM", "data/anim/swap_umbrella.zip"),
-	--Asset("ANIM", "data/anim/swap_goldenpitchfork.zip"),
     Asset("IMAGE", "data/inventoryimages/umbrella.tex"),
-    --Asset("IMAGE", "data/inventoryimages/goldenpitchfork.tex"),
 }
-    
-
-local function StartSound(inst)
-	local owner = inst.components.inventoryitem.owner
-	if owner and owner.SoundEmitter then
-		owner.SoundEmitter:PlaySound("dontstarve/rain/rain_on_umbrella", "umbrellarainsound") 
-	end
-end
-
-local function StopSound(inst)
-	local owner = inst.components.inventoryitem.owner
-	if owner and owner.SoundEmitter then
-		owner.SoundEmitter:KillSound("umbrellarainsound") 
-	end
-end
+  
+local function UpdateSound(inst)
+    local soundShouldPlay = GetSeasonManager():IsRaining() and inst.components.equippable:IsEquipped()
+    if soundShouldPlay ~= inst.SoundEmitter:PlayingSound("umbrellarainsound") then
+        if soundShouldPlay then
+		    inst.SoundEmitter:PlaySound("dontstarve/rain/rain_on_umbrella", "umbrellarainsound") 
+        else
+		    inst.SoundEmitter:KillSound("umbrellarainsound")
+		end
+    end
+end  
 
 local function onfinished(inst)
     inst:Remove()
@@ -29,23 +22,15 @@ end
     
 local function onequip(inst, owner) 
     owner.AnimState:OverrideSymbol("swap_object", "swap_umbrella", "swap_umbrella")
-    owner.AnimState:Show("ARM_carry") 
-    owner.AnimState:Hide("ARM_normal") 
-    
-    if owner.SoundEmitter then
-        if GetSeasonManager():IsRaining() then
-            StartSound(inst)
-        end
-    end
+    owner.AnimState:Show("ARM_carry")
+    owner.AnimState:Hide("ARM_normal")
+    UpdateSound(inst)
 end
 
 local function onunequip(inst, owner) 
     owner.AnimState:Hide("ARM_carry") 
     owner.AnimState:Show("ARM_normal") 
-    
-    if owner.SoundEmitter then
-        StopSound(inst)
-    end
+    UpdateSound(inst)
 end
     
     
@@ -60,6 +45,7 @@ local function fn(Sim)
     anim:SetBuild("umbrella")
     anim:PlayAnimation("idle")
     
+    inst:AddTag("sharp")
 
     inst:AddComponent("dapperness")
     inst.components.dapperness.mitigates_rain = true
@@ -80,8 +66,8 @@ local function fn(Sim)
     inst.components.equippable:SetOnEquip( onequip )
     inst.components.equippable:SetOnUnequip( onunequip )
     
-    inst:ListenForEvent("rainstop", function() StopSound(inst) end, GetWorld()) 
-	inst:ListenForEvent("rainstart", function() StartSound(inst) end, GetWorld()) 
+    inst:ListenForEvent("rainstop", function() UpdateSound(inst) end, GetWorld()) 
+	inst:ListenForEvent("rainstart", function() UpdateSound(inst) end, GetWorld()) 
     
     
     return inst

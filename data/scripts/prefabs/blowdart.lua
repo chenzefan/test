@@ -50,7 +50,7 @@ local function common()
     anim:SetBuild("blow_dart")
     
     inst:AddTag("blowdart")
-
+    inst:AddTag("sharp")
     
     inst:AddComponent("weapon")
     inst.components.weapon:SetDamage(0)

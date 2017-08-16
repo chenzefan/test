@@ -5,6 +5,7 @@ require "behaviours/doaction"
 require "behaviours/avoidlight"
 require "behaviours/panic"
 require "behaviours/attackwall"
+require "behaviours/useshield"
 
 local RUN_AWAY_DIST = 10
 local SEE_FOOD_DIST = 10
@@ -20,6 +21,10 @@ local MAX_WANDER_DIST = 32
 
 local START_RUN_DIST = 8
 local STOP_RUN_DIST = 12
+
+local DAMAGE_UNTIL_SHIELD = 50
+local SHIELD_TIME = 3
+local AVOID_PROJECTILE_ATTACKS = false
 
 local SpiderBrain = Class(Brain, function(self, inst)
     Brain._ctor(self, inst)
@@ -63,6 +68,8 @@ function SpiderBrain:OnStart()
         PriorityNode(
         {
             WhileNode( function() return self.inst.components.health.takingfiredamage end, "OnFire", Panic(self.inst)),
+            IfNode(function() return self.inst:HasTag("spider_hider") end, "IsHider", 
+                UseShield(self.inst, DAMAGE_UNTIL_SHIELD, SHIELD_TIME, AVOID_PROJECTILE_ATTACKS)),
             AttackWall(self.inst),
             ChaseAndAttack(self.inst, MAX_CHASE_TIME),
             DoAction(self.inst, function() return EatFoodAction(self.inst) end ),

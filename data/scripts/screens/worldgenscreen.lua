@@ -29,18 +29,14 @@ WorldGenScreen = Class(Screen, function(self, profile, cb, world_gen_options)
     self.bottom_root:SetScaleMode(SCALEMODE_PROPORTIONAL)
     
     self.worldanim = self.bottom_root:AddChild(UIAnim())
-    self.worldanim:GetAnimState():SetBuild("generating_world")
-    self.worldanim:GetAnimState():SetBank("generating_world")
-    self.worldanim:GetAnimState():PlayAnimation("idle", true)
-
-
-	local hand_scale = 1.3
+    
+	local hand_scale = 1.5
     self.hand1 = self.bottom_root:AddChild(UIAnim())
     self.hand1:GetAnimState():SetBuild("creepy_hands")
     self.hand1:GetAnimState():SetBank("creepy_hands")
     self.hand1:GetAnimState():SetTime(math.random()*2)
     self.hand1:GetAnimState():PlayAnimation("idle", true)
-    self.hand1:SetPosition(300, 0, 0)
+    self.hand1:SetPosition(400, 0, 0)
     self.hand1:SetScale(hand_scale,hand_scale,hand_scale)
 
     self.hand2 = self.bottom_root:AddChild(UIAnim())
@@ -48,15 +44,25 @@ WorldGenScreen = Class(Screen, function(self, profile, cb, world_gen_options)
     self.hand2:GetAnimState():SetBank("creepy_hands")
     self.hand2:GetAnimState():PlayAnimation("idle", true)
     self.hand2:GetAnimState():SetTime(math.random()*2)
-    self.hand2:SetPosition(-300, 0, 0)
+    self.hand2:SetPosition(-425, 0, 0)
 	self.hand2:SetScale(-hand_scale,hand_scale,hand_scale)
     
     self.worldgentext = self.center_root:AddChild(Text(TITLEFONT, 100))
     self.worldgentext:SetPosition(0, 200, 0)
     
     
-    
-    self.worldgentext:SetString(STRINGS.UI.WORLDGEN.TITLE)
+    if world_gen_options.level_type == "cave" then
+		self.bg:SetTexture("data/images/bg_purple.tex")
+		self.worldanim:GetAnimState():SetBuild("generating_cave")
+		self.worldanim:GetAnimState():SetBank("generating_cave")
+	    self.worldgentext:SetString(STRINGS.UI.WORLDGEN.CAVETITLE)
+	else
+		self.worldanim:GetAnimState():SetBuild("generating_world")
+		self.worldanim:GetAnimState():SetBank("generating_world")
+	    self.worldgentext:SetString(STRINGS.UI.WORLDGEN.TITLE)
+	end
+	
+    self.worldanim:GetAnimState():PlayAnimation("idle", true)
 
     self.flavourtext= self.center_root:AddChild(Text(UIFONT, 40))
     self.flavourtext:SetPosition(0, 100, 0)
@@ -84,8 +90,16 @@ WorldGenScreen = Class(Screen, function(self, profile, cb, world_gen_options)
 		if gen_parameters.current_level == nil or gen_parameters.current_level < 1 then
 			gen_parameters.current_level = 1
 		end
+
+		gen_parameters.adventure_progress = world_gen_options.adventure_progress or 1
+	end
+
+	gen_parameters.profiledata = world_gen_options.profiledata
+	if gen_parameters.profiledata == nil then
+		gen_parameters.profiledata = { unlocked_characters = {} }
 	end
 	
+
     TheSim:GenerateNewWorld( json.encode(gen_parameters), function(worlddata) 
     		self.worlddata = worlddata
 			self.done = true

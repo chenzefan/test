@@ -96,6 +96,65 @@ function PickSome(num, choices)
 	return ret
 end
 
+function PickSomeWithDups(num, choices)
+    local l_choices = choices
+    local ret = {}
+    for i=1,num do
+        local choice = math.random(#l_choices)
+        table.insert(ret, l_choices[choice])       
+    end
+    return ret
+end
+
+-- concatenate two array-style tables
+function JoinArrays(...)
+	local ret = {}
+	for i,array in ipairs(arg) do
+		for j,val in ipairs(array) do
+			table.insert(ret, val)
+		end
+	end
+	return ret
+end
+
+-- merge two array-style tables, only allowing each value once
+function ArrayUnion(...)
+	local ret = {}
+	for i,array in ipairs(arg) do
+		for j,val in ipairs(array) do
+			if not table.contains(ret, val) then
+				table.insert(ret, val)
+			end
+		end
+	end
+	return ret
+end
+
+-- merge two map-style tables, overwriting duplicate keys with the latter map's value
+function MergeMaps(...)
+	local ret = {}
+	for i,map in ipairs(arg) do
+		for k,v in pairs(map) do
+			ret[k] = v
+		end
+	end
+	return ret
+end
+
+-- Adds 'addition' to the end of 'orig', 'mult' times.
+-- ExtendedArray({"one"}, {"two","three"}, 2) == {"one", "two", "three", "two", "three" }
+function ExtendedArray(orig, addition, mult)
+	local ret = {}
+	for k,v in pairs(orig) do
+		ret[k] = v
+	end
+	mult = mult or 1
+	for i=1,mult do
+		table.insert(ret,addition)
+	end
+	return ret
+end
+
 function GetRandomKey(choices)
  	local choice = math.random(GetTableSize(choices)) -1
  	
@@ -338,4 +397,58 @@ function math.clamp(input, min_val, max_val)
         input = max_val
     end
     return input
+end
+
+function fastdump(value)
+	local tostring = tostring
+	local string = string
+	local table = table
+	local items = {"return "}
+	local type = type
+
+	local function printtable(in_table)
+		table.insert(items, "{")
+		
+		for k,v in pairs(in_table) do
+			local t = type(v)
+			local comma = true
+			if type(k) == "number" then
+				if t == "number" then
+					table.insert(items, string.format("%s", tostring(v)))
+				elseif t == "string" then
+					table.insert(items, string.format("%q", v))
+				elseif t == "boolean" then
+					table.insert(items, string.format("%s", tostring(v)))
+				elseif type(v) == "table" then
+					printtable(v)
+				end
+			elseif type(k) == "string" then
+				local key = tostring(k)
+				if t == "number" then
+					table.insert(items, string.format("%s=%s", key, tostring(v)))
+				elseif t == "string" then
+					table.insert(items, string.format("%s=%q", key, v))
+				elseif t == "boolean" then
+					table.insert(items, string.format("%s=%s", key, tostring(v)))
+				elseif type(v) == "table" then
+					if next(v) then
+						table.insert(items, string.format("%s=", key))
+						printtable(v)
+					else
+						comma = false
+					end
+				end
+			else
+				assert(false, "trying to save invalid data type")
+			end
+			if comma and next(in_table, k) then
+				table.insert(items, ",")
+			end
+		end
+		
+		table.insert(items, "}")
+		collectgarbage("step")
+	end
+	printtable(value)
+	return table.concat(items)
 end

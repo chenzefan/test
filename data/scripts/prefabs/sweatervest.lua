@@ -6,10 +6,16 @@ local assets=
 
 local function onequip(inst, owner) 
     owner.AnimState:OverrideSymbol("swap_body", "armor_sweatervest", "swap_body")
+    inst.components.fueled:StartConsuming()
 end
 
 local function onunequip(inst, owner) 
     owner.AnimState:ClearOverrideSymbol("swap_body")
+    inst.components.fueled:StopConsuming()
+end
+
+local function onperish(inst)
+	inst:Remove()
 end
 
 local function fn(Sim)
@@ -34,6 +40,12 @@ local function fn(Sim)
     
     inst.components.equippable:SetOnEquip( onequip )
     inst.components.equippable:SetOnUnequip( onunequip )
+    
+    inst:AddComponent("fueled")
+    inst.components.fueled.fueltype = "USAGE"
+    inst.components.fueled:InitializeFuelLevel(TUNING.SWEATERVEST_PERISHTIME)
+    inst.components.fueled:SetDepletedFn(onperish)
+    
     
 	inst:AddComponent("insulator")
     inst.components.insulator.insulation = TUNING.INSULATION_SMALL

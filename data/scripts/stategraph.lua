@@ -347,6 +347,9 @@ function StateGraphInstance:HandleEvents()
     self.bufferedevents = {}
 end
 
+function StateGraphInstance:InNewState()
+	return self.laststate ~= self.currentstate
+end
 
 function StateGraphInstance:GoToState(statename, params)
     local state = self.sg.states[statename]
@@ -365,6 +368,7 @@ function StateGraphInstance:GoToState(statename, params)
         end
     end
     self.timeout = nil
+    self.laststate = self.currentstate
     self.currentstate = state
     self.timeinstate = 0
 
@@ -379,6 +383,7 @@ function StateGraphInstance:GoToState(statename, params)
         self.currentstate.onenter(self.inst, params)
     end
     
+    self.inst:PushEvent("newstate", {statename = statename})
     
     
     self.lastupdatetime = GetTime()

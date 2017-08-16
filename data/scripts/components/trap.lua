@@ -225,6 +225,9 @@ function Trap:OnSave()
         isset = self.isset,
         bait = self.bait and self.bait.GUID or nil,
         loot = self.lootprefabs,
+    }, 
+    {
+		self.bait and self.bait.GUID or nil
     }
 end
 

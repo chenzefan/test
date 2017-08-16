@@ -25,11 +25,16 @@ local function fn(Sim)
 	local inst = CreateEntity()
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
+    inst.entity:AddSoundEmitter()
     
     inst.AnimState:SetBank("redgem")
     inst.AnimState:SetBuild("amulet_gem")
     inst.AnimState:PlayAnimation("idle")
     MakeInventoryPhysics(inst)
+    
+    inst:AddComponent("edible")
+    inst.components.edible.foodtype = "ELEMENTAL"
+    inst.components.edible.hungervalue = 3
     
     inst:AddComponent("stackable")
 	inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM

@@ -19,6 +19,7 @@ local Inventory = Class(function(self, inst)
     self.activeitem = nil
     self.acceptsstacks = true
     self.ignorescangoincontainer = false
+    self.opencontainers = {}
     
 end)
 
@@ -100,6 +101,21 @@ function Inventory:DropActiveItem()
 
 end
 
+function Inventory:IsWearingArmor()
+    for k,v in pairs(self.equipslots) do
+        if v.components.armor then
+            return true
+        end
+    end
+end
+
+function Inventory:ArmorHasTag(tag)
+    for k,v in pairs(self.equipslots) do
+        if v.components.armor and v:HasTag(tag) then
+            return true
+        end
+    end
+end
 
 function Inventory:ApplyDamage(damage, attacker, weapon)
     --check resistance
@@ -259,7 +275,7 @@ function Inventory:RemoveItemBySlot(slot)
 end
 
 function Inventory:DropItem(item, wholestack, randomdir, pos)
-    if not item then
+    if not item or not item.components.inventoryitem then
         return
     end
     
@@ -442,23 +458,22 @@ function Inventory:GiveItem( inst, slot, screen_src_pos )
         
         return slot
     elseif self.overflow and self.overflow.components.container then
-        --print("OVERFLOW")
 		if self.overflow.components.container:GiveItem(inst, nil, screen_src_pos) then
-            --print("GIVE OK")
 			return true
 		end
     end
+    self.inst:PushEvent("inventoryfull", {item=inst})
     
     --can't hold it!    
     if not self.activeitem then
         --print("not activeitem")
         inst.components.inventoryitem:OnPutInInventory(self.inst)
         self:SetActiveItem(inst)
+        return true
     else
         --print("yes activeitem")
         self:DropItem(inst, true, true)
     end
-    self.inst:PushEvent("inventoryfull", {item=inst})
     
 end
 
@@ -474,8 +489,16 @@ function Inventory:Unequip(equipslot)
 end
 
 function Inventory:SetActiveItem(item)
-    self.activeitem = item
-    self.inst:PushEvent("newactiveitem", {item=item})
+    if item and item.components.inventoryitem.cangoincontainer or item == nil then
+        self.activeitem = item
+        self.inst:PushEvent("newactiveitem", {item=item})
+
+        if item and item.components.inventoryitem and item.components.inventoryitem.onactiveitemfn then
+            item.components.inventoryitem.onactiveitemfn(item)
+        end
+    else
+        self:DropItem(item, true, true)
+    end
 end
 
 function Inventory:Equip(item, old_to_active)
@@ -484,7 +507,11 @@ function Inventory:Equip(item, old_to_active)
         return
     end
 
-    item = self:RemoveItem(item, item.components.equippable.equipstack) or item
+    if item.components.inventoryitem then
+        item = item.components.inventoryitem:RemoveFromOwner(item.components.equippable.equipstack) or item
+    else
+        item = self:RemoveItem(item, item.components.equippable.equipstack) or item
+    end
 
     local leftovers = nil
     if item == self.activeitem then
@@ -551,7 +578,6 @@ function Inventory:RemoveItem(item, wholestack)
             end
         end
 
-
         local ret = nil
         if item == self.activeitem then
             self:SetActiveItem(nil)
@@ -566,9 +592,16 @@ function Inventory:RemoveItem(item, wholestack)
             end
         end
         
-        if ret and ret.components.inventoryitem and ret.components.inventoryitem.OnRemoved then
-            ret.components.inventoryitem:OnRemoved()
-            return ret
+        
+        if ret then
+            if ret.components.inventoryitem and ret.components.inventoryitem.OnRemoved then
+                ret.components.inventoryitem:OnRemoved()
+                return ret
+            end
+        else
+            if self.overflow then
+		        return self.overflow.components.container:RemoveItem(item, wholestack)
+            end
         end
 
     end
@@ -690,6 +723,7 @@ end
 
 
 function Inventory:OnProgress()
+
     if SaveGameIndex:GetCurrentMode(Settings.save_slot) == "adventure" then
    	    local teleportato = TheSim:FindFirstEntityWithTag("teleportato")
    	    if teleportato and teleportato.components.container then

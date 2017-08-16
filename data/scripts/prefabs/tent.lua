@@ -16,7 +16,7 @@ end
 
 local function onhit(inst, worker)
 	inst.AnimState:PlayAnimation("hit")
-	inst.AnimState:PushAnimation("idle")
+	inst.AnimState:PushAnimation("idle", true)
 end
 
 local function onfinished(inst)
@@ -26,6 +26,12 @@ local function onfinished(inst)
 	inst.persists = false
 	inst:DoTaskInTime(16*FRAMES, function() inst.SoundEmitter:PlaySound("dontstarve/common/tent_dis_twirl") end)
 end
+
+local function onbuilt(inst)
+	inst.AnimState:PlayAnimation("place")
+	inst.AnimState:PushAnimation("idle", true)
+end
+
 
 local function onsleep(inst, sleeper)
 
@@ -37,8 +43,11 @@ local function onsleep(inst, sleeper)
 		end
 	end
 	
+	local hounded = GetWorld().components.hounded
+
 	local danger = FindEntity(inst, 10, function(target) return target:HasTag("monster") or target.components.combat and target.components.combat.target == inst end)
-	if inst.components.hounded and (inst.components.hounded.warning or inst.components.hounded.timetoattack <= 0) then
+	
+	if hounded and (hounded.warning or hounded.timetoattack <= 0) then
 		danger = true
 	end
 	
@@ -127,7 +136,7 @@ local function fn(Sim)
 	inst:AddComponent("sleepingbag")
 	inst.components.sleepingbag.onsleep = onsleep
 	MakeSnowCovered(inst, .01)
-	--inst:SetInherentSceneAction(ACTIONS.SWITCHCHARACTER)
+	inst:ListenForEvent( "onbuilt", onbuilt)
     return inst
 end
 

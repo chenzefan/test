@@ -20,9 +20,19 @@ local function retargetfn(inst)
     end
 end
 
+local function ShouldSleep(inst)
+	return false -- frogs either go to their home, or just sit on the ground.
+end
+
+
 local function OnAttacked(inst, data)
     inst.components.combat:SetTarget(data.attacker)
     inst.components.combat:ShareTarget(data.attacker, 30, function(dude) return dude:HasTag("frog") and not dude.components.health:IsDead() end, 5)
+end
+
+local function OnGoingHome(inst)
+	local splash = PlayFX(Vector3(inst.Transform:GetWorldPosition() ), "splash", "splash", "splash")
+	inst.SoundEmitter:PlaySound("dontstarve/frog/splash")
 end
 
 local function fn(Sim)
@@ -40,18 +50,24 @@ local function fn(Sim)
     anim:SetBank("frog")
     anim:SetBuild("frog")
     anim:PlayAnimation("idle")
-    inst:AddComponent("locomotor") -- locomotor must be constructed before the stategraph
+    
+	inst:AddComponent("locomotor") -- locomotor must be constructed before the stategraph
+	inst.components.locomotor.walkspeed = 4
+	inst.components.locomotor.runspeed = 8
+
     inst:SetStateGraph("SGfrog")
 
     inst:AddTag("animal")
     inst:AddTag("prey")
     inst:AddTag("smallcreature")
+    inst:AddTag("frog")
     inst:AddTag("canbetrapped")    
 
     local brain = require "brains/frogbrain"
     inst:SetBrain(brain)
     
     inst:AddComponent("sleeper")
+	inst.components.sleeper:SetSleepTest(ShouldSleep)
     
     inst:AddComponent("health")
     inst.components.health:SetMaxHealth(TUNING.FROG_HEALTH)
@@ -74,6 +90,7 @@ local function fn(Sim)
     inst:AddComponent("inspectable")
 
     inst:ListenForEvent("attacked", OnAttacked)
+    inst:ListenForEvent("goinghome", OnGoingHome)
     
     return inst
 end

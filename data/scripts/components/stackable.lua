@@ -17,7 +17,9 @@ function Stackable:IsFull()
 end
 
 function Stackable:OnSave()
-	return {stack = self.stacksize}
+	if self.stacksize ~= 1 then
+		return {stack = self.stacksize}
+	end
 end
 
 function Stackable:OnLoad(data)

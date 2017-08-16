@@ -12,9 +12,25 @@ function ButterflySpawner:SetButterfly(butterfly)
 end
 
 function ButterflySpawner:GetSpawnPoint(player)
-    local radius = 6+math.random()*6
-    local closestFlower = FindEntity(player, radius, nil, {"flower"})
-    return closestFlower
+	local rad = 25
+	local player = GetPlayer()
+	local x,y,z = player.Transform:GetWorldPosition()
+	local nearby_ents = TheSim:FindEntities(x,y,z, rad)
+	local mindistance = 36
+	local validflowers = {}
+	for k,flower in ipairs(nearby_ents) do
+		if flower and flower:HasTag("flower") and
+		player:GetDistanceSqToInst(flower) > mindistance then
+			table.insert(validflowers, flower)			
+		end
+	end
+
+	if #validflowers > 0 then
+		local f = validflowers[math.random(1, #validflowers)]
+		return f
+	else
+		return nil
+	end
 end
 
 function ButterflySpawner:StartTracking(inst)

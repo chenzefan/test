@@ -15,622 +15,698 @@ STRINGS=
 {
 	CHARACTER_NAMES =
 	{
-		wilson = "Íþ ¶û Ñ· ¡¤ P¡¤ Ï£ ¸ñ Ë¹ ²¨ Àû ",
-		willow = "Þ± Âå ",
-		wendy = "ÎÂ µÏ ",
-		wolfgang = "ÎÖ ¶û ·ò ¸Ô ",
-		woodie = "Îé µÏ ",
-		wickerbottom = "Þ± ¿É ²¨ ÌØ Ä· Å® Ê¿ ",
+		wilson = "Wilson P. Higgsbury",
+		willow = "Willow",
+		wendy = "Wendy",
+		wolfgang = "Wolfgang",
+		woodie = "Woodie",
+		wickerbottom = "Ms Wickerbottom",
 		wx78 = "WX-78",
-		wes = "Î¤ Ë¹ ",
-		unknown = "Î´ Öª ",
+		wes = "Wes",
+		waxwell = "Maxwell",
+		unknown = "The Unknown",
 	},
 
 	CHARACTER_QUOTES =
 	{
-		wilson = "&quot;ÎÒ »á ÓÃ ÎÒ µÄ Ë¼ Ïë Á¦ Á¿ È¥ Õ÷ ·þ µÄ !&quot;",
-		willow = "&quot;Ëû ÃÇ ·Å »ð Ê± ÊÂ Çé ºÃ ×ª ÁË .&quot;",
-		wendy ="&quot;Abigail? Come back! I'm not done playing with you.&quot;",
-		wolfgang = "&quot;ÎÒ ÎÞ Ëù ²» ÄÜ !Ã» ÈË ±È ÎÒ Ç¿ ´ó !&quot;",
-		wx78 = "&quot;ÒÆ Çé Ä£ ¿é ÎÞ Ïì Ó¦ &quot;",
-		wickerbottom = "&quot;Ðê ! ±ð Ëµ »° !&quot;",
+		wilson = "\"I will conquer it all with the power of my MIND!\"",
+		willow = "\"Things are so much prettier when they burn.\"",
+		wendy ="\"Abigail? Come back! I'm not done playing with you.\"",
+		wolfgang = "\"I am mighty! No one is mightier!\"",
+		wx78 = "\"EMPATHY MODULE NOT RESPONDING\"",
+		wickerbottom = "\"Shhhh! No talking!\"",
+		waxwell = "\"Freedom!\"",
 		wes = "...",
 	},
 
 	CHARACTER_TITLES =
 	{
-		wilson = "Éð Ê¿ ¿Æ Ñ§ ¼Ò ",
-		willow = "·À »ð Ç½ ",
-		wendy = "ÊÜ º¦ Õß ¼Ò Êô ",
-		wolfgang = "Ç¿ ÈË ",
-		wx78 = "ÎÞ Çé ×Ô ¶¯ »ú ",
-		wickerbottom = "Í¼ Êé ¹Ü Àí Ô± ",
-		wes = "¼Å ¾² ",
+		wilson = "The Gentleman Scientist",
+		willow = "The Firestarter",
+		wendy = "The Bereaved",
+		wolfgang = "The Strongman",
+		wx78 = "The Soulless Automaton",
+		wickerbottom = "The Librarian",
+		wes = "The Silent",
+		waxwell = "The Puppet Master",
 	},
 
 	CHARACTER_DESCRIPTIONS =
 	{
-		wilson = "*³¤ ÁË ´ó ºú ×Ó ",
-		willow = "*Ãâ Òß »ð Ïµ ÉË º¦ \n*ÔÚ ºÚ °µ ÖÐ ¿ª »ð ÁË ",
-		wendy = "*Íí ÉÏ ÓÐ ÓÎ ¿Í ¡£ ",
-		wolfgang = "*¸ß µÈ ÎÀ Éú ,´ó Î¸ \n*¸ü ¼Ó ÓÐ Á¦ µÄ ¹¥ »÷ ",
-		wx78 = "*¿É ÒÔ ÎÞ ³Í ·£ µÄ ³Ô µ÷ ±ä ÖÊ Ê³ Îï ",
-		wickerbottom = "*»ñ µÃ ÁË ½± Àø ¿Æ ¼¼ ¹Ø ¿¨ ",
-		wes = "*²» ÄÜ Ëµ »° \n*Òª »î ÏÂ È¥ ±È ½Ï ÓÐ Âé ·³ ",
+		wilson = "*Grows a magnificent beard",
+		willow = "*Immune to fire damage\n*Starts fires in the dark",
+		wendy = "*Has visitors at night",
+		wolfgang = "*Higher health, bigger stomach\n*Hits harder",
+		wx78 = "*Can eat spoiling food with no penalty",
+		wickerbottom = "*Gets a bonus tech level",
+		wes = "*Can't talk\n*Has trouble staying alive",
+		waxwell = "*Is dapper\n*Is frail\n*Brings his own sword",
 	},
 
 
     --ACTION MOUSEOVER TEXT
     ACTIONS=
     {
-        GIVE = "¸ø ",
+		SEW = "Sew",
+        GIVE = "Give",
         DROP = 
         {
-            GENERIC = "ÈÓ ",
-            SETTRAP = "Éè ÖÃ ÏÝ Úå ",
-            SETMINE = "Éè ÖÃ µØ À× ",
+            GENERIC = "Drop",
+            SETTRAP = "Set Trap",
+            SETMINE = "Set Mine",
         },
-        BUILD = "½¨ Ôì ",
-        PICK = "²É Õª ",
-        REPAIR = "ÐÞ ¸´ ",
-        PICKUP = "Ê° Æð ",
-        CHOP = "¿³ ",
-        FERTILIZE = "Ê© ·Ê ",
-        EAT = "³Ô ",
-        BAIT = "ÓÕ ¶ü ",
-        COOK = "Öó ",
-        ADDFUEL = "Ìí ¼Ó È¼ ÁÏ ",
-        LIGHT = "µã »ð ",
-        EXTINGUISH = "ÆË Ãð ",
-        LOOKAT = "²é ¿´ ",
-        MINE = "ÍÚ ¿ó ",
-        ATTACK = "¹¥ »÷ ",
-        WALKTO = "ÐÐ ×ß ",
-        CHECKTRAP = "²é ¿´ ",
-        BUILD = "½¨ Ôì ",
-        CRAFT = "¹¤ ÒÕ Æ· ",
-        PLANT = "Ö² Îï ",
-        HARVEST = "ÊÕ »ñ ",
-        GOHOME = "»Ø ¼Ò ",
-        DIG = "ÍÚ ",
-        SLEEPIN = "Ë¯ ¾õ ",
-        EQUIP = "×° ±¸ ",
-        TERRAFORM = "ÍÚ ",
-        UNEQUIP = "Î´ ×° ±¸ ",
-        RESEARCH = "ÑÐ ¾¿ ",
-        SHAVE = "Ìê ",
-        DRY = "¸É ",
+        BUILD = "Build",
+        PICK = "Pick",
+        REPAIR = "Repair",
+        PICKUP = "Pick up",
+        CHOP = "Chop",
+        FERTILIZE = "Fertilize",
+        EAT = "Eat",
+        BAIT = "Bait",
+        COOK = "Cook",
+        ADDFUEL = "Add Fuel",
+        LIGHT = "Light",
+        EXTINGUISH = "Extinguish",
+        LOOKAT = "Examine",
+        TALKTO = "Talk to",
+        MINE = "Mine",
+        ATTACK = "Attack",
+        WALKTO = "Walk To",
+        CHECKTRAP = "Check",
+        BUILD = "Build",
+        CRAFT = "Craft",
+        PLANT = "Plant",
+        HARVEST = "Harvest",
+        GOHOME = "Go Home",
+        DIG = "Dig",
+        SLEEPIN = "Sleep",
+        EQUIP = "Equip",
+        TERRAFORM = "Dig",
+        UNEQUIP = "Unequip",
+        RESEARCH = "Research",
+        SHAVE = "Shave",
+        DRY = "Dry",
         STORE = 
         {
-            GENERIC = "ÉÌ µê ",
-            COOK = "Öó ",
-            IMPRISON = "¼à ½û ",
+            GENERIC = "Store",
+            COOK = "Cook",
+            IMPRISON = "Imprison",
         },
         RUMMAGE =
         {
-            GENERIC = "¿ª ·Å ",
-            CLOSE = "¹Ø ±Õ ",
+            GENERIC = "Open",
+            CLOSE = "Close",
         },
         DEPLOY = 
         {
-			GENERIC = "Ö² Îï ",
-			GROUNDTILE = "·Å ÖÃ µØ Ãæ ",
-			WALL = "½¨ Ôì Ç½ "
+			GENERIC = "Plant",
+			GROUNDTILE = "Place Ground",
+			WALL = "Build Wall"
 		},
 		
-        PLAY = "Íæ ",
-        NET = "×¥ ",
-        CATCH = "×¥ ",
-        FISH = "Óã ",
+        PLAY = "Play",
+        NET = "Catch",
+        CATCH = "Catch",
+        FISH = "Fish",
         REEL =
         {
-            GENERIC = "¹³ ",
-            REEL = "¾í ",
-            CANCEL = "Í£ Ö¹ ²¶ Óã ",
+            GENERIC = "Hook",
+            REEL = "Reel In",
+            CANCEL = "Stop Fishing",
         },
-        POLLINATE = "ÊÚ ·Û ",
-        HAMMER = "´¸ ",
-        RESETMINE = "ÖØ ÖÃ ",
+        POLLINATE = "Pollinate",
+        HAMMER = "Hammer",
+        RESETMINE = "Reset",
         ACTIVATE = {
-            GENERIC = "Æô ¶¯ ",
-            INVESTIGATE = "µ÷ ²é ",
+            GENERIC = "Activate",
+            INVESTIGATE = "Investigate",
+            SPELUNK = "Spelunk",
+            CLIMB = "Climb",
         },
-		JUMPIN = "Ìø Èë ",
-        MURDER = "É± ËÀ ",
-        HEAL = "ÖÎ ÁÆ ",
-        UNLOCK = "½â Ëø ",
-        TEACH = "Ñ§ Ï° ",
+		JUMPIN = "Jump In",
+        MURDER = "Murder",
+        HEAL = "Heal",
+        UNLOCK = 
+        {
+            GENERIC = "Unlock",
+            LOCK = "Lock",
+        },
+        TEACH = "Learn",
+        TURNON = "Turn On",
+        TURNOFF = "Turn Off",
+        USEITEM = "Use",
     },
 
+	LMB = "\255",--"ÿ",
+	RMB = "\254",--"þ",
 
-	LMB = "Êó ±ê ×ó ¼ü ",
-	RMB = "Êó ±ê ÓÒ ¼ü ",
-
-	SELECT = "Ñ¡ Ôñ ",
-    DROPALL = "¶ª Æú Ëù ÓÐ ",
+	SELECT = "Select",
+    DROPALL = "Drop All",
 
     NAMES =
     {
-		DEFAULT = "Îï Æ· À¸ Îï Æ· ",
+		DEFAULT = "INVENTORY ITEM",
 		
-        RED_MUSHROOM = "ºì Ä¢ ¹½ ",
-        RED_CAP = "ºì Ã± ×Ó ",
-        GREEN_MUSHROOM = "ÂÌ Ä¢ ¹½ ",
-        GREEN_CAP = "ÂÌ Ã± ×Ó ",
-        BLUE_MUSHROOM = "À¶ Ä¢ ¹½ ",
-        BLUE_CAP = "À¶ Ã± ×Ó ",
+        MUSHTREE_TALL = "Mushtree",
+        SPIDER_HIDER="Cave Spider",
+        SPIDER_SPITTER="Spitter",
+		SEWING_KIT = "Sewing Kit",
+        RED_MUSHROOM = "Red Mushroom",
+        RED_CAP = "Red Cap",
+        RED_CAP_COOKED = "Cooked Red Cap",
+        GREEN_MUSHROOM = "Green Mushroom",
+        GREEN_CAP = "Green Cap",
+        GREEN_CAP_COOKED = "Cooked Green Cap",
+        BLUE_MUSHROOM = "Blue Mushroom",
+        BLUE_CAP_COOKED = "Cooked Blue Cap",
+        BLUE_CAP = "Blue Cap",
 
-		CARROT = "ºú ÂÜ ²· ",
-		PUMPKIN = "ÄÏ ¹Ï ",
-		DRAGONFRUIT = "»ð Áú ¹û ",
-		POMEGRANATE = "Ê¯ Áñ ",
-		CORN = "Óñ Ã× ",
-		DURIAN = "Áñ Á« ",
-		EGGPLANT = "ÇÑ ×Ó ",
-		ICEBOX = "±ù ºÐ ",
-		CARROT_SEEDS = "ºú ÂÜ ²· ÖÖ ×Ó ",
-		PUMPKIN_SEEDS = "ÄÏ ¹Ï ÖÖ ×Ó ",
-		DRAGONFRUIT_SEEDS = "»ð Áú ¹û ÖÖ ×Ó ",
-		POMEGRANATE_SEEDS = "Ê¯ Áñ ÖÖ ×Ó ",
-		CORN_SEEDS = "Óñ Ã× ÖÖ ×Ó ",
-		DURIAN_SEEDS = "Áñ Á« ÖÖ ×Ó ",
-		EGGPLANT_SEEDS = "ÇÑ ×Ó ÖÖ ×Ó ",
+		CARROT = "Carrot",
+		PUMPKIN = "Pumpkin",
+		DRAGONFRUIT = "Dragon Fruit",
+		POMEGRANATE = "Pomegranate",
+		CORN = "Corn",
+		DURIAN = "Durian",
+		EGGPLANT = "Eggplant",
+		ICEBOX = "Ice Box",
+		CARROT_SEEDS = "Carrot Seeds",
+		PUMPKIN_SEEDS = "Pumpkin Seeds",
+		DRAGONFRUIT_SEEDS = "Dragon Fruit Seeds",
+		POMEGRANATE_SEEDS = "Pomegranate Seeds",
+		CORN_SEEDS = "Corn Seeds",
+		DURIAN_SEEDS = "Durian Seeds",
+		EGGPLANT_SEEDS = "Eggplant Seeds",
+		MANRABBIT_TAIL = "Bunny Puff",
+		NITRE = "Nitre",
+		GUNPOWDER = "Gunpowder",
+		BIRD_EGG = "Egg",
+		BIRD_EGG_COOKED = "Cooked Egg",
+		ROTTENEGG = "Rotten Egg",
 		
-		NITRE = "Ïõ Ê¯ ",
-		GUNPOWDER = "»ð Ò© ",
-		BIRD_EGG = "µ° ",
-		BIRD_EGG_COOKED = "Öó Êì µÄ ¼¦ µ° ",
-		ROTTENEGG = "ÀÃ ¼¦ µ° ",
-		
-		WINTEROMETER = "²â ·ç ÒÇ ",
-        RAINOMETER = "²â Óê ÒÇ ",
-		SPOILED_FOOD = "¸¯ ÀÃ ",
-		BERRIES = "½¬ ¹û ",
-		BACKPACK = "±³ °ü ",
-		PIGGYBACK = "ÉÓ ´ø ",
+		WINTEROMETER = "Winterometer",
+        RAINOMETER = "Rainometer",
+		SPOILED_FOOD = "Rot",
+		BERRIES = "Berries",
+		BACKPACK = "Backpack",
+		PIGGYBACK = "Piggyback",
 		REDGEM ="Red Gem",
-        PURPLEGEM = "×Ï É« ±¦ Ê¯ ",
-		HOUNDSTOOTH = "ÁÔ È® ÑÀ ",
-		SWEATERVEST = "Õû ½à ±³ ÐÄ ",
-		CARROT_COOKED = "¿¾ ºú ÂÜ ²· ",
-		PUMPKIN_COOKED = "ÈÈ ÄÏ ¹Ï ",
-		DRAGONFRUIT_COOKED = "×¼ ±¸ »ð Áú ¹û ",
-		POMEGRANATE_COOKED = "ÇÐ Æ¬ Ê¯ Áñ ",
-		CORN_COOKED = "±¬ Ã× »¨ ",
-		DURIAN_COOKED = "¶î Íâ µÄ ³ô Áñ Á« ",
-		EGGPLANT_COOKED = "ºì ÉÕ ÇÑ ×Ó ",
-		BERRIES_COOKED = "¿¾ ½¬ ¹û ",
-		
-        UMBRELLA = "É¡ ",
-		KRAMPUS_SACK = "¿Ë À­ ÆÕ Ë¹ ´ü ×Ó ",
+        PURPLEGEM = "Purple Gem",
+		HOUNDSTOOTH = "Hound's Tooth",
+		SWEATERVEST = "Dapper Vest",
+		CARROT_COOKED = "Roasted Carrot",
+		PUMPKIN_COOKED = "Hot Pumpkin",
+		DRAGONFRUIT_COOKED = "Prepared Dragon Fruit",
+		POMEGRANATE_COOKED = "Sliced Pomegranate",
+		CORN_COOKED = "Popcorn",
+		DURIAN_COOKED = "Extra Smelly Durian",
+		EGGPLANT_COOKED = "Braised Eggplant",
+		BERRIES_COOKED = "Roasted Berries",
+        CAVE_ENTRANCE_CLOSED = "Plugged Sinkhole",
+        CAVE_ENTRANCE_OPEN = "Sinkhole",
+        RABBITHOUSE = "Rabbit Hutch",
+        CAVE_EXIT = "Rope to Surface",
+        UMBRELLA = "Umbrella",
+		KRAMPUS_SACK = "Krampus Sack",
 
-		TURF_WOODFLOOR = "Ä¾ ÖÆ µØ °å ",
-		TURF_CARPETFLOOR = "ÆÌ ÓÐ µØ Ìº µÄ µØ °å ",
-		TURF_CHECKERFLOOR = "Æå ÅÌ µØ °å ",
-		TURF_SAVANNA = "´ó ²Ý Ô­ ²Ý µØ ",
-		TURF_GRASS = "²Ý µØ ",
-		TURF_FOREST = "É­ ÁÖ ²Ý µØ ",
-		TURF_MARSH = "ÕÓ Ôó ²Ý µØ ",
-		TURF_DIRT = "ÎÛ ¹¸ ²Ý µØ ",
-		TURF_ROCKY = "ÑÒ Ê¯ ²Ý µØ ",
-		TURF_ROAD = "¶ì ÂÑ Ê¯ ",
-		TURF_WEBBING = "Õ³ Ö¯ Îï ",
+		TURF_WOODFLOOR = "Wooden Flooring",
+		TURF_CARPETFLOOR = "Carpeted Flooring",
+		TURF_CHECKERFLOOR = "Checkerboard Flooring",
+		TURF_SAVANNA = "Savanna Turf",
+		TURF_GRASS = "Grass Turf",
+		TURF_FOREST = "Forest Turf",
+		TURF_MARSH = "Marsh Turf",
+		TURF_DIRT = "Dirt Turf",
+		TURF_ROCKY = "Rocky Turf",
+		TURF_ROAD = "Cobblestones",
+		TURF_WEBBING = "Sticky Webbing",
+        TURF_CAVE = "Guano Turf",
+        TURF_FUNGUS = "Fungal Turf",
+        TURF_SINKHOLE = "Slimey Turf",
+        TURF_UNDERROCK = "Cave Rock Turf",
+        TURF_MUD = "Mud Turf",
 		
-		COOKPOT = "É° ¹ø ",
-		DUG_GRASS = "Çà ²Ý ´Ô Éú ",
-		DUG_SAPLING = "Ê÷ Ãç ",
-		DUG_BERRYBUSH = "½¬ ¹û ´Ô ",
-        DUG_BERRYBUSH2 = "½¬ ¹û ´Ô ",
+		COOKPOT = "Crock Pot",
+		DUG_GRASS = "Grass Tuft",
+		DUG_SAPLING = "Sapling",
+		DUG_BERRYBUSH = "Berry Bush",
+        DUG_BERRYBUSH2 = "Berry Bush",
+        DUG_MARSH_BUSH = "Spiky Bush",
 		
 		FOOTBALLHAT="Football Helmet",
-		PIGSKIN = "Öí Æ¤ ",
-		AXE = "¸« ",
-		HAMMER = "´¸ ",
-		GOLDENAXE = "ºÀ »ª Ö® ¸« ",
-		MEAT = "Èâ ",
-		COOKEDMEAT = "Öó Êì µÄ Èâ ",
-		MEAT_DRIED = "Å£ Èâ ¸É ",
-        SMALLMEAT = "Ê³ Îï ",
-        COOKEDSMALLMEAT = "Öó Êì µÄ Ê³ Îï ",
-        SMALLMEAT_DRIED = "Ð¡ Å£ Èâ ¸É ",
-		MONSTERMEAT = "¹Ö Îï Èâ ",
-		COOKEDMONSTERMEAT = "Öó Êì ¹Ö Îï Èâ ",
-		MONSTERMEAT_DRIED = "¹Ö Îï Å£ Èâ ¸É ",
-		TRAP = "ÏÝ Úå ",
-		LOG = "Ô­ Ä¾ ",
-		HAMBAT = "»ð ÍÈ òù òð ",
-        LIVINGLOG = "»î µÄ Ä¾ Í· ",
-		TWIGS = "Ê÷ Ö¦ ",
-		CUTGRASS = "¸î ÏÂ À´ µÄ ²Ý ",
-		PETALS = "»¨ °ê ",
-        PETALS_EVIL = "ºÚ É« »¨ °ê ",
-        ADVENTURE_PORTAL = "Âó ¿Ë Ë¹ Î¤ µÄ ÃÅ ",
-        POOP = "·Ê ÁÏ ",
-		TORCH = "»ð ¾æ ",
-        SEEDS = "ÖÖ ×Ó ",
-        HOUND = "ÁÔ È® ",
-        FIREHOUND = "ºì ÁÔ È® ",
-		SEEDS_COOKED = "¿¾ ÖÖ ×Ó ",
-		SILK = "Ë¿ ³ñ ",
-		SPIDERGLAND = "Ö© Öë ÏÙ ",
-		TRAP_TEETH = "ÑÀ ³Ý ÏÝ Úå ",
-		TRAP_TEETH_MAXWELL = "Âó ¿Ë Ë¹ Î¤ µÄ ÑÀ ³Ý ÏÝ Úå ",
-		KRAMPUS = "¿Ë À­ ÆÕ Ë¹ ",
-		ROCKS = "ÑÒ Ê¯ ",
-        FLINT = "ìÝ Ê¯ ",
-		AMULET = "»¤ Éí ·û ",
-		PICKAXE = "º× ×ì ³ú ",
-		GOLDENPICKAXE = "»ª Àö µÄ º× ×ì ³ú ",
-		SHOVEL = "²ù ×Ó ",
-		GOLDENSHOVEL = "ºÀ »ª ²ù ×Ó ",
-		PITCHFORK = "¸É ²Ý ²æ ",
-		GOLDENPITCHFORK = "Ê± ÷Ö µÄ ¸É ²Ý ²æ ",
-		BEEFALO = "Æ¤ ¸¥ Â¦ Å£ ",
-		BABYBEEFALO = "Ð¡ Æ¤ ¸¥ Â¦ Å£ ",
-		BERRYBUSH = "½¬ ¹û ´Ô ",
-        BERRYBUSH2 = "½¬ ¹û ´Ô ",
-		SUNKBOAT = "Ð¡ ´¬ ",
-		BONFIRE = "óô »ð ",
-		CAMPFIRE = "Óª »ð ",
-		CROW = "ÎÚ Ñ» ",
-		ROBIN = "ºì È¸ ",
-		ROBIN_WINTER = "Ñ© Äñ ",
-		EVERGREEN = "³£ ÂÌ Ê÷ ",
-		EVERGREEN_SPARSE = "´Ö ×³ µÄ ³£ ÂÌ Ê÷ ",
-		SLOW_FARMPLOT = "»ù ±¾ Å© ³¡ ",
-		FAST_FARMPLOT = "¸Ä ÉÆ Å© ³¡ ",
-		FIRE = "»ð ",
-		FIREPIT = "»ð ¿Ó ",
-		HEATROCK = "ÈÈ Ê¯ ",
-		FLOWER = "»¨ ",
-        FLOWER_EVIL = "Ð° ¶ñ Ö® »¨ ",
-        FIREFLIES = "Ó© »ð ³æ ",
-		GHOST = "¹í ",
-        GRASS = "²Ý ",
-        DEPLETED_GRASS = "²Ý ",
-		GRAVESTONE = "Ä¹ ±® ",
-		HOMESIGN = "±ê ÅÆ ",
-		MAXWELL = "Âó ¿Ë Ë¹ Î¤ ",
-		MOUND = "·Ø Ä¹ ",
-		PIGHOUSE = "Öí È¦ ",
-		PIGMAN = "Öí ÈË ",
-		CROP = "×÷ Îï ",
-		POND = "³Ø ÌÁ ",
-        POND_MOS = "³Ø ÌÁ ",
-		RABBIT = "ÍÃ ×Ó ",
-		RABBITHOLE = "ÍÃ ×Ó ¶´ ",
-		ROCK1 = "ÂÑ Ê¯ ",
-		ROCK2 = "ÂÑ Ê¯ ",
-        INSANITYROCK = "·½ ¼â ±® ",
-        SANITYROCK = "·½ ¼â ±® ",
-        SKELETON = "¹Ç ¼Ü ",
-        PIGHEAD = "Öí Í· ",
-        MERMHEAD = "ÃÀ ÈË Óã Í· ",
+		PIGSKIN = "Pig Skin",
+		AXE = "Axe",
+		HAMMER = "Hammer",
+		GOLDENAXE = "Luxury Axe",
+		MEAT = "Meat",
+		COOKEDMEAT = "Cooked Meat",
+		MEAT_DRIED = "Jerky",
+        SMALLMEAT = "Morsel",
+        COOKEDSMALLMEAT = "Cooked Morsel",
+        SMALLMEAT_DRIED = "Small Jerky",
+		MONSTERMEAT = "Monster Meat",
+		COOKEDMONSTERMEAT = "Cooked Monster Meat",
+		MONSTERMEAT_DRIED = "Monster Jerky",
+		TRAP = "Trap",
+		LOG = "Log",
+		HAMBAT = "Ham Bat",
+        LIVINGLOG = "Living Log",
+		TWIGS = "Twigs",
+		CUTGRASS = "Cut Grass",
+		PETALS = "Petals",
+        PETALS_EVIL = "Dark Petals",
+        ADVENTURE_PORTAL = "Maxwell's Door",
+        POOP = "Manure",
+		TORCH = "Torch",
+        SEEDS = "Seeds",
+        HOUND = "Hound",
+        FIREHOUND = "Red Hound",
+		SEEDS_COOKED = "Toasted Seeds",
+		SILK = "Silk",
+		SPIDERGLAND = "Spider Gland",
+		TRAP_TEETH = "Tooth Trap",
+		TRAP_TEETH_MAXWELL = "Maxwell's Tooth Trap",
+		KRAMPUS = "Krampus",
+		ROCKS = "Rocks",
+        FLINT = "Flint",
+		AMULET = "Amulet",
+		PICKAXE = "Pickaxe",
+		GOLDENPICKAXE = "Opulent Pickaxe",
+		SHOVEL = "Shovel",
+		GOLDENSHOVEL = "Regal Shovel",
+		PITCHFORK = "Pitchfork",
+		GOLDENPITCHFORK = "Snazzy Pitchfork",
+		BEEFALO = "Beefalo",
+		BABYBEEFALO = "Baby Beefalo",
+		BERRYBUSH = "Berry Bush",
+        BERRYBUSH2 = "Berry Bush",
+		SUNKBOAT = "Boat",
+		BONFIRE = "Bonfire",
+		CAMPFIRE = "Campfire",
+		CROW = "Crow",
+		ROBIN = "Redbird",
+		ROBIN_WINTER = "Snowbird",
+		EVERGREEN = "Evergreen",
+		EVERGREEN_SPARSE = "Lumpy Evergreen",
+		SLOW_FARMPLOT = "Basic Farm",
+		FAST_FARMPLOT = "Improved Farm",
+		FIRE = "Fire",
+		FIREPIT = "Fire Pit",
+		HEATROCK = "Heat Stone",
+		FLOWER = "Flower",
+        FLOWER_EVIL = "Evil Flower",
+        FIREFLIES = "Fireflies",
+		GHOST = "Ghost",
+        GRASS = "Grass",
+        DEPLETED_GRASS = "Grass",
+		GRAVESTONE = "Headstone",
+		HOMESIGN = "Sign",
+		MAXWELL = "Maxwell",
+		MOUND = "Grave",
+		PIGHOUSE = "Pig House",
+		PIGMAN = "Pig Man",
+		CROP = "Crop",
+		POND = "Pond",
+        POND_MOS = "Pond",
+		RABBIT = "Rabbit",
+		RABBITHOLE = "Rabbit Hole",
+		ROCK1 = "Boulder",
+		ROCK2 = "Boulder",
+		ROCK_FLINTLESS = "Boulder",
+        INSANITYROCK = "Obelisk",
+        SANITYROCK = "Obelisk",
+        SKELETON = "Skeleton",
+        PIGHEAD = "Pig Head",
+        MERMHEAD = "Merm Head",
 
-		SAPLING = "Ê÷ Ãç ",
-		SPIDER = "Ö© Öë ",
-		SPIDERDEN = "Ö© Öë ³² Ñ¨ ",
-		SPIDER_WARRIOR = "Ö© Öë Õ½ Ê¿ ",
-		TENT = "ÕÊ Åñ ",
-        PIGTORCH = "Öí »ð ¾æ ",
+		SAPLING = "Sapling",
+		SPIDER = "Spider",
+		SPIDERDEN = "Spider Den",
+		SPIDER_WARRIOR = "Spider Warrior",
+		TENT = "Tent",
+        PIGTORCH = "Pig Torch",
 		
-		WILSON = "Íþ ¶û Ñ· ",
-        WILLOW = "Þ± Âå ",
-        WENDY = "ÎÂ µÏ ",
-        WOLFGANG = "ÎÖ ¶û ·ò ¸Ô ",
-        WOODIE = "Îé µÏ ",
-        WICKERBOTTOM = "Þ± ¿É ²¨ ÌØ Ä· ",
+		WILSON = "Wilson",
+        WILLOW = "Willow",
+        WENDY = "Wendy",
+        WOLFGANG = "Wolfgang",
+        WOODIE = "Woodie",
+        WICKERBOTTOM = "Wickerbottom",
         WX78 = "Wx78",
-        WES = "Î¤ Ë¹ ",
+        WES = "Wes",
         
-        PIGKING = "Öí Íõ ",
-        STRAWHAT = "²Ý Ã± ",
-        TOPHAT = "´ó Àñ Ã± ",
-        FLOWERHAT = "»¨ »· ",
-        BEEFALOHAT = "Æ¤ Ã± ×Ó ",
-		FEATHERHAT = "Óð Ã« Ã± ",
-        ARMORWOOD = "·¥ Ä¾ ×° ",
-        ARMORGRASS = "²Ý ×° ",
-        ARMORMARBLE = "´ó Àí Ê¯ ×° ",
-        ARMOR_SANITY = "Ò¹ ¼× ",
-        SPEAR = "Ã¬ ",
-        TENTACLESPIKE = "´¥ ½Ç ³¤ ¶¤ ",
-        TENTACLE = "´¥ ½Ç ",
-        ROPE = "Éþ ×Ó ",
-        RESURRECTIONSTATUE = "Èâ µñ Ïñ ",
-        RESURRECTIONSTONE = "ÊÔ ½ð Ê¯ ",
-        BOARDS = "Ä¾ °å ",
-        CUTSTONE = "×Á Ê¯ ",
-        GOLDNUGGET = "½ð ¿é ",
-        RESEARCHLAB = "¿Æ Ñ§ »ú ",
-        RESEARCHLAB2 = "Á¶ ½ð Êõ Òý Çæ ",
-        RESEARCHLAB3 = "°µ Ó° »ú Ðµ ÊÖ ",
-        PLANT_NORMAL = "×÷ Îï ",
-        RAZOR = "Ìê Ðë µ¶ ",
-        BEARDHAIR = "·¢ Ã« ",
-        TREASURECHEST = "Ïä ×Ó ",
-        CHESTER = "Ïä ",
-        CHESTER_EYEBONE = "ÑÛ ¹Ç ",
-        BEDROLL_STRAW = "²Ý ¹õ ",
-        BEEFALOWOOL = "Æ¤ ¸¥ Â¦ Å£ Ñò Ã« ",
-        PINECONE = "ËÉ ¹û ",
-        SPIDEREGGSACK = "Ö© Öë µ° ",
-        CHARCOAL = "Ä¾ Ì¿ ",
-		ASH = "»Ò ½ý ",
-		ASH_REMAINS = "%sµÄ »Ò ½ý ",
-        MANDRAKE = "Âü µÂ À­ ²Ý ",
-        COOKEDMANDRAKE = "Öó Êì µÄ Âü µÂ À­ ²Ý ",
-        REEDS = "Â« Î­ ",
-        CUTREEDS = "¿³ Â« Î­ ",
-        MARSH_PLANT = "Ö² Îï ",
-        MARSH_BUSH = "ÓÐ Ëë ´Ô ÁÖ ",
-        PAPYRUS = "Ö½ É¯ ²Ý ",
-        MARSH_TREE = "´ø ´Ì µÄ Ê÷ ",
-        PANFLUTE = "ÅÅ Ïô ",
-        BUGNET = "³æ Íø ",
-        FROG = "Çà ÍÜ ",
-        FISHINGROD = "Óã ¸Í ",
-        FISH = "Óã ",
-        FISH_COOKED = "Öó Êì µÄ Óã ",
-        HONEY = "·ä ÃÛ ",
-        HONEYCOMB = "·ä ³² ",
-        BEEHIVE = "·ä ÎÑ ",
-        BEEBOX = "ÃÛ ·ä Ïä ×Ó ",
-        BEE = "ÃÛ ·ä ",
-        KILLERBEE = "É± ÈË ·ä ",
-        WASPHIVE = "É± ÊÖ ·ä ³² Ïä ",
-		MOSQUITO = "ÎÃ ×Ó ",
-        BEEHAT = "Ñø ·ä ÈË Ã± ×Ó ",
-        STINGER = "´Ì ",
-        BUTTERFLY = "ºû µû ",
-        BUTTERFLYWINGS = "ºû µû ³á °ò ",
-        BUTTER = "»Æ ÓÍ ",
-        FROGLEGS = "Çà ÍÜ ÍÈ ",
-        FROGLEGS_COOKED = "Öó Êì µÄ Çà ÍÜ ÍÈ ",
-        TALLBIRD = "³¤ Äñ ",
-        SMALLBIRD = "Ð¡ Äñ ",
-        TEENBIRD = "¶Ì Ð¡ µÄ ³¤ Äñ ",
-        WALRUS = "³¤ ÑÀ ¼¦ ",
-        WALRUS_CAMP = "º£ Ïó Óª ",
-        WALRUS_TUSK = "º£ Ïó ³¤ ÑÀ ",
-        WALRUSHAT = "ÈÞ Çò Å® Ã± ",
-        LITTLE_WALRUS = "Ð¡ ³¤ ÑÀ ¼¦ ",
-        PUMPKIN_LANTERN = "ÄÏ ¹Ï µÆ Áý ",
-        TALLBIRDNEST = "³¤ Äñ ³² ",
-        TALLBIRDEGG = "³¤ Äñ µ° ",
-        TALLBIRDEGG_CRACKED = "·õ »¯ µÄ ³¤ Äñ µ° ",
-        TALLBIRDEGG_COOKED = "ÓÍ Õ¨ µÄ ³¤ Äñ µ° ",
-        FEATHER_CROW = "ÎÚ Ñ» Óð Ã« ",
-        FEATHER_ROBIN = "ºì È¸ Óð Ã« ",
-        FEATHER_ROBIN_WINTER = "Ñ© Äñ Óð Ã« ",
-        BIRDTRAP = "Äñ ÏÝ Úå ",
-        BLOWDART_SLEEP = "Ë¯ Ãß ·É ïÚ ",
-        BLOWDART_FIRE = "»ð ·É ïÚ ",
-        BLOWDART_PIPE = "´µ ïÚ ",
-        BEEMINE = "ÃÛ ·ä µØ À× ",
-        BEEMINE_MAXWELL = "Âó ¿Ë Ë¹ Î¤ µÄ ÎÃ ×Ó ÏÝ Úå ",
-        BIRDCAGE = "Äñ Áý ",
-        SPIDERQUEEN = "Ö© Öë Å® Íõ ",
-		EARMUFFSHAT = "ÍÃ ¶ú Ì× ",
-        WINTERHAT = "¶¬ ÈÕ Ã± ×Ó ",
-        HORN = "Æ¤ ¸¥ Â¦ Å£ µÄ ½Ç ",
-        ONEMANBAND = "µ¥ ÈË ÀÖ ¶Ó ",
-        STATUEHARP = "Êú ÇÙ µñ Ïñ ",
-        STATUEMAXWELL = "Âó ¿Ë Ë¹ Î¤ µñ Ïñ ",
-        MAXWELLLIGHT = "Âó ¿Ë Ë¹ Î¤ Ö® ¹â ",
+        PIGKING = "Pig King",
+        STRAWHAT = "Straw Hat",
+        TOPHAT = "Top Hat",
+        FLOWERHAT = "Garland",
+        BEEFALOHAT = "Beefalo Hat",
+		FEATHERHAT = "Feather Hat",
+        ARMORWOOD = "Log Suit",
+        ARMORGRASS = "Grass Suit",
+        ARMORMARBLE = "Marble Suit",
+        ARMOR_SANITY = "Night Armour",
+        SPEAR = "Spear",
+        TENTACLESPIKE = "Tentacle spike",
+        TENTACLE = "Tentacle",
+        ROPE = "Rope",
+        RESURRECTIONSTATUE = "Meat Effigy",
+        RESURRECTIONSTONE = "Touch Stone",
+        BOARDS = "Boards",
+        CUTSTONE = "Cut Stone",
+        GOLDNUGGET = "Gold Nugget",
+        RESEARCHLAB = "Science Machine",
+        RESEARCHLAB2 = "Alchemy Engine",
+        RESEARCHLAB3 = "Shadow Manipulator",
+        PLANT_NORMAL = "Crop",
+        RAZOR = "Razor",
+        BEARDHAIR = "Beard Hair",
+        TREASURECHEST = "Chest",
+        SKULLCHEST = "Skullchest",
+        PANDORASCHEST = "Ornate Chest",
+        CHESTER = "Chester",
+        CHESTER_EYEBONE = "Eye Bone",
+        BEDROLL_STRAW = "Straw Roll",
+        BEDROLL_FURRY = "Fur Roll",
+        BEEFALOWOOL = "Beefalo Wool",
+        PINECONE = "Pine Cone",
+        SPIDEREGGSACK = "Spider Eggs",
+        CHARCOAL = "Charcoal",
+		ASH = "Ashes",
+		ASH_REMAINS = "Ashes of %s",
+        MANDRAKE = "Mandrake",
+        COOKEDMANDRAKE = "Cooked Mandrake",
+        REEDS = "Reeds",
+        CUTREEDS = "Cut Reeds",
+        MARSH_PLANT = "Plant",
+        MARSH_BUSH = "Spiky Bush",
+        PAPYRUS = "Papyrus",
+        MARSH_TREE = "Spiky Tree",
+        PANFLUTE = "Pan Flute",
+        BUGNET = "Bug Net",
+        FROG = "Frog",
+        FISHINGROD = "Fishing Rod",
+        FISH = "Fish",
+        FISH_COOKED = "Cooked Fish",
+        HONEY = "Honey",
+        HONEYCOMB = "Honeycomb",
+        BEEHIVE = "Beehive",
+        BEEBOX = "Bee box",
+        BEE = "Bee",
+        KILLERBEE = "Killer Bee",
+        WASPHIVE = "Killer Bee Hive",
+		MOSQUITO = "Mosquito",
+        BEEHAT = "Beekeeper Hat",
+        STINGER = "Stinger",
+        BUTTERFLY = "Butterfly",
+        BUTTERFLYWINGS = "Butterfly Wings",
+        BUTTER = "Butter",
+        FROGLEGS = "Frog Legs",
+        FROGLEGS_COOKED = "Cooked Frog Legs",
+        TALLBIRD = "Tallbird",
+        SMALLBIRD = "Smallbird",
+        TEENBIRD = "Smallish Tallbird",
+        WALRUS = "MacTusk",
+        WALRUS_CAMP = "Walrus Camp",
+        WALRUS_TUSK = "Walrus Tusk",
+        WALRUSHAT = "Tam o' Shanter",
+        LITTLE_WALRUS = "Wee MacTusk",
+        PUMPKIN_LANTERN = "Pumpkin Lantern",
+        TALLBIRDNEST = "Tallbird Nest",
+        TALLBIRDEGG = "Tallbird Egg",
+        TALLBIRDEGG_CRACKED = "Hatching Tallbird Egg",
+        TALLBIRDEGG_COOKED = "Fried Tallbird Egg",
+        FEATHER_CROW = "Crow Feather",
+        FEATHER_ROBIN = "Redbird Feather",
+        FEATHER_ROBIN_WINTER = "Snowbird Feather",
+        BIRDTRAP = "Bird Trap",
+        BLOWDART_SLEEP = "Sleep Dart",
+        BLOWDART_FIRE = "Fire Dart",
+        BLOWDART_PIPE = "Blow Dart",
+        BEEMINE = "Bee Mine",
+        BEEMINE_MAXWELL = "Maxwell's Mosquito Trap",
+        BIRDCAGE = "Birdcage",
+        SPIDERQUEEN = "Spider Queen",
+		EARMUFFSHAT = "Rabbit Earmuffs",
+        WINTERHAT = "Winter Hat",
+        HORN = "Beefalo Horn",
+        ONEMANBAND = "One-man Band",
+        STATUEHARP = "Harp Statue",
+        STATUEMAXWELL = "Maxwell Statue",
+        MAXWELLLIGHT = "Maxwell's Light",
+        MAXWELLKEY = "Shadow Key",
         
-		TELEPORTATO_RING = "»· ¼þ ",
-		TELEPORTATO_BOX = "Ïä ¼þ ",
-		TELEPORTATO_CRANK = "Çú ±ú ¼þ ",
-		TELEPORTATO_POTATO = "½ð Êô Âí Áå Êí ¼þ ",
-		TELEPORTATO_BASE = "Ä¾ ¼þ ",
+		TELEPORTATO_RING = "Ring thing",
+		TELEPORTATO_BOX = "Box thing",
+		TELEPORTATO_CRANK = "Crank thing",
+		TELEPORTATO_POTATO = "Metal potato thing",
+		TELEPORTATO_BASE = "Wooden thing",
+        TELEPORTATO_CHECKMATE = "Wooden thing",
+
 		
-        TRINKET_1 = "ÈÚ »¯ µÄ ´ó Àí Ê¯ ",
-        TRINKET_2 = "¼Ù Ã° ¿¨ ×æ µÑ ",
-        TRINKET_3 = "¸ê µÂ µÄ ½á ",
-        TRINKET_4 = "ÍÁ µØ Éñ ",
-        TRINKET_5 = "Ð¡ ËÒ Óî Öæ ·É ´¬ ",
-        TRINKET_6 = "´© ÆÆ ÁË µÄ µç Ïß ",
-        TRINKET_7 = "Çò ºÍ ±­ ",
-        TRINKET_8 = "Ó² Ïð ½º Èû ×Ó ",
-        TRINKET_9 = "Åä ´í µÄ °´ Å¥ ",
-        TRINKET_10 = "¶þ ÊÖ ¼Ù ÑÀ ",
-        TRINKET_11 = "Ëµ »Ñ »° µÄ »ú Æ÷ ÈË ",
-        TRINKET_12 = "¸É ´¥ ÊÖ ",
+        TRINKET_1 = "Melty Marbles",
+        TRINKET_2 = "Fake Kazoo",
+        TRINKET_3 = "Gord's Knot",
+        TRINKET_4 = "Gnome",
+        TRINKET_5 = "Tiny Rocketship",
+        TRINKET_6 = "Frazzled Wires",
+        TRINKET_7 = "Ball and Cup",
+        TRINKET_8 = "Hardened Rubber Bung",
+        TRINKET_9 = "Mismatched Buttons",
+        TRINKET_10 = "Second-hand Dentures",
+        TRINKET_11 = "Lying Robot",
+        TRINKET_12 = "Dessicated Tentacle",
 
-        CARROT_PLANTED = "ºú ÂÜ ²· ",
-        LEIF = "Ê÷ ÊØ ÎÀ ",
+        CARROT_PLANTED = "Carrot",
+        LEIF = "Treeguard",
+        LEIF_SPARSE = "Treeguard",
 
-		BUTTERFLYMUFFIN = "»Æ ÓÍ ËÉ ±ý ",
-		FROGGLEBUNWICH = "ÍÜ ±¤ ",
-		HONEYHAM = "·ä ÃÛ »ð ÍÈ ",
-		DRAGONPIE = "Áú ÅÉ ",
-		TAFFY = "Ì« åú ÌÇ ",
-		PUMPKINCOOKIE = "ÄÏ ¹Ï ±ý ¸É ",
-		KABOBS = "¿¾ Èâ ",
-		MANDRAKESOUP = "Âü µÂ À­ ²Ý ÌÀ ",
-		BACONEGGS = "Åà ¸ù ºÍ ¼¦ µ° ",
-		BONESTEW = "ìÀ Èâ ",
-		PEROGIES = "°ë Ô² ÐÎ Ð¡ ËÖ ±ý ",
-		WETGOOP = "³± Êª ð¤ ºý ºý µÄ ¶« Î÷ ",
-		RATATOUILLE = "õ¿ ½Å ìÀ ²Ë ",
-		FRUITMEDLEY = "Ë® ¹û »ì ºÏ ",
+		BUTTERFLYMUFFIN = "Butter Muffin",
+		FROGGLEBUNWICH = "Froggle Bunwich",
+		HONEYHAM = "Honey Ham",
+		DRAGONPIE = "Dragonpie",
+		TAFFY = "Taffy",
+		PUMPKINCOOKIE = "Pumpkin Cookies",
+		KABOBS = "Kabobs",
+		MANDRAKESOUP = "Mandrake Soup",
+		BACONEGGS = "Bacon and Eggs",
+		BONESTEW = "Meaty Stew",
+		PEROGIES = "Pierogi",
+		WETGOOP = "Wet Goop",
+		RATATOUILLE = "Ratatouille",
+		FRUITMEDLEY = "Fruit Medley",
 		FISHTACOS ="Fish Tacos",
 		WAFFLES ="Waffles",
-		TURKEYDINNER = "»ð ¼¦ Íí ²Í ",
-		DRUMSTICK = "¹Ä é³ ",
-		DRUMSTICK_COOKED = "ÓÍ Õ¨ ¼¦ ÍÈ ",
-		TENTACLESPOTS = "´¥ ÊÖ °ß µã ",
-		PERD = "ÐÛ »ð ¼¦ ",
-		ABIGAIL = "°¢ ±È ¸Ç ¶û ",
-		MINERHAT = "¿ó ¹¤ Ã± ×Ó ",
-		FISHSTICKS = "¿¾ Óã Èâ ",
-		STUFFEDEGGPLANT = "Èû ÇÑ ×Ó ",
-		HONEYNUGGETS = "·ä ÃÛ Õä Æ· ",
-		MEATBALLS = "Èâ Íè ",
-		JAMMYPRESERVES = "Âú ¹û ½´ Ö® È­ ",
-		MONSTERLASAGNA = "¹Ö Îï Â± Ö­ Ãæ Ìõ ",
-		SPIDERHAT = "Ö© Öë Ã± ×Ó ",
-		WORMHOLE = "³æ ¶´ ",
-        WORMHOLE_LIMITED_1 = "¶ñ ÐÄ ³æ ¶´ ",
+		TURKEYDINNER = "Turkey Dinner",
+		DRUMSTICK = "Drumstick",
+		DRUMSTICK_COOKED = "Fried Drumstick",
+		TENTACLESPOTS = "Tentacle Spots",
+		PERD = "Gobbler",
+		ABIGAIL = "Abigail",
+		MINERHAT = "Miner Hat",
+		FISHSTICKS = "Fishsticks",
+		STUFFEDEGGPLANT = "Stuffed Eggplant",
+		HONEYNUGGETS = "Honey Nuggets",
+		MEATBALLS = "Meatballs",
+		JAMMYPRESERVES = "Fist Full of Jam",
+		MONSTERLASAGNA = "Monster Lasagna",
+		SPIDERHAT = "Spiderhat",
+		WORMHOLE = "Worm Hole",
+        WORMHOLE_LIMITED_1 = "Sick Worm Hole",
 		
-		WALL_WOOD_ITEM = "Ä¾ Ç½ ",
-		WALL_STONE_ITEM = "Ê¯ Ç½ ",
-		WALL_HAY_ITEM = "»¨ ·Û ±Ú ",
+		WALL_WOOD_ITEM = "Wood Wall",
+		WALL_STONE_ITEM = "Stone Wall",
+		WALL_HAY_ITEM = "Hay Wall",
 
-		WALL_WOOD = "Ä¾ Ç½ ",
-		WALL_STONE = "Ê¯ Ç½ ",
-		WALL_HAY = "»¨ ·Û ±Ú ",
-        ANIMAL_TRACK = "¶¯ Îï ×Ù ¼£ ",
-        DIRTPILE = "¿É ÒÉ ÍÁ ¶Ñ ",
-        KOALEFANT_SUMMER = "¿¼ À­ Ïó ",
-        KOALEFANT_WINTER = "¿¼ À­ Ïó ",
-        TRUNK_SUMMER = "¿¼ À­ Ïó ±Ç ×Ó ",
-		TRUNK_WINTER = "¶¬ ¼¾ ¿¼ À­ Ïó ±Ç ×Ó ",
-        TRUNK_COOKED = "¿¼ À­ Ïó ±Ç ×Ó Èâ ÅÅ ",
-        TRUNKVEST_SUMMER = "Í¨ ·ç ºÃ µÄ ±³ ÐÄ ",
-		TRUNKVEST_WINTER = "Óð ÈÞ ±³ ÐÄ ",
-        BOOMERANG = "·É È¥ À´ Æ÷ ",
-        BUSHHAT = "´Ô ÁÖ Ã± ×Ó ",
+		WALL_WOOD = "Wood Wall",
+		WALL_STONE = "Stone Wall",
+		WALL_HAY = "Hay Wall",
+        ANIMAL_TRACK = "Animal Track",
+        DIRTPILE = "Suspicious Dirt Pile",
+        KOALEFANT_SUMMER = "Koalefant",
+        KOALEFANT_WINTER = "Koalefant",
+        TRUNK_SUMMER = "Koalefant Trunk",
+		TRUNK_WINTER = "Winter Koalefant Trunk",
+        TRUNK_COOKED = "Koalefant Trunk Steak",
+        TRUNKVEST_SUMMER = "Breezy Vest",
+		TRUNKVEST_WINTER = "Puffy Vest",
+        BOOMERANG = "Boomerang",
+        BUSHHAT = "Bush Hat",
         
-        CRAWLINGHORROR = "ÅÀ ÐÐ ¿Ö ¾å ",
-        TERRORBEAK = "¿Ö ²À Äñ ×ì ",
-        NIGHTMAREFUEL = "Ø¬ ÃÎ È¼ ÁÏ ",
-        NIGHTLIGHT = "Ò¹ µÆ ",
-        NIGHTSWORD = "°µ ½£ ",
+        CRAWLINGHORROR = "Crawling Horror",
+        TERRORBEAK = "Terrorbeak",
+        NIGHTMAREFUEL = "Nightmare Fuel",
+        NIGHTLIGHT = "Night Light",
+        NIGHTSWORD = "Dark Sword",
         
-        DEERCLOPS = "Â¹ Ìã ",
-        BLUEGEM = "À¶ ±¦ Ê¯ ",
-        ICESTAFF = "±ù Ô± ¹¤ ",
-        FIRESTAFF = "Ïû ·À ÈË Ô± ",
-        ICEHOUND = "À¶ ÁÔ È® ",
-        PENGUIN = "Æó ¶ì ",
-        DEERCLOPS_EYEBALL = "Â¹ Ìã ÑÛ Çò ",
-        GEARS = "³Ý ÂÖ ",
-        NITRE = "Ïõ Ê¯ ",
-        MAXWELLHEAD = "Âó ¿Ë Ë¹ Î¤ µÄ Í· ",
-        DEADLYFEAST = "ÖÂ Ãü Ê¢ Ñç ",
-       
-        
-        BASALT = "Ðþ Îä ÑÒ ",
-        BASALT_PILLAR = "Ðþ Îä ÑÒ Öù ",
-        HOUNDMOUND = "ÁÔ È® Çð ",
-        HOUNDBONE = "¹Ç Í· ",
-        MERM = "ÃÀ ÈË ¼¦ ",
-        MERMHOUSE = "ÆÆ ¾É ·¿ ×Ó ",
+        DEERCLOPS = "Deerclops",
+        BLUEGEM = "Blue Gem",
+        ICESTAFF = "Ice Staff",
+        FIRESTAFF = "Fire Staff",
+        ICEHOUND = "Blue Hound",
+        PENGUIN = "Penguin",
+        DEERCLOPS_EYEBALL = "Deerclops Eyeball",
+        GEARS = "Gears",
+        NITRE = "Nitre",
+        MAXWELLHEAD = "Maxwell's Head",
+        DEADLYFEAST = "Deadly Feast",
+               
+        SINKHOLE = "Basalt",
+        BASALT = "Basalt",
+        BASALT_PILLAR = "Basalt Pillar",
+        HOUNDMOUND = "Hound Mound",
+        HOUNDBONE = "Bones",
+        MERM = "Merm",
+        MERMHOUSE = "Rundown House",
 
-        MARBLEPILLAR = "´ó Àí Ê¯ Öù ×Ó ",
-        MARBLETREE = "´ó Àí Ê¯ Ê÷ ",
-        MARBLE = "´ó Àí Ê¯ ",
-        KNIGHT = "·¢ Ìõ Æï Ê¿ ",
-        BISHOP = "·¢ Ìõ Ö÷ ½Ì ",
-        SUNKBOAT = "³Á ´¬ ",
+        MARBLEPILLAR = "Marble Pillar",
+        MARBLETREE = "Marble Tree",
+        MARBLE = "Marble",
+        KNIGHT = "Clockwork Knight",
+        BISHOP = "Clockwork Bishop",
+        SUNKBOAT = "Sunken Boat",
+        MAXWELLPHONOGRAPH = "Maxwell's Phonograph",
+        MAXWELLTHRONE = "Nightmare Throne",
+        MAXWELLLOCK = "Nightmare Lock",
 
-        LOCKEDWES = "Î¤ Ë¹ ",
-        TREASURECHEST_TRAP = "±¦ Ïä ",
-        MEATRACK = "¸É Ôï ¼Ü ",
-        BANDAGE = "·ä ÃÛ ¸à ×´ Ò© ",
-		HEALINGSALVE = "ÖÎ ÁÆ Ò© ¸à ",
-		CANE = "¹Õ ÕÈ ",
-		LIGHTNING_ROD = "±Ü À× Õë ",
+        LOCKEDWES = "Wes",
+        TREASURECHEST_TRAP = "Treasure Chest",
+        MEATRACK = "Drying Rack",
+        BANDAGE = "Honey Poultice",
+		HEALINGSALVE = "Healing Salve",
+		CANE = "Walking Cane",
+		LIGHTNING_ROD = "Lightning Rod",
+		DIVININGROD = "Divining Rod",
+		DIVININGRODBASE = "Divining Rod Holder",
+		DIVININGRODSTART = "Divining Rod Holder",
+
+        SLURTLE = "Slurtle",
+        SLURTLESLIME = "Slurtle Slime",
+        SLURTLEHOLE = "Slurtle Mound",
+        SLURTLEHAT = "Shelmet",
+        SNURTLE = "Snurtle",
+        SLURTLE_SHELLPIECES = "Broken Shell",
+        ARMORSNURTLESHELL = "Snurtle Shell Armour",
+		MAGIC_BLUEPRINT = "Blank Blueprint",
+        BAT = "Batilisk",
+        TEAMLEADER = "Team Leader",
+        BATWING = "Batilisk Wing",
+        BATWING_COOKED = "Cooked Batilisk Wing",
+        GUANO = "Guano",
+        LANTERN = "Lantern",
+        POWCAKE = "Powdercake",
+        FLOWER_CAVE = "Light Flower",
+        FLOWER_CAVE_DOUBLE = "Light Flower",
+        FLOWER_CAVE_TRIPLE = "Light Flower",
+        LIGHTBULB = "Light Bulb",
+        STALAGMITE = "Stalagmite",
+        STALAGMITE_FULL = "Stalagmite",
+        STALAGMITE_MED = "Stalagmite",
+        STALAGMITE_LOW = "Stalagmite",
+        SPIDERHOLE = "Spilagmite",
+
+
 	},
 
     RECIPE_DESC=
     {
-		GUNPOWDER = "ÉÙ Á¿ »ð Ò© ",
-        TORCH = "±ã Ð¯ Ê½ ¹â Ô´ ",
-        TRAP = "²¶ ×½ Ð¡ Éú Îï ",
-        BIRDTRAP = "²¶ »ñ ÓÐ Òí ÊÞ ",
-        PIGHOUSE = "±£ »¤ Ò» Ö» Öí ",
-        CAMPFIRE = "È¼ ÉÕ Ê± Ìá ¹© ¹â ÕÕ ",
-        FIREPIT = "¸ü °² È« ¡¢ ¸ü ¸ß Ð§ µÄ óô »ð ",
-		HEATROCK = "±£ ´æ ÂÃ ÐÐ Ê± ¶ø ¶¯ ÈÈ Á¿ ¡£ ",
-        SLOW_FARMPLOT = "Éú ³¤ ÖÖ ×Ó ",
-        FAST_FARMPLOT = "ÖÖ ×Ó Éú ³¤ ¼Ó ¿ì ÁË Ò» µã ",
-        TENT = "»Ö ¸´ Àí ÖÇ ,µ« Òª Ïû ºÄ Ê± ¼ä Óë ¼¢ ¶ö ",
-        ROPE = "ÓÐ ÓÃ µÄ ½ô ÃÜ ±à Ö¯ µÄ Ïß È¦ ",
-        ARMORWOOD = "±£ »¤ Äã Ãâ ÊÜ Ò» Ð© ÉË º¦ ",
-        ARMORGRASS = "Ìá ¹© ÉÙ Á¿ µÄ ±£ »¤ ¡£ ",
-        ARMORMARBLE = "ºÜ ÖØ £¬ µ« ºÜ ÄÜ ±£ »¤ Äã ¡£ ",
-        ARMOR_SANITY = "±£ »¤ Äã µÄ Éí Ìå ,µ« ²» ÊÇ Äã µÄ Í· ÄÔ ",
+		GUNPOWDER = "A handful of gunpowder",
+        TORCH = "Portable light source",
+        TRAP = "Capture small creatures",
+        BIRDTRAP = "Capture winged beasts",
+        PIGHOUSE = "Shelters one pig",
+        RABBITHOUSE = "Room for one giant rabbit and his weird rabbit stuff",
+        CAMPFIRE = "Provides light while burning",
+        FIREPIT = "A safer, more efficient campfire",
+		HEATROCK = "Stores heat for travel.",
+        SLOW_FARMPLOT = "Grows seeds",
+        FAST_FARMPLOT = "Grows seeds a bit faster",
+        TENT = "Restores sanity, but costs time and hunger",
+        ROPE = "Tightly woven coils of usefulness",
+        ARMORWOOD = "Protects you from some damage",
+        ARMORGRASS = "Provides a small amount of protection.",
+        ARMORMARBLE = "It's heavy, but it will protect you.",
+        ARMOR_SANITY = "Protects your body, but not your mind",
         SPEAR="Use the pointy end",
-        STRAWHAT = "Ì« Ê± ÉÐ ÁË !",
-        TOPHAT = "¾­ µä Ã± ×Ó ¡£ ",
-		FLOWERHAT = "¿É ÒÔ Êæ »º Éñ ¾­ µÄ ¶« Î÷ ¡£ ",
-        BEEFALOHAT = "Äã ÈÏ Îª Ëû ÃÇ ÔÚ Íâ Ãæ ÎÅ Æð À´ ºÜ Ôã ¸â ¡£ ",
-        AXE = "¿³ Ê÷ !",
-        PICKAXE = "·Ö ½â ÑÒ Ê¯ ",
-		HAMMER = "²ð Ð¶ ½¨ Öþ ",
-        SHOVEL = "ÒÆ ¶¯ ÖÜ Î§ µÄ Ö² Îï ",
-        PITCHFORK = "ÒÆ ¶¯ ÖÜ Î§ µÄ µØ Ãæ ",
-        GOLDENAXE = "ÓÃ ·ç ¸ñ ¿³ Ê÷ !",
-        GOLDENPICKAXE = "Ïñ ¶Ô ¸¶ BOSSÒ» Ñù ·Ö ½â ÑÒ Ê¯ ¡£ ",
-        GOLDENSHOVEL = "³Ö Ðø ¸ü ¾Ã ,ÍÚ Ò» Ñù µÄ ¶« Î÷ ",
-		GOLDENPITCHFORK = "ÖØ ÐÂ °² ÅÅ Õû ¸ö ÊÀ ½ç ",
-        CUTSTONE = "²» ´í µÄ Æ½ ·½ ÑÒ Ê¯ ",
-		WINTEROMETER = "²â Á¿ ÖÜ Î§ ¿Õ Æø ÎÂ ¶È ",
-        RAINOMETER = "Ö¸ ³ö ½µ Ë® µÄ ¿É ÄÜ ÐÔ ",
-        RESURRECTIONSTATUE = "ÓÃ Èâ µÄ Á¦ Á¿ ¸´ »î ×Ô ¼º ¡£ ",
-        BOARDS = "Ïñ Ô­ Ä¾ Ò» Ñù Æ½ Ì¹ ",
-        RESEARCHLAB = "½â Ëø ÐÂ µÄ ¹¤ ÒÕ Åä ·½ ",
-		BACKPACK = "Ð¯ ´ø ¸ü ¶à µÄ ¶« Î÷ ¡£ ",
-		PIGGYBACK = "¿É ÒÔ Ð¯ ´ø ºÜ ¶à ,µ« »á ¼õ »º Äã µÄ ËÙ ¶È ¡£ ",
-        UMBRELLA = "¼õ Çá ´ó Æø Ë® ·Ö µÄ Ó° Ïì ¡£ ",
-        RESEARCHLAB2 = "½Ò ¿ª ¸ü ¶à µÄ ¹¤ ÒÕ Åä ·½ ",
-        RESEARCHLAB3 = "Õâ ÊÇ ²» ÊÇ ±È ½Ï ¿Æ Ñ§ ÁË ?",
-        RAZOR = "Ìê µô Äã ÄÇ Ôà ºú ×Ó ¡£ ",
-        PAPYRUS = "ÊÇ ÓÃ À´ Ð´ ¶« Î÷ µÄ ",
-        PANFLUTE = "¸§ Î¿ Ò° ÊÞ µÄ Òô ÀÖ ",
-        COOKPOT = "×ö ³ö ¸ü ºÃ µÄ Ê³ Îï ",
-        BUGNET = "²¶ ×½ Ð¡ ³æ ×Ó ",
-        BEEBOX = "±£ ´æ ºÃ ×Ô ¼º µÄ ÃÛ ·ä ",
-        BEEHAT = "·À Ö¹ ·ß Å­ ÃÛ ·ä ",
-        TREASURECHEST = "¼á ¹Ì ÈÝ Æ÷ ",
-        BEDROLL_STRAW = "ÔÚ Ò¹ Íí Èë Ë¯ ",
-        PUMPKIN_LANTERN = "ÓÄ Áé ÕÕ Ã÷ ",
-        FISHINGROD = "È¥ µö Óã ¡£ µö Óã ¡£ ",
-        FEATHERHAT = "Í· ²¿ Àñ ·þ ¡£ ",
-        MINERHAT = "ÓÃ Äã µÄ Ð¡ ±­ ×Ó ÕÕ ÁÁ Ò¹ Íí ¡£ ",
-        FOOTBALLHAT = "±£ »¤ Äã µÄ ÄÔ ¿Ç ¡£ ",
-        BLOWDART_SLEEP = "Ïò Äã µÄ µÐ ÈË Åç ³ö Ë¯ Òâ ¡£ ",
-        BLOWDART_FIRE = "Ïò Äã µÄ µÐ ÈË Åç »ð ¡£ ",
-        BLOWDART_PIPE = "Ïò Äã µÄ µÐ ÈË Åç ÑÀ ³Ý ¡£ ",
-        BEEMINE = "Îä Æ÷ »¯ ÃÛ ·ä ¡£ Ê² Ã´ ¿É ÄÜ ³ö ´í ?",
-        AMULET = "±£ »¤ Äã Ãâ ÊÜ ËÀ Íö ¡£ ",
-        SWEATERVEST = "ºÜ ´Ö ²Ú ,µ« ºÜ Ê± ÉÐ ¡£ ",
-        TRUNKVEST_SUMMER = "ºÜ ÎÂ Å¯ ,µ« ÔÚ ÏÄ Ìì ×ã ¹» Çá ¡£ ",
-		TRUNKVEST_WINTER = "¶Ô ÓÚ ¶¬ ¼¾ ·ç ±© ×ã ¹» ÎÂ Å¯ ÁË ¡£ ",
-        BIRDCAGE = "¶Ô Äã µÄ Äñ Àà Åó ÓÑ À´ Ëµ ÊÇ Ò» ¸ö ÐÒ ¸£ µÄ ¼Ò Í¥ ¡£ ",
-        SPIDERHAT = "Ö© Öë »á ½Ð Äã ¡® Âè Âè ¡¯ ¡£ ",
-        TRAP_TEETH = "µ¯ ³ö ºÍ Ò§ Ë­ ²È Ëü ",
-        TRAP_TEETH_MAXWELL = "µ¯ ³ö ºÍ Ò§ Ë­ ²È Ëü ",
-		EARMUFFSHAT = "Ò» µã ÎÂ Å¯ ",
-        WINTERHAT = "¿Ï ¶¨ ÓÐ Ò» Ð© Ä§ ·¨ ¡­ ¡­ ¡± ",
-        BUSHHAT = "ÊÊ ºÏ Òþ ²Ø !",
-        BOOMERANG = "À´ ×Ô ÏÂ Ãæ ¡£ ",
-        ICEBOX = "¼õ »º Ê³ Îï ±ä ÖÊ ¡£ ",
-        ONEMANBAND = "Éõ ÖÁ ÊÇ ·è ¿ñ µÄ Òô ÀÖ ¼Ò Ò² ¿É ÒÔ »ý ¾Û Ò» Åú ×· Ëæ Õß ¡£ ",
-        NIGHTMAREFUEL = "´À µ° ºÍ ·è ×Ó Ê¹ ÓÃ µÄ Ð° ¶ñ ²Ð Ôü ¡£ ",
-        PURPLEGEM = "Í¨ ¹ý Äã µÄ ÑÕ É« ×é ºÏ !",
-        HAMBAT = "Òª ÓÃ Ê³ Îï À´ ÖÆ Ôì Ê³ Îï ¡£ ",
-        HOMESIGN = "ÔÚ ÊÀ ½ç ÉÏ ×ö ³ö ×Ô ¼º µÄ ±ê Ö¾ ¡£ ",
-		WALL_WOOD_ITEM = "Ä¾ ±Ú ²¿ ·Ö ¡£ ",
-		WALL_STONE_ITEM = "Ê¯ Ç½ ²¿ ·Ö ¡£ ",
-		WALL_HAY_ITEM = "»¨ ·Û ±Ú ²¿ ·Ö ¡£ ²» ÊÇ ºÜ ¼á ¹Ì ¡£ ",
-        TURF_WOODFLOOR = "¸ß ÖÊ Á¿ µÄ ¸´ ºÏ µØ °å ¡£ ",
-        TURF_CHECKERFLOOR = "²» ´í µÄ Íø ÎÆ ´ó Àí Ê¯ ×© ¡£ ",
-        TURF_CARPETFLOOR = "ÄÇ Æø Î¶ ×î ºÃ ÐÎ ÈÝ Îª ¡° ¼Ù Å£ Èâ ¡¯ ¡£ ",
-        TURF_ROAD = "½¨ Ôì ×Ô ¼º Í¨ Íù ÈÎ ºÎ µØ ·½ µÄ µÀ Â· ¡£ ",
-        
-        NIGHTLIGHT = "ÓÃ Äã µÄ ÃÎ ÕÕ ÁÁ Ò¹ Íí ¡£ ",
-        NIGHTSWORD = "Çå ÐÑ Ö® ÃÎ ÉË º¦ ¡£ ",
-        ICESTAFF = "ÔÚ Â· ÉÏ ¶³ ½á µÐ ÈË ¡£ ",
-        FIRESTAFF = "Àû ÓÃ È¼ ÉÕ µÄ Á¦ Á¿ !",
-        MEATRACK = "×î ²» Æ½ ÎÈ µÄ »õ ¼Ü ¡£ ",
-        BANDAGE = "ÖÎ Óú Äã µÄ Ð¡ ÉË ¿Ú ¡£ ",
-		HEALINGSALVE = "ÓÃ ÓÚ ÇÐ ÉË ºÍ ²Á ÉË µÄ Ïû ¶¾ ¼Á ¡£ ",
-		LIGHTNING_ROD = "±£ »¤ Ãâ ÓÚ ¹¥ »÷ ¡£ ",
-		CANE = "°ï Äã ×ß Â· ¡£ ",
+        STRAWHAT = "How fashionable!",
+        TOPHAT = "The classiest hat of all.",
+		FLOWERHAT = "Something to soothe the nerves.",
+        BEEFALOHAT = "And you thought they smelled bad on the outside.",
+        AXE = "Chop down trees!",
+        PICKAXE = "Break down rocks",
+		HAMMER = "Deconstruct structures",
+        SHOVEL = "Move plants around",
+        PITCHFORK = "Move the ground around",
+        GOLDENAXE = "Chop down trees with STYLE!",
+        GOLDENPICKAXE = "Break down rocks like a boss.",
+        GOLDENSHOVEL = "Lasts longer, digs the same stuff",
+		GOLDENPITCHFORK = "Rearrange the whole world",
+        CUTSTONE = "Nicely squared rocks",
+		WINTEROMETER = "Measure ambient air temperature",
+        RAINOMETER = "Indicates the probability of precipitation",
+        RESURRECTIONSTATUE = "Resurrect yourself with the power of meat.",
+        BOARDS = "Like logs but flatter",
+        RESEARCHLAB = "Unlock new crafting recipes",
+		BACKPACK = "Carry more stuff.",
+		PIGGYBACK = "Carries a lot, but slows you down.",
+        UMBRELLA = "Mitigate the effects of atmospheric moisture.",
+        RESEARCHLAB2 = "Unlock even more crafting recipes",
+        RESEARCHLAB3 = "Is this even science anymore?",
+        RAZOR = "Shave off your dirty beatnick beard.",
+        PAPYRUS = "For writing things",
+        PANFLUTE = "Music to soothe savage beasts",
+        COOKPOT = "Make better food",
+        BUGNET = "Catch bugs",
+        BEEBOX = "Store your own bees",
+        BEEHAT = "Protection against angry bees",
+        TREASURECHEST = "A sturdy container",
+        BEDROLL_STRAW = "Sleep through the night ",
+        BEDROLL_FURRY = "Sleep through the night in comfort!",
+        PUMPKIN_LANTERN = "Spooky illumination",
+        FISHINGROD = "Go fishing. For fish.",
+        FEATHERHAT = "Dress for your head.",
+        MINERHAT = "Light up the night with your noggin.",
+        FOOTBALLHAT = "Protect your braincase.",
+        BLOWDART_SLEEP = "Spit sleepiness at your enemies.",
+        BLOWDART_FIRE = "Spit fire at your enemies",
+        BLOWDART_PIPE = "Spit teeth at your enemies.",
+        BEEMINE = "Weaponized bees. What could go wrong?",
+        AMULET = "Protects you from death.",
+        SWEATERVEST = "Rugged, yet stylish.",
+        TRUNKVEST_SUMMER = "Warm, but light enough for summer.",
+		TRUNKVEST_WINTER = "Warm enough for winter storms.",
+        BIRDCAGE = "A happy home for your avian friends.",
+        SPIDERHAT = "Spiders will call you 'mom'.",
+        TRAP_TEETH = "Pops up and bites whoever steps on it",
+        TRAP_TEETH_MAXWELL = "Pops up and bites whoever steps on it",
+		EARMUFFSHAT = "A fuzzy little bit of warmth",
+        WINTERHAT = "There must be some magic in it...",
+        BUSHHAT = "Good for hiding!",
+        BOOMERANG = "It comes from a land down under.",
+        ICEBOX = "Slows food spoilage.",
+        ONEMANBAND = "Even a crazed musician can amass quite a following.",
+        NIGHTMAREFUEL = "An evil residue used by the foolish and the crazy.",
+        PURPLEGEM = "By your colours combined!",
+        HAMBAT = "It takes food to make food.",
+        HOMESIGN = "Make your mark upon the world.",
+		WALL_WOOD_ITEM = "Wooden wall segments.",
+		WALL_STONE_ITEM = "Stone wall segments.",
+		WALL_HAY_ITEM = "Hay wall segments. Not very sturdy.",
+        TURF_WOODFLOOR = "High-quality laminate floorboards.",
+        TURF_CHECKERFLOOR = "Nicely checkered marble tiles.",
+        TURF_CARPETFLOOR = "The smell is best described as 'Beefalesque'.",
+        TURF_ROAD = "Build your own road to nowhere.",
+        SEWING_KIT = "Fix up degraded clothing items.",
+        NIGHTLIGHT = "Light the night with your dreams.",
+        NIGHTSWORD = "Lucid dreaming damage.",
+        ICESTAFF = "Freeze enemies in their tracks.",
+        FIRESTAFF = "Harness the power of combustion!",
+        MEATRACK = "The jerkiest of racks.",
+        BANDAGE = "Heal your minor wounds.",
+		HEALINGSALVE = "Disinfectant for cuts and abrasions.",
+		LIGHTNING_ROD = "Protection from strikes.",
+		CANE = "Help with walking.",
+		DIVININGROD = "There must be some kind of way out of here...", 
+        LANTERN = "Refuelable, bright, portable!",
+
     },
 
     MAXWELL_TEST = {"Say pal, you don't look so good.", "You better find something to eat before night comes!"},
@@ -647,90 +723,95 @@ STRINGS=
     	{"I left you a little something...","I don't think it will help you though.", "You know what I like about nighttime?", "All the spiders."},
     	},
     	
-    MAXWELL_SEARCH = 
-    {
-     	{ --Level 1
-        "That wasn't so hard, was it?",
-        "A trained monkey could figure out how to put together that machine.",
-        "Let's try something a little more challenging, shall we?",
-        "Let's see if you can do the same trick when it's fourty below."
-        },
-     	{ --Level 2
-        "You survived! Bully on you!",
-        "Now don't get a big head, you aren't the first.",
-        "Let's see what you're really made of.",
-        --Sound play here
-        "And by that I mean to say,",
-        "I will enjoy inspecting your entrails once the Deerclops is done with you."
-        },
-     	{ --Level 3
-        "[PLACEHOLDER TEXT] Level 3: The Game is Afoot",
-        "Hub world with themed islands"
-        },
-     	{ --Level 4
-        "[PLACEHOLDER TEXT] Level 4: Bargaining", 
-        "Paradise island followed by rainy hostile land"
-        },
-     	{ -- Level 5
-        "[PLACEHOLDER TEXT] Level 5: This Means War", 
-        "Everything is hard. Resources are scarce."
-        },
-     	{ -- Level 6
-        "[PLACEHOLDER TEXT] Level 6: Checkmate", 
-        "A final confrontation with Maxwell"
-        },
-	},
 
     MAXWELL_SANDBOXINTROS =
     {
-        ONE = "ÀÏ ÐÖ £¬ Äã ¿´ Æð À´ ²» Ãî ¡£ ",
-        TWO = "Äã ×î ºÃ ÔÚ Ìì ºÚ Ö® Ç° ÕÒ µã ³Ô µÄ £¡ ",       
+        ONE = "Say pal, you don't look so good.",
+        TWO = "You'd better find something to eat before night comes!",       
     },
 
     MAXWELL_ADVENTUREINTROS =
     {
         LEVEL_1 =
         {
-            ONE = "ÚÀ £¬ Äã ÕÒ µ½ ÎÒ µÄ ´« ËÍ ÃÅ ÁË °É £¿ ",
-            TWO = "Äã Ó¦ ¸Ã Öª µÀ ×Ô ¼º Ñ§ »á ÁË Ê² Ã´ °É ¡£ ",
-            THREE = "Äã Óë Ææ ¹Ö µÄ »ú Æ÷ Ö® ¼ä ¿É ÊÇ ÓÐ ºÚ Àú Ê· µÄ ¡£ ",
-            FOUR = "àÅ ¡£ ÎÒ ÃÇ ÊÔ ÊÔ ¸ü ÓÐ Ìô Õ½ µÄ ¶« Î÷ °É £¿ ",
-            FIVE = "ÈÃ ÎÒ ÃÇ À´ ¿´ ¿´ £¬ µ± Áã ÏÂ 40µÄ Ê± ºò £¬ Äã »¹ »á ²» »á Õâ Ã´ ÓÐ ¼¤ Çé ¡£ ",
+            ONE = "Oh, you found my portal did you?",
+            TWO = "You'd think you would have learned your lesson by now.",
+            --THREE = "Strange machinery hasn't exactly been kind to you in the past.",
+            THREE = "Hmm. Let's try something a little more challenging, shall we?",
+            --FIVE = "Let's see if you're so enthusastic when it's fourty below.",
         },
         LEVEL_2 =
         {
-            ONE = "àÅ £¬ Äã ¿É ÒÔ ¿´ ¿´ £¬ Äã »î ÏÂ À´ ÁË ¡£ ",
-            TWO = "ÏÖ ÔÚ £¬ ±ð ×Ô ÒÔ Îª ÁË ²» Æð ÁË £¬ Äã »¹ ²» ÊÇ µÚ Ò» ÄØ ¡£ ",
-            THREE = "ÈÃ ÎÒ ÃÇ À´ ¿´ ¿´ Äã µ½ µ× ÊÇ Ê² Ã´ ×ö µÄ ¡£ ",
-            FOUR = "ÎÒ µÄ Òâ Ë¼ ÊÇ Ëµ £¬ ",
-            FIVE = "Ò» µ© Â¹ Ìã ÁË ½â ÁË £¬ ÎÒ ºÜ ÀÖ Òâ ¼ì ²é Ò» ÏÂ Äã µÄ ÄÚ Ôà ¡£ ",
+            ONE = "Well would you look at that, you survived.",
+            TWO = "One down, four to go!",
+            --TWO = "Now don't get a big head, you aren't the first.",
+            --THREE = "Let's see what you're really made of.",
+            --FOUR = "And by that I mean to say,",
+            --FIVE = "I will enjoy inspecting your entrails once the Deerclops is done with you.",
         },
         LEVEL_3 =
         {
-            ONE = "Ê² Ã´ £¿ Äã »¹ ÔÚ Õâ Àï £¿ ",
-            TWO = "ÎÒ Ò» ¶¨ Òª ×Ô ¼º Íê ³É Ò» ÇÐ Âð £¿ ",
-            THREE = "ÁÔ ¹· £¡ ½â ¾ö µô Õâ º¦ ³æ £¡ ",
+            ONE = "What? You're still here?",
+            TWO = "Impressive. But you should probably stop while you're ahead.",
+            --TWO = "Must I do everything myself?",
+            --THREE = "HOUNDS! DISPOSE OF THIS PEST!",
         },
         LEVEL_4 =
         {
-            ONE = "ºÙ £¬ »ï ¼Æ ¡£ ",
-            TWO = "ÈÃ ÎÒ ÃÇ ×ö ¸ö ½» Ò× ¡£ Äã ¿É ÒÔ Áô ÔÚ Õâ ¶ù ¡£ Éõ ÖÁ £¬ °² ¶Ù ÏÂ À´ ¡£ ",
-            THREE = "ÎÒ »á ¸ø Äã Ê³ Îï £¬ »Æ ½ð £¬ Öí £¬ ²» ¹Ü Äã Òª Ê² Ã´ ¡£ ",
-            FOUR = "ÎÒ Ëù Ïë Òª µÄ »Ø ±¨ ¾Í ÊÇ ÐÝ Õ½ ¡£ ",
+            ONE = "Say, pal.",
+            TWO = "You're really pushing your luck.",
+            THREE = "Turn back now, or I may have to resort to drastic mesaures.",
+        },
+        TWOLANDS =
+        {
+            ONE = "Say, pal.",
+            TWO = "Let's make a deal. You can stay here. Settle down, even.",
+            THREE = "I'll give you food, gold, pigs, whatever you need.",
+            FOUR = "All I want in return is a truce.",
         },
         LEVEL_5 =
         {
-            ONE = "Äã ÈÏ Îª Äã ÊÇ Ë­ £¿ ",
-            TWO = "Äã Öª µÀ ÎÒ ÊÇ Ë­ Âð £¿ ",
-            THREE = "ÎÒ ÊÇ Âó ¿Ë Ë¹ Î¤ £¡ ",
-            FOUR = "´Ó À´ Ã» ÓÐ ÈË ÄÜ ¹» Õ¼ ¾Ý ÉÏ ·ç £¡ ",
-            FIVE = "Ã» ÓÐ ÈË £¡ ",
-            SIX = "ÏÖ ÔÚ £¬ Í£ Ö¹ ÁË £¡ ",
+            ONE = "You insolent, pitiful, insignificant ant!",
+            TWO = "Do not arouse the wrath of the Great Maxwell!",
+            THREE = "You will regret coming any further...",
         },
         LEVEL_6 =
         {
-            ONE = "ºÃ °É £¬ ¾Í ÊÇ Õâ Ñù ¡£ ",
-            TWO = "Äã ÕÒ µ½ ÁË ÎÒ ¡£ ",
+            ONE = "Well, this is it.",
+            TWO = "You found me. Now, what are you going to do?",
+            TELEPORTFAIL = "Don't you think I've tried that?",
+            TELEPORTFAIL2 = "This is the end of the line. We have no escape.",
+            COMBATFAIL = 
+            {
+                "Where would be the sport in that?",
+                "Who do you think allowed you to make that?",
+            },
+            CONVERSATION = 
+            {
+                "Is this what you were expecting?",
+                "Forgive me if I don't get up.",
+                "You've been an interesting plaything, but I've grown tired of this game.",
+                "Or maybe They've grown tired of me.",
+                "Heh. Took them long enough.",
+                "They'll show you terrible, beautiful things.",
+                "It will change you, like it did me.",
+                "It's best not to fight it.",
+                "There wasn't much here when I showed up.",
+                "Just dust. And the void. And Them.",
+                "I've learned so much since then. I've built so much.",
+				"But even a King is bound to the board.",                
+				"You can't change the rules of the game.",
+                "I don't know what they want. They... they just watch.",
+                "Unless you get too close. Then...",
+                "Well, there's a reason I stay so dapper.",
+                "What year is it out there? Time moves differently here.",
+                "Go on, stay a while. Keep us company.",
+                "Or put the key in the box. It's your decision.",
+                "Either way, you're just delaying the inevitable.",
+                "Reality is like that, sometimes.",
+                "I think I've said enough.",
+                "..."
+            }
         },
 
     },
@@ -739,25 +820,25 @@ STRINGS=
     {
         LEVEL_4 =
         {
-            ONE = "ºÃ µÄ ¡£ ¼Ç ×¡ Õâ ÊÇ Äã ×Ô ¼º Ñ¡ µÄ ¡£ ",
+            ONE = "Fine. Just remember that you chose this.",
         },
         LEVEL_6 =
         {
-            ONE = "Äã ¸ú ÎÒ £¬ Ã» Ê² Ã´ Á½ Ñù ¡£ ",
+            ONE = "We're not so different, you and I.",
             TWO = 
             {
-                ONE = "Õâ ¾Í ÊÇ ÎÒ Îª Ê² Ã´ °Ñ Äã ´ø µ½ Õâ Àï À´ ¡£ ",
-                TWO = "Õâ ¾Í ÊÇ Îª Ê² Ã´ ÎÒ °Ñ Ëû ÃÇ ¶¼ ´ø µ½ ÁË Õâ Àï ¡£ ",
+                ONE = "That's why I brought you here.",
+                TWO = "That's why I brought all of them here.",
             },
             THREE =   
             {
-                ONE = "àÞ £¬ Äã ÈÏ Îª Äã ÊÇ µÚ Ò» Âð £¿ ",
-                TWO = "¹þ £¡ ",
+                ONE = "Oh, did you think you were the first?",
+                TWO = "HA!",
             },
             FOUR = 
             {
-                ONE = "Õâ Ö» ÊÇ ......",
-                TWO = "ÎÒ ÒÑ ¾­ Ï° ¹ß Ó® ÁË ¡£ ",
+                ONE = "It's just that...",
+                TWO = "I've become accustomed to winning.",
             },
         },
     },
@@ -768,28 +849,29 @@ STRINGS=
         {
             INTRO =
             {
-                ONE = "Äã ×ö µ½ ÁË ¡£ Äã Ó® ÁË ¡£ ",
-                TWO = "Èç ¹û ÎÒ Ã» Æð À´ ºÍ Äã ÎÕ ÊÖ £¬ Çë Ô­ ÁÂ ÎÒ ¡£ ",
-                THREE = "Äã Ïë »Ø ¼Ò £¿ ²» ¹Ü ÓÃ Ê² Ã´ ·½ ·¨ £¬ ¾¡ ¹Ü È¥ °É ¡£ ÎÒ ²» »á ×è Ö¹ Äã ¡£ ",
-                FOUR = "µ« ÊÇ £¬ »¹ ÓÐ Áí Ò» ¸ö Ñ¡ Ôñ ...",
-                FIVE = "Äã Ï² »¶ Õâ ¸ö µØ ·½ Âð £¿ Õâ Àï ËÆ ºõ ºÜ ÊÊ ºÏ Äã ¡£ ",
-                SIX = "ÎÒ ÔÚ Õâ Àï ÒÑ ¾­ ¹» ¾Ã ÁË ¡£ Äã ¿É ÒÔ ´ú Ìæ ÎÒ µÄ Î» ÖÃ ¡£ Õâ ¹¤ ×÷ ÓÐ Æä ÌØ Êâ ´ý Óö ¡£ ",
-                SEVEN = "Äã ×Ô ¼º Ñ¡ Ôñ °É ¡£ ",
+                ONE = "Is this how it ends?",
             },
-            MAXWELL = 
+            HIT =
             {
-                ONE = "²» Òª µ£ ÐÄ ¡£ Äã »á Âý Âý Ï° ¹ß µÄ ¡£ ",
-                TWO = "Äã Éõ ÖÁ ¿É ÄÜ »á Ï² »¶ ÉÏ Ëü ¡£ ",
+                ONE = "The throne won't allow that. I've tried.",
             },
-            PORTAL =
+            NOUNLOCK =
             {
-                ONE = "×Ü »á ÓÐ ÏÂ ´Î µÄ ¡£ ",
+                ONE = "Ah, I am a fool. I had dared to hope.",
+            },
+            PHONOGRAPHON =
+            {
+                ONE = "I guess I deserve that.",
+            },
+            PHONOGRAPHOFF =
+            {
+                ONE = "Thank you. I have been listening to that song for an eternity.",
             },
         },
     },
 	
     --ITEM DESCRIPTIONS
-    DESCRIBE_NULL = "¶ª Ê§ µÄ Ãè Êö ×Ö ·û ´® ",
+    DESCRIBE_NULL = "MISSING DESCRIPTION STRING",
 
 
     PIG_TALK_FOLLOWWILSON = {"YOU FRIEND", "I LOVE FRIEND", "YOU IS GOOD", "I FOLLOW!"},
@@ -811,6 +893,10 @@ STRINGS=
     PIG_GUARD_TALK_LOOKATWILSON = {"YOU LEAVE NOW", "YOU GO AWAY", "YOU NO STAY"},
     
 
+    RABBIT_BATTLECRY = {"HOP!", "KILL!", "DIE!"},
+    RABBIT_MEAT_BATTLECRY = {"MEAT!", "UNCLEAN!", "MURDERER!", "REVENGE!", "MONSTER!"},
+    RABBIT_GIVEUP = {"DONE.", "LATER."},
+    RABBIT_RETREAT = {"AWAY!", "HURT!", "HOME!", "RUN!"},
 
     EPITAPHS =
     {
@@ -822,3528 +908,97 @@ STRINGS=
 
     TABS =
     {
-        TOOLS = "¹¤ ¾ß ",
-        LIGHT = "µã »ð ",
-        FARM = "Ê³ Îï ",
-        SURVIVAL = "Éú ´æ ",
-        SCIENCE = "¿Æ Ñ§ ",
-        WAR = "Õ½ ¶· ",
-        TOWN = "½¨ Öþ ",
-        REFINE = "¾« Á¶ ",
-        DRESS = "·þ ×° ",
-        MAGIC = "Ä§ ·¨ ",
+        TOOLS = "Tools",
+        LIGHT = "Light",
+        FARM = "Food",
+        SURVIVAL = "Survival",
+        SCIENCE = "Science",
+        WAR = "Fight",
+        TOWN = "Structures",
+        REFINE = "Refine",
+        DRESS = "Dress",
+        MAGIC = "Magic",
     },
 }
 
-
-STRINGS.CHARACTERS =
+STRINGS.BUNNYMANNAMES =
 {
+    "Brassica",
+    "Bunium",
+    "Burdock",
+    "Carrot",
+    "Celeriac",
+    "Daikon",
+    "Lepidium",
+    "Microseris",
+    "Parsnip",
+    "Radish",
+    "Sium",
+    "Tragopogon",
+    "Ipomoea",
+    "Manihot",
+    "Mirabilis",
+    "Psoralea",
+    "Canna",
+    "Typha",
+    "Zingiber",
+    "Oxalis",
+    "Solanum",
+    "Ullucus",
+    "Cuperus",
+    "Apios",
+    "Yam Daisy",
+    "Altrincham",
+    "Barwon",
+    "Bolero",
+    "Chantenay",
+    "Crusader",
+    "Danvers",
+    "Doucer",
+    "Flakee",
+    "Guerande",
+    "Hipak",
+    "Imperator",
+    "Juwarot",
+    "Karotan",
+    "Magno",
+    "Nantes",
+    "Nelson",
+    "Onward",
+    "Oxheart",
+    "Pimpernel",
+    "Redhild",
+    "Redland",
+    "Suko",
+    "Thumbelina",
+    "Topweight",
+    "Touchon",
+    "Uchon",
+    "Valery",
+    "Yellow",
+    "Zino",
+    "Scandius",
+    "Yttria",
+    "Lanthan",
+    "Cerium",
+    "Praseodymia",
+    "Neodymia",
+    "Promethia",
+    "Samari",
+    "Europia",
+    "Gadolin",
+    "Terbia",
+    "Dyspros",
+    "Holmia",
+    "Erbium",
+    "Thulium",
+    "Ytterbia",
+    "Lutetium",
 }
-
-
-STRINGS.CHARACTERS.GENERIC =
-{
-    ACTIONFAIL =
-    {
-		STORE =
-		{
-			GENERIC = "Âú ÁË ¡£ ",
-			NOTALLOWED = "²» ÄÜ ½ø È¥ ¡£ ",
-		},
-
-        SHAVE =
-        {
-            GENERIC = "ÎÒ ²» ÄÜ Ìê ÏÂ À´ !",
-            NOBITS = "Éõ ÖÁ Ã» ÓÐ Ê² Ã´ ²Ð Öê ÁË !",
-            AWAKEBEEFALO = "Ëû ÐÑ ÁË ÎÒ ÊÇ ²» »á È¥ ³¢ ÊÔ µÄ ¡£ ",
-        }
-    },
-    DESCRIBE=
-    {
-		SPOILED_FOOD = "Õâ ÊÇ ¸¯ ÀÃ Ê³ Îï µÄ Ã« È× È× µÄ Çò ¡£ ",
-		ABIGAIL = "ßí ,Ëý ÓÐ Ò» °Ñ ¿É °® µÄ Ð¡ ¹­ ¡£ ",
-        MEAT = "ÓÐ Ò» µã ÓÂ ¸Ò ,µ« ¿É ÒÔ µÄ ¡£ ",
-        SMALLMEAT = "Ò» Ð¡ ¿é ËÀ ¶¯ Îï ¡£ ",
-        COOKEDSMALLMEAT = "ÏÖ ÔÚ ÎÒ ²» ÓÃ µ£ ÐÄ ×¥ Èä ³æ ÁË !",
-        MONSTERMEAT = "ßÀ ¡£ ÎÒ Ïë ÎÒ ²» Ó¦ ¸Ã ³Ô Õâ ¸ö ¡£ ",
-        COOKEDMEAT = "Ì¿ »ð ÉÕ ¿¾ ÖÁ Íê ÃÀ ¡£ ",
-        COOKEDMONSTERMEAT = "±È Æð Éú ³Ô £¬ Õâ Ñù ×Ó ¸ü ¼Ó ÓÐ Î¸ ¿Ú ¡£ ",
-        MAXWELL = "ÎÒ ÌÖ Ñá ÄÇ ¸ö ¼Ò »ï ",
-        UMBRELLA = "Õâ Ñù ÖÁ ÉÙ ¿É ÒÔ ÈÃ ÎÒ µÄ Í· ·¢ ±£ ³Ö ¸É Ôï ¡£ ",
-        BACKPACK = "ÊÇ ÎÒ °Ñ ¶« Î÷ ·Å ½ø À´ µÄ ¡£ ",
-        PIGGYBACK = "ÎÒ ¸Ð ¾õ ÓÐ µã ²» Ãî ¡£ ",
-        TENT = "ÎÒ ²» Ë¯ ¾õ ¾Í »á ·¢ ·è ¡£ ",
-        
-        TURF_CHECKERFLOOR = "Õâ Ð© ¶¼ ºÜ Ê± ÷Ö ¡£ ",
-        TURF_CARPETFLOOR = "Õâ Õæ Áî ÈË ¾ª ÑÈ µÄ ´Ö ²Ú °¡ ¡£ ",
-		TURF_WOODFLOOR = "ÓÐ µØ °å ¡£ ",
-		TURF_SAVANNA = "Ò» ¿é µØ Ãæ ¡£ ",
-		TURF_GRASS = "Ò» ¿é µØ Ãæ ¡£ ",
-		TURF_FOREST = "Ò» ¿é µØ Ãæ ¡£ ",
-		TURF_MARSH = "Ò» ¿é µØ Ãæ ¡£ ",
-		TURF_DIRT = "Ò» ¿é µØ Ãæ ¡£ ",
-		TURF_ROCKY = "Ò» ¿é µØ Ãæ ¡£ ",
-		TURF_ROAD = "¶ì ÂÑ Ê¯ Ê¯ Í· ",
-        ADVENTURE_PORTAL = "ÎÒ ²» È· ¶¨ ÎÒ Ïë µÚ ¶þ ´Î µ¹ ÏÂ ¡£ ",
-        
-		NITRE = "ÎÒ ²» ÊÇ µØ ÖÊ Ñ§ ¼Ò ¡£ ",
-		GUNPOWDER = "¿´ Æð À´ Ïñ ºú ½· ¡£ ",
-		BIRD_EGG = "Ò» ¸ö ÆÕ Í¨ µÄ Ð¡ µ° ¡£ ",
-		BIRD_EGG_COOKED = "Ïò Ñô !",
-		ROTTENEGG = "°¬ Âê !³ô ËÀ ÁË !",
-        
-        BIRDCAGE = 
-        {
-			GENERIC = "ÎÒ Ó¦ ¸Ã ·Å Ò» Ö» Äñ ½ø È¥ µÄ ¡£ ",
-			OCCUPIED = "Õâ ÊÇ ÎÒ µÄ Äñ !",
-			SLEEPING = "°¡ ,Ëû Ë¯ ×Å ÁË ¡£ ",
-        },
-		KRAMPUS = "Ëû Õý ÔÚ ×· ÎÒ µÄ ¶« Î÷ !",
-		KRAMPUS_SACK = "¶î ¡£ ÉÏ Ãæ ¶¼ ÊÇ ¿Ë À­ ÆÕ Ë¹ Õ³ Òº ¡£ ",
-        BEEFALO =
-        {
-            GENERIC = "ÊÇ Ò» Ö» Æ¤ ¸¥ Â¦ Å£ !",
-            FOLLOWER = "Ëû Æ½ ¾² µÄ ×ß ÁË ¹ý À´ ¡£ ",
-            NAKED = "Å¶ ,Ëû ÊÇ Èç ´Ë ±¯ ÉË ¡£ ",
-            SLEEPING = "Õâ Ð© ¼Ò »ï Õæ µÄ Ë¯ µÃ ºÜ ËÀ ¡£ ",
-        },
-        BABYBEEFALO = "°¡ ¡£ ºÃ ¿É °® !",
-		PIGSKIN = "Ëü ÈÔ È» ÓÐ Î² °Í ¡£ ",
-        MANDRAKE =
-        {
-			GENERIC = "ÎÒ Ìý Ëµ ¹ý ¹Ø ÓÚ ÄÇ Ð© Ö² Îï µÄ Ò» Ð© Ææ ¹Ö ÊÂ Çé ¡£ ",
-			PICKED = "±ð ¸ú ×Ù ÎÒ ÁË !",
-			DEAD = "Âü µÂ À­ ²Ý ¸ù ÓÐ Ææ ¹Ö µÄ Á¦ Á¿ ¡£ ",
-        },
-        MANDRAKE_COOKED = "ËÆ ºõ ²» ÄÇ Ã´ Ææ ¹Ö ÁË ¡£ ",
-
-		HOMESIGN = "Ëü Ëµ ,¡° Äã À´ ÁË '¡£ ",
-		DUG_GRASS = "ÎÒ Ó¦ ¸Ã ÖÖ Õâ Öê µÄ ¡£ ",
-		DUG_SAPLING = "ÎÒ Ó¦ ¸Ã ÖÖ Õâ Öê µÄ ¡£ ",
-		DUG_BERRYBUSH = "ÎÒ Ó¦ ¸Ã ÖÖ Õâ Öê µÄ ¡£ ",
-
-        PINECONE = "ÎÒ ÄÜ Ìý µ½ Àï Ãæ ÓÐ Ò» Öê Ð¡ Ê÷ Ä¾ £¬ Ïë Òª ³ö À´ ¡£ ",
-        ARMORWOOD = "Õâ ÊÇ Ò» ¼þ Íê È« ºÏ ÊÊ µÄ ÒÂ ·þ ¡£ ",
-		ARMOR_SANITY = "´÷ ×Å Õâ ¸ö ÈÃ ÎÒ ¾õ µÃ ²» ÊÇ ÄÇ Ã´ °² È« ¡£ ",
-        SPEAR ="That's one pointy stick",
-        TENTACLESPIKE = "ÓÐ µã ¼â ,Õ³ ºý ºý µÄ ¡£ ",
-        TENTACLE = "¿´ Æð À´ ºÜ Î£ ÏÕ ¡£ ",
-        STRAWHAT = "¶à Ã´ Æ¯ ÁÁ µÄ Ã± ×Ó °¡ ¡£ ",
-        BEEFALOHAT = "¶à Ã´ Æ¯ ÁÁ µÄ Ã± ×Ó °¡ ¡£ ",
-        TOPHAT = "¶à Ã´ Æ¯ ÁÁ µÄ Ã± ×Ó °¡ ¡£ ",
-        FLOWERHAT = "ÎÅ Æð À´ ºÜ ²» ´í ¡£ ",
-        BEEHAT = "Õâ Ó¦ ¸Ã ¿É ÒÔ ±£ »¤ ÎÒ ¡£ ",
-        ROPE = "Ò» Ð© ¶Ì ³¤ ¶È µÄ Éþ ×Ó ¡£ ",
-        TRAP_TEETH = "Õâ ÊÇ Ò» ¸ö Áî ÈË ÌÖ Ñá µÄ ¾ª Ï² ¡£ ",
-        TRAP_TEETH_MAXWELL = "ÎÒ ¿É ÒÔ ²» Òª ²È µ½ ÄÇ ÉÏ Ãæ !",
-        FIRESTAFF = "ÎÒ ²» Ïë Ò» Ãù ¾ª ÈË ¡£ ",
-        PIGHEAD = "¿´ Æð À´ Ïñ ÊÇ ¸ø ÄÇ Ò° ÊÞ µÄ ¼À Æ· ¡£ ",
-        MERMHEAD = "ÎÒ Ò» Õû Ìì ¶¼ Òª ÎÅ µ½ µÄ ¶ñ ³ô µÄ ¶« Î÷ ¡£ ",
-
-        LIVINGLOG = "¿´ Æð À´ ÓÇ ÐÄ âç âç ¡£ ",
-        LOG =
-        {
-            GENERIC = "ºÜ ´ó ,ºÜ ÖØ ,ÊÇ Ä¾ ÖÆ µÄ ¡£ ",
-            BURNING = "ÊÇ Ò» Ð© ÈÈ Ä¾ !",
-        },
-
-        TWIGS = "ÊÇ Ò» ´® Ð¡ Ê÷ Ö¦ ¡£ ",
-        CARROT = "ÌÖ Ñá µÄ ¶« Î÷ ¡£ ¶¼ ÊÇ Ö² Îï ¡£ ",
-        PUMPKIN = "ºÍ ÎÒ µÄ Í· Ò» Ñù ´ó !",
-		DRAGONFRUIT = "¶à Ã´ Ææ ¹Ö µÄ Ë® ¹û °¡ ¡£ ",
-		POMEGRANATE = "¿´ Æð À´ Ïñ ÊÇ ÔÚ Íâ ÐÇ ÈË µÄ ´ó ÄÔ ÄÚ ¡£ ",
-		CORN = "¹û ÌÇ º¬ Á¿ ºÜ ¸ß !",
-		DURIAN = "Å¶ Õâ Æø Î¶ !",
-		EGGPLANT = "¿´ Æð À´ ²» Ïñ ÊÇ Ò» ¸ö ¼¦ µ° ¡£ ",
-        BERRIES = "ºì ½¬ ¹û Î¶ µÀ ÊÇ ×î ºÃ µÄ ¡£ ",
-
-        RED_MUSHROOM =
-        {
-            GENERIC = "ÊÇ Ò» ¸ö Ä¢ ¹½ ¡£ ",
-            PICKED = "ÎÒ Ïë Öª µÀ ÊÇ ·ñ »á »Ø À´ ?",
-            INGROUND = "Ë¯ ×Å ÁË ",
-        },
-        GREEN_MUSHROOM = 
-        {
-            GENERIC = "ÊÇ Ò» ¸ö Ä¢ ¹½ ¡£ ",
-            PICKED = "ÎÒ Ïë Öª µÀ ÊÇ ·ñ »á »Ø À´ ?",
-            INGROUND = "Ë¯ ×Å ÁË ",
-        },
-
-        BLUE_MUSHROOM = 
-        {
-            GENERIC = "ÊÇ Ò» ¸ö Ä¢ ¹½ ¡£ ",
-            PICKED = "ÎÒ Ïë Öª µÀ ÊÇ ·ñ »á »Ø À´ ?",
-            INGROUND = "Ë¯ ×Å ÁË ",
-        },
-
-        RED_CAP = "ÎÅ Æð À´ ÓÐ µã ¹Ö ¡£ ",
-        GREEN_CAP = "ËÆ ºõ Í¦ Õý ³£ µÄ ¡£ ",
-        BLUE_CAP = "Ææ ¹Ö ÓÖ ð¤ ºý ºý µÄ ¡£ ",
-
-
-
-        CARROT_COOKED = "ºý ×´ ¡£ ",
-        PUMPKIN_COOKED = "Ôõ Ã´ ±ä ³É ÏÚ ±ý ÁË ..",
-		DRAGONFRUIT_COOKED = "»¹ ÊÇ ¹Ö ¹Ö µÄ ¡£ ",
-		POMEGRANATE_COOKED = "¸ß ¼¶ Åë â¿ Êõ £¡ ",
-		CORN_COOKED = "¹û ÌÇ º¬ Á¿ ºÜ ¸ß !",
-		DURIAN_COOKED = "ÏÖ ÔÚ ÎÅ Æð À´ ¸ü ¶ñ ÐÄ ÁË £¡ ",
-		EGGPLANT_COOKED = "µ° »Æ ±ä µÃ ¸ü Ï¡ ÁË ¡£ ",
-        BERRIES_COOKED = "ÎÒ ¾õ µÃ ¼Ó ÈÈ Ã» ÓÃ ¡£ ",
-        
-		CARROT_SEEDS = "Õâ »¹ ÊÇ ÖÖ ×Ó ¡£ ",
-		PUMPKIN_SEEDS = "Õâ »¹ ÊÇ ÖÖ ×Ó ¡£ ",
-		DRAGONFRUIT_SEEDS = "Õâ »¹ ÊÇ ÖÖ ×Ó ¡£ ",
-		POMEGRANATE_SEEDS = "Õâ »¹ ÊÇ ÖÖ ×Ó ¡£ ",
-		CORN_SEEDS = "Õâ »¹ ÊÇ ÖÖ ×Ó ¡£ ",
-		DURIAN_SEEDS = "Õâ »¹ ÊÇ ÖÖ ×Ó ¡£ ",
-		EGGPLANT_SEEDS = "Õâ »¹ ÊÇ ÖÖ ×Ó ¡£ ",
-		EARMUFFSHAT = "ÖÁ ÉÙ ÎÒ µÄ ¶ú ¶ä ²» »á ÉË ·ç ..",
-        WINTERHAT = "¶¬ Ìì À´ ÁË ¾Í ÓÐ ÓÃ ÁË ¡£ ",
-        HAMBAT = "Õâ ËÆ ºõ ÓÐ µã ²» Ì« ÎÀ Éú ¡£ ",
-
-        CARROT_PLANTED = "µØ Çò ÔÚ Éú º¢ ×Ó ¡£ ",
-
-        CUTSTONE = "Ëü ÃÇ ±» ÎÒ Åª µÃ ³ö Ææ µØ ¹â »¬ ¡£ ",
-        SEEDS = "Ã¿ ¸ö ¶¼ ÊÇ Î¢ Ð¡ µÄ ÃÔ ¡£ ",
-        SILK = "¶« Î÷ À´ ×Ô Ö© Öë µÄ Æ¨ ¹É ¡£ ",
-		SPIDERGLAND = "Ò» ¹É ÆË ±Ç µÄ Ïû ¶¾ ¼Á Î¶ ¡£ ",
-        BOARDS = "Ä¾ °å ",
-        HOME = "¿Ï ¶¨ ÓÐ ÈË ×¡ ÔÚ Õâ ¶ù ¡£ ",
-        RABBIT = {
-            GENERIC = "Ëû ÔÚ ÕÒ ºú ÂÜ ²· ¡£ ",
-            HELD = "Äã Ï² »¶ ¿Æ Ñ§ Âð £¿ ",
-        },
-        ROCK = "ÎÒ µÄ ¿Ú ´ü ×° ²» ÏÂ ¡£ ",
-        TREECLUMP = "¾Í ºÃ Ïñ ÓÐ ÈË ÊÔ Í¼ ×è Ö¹ ÎÒ È¥ Ä³ ¸ö µØ ·½ ",
-        BOAT = "ÎÒ ¾Í ÊÇ Õâ Ñù µ½ Õâ ¶ù µÄ £¿ ",
-        PIGTENT = "ÎÅ Æð À´ Ïñ Åà ¸ù ¡£ ",
-        PIGKING = "ßÀ £¬ Ëû ºÃ ÄÑ ÎÅ £¡ ",
-        SPIDERQUEEN = "°¡ £¡ ÄÇ Ö» Ö© Öë ºÃ ´ó £¡ ",
-        
-        WINTEROMETER = "ÎÒ ÊÇ ¸ö ÁË ²» Æð µÄ ¿Æ Ñ§ ¼Ò ¡£ ",
-        RAINOMETER = "²â Á¿ Òõ °µ ¶È µÄ ¡£ ",
-        RESURRECTIONSTATUE = "Õæ ÊÇ ¸ö Ë§ Æø µÄ Ä§ ¹í £¡ ",
-        RESURRECTIONSTONE = "Õæ ÊÇ ¿é ÐÎ ×´ Ææ ¹Ö µÄ Ê¯ Í· ¡£ ",
-        AXE = "Õâ ÊÇ ÎÒ ¿É ¿¿ µÄ Õ½ ¸« ¡£ ",
-        HAMMER = "Í£ £¡ ÊÇ Ê± ºò ÁË £¡ Ò» ¶Ù ÂÒ ÔÒ £¡ ",
-        PICKAXE = "·í ´Ì £¬ ¶Ô °É £¿ ",
-        SHOVEL = "µØ ÏÂ ¶¯ ¾² ºÜ ´ó ¡£ ",
-		PITCHFORK = "Âó ¿Ë Ë¹ Î¤ »ò Ðí ÔÚ ÕÒ Õâ Íæ Òâ ",
-        ROCKS = "ÎÒ ÄÜ ÓÃ Õâ Ð© ÖÆ Ôì ³ö Æä Ëû ¶« Î÷ ¡£ ",
-        FLINT = "Õâ ÊÇ ¿é ºÜ ·æ Àû µÄ ÑÒ Ê¯ ¡£ ",
-        AMULET = "ÎÒ ´© ×Å Ê± ¸Ð ¾õ ºÜ °² È« ¡£ ",
-        RAZOR = "°ó ÔÚ ¹÷ ×Ó ÉÏ µÄ ¼â Èñ ÑÒ Ê¯ ¡£ Õæ ÎÀ Éú £¡ ",
-		POND = "ÎÒ ¿´ ²» µ½ µ× ²¿ £¡ ",
-		BUGNET = "Îª ÁË ×½ ³æ ×Ó ¡£ ",
-		PANFLUTE = "ÎÒ ÄÜ Îª ¶¯ Îï ÃÇ ³ª Ð¡ Ò¹ Çú ¡£ ",
-        ONEMANBAND = "ÎÒ Ó¦ ¸Ã Ìí ¼Ó ¸ö Æ¤ ¸¥ Âå Å£ Áå µÄ ¡£ ",
-		PUMPKIN_LANTERN = "Õæ ÏÅ ÈË £¡ ",
-		HORN = "Ìý ÉÏ È¥ ÄÇ ¶ù ÊÇ ¿é Æ¤ ¸¥ Âå Å£ ÄÁ ³¡ ¡£ ",
-        GEARS = "Ò» ¶Ñ »ú Ðµ Áã ¼þ ¡£ ",
-        STATUEHARP = "Äã µÄ Í· ÊÇ Ôõ Ã´ ÁË £¿ ",
-        STATUEMAXWELL = "Ëû µÄ ÐÔ ¸ñ Ò» ÏÂ ×Ó Ã÷ ÁË ÁË ¡£ ",
-        SKELETON = "ÊÇ Ëû ×Ü ±È ÊÇ ÎÒ ºÃ ¡£ ",
-
-        GOLDENAXE = "Õâ °Ñ Õ½ ¸« Õæ ±ð ÖÂ ¡£ ",
-        GOLDENPICKAXE = "ºÙ £¬ ½ð ×Ó ²» ÊÇ ºÜ Èá Èí µÄ Âð £¿ ",
-        GOLDENSHOVEL = "ÎÒ µÈ ²» ¼° Òª ÍÚ ¶´ ÁË ¡£ ",
-		GOLDENPITCHFORK = "ÎÒ µ½ µ× Îª Ê² Ã´ Òª °Ñ ¸É ²Ý ²æ ×ö µÄ Õâ Ã´ ±ð ÖÂ £¿ ",
-        LEIF = "Ëû Õæ ´ó £¡ ",
-
-        CHESTER = "°Â ÍÐ ¡¤ ·ë ¡¤ ÇÐ Ë¹ ÌØ ·Æ ¶û µÂ ÏÈ Éú ¡£ ",
-        CHESTER_EYEBONE = {
-            GENERIC = "Ëü ×¢ ÊÓ ×Å ÎÒ ¡£ ",
-            WAITING = "Ëü Èë Ë¯ ÁË ¡£ ",
-        },
-
-        TALLBIRD = "Õâ Ö» Äñ ºÃ ¸ß £¡ ",
-        SMALLBIRD = 
-        {
-            GENERIC = "Õâ ÊÇ Ö» Ð¡ Äñ ¡£ ",
-            HUNGRY = "Ëü ¿´ ÉÏ È¥ ºÜ ¶ö ¡£ ",
-            STARVING = "Ëü ¿Ï ¶¨ ¶ö »µ ÁË ¡£ ",
-        },
-
-        TEENBIRD = 
-        {
-            GENERIC = "²» ÊÇ Ö» ·Ç ³£ ¸ß µÄ Äñ ¡£ ",
-            HUNGRY = "ÎÒ ×î ºÃ °ï Ëü ÕÒ µã Ê³ Îï À´ ¡£ ",
-            STARVING = "Ëü µÄ ÑÛ Éñ Àï Í¸ Â¶ ³ö Î£ ÏÕ µÄ Æø Ï¢ ¡£ ",
-        },
-
-        TALLBIRDEGG = "Ëü »á ·õ »¯ Âð £¿ ",
-        TALLBIRDEGG_COOKED = "ÃÀ Î¶ ¶ø ÓÐ Óª Ñø ¡£ ",
-        TALLBIRDEGG_CRACKED = 
-        {
-            GENERIC = "¿´ Æð À´ ËÆ ºõ ÔÚ ·õ »¯ ÁË ¡£ ",
-            HOT = "µ° ±¾ ¸Ã ÊÇ Êª µÄ Âð £¿ ",
-            COLD = "Å¶ £¡ ",
-            SHORT = "Ëü Ó¦ ¸Ã »á Ëæ Ê± ·õ ³ö À´ ¡£ ",
-            LONG = "ÎÒ ÓÐ Ô¤ ¸Ð Ó¦ ¸Ã »¹ Òª Ò» »á ¶ù ..",
-        },
-
-        TALLBIRDNEST =
-        {
-			GENERIC = "ºÃ ´ó Ò» ¸ö µ° £¡ ",
-			PICKED = "³² Àï ÊÇ ¿Õ µÄ ¡£ ",
-        },
-
-		WALRUSHAT = "±» º£ Ïó Ã« ¸Ç ×¡ ÁË ¡£ ",
-        WALRUS = "º£ Ïó ÊÇ Ìì È» ²¶ ÁÔ Õß ¡£ ",
-        WALRUS_CAMP = 
-        {
-            GENERIC = "Àï Ãæ ¿´ ÉÏ È¥ ÎÂ Å¯ ¶ø Êæ ÊÊ ¡£ ",
-            EMPTY = "¿´ Æð À´ ÓÐ ÈË ÔÚ Õâ ¶ù Â¶ Óª ¡£ ",
-        },
-        LITTLE_WALRUS = "Ëû ²» »á ÓÀ Ô¶ ¶¼ Õâ Ã´ ¿É °® ÓÖ ¶º ÈË Ï² °® µÄ ¡£ ",
-        WALRUS_TUSK = "ÎÒ Ïà ÐÅ ×î ÖÕ ÎÒ »á ÕÒ µ½ ÅÉ µÄ ÉÏ ÓÃ ³¡ µÄ µØ ·½ ¡£ ",
-
-        COOKPOT=
-        {
-			COOKING_LONG="This is going to take a while.",
-			COOKING_SHORT="It's almost done!",
-			DONE="Mmmmm! It's ready to eat!",
-			EMPTY="It makes me hungry just to look at it.",
-        },
-
-        PIGHOUSE =
-        {
-            GENERIC = "Õâ Ð© Öí µÄ ÎÝ ×Ó Ïà µ± À« Æø ¡£ ",
-            FULL = "ÎÒ ÄÜ ¿´ µ½ Ò» Ö» ±Ç ×Ó ¶¢ ×Å ´° »§ ¡£ ",
-            LIGHTSOUT = "±ð ÄÖ ÁË £¡ ÎÒ Öª µÀ Äã ÔÚ ¼Ò £¡ ",
-        },
-
-        SPIDERDEN = "ºÃ Õ³ £¡ ",
-        RABBITHOLE = "Õâ ¿Ï ¶¨ ÊÇ È¥ ÍÃ ÈË Íõ ¹ú µÄ Â· ¡£ ",
-        FIREFLIES = {
-            GENERIC = "Òª ÊÇ ÎÒ ÄÜ ×¥ ×¡ Ëü ÃÇ ¾Í ºÃ ÁË £¡ ",
-            HELD = "Âô µô Ëü ÃÇ ¿É ÒÔ ´ó ×¬ Ò» ±Ê £¡ ",
-        },
-        CROW = {
-            GENERIC = "ÏÅ ÈË £¡ ",
-            HELD = "Ëû ÔÚ ÄÇ ¶ù ²» Ôõ Ã´ ¿ª ÐÄ ¡£ ",
-        },
-        GHOST = "×÷ Îª ¿Æ Ñ§ ¼Ò ÎÒ »á ²» Êæ ·þ ¡£ ",
-        CUTGRASS = "¸î ²Ý £¬ ×¼ ±¸ ¼û Ê¶ ¹¤ ÒÕ ´ó ×÷ ¡£ ",
-        CUTREEDS = "¸î ²Ý £¬ ×¼ ±¸ ¼û Ê¶ ¹¤ ÒÕ ´ó ×÷ ºÍ ÎÒ µÄ ÊÈ ºÃ ¡£ ",
-        PETALS = "ÎÒ ÈÃ ÄÇ Ð© »¨ ¶ù Öª µÀ Ë­ ²Å ÊÇ ÀÏ ´ó £¡ ",
-        PETALS_EVIL = "ÎÒ ²» È· ¶¨ Òª ²» Òª Áô ×Å Õâ Ð© ¡£ ",
-        FLOWER = "ºÜ Æ¯ ÁÁ £¬ µ« ÎÅ Æð À´ Ïñ ÀÍ ¹¤ Éí ÉÏ µÄ Î¶ µÀ ¡£ ",
-        FLOWER_EVIL = "°¡ £¡ Õæ Ð° ¶ñ £¡ ",
-        GOLDNUGGET = "ÎÒ ³Ô ²» ÏÂ È¥ £¬ µ« µÄ È· ÉÁ ÉÁ ·¢ ¹â ¡£ ",
-        RESEARCHLAB = "Ëü ½« Îï Ìå ·Ö ½â ³É ¿Æ Ñ§ ³É ·Ö ¡£ ",
-        RESEARCHLAB2 = "Õâ ±È ÉÏ Ò» ¸ö ¸ü ¿Æ »Ã £¡ ",
-        RESEARCHLAB3 = "ÎÒ ´´ Ôì ÁË Ê² Ã´ £¿ ",
-        POOP = "ÎÒ Ó¦ ¸Ã ¾Ý Îª ¼º ÓÐ µÄ £¡ ",
-        TORCH = "¹Â ¾ü Í» Î§ Ê± ÓÃ µÃ ÉÏ ¡£ ",
-        TRAP = "ÎÒ ±à Ö¯ µØ ºÜ ½ô ¡£ ",
-        BEEFALOWOOL = "ÎÅ Æð À´ Ïñ Æ¤ ¸¥ Âå Å£ µÄ ÑÛ Àá ¡£ ",
-        BUTTERFLY = 
-        {
-            GENERIC = "ºû µû £¬ ôæ ôæ ·É Îè ¡£ ",
-            HELD = "ÏÖ ÔÚ Äã ÊÇ ÎÒ µÄ ÁË £¡ ",
-        },
-        BUTTERFLYWINGS = "Ã» ÓÐ Õâ Ð© £¬ Õâ Ö» ²» ¹ý ÊÇ ÄÌ ÓÍ ¡£ ",
-        BUTTER = "²» ¸Ò Ïà ÐÅ ¾¹ È» ÊÇ ÄÌ ÓÍ £¡ ",
-        FROGLEGS = "ÎÒ Ìý Ëµ ÊÇ µÀ ¼Ñ ëÈ ¡£ ",
-        FROGLEGS_COOKED = "³¢ ÉÏ È¥ Ïñ ¼¦ Èâ ¡£ ",
-        BIRDTRAP = "×¬ ÁË Ò» ±Ê ¾» Àû Òæ £¡ ",
-        FISHINGROD = "¹´ Æð £¬ ÅÅ ºÃ £¬ ´Ì £¡ ",
-        FEATHER_CROW = "ÎÚ Ñ» µÄ Óð Ã« ¡£ ",
-        FEATHER_ROBIN = "ºì È¸ µÄ Óð Ã« ¡£ ",
-		FEATHER_ROBIN_WINTER = "Ñ© Äñ µÄ Óð Ã« ¡£ ",
-
-        ROBIN = {
-            GENERIC = "Õâ Òâ Î¶ ×Å ´º Ìì Òª À´ ÁË Âð £¿ ",
-            HELD = "Ëû Ï² »¶ ÎÒ µÄ ¿Ú ´ü ¡£ ",
-        },
-
-        ROBIN_WINTER = {
-            GENERIC = "±ù Àä »Ä µØ ÖÐ µÄ Éú »î ¡£ ",
-            HELD = "Õæ Èá Èí ¡£ ",
-        },
-
-        SEEDS_COOKED = "ÎÒ ×ö ÁË Ò» ±² ×Ó µÄ ³ø Ê¦ ",
-        FEATHERHAT = "ÎÒ ÊÇ Ò» Ö» Ð¡ Ð¡ Äñ £¡ ",
-        BUSHHAT = "ÓÐ µã ´Ö ²Ú ¡£ ",
-        DRUMSTICK = "ÎÒ Ó¦ ¸Ã Ò» ¿Ú ÍÌ ÁË µÄ ¡£ ",
-        DRUMSTICK_COOKED = "ÏÖ ÔÚ Î¶ µÀ ¸ü ºÃ ÁË ¡£ ",
-        FISH = "ÏÖ ÔÚ ÎÒ ½« ³Ô ÉÏ Ò» Ìì ¡£ ",
-        FISH_COOKED = "¿¾ ¿¾ ¸ü ÃÀ Î¶ ¡£ ",
-		TURKEYDINNER = "àÅ ¡£ ",
-		PERD = "¸Ã ËÀ µÄ Äñ £¡ Àë ÎÒ µÄ ¹û ×Ó Ô¶ µã £¡ ",
-		COOKEDMANDRAKE = "¿É Á¯ µÄ Ð¡ ¼Ò »ï ¡£ ",
-		TENTACLESPOTS = "ÎÒ ¾õ µÃ Õâ Ð© ÊÇ Ëü µÄ Éú Ö³ Æ÷ ¡£ ",
-        MINERHAT = "Õâ Ñù ÎÒ µÄ ÊÖ ¾Í ÏÐ ÏÂ À´ ÁË ¡£ ",
-        FOOTBALLHAT = "ÎÒ ²» Ï² »¶ ÔË ¶¯ ¡£ ",
-        BLOWDART_SLEEP = "±ð Îü ½ø È¥ ¾Í ÐÐ ¡£ ",
-        BLOWDART_FIRE = "´Ó ¸ù ±¾ ÉÏ ½² Õâ ËÆ ºõ ²» °² È« ¡£ ",
-        BEEMINE = "Ò¡ Ò» Ò¡ »á ·¢ ³ö ÎË ÎË µÄ Éù Òô ¡£ ",
-        BEEMINE_MAXWELL = "Æ¿ ×° ÎÃ ×Ó ËÁ Å° £¡ ",
-        SPIDERHAT = "µ« Ô¸ Ëù ÓÐ Ö© Öë Õ³ ÐÔ Îï ¶¼ Åª µô ÁË ¡£ ",
-        NIGHTMAREFUEL = "Õâ Íæ Òâ Õæ ²» ¿É Ë¼ Òé £¡ ",
-        NIGHTLIGHT = "Ëü ·¢ ³ö ÓÄ Áé °ã µÄ ¹â ¡£ ",
-        NIGHTSWORD = "ÎÒ ×Ô ¼º ÃÎ µ½ µÄ £¡ ",
-        WORMHOLE_LIMITED = "°¡ £¬ ÄÇ Íæ Òâ ¿´ Æð À´ ±È Æ½ ³£ ¸ü Ôã ¡£ ",
-        ARMORMARBLE = "Õâ ¿´ Æð À´ ·Ç ³£ ÖØ ¡£ ",
-        ARMORGRASS = "ÎÒ Ï£ Íû Õâ Àï Ãæ Ã» ÓÐ ³ô ³æ ¡£ ",
-        BLUEPRINT = "ºÜ ¿Æ Ñ§ £¡ ",
-        MAXWELLHEAD = "ÎÒ ÄÜ ¿´ µ½ Ëû µÄ Ã« ¿× ¡£ ",
-
-        SPIDER = {
-            GENERIC = "ÎÒ ÌÖ Ñá Ö© Öë ¡£ ",
-            SLEEPING = "Ëû ÐÑ À´ Ê± ÎÒ ×î ºÃ ±ð ´ô ÔÚ Õâ ¶ù ¡£ ",
-            DEAD = "¶î £¡ ",
-        },
-
-        SPIDER_WARRIOR = {
-            GENERIC = "±È Æ½ ³£ ¿´ Æð À´ ¸ü ²» ºÃ Òâ Ë¼ ¡£ ",
-            SLEEPING = "ÎÒ Ó¦ ¸Ã ±£ ³Ö ¾à Àë µÄ ¡£ ",
-            DEAD = "½â ÍÑ ÁË £¡ ",
-        },
-
-        BERRYBUSH = {
-            GENERIC = "ºì ½¬ ¹û Î¶ µÀ ÊÇ ×î ºÃ µÄ ¡£ ",
-            PICKED = "Íò Ò» Ëû ÃÇ »á ÖØ ÐÂ ³¤ ³ö À´ ÄØ £¿ ",
-            BARREN = "ÎÒ ¾õ µÃ Ðè Òª ÊÜ ¾« ²Å ÐÐ ¡£ ",
-        },
-
-        SAPLING = {
-            GENERIC = "±¦ ±¦ Ê÷ Õæ ¿É °® £¡ ",
-            PICKED = "ÈÃ Ëû ³¤ ³¤ ¼û Ê¶ ¡£ ",
-            BURNING = "ÉÕ µÃ ºÃ ¿ì £¡ ",
-        },
-
-        GRASS = {
-            GENERIC = "Ò» ´Ø ²Ý ¡£ ",
-            PICKED = "ÎÒ ÔÚ Ëü È« Ê¢ Ê± ÆÚ ½« Æä ¸î ÁË ÏÂ À´ ¡£ ",
-            BARREN = "Ëü Ðè Òª ÅÅ ±ã ¡£ ",
-            BURNING = "ÉÕ µÃ ºÃ ¿ì £¡ ",
-        },
-
-        DEPLETED_GRASS = {
-            GENERIC = "Õâ ¿É ÄÜ ÊÇ Ò» ´Ô ²Ý ",
-        },
-
-        REEDS = {
-            GENERIC = "Ò» ´Ô Â« Î­ ¡£ ",
-            PICKED = "ÎÒ ²É Õª ÁË Ëù ÓÐ ÓÐ ÓÃ µÄ Â« Î­ ¡£ ",
-            BURNING = "Õæ µÄ ÔÚ È¼ ÉÕ £¡ ",
-        },
-
-        PLANT_NORMAL = {
-            GENERIC = "Ö¦ ·± Ò¶ Ã¯ £¡ ",
-            READY = "àÅ ¡£ ¾Í ¿ì ¿É ÒÔ ·á ÊÕ ÁË ¡£ ",
-            GROWING = "°¡ £¡ Éú ³¤ ËÙ ¶È ºÃ Âý £¡ ",
-        },
-
-        MOUND = {
-            GENERIC ="I bet there's all sorts of good stuff down there!",
-            DUG = "ÎÒ Ó¦ ¸Ã Îª Æä ¸Ð µ½ ÄÑ ¹ý ¡£ ",
-        },
-
-        PIGMAN =
-        {
-            GENERIC = "Ëü ÃÇ ÏÅ µÃ ÎÒ ²» Çá ¡£ ",
-            FOLLOWER = "Ëû ÊÇ ÎÒ µÄ Ëæ ´Ó ¡£ ",
-            DEAD = "Ó¦ ¸Ã ÕÒ ÈË ¸æ Ëß Ëû µÄ ¼Ò ÈË ¡£ ",
-            WEREPIG = "Ëû ²» ÓÑ ºÃ !",
-            GUARD = "Ëû ¿´ ÉÏ È¥ ºÜ ÑÏ Ëà ¡£ ",
-        },
-        SPIDEREGGSACK = "µ« Ô¸ Õâ Ð© ±ð ÔÚ ÎÒ ¿Ú ´ü Àï ·õ ³ö À´ ¡£ ",
-
-		TELEPORTATO_RING = "Ò» Ã¶ ¿É ÒÔ ¾Û ¼¯ ¿Õ ¼ä ÄÜ Á¿ µÄ ½ä Ö¸ ¡£ ",
-		TELEPORTATO_BOX = "Õâ »ò Ðí ¿É ÒÔ ¿Ø ÖÆ Õû ¸ö Óî Öæ µÄ ¼« ÐÔ ¡£ ",
-		TELEPORTATO_CRANK = "ÀÎ ¹Ì µ½ ¿É ÒÔ ¾­ ÊÜ ×î ¾ç ÁÒ µÄ Êµ Ñé ¡£ ",
-		TELEPORTATO_POTATO = "Õâ ÖÖ ½ð Êô ÍÁ ¶¹ º¬ ÓÐ ¾Þ ´ó ¶ø ¿É ÅÂ µÄ Á¦ Á¿ ¡­ ¡­ ",
-		TELEPORTATO_BASE = {
-			GENERIC = "Õâ ËÆ ºõ Á¬ ½á µ½ Áí Ò» ¸ö ÊÀ ½ç !",
-			PARTIAL = "ºÜ ¿ì ,ÎÒ µÄ ·¢ Ã÷ ¾Í Òª Íê ³É ÁË !",
-			ACTIVE = "ÓÐ ÁË Õâ £¬ ÎÒ ±Ø ¶¨ ¿É ÒÔ ´© Ô½ Ê± ¿Õ £¡ ",
-		},
-
-        TRINKET_1 = "Ëü ÃÇ ¶¼ ÈÚ »¯ ÔÚ Ò» Æð ÁË ¡£ ",
-        TRINKET_2 = "Õâ Ö» ÊÇ ¸ö Á® ¼Û µÄ ¸´ ÖÆ Æ· ",
-        TRINKET_3 = "ËÀ ½á ¡£ ½â ²» ¿ª ¡£ ",
-        TRINKET_4 = "Õâ ¿Ï ¶¨ ÊÇ ÊÇ Ä³ ÖÖ ×Ú ½Ì ¹¤ ÒÕ Æ· ¡£ ",
-        TRINKET_5 = "ÒÅ º¶ µÄ ÊÇ ,¶Ô ÎÒ À´ Ëµ Ì« Ð¡ ÁË ¡£ ",
-        TRINKET_6 = "Ëû ÃÇ Ð¯ ´ø µç Á¦ µÄ Ê± ´ú ½á Êø ÁË ¡£ ",
-        TRINKET_7 = "ÎÒ Ã» ¿Õ Íæ ÀÖ £¡ ",
-        TRINKET_8 = "ºÜ ºÃ ¡£ ÎÒ Ëù ÓÐ Ðè Òª ¶¼ Âú ×ã ÁË ¡£ ",
-        TRINKET_9 = "ÎÒ ¸ü ¿É ÒÔ Ëµ ÊÇ ÄÚ Ïò µÄ ÈË ¡£ ",
-        TRINKET_10 = "µ« Ô¸ ÎÒ ÄÜ ÔÚ Ðè Òª Õâ Ð© Ö® Ç° Àë ¿ª Õâ ¶ù ¡£ ",
-        TRINKET_11 = "Ëû ÔÚ ÎÒ ¶ú ±ß µÍ Éù Ëµ ×Å ÃÀ Àö µÄ »Ñ ÑÔ ¡£ ",
-        TRINKET_12 = "ÎÒ ²» È· ¶¨ ¸Ã Èç ºÎ ´¦ Àí ¸É Ôï µÄ ´¥ ½Ç ¡£ ",
-		
-        BEARDHAIR = "ÎÒ ÓÃ ÎÒ µÄ Á³ ³É ¾Í ÁË Ëü ÃÇ ¡£ ",
-
-        EVERGREEN = {
-            GENERIC = "¾Í Ïñ ËÉ Ê÷ °ã Ã¯ Ê¢ ¡£ ",
-            CHOPPED = "ºÃ ºÃ ¿´ ¿´ £¬ ´ó ×Ô È» £¡ ",
-            BURNING = "Õæ ÊÇ ÀË ·Ñ Ä¾ Í· ¡£ ",
-            BURNT = "ÎÒ ¸Ð ¾õ ÎÒ ÄÜ ×è Ö¹ ¡£ "
-        },
-        EVERGREEN_SPARSE = {
-            GENERIC = "Õâ Ò¹ ÜÔ Ã» ÓÐ Çò ¹û ¡£ ",
-            CHOPPED = "ºÃ ºÃ ¿´ ¿´ £¬ ´ó ×Ô È» £¡ ",
-            BURNING = "Õæ ÊÇ ÀË ·Ñ Ä¾ Í· ¡£ ",
-            BURNT = "ÎÒ ¸Ð ¾õ ÎÒ ÄÜ ×è Ö¹ ¡£ "
-        },
-
-        FIREPIT = {
-            GENERIC = "µ± È» ±È ºÚ °µ ºÃ ¡£ ",
-            OUT = "ÖÁ ÉÙ ÎÒ ÄÜ ÖØ ÐÂ ÔÙ À´ ",
-            EMBERS = "ÎÒ Ó¦ ¸Ã ÔÚ »ð Ï¨ Ãð Ç° ÉÕ µã Ê² Ã´ ¡£ ",
-            LOW = "»ð Ñæ Ô½ À´ Ô½ Î¢ Èõ ÁË ¡£ ",
-            NORMAL = "Êæ ·þ ¡£ ",
-            HIGH = "»¹ ºÃ ¿Ø ÖÆ ×¡ ÁË £¡ ",
-        },
-		HEATROCK = {
-			COLD = "Àä Ñª ¡£ ",
-			GENERIC = "ÎÒ ¿É ÒÔ ÔÚ »ð ¸½ ½ü ¼Ó ÈÈ ¡£ ",
-			WARM = "¶Ô Ò» ¿é ÑÒ Ê¯ À´ Ëµ ..¹ý ÓÚ ÎÂ Å¯ ¶ø ÌÖ ÈË Ï² »¶ ÁË £¡ ",
-			HOT = "ÈÈ µÃ ·¢ ÌÌ ÁË £¡ ",
-		},
-
-        BEE = 
-        {
-            GENERIC = "ÊÇ ·ä »¹ ÊÇ ·ç ¡£ ",
-            HELD = "Ð¡ ÐÄ £¡ ",
-        },
-        KILLERBEE = 
-        {
-            GENERIC = "Å¶ ²» £¡ ÊÇ É± ÈË ·ä £¡ ",
-            HELD = "Õâ ËÆ ºõ ÓÐ µã Î£ ÏÕ ¡£ ",
-        },
-		MOSQUITO =
-		{
-			GENERIC = "¶ñ ÐÄ µÄ Ð¡ Îü Ñª ¹í ¡£ ",
-			HELD = "ºÙ ,ÄÇ ÊÇ ÎÒ µÄ Ñª ?",
-		},
-        BEEHIVE = "·É À´ ·É È¥ ·¢ ³ö ÎË ÎË Éù ¡£ ",
-        BEEBOX =
-        {
-            GENERIC = "ÃÛ ·ä !",
-            NOHONEY = "¿Õ µÄ ¡£ ",
-            SOMEHONEY = "ÎÒ Ó¦ ¸Ã µÈ Ò» µÈ ¡£ ",
-            FULLHONEY = "×° Âú ÁË ·ä ÃÛ ¡£ ",
-        },
-        HONEY = "¿´ Æð À´ ºÜ ºÃ ³Ô !",
-        HONEYCOMB = "ÃÛ ·ä Ôø ¾­ ×¡ ÔÚ Õâ Àï ¡£ ",
-        STINGER = "¿´ Æð À´ ºÜ ·æ Àû £¡ ",
-
-        CAMPFIRE = {
-            GENERIC = "µ± È» ±È ºÚ °µ ºÃ ¡£ ",
-            OUT = "µÃ £¬ ½á Êø ÁË ¡£ ",
-            EMBERS = "ÎÒ Ó¦ ¸Ã ÔÚ »ð Ï¨ Ãð Ç° ÉÕ µã Ê² Ã´ ¡£ ",
-            LOW = "»ð Ñæ Ô½ À´ Ô½ Î¢ Èõ ÁË ¡£ ",
-            NORMAL = "Êæ ·þ ¡£ ",
-            HIGH = "»ð Ô½ À´ Ô½ ´ó £¬ ¿Ø ÖÆ ²» ×¡ ÁË £¡ ",
-        },
-
-        FARMPLOT = {
-            GENERIC = "ÎÒ Ó¦ ¸Ã ³¢ ÊÔ ÖÖ Ö² Ò» Ð© Å© ×÷ Îï ",
-            GROWING = "×¯ ¼Ú µÄ ¸É »î £¡ ",
-            NEEDSFERTILIZER = "ÎÒ ¾õ µÃ Ðè Òª ÊÜ ¾« ²Å ÐÐ ¡£ ",
-        },
-
-        TREASURECHEST = "Õâ ÊÇ ÎÒ µÄ ¿¨ ³µ !",
-        BEDROLL_STRAW = "ÎÅ Æð À´ Ò» ¹É ³± Êª µÄ Æø Î¶ ¡£ ",
-        CHARCOAL = "Ìå ÐÍ Ð¡ £¬ ºÚ É« £¬ ÎÅ Æð À´ Ò» ¹É ÉÕ ½¹ Ä¾ Í· µÄ Î¶ µÀ ¡£ ",
-
-		ASH = {
-			GENERIC = "´ó »ð ºó Ê£ ÏÂ µÄ Ö» ÓÐ ¼Å Ä¯ ¡£ ",
-			REMAINS_EYE_BONE = "ÎÒ ´« ËÍ µÄ Ê± ºò ÑÛ ¹Ç ±» »ð ÉÕ Ê´ ÁË £¡ ",
-			REMAINS_THINGIE = "±» ÉÕ Ö® Ç° ÄÇ ¿É Î½ Ææ Ýâ ..",
-		},
-
-        MARSH_PLANT = "Ò» Öê Ö² Îï ¡£ ",
-        MARSH_BUSH = "¿´ Æð À´ ´Ì ºÜ ¶à ¡£ ",
-        MARSH_TREE = {
-            GENERIC = "ÄÇ Ð© ´Ì ¿´ ÉÏ È¥ ºÜ ·æ Àû £¡ ",
-            CHOPPED = "ÏÖ ÔÚ ²» ÄÇ Ã´ ·æ Àû ÁË £¡ ",
-            BURNING = "´Ì Óë »ð £¡ ",
-            BURNT = "ÏÖ ÔÚ ±» ÉÕ ½¹ ÁË "
-        },
-        PAPYRUS = "Ò» Ð© Ö½ ÕÅ ",
-        FROG = {
-            SLEEPING = "Å¶ £¬ ¿´ Ëû Ë¯ ¾õ £¡ ",
-            DEAD = "Ëû ¶Ï Æø ÁË ¡£ ",
-            GENERIC = "Ëû Ì« ¿É °® ÁË !",
-        },
-		WORMHOLE = {
-			GENERIC = "Èá Èí ¶ø Æð ·ü ¡£ ",
-			OPEN = "¿Æ Ñ§ ´Ù Ê¹ ÎÒ Ìø ½ø È¥ ¡£ ",
-		},
-
-
-		BUTTERFLYMUFFIN = "ÎÒ ×Ô ¼º ÉÕ µÄ £¡ ",
-		FROGGLEBUNWICH = "ÎÒ ×Ô ¼º ÉÕ µÄ £¡ ",
-		HONEYHAM = "ÎÒ ×Ô ¼º ÉÕ µÄ £¡ ",
-		DRAGONPIE = "ÎÒ ×Ô ¼º ÉÕ µÄ £¡ ",
-		TAFFY = "ÎÒ ×Ô ¼º ÉÕ µÄ £¡ ",
-		PUMPKINCOOKIE = "ÎÒ ×Ô ¼º ÉÕ µÄ £¡ ",
-		KABOBS = "ÎÒ ×Ô ¼º ÉÕ µÄ £¡ ",
-		MANDRAKESOUP = "ÎÒ ×Ô ¼º ÉÕ µÄ £¡ ",
-		BACONEGGS = "ÎÒ ×Ô ¼º ÉÕ µÄ £¡ ",
-		BONESTEW = "ÎÒ ×Ô ¼º ÉÕ µÄ £¡ ",
-		PEROGIES = "ÎÒ ×Ô ¼º ÉÕ µÄ £¡ ",
-		WETGOOP = "ÎÒ ×Ô ¼º ÉÕ µÄ £¡ ",
-		RATATOUILLE = "ÎÒ ×Ô ¼º ÉÕ µÄ £¡ ",
-		FRUITMEDLEY = "ÎÒ ×Ô ¼º ÉÕ µÄ £¡ ",
-		FISHTACOS ="I cooked it myself!",
-		WAFFLES ="I cooked it myself!",
-        FISHSTICKS = "ÎÒ ×Ô ¼º ÉÕ µÄ £¡ ",
-        STUFFEDEGGPLANT = "ÎÒ ×Ô ¼º ÉÕ µÄ £¡ ",
-		HONEYNUGGETS = "ÎÒ ×Ô ¼º ÉÕ µÄ £¡ ",
-		MEATBALLS = "ÎÒ ×Ô ¼º ÉÕ µÄ £¡ ",
-		JAMMYPRESERVES = "ÎÒ ×Ô ¼º ÉÕ µÄ £¡ ",
-		MONSTERLASAGNA = "ÎÒ ×Ô ¼º ÉÕ µÄ £¡ ",
-        
-        
-        ICEBOX = "ÎÒ ¼Ý Ô¦ ÁË ±ù Àä µÄ Á¦ Á¿ £¡ ",
-        
-		WALL_WOOD_ITEM = "Ñ© ×® £¡ ",
-		WALL_STONE_ITEM = "Ëû ÃÇ ÈÃ ÎÒ ¾õ µÃ ºÜ °² È« ¡£ ",
-		WALL_HAY_ITEM = "Õâ ËÆ ºõ ÊÇ Ò» ¸ö »µ Ö÷ Òâ ¡£ ",
-		WALL_WOOD = "¼â ¼â µÄ !",
-		WALL_STONE = "Õâ ÊÇ Ò» ¶Â ²» ´í µÄ Ç½ ",
-		WALL_HAY = "àÅ ¡£ ÎÒ Ïë Ö» ÄÜ ½« ¾Í ÏÂ ÁË ¡£ ",
-        
-
-        ANIMAL_TRACK = "Ê³ Îï ²Ð Áô µÄ ºÛ ¼£ ¡£ ÎÒ µÄ Òâ Ë¼ ÊÇ ¡­ ¡­ ¶¯ Îï ¡£ ",
-        DIRTPILE = "Ò» ¶Ñ Äà ÍÁ ¡­ ¡­ »¹ ÊÇ ?",
-        KOALEFANT_SUMMER = "ÃÀ Î¶ ¡£ ",
-        KOALEFANT_WINTER = "¿´ Æð À´ ÎÂ Å¯ ²¢ ³ä Âú ÁË Èâ ¡£ ",
-        TRUNK_SUMMER = "Î¢ Î¢ Æ® ¶¯ µÄ Ê÷ ¸É ¡£ ",
-		TRUNK_WINTER = "´Ö ×³ ¶à Ö¦ µÄ Ê÷ ¸É ¡£ ",
-        TRUNK_COOKED = "²» Öª Ôõ Ã´ ±È ÒÔ Ç° ±Ç Òô ¸ü ÖØ ÁË ¡£ ",
-        TRUNKVEST_SUMMER = "»Ä Ò° Çé µ÷ ¡£ ",
-		TRUNKVEST_WINTER = "¶¬ ¼¾ Éú ´æ ×° ±¸ ¡£ ",
-        
-        DEERCLOPS = "ºÃ ´ó ! !",
-        REDGEM = "Ëü ÉÁ Ë¸ ×Å ÄÚ ÐÄ µÄ ÎÂ Å¯ ¡£ ",
-        BLUEGEM = "Ëü ÉÁ Ë¸ ×Å ±ù Àä µÄ ÄÜ Á¿ ¡£ ",
-        PURPLEGEM = "Ëü °ü º¬ ÁË Óî Öæ µÄ °Â ÃØ ¡£ ",
-        HOUND = "Äã ²» ÊÇ ·Ï Îï £¬ ÁÔ È® £¡ ",
-        FIREHOUND = "Õâ Íæ Òâ ÈÈ ºõ ºõ µÄ ¡£ ",
-        ICEHOUND = "Ã¿ ¸ö ¼¾ ½Ú ¶¼ ÓÐ ÁÔ È® £¿ ",
-        PENGUIN = "...",
-        DEERCLOPS_EYEBALL = "Õâ Ì« ¶ñ ÐÄ ÁË ¡£ ",
-        BASALT = "ÀÎ ¹Ì µ½ ¸ù ±¾ ×² ²» ÆÆ £¡ ",
-        HOUNDMOUND = "ÎÒ ¿É ²» Ïë ºÍ Ëù ÓÐ Õß ¹ý ²» È¥ ¡£ ",
-        HOUNDBONE = "ÏÅ ÈË ¡£ ",
-        MERM = "Ò» ¹É Óã ÐÈ Î¶ £¡ ",
-        MERMHOUSE = "Ë­ »á ×¡ ÔÚ Õâ Àï ?",
-        KNIGHT = "¿ì ¿´ £¡ ",
-        BISHOP = "±ð ¹ý À´ £¬ ´« ½Ì Ê¿ £¡ ",
-        
-        INSANITYROCK = {
-            INACTIVE = "Ïà ±È ·½ ¼â ±® £¬ ¸ü Ïñ ½ð ×Ö Ëþ ¡£ ",
-            ACTIVE = "³¢ ³¢ Õâ ×Ì Î¶ £¬ Àí ÖÇ µÄ ÈË ¶ù £¡ ",
-        },
-        SANITYROCK = {
-            INACTIVE = "Ê£ ÏÂ µÄ µ½ ÄÄ È¥ ÁË £¿ ",
-            ACTIVE = "Õâ ¿´ Æð À´ ²» ×Ô È» ¡£ ",
-        },
-        PIGTORCH = "µÄ È· ¿´ Æð À´ Êæ ÊÊ ¡£ ",
-        WASPHIVE = "ÎÒ ÈÏ Îª ÄÇ Ð© ÃÛ ·ä ¶¼ ·è ÁË ¡£ ",
-        MARBLEPILLAR = "ÎÒ Ïë ÎÒ ÓÃ µÄ µ½ ¡£ ",
-        MARBLETREE = "ÎÒ ¾õ µÃ ¸« Í· Ò² Ã» ÓÃ ¡£ ",
-        MARBLE = "Æ¯ ÁÁ £¡ ",
-        SUNKBOAT = "µ½ ÁË Íâ Ãæ ÎÒ Ò² ÓÃ ²» ÉÏ £¡ ",
-        MEATRACK = 
-        {
-            GENERIC = "ÎÒ ¸Ã Åª ¸É Ò» Ð© Èâ ¡£ ",
-            DRYING = "Èâ Òª Ò» ¶Î Ê± ¼ä ²Å »á ¸É ¡£ ",
-            DONE = "Å£ Èâ ¸É Ê± ¼ä µ½ £¡ ",
-        },
-        SMALLMEAT_DRIED = "Ò» µã Å£ Èâ ¸É ¡£ ",
-        MEAT_DRIED = "Õý ºÃ ¹» ",
-        MONSTERMEAT_DRIED = "Æø Î¶ Ææ ¹Ö µÄ Å£ Èâ ¸É ",
-        BANDAGE = "ËÆ ºõ ÄÜ ³Ô ÁË ¡£ ",
-		HEALINGSALVE = "´Ì Í´ ´ú ±í Æð ×÷ ÓÃ ÁË ¡£ ",
-		CANE = "Õâ ÈÃ ×ß Â· ±ä µÃ ËÆ ºõ ¼ò µ¥ ÁË Ò» Ð© £¡ ",
-		LIGHTNING_ROD = 
-		{
-		    GENERIC = "ÎÒ ¿É ÒÔ ¼Ý Ô¦ Ìì ÌÃ £¡ ",
-		    CHARGED = "Á¦ Á¿ Êô ÓÚ ÎÒ £¡ ",
-		},
-
-
-        LOCKEDWES = "Âó ¿Ë Ë¹ Î¤ µÄ µñ Ïñ À§ ×¡ Ëû ÁË ¡£ ",
-
-        TREASURECHEST_TRAP = "Õæ ·½ ±ã !",
-    },
-
-    DESCRIBE_TOODARK = "Ì« ºÚ ÁË ,¿´ ²» ¼û !",
-    DESCRIBE_GENERIC = "ÊÇ ..²» Öª Ê² Ã´ Íæ Òâ ¡£ ",
-    ACTIONFAIL_GENERIC = "ÎÒ ×ö ²» µ½ ¡£ ",
-
-    BATTLECRY =
-    {
-        GENERIC = "Ãé ×¼ ÑÛ ¾¦ £¡ ",
-        PREY = "±ð ÅÜ £¡ ",
-        PIG = "À´ £¬ Ð¡ Öí Ð¡ Öí £¡ ",
-        SPIDER = "ÎÒ Òª ²È ËÀ Äã £¡ ",
-        SPIDER_WARRIOR = "ÊÇ Äã ×Ü ±È ÊÇ ÎÒ ºÃ £¡ ",
-    },
-
-    COMBAT_QUIT =
-    {
-        PREY = "Ëû µÄ ËÙ ¶È Ì« ¿ì ÁË !",
-        PIG = "Õâ ´Î ¡£ ÎÒ ÈÃ Ëû ×ß ¡£ ",
-        SPIDER = "Ëû Ì« ¶ñ ÐÄ ÁË ¡£ ",
-        SPIDER_WARRIOR = "Ðê ,Äã Õâ ÌÖ ÈË Ñá µÄ ¶« Î÷ !",
-        GENERIC = "ÎÒ ±Ø È» ÈÃ Ëû ¼û Ê¶ ÁË £¡ ",
-    },
-
-    EAT_FOOD = 
-    {
-        TALLBIRDEGG_CRACKED = "àÅ ¡£ Ïñ Äñ ×ì ¡£ ",
-    },
-
-
-
-	ANNOUNCE_EAT =
-	{
-		GENERIC = "ºÃ ³Ô £¡ ",
-		SPOILED = "ºÃ ÄÑ ³Ô £¡ ¶ñ ÐÄ ËÀ ÎÒ ÁË £¡ ",	
-		STALE = "ÎÒ ¾õ µÃ ¸Õ »¹ ÄÜ ³Ô ÄØ ¡£ ",
-		PAINFUL = "ÎÒ ¸Ð ¾õ ²» Ì« ºÃ ",
-	},
-	
-	ANNOUNCE_RESEARCH = "ÓÀ Ô¶ ²» Òª Í£ Ö¹ Ñ§ Ï° £¡ ",
-	ANNOUNCE_HIGHRESEARCH = "ÏÖ ÔÚ ÎÒ ¸Ð ¾õ ×Ô ¼º ºÜ ´Ï Ã÷ £¡ ",
-	ANNOUNCE_LOWRESEARCH = "ÎÒ ´Ó ÖÐ Ã» ÓÐ Ñ§ µ½ Ê² Ã´ ¡£ ",
-
-	ANNOUNCE_COLD = "Õæ Àä £¡ ",
-    ANNOUNCE_HUNGRY = "ÎÒ ¶ö ËÀ ÁË £¡ ",
-    ANNOUNCE_TORCH_OUT = "ÎÒ µÄ »ð °Ñ Ï¨ Ãð ÁË £¡ ",
-    ANNOUNCE_DUSK = "Ìì É« ÒÑ Íí ¡£ ÎÒ Ðè Òª Éú °Ñ »ð ¡£ ",
-
-    ANNOUNCE_CHARLIE_ATTACK = "àÞ !ÓÐ ¶« Î÷ Ò§ ÁË ÎÒ Ò» ¿Ú £¡ ",
-    ANNOUNCE_CHARLIE = "Ê² Ã´ ¶« Î÷ £¿ £¡ ",
-    ANNOUNCE_HOUNDS = "Äã Ìý µ½ ÁË Âð £¿ ",
-    ANNOUNCE_DEERCLOPS = "ºÃ Ïñ ºÜ ´ó µÄ Ñù ×Ó £¡ ",
-
-    ANNOUNCE_PECKED = "Å¶ £¡ ·Å Æú °É £¡ ",
-
-	ANNOUNCE_BOOMERANG = "Å¶ £¬ ÎÒ Ïë ¸Ï ÉÏ Ëû ÊÔ ÊÔ £¡ ",
-	
-    ANNOUNCE_ENTER_LIGHT = "ÎÒ ÓÖ ¿´ µ½ ÁË £¡ ",
-    ANNOUNCE_ENTER_DARK = "Ì« ºÚ ÁË £¡ ",
-    ANNOUNCE_INV_FULL = "ÎÒ ÎÞ ·¨ ÔÙ ÄÃ ¸ü ¶à µÄ ¶« Î÷ ÁË £¡ ",
-
-    ANNOUNCE_CRAFTING_FAIL = "ÎÒ µÄ ²Ä ÁÏ ²» Æë ",
-    ANNOUNCE_NODAYSLEEP = "Íâ Ãæ Ì« ÁÁ ÁË ¡£ ",
-    ANNOUNCE_NODANGERSLEEP = "ÏÖ ÔÚ Ì« Î£ ÏÕ ÁË £¡ ",
-    ANNOUNCE_KNOCKEDOUT = "°¡ £¬ ÎÒ µÄ Í· £¡ ",
-    ANNOUNCE_BEES = "ÃÛ ·ä £¡ £¡ £¡ ",
-    ANNOUNCE_MOSQUITOS = "°¡ £¡ ×ß ¿ª £¡ ",
-	ANNOUNCE_WORMHOLE = "Õâ Ñù ×ö Ì« ²» Àí ÖÇ ÁË ¡£ ",
-    ANNOUNCE_HUNT_LOST_TRAIL = "ºÛ ¼£ µ½ Õâ Àï ¾Í Ã» ÓÐ ÁË ¡£ ",
-    ANNOUNCE_HUNT_BEAST_NEARBY = "Õâ ¸ö ºÛ ¼£ »¹ ÊÇ ÐÂ µÄ £¬ Ò° ÊÞ ¿Ï ¶¨ ¾Í ÔÚ ¸½ ½ü ¡£ ",
-
-    ANNOUNCE_TRAP_WENT_OFF = "°¥ Ó´ ¡£ ",
-    ANNOUNCE_NO_TRAP = "ÊÂ Çé ¼ò µ¥ ¶à ÁË ¡£ ",
-}
-
-
-STRINGS.CHARACTERS.WX78 =
-{
-    ACTIONFAIL =
-    {
-		STORE =
-		{
-			GENERIC = "È« ËÙ ",
-			NOTALLOWED = "Êä Èë ²» ÔÊ Ðí ",
-		},
-
-        SHAVE =
-        {
-            GENERIC = "ÄÇ ²» ÊÇ ¸ö ÓÐ Ð§ Ä¿ ±ê ",
-            NOBITS = "Ã» ÓÐ ºú Ðë Òª ¹Î µÄ ",
-            AWAKEBEEFALO = "Î£ ÏÕ £¡ Ä¿ ±ê ÐÑ ÁË ",
-        }
-    },
-    DESCRIBE=
-    {
-		SPOILED_FOOD = "¾Í Ëã ÊÇ ÎÒ Ò² Ã» °ì ·¨ ´¦ Àí ",
-		ABIGAIL = "Íö Áé ¾¯ ¸æ ",
-        MEAT = "ÎÒ ¼Ó Èë ",
-        SMALLMEAT = "ºÃ Ïñ ¸´ ³ð µÄ ×Ì Î¶ ",
-        COOKEDSMALLMEAT = "ºÃ Ïñ ¸´ ³ð µÄ ×Ì Î¶ ",
-        MONSTERMEAT = "ºÍ ÎÒ µÄ »¯ Ñ§ Òý Çæ ¸ñ ¸ñ ²» Èë ",
-        COOKEDMEAT = "Èç ¹û ÓÐ »ð µÄ »° ¾Í ºÃ ¶à ÁË ",
-        COOKEDMONSTERMEAT = "»¹ ÊÇ ÓÐ µã ¶ù ²» Ð­ µ÷ ",
-        MAXWELL = "Ëû ºÜ Ä¬ Ä¬ ÎÞ ÎÅ ",
-        BACKPACK = "Éý ¼¶ ´æ ´¢ Ä£ ¿é ",
-        PIGGYBACK = "Éý ¼¶ ´æ ´¢ Ä£ ¿é V2.0",
-        UMBRELLA = "Õâ ¶« Î÷ ÄÜ ·À Ö¹ Éú Ðâ ¡£ ",
-        TENT = "ÎÒ ÄÜ ÔÚ ÄÇ Àï ÖØ ÐÂ Æô ¶¯ ",
-        ADVENTURE_PORTAL = "Ëû ²» ÊÇ ºÜ ½¡ Ì¸ ",
-        
-        TURF_CHECKERFLOOR = "´ó Àí Ê¯ µØ Ãæ ",
-        TURF_CARPETFLOOR = "µØ Ìº ",
-		TURF_WOODFLOOR = "Ä¾ ÖÊ µØ Ãæ ",
-		TURF_SAVANNA = "µØ Ãæ ",
-		TURF_GRASS = "µØ Ãæ ",
-		TURF_FOREST = "µØ Ãæ ",
-		TURF_MARSH = "µØ Ãæ ",
-		TURF_DIRT = "µØ Ãæ ",
-		TURF_ROCKY = "µØ Ãæ ",
-		TURF_ROAD = "µÀ Â· ×é ¼þ ",
-        
-		NITRE = "ÓÐ Ð© Ê¯ Í· ±È Æä Ëû µÄ Òª ºÃ ",
-		GUNPOWDER = "°Ñ Õ½ ·ý ÍÆ µ½ ·Û Ä© ÖÐ È¥ ",
-		BIRD_EGG = "ÎÒ ÌÖ Ñá Äã ",
-		BIRD_EGG_COOKED = "Õâ Ò² Ëã ÊÇ ¸Ä ÉÆ ",
-		ROTTENEGG = "ºÜ ¸ß ÐË ÎÒ ÎÅ ²» µ½ ",
-        HAMBAT = "³¢ ³¢ ·í ´Ì µÄ Î¶ µÀ £¬ È¥ ËÀ °É £¬ Ñª Èâ Ö® Çû ¡£ ",
-        
-        BIRDCAGE = 
-        {
-			GENERIC = "ÎÒ Òª °Ñ Ñª Èâ Ö® Çû ¹Ø Æð À´ ",
-			OCCUPIED = "ÖÕ ÓÚ ×¥ ×¡ Äã ÁË ",
-			SLEEPING = "ÐÑ ÐÑ £¬ Ñª Èâ Ö® Çû ",
-        },
-		KRAMPUS = "Í£ ÏÂ £¡ Ð¡ Íµ £¡ ",
-		KRAMPUS_SACK = "´æ ´¢ Ä£ ¿é 2.0",
-        BEEFALO =
-        {
-            GENERIC = "³ô Èâ µÄ Î¶ µÀ ",
-            FOLLOWER = "±ð ÎÊ ÎÊ Ìâ £¬ ¸ú ×Å ÎÒ ¡£ ",
-            NAKED = "ÎÒ ¶ª Á³ ÁË £¬ ºÜ ºÃ ¡£ ",
-            SLEEPING = "Ëü Çë Çó ±» ÇÀ ½Ù ",
-        },
-        BABYBEEFALO = 
-        {
-            GENERIC = "»¹ ÔÚ ³õ Ê¼ »¯ ",
-            SLEEPING = "Æä Óà ¹¦ ÄÜ ¼¤ »î "
-        },
-		PIGSKIN = "Õâ Ð© Ñª Èâ Ö® Çû Õæ ÊÇ ¶ñ ÐÄ ",
-        
-        MANDRAKE =
-        {
-			GENERIC = "ÊÇ Ò» ¿Å Ö² Îï ",
-			PICKED = "Äã Ïë Òª Ê² Ã´ £¿ ",
-			DEAD = "ÎÒ °Ñ Ëü ¸ø É± ÁË £¬ ºÜ ºÃ ¡£ ",
-        },
-        
-
-        RED_MUSHROOM =
-        {
-            GENERIC = "ºì É« Õæ ¾ú ",
-            PICKED = "ÎÒ ÄÃ µ½ ÁË ¡£ ",
-            INGROUND = "Ëü ²Ø Æð À´ ÁË ",
-        },
-        GREEN_MUSHROOM = 
-        {
-            GENERIC = "ÂÌ É« Õæ ¾ú ",
-            PICKED = "ÎÒ ÄÃ µ½ ÁË ¡£ ",
-            INGROUND = "Ëü ²Ø Æð À´ ÁË ",
-        },
-
-        BLUE_MUSHROOM = 
-        {
-            GENERIC = "À¶ É« Õæ ¾ú ",
-            PICKED = "ÎÒ ÄÃ µ½ ÁË ¡£ ",
-            INGROUND = "Ëü ²Ø Æð À´ ÁË ",
-        },
-
-        MANDRAKE_COOKED = "ÎÒ ÓÖ Ò» ´Î °Ñ Ëü ¸ø É± ËÀ ÁË £¬ ¹þ ¹þ ¡£ ",
-        HOMESIGN = "Äã ÔÚ Õâ ¶ù ¡£ ",
-
-		DUG_GRASS = "Ëü ÔÚ µØ Ãæ µÄ ÓÃ Í¾ ¸ü ´ó ",
-		DUG_SAPLING = "Ëü ÔÚ µØ Ãæ µÄ ÓÃ Í¾ ¸ü ´ó ",
-		DUG_BERRYBUSH = "Ëü ÔÚ µØ Ãæ µÄ ÓÃ Í¾ ¸ü ´ó ",
-
-        PINECONE = "Ê÷ ÊÇ Ôõ Ã´ ÊÊ ºÏ ÄÇ Àï µÄ £¿ ",
-        ARMORWOOD = "Éý ¼¶ ¿ø ¼× ",
-		ARMOR_SANITY = "ÎÒ »á ¼Ì Ðø ÓÃ ¿Õ °× ±£ »¤ ×Ô ¼º ",
-        SPEAR ="BRING IT, FLESHLINGS",
-        TENTACLESPIKE = "ÓÐ Õ³ ÐÔ ",
-        
-        TENTACLE = "Éú Îï Ñ§ ºÜ ¶ñ ÐÄ ",
-        STRAWHAT = "Õâ Ñù ÄÜ ÑÚ ¸Ç ÎÒ µÄ ´¦ Àí µ¥ Ôª ",
-        BEEFALOHAT = "Õâ Ð© ÏË Î¬ ÖÐ £¬ ºÃ Ïñ ÓÐ ·à ±ã µÄ ºÛ ¼£ ",
-        TOPHAT = "¸´ ÔÓ Ï¸ ÖÂ ",
-        FLOWERHAT = "ÖÁ ÉÙ Ëû ÃÇ ËÀ ÁË ",
-        BEEHAT = "Õâ Ð© Íø Ë¿ ±È ÃÛ ·ä µÄ ´Ì ¸ü Ï¸ ",
-        BUSHHAT = "Ì« Îê Èè ÁË ",
-        ROPE = "±È Íâ ±í ¿´ Æð À´ ¸ü Ã» ÓÃ ",
-        TRAP_TEETH = "¿É ÒÔ ´Ì ´© µÐ ÈË µÄ ÍÈ ",
-		TRAP_TEETH_MAXWELL = "¼¼ Êõ Óë ÎÒ Ïò ¶Ô ¿¹ ÁË ",
-
-
-        RED_CAP = "ÓÐ ¶¾ µÄ Õæ ¾ú ",
-        GREEN_CAP = "Åë â¿ Õæ ¾ú ",
-        BLUE_CAP = "Ò© Îï Õæ ¾ú ",
-
-        LIVINGLOG = "Éõ ÖÁ ±È ÆÕ Í¨ µÄ Ô­ Ä¾ »¹ Ôã ¸â ",
-        LOG =
-        {
-            GENERIC = "LOG(1) = 0",
-            BURNING = "Õý ÔÚ È¼ ÉÕ ",
-        },
-
-        TWIGS = "Ê÷ Ö¦ ",
-        CARROT = "ÓÐ Óª Ñø ",
-        PUMPKIN = "ÐÎ ×´ ÈÃ ÈË ¾õ µÃ Óä ¿ì ",
-		DRAGONFRUIT = "¾ß ÓÐ ÖÎ ÁÆ ¹¦ ÄÜ ",
-		POMEGRANATE = "ºÜ ÄÑ ±» °þ Æ¤ ",
-		CORN = "Ëµ (CORNY_JOKE)",
-		DURIAN = "»¹ ºÃ ÎÒ Ã» ÓÐ Ðá ¾õ ",
-		EGGPLANT = "Õâ ÊÇ ¸ö ²» ºÏ Âß ¼­ µÄ Ãû ×Ö ",
-        BERRIES = "¿´ µ½ Ëû ÃÇ ÎÒ Ïë µ½ ÁË Ñª Òº ",
-
-        CARROT_COOKED = "ÏÖ ÔÚ ±ä µÃ ËÉ Èí ÁË ",
-        PUMPKIN_COOKED = "ÃÀ Î¶ ",
-		DRAGONFRUIT_COOKED = "ÎÒ Òª Âí ÉÏ ³Ô ÁË Ëü ",
-		POMEGRANATE_COOKED = "ÃÀ Î¶ ",
-		CORN_COOKED = "Áã ¿¨ Â· Àï ",
-		DURIAN_COOKED = "»¹ ÊÇ ²» Ì« ºÃ ",
-		EGGPLANT_COOKED = "Ææ ÌØ ",
-        BERRIES_COOKED = "Ëû ÃÇ Ê§ È¥ ÁË ½á ¹¹ Íê Õû ÐÔ ",
-        
-		CARROT_SEEDS = "ºÃ Ïñ ÊÇ Ö² Îï µÄ Ô´ ´ú Âë ",
-		PUMPKIN_SEEDS = "ºÃ Ïñ ÊÇ Ö² Îï µÄ Ô´ ´ú Âë ",
-		DRAGONFRUIT_SEEDS = "ºÃ Ïñ ÊÇ Ö² Îï µÄ Ô´ ´ú Âë ",
-		POMEGRANATE_SEEDS = "ºÃ Ïñ ÊÇ Ö² Îï µÄ Ô´ ´ú Âë ",
-		CORN_SEEDS = "ºÃ Ïñ ÊÇ Ö² Îï µÄ Ô´ ´ú Âë ",
-		DURIAN_SEEDS = "ºÃ Ïñ ÊÇ Ö² Îï µÄ Ô´ ´ú Âë ",
-		EGGPLANT_SEEDS = "ºÃ Ïñ ÊÇ Ö² Îï µÄ Ô´ ´ú Âë ",
-        
-		EARMUFFSHAT = "ÎÒ Òª Àû ÓÃ Ëû ÃÇ µÄ Æ¤ Ã« ",
-        WINTERHAT =  "THIS WILL KEEP MY PROCESSOR FROM FREEZING",
-
-        CARROT_PLANTED = "»ú Æ÷ ÈË Ò² Ðè Òª Ê³ Îï ",
-
-        CUTSTONE = "ÎÒ ¸Ä ½ø ÁË Õâ Ð© Ê¯ Í· ",
-        SEEDS = "ºÃ Ïñ ÊÇ Ö² Îï µÄ Ô´ ´ú Âë ",
-        SILK = "Ö© Öë ÄÚ Ôà ",
-		SPIDERGLAND = "ÎÒ µÃ µ½ ÁË Ëû ÃÇ µÄ Æ÷ ¹Ù ",
-        BOARDS = "Ëû ÃÇ Ê® ·Ö ¸ß ÐË ",
-        HOME = "Ë­ Ð´ µÄ £¿ ",
-        RABBIT = {
-            GENERIC = "Ëü Õý ÔÚ Ö´ ÐÐ ËÑ Ë÷ Ëã ·¨ ",
-            HELD = "ÎÒ ½« Õâ ¸ö Ð¡ ¶« Î÷ Åõ ÔÚ ÊÖ ÐÄ ",
-        },
-        ROCK = "³É ¿é µÄ ",
-        TREECLUMP = "Äý ½á ³É ¿é ",
-        BOAT = "´¬ ",
-        PIGTENT = "ÕÊ Åñ ",
-        PIGKING = "ºÃ Ïñ ÊÇ Õ¼ ÓÅ ÊÆ µÄ Öí ",
-        SPIDERQUEEN = "Ö© Öë Éú »î ÔÚ ¾ý Ö÷ ÖÆ µÄ Ìå Ïµ ÖÐ ",
-        
-        WINTEROMETER = "Äã ºÃ £¬ Åó ÓÑ ¡£ ",
-        RAINOMETER = "»¶ Ó­ £¬ ÐÖ µÜ ¡£ ",
-
-        RESURRECTIONSTATUE = "ÄÇ ÊÇ Ë­ £¿ ",
-        RESURRECTIONSTONE = "Äã Ïà ÐÅ Ä§ ·¨ Âð £¿ ",
-        AXE = "Ò» ÖÖ ¿³ ÏÂ »î Îï ÖÊ µÄ ¹¤ ¾ß ",
-        HAMMER = "½â ¹¹ ",
-        PICKAXE = "¿ó Òµ ÊÖ ¶Î ¼ì ²â ",
-        SHOVEL = "Ëü ÓÐ ºÜ ¶à ÖÖ ÓÃ Í¾ ",
-		PITCHFORK = "ÎÒ Ï² »¶ Õâ Ð© ¼â ¼â µÄ ²¿ ·Ö ",
-        ROCKS = "ÎÒ Òª ¸Ä ½ø ¸ß ¿Æ ¼¼ ",
-        FLINT = "Õâ ¿é Ê¯ Í· ±È Æä Ëû µÄ ¸ü ¼Ó ·æ Àû ",
-        AMULET = "·¢ ÏÖ ·´ ³£ ",
-        RAZOR = "°þ Âä £¡ ",
-		POND = "´í Îó £¬ Çë Àë ¿ª ¡£ ",
-		BUGNET = "ÊÕ »ñ À¥ ³æ ",
-		PANFLUTE = "ÎÒ ÄÜ ÓÃ Õâ ¶« Î÷ ÖØ Æô Ñª Èâ Ö® Çû ",
-        ONEMANBAND = "±í Ãæ Éù Òô Ä£ ¿é Éý ¼¶ ¡£ ",        
-		PUMPKIN_LANTERN = "Ëü ÄÜ ·¢ ³ö Ò» ÖÖ ¹Ö Òì µÄ ¹â Ïß ",
-		HORN = "²» ÎÀ Éú ",
-        GEARS = "²» £¬ ÎÒ ¶Ô Äã ¶¼ ×ö ÁË Ð© Ê² Ã´ °¡ ?",
-        STATUEHARP = "ÓÐ ÈË Íü ¼Ç °² ×° Í· ²¿ Ä£ ¿é ÁË ¡£ ",
-        STATUEMAXWELL = "·¢ ÏÖ ¸ß ¼¶ Ð° ¶ñ ¡£ ",
-        SKELETON = "¹þ £¬ Ëü ËÀ ÁË £¬ ¾­ µä µÄ ÈË Àà ´í Îó ¡£ ",
-
-        GOLDENAXE = "½ð ×Ó ¸ü ¼Ó ÄÍ ÓÃ Âð £¿ ",
-        GOLDENPICKAXE = "½ð ×Ó ¸ü ¼Ó ÄÍ ÓÃ Âð £¿ ",
-        GOLDENSHOVEL = "½ð ×Ó ¸ü ¼Ó ÄÍ ÓÃ Âð £¿ ",
-        GOLDENPITCHFORK = "½ð ×Ó ¸ü ¼Ó ÄÍ ÓÃ Âð £¿ ",
-        LEIF = "¾¯ ¸æ £º »î ¶¯ Ê÷ ",
-
-        TALLBIRD = "Ëü ºÃ Ïñ ÓÐ ×Ô ¼º µÄ Áì Óò ",
-        
-        SMALLBIRD = 
-        {
-            GENERIC = "Ëü ºÃ Ïñ ºÜ ÉË ÐÄ ",
-            HUNGRY = "Ëü Ðè Òª Êä Èë ",
-            STARVING = "¿ì Ã» È¼ ÁÏ ÁË ",
-        },
-
-        TEENBIRD = 
-        {
-            GENERIC = "¼ì ²â µ½ ½¹ ÂÇ ",
-            HUNGRY = "Ëü Ðè Òª Ê³ Îï ",
-            STARVING = "¿ª Ê¼ ±í ÏÖ ²» ºÏ Àí ÁË ",
-        },
-
-        TALLBIRDEGG = "Ëü »¹ »î ×Å Âð £¿ ",
-        TALLBIRDEGG_COOKED = "ÒÑ ¾­ ËÀ ÁË ¡£ ",
-        TALLBIRDEGG_CRACKED = 
-        {
-            GENERIC = "·¢ ÏÖ ÁÑ ·ì ",
-            HOT = "ÎÞ ·¨ É¢ ³ö ¹ý ¶à µÄ ÈÈ Æø ",
-            COLD = "Ëü Ðè Òª ÎÂ Å¯ ",
-            SHORT = "ÓÐ ¶« Î÷ ³ö ÏÖ ÁË ",
-            LONG = "Éú Ãü ÊÇ Ò» ¶Î ÌÖ Ñá µÄ Âý ¹ý ³Ì ",
-        },
-
-        TALLBIRDNEST =
-        {
-			GENERIC = "ÎÒ Ïë Òª µ° ",
-			PICKED = "¿Õ µÄ ",
-        },
-        
-		WALRUSHAT = "ÎÅ Æð À´ Ïñ ²¸ Èé ¶¯ Îï ",
-        WALRUS = "ÎÒ ²» Ï² »¶ Ëû µÄ Ñù ×Ó ",
-        WALRUS_CAMP = 
-        {
-            GENERIC = "ÎÒ Ìý µ½ ÁË Ä£ ºý µÄ Éù Òô ",
-            EMPTY = "Ëû ÃÇ ÔÚ ÄÄ ¶ù £¿ ",
-        },
-        LITTLE_WALRUS = "Õæ ¿É Á¯ ",
-        WALRUS_TUSK = "Õâ ¶Ô Ô­ À´ µÄ Ö÷ ÈË Ã» ÓÐ ¶à ´ó °ï Öú ",
-        
-
-        COOKPOT=
-        {
-			COOKING_LONG="MORE TIME IS REQUIRED",
-			COOKING_SHORT="IT IS ALMOST COMPLETE",
-			DONE="THE COOKING PROCESS IS DONE",
-			EMPTY="I CAN REFINE MEATS AND VEGETABLES INTO MORE ROBUST FORMS",
-        },
-
-        PIGHOUSE =
-        {
-            GENERIC = "¼Ò ¾ß È« ÊÇ Ð¡ Öí ÐÎ ×´ µÄ ",
-            FULL = "ÒÑ Õ¼ ÓÃ ",
-            LIGHTSOUT = "Õ¼ ÓÐ ÈË ¿Ï ¶¨ Ë¯ ×Å ÁË ",
-        },
-
-        SPIDERDEN = "·¢ ÏÖ Ö© Öë À´ Ô´ ",
-        RABBITHOLE = "Ëû ÃÇ È« ²¿ Í¨ ¹ý µØ ÏÂ Í¨ µÀ Á¬ ½Ó Æð À´ ",
-        FIREFLIES = {
-            GENERIC = "·¢ ¹â µÄ À¥ ³æ ",
-            HELD = "Ëû ÃÇ Õæ ÁÁ ",
-        },
-        CROW = {
-            GENERIC = "Ëü ±È ´ó ¶à Êý ÈË ¶¼ Òª ´Ï Ã÷ ",
-            HELD = "ÏÖ ÔÚ Ã» ÄÇ Ã´ ´Ï Ã÷ ÁË £¬ ¶Ô °É £¿ ",
-        },
-        GHOST = "´í Îó £º Î´ Öª ",
-        CUTGRASS = "Ö² Îï Îï ÖÊ ",
-        CUTREEDS = "¿Õ ÐÄ Ö² Îï Îï ÖÊ ",
-        PETALS = "ÎÒ °Ñ Ò» Ð© Æ¯ ÁÁ ¶« Î÷ ¸ø »Ù ÁË ¡£ ",
-        PETALS_EVIL = "Ëü ²¢ ²» ºÃ ¿´ £¬ ²» ¹ý ÎÒ »¹ ÊÇ ½« Ëü ¸ø »Ù ÁË £¬ ¹þ ¹þ ¡£ ",        
-        FLOWER = "ÎÒ ¶Ô Æ¯ ÁÁ µÄ ¼ø ±ð ÄÜ Á¦ ÓÐ ÏÞ ",
-        FLOWER_EVIL = "ÇÆ £¬ »¨ ¡£ Ïë ¡­ É± ËÀ Ëù ÓÐ ÈË Âð £¿ ",
-        GOLDNUGGET = "ÎÒ Ï² »¶ Ëü µÄ µ¼ µç ÐÔ ¡£ ",
-        RESEARCHLAB = "Ä¸ Ç× £¿ ",
-        RESEARCHLAB2 = "Äã ºÃ £¬ Åó ÓÑ ",
-        RESEARCHLAB3 = "¿É ÄÜ ÊÇ Ëü Ì« Ç¿ Á¦ ÁË ",
-        POOP = "Õâ Ð© ¶¯ Îï Õæ ¶ñ ÐÄ ",
-        TORCH = "Ô­ Ê¼ µÄ ¹â Ô´ ",
-        TRAP = "ÎÒ ¶Ô ±à Ö¯ ºÜ Êì Á· ",
-        BEEFALOWOOL = "¼· ³ö ¶ñ ÐÄ µÄ Æ¤ ¸¥ Âå Å£ ",
-        BUTTERFLY = 
-        {
-            GENERIC = "Ëü ¾õ µÃ ºÜ Æ¯ ÁÁ ",
-            HELD = "Ñ¹ ±â ",
-        },
-        BUTTERFLYWINGS = "ÉÁ ¹â ",
-        BUTTER = "Õâ ²» Ì« ¿É ÄÜ ",
-        FROGLEGS = "¸ø Çà ÍÜ »» Áã ¼þ ",
-        FROGLEGS_COOKED = "Ëû ÃÇ ÏÖ ÔÚ ¸ü ÓÐ Óª Ñø ÁË ",
-        BIRDTRAP = "ÓÞ ´À µÄ Äñ Àà ¡£ ",
-        FISHINGROD = "ÎÒ ²» Ï² »¶ Ë® ",
-        FEATHER_CROW = "´Ó Äñ Éí ÉÏ ·Ö Àë ÁË ",
-        FEATHER_ROBIN = "´Ó Äñ Éí ÉÏ ·Ö Àë ÁË ",
-        FEATHER_ROBIN_WINTER = "´Ó Äñ Éí ÉÏ ·Ö Àë ÁË ",
-
-        ROBIN = {
-            GENERIC = "Äã ºÃ £¬ ºì Äñ ",
-            HELD = "Ñ¹ ±â ",
-        },
-        ROBIN_WINTER = {
-            GENERIC = "Ò» Ö± ´À Äñ ",
-            HELD = "Èá Èí µÄ ¼Ò »ï ",
-        },
-
-        SEEDS_COOKED = "Ëû ÃÇ Ã» °ì ·¨ ·¢ Ñ¿ ",
-        FEATHERHAT = "ÎÒ »¹ ÊÇ ²» ÄÜ ·É ",
-        DRUMSTICK = "Éú Îï ÊÇ ÓÉ ÃÔ ÈË µÄ ²¿ ·Ö ×é ³É µÄ ",
-        DRUMSTICK_COOKED = "Î¶ ¾õ ",
-        FISH = "Ëü Ã» È¼ ÁÏ ÁË £¬ ÎÒ Ó® ÁË ",
-        FISH_COOKED = "Ðè Òª Ð¾ Æ¬ ",
-		TURKEYDINNER = "Ï² Çì ",
-		PERD = "Õâ ÊÇ Ò» Ö» ÓÐ ¹¥ »÷ ÐÔ µÄ ´ó Äñ ",
-		COOKEDMANDRAKE = "ÎÒ Ó® ÁË ",
-		TENTACLESPOTS = "²» ÊÇ Òò Îª Å» ÍÂ ",
-        MINERHAT = "Ö§ ³Ö Ãâ Ìá ²Ù ×÷ ",
-        FOOTBALLHAT = "Ìæ ÎÒ µÄ ´¦ Àí µ¥ Ôª Ìî ²¹ ",
-        BLOWDART_SLEEP = "Õâ Ð© Éú Îï ¿É ÒÔ ²Ù ×÷ ",
-        BLOWDART_FIRE = "»Ù Ãð ÐÔ ½Ï Ð¡ µÄ Îä Æ÷ ",
-        BEEMINE = "ÁÙ Ê± ×¼ ±¸ µÄ ´Ì ×´ Éè ±¸ ",
-        BEEMINE_MAXWELL = "ÇÖ ÂÔ ÐÔ µÄ Éú Ãü ÐÎ Ì¬ ",
-        SPIDERHAT = "Ëü ¿É ÒÔ Ïò Ö© Öë ÎÞ Ïß ´« Êä Ë¼ Ïë ",
-        NIGHTMAREFUEL = "µ÷ ÊÔ ²Ð Ôü ",
-        NIGHTLIGHT = "Î´ Öª ¹â Ô´ ",
-        NIGHTSWORD = "ÎÒ ¿É ÒÔ Èë ÇÖ Õâ ¸ö ÊÀ ½ç ",
-        ARMORMARBLE = "ÌØ ÖØ ÐÍ Íâ ¿Ç ¡£ ",
-        ARMORGRASS = "Õâ »á ¶Ô ÎÒ µÄ ½ð Êô ¿Ç Ìí ¼Ó ¶î Íâ µÄ ±£ »¤ ¡£ ",
-        BLUEPRINT = "Öª Ê¶ µÈ ´ý ×Å ±» Îü ÊÕ ¡£ ",
-        MAXWELLHEAD = "Õâ ËÆ ºõ ÊÇ Ä³ ÖÖ Í¶ Éä ¡£ ",
-
-        SPIDER = {
-            GENERIC = "·¢ ÏÖ Íþ Ð² ",
-            SLEEPING = "Ëü ºÜ ÈÝ Ò× ÊÜ µ½ ¹¥ »÷ ",
-            DEAD = "ÎÒ Ó® ÁË ",
-        },
-
-        SPIDER_WARRIOR = {
-            GENERIC = "·¢ ÏÖ ¸ß ¶È Íþ Ð² ",
-            SLEEPING = "Íþ Ð² ÒÑ Çå ³ý ",
-            DEAD = "ÎÒ Ó® ÁË ",
-        },
-
-        BERRYBUSH = {
-            GENERIC = "ÖÜ ÆÚ ¿¨ Â· Àï µ÷ ÊÔ ",
-            PICKED = "Õý ÔÚ ÖØ Æô ",
-            BARREN = "Ïµ Í³ ÒÑ ¾­ ±À À£ ",
-        },
-
-        SAPLING = {
-            GENERIC = "Ç± ÔÚ µÄ ½¨ Öþ ²Ä ÁÏ ",
-            PICKED = "Õý ÔÚ ÖØ ÐÂ Ìî ³ä ",
-            BURNING = "×Ê Ô´ ÀË ·Ñ ",
-        },
-
-        GRASS = {
-            GENERIC = "ºÃ Ïñ ¿É ÒÔ È¼ ÉÕ ",
-            PICKED = "ºÜ ¿ì ¾Í »á »Ø À´ ",
-            BARREN = "Ðè Òª ·Ê ÁÏ ",
-            BURNING = "°¥ Ó´ ",
-        },
-
-        REEDS = {
-            GENERIC = "·¢ ÏÖ ¿É ÓÃ ²Ä ÁÏ ",
-            PICKED = "Ðè Òª ÔÙ Éú ³¤ ",
-            BURNING = "Ì« ÈÈ ÁË ",
-        },
-
-        PLANT_NORMAL = {
-            GENERIC = "¿´ Æð À´ ¿É ÒÔ Ê³ ÓÃ ",
-            READY = "Ëü µÄ Óª Ñø ¼Û Öµ ×î ¸ß ",
-            GROWING = "¿ì µã ³¤ °É £¬ Ö² Îï ",
-        },
-
-        MOUND = {
-            GENERIC ="MEATLINGS ARE SO SUPERSTITIOUS",
-            DUG = "Èä ³æ ºÍ Å§ Ë® ",
-        },
-
-        PIGMAN =
-        {
-            GENERIC = "Ëû ÃÇ µÄ Àí ½â Á¦ ×î µÍ ",
-            FOLLOWER = "°´ ÎÒ µÄ Ãü Áî ×ö ",
-            DEAD = "°¥ Ó´ ",
-            WEREPIG = "´í Îó £º Òì ³£ £¡ ",
-            GUARD = "·¢ ÏÖ ·À Óù ×Ë Ì¬ ¡£ ",
-        },
-        SPIDEREGGSACK = "Ö© Öë Ç± ÄÜ = 6",
-
-		TELEPORTATO_RING = "¶à ¿ì ÀÖ µÄ ÎÞ »ú »¯ Ñ§ °¡ ",
-		TELEPORTATO_BOX = "Õâ ¸ö ÊÀ ½ç ¿É ÄÜ ÔÚ ÎÒ µÄ »· Â· ÒÔ ÏÂ ",
-		TELEPORTATO_CRANK = "ÎÒ ÊÇ ÓÃ Ê® ·Ö Ç¿ ×³ µÄ ²Ä ÁÏ ÖÆ ×÷ µÄ ",
-		TELEPORTATO_POTATO = "ÈÃ ÎÒ Ïë Æð ÁË ÎÒ Âè Âè ",
-		TELEPORTATO_BASE = {
-			GENERIC = "Ê² Ã´ Ô­ Ê¼ &quot;¼¼ Êõ &quot;",
-			PARTIAL = "ÎÒ ¿Ï ¶¨ £¬ Õâ Ò» ¶¨ ÓÐ ÓÃ ",
-			ACTIVE = "ÎÒ ºÜ ¿ì ¾Í ¿É ÒÔ Àë ¿ª Õâ Àï ÁË ",
-		},
-
-
-        TRINKET_1 = "ÒÔ Ç° µÄ Ò» ¶Ñ Ã» ÓÃ À¬ »ø ",
-        TRINKET_2 = "ÒÔ Ç° µÄ Ò» ¶Ñ Ã» ÓÃ À¬ »ø ",
-        TRINKET_3 = "ÒÔ Ç° µÄ Ò» ¶Ñ Ã» ÓÃ À¬ »ø ",
-        TRINKET_4 = "ÒÔ Ç° µÄ Ò» ¶Ñ Ã» ÓÃ À¬ »ø ",
-        TRINKET_5 = "ÒÔ Ç° µÄ Ò» ¶Ñ Ã» ÓÃ À¬ »ø ",
-        TRINKET_6 = "ÒÔ Ç° µÄ Ò» ¶Ñ Ã» ÓÃ À¬ »ø ",
-        TRINKET_7 = "ÒÔ Ç° µÄ Ò» ¶Ñ Ã» ÓÃ À¬ »ø ",
-        TRINKET_8 = "ÒÔ Ç° µÄ Ò» ¶Ñ Ã» ÓÃ À¬ »ø ",
-        TRINKET_9 = "ÒÔ Ç° µÄ Ò» ¶Ñ Ã» ÓÃ À¬ »ø ",
-        TRINKET_10 = "ÒÔ Ç° µÄ Ò» ¶Ñ Ã» ÓÃ À¬ »ø ",
-        TRINKET_11 = "Ëû ½Ð ¹þ ¶û £¬ Ëû ÊÇ ÎÒ Åó ÓÑ ",
-        TRINKET_12 = "ÒÔ Ç° µÄ Ò» ¶Ñ Ã» ÓÃ À¬ »ø ",
-
-        BEARDHAIR = "¶ñ ÐÄ ",
-
-        EVERGREEN = {
-            GENERIC = "Ä¿ ±ê ²¶ »ñ ",
-            CHOPPED = "ÎÒ ÃÇ ¶Ô ×Ô È» ½ç µÄ ÆÀ ¼Û ÓÐ µã ¶ù ¸ß ÁË ",
-            BURNING = "Õâ Àï ºÜ ¿ì ¾Í ½« Ò» ÎÞ Ëù ÓÐ ",
-            BURNT = "ÎÒ Ó® ÁË ¡£ "
-        },
-
-        EVERGREEN_SPARSE = {
-            GENERIC = "¿É Á¯ µÄ Ê÷ Ã» ÓÐ ÈÎ ºÎ ¹û Êµ ",
-            CHOPPED = "ÎÒ ÃÇ ¶Ô ×Ô È» ½ç µÄ ÆÀ ¼Û ÓÐ µã ¶ù ¸ß ÁË ",
-            BURNING = "Õâ Àï ºÜ ¿ì ¾Í ½« Ò» ÎÞ Ëù ÓÐ ",
-            BURNT = "ÎÒ Ó® ÁË ¡£ "
-        },
-
-        FIREPIT = {
-            GENERIC = "ÎÂ Å¯ ºÍ ¹â ÁÁ ",
-            OUT = "Ðè Òª ÖØ Æô ",
-            EMBERS = "¾¯ ¸æ £º »ð Ñæ µÈ ¼¶ Î£ ÏÕ ",
-            LOW = "¾¯ ¸æ £º »ð Ñæ µÈ ¼¶ ½Ï µÍ ",
-            NORMAL = "Õâ Ò» »ð Ñæ Íê È« ¿É ÒÔ ²Ù ×÷ ",
-            HIGH = "¾¯ ¸æ £º »ð Ñæ µÈ ¼¶ ³¬ ¹ý Éè ¼Æ ²Î Êý ",
-        },
-		HEATROCK = {
-			COLD = "È± ÉÙ ÈÈ ÄÜ ",
-			GENERIC = "Æ­ ÈË µÄ ¼ò µ¥ Éè ±¸ ",
-			WARM = "Ëü ½« º® Àä µÄ µØ ÅÌ ±ä Å¯ ÁË ",
-			HOT = "×î ¸ß ÎÂ ¶È ",
-		},
-
-        BEE = 
-        {
-            GENERIC = "Ò» Ö± ÓÞ ´À µÄ ÐÛ ·å £¬ ÎÒ °Ñ Ëü ¸ø É± ÁË ",
-            HELD = "Ëü µÄ Õñ ¶¯ ÈÃ ÈË ºÜ Êæ ·þ ",
-        },
-        KILLERBEE = 
-        {
-            GENERIC = "Ëü ³¤ ÓÐ ¼â ´Ì £¬ ¶ø ÇÒ Ì¬ ¶È ºÜ ²î ",
-            HELD = "¾¯ ¸æ £º É± ÈË ·ä ",
-        },
-		MOSQUITO =
-		{
-			GENERIC = "Ëü Íµ ×ß ÁË ±ð ÈË µÄ ÐÔ Ãü ",
-			HELD = "³ä Âú ÁË ¶ñ ÐÄ µÄ Òº Ìå ",
-		},
-        BEEHIVE = "Õæ ÇÚ ·Ü ",
-        BEEBOX =
-        {
-            GENERIC = "ÃÛ ·ä £¬ ¹¤ ×÷ Å¬ Á¦ µã ",
-            NOHONEY = "Î´ ·¢ ÏÖ ·ä ÃÛ ",
-            SOMEHONEY = "·ä ÃÛ µÈ ¼¶ ½Ï µÍ ",
-            FULLHONEY = "·ä ÃÛ µÈ ¼¶ ºÜ ¸ß ",
-        },
-        HONEY = "¶Ô ÎÒ µÄ ³Ý ÂÖ À´ Ëµ £¬ ÊÇ ²» ´í µÄ Èó »¬ ÓÍ ",
-        HONEYCOMB = "ÃÛ ·ä ²Ö ¿â µÄ Ò» ¸ö µ¥ Î» ",
-        STINGER = "¾¯ ¸æ £º ³ö ÏÖ ¶¾ ËØ ",
-
-        CAMPFIRE = {
-            GENERIC = "ÁÙ Ê± Óª µØ ",
-            OUT = "Î´ ·¢ ÏÖ »ð Ñæ ",
-            EMBERS = "¾¯ ¸æ £º »ð Ñæ µÈ ¼¶ Î£ ÏÕ ",
-            LOW = "¾¯ ¸æ £º »ð Ñæ µÈ ¼¶ ½Ï µÍ ",
-            NORMAL = "ÈÃ ÎÒ Ïë Æð ÁË Ò» Ð© ÊÂ ",
-            HIGH = "¾¯ ¸æ £º »ð Ñæ ±ä µÃ ÄÑ ÒÔ ¿Ø ÖÆ ",
-        },
-
-        FARMPLOT = {
-            GENERIC = "µ± Ç° ²» ¿É ¼¤ »î ",
-            GROWING = "Éú Ãü Ð§ ÂÊ ºÜ µÍ ",
-            NEEDSFERTILIZER = "×Ê Ô´ ÒÑ ºÄ ¾¡ ",
-        },
-
-        TREASURECHEST = "Íâ ²¿ ´æ ´¢ Æ÷ ",
-        CHESTER = "Íâ ²¿ ´æ ´¢ Æ÷ ºÃ Ïñ ÓÐ Öª ¾õ ",
-        CHESTER_EYEBONE = "ÊÇ ´æ ´¢ µ¥ Î» µÄ DRM¼ü ",
-        BEDROLL_STRAW = "Ë¯ Ãß ( 1000 )",
-        CHARCOAL = "Ñ¹ Ëõ ÎÞ »ú Îï £¬ Îª Ê² Ã´ ²» Ï² »¶ ÄØ £¿ ",
-        MARSH_PLANT = "ÎÞ È¤ µÄ Ö² Îï ",
-        MARSH_BUSH = "¾£ ¼¬ ",
-        
-        MARSH_TREE = {
-            GENERIC = "Ò» ¿Å ´ø ´Ì µÄ Ê÷ ",
-            CHOPPED = "·¢ ÏÖ Ò» ¿Å ´ø ´Ì µÄ Ê÷ ",
-            BURNING = "´ø ´Ì µÄ Ê÷ ×Å »ð ÁË ",
-            BURNT = "´ø ´Ì µÄ Ê÷ ÒÑ ¾­ ²» ´æ ÔÚ ÁË "
-        },
-        
-        PAPYRUS = "ÎÒ ¸ü Ï² »¶ µã Õó Ö½ ÕÅ ",
-        
-        FROG = {
-            SLEEPING = "ÎÒ Ó¦ ¸Ã ÊÕ ¸î Ëü ",
-            DEAD = "ÎÒ Ó® ÁË ",
-            GENERIC = "Ç± ÔÚ µÄ °î Íþ Ææ ",
-        },
-
-		WORMHOLE = {
-			GENERIC = "ÎÒ Ïë ¼Ó ¿ì ËÙ ¶È ",
-			OPEN = "Õâ ¸ö Èâ ¹Ü Âú ×ã ÎÒ µÄ Òª Çó ",
-		},
-
-
-		BUTTERFLYMUFFIN = "Éý ¼¶ Ê³ Îï Ô­ ÁÏ ",
-		FROGGLEBUNWICH = "Éý ¼¶ Ê³ Îï Ô­ ÁÏ ",
-		HONEYHAM = "Éý ¼¶ Ê³ Îï Ô­ ÁÏ ",
-		DRAGONPIE = "Éý ¼¶ Ê³ Îï Ô­ ÁÏ ",
-		KABOBS = "Éý ¼¶ Ê³ Îï Ô­ ÁÏ ",
-		MANDRAKESOUP = "Éý ¼¶ Ê³ Îï Ô­ ÁÏ ",
-		BACONEGGS = "Éý ¼¶ Ê³ Îï Ô­ ÁÏ ",
-		BONESTEW = "Éý ¼¶ Ê³ Îï Ô­ ÁÏ ",
-		PEROGIES = "Éý ¼¶ Ê³ Îï Ô­ ÁÏ ",
-		WETGOOP = "Éý ¼¶ Ê³ Îï Ô­ ÁÏ ",
-		RATATOUILLE = "Éý ¼¶ Ê³ Îï Ô­ ÁÏ ",
-		FRUITMEDLEY = "Éý ¼¶ Ê³ Îï Ô­ ÁÏ ",
-		FISHTACOS = "Éý ¼¶ Ê³ Îï Ô­ ÁÏ ",
-		WAFFLES = "Éý ¼¶ Ê³ Îï Ô­ ÁÏ ",
-        FISHSTICKS = "Éý ¼¶ Ê³ Îï Ô­ ÁÏ ",
-        STUFFEDEGGPLANT = "Éý ¼¶ Ê³ Îï Ô­ ÁÏ ",
-		HONEYNUGGETS = "Éý ¼¶ Ê³ Îï Ô­ ÁÏ ",
-		MEATBALLS = "Éý ¼¶ Ê³ Îï Ô­ ÁÏ ",
-		JAMMYPRESERVES = "Éý ¼¶ Ê³ Îï Ô­ ÁÏ ",
-		MONSTERLASAGNA = "Éý ¼¶ Ê³ Îï Ô­ ÁÏ ",
-        
-        
-        ICEBOX = "¼Ì Ðø £¬ ÀÏ ÐÖ ",
-        
-		WALL_WOOD_ITEM = "Ä¾ Í· ·À Óù ",
-		WALL_STONE_ITEM = "Ê¯ Í· ·À Óù ",
-		WALL_HAY_ITEM = "²» ÊÇ ºÜ ºÃ µÄ ·À Óù ",
-		WALL_WOOD = "ÎÒ ÓÐ µã ¶ù ·Å ÐÄ ÁË ",
-		WALL_STONE = "ÎÒ ¸Ð ¾õ ºÜ °² È« ",
-		WALL_HAY = "Ã» ÓÐ ´ï µ½ ×î ¼Ñ ±ê ×¼ ",
-        
-        ANIMAL_TRACK = "·¢ ÏÖ Éú Ãü ÐÎ Ì¬ ",
-        DIRTPILE = "Î´ Öª ¶Ñ »ý ¸ñ Ê½ ",
-        KOALEFANT_SUMMER = "ÓÐ ·á ¸» µÄ ÄÜ Ô´ ´¢ ±¸ ",
-        KOALEFANT_WINTER = "É¢ ·¢ ³ö Èâ Àà µÄ ÎÂ Å¯ ",
-        TRUNK_SUMMER = "Î´ ²å µç µÄ µç ÀÂ ",
-		TRUNK_WINTER = "µç ÀÂ ¸ü ¼Ó ¶ñ ÐÄ £¬ ¶ø ÇÒ ±È Õý ³£ Ã« ·¢ ¸ü ¶à ",
-        TRUNK_COOKED = "Èâ Àà Ìá È¡ ÔÝ Í£ £¬ Ì« ºÃ ÁË ¡£ ",
-        TRUNKVEST_SUMMER = "ÎÂ ¶È ¿Ø ÖÆ ×¡ Õ¬ ",
-		TRUNKVEST_WINTER = "¸Ä Á¼ µÄ ÎÂ ¶È ¿Ø ÖÆ ×¡ Õ¬ ",
-        
-        DEERCLOPS = "Î£ ÏÕ £¡ Íþ Ð² ¿¿ ½ü £¡ ",
-        REDGEM = "ÓÐ µã ¶ù ÎÂ Å¯ ",
-        BLUEGEM = "ÓÐ µã ¶ù Àä ",
-        PURPLEGEM = "Õæ Ææ ¹Ö ",
-        HOUND = "Ëü ±» ³Ô ÁË ",
-        FIREHOUND = "Ëü ±» ÉÕ ÁË ",
-        ICEHOUND = "Ëü ±» ¶³ ½á ÁË ",
-        PENGUIN = "...",
-        DEERCLOPS_EYEBALL = "¾Þ ´ó µÄ ÓÐ »ú ¾§ Ìå ",
-        BASALT = "²» ³ä ×ã µÄ »Ù Ãð ÄÜ Á¦ ",
-        PIGHEAD = "Èç ¹û Õâ Í· Öí ·¢ ÏÖ ×Ô ¼º µÄ Í· ²¿ Ä£ ¿é ²¿ ¼þ ÁË £¬ Ëû »á ¾õ µÃ ºÜ ÓÞ ´À ",
-        MERMHEAD = "Õâ Óã ÊÞ ±È ¿´ Æð À´ ¸ü ¼Ó °× ³Õ ¡£ ",
-
-        HOUNDMOUND = "Õâ Àï ×¡ ×Å Î£ ÏÕ µÄ ¶« Î÷ ",
-        MERM = "ÐÂ ÏÊ µÄ º£ ÏÊ ",
-        MERMHOUSE = "ÀÏ Ê½ ×¡ Ëù ",
-        KNIGHT = "×Ô ¶¯ Çå ³ý Âí ",
-        BISHOP = "×Ô ¶¯ Çå ³ý ½Ì Ê¿ ",
-
-        INSANITYROCK = {
-            INACTIVE = "ºÃ Ïñ ÊÇ ÔÚ µØ ÏÂ ",
-            ACTIVE = "ÎÒ µÄ µØ Í¼ Ä£ ¿é ÏÔ Ê¾ £¬ Ã» ÓÐ ÕÏ °­ ¼Ç Â¼ ",
-        },
-        SANITYROCK = {
-            INACTIVE = "¿´ Æð À´ ±È ÏÈ Ç° ÐÅ Ï¢ Ö¸ Ê¾ µÄ Òª ¸ü Ð¡ ",
-            ACTIVE = "Ëü µñ ¿Ì µÃ Ì« Íê ÃÀ ÁË ",
-        },
-        PIGTORCH = "Ëü ¸ø Ëû ´ø À´ Ä¿ µÄ ",
-        WASPHIVE = "Ò» ¸ö ´ú ±í Ð§ ÂÊ µÄ ºÃ Àý ×Ó ",
-        MARBLEPILLAR = "ÆÆ Ëé µÄ ²Ð º¡ ¡£ ",
-        MARBLETREE = "Ò» ¿Å ºÜ ¼á Ç¿ µÄ Ê÷ ¡£ ",
-        MARBLE = "ÎÒ Ó¦ ¸Ã ´´ Ôì Ò» ×ù ×Ô ¼º µÄ µñ Ïñ ¡£ ",
-        SUNKBOAT = "ÎÞ ·¨ Ê¹ ÓÃ ¡£ ",
-        MEATRACK = 
-        {
-            GENERIC = "ÎÒ Òª °Ñ ¹ý ÆÚ µÄ Èâ ¹Ò ÔÚ Õâ ¶ù ",
-            DRYING = "Èâ Àà Ðè Òª Ò» ¶Î Ê± ¼ä ²Å »á ÍÑ Ë® ",
-            DONE = "ÎÒ ÌÖ Ñá ÐÂ µÄ µ° °× ÖÊ ",
-        },
-        SMALLMEAT_DRIED = "ÍÑ Ë® µ° °× ÖÊ ",
-        MEAT_DRIED = "ÍÑ Ë® µ° °× ÖÊ ",
-        MONSTERMEAT_DRIED = "ÍÑ Ë® µ° °× ÖÊ ",
-        BANDAGE = "ÁÙ Ê± Î¬ ÐÞ Éè ±¸ ",
-		HEALINGSALVE = "É± ËÀ Ð¡ Éú Ãü £¬ Õü ¾È ´ó Éú Ãü ",
-		CANE = "¸¨ Öú ÒÆ ¶¯ ×° ÖÃ ",
-		LIGHTNING_ROD = 
-		{
-		    GENERIC = "¹ý ÔØ ±£ »¤ ",
-		    CHARGED = "±¸ ÓÃ µç Ô´ ",
-		},
-   },
-
-    DESCRIBE_TOODARK = "ÕÕ Ã÷ ²» ×ã ",
-    DESCRIBE_GENERIC = "´í Îó £º Î´ Öª ",
-    ACTIONFAIL_GENERIC = "ÔÚ µ± Ç° ÄÚ ÈÝ ÖÐ £¬ ÐÐ ¶¯ ²» ¿É ÓÃ ",
-
-    BATTLECRY =
-    {
-        GENERIC = "ÎÒ Òª Ãð ÁË Äã ",
-        PREY = "Ïû Ãð ",
-    },
-
-    COMBAT_QUIT =
-    {
-        GENERIC = "Õ½ ¶· ³Ì Ðò Ê§ °Ü ",
-    },
-
-    EAT_FOOD = 
-    {
-        TALLBIRDEGG_CRACKED = "·¢ ÏÖ Äñ Àà µÄ ºÛ ¼£ ",
-    },
-
-
-
-	ANNOUNCE_EAT =
-	{
-		GENERIC = "ÃÀ Î¶ ",
-		SPOILED = "±ä ÖÊ µÄ Ê³ Îï Ò» Ñù ºÜ ²» ´í ",	
-		STALE = "²» ÐÂ ÏÊ µÄ Ê³ Îï Ò» Ñù ºÜ ²» ´í ",
-		PAINFUL = "ÄÇ ²» ÊÇ Ê³ Îï ",
-	},
-	
-	ANNOUNCE_RESEARCH = "ÐÅ Ï¢ Ôö ¼Ó ",
-	ANNOUNCE_HIGHRESEARCH = "ÐÅ Ï¢ ³¬ ÔØ ",
-	ANNOUNCE_LOWRESEARCH = "²Ä ÁÏ ÐÅ Ï¢ ³É ·Ö ¹ý µÍ ",
-
-    ANNOUNCE_HUNGRY = "È¼ ÁÏ ´¢ ±¸ Á¿ ¹ý µÍ ",
-    ANNOUNCE_COLD = "»ú Æ÷ ±» ±ù ¶³ ",
-    ANNOUNCE_TORCH_OUT = "»ð °Ñ Ï¨ Ãð ",
-    ANNOUNCE_DUSK = "¾¯ ¸æ £º ºÚ Ò¹ ¼´ ½« À´ ÁÙ ",
-
-    ANNOUNCE_CHARLIE_ATTACK = "´í Îó £º Î´ Öª ¹¥ »÷ Õß ",
-    ANNOUNCE_CHARLIE = "·¢ ÏÖ Íþ Ð² ",
-    ANNOUNCE_HOUNDS = "ÓÐ ÈË À´ ÁË ",
-    
-
-    ANNOUNCE_PECKED = "°¥ Ó´ ",
-
-	ANNOUNCE_BOOMERANG ="ERROR: CATCH FAILED",
-	
-    ANNOUNCE_ENTER_LIGHT = "¹â Ñ§ ´« ¸Ð Æ÷ ¼¤ »î ",
-    ANNOUNCE_ENTER_DARK = "¹â Ñ§ ´« ¸Ð Æ÷ Ê§ Ð§ ",
-    ANNOUNCE_INV_FULL = "Îï Ìå ³¬ ³ö ³Ð ÔØ ÄÜ Á¦ ",
-
-    ANNOUNCE_CRAFTING_FAIL = "×Ê Ô´ ²» ×ã ",
-    ANNOUNCE_NODAYSLEEP = "Ë¯ Ãß Ä£ Ê½ ÔÚ °× Ìì ²» ¿É ÓÃ ",
-    ANNOUNCE_NODANGERSLEEP = "¾¯ ¸æ £º ·¢ ÏÖ Íþ Ð² ¡£ Ë¯ Ãß Ä£ Ê½ Ê§ Ð§ ",
-    ANNOUNCE_KNOCKEDOUT = "CPUÖØ Æô ",
-    ANNOUNCE_BEES = "ÃÛ ·ä £¡ ",
-    ANNOUNCE_MOSQUITOS = "ÎÃ ×Ó £¡ ",
-	ANNOUNCE_WORMHOLE = "ÎÒ µÄ Êä Èë ³ä Âú Õ³ ÐÔ ",
-    ANNOUNCE_HUNT_LOST_TRAIL = "×Ù ¼£ µÄ ¾¡ Í· ",
-    ANNOUNCE_HUNT_BEAST_NEARBY = "¾à Àë Éú Ãü ÐÎ Ì¬ µÄ ¾à Àë : ×î Ð¡ ",
-}
-
-
-STRINGS.CHARACTERS.WILLOW =
-{
-    DESCRIBE=
-    {
-		SPOILED_FOOD = "ÖÁ ÉÙ ÈÔ È» ¿É ÒÔ È¼ ÉÕ ¡£ ",
-		ICEBOX = "ÄÇ ÊÇ »ð µÄ ¶Ô Ãæ ¡£ ",
-		
-		WALL_WOOD_ITEM = "ÎÒ ²» Ï² »¶ ¶ã ²Ø ¡£ ",
-		WALL_STONE_ITEM = "Õâ Ð© ¶« Î÷ Ì« ÖØ ÁË ¡£ ",
-		WALL_HAY_ITEM = "àÅ ¡£ ²» Öª µÀ Õâ Ð© ÄÜ ²» ÄÜ µã ×Å ¡£ ",
-		WALL_WOOD = "ÄÇ Íê È« ÄÜ ¹» µã ×Å ¡£ ",
-		WALL_STONE = "àÅ ¡£ ÎÒ ²Â ÄÇ Ã» ÎÊ Ìâ ¡£ ",
-		WALL_HAY = "¿´ ÉÏ È¥ ÊÇ ¿É È¼ µÄ £¡ ",
-		
-		
-        ADVENTURE_PORTAL = "Ò² Ðí ÄÇ Í¨ Ïò ¼Ò ¡£ ",
-        MEAT = "ÓÐ »ð ÎÒ ¿É ÒÔ ×ö µÃ ¸ü ºÃ £¡ ",
-        SMALLMEAT = "ÓÐ »ð ÎÒ ¿É ÒÔ ×ö µÃ ¸ü ºÃ £¡ ",
-        COOKEDSMALLMEAT = "Òª »î ÏÂ È¥ £¬ ÎÒ Ðè Òª µÄ ¿É ²» Ö¹ ¿ª Î¸ ²Ë ¡£ ",
-        MONSTERMEAT = "Õæ ¶ñ ÐÄ ¡£ ¶¼ ÊÇ Ã« ·¢ ¡£ ",
-        COOKEDMEAT = "ÎÒ ³Ô ¹ý ¸ü ºÃ µÄ ¡£ ",
-        COOKEDMONSTERMEAT = "»¹ ÊÇ ºÜ ¶ñ ÐÄ ¡£ ",
-        MAXWELL = "Ëû ÊÇ Èç ´Ë Ç« Ñ· ¡£ ",
-        TENT = "ÎÒ ÔÚ Å® Í¯ ¾ü Àï ÄÃ µ½ ÁË Ëù ÓÐ µÄ »Õ ÕÂ ¡£ ",
-		KRAMPUS = "ÍË ºó £¬ Äã ¸ö ´ó °× ³Õ £¡ ",
-		KRAMPUS_SACK = "ÎÒ ÄÃ µ½ ÁË Ò» ¸ö ÐÂ °ü £¡ ",
-        UMBRELLA = "ÎÒ Ï² »¶ ÄÇ ¸ö ÑÕ É« £¡ ",
-        BEEFALO =
-        {
-            GENERIC = "¶à Ã´ ¶ñ ÐÄ µÄ Ò» Í· ³¤ Ã« Ò° ÊÞ £¡ ",
-            FOLLOWER = "ßÀ £¬ Äã ÔÚ ¸ú ×Å ÎÒ Âð £¿ ",
-            NAKED = "¹þ £¡ Ëû ÏÖ ÔÚ È« Éí ³à Âã ÁË £¡ ",
-            SLEEPING = "Ëû ÃÇ Ë¯ ×Å µÄ Ê± ºò ¿´ ÉÏ È¥ ¸ü ¼Ó ÓÞ ´À ÁË £¡ ",
-        },
-        BABYBEEFALO = 
-        {
-            GENERIC = "¾Í Á¬ Ó¤ ¶ù Ò² ÊÇ Èç ´Ë ³ó Âª ¡£ ",
-            SLEEPING = "ÐÑ ÐÑ £¡ "
-        },
-        BIRDCAGE = 
-        {
-			GENERIC = "Äñ Àà µÄ ¼à Óü £¡ ",
-			OCCUPIED = "¹þ £¡ ÎÒ ×¥ µ½ Äã ÁË £¡ ",
-			SLEEPING = "ÓÞ ´À µÄ Äñ ¡£ ÐÑ ÐÑ £¡ ",
-        },
-
-		NITRE = "Àï Ãæ µÄ Ð¡ Óî Öæ ¿ì Òª ±¬ ·¢ ÁË ¡£ ",
-		GUNPOWDER = "Å¶ Å¶ £¡ ºÃ ÉÁ Ò« °¡ £¡ ",
-		BIRD_EGG = "ÎÅ ÉÏ È¥ Ïñ Äñ Æ¨ ¹É ¡£ ",
-		BIRD_EGG_COOKED = "ÅÞ ¡£ »Æ É« µÄ ²¿ ·Ö ¶¼ ÊÇ ±Ç Ìé ¡£ ",
-		ROTTENEGG = "Å» £¡ Îª É¶ £¿ Å¶ £¬ Îª É¶ £¿ ",
-        HAMBAT = "ºÜ ¸ß ÐË ³Ô µô Äã £¡ ",
-        HOMESIGN = "ÉÙ ¶Á µã £¡ ÉÕ ¶à µã £¡ ",
-
-        PINECONE = "ºÙ £¬ Ê÷ ÖÖ ¡£ ",
-        ARMORWOOD = "ÏÖ ÔÚ ÎÒ ÄÜ »î ÏÂ È¥ ÁË £¡ ",
-		ARMOR_SANITY = "¾Í Ïñ ±» °ü ¹ü ÔÚ ÑÌ Àï Ò» Ñù ¡£ ",
-		SPEAR = "³Ð ÊÜ ÎÒ µÄ ·ß Å­ °É £¡ ",
-        SPIDERQUEEN = "ÓÃ »ð °Ñ Ëü Ãð ÁË £¡ ",
-        PIGGYBACK ="I made a backpack out of butts!",
-
-        CARROT = "ÌÖ Ñá µÄ ¶« Î÷ ¡£ ¶¼ ÊÇ Ö² Îï ¡£ ",
-        BERRIES = "ºì ½¬ ¹û Î¶ µÀ ÊÇ ×î ºÃ µÄ ¡£ ",
-        SEEDS = "Å© ¸û ºÜ ÎÞ ÁÄ ¡£ ",
-        SILK = "àÅ ¡£ ºÜ Á÷ ³© ¡£ ",
-		SPIDERGLAND = "Å» £¬ ÓÖ ð¤ ÓÖ ³ô £¡ ",
-        RABBIT = {
-            GENERIC = "Ëû ¿´ ÉÏ È¥ Î¶ µÀ ²» ´í ¡£ ",
-            HELD = "ÎÒ ÈÃ Ëû ´ý ÔÚ ÎÒ Ï² »¶ µÄ µØ ·½ £¡ ",
-        },
-
-        RED_MUSHROOM =
-        {
-            GENERIC = "ºÜ Æ¯ ÁÁ £¡ ",
-            PICKED = "Ò² Ðí Ëü Ä³ Ìì »á »Ø À´ ¡£ ",
-            INGROUND = "ºÙ £¡ Äã £¡ Õ¾ Æð À´ £¡ ",
-        },
-        GREEN_MUSHROOM = 
-        {
-            GENERIC = "±¿ Ä¢ ¹½ ¡£ ",
-            PICKED = "Ò² Ðí Ëü Ä³ Ìì »á »Ø À´ ¡£ ",
-            INGROUND = "ºÙ £¡ Äã £¡ Õ¾ Æð À´ £¡ ",
-        },
-
-        BLUE_MUSHROOM = 
-        {
-            GENERIC = "´À Ä¢ ¹½ ¡£ ",
-            PICKED = "Ò² Ðí Ëü Ä³ Ìì »á »Ø À´ ¡£ ",
-            INGROUND = "ºÙ £¡ Äã £¡ Õ¾ Æð À´ £¡ ",
-        },
-
-
-        RED_CAP = "ÎÒ Ï² »¶ ÄÇ ¸ö ÑÕ É« ¡£ ",
-        GREEN_CAP = "ºÃ ÎÞ ÁÄ °¡ £¡ ",
-        BLUE_CAP = "ÎÅ ÉÏ È¥ Ïñ ³ô Íà ×Ó µÄ Î¶ µÀ £¡ ",
-
-        TRAP = "ÓÐ Ò» µã Ïû ¼« ¹¥ »÷ £¬ µ« »á Æð ×÷ ÓÃ µÄ ¡£ ",
-        PIGKING = "ÅÞ ¡£ ºÃ ÀÁ µÄ Ò» ¸ö ¼Ò »ï ¡£ ",
-        WINTEROMETER = "ÓÃ »ð À´ ¿¾ »á ¸ü ºÃ ¡£ ",
-        RAINOMETER = "Óê »á °Ñ »ð Ãð µô ¡£ Ðê £¡ ",
-
-        RESURRECTIONSTATUE = "ÄÇ ÊÇ ÎÒ µÄ ±£ µ¥ ¡£ ",
-        RESURRECTIONSTONE = "ÎÒ ²Â ÎÒ Ó¦ ¸Ã ´¥ Ãþ Ò» ÏÂ Ëü £¿ ",
-
-        AXE = "Ëü ºÜ ¼â Èñ ¡£ ",
-		HAMMER = "ÎÒ Ï² »¶ ¼â Èñ µÄ ¹¤ ¾ß ¡£ ",
-        PICKAXE = "Ëü ·Ç ³£ µØ ¼â ¡£ ",
-        SHOVEL = "ÓÃ ÓÚ Õ½ ¶· ²» ºÏ ÊÊ ¡£ ",
-		PITCHFORK = "¼â Èñ µ½ ÁË ¼« ÖÂ ¡£ ",
-		LEIF = "Ëû ¿´ ÉÏ È¥ ÊÇ ¿É È¼ µÄ £¡ ",
-		BIRDTRAP = "ÎÒ »á °Ñ Õâ Ð© ¿É ÅÂ µÄ Äñ ²¶ »ñ µÄ ¡£ ",
-
-		DUG_GRASS = "Ôõ Ã´ ÁË £¬ Ã» ÓÐ Äà ÍÁ Âð £¿ ",
-		DUG_SAPLING = "Ôõ Ã´ ÁË £¬ Ã» ÓÐ Äà ÍÁ Âð £¿ ",
-		DUG_BERRYBUSH = "Ôõ Ã´ ÁË £¬ Ã» ÓÐ Äà ÍÁ Âð £¿ ",
-        TRAP_TEETH = "ÓÐ »ð »á ¸ü ºÃ ¡£ ",
-        TRAP_TEETH_MAXWELL = "µ½ µ× ÊÇ ¶à ´À µÄ ¼Ò »ï ²Å »á °Ñ Õâ ¸ö Åª µÃ µ½ ´¦ ¶¼ ÊÇ £¿ ",
-		EARMUFFS = "ÎÅ ÉÏ È¥ Ïñ ÊÇ ÍÃ ×Ó µÄ Æ¨ ¹É ¡£ ",
-        WINTERHAT = "ÎÒ ¾õ µÃ »¹ ²» ¹» ÎÂ Å¯ ¡£ ",
-        BUSHHAT = "Ì« ±» ¶¯ ÁË £¡ ",
-
-        RAZOR = "ÎÒ Îª É¶ Òª ½¨ Õâ ¸ö £¿ ",
-
-		WALRUSHAT = "ÎÒ ÓÐ µã Ï² »¶ Ëü µÄ Ñù ×Ó ¡£ ",
-        WALRUS = "±ð ¸ú ×Ù ÎÒ ÁË !",
-        WALRUS_CAMP = 
-        {
-            GENERIC = "Îª É¶ ´ó ¼Ò µÄ ·¿ ×Ó ¶¼ ±È ÎÒ µÄ ºÃ £¿ ",
-            EMPTY = "ÎÒ ²» Òª È¥ ÄÇ Àï ¡£ ÅÞ £¡ ",
-        },
-        LITTLE_WALRUS = "Ëû ¿´ ÉÏ È¥ Î¶ µÀ ²» ´í ¡£ ",
-        WALRUS_TUSK = "²» ²» ²» ¡£ ",
-
-        PIGHOUSE =
-        {
-            GENERIC = "Õâ Ð© Öí ¶Ô ½¨ Öþ µÄ Éó ÃÀ ÓÐ ÎÊ Ìâ ¡£ ",
-            FULL = "Ëû ÔÚ ÄÇ Ïñ Öí Ò» Ñù »î ×Å ¡£ ",
-            LIGHTSOUT = "Äã ¸ö °× ³Õ £¡ ·Å ÎÒ ½ø È¥ £¡ ",
-        },
-
-        SPIDERDEN = "ÄÇ Õæ ÊÇ °¹ Ôà ¡£ ",
-        RABBITHOLE = "ÓÞ ´À µÄ ÍÃ ×Ó ¡£ ³ö À´ ÈÃ ÎÒ ³Ô ÁË Äã ÃÇ ¡£ ",
-        CROW = {
-            GENERIC = "ÎÒ Ïë Ëü ÔÚ µÈ ÎÒ ËÀ È¥ ¡£ ",
-            HELD = "ÏÖ ÔÚ Äã Ã» ÄÇ Ã´ ´Ï Ã÷ ÁË °É £¿ ",
-        },
-        GHOST = "ÎÒ É± ²» ÁË ÒÑ ¾­ ËÀ µô µÄ ¶« Î÷ ¡£ ",
-        PETALS = "ÓÞ ´À µÄ »¨ ¡£ Ëû ÃÇ ¼¸ ºõ Ã» Ê² Ã´ ÓÃ ¡£ ",
-        PETALS_EVIL = "Å» £¬ Ëû ÃÇ ºÃ Õ³ ¡£ ",        
-        FLOWER = "ÎÒ Ã» Ê± ¼ä ÀË ·Ñ ÔÚ Õâ Ð© »¨ ÉÏ ¡£ ",
-        FLOWER_EVIL = "°¡ £¬ Î¶ µÀ ºÃ ¶ñ ÐÄ ¡£ ",
-        GOLDNUGGET = "ÎÒ ÉÏ ÄÄ È¥ »¨ µô Õâ ¸ö ¡£ ",
-        RESEARCHLAB = "¼´ Ê¹ ÊÇ ÎÒ Ò² ²¢ ²» ÁË ½â Ò» ÇÐ ¡£ ",
-        RESEARCHLAB2 = "¼´ Ê¹ ÊÇ ÎÒ Ò² ²¢ ²» ÁË ½â Ò» ÇÐ ¡£ ",
-        RESEARCHLAB3 = "Ò» ¸ö Ç¿ ´ó µÄ ºÚ °µ Á¦ Á¿ ´Ó Õâ Àï ·¢ ³ö À´ ¡£ ",
-        POOP = "Å» ¡£ Õæ ¶ñ ÐÄ ¡£ µ« ºÜ ÓÐ ÓÃ ¡£ ",
-        TORCH = "»ð ÊÇ Èç ´Ë Ö® ÃÀ ¡£ ",
-        BEEFALOWOOL = "¹þ £¡ ÎÒ Íµ ÁË Ëû µÄ Ã« ·¢ £¡ ",
-        BUGNET = "ÎÒ ÄÜ ×¥ ×¡ Ò» Ö» ³ô ³æ £¡ ",
-        PANFLUTE = "Òô ÀÖ ºÃ ÎÞ ÁÄ ¡£ ",
-        ONEMANBAND = "ÎÒ Ò² »á ÖÆ Ôì ÑÌ »ð £¡ ",
-        FIREFLIES = {
-            GENERIC = "Ï£ Íû Ëû ÃÇ Ã» ÓÐ ÅÜ µô £¡ ",
-            HELD = "Ëû ÃÇ ¾Í Ïñ ÎÒ ¿Ú ´ü Àï µÄ Ð¡ »ð Ñæ £¡ ",
-        },
-        GEARS = "Õâ Ð© ¿Ï ¶¨ »á ÈÃ Ëû ÃÇ ÒÆ ¶¯ ¡£ ",
-        STATUEHARP = "¶à °ô µÄ µñ Ïñ ¡£ ÔÚ Ëü Éí ÉÏ ·¢ Éú Ê² Ã´ ¶¼ ÊÇ ¸ö ³Ü Èè ¡£ ",
-        STATUEMAXWELL = "ÎÒ ¿ª Ê¼ ÌÖ Ñá ÄÇ ¸ö ÈË ÁË ¡£ ",
-        SKELETON = "Å¶ £¬ Ìì ÄÅ ¡£ Ï£ Íû Ëû ÔÚ Ò» Æ¬ ÈÙ ¹â ÖÐ Àë ¿ª ¡£ ",
-
-		TENTACLESPOTS = "Å» ¡£ ",
-        BLOWDART_FIRE = "Õâ ÊÇ ÎÒ ÔÚ Õâ ¸ö ÊÀ ½ç ÉÏ ×î Ï² »¶ µÄ ¶« Î÷ ¡£ ",
-        SPIDERHAT = "Ë­ ÊÇ Äã ÀÏ Ä¸ £¡ ",
-        NIGHTMAREFUEL = "Å» £¬ »¹ ÓÐ µã ÎÂ Å¯ £¡ ",
-        NIGHTLIGHT = "Ëü ¾Í Ïñ »ð Ñæ £¬ µ« È´ ÊÇ ×Ï É« µÄ £¡ ",
-        NIGHTSWORD = "¾Í Ïñ ÎÒ µÄ ÃÎ Ïë ÄÜ ¹» ÉË º¦ ÏÖ Êµ µÄ ¶« Î÷ Ò» Ñù £¡ ",
-        PIGHEAD = "ÎÒ Ïë Ã» ÎÊ Ìâ ÁË ¡£ ",
-        MERMHEAD = "ÄÇ ¾Í ÊÇ Äã Åª µÄ Èç ´Ë ¶ñ ³ô µÄ ÏÂ ³¡ £¡ ",
-        ARMORMARBLE = "Èç ¹û ÎÒ ±Ø Ðë Õ½ ¶· µÄ »° £¬ ²» ÈÃ ºÃ ºÃ ·À »¤ Ò» ÏÂ ¡£ ",
-        ARMORGRASS = "ÀË ·Ñ Ò× È¼ ²Ä ÁÏ ¡£ ",
-        BLUEPRINT = "Õâ ½« ½Ú Ê¡ Ò» Ð© Êµ Ñé ¡£ ",
-        MAXWELLHEAD = "Ëû ¿Ï ¶¨ Ï² »¶ Ì¸ »° ¡£ ",
-
-
-        MANDRAKE =
-        {
-			GENERIC = "ÄÇ ¿É ²» ÊÇ Ò» Öê Æ½ ³£ µÄ Ö² Îï ",
-			PICKED = "Ö» ÊÇ ÓÐ µã ¿É ÅÂ £¡ ",
-			DEAD = "Îª É¶ Õâ Öê Ö² Îï ÓÐ ÕÅ Á³ £¿ ",
-        },
-
-        SPIDER = {
-            SLEEPING = "ÎÒ ¿É ÒÔ °Ñ Ëû ÄÃ ×ß ¡£ ",
-            DEAD = "¹þ £¡ ÎÒ Ïò Äã Ö¤ Ã÷ ¹ý ÁË £¡ ",
-            GENERIC = "Ëû Õæ ÏÂ Á÷ ¡£ ÎÒ Ó¦ ¸Ã °Ñ Ëû É± ÁË ¡£ ",
-        },
-
-        SPIDER_WARRIOR = {
-            GENERIC = "Ò² Ðí ÎÒ ¿É ÒÔ ÓÃ »ð ¡­ °Ñ Ëû É± ÁË ¡£ ",
-            SLEEPING = "Ò² Ðí ÎÒ »¹ ÊÇ ²» Òª È¥ Àí ÄÇ ¸ö ¼Ò »ï Îª ºÃ ¡£ ",
-            DEAD = "Ëû ÊÇ ¾Ì ÓÉ ×Ô È¡ ¡£ ",
-        },
-
-        BERRYBUSH = {
-            GENERIC = "àÅ ¡£ ½¬ ¹û ¡£ ",
-            PICKED = "ÎÒ Ïë ÔÙ À´ µã ½¬ ¹û £¡ ",
-            BARREN = "³Ô Êº È¥ °É £¬ ´À Ê÷ £¡ ",
-        },
-
-        SAPLING = {
-            GENERIC = "ÎÒ Ó¦ ¸Ã ¼ñ Æð À´ µÄ ¡£ ",
-            PICKED = "¿É Á¯ µÄ Ð¡ ²Ð Ê÷ ¡£ ",
-            BURNING = "È¼ ÉÕ °É £¡ Ã» ´í £¡ ",
-        },
-
-        GRASS = {
-            GENERIC = "Ò» ´Ø ²Ý ÊÇ ·Ç ³£ Ò× È¼ µÄ ¡£ ",
-            PICKED = "²Ð ²Ý ¼¸ ºõ Ã» Ê² Ã´ ÓÃ ¡£ ",
-            BARREN = "Ëü Ðè Òª ÅÅ ±ã ¡£ ",
-            BURNING = "»ð Ñæ £¡ à¸ £¡ ",
-        },
-
-        REEDS = {
-            GENERIC = "Õâ ÊÇ Ò» ´Ô ¿É È¼ µÄ Â« Î­ ",
-            PICKED = "Ã» ÓÐ ²Ð ´æ µÄ Â« Î­ ÎÒ Ê² Ã´ ¶¼ ×ö ²» ÁË ¡£ ",
-            BURNING = "È¼ ÉÕ °É £¡ Ã» ´í £¡ ",
-        },
-
-        PLANT_NORMAL = {
-            GENERIC = "Èç Èô ±Ø Òª £¬ ÎÒ »á °Ñ Ëü ³Ô µô µÄ ¡£ ",
-            READY = "Å¶ £¬ º¢ ×Ó ¡£ Êß ²Ë ¡£ ",
-            GROWING = "¿ì µã £¬ Äã ¸ö ÓÞ ´À µÄ Ö² Îï £¡ ",
-        },
-
-        MOUND = {
-            GENERIC ="It's full of dead stuff, I bet.",
-            DUG = "±È ÎÒ ºÃ ¶à ÁË ¡£ ",
-        },
-
-        PIGMAN =
-        {
-            GENERIC = "ßÀ ¡£ Ëû ÃÇ ºÜ Ïã ¡£ ",
-            FOLLOWER = "Å» ¡£ Ëü ¸ú ×Å ÎÒ ÄØ ¡£ ",
-            DEAD = "²» Öª µÀ Ëû ÃÇ Î¶ µÀ Èç ºÎ ¡£ ",
-			WEREPIG = "¼Ì Ðø £¬ Ð¡ Öí £¡ ",
-            GUARD = "ÎÒ ¿É ²» Ìý Ëû µÄ £¡ ",
-        },
-
-
-		TELEPORTATO_RING = "Ëü Ì« Õä ¹ó ÁË £¬ ²» ÄÜ ÉÕ µô £¡ ",
-		TELEPORTATO_BOX = "¸Ð ¾õ ºÜ ÎÂ Å¯ ¡£ ",
-		TELEPORTATO_CRANK = "Õâ ²¿ ·Ö ÓÐ Ê² Ã´ ÓÃ £¿ ",
-		TELEPORTATO_POTATO = "Ò² Ðí ÎÒ ¿É ÒÔ °Ñ Ëü ÈÛ ³É ¸ü ºÏ ÐÄ Òâ µÄ ÐÎ ×´ ¡£ ",
-		TELEPORTATO_BASE = {
-			GENERIC = "ÎÒ Ï² »¶ Ïó Õ÷ ·¢ ¹â µÄ ·½ Ê½ ¡£ ",
-			PARTIAL = "ÎÒ ÔÚ ×ö Ò» ¸ö ¹Ö Îï £¡ ",
-			ACTIVE = "ÎÒ Ö» Ïë ¿´ µ½ Õâ ¸ö ÊÀ ½ç ±» ÉÕ »Ù ¡£ ",
-		},
-
-        FROG = {
-            SLEEPING = "Ëû ÃÇ Ë¯ ×Å µÄ Ê± ºò Õæ ¿É °® ¡£ ",
-            DEAD = "ÎÒ Ïò Ëû Ö¤ Ã÷ ¹ý ÁË £¡ ",
-            GENERIC = "Ëû Ì« ³± Êª ÁË £¬ ÉÕ ²» Æð À´ ¡£ ",
-        },
-
-		WORMHOLE = {
-			GENERIC = "ÓÃ ¹÷ ×Ó ´Ì Ëü £¡ ",
-			OPEN = "²» Öª µÀ Ëû Ï² ²» Ï² »¶ ÐÁ À± µÄ Ê³ Îï £¿ ",
-		},
-
-
-        BEARDHAIR = "ßÀ £¬ Õâ ÊÇ ´Ó ÄÄ À´ µÄ £¿ ",
-
-        EVERGREEN = {
-            GENERIC = "¿´ ÉÏ È¥ ËÆ ºõ ºÜ ÈÝ Ò× ÉÕ ¡£ ",
-            CHOPPED = "ÊÀ ÉÏ ÓÖ ÉÙ ÁË ¿Ã Ê÷ ¡£ ",
-            BURNING = "ÊÇ µÄ £¡ È¼ ÉÕ £¡ ",
-            BURNT = "Ï£ Íû Ëü »¹ ÔÚ È¼ ÉÕ ¡£ "
-        },
-
-        EVERGREEN_SPARSE = {
-            GENERIC = "ËÀ ÔÚ »ð ÖÐ £¡ ",
-            CHOPPED = "ÊÀ ÉÏ ÓÖ ÉÙ ÁË ¿Ã Ê÷ ¡£ ",
-            BURNING = "ÊÇ µÄ £¡ È¼ ÉÕ £¡ ",
-            BURNT = "Ï£ Íû Ëü »¹ ÔÚ È¼ ÉÕ ¡£ "
-        },
-
-        FIREPIT = {
-            GENERIC = "ÎÒ ¿É ÒÔ »¨ ÉÏ ºÃ ¼¸ ¸ö Ð¡ Ê± ¿´ ×Å ¡£ ",
-            OUT = "ÎÒ Ó¦ ¸Ã ÈÃ »ð Ñæ »Ø À´ ¡£ ",
-            EMBERS = "°¡ Å¶ ¡£ ¼¸ ºõ ÒÑ ¾­ Ã» ÁË £¡ ",
-            LOW = "Õâ »ð Ì« Ð¡ ÁË £¬ Õæ ÎÞ ÁÄ ¡£ ",
-            NORMAL = "È¼ ÉÕ £¡ ",
-            HIGH = "È¼ ÉÕ £¡ ÉÕ µÃ ÔÙ ¿ì µã £¡ ",
-        },
-		HEATROCK = {
-			COLD = "Àä Ñª ¡£ ",
-			GENERIC = "Ò» ´Ø »ð Ñæ »á ¸ü ºÃ £¡ ",
-			WARM = "²» ÓÃ »ð ¼Ó ÈÈ ¡­ ÄÇ ÓÐ Ê² Ã´ ºÃ Íæ µÄ £¿ ",
-			HOT = "¿´ ¿´ Ëü ÊÇ Èç ºÎ ·¢ ¹â µÄ £¡ ",
-		},
-
-        CAMPFIRE = {
-            GENERIC = "ÎÒ Ï² »¶ »ð Ñæ ¡£ ",
-            OUT = "°Â ¡£ Ò» ÇÐ ¶¼ ½á Êø ÁË ¡£ ",
-            EMBERS = "°¡ Å¶ ¡£ ¼¸ ºõ ÒÑ ¾­ Ã» ÁË £¡ ",
-            LOW = "Õâ »ð Ì« Ð¡ ÁË £¬ Õæ ÎÞ ÁÄ ¡£ ",
-            NORMAL = "È¼ ÉÕ £¡ ",
-            HIGH = "È¼ ÉÕ £¡ ÉÕ µÃ ÔÙ ¿ì µã £¡ ",
-        },
-
-        FARMPLOT = {
-            GENERIC = "°¦ ¡£ ÓÐ Ò» ¶Ñ Äà ÍÁ ¡£ ",
-            GROWING = "¿ì µã £¬ Äà ÍÁ ¶Ñ ¡£ Î¹ ÎÒ ³Ô £¡ ",
-            NEEDSFERTILIZER = "´À »õ ²Å »á ³Ô Êº ¡£ ",
-        },
-
-        BEE = {
-            GENERIC = "Ëü ºÜ ·Ê £¬ µ« ÄÇ ¸ù ´Ì ¿´ ÉÏ È¥ ±È ½Ï Î£ ÏÕ ¡£ ",
-            HELD = "¿Ú ´ü Àï ¶¼ ÊÇ ÃÛ ·ä £¡ ",
-        },
-        KILLERBEE = 
-        {
-            GENERIC = "ÎÒ Ï² »¶ ÃÛ ·ä ÕÝ µÄ ÉË ¿Ú ¡£ ",
-            HELD = "ÎË ÎË £¡ ",
-        },
-		MOSQUITO =
-		{
-			GENERIC = "Õæ ·³ ÈË £¡ ",
-			HELD = "°Ñ ÄÇ ÕÅ ×ì Àë ÎÒ Ô¶ µã £¡ ",
-		},
-        BEEHIVE = "¶¼ ÊÇ ÃÛ ·ä £¡ ",
-        BEEBOX =
-        {
-            READY = "ÍÛ £¡ ÎÒ ¿É ÒÔ Íµ ·ä ÃÛ ÁË £¡ ",
-            GENERIC = "¿ì µã £¬ ÅÖ ÃÛ ·ä £¬ Îª ÎÒ ²É ÃÛ °É £¡ ",
-        },
-        HONEY = "Ìð Ìð µÄ £¬ Î¶ µÀ ºÃ ¼« ÁË £¡ ",
-        HONEYCOMB = "Ëü ºÜ Èá Èí ¡£ ",
-        STINGER = "Ëü ºÜ ³Ù ¶Û ¡£ ",
-        BUTTERFLY = 
-        {
-            GENERIC = "¿ì ·É ×ß £¬ ºû µû £¡ ",
-            HELD = "ÎÒ Ïë Òª Ñ¹ ±â Ëü ¡£ ",
-        },
-        BUTTERFLYWINGS = "ÈÃ ÄÇ Ö» ºû µû ÔÙ Ò² ·É ²» ÁË £¡ ",
-        BUTTER = "Õæ ÃÀ Î¶ £¬ ¾Í ÊÇ ³æ ÓÐ µã ¶à ",
-
-        TREASURECHEST = "Õâ ÊÇ ÎÒ µÄ À¬ »ø Í° ¡£ ",
-
-        CHARCOAL = "àÅ ¡£ ÎÅ ÉÏ È¥ Ïñ »ð µÄ Î¶ µÀ ¡£ ",
-        MARSH_PLANT = "·Ç ³£ ³ä ×ã ¡£ ",
-        MARSH_BUSH = "°¥ Ó´ £¡ Ëü ¿´ ÉÏ È¥ ºÃ ¼â ¡£ ",
-        PAPYRUS = "ÎÒ Ïà ÐÅ Ëü ÄÜ ÉÕ ×Å £¡ ",
-        MARSH_TREE = {
-            GENERIC = "¿´ ÉÏ È¥ ºÜ Î£ ÏÕ £¡ ",
-            CHOPPED = "ÏÖ ÔÚ Ã» ÄÇ Ã´ ¼â ÁË £¬ ¶Ô Âð £¿ ",
-            BURNING = "ÊÇ µÄ £¡ È¼ ÉÕ £¡ ",
-            BURNT = "Ï£ Íû Ëü »¹ ÔÚ È¼ ÉÕ ¡£ "
-        },
-
-        CHESTER = "Ëû ¿É Õæ ºý Í¿ £¡ ",
-        CHESTER_EYEBONE = {
-            GENERIC = "¶¢ ×Å ¿´ ÊÇ ºÜ ÎÞ Àñ µÄ ¡£ ",
-            WAITING = "ÖÁ ÉÙ Ëü Ã» ÓÐ ÔÙ ¶¢ ×Å ÎÒ ÁË ¡£ ",
-        },
-
-        TALLBIRD = "ÎÒ ÈÏ Îª Ëü Ã» ÓÐ ×ö Åó ÓÑ µÄ Òâ Ë¼ ¡£ ",
-        SMALLBIRD = 
-        {
-            GENERIC = "ÎÒ ²Â £¬ ²» Ôõ Ã´ Ïñ ·ï »Ë £¬ µ« »¹ ÊÇ ºÜ ¿É °® ¡£ ",
-            HUNGRY = "Äã ¶ö Âð £¿ ",
-            STARVING = "ºÃ µÄ £¬ ºÃ µÄ £¡ ÎÒ Ã÷ °× ÁË £¬ Äã ¶ö ÁË ¡£ ",
-        },
-
-        TEENBIRD = 
-        {
-            GENERIC = "¸Ð ¾õ Ëû ÄÜ Ìý ¶® ÎÒ µÄ »° ¡£ ",
-            HUNGRY = "Ëû µ± È» ³Ô ºÜ ¶à ¡£ ",
-            STARVING = "±ð ¿´ ×Å ÎÒ £¡ ×Ô ¼º ²¶ Ê³ È¥ ¡£ ",
-        },
-
-        TALLBIRDEGG = "Ëü Ï² »¶ »ð Âð £¿ ",
-        TALLBIRDEGG_COOKED = "»ð ÈÃ Ëü ÃÇ ºÃ ¶à ÁË ¡£ ",
-        TALLBIRDEGG_CRACKED = 
-        {
-            GENERIC = "ÎÒ µÄ ·ï »Ë ³ö ÏÖ ÁË £¡ ",
-            HOT = "»á ÓÐ ÈË ÏÓ »ð Ì« ¶à Âð £¿ ",
-            COLD = "Ðè Òª ¸ü ¶à »ð £¡ ",
-            SHORT = "ÎÒ µÈ ·³ ÁË ¡£ ",
-            LONG = "»¹ Òª ¶à ¾Ã £¿ ",
-        },	
-
-        ANIMAL_TRACK = "Ëü ´ø ÎÒ È¥ ¼û ÐÂ Åó ÓÑ ¡£ ",
-        DIRTPILE = "ÊÇ Ë­ ÈÃ Äà ÍÁ ¾Í Õâ Ñù ²¼ Âú Õû Æ¬ É­ ÁÖ µÄ £¿ ",
-        KOALEFANT_SUMMER = "ÎÒ ÃÇ »á ³É Îª ºÜ ºÃ µÄ Åó ÓÑ £¡ ",
-        KOALEFANT_WINTER = "Ëû ¿´ ÉÏ È¥ µ± È» ºÜ ÎÂ Å¯ ¡­ ",
-        TRUNK_SUMMER = "àÅ £¬ Ëû ÓÐ Ð© ²¿ ·Ö ÈÔ È» ·Ç ³£ ¶º ÈË Ï² »¶ ¡£ ",
-		TRUNK_WINTER = "Èç ´Ë Èá Èí Õ³ Äå £¡ ",
-        TRUNK_COOKED = "ÎÒ ÒÀ È» ²» È· ¶¨ ×Ô ¼º ÊÇ ·ñ Òª ³Ô Õâ ¸ö ¡£ ",
-        TRUNKVEST_SUMMER = "ÏÖ ÔÚ £¬ ÎÒ ¿É ÒÔ ÓÀ Ô¶ ºÍ ÎÒ µÄ Åó ÓÑ ÔÚ Ò» Æð ÁË ¡£ ",
-		TRUNKVEST_WINTER = "Ã» ÓÐ ´ó »ð ÄÇ Ñù ÎÂ Å¯ £¬ µ« »¹ ´Õ ºÏ £¡ ",
-        
-        DEERCLOPS = "ÎÒ ÁË ¸ö È¥ £¡ ",
-        REDGEM = "Ì« ÃÀ ÁË £¡ ",
-        BLUEGEM = "°¡ ¡£ Õâ ¼Ò »ï Õæ ³ó ¡£ ",
-        PURPLEGEM = "Õæ ¹Ö Òì £¡ ",
-        HOUND = "´À »õ £¡ ",
-        FIREHOUND = "Æä Êµ ÎÒ ÓÐ µã Ï² »¶ Õâ ¸ö ÁË ¡£ ",
-        ICEHOUND = "Õæ ¶ñ ÐÄ £¡ ÓÐ µã Àä £¡ ",
-        PENGUIN =  "...",
-        DEERCLOPS_EYEBALL = "±ð ÔÙ ¶¢ ×Å ÎÒ ÁË £¡ ",
-        BASALT = "Ì« Ó² ÁË £¬ ´ò ²» ÆÆ ¡£ ",
-        HOUNDMOUND = "°¡ Å¶ £¬ ÎÒ ²» Ï² »¶ Ëü µÄ Ñù ×Ó ¡£ ",
-        MERM = "¶î £¬ ¶¼ Êª ÁË ¡£ ",
-        MERMHOUSE = "Ã» ÈË »á ÔÚ ºõ Ëü ÊÇ ·ñ »á ±» ÉÕ »Ù ¡£ ",
-        KNIGHT = "Õâ ÊÇ Ò» Æ¥ °« ÖÖ Âí £¡ ",
-        BISHOP = "Õâ ÊÇ Ò» Î» Ö÷ ½Ì £¡ ",
-        INSANITYROCK = {
-            INACTIVE = "¿´ ÉÏ È¥ ²» ÊÇ ¿É È¼ µÄ ¡£ Õæ ÎÞ È¤ ¡£ ",
-            ACTIVE = "ÎÒ ²ú Éú »Ã ¾õ ÁË Âð £¿ ",
-        },
-        SANITYROCK = {
-            INACTIVE = "Ëü Òª È¥ ÄÄ £¿ ",
-            ACTIVE = "²» Öª µÀ Õâ Ð© ±ê ¼Ç ÊÇ Ê² Ã´ Òâ Ë¼ ¡£ ",
-        },
-        PIGTORCH = "Õâ Ð© Öí ¿Ï ¶¨ Öª µÀ Ôõ Ñù Óµ ÓÐ ÃÀ ºÃ Ê± ¹â ¡£ ",
-        WASPHIVE = "ÎÒ ×î ºÃ ±£ ³Ö ¾à Àë ¡£ ",
-        MARBLEPILLAR = "²» Öª µÀ Æä Óà µÄ ²¿ ·Ö ÊÇ ·ñ ÒÑ ¾­ ÉÕ »Ù ÁË ¡£ ",
-        MARBLETREE = "×î Ôã ¸â µÄ Ê÷ ÖÖ ¡£ ²» ¿É È¼ ÉÕ µÄ ÖÖ Àà ¡£ ",
-        MARBLE = "Ëü ºÜ ³Á £¡ ",
-        SUNKBOAT = "Ì« Ô¶ ÁË £¬ ÎÒ ¶¼ ²» ÄÜ µã ×Å Ëü £¡ ",
-        MEATRACK = 
-        {
-            GENERIC = "ÎÒ Ïë ¹Ò Ð© Èâ £¡ ",
-            DRYING = "¿ì µã £¬ Èâ ÒÑ ¾­ ¸É ÁË £¡ ",
-            DONE = "ÒÑ ¾­ ºÃ ÁË £¡ ",
-        },
-        SMALLMEAT_DRIED = "ºÜ ÄÑ ½À £¬ µ« »¹ ¿É ÒÔ ¡£ ",
-        MEAT_DRIED = "ºÜ ÄÑ ½À £¬ µ« »¹ ¿É ÒÔ ¡£ ",
-        MONSTERMEAT_DRIED = "ºæ ¸É ÁË £¬ ÎÅ ÉÏ È¥ Õæ Ææ ¹Ö ¡£ ",
-        BANDAGE = "¶î £¬ ÎÒ Ò» ¶¨ Òª Âð £¿ ",
-		HEALINGSALVE = "Ëü ÉÕ ×Å ÁË £¡ µ« ÊÇ £¬ »ð ÄØ £¿ ",
-		CANE = "ÓÐ ÁË Õâ ¸ö £¬ ÎÒ ×ß Â· ¾Í ¸ü ¼ò µ¥ ÁË £¡ ",
-		LIGHTNING_ROD = 
-		{
-		    GENERIC = "Ëù ÓÐ µÄ ÉÁ µç ¶¼ »á Íù Õâ ´ò £¡ ",
-		    CHARGED = "°Â £¬ ¶¼ ÊÇ ¹â µ« Ã» ÓÐ »ð ¡£ ",
-		},
-    },
-
-    EAT_FOOD = 
-    {
-        TALLBIRDEGG_CRACKED = "°¡ ¡£ ÈÝ Ò× Ëé ¡£ ",
-    },
-
-    DESCRIBE_TOODARK = "ÔÙ À´ µã ÉÁ µç £¡ ",
-
-    BATTLECRY =
-    {
-        GENERIC = "·Ç Äã ¼´ ÎÒ £¡ ",
-        PREY = "¹ý À´ Õâ ±ß £¡ ",
-        PIG = "´À Öí £¡ ",
-        SPIDER = "°¡ °¡ £¡ ",
-        SPIDER_WARRIOR = "¶î £¬ É± ÁË Ëü £¡ ",
-    },
-
-    COMBAT_QUIT =
-    {
-        GENERIC = "ÎÒ Õý ÊÇ ÄÇ Ñù Ïë µÄ £¡ ",
-        PREY = "ÎÒ Ò» ¶¨ »á »Ø À´ µÄ £¡ ",
-        PIG = "»Ø À´ £¬ Öí ÅÅ £¡ ",
-        SPIDER = "ºß ¡£ ³Ù Ôç ÎÒ Òª Ãð ÁË Ëû ¡£ ",
-        SPIDER_WARRIOR = "ÏÖ ÔÚ Ã» ÄÇ Ã´ ÀÎ ¹Ì ÁË £¡ ",
-    },
-
-	ANNOUNCE_COLD = "±ù ¿é £¡ ÉÕ ×Å ÁË £¡ ",
-    ANNOUNCE_HUNGRY = "ÎÒ Ðè Òª Ê³ Îï £¡ ",
-    ANNOUNCE_TORCH_OUT = "ÎÒ ±¦ ¹ó µÄ »ð Ã» ÁË £¡ ",
-    ANNOUNCE_DUSK = "Ò¹ Ä» ½µ ÁÙ ÁË ¡£ ÎÒ Ðè Òª »ð £¡ ",
-	ANNOUNCE_LIGHTFIRE =
-	{
-		"Tee hee!",
-		"Pretty!",
-		"Oops!",
-		"I made a fire!",
-		"Burn!",
-	},
-    ANNOUNCE_CHARLIE_ATTACK = "°¥ Ó´ £¡ Äã ¸ö ±¿ µ° £¡ ",
-    ANNOUNCE_CHARLIE = "ÎÒ ²Å ²» ÅÂ Äã £¡ ",
-    ANNOUNCE_BOOMERANG = "ÓÞ ´À µÄ »Ø ·É °ô £¡ ",
-    ANNOUNCE_HOUNDS = "³ö À´ £¡ ",
-
-    
-    ANNOUNCE_PECKED = "²» £¡ »µ Äñ ÈË £¡ ",
-
-	ANNOUNCE_EAT =
-	{
-		GENERIC = "ºÃ ³Ô £¡ ",
-		SPOILED = "Õæ ÄÑ ³Ô £¡ ",	
-		STALE = "ÓÐ µã ¶ñ ÐÄ ¡£ ",
-		PAINFUL = "°¡ £¡ Õæ ¶ñ ÐÄ £¡ ",
-	},
-    
-	ANNOUNCE_WORMHOLE = "ÎÒ µÃ µã È¼ Õâ Ð© ÒÂ ·þ £¡ ",
-
-    ANNOUNCE_HUNT_LOST_TRAIL = "Å¶ ¡­ Ëû ×ß ÁË ¡£ ",
-    ANNOUNCE_HUNT_BEAST_NEARBY = "ÎÒ »á ÕÒ µ½ Äã µÄ ¡£ ",
-}
-
-STRINGS.CHARACTERS.WICKERBOTTOM =
-{
-    ACTIONFAIL =
-    {
-        SHAVE =
-        {
-            GENERIC = "Õæ µÄ ²» ÊÇ ³ö ÓÚ ÎÒ ±¾ Òâ ¡£ ",
-            NOBITS = "ÒÑ ¾­ ¹â »¬ ÁË £¬ Ç× °® µÄ ¡£ ",
-            AWAKEBEEFALO = "ÎÒ Ïë Ëû ¿É ÄÜ »á ·´ ¶Ô ¡£ ",
-        }
-    },
-    DESCRIBE=
-    {
-		SPOILED_FOOD = "Àï Ãæ ³ä Âú ÁË Ï¸ ¾ú ¡£ ",
-		ICEBOX = "Õâ ÊÇ Ò» ¸ö Ìì È» µÄ ÈÈ ½» »» Æ÷ ¡£ ",
-		
-		
-		WALL_WOOD_ITEM = "¿É Õ¹ ¿ª µÄ Ä¾ ×® ¡£ ",
-		WALL_STONE_ITEM = "ÎÒ Ò² ²» Öª µÀ Îª Ê² Ã´ ÎÒ ÄÜ ´ø Õâ Ã´ ¶à ¡£ ",
-		WALL_HAY_ITEM = "¸É ²Ý À¦ ¡£ ",
-		WALL_WOOD = "ÄÇ ÄÜ ±£ »¤ Ò» Õó ×Ó ¡£ ",
-		WALL_STONE = "ÄÇ Ïà µ± °² È« ¡£ ",
-		WALL_HAY = "ÎÒ ²» Ïà ÐÅ ÄÇ ¶Â Ç½ ¡£ ",
-        ADVENTURE_PORTAL = "ÄÇ Î¥ ·´ ÁË Ò» Ð© ×î »ù ±¾ µÄ ×Ô È» ·¨ Ôò ¡£ ",
-		
-        BIRDCAGE = 
-        {
-			GENERIC = "Õâ Àï ·Å ÖÃ Ò» ¸ö Äñ Àà ±ê ±¾ ºÜ °² È« ¡£ ",
-			OCCUPIED = "Ëû ±» ¿Ø ÖÆ ÁË ¡£ ",
-			SLEEPING = "Ðê Ðê £¡ ",
-        },
-        MEAT = "ÎÒ Í¨ ³£ ²» ³Ô Éú µÄ ¡£ ",
-        SMALLMEAT = "Õâ ÊÇ Ò» Ð¡ ¿é Éú Èâ ¡£ ",
-        COOKEDSMALLMEAT = "Ö» ÊÇ Öó Êì µÄ Ê± ºò »á ¸ü ºÃ ³Ô ¡£ ",
-        MONSTERMEAT = "ÎÒ ¾õ µÃ ³Ô Õâ ¸ö ²» °² È« ¡£ ",
-        COOKEDMEAT = "Ö» ÊÇ Öó Êì µÄ Ê± ºò »á ¸ü ºÃ ³Ô ¡£ ",
-        UMBRELLA = "Ò» ¸ö ·À ³± µÄ ¼ò µ¥ ×° ÖÃ ¡£ ",
-        COOKEDMONSTERMEAT = "»¹ ÊÇ ÓÐ ¼¸ ·Ö ¶¾ ÐÔ µÄ ¡£ ",
-        MAXWELL = "¶à Ã´ ´Ö Â³ µÄ Ò» Î» ÏÈ Éú °¡ ¡£ ",
-        TENT = "Ë¯ ÔÚ ÄÇ ÈÃ ÎÒ Âä Õí ÁË ¡£ ",
-        BEEFALO =
-        {
-            GENERIC = "¿´ ÉÏ È¥ ¾Í Ïñ ÊÇ Í· Å£ ¡£ ",
-            FOLLOWER = "ËÆ ºõ Ëü ÔÚ ¸ú ×Å ÎÒ ¡£ ",
-            NAKED = "¿´ ÉÏ È¥ ºÜ Àä ¡£ ",
-            SLEEPING = "Ëü ÔÚ Ë¯ ¾õ ¡£ ",
-        },
-        BABYBEEFALO = "¿´ ¿´ Ëû ÄÇ ÕÅ ÆÆ Á³ £¡ £¨ ßÀ ºß £¡ £© ",
-        MANDRAKE =
-        {
-			GENERIC = "Âü ÍÓ ÂÞ Á¼ ½ª ¡£ ",
-			PICKED = "Âü ÍÓ ÂÞ Á¼ ½ª ¡£ µ« ÓÐ ÕÅ Á³ ¡£ ",
-			DEAD = "Âü ÍÓ ÂÞ Á¼ ½ª ¡£ ÒÑ ËÀ ¡£ ",
-        },
-		KRAMPUS = "Õâ ÊÇ Ò» ¸ö Éñ »° °ã µÄ ¶È ¼Ù ¹Ö Îï ¡£ ",
-		KRAMPUS_SACK = "Àï Ãæ ËÆ ºõ ±È Íâ Ãæ ´ó ¡£ ",
-        PINECONE = "Õë Ò¶ Ê÷ ÖÖ ×Ó °ü ¹ü ÔÚ Ò» ¸ö ³É Êì µÄ Çò ¹û Àï ¡£ ",
-        ARMORWOOD = "Ìì È» µÄ îø ¼× ´Ó ·¥ Ä¾ ¿ª Ê¼ ¾Í ±» ÐÞ ²¹ ÔÚ ÁË Ò» Æð ¡£ ",
-		ARMOR_SANITY = "»¤ ÕÖ »á °Ñ ¹¥ »÷ ×ª ÒÆ µ½ Áí Ò» ¸ö Î¬ ¶È ¡£ ",
-        SPEAR = "¹Å ÀÏ µÄ Îä Æ÷ ¼¼ Êõ ¡£ ",
-        STRAWHAT = "Õâ »á Îª Äã µ² µô Ò» Ð© Ì« Ñô ¹â Ïß ¡£ ",
-        BEEFALOHAT = "Õâ ¶¥ Ã± ×Ó Õæ ³ó ¡£ ",
-        TOPHAT = "¶à Ã´ Ì° Í¼ Ïí ÊÜ °¡ ¡£ ",
-        FLOWERHAT = "¶à Ã´ ¿ì ÀÖ ¡£ ",
-        BUSHHAT = "Î± ×° ",
-        ROPE = "Ò» ¸ù Ç¿ ÈÍ µÄ ¶Ì Âé Éþ ¡£ ",
-        LOG = "Ê÷ ¸É µÄ Ò» ¸ö Öá Ïò ÆÊ Ãæ ¡£ ",
-        LIVINGLOG = "Õâ ¸ö ¼Ç Â¼ ºÜ ÌØ Êâ ¡£ ",
-        TWIGS = "Ò» Ð© Ð¡ Ê÷ Ö¦ ¡£ ",
-        CARROT = "ºú ÂÜ ²· ¡£ Ê³ Îï £¬ ºÍ ÃÀ Î¶ ¡£ ",
-        BERRIES = "ÎÒ Ïë ÊÇ Ò» Ð© Öì É° ¸ù ½¬ ¹û ¡£ ",
-        CUTSTONE = "Ò» Ð© Æ½ »¬ µÄ ÑÒ °å ¡£ ",
-        SEEDS = "Ò» °Ñ ÎÞ ·¨ ±æ ÈÏ µÄ ÖÖ ×Ó ¡£ ",
-        SILK = "À´ ×Ô Ö© Öë ¸Ù ¶¯ Îï µÄ ÊÜ ¼· Ñ¹ µÄ µ° °× ÏË Î¬ ¡£ ",
-		SPIDERGLAND = "Õâ ¸ö ÏÙ Ìå ·Ö ÃÚ ³ö Ò» ÖÖ Çá Î¢ µÄ ¶¾ Òº ¡£ ",
-        BOARDS = "´Ö ÂÔ Ôä ³É µÄ Ä¾ °å ¡£ ",
-        
-		NITRE = "Ò² ±» ³Æ Îª Ïõ Ê¯ ¡£ ",
-		GUNPOWDER = "Öª Ê¶ ¾Í ÊÇ Á¦ Á¿ £¡ ",
-		BIRD_EGG = "Õâ Î´ Ê© ·Ê ¡£ ",
-		BIRD_EGG_COOKED = "Èç ¹û ÎÒ ÓÐ Ò» Ð© Ãæ °ü ¾Í ºÃ ÁË ¡£ ",
-		ROTTENEGG = "¶à Ã´ Áî ÈË µ¹ Î¸ ¿Ú ¡£ ",
-		HAMBAT = "ÎÒ ²» È· ¶¨ Õâ ÊÇ ²» ÊÇ ×î ¸ß Ð§ µÄ ×Ê Ô´ Àû ÓÃ ¡£ ",
-
-        TRAP_TEETH = "Ëü ¸² ¸Ç ×Å Ò» ²ã ±¡ ±¡ µÄ È® ¿Æ Ïû »¯ Òº ¡£ ",
-        TRAP_TEETH_MAXWELL = "Ô­ ÓÍ ²î µã ÈÃ ÎÒ ÉÏ µ± ¡£ ",
-        RABBIT = {
-            GENERIC = "Õâ ÊÇ Ä³ ÖÖ ÍÃ Àà ¶¯ Îï ¡£ ÓÐ ÊÞ ½Ç ¡£ ",
-            HELD = "Ëü Ò» Ö» ¿É °® µÄ Ð¡ ¶À ½Ç ÍÃ Àà ¶¯ Îï ¡£ ",
-        },
-        ROCK = "Ò» ¿é ´ó ÐÍ µÄ ³Á »ý ÑÒ ¡£ ",
-        PIGKING = "Ëû ËÆ ºõ ÊÇ ´å ×¯ µÄ Áì µ¼ Õß ¡£ ",
-        WINTEROMETER = "ÔÚ Äã ÐÐ ¶¯ Ç° ÏÈ ²â Á¿ Ò» ÏÂ ¡£ ",
-        RAINOMETER = "ÔÚ Äã ÐÐ ¶¯ Ç° ÏÈ ²â Á¿ Ò» ÏÂ ¡£ ",
-        RESURRECTIONSTATUE = "·Ç ³£ Ã» ÓÐ ÐÅ Ñö ¡£ ",
-        RESURRECTIONSTONE = "ÄÇ Ê¯ Í· ÉÏ ÓÐ Ò» Ð© ºÜ ²» ×Ô È» µÄ ¶« Î÷ ¡£ ",
-        AXE = "Ë« Ð± Ãæ Á¬ ×Å Ò» ¸ù ¸Ü ¸Ë ¡£ ",
-		HAMMER = "Ò» Ãû ¹¤ ÈË µÄ ¹¤ ¾ß ¡£ ",
-        PICKAXE = "Ò» °Ñ ×¨ ÃÅ µÄ ¸« ×Ó À´ ¿ª Ôä ÑÒ Ê¯ ¡£ ",
-        SHOVEL = "Õâ ÊÇ Ò» °Ñ ²ù ×Ó ¡£ Äã ¿Ï ¶¨ Ö® Ç° ¼û ¹ý £¿ ",
-		PITCHFORK = "Ëü µÄ Éè ¼Æ ¿É ÒÔ ÓÐ Ð§ µØ ËÉ ÍÁ ¡£ ",
-        ROCKS = "ÉÙ Á¿ µÄ »ì ÔÓ ÑÒ Ê¯ ¡£ ",
-        FLINT = "Ê¯ Ó¢ Ó² ÖÊ ½á ½Ú ¡£ ",
-        AMULET = "Ò» ¸ö À´ ×Ô Áí Ò» ¸ö Ê± ´ú µÄ ÒÅ Îï ¡£ ",
-        RAZOR = "¸ö ÈË ÎÀ Éú Æ÷ ¾ß ¡£ ",
-		POND = "Ò» ¸ö Ð¡ µÄ £¬ µ« Ë® Éî µÄ ³Ø ÌÁ ¡£ ",
-		LEIF = "ÎÒ ...Éõ ÖÁ ²» Öª µÀ ¡£ ",
-        SPIDERQUEEN = "ÄÇ Ò» ¶¨ ÊÇ Ä¸ ³² µÄ ÖÐ ÐÄ ¡£ ",
-        PIGGYBACK = "Ò» ÕÅ Ö» Ðè Òª °® µÄ Á³ ¡£ ",
-        BLOWDART_FIRE = "¼ò Ò× Ñ× Ö¢ Éè ±¸ ¡£ ",
-        SPIDERHAT = "ÓÐ ÁË Õâ ¸ö £¬ ÎÒ Ó¦ ¸Ã ÄÜ ¹» ·¢ »Ó ³¬ ÄÜ Á¦ À´ ¿Ø ÖÆ Ö© Öë ¡£ ",
-		EARMUFFHAT = "´ó ²¿ ·Ö µÄ ¾ø Ôµ ¼þ ±» Ê¹ ÓÃ ¡£ ",
-        WINTERHAT = "ÎÒ ×Ô ¼º ±à Ö¯ ¡£ ",
-        NIGHTMAREFUEL = "ÄÜ Ô´ ²Ð Óà Îï ¡£ ",
-        NIGHTLIGHT = "Ææ ¹Ö µÄ Àä ¹â ¡£ ",
-        NIGHTSWORD = "³¬ ´Î Ôª Îä Æ÷ ¡£ ",
-        PIGHEAD = "Í· ¿¿ ÔÚ Ò» ¸ù ¹÷ ×Ó ÉÏ ¡£ ",
-		MERMHEAD = "ÎÒ ²» È· ¶¨ Õâ ÊÇ ¸¯ °Ü ÁË £¬ »¹ ÊÇ ·¢ ½Í ¡£ ",
-        ARMORMARBLE = "ÓÐ È¤ µÄ ²Ä ÁÏ Ñ¡ Ôñ ¡£ ",
-        ARMORGRASS = "Áî ÈË ¾ª Ææ µÄ ÊÇ Õâ Ð© Í¼ ²ã ºÜ ÓÐ Ð§ ¡£ ",
-        BLUEPRINT = "Ïê Ï¸ µÄ ¼¼ Êõ Í¼ Ö½ ¡£ ",
-        MAXWELLHEAD = "ÎÒ Ï£ Íû Ëû ²» »á ÄÇ Ñù ×ö ¡£ ",
-
-		WALRUSHAT = "¾É ÈÕ Åó ÓÑ Æñ ÄÜ Ïà Íü £¿ ",
-        WALRUS = "º£ Ïó £» ¸Ç ¶û Æ· ÖÖ ¡£ ",
-        WALRUS_CAMP = 
-        {
-            GENERIC = "Ä³ ÖÖ ÁÙ Ê± ×¡ Ëù ¡£ ",
-            EMPTY = "Ëü ÏÖ ÔÚ ¾Í ±» ÒÅ Æú ÁË ¡£ ",
-        },
-        LITTLE_WALRUS = "¸Ã ÉÙ Äê ²¢ ²» ºÃ ¶· ¡£ ",
-        WALRUS_TUSK = "Õâ ¶Ô µñ ¿Ì ºÜ ÓÐ ÓÃ ¡£ ",
-
-        PIGHOUSE =
-        {
-            GENERIC = "Öí Ò» Ñù µÄ Éú Îï ¶Ô ½¨ Öþ Ñ§ ºÁ ÎÞ Æ· Î¶ ¡£ ",
-            FULL = "ÎÒ ²» Öª µÀ Ëû ÃÇ ÔÚ ÄÇ Àï ×ö Ê² Ã´ ¡£ ",
-            LIGHTSOUT = "Õâ Ïà µ± ´Ö Â³ ¡£ ",
-        },
-
-        SPIDERDEN = "Òý ÈË Èë Ê¤ ¡£ Õâ Ð© Ö© Öë ÓÐ Ò» ¸ö ¹« ¹² ·ä ³² ¡£ ",
-        RABBITHOLE = "Ëü ¿´ Æð À´ Ïñ Ò» ¸ö Ð¡ ¶¯ Îï µÄ ¶´ Ñ¨ ¡£ ",
-        FIREFLIES = {
-            GENERIC = "µ± ÎÒ ½Ó ½ü Ê± £¬ Ëü ÃÇ ¾Í ÅÜ É¢ ÁË ¡£ ",
-            HELD = "Æä ·¢ ¹â ÐÔ ÖÊ ¿É ÄÜ ÓÐ ÓÃ ¡£ ",
-        },
-        CROW = {
-            GENERIC = "¶Ì ×ì Ñ» ¡£ ",
-            HELD = "Ëû ÏÖ ÔÚ ÊÇ ÎÒ µÄ ¡£ ",
-        },
-        GHOST = "Ëü Ò» ¶¨ ÊÇ ¼Ù µÄ ¡£ ÎÒ ²» Ïà ÐÅ Ëü ¡£ ",
-        CUTGRASS = "Ò» Ð© ²Ý Ç¤ ²å ¡£ ",
-        CUTREEDS = "Ò» Ð© ¼± Ðè µÄ Ç¤ ²å ¡£ ",
-        PETALS = "ÎÒ ×ö ÁË Ò» Ð© °Ù »¨ Ïã ¡£ ",
-        PETALS_EVIL = "ÓÐ È¤ µÄ ÊÇ £¬ Õâ Ð© »¨ °ê ËÆ ºõ ÓÐ ×Ô ¼º µÄ Ë¼ Ïë ¡£ ",        
-        FLOWER = "Õâ ÊÇ Ò» ÖÖ Ò° »¨ ¡£ ÎÒ ²» Êì Ï¤ µÄ Îï ÖÖ ¡£ ",
-        FLOWER_EVIL = "ºÜ ÉÙ ¿É ÒÔ ¿´ µ½ Õâ Ñù ´ø ×Å Ç¿ ´ó ¹â »· µÄ »¨ ¡£ ",
-        GOLDNUGGET = "Ò» Ð¡ ¿é »Æ ½ð ¡£ Ô­ ×Ó Ðò Êý 79¡£ ",
-        RESEARCHLAB = "Õâ ÊÇ Ò» ¸ö ÑÐ ¾¿ Õ¾ ¡£ ÎÒ ÄÜ ÔÚ Àï Ãæ Ñ§ µ½ ÐÂ µÄ ¶« Î÷ ¡£ ",
-        RESEARCHLAB2 = "Õâ ÊÇ Ò» ¸ö ÑÐ ¾¿ Õ¾ ¡£ ÎÒ ÄÜ ÔÚ Àï Ãæ Ñ§ µ½ ÐÂ µÄ ¶« Î÷ ¡£ ",
-        RESEARCHLAB3 = "Ò² Ðí ÎÒ ×ß µÃ Ì« Ô¶ ÁË ¡£ ",
-        POOP = "Ò» ¶¨ Á¿ µÄ ¶¯ Îï µÄ ·à ±ã ¡£ ¶à Ã´ Ïã ¡£ ",
-        TORCH = "Ò» ¸ö ¼ò Ò× µÄ ÊÖ ³Ö Ê½ µç Í² ¡£ ",
-        TRAP = "Ò» ¸ö ¼ò µ¥ µÄ ¹÷ ×Ó Àº ÏÝ Úå ¡£ ",
-        BEEFALOWOOL = "ÊÕ »ñ À´ ×Ô Æ¤ ¸¥ Âå Å£ µÄ ³¤ ÏÙ °û ¡£ ",
-        BUGNET = "À¥ ³æ Ñ§ ¼Ò µÄ ¹¤ ¾ß ",
-        PANFLUTE = "´ø ×Å Ð³ ²¨ ¹² Õñ µÄ ¿Õ ÐÄ Â« Î­ ¡£ ",
-        ONEMANBAND = "Ò» ¸ö Áî ÈË Ó¡ Ïó Éî ¿Ì ´« Í³ ¹Ü µÀ ºÍ µ¥ Ãæ Ð¡ ¹Ä µÄ ¸Ä ½ø ¡£ ",
-        BIRDTRAP = "Ò» ¸ö ¼ò µ¥ µÄ ²¶ Äñ ÏÝ Úå ¡£ ",
-        GEARS = "¸÷ ÖÖ ³Ý ÂÖ ºÍ ³µ ÂÖ ¡£ ",
-        STATUEHARP = "Ò» ¸ö ¼ò µ¥ µÄ µñ Ïñ ¡£ ",
-        STATUEMAXWELL = "Õâ ¸ö ÈË °Ñ ÎÒ À§ ÔÚ ÁË Õâ Àï ¡£ ",
-        SKELETON = "Ò» ¸ö Áî ÈË ÄÑ ÒÔ ÖÃ ÐÅ µÄ ±£ ´æ Íê ºÃ µÄ ÷¼ ÷Ã ¡£ ",
-
-        RED_MUSHROOM =
-        {
-            GENERIC = "Ëü ÊÇ Ò» ÖÖ Õæ ¾ú ¡£ ",
-            PICKED = "ÔÙ ´Î ½á ¹û Êµ Ö® Ç° £¬ Ëü Ðè Òª Ë® ºÏ ×÷ ÓÃ ¡£ ",
-            INGROUND = "Õâ Ò» Ìì µÄ Ê± ¼ä Ëü ´¦ ÓÚ ÐÝ Ãß ×´ Ì¬ ¡£ ",
-        },
-        GREEN_MUSHROOM = 
-        {
-            GENERIC = "Ëü ÊÇ Ò» ÖÖ Õæ ¾ú ¡£ ",
-            PICKED = "ÔÙ ´Î ½á ¹û Êµ Ö® Ç° £¬ Ëü Ðè Òª Ë® ºÏ ×÷ ÓÃ ¡£ ",
-            INGROUND = "Õâ Ò» Ìì µÄ Ê± ¼ä Ëü ´¦ ÓÚ ÐÝ Ãß ×´ Ì¬ ¡£ ",
-        },
-
-        BLUE_MUSHROOM = 
-        {
-            GENERIC = "Ëü ÊÇ Ò» ÖÖ Õæ ¾ú ¡£ ",
-            PICKED = "ÔÙ ´Î ½á ¹û Êµ Ö® Ç° £¬ Ëü Ðè Òª Ë® ºÏ ×÷ ÓÃ ¡£ ",
-            INGROUND = "Õâ Ò» Ìì µÄ Ê± ¼ä Ëü ´¦ ÓÚ ÐÝ Ãß ×´ Ì¬ ¡£ ",
-        },
-
-        RED_CAP = "ºì É« Í¨ ³£ ±í Ê¾ ¶¾ Ò© ¡£ ",
-        GREEN_CAP = "ÎÒ Ïà ÐÅ Õâ Ö» ÊÇ Ê³ Æ· ¡£ ",
-        BLUE_CAP = "Õâ ËÆ ºõ ÓÐ Ò© ÓÃ ¼Û Öµ ",
-
-
-        BEE = {
-            GENERIC = "Òâ ·ä ¡£ Ïà µ± ´ó £¡ ",
-            HELD = "Ëü ²» ¸ß ÐË ÁË ¡£ ",
-        },
-        KILLERBEE = 
-        {
-            GENERIC = "ÓÐ ¾ç ¶¾ ¡£ ",
-            HELD = "Ëü ²» ¸ß ÐË ÁË ¡£ ",
-        },
-		MOSQUITO = 
-		{
-			GENERIC = "Ò» Ö» ¿Ú ¿Ê µÄ ´Æ ÎÃ ×Ó ¡£ ",
-			HELD = "Ëü ±» °² È« µØ ´¢ ´æ ÁË Æð À´ ¡£ ",
-		},
-        BEEHIVE = "ÃÛ ·ä µÄ ×Ô È» ¼Ò Ô° ¡£ ",
-        BEEBOX =
-        {
-            READY = "ÎÒ ¿É ÒÔ ÊÕ »ñ ·ä ÃÛ ¡£ ",
-            GENERIC = "Ò» ¸ö ¼ò Âª µÄ ·ä ·¿ ¡£ ",
-        },
-        HONEY = "Ìð Ö² Îï »¨ ÃÛ ¡£ ",
-        HONEYCOMB = "ÓÃ ÓÚ ´æ ´¢ ·ä ÃÛ ¡£ ",
-        STINGER = "Ëü Öð ½¥ ¼õ ÉÙ µ½ Ò» ¸ö ¼â ½Ç ¡£ ",
-
-        SPIDER = {
-            GENERIC = "Ò» ¸ö ´ó ÐÍ µÄ £¬ Ê³ Èâ Ö© Öë Îï ÖÖ ¡£ ",
-            SLEEPING = "Ëü ÃÇ ¿´ Æð À´ Öç ·ü Ò¹ ³ö ¡£ ",
-            DEAD = "Ëü ÒÑ ¾­ ËÀ ÁË ¡£ ",
-        },
-
-        SPIDER_WARRIOR = {
-            GENERIC = "Õâ ËÆ ºõ ÊÇ Îä Ê¿ ÖÖ ÐÕ ¡£ ",
-            SLEEPING = "ÐÝ Ï¢ ºÃ £¬ ºÁ ÎÞ ÒÉ ÎÊ ¡£ ",
-            DEAD = "Ëû ½« Æä Éú Ãü ¸ø ÁË Ëû µÄ Íõ ºó ¡£ ",
-        },
-
-        BERRYBUSH = {
-            GENERIC = "Õâ ÊÇ Ò» ¸ö Öì É° ¸ù ¹à Ä¾ ¡£ ",
-            PICKED = "½¬ ¹û ÖØ ÐÂ Éú ³¤ £¬ ºÜ »º Âý ¡£ ",
-            BARREN = "ÎÒ Ðè Òª ¸É Ô¤ ¡£ ",
-        },
-
-		HOMESIGN = "µ¼ º½ Éè ±¸ ¡£ ",
-
-		DUG_GRASS = "Ëü Òª Çó ÍÁ ÈÀ ÖÖ Ö² ¡£ ",
-		DUG_SAPLING = "Ëü Òª Çó ÍÁ ÈÀ ÖÖ Ö² ¡£ ",
-		DUG_BERRYBUSH = "Ëü Òª Çó ÍÁ ÈÀ ÖÖ Ö² ¡£ ",
-
-
-        SAPLING = {
-            GENERIC = "Õâ ÊÇ Ò» ¿Ã Ð¡ Ê÷ ¡£ ",
-            PICKED = "Ææ ¹Ö ¡£ ÎÒ ÈÏ Îª Õâ »á É± ÁË Ëü ¡£ ",
-            BURNING = "È¼ ÉÕ £¡ ",
-        },
-
-        GRASS = {
-            GENERIC = "Ò» ´Ø ºÌ ²Ý ½Õ ¸Ñ ¡£ ",
-            PICKED = "ÎÒ ÈÏ Îª Ëü »á ÖØ ÐÂ ³¤ ³ö ¡£ ",
-            BARREN = "Ëü Ðè Òª ÅÅ ±ã ¡£ ",
-            BURNING = "È¼ ÉÕ £¡ ",
-        },
-
-        REEDS = {
-            GENERIC = "Ò» ×é µÆ ÐÄ ²Ý ¿Æ ºÌ ²Ý ¡£ ",
-            PICKED = "ÎÒ Ïà ÐÅ £¬ Ëü ÃÇ Ó¦ ¸Ã »á ÖØ ÐÂ ³¤ ³ö ¡£ ",
-            BURNING = "È¼ ÉÕ £¡ ",
-        },
-
-        PLANT_NORMAL = {
-            GENERIC = "Õâ ÊÇ ...Ö² Îï ¡£ Ä³ ÖÖ ¡£ ",
-            READY = "Ëü ¿´ Æð À´ ³É Êì ÁË £¬ ÏÖ ÔÚ ¡£ ",
-            GROWING = "ÉÐ Î´ ×¼ ±¸ ÊÕ »ñ ¡£ ",
-        },
-
-        MOUND = {
-            GENERIC ="A burial mound.",
-            DUG = "Ò» ¸ö ±» Ùô äÂ µÄ ¹Å ·Ø ¡£ ",
-        },
-
-        PIGMAN =
-        {
-            GENERIC = "Õâ ÊÇ Ò» Ö» °ë ÖÇ ÄÜ µÄ Ë« ×ã Öí ¡£ ",
-            FOLLOWER = "Ëû ËÆ ºõ ÒÑ ¾­ Óë ÎÒ ÓÐ Áª Ïµ ÁË ¡£ ",
-            DEAD = "²» Òª µ£ ÐÄ £¬ »¹ ÓÐ ºÜ ¶à ¡£ ",
-			WEREPIG = "Õâ ÊÇ Ò» Ö» Íý Ïë µÄ Öí ¡£ ",
-            GUARD = "Õâ ËÆ ºõ ÊÇ Ò» ¸ö ÊØ ÎÀ ¡£ ",
-        },
-        SPIDEREGGSACK = "¸ß ¶È ±ã Ð¯ µÄ Ö© Öë ÂÑ ´ü ¡£ ",
-
-		TELEPORTATO_RING = "Ò» ¸ö »· ÐÎ µÄ ºÏ ½ð ºÍ ²¼ Ïß ¡£ ",
-		TELEPORTATO_BOX = "Ò» ¸ö µç ºÉ µ÷ ½Ú Æ÷ ¡£ ",
-		TELEPORTATO_CRANK = "Ëü ÔË ÓÃ »ù ±¾ »ú Ðµ Ö÷ Ìå ¡£ ",
-		TELEPORTATO_POTATO = "¼È ²» ÊÇ Íê È« ÓÐ »ú Ò² ²» ÊÇ ÎÞ »ú £¡ ",
-		TELEPORTATO_BASE = {
-			GENERIC = "Õâ ¸ö ·û ÎÄ Ê¯ ¾ß ÓÐ ¶À ÌØ µÄ ¼¸ ºÎ ÐÔ ÄÜ £¡ ",
-			PARTIAL = "¸Ã Éè ±¸ ÔÚ Ò» ¸ö ¾Ö ²¿ µÄ Íê ³É ×´ Ì¬ ÏÂ ¡£ ",
-			ACTIVE = "Õâ Ì¨ »ú Æ÷ ¿É ÒÔ ÓÃ À´ ÔÚ ÊÀ ½ç Ö® ¼ä ÂÃ ÐÐ ¡£ ",
-		},
-
-        BEARDHAIR = "Õâ ÊÇ ÈË Àà µÄ Ãæ ²¿ Ã« ·¢ ¡£ ",
-        BUTTERFLY = 
-        {
-            GENERIC = "¶à ²Ê µÄ ÁÛ ³á ¡£ ",
-            HELD = "Ëü ±» ²¶ »ñ ÁË ¡£ ",
-        },
-        BUTTERFLYWINGS = "À´ ×Ô ±» ²¶ »ñ µÄ ºû µû ³á °ò ",
-        BUTTER = "ÁÛ ³á ÓÍ Ö¬ £¿ ",
-
-
-        EVERGREEN = {
-            GENERIC = "ÆÕ Í¨ Õë Ò¶ Ê÷ ¡£ ",
-            CHOPPED = "ÒÑ ¾­ ÊÕ »ñ ¡£ ",
-            BURNING = "Ê÷ ÔÚ È¼ ÉÕ ¡£ ",
-            BURNT = "Ò» ¿Å Ì¿ »¯ µÄ Ê÷ Ä¾ ¡£ "
-        },
-
-        EVERGREEN_SPARSE = {
-            GENERIC = "Õâ Îï ÖÖ ËÆ ºõ È± ÉÙ Éú Ö³ ÄÜ Á¦ ¡£ ",
-            CHOPPED = "ÒÑ ¾­ ÊÕ »ñ ¡£ ",
-            BURNING = "Ê÷ ÔÚ È¼ ÉÕ ¡£ ",
-            BURNT = "Ò» ¿Å Ì¿ »¯ µÄ Ê÷ Ä¾ ¡£ "
-        },
-
-        FIREPIT = {
-            GENERIC = "Ò» ¸ö »ð ¿Ó ¡£ ",
-            OUT = "ÎÒ ¿É ÒÔ ÖØ ÐÂ µã È¼ Ëü ¡£ ",
-            EMBERS = "´ó »ð ÒÑ ¼¸ ºõ ×Ô Ãð ÁË ¡£ ",
-            LOW = "¿É ÒÔ »ð ÉÏ ½½ ÓÍ ¡£ ",
-            NORMAL = "Ò» ³¡ Íê ÃÀ µÄ »ð ¡£ ",
-            HIGH = "ÄÇ ³¡ ´ó »ð Õý ÒÔ ¾ª ÈË µÄ ËÙ ¶È È¼ ÉÕ ×Å ¡£ ",
-        },
-		HEATROCK = {
-			COLD = "Ëü µÄ ÎÂ ¶È ÔÚ Áã ¶È ÒÔ ÏÂ ¡£ ",
-			GENERIC = "Ëü ºÍ »· ¾³ ÎÂ ¶È Ïà Æ¥ Åä ¡£ ",
-			WARM = "Ëü ±£ Áô ÁË ÈÈ ÄÜ ¡£ ",
-			HOT = "ÓÐ ×ã ¹» µÄ ÎÂ Å¯ À´ É¢ ·¢ ÈÈ ºÍ ¹â £¡ ",
-		},
-
-        CAMPFIRE = {
-            GENERIC = "Óª »ð ¡£ ",
-            OUT = "ÎÒ ¿É ÒÔ ÖØ ÐÂ µã È¼ Ëü ¡£ ",
-            EMBERS = "´ó »ð ÒÑ ¼¸ ºõ ×Ô Ãð ÁË ¡£ ",
-            LOW = "¿É ÒÔ »ð ÉÏ ½½ ÓÍ ¡£ ",
-            NORMAL = "Ò» ³¡ Íê ÃÀ µÄ »ð ¡£ ",
-            HIGH = "ÄÇ ³¡ ´ó »ð Õý ÒÔ ¾ª ÈË µÄ ËÙ ¶È È¼ ÉÕ ×Å ¡£ ",
-        },
-
-        FARMPLOT = {
-            GENERIC = "Ò» ¸ö Ð¡ Æ¬ ¸û µØ ¡£ ",
-            GROWING = "Ö² Îï ´Ó ÍÁ µØ ÖÐ Ìá È¡ ¿ó Îï ÖÊ ¡£ ",
-            NEEDSFERTILIZER = "ÓÉ ÓÚ È± ·¦ Óª Ñø £¬ Ëü ³Ê ÏÖ ÁË ²» Óý ¡£ ",
-        },
-
-        TREASURECHEST = "Öü ²Ø Ïä ¡£ ",
-        BEDROLL_STRAW = "´Ö ²Ú µÄ ÇÞ ¾ß ¡£ ",
-        CHARCOAL = "Ö÷ Òª ÊÇ Ì¼ ºÍ »Ò ¡£ ",
-        MARSH_PLANT = "ÆÜ Ï¢ ¸ù ¾¥ ¡£ ",
-        MARSH_BUSH = "Ò» ´Ø ¾£ ¼¬ ¡£ ",
-        PAPYRUS = "ÏË Î¬ ËØ ºÍ Ä¾ ÖÊ ËØ µÄ ±¡ Æ¬ ",
-        MARSH_TREE = {
-            GENERIC = "ÃÌ ÂÁ ºì Ê÷ ÁÖ ¡£ ",
-            CHOPPED = "Ëü ÒÑ ±» ¿³ ·¥ ",
-            BURNING = "È¼ ÉÕ £¡ ",
-            BURNT = "Ì¿ »¯ ºì Ê÷ ÁÖ "
-        },
-        FROG = {
-            SLEEPING = "Ëü ÔÚ Ë¯ ¾õ ¡£ ",
-            DEAD = "Ò» Ð© ¹ú ¼Ò ÈÏ Îª ÊÇ ÃÀ Î¶ ¡£ ",
-            GENERIC = "ËÄ ½Å Á½ ÆÜ ¶¯ Îï ¡£ ",
-        },
-		WORMHOLE = {
-			GENERIC = "ÐÝ Ãß µÄ ´ó ÐÍ Èä ³æ ³æ ¶´ ¡£ ",
-			OPEN = "¿ì ËÙ Éã È¡ µÄ Í¬ ÐÄ Ô² ×´ ÑÀ ³Ý ¡£ ",
-		},
-
-        CHESTER = "Ò» ¿î ¿É ÒÆ ¶¯ µÄ Öü ²Ø Ïä ¡£ ",
-        CHESTER_EYEBONE = {
-            GENERIC = "ÑÛ ¾¦ Éñ ÃØ Îï ÖÊ ¡£ ",
-            WAITING = "Ä§ »· ²» »î Ô¾ ¡£ ",
-        },
-
-        TALLBIRD = "Âí ¸ñ Å¬ Ë¹ ¡¤ °² ·É Ê¿ £¬ ³ä ·Ö ·¢ Óý ¡£ ",
-        SMALLBIRD = 
-        {
-            GENERIC = "Ò» ¸ö °² ·É Ê¿ Ð¡ ÐÍ Äñ Àà ±ê ±¾ ¡£ ",
-            HUNGRY = "Ëü Ðè Òª Ê³ Îï ¡£ ",
-            STARVING = "Ã» ÓÐ Ê³ Îï £¬ Ëü ±Ø ½« Ãð Íö ¡£ ",
-        },
-
-        TEENBIRD = 
-        {
-            GENERIC = "Ò» ¸ö Ð¡ Äñ ¡£ ",
-            HUNGRY = "Çë ±£ ³Ö Äã µÄ Éù Òô Ë® Æ½ µ½ ×î µÍ ÏÞ ¶È ¡£ ",
-            STARVING = "Ò» Ö» ·Ç ³£ µ÷ Æ¤ µÄ Äñ £¡ ",
-        },
-
-        TALLBIRDEGG = "Ëü Ðè Òª ·õ »¯ ¡£ ",
-        TALLBIRDEGG_COOKED = "³ä Âú µ¨ ¹Ì ´¼ ¡£ ",
-        TALLBIRDEGG_CRACKED = 
-        {
-            GENERIC = "·¢ Õ¹ ³ö ÏÖ ½ø Õ¹ ¡£ ",
-            HOT = "±© Â¶ ÔÚ ¼« ¶Ë ÎÂ ¶È ÏÂ £¬ ¿É ÄÜ »á µ¼ ÖÂ ËÀ Íö ¡£ ",
-            COLD = "Äã »á ¶³ ËÀ £¡ ",
-            SHORT = "ÎÒ ÃÇ ½« ºÜ ¿ì »ñ µÃ ÎÒ ÃÇ µÄ ÀÍ ¶¯ ³É ¹û ¡£ ",
-            LONG = "Óû ËÙ Ôò ²» ´ï ¡£ ",
-        },
-
-        ANIMAL_TRACK = "¶¯ Îï ±ê ÅÆ £¬ Ö¸ Â· ¡£ ",
-        DIRTPILE = "²» ÎÀ Éú £¡ ",
-        KOALEFANT_SUMMER = "¿¼ À­ Ïó ³¤ ±Ç ×Ó ",
-        KOALEFANT_WINTER = "ºñ ºñ µÄ ¶¬ ¼¾ Ã« ·¢ ÏÂ µÄ ¿¼ À­ Ïó ³¤ ±Ç ×Ó ",
-        TRUNK_SUMMER = "¹¦ Àû µÄ ³¤ ±Ç ¡£ ",
-		TRUNK_WINTER = "Æ¤ ¸ï ºÍ Ã« Æ¤ ±ê ±¾ ¡£ ",
-        TRUNK_COOKED = "ÄÑ ³Ô £¬ µ« ¸ß µ° °× ÖÊ ¡£ ",
-        TRUNKVEST_SUMMER = "ÄÍ ÓÃ µÄ Íâ ÒÂ ¡£ ",
-		TRUNKVEST_WINTER = "¶Ô ¿¹ Ôª ËØ ³ä ×ã µÄ ±£ »¤ ¡£ ",
-        
-        DEERCLOPS = "ÀÍ ÑÇ ÊÞ £¡ ",
-        REDGEM = "ºÜ ÎÂ Å¯ ¡£ ",
-        BLUEGEM = "ºÜ Àä ¡£ ",
-        PURPLEGEM = "Ëü É¢ ·¢ ³ö Ò» ÖÖ Ææ ¹Ö µÄ ¹â »· ¡£ ",
-        HOUND = "ÄÇ ÁÔ È® Ã» ÓÐ ±» Ñ± »¯ ¡£ ",
-        FIREHOUND = "ÄÇ ÁÔ È® ±È Æä Ëû µÄ ¸ü Î£ ÏÕ ¡£ ",
-        ICEHOUND = "ºÜ Ææ ¹Ö £¬ Àä Ñª Ò° ÊÞ ¡£ ",
-        PENGUIN = "...",
-        DEERCLOPS_EYEBALL = "Ò» ¸ö Ä£ ºý µÄ ³É ¾Í ¸Ð ¡£ ",
-        BASALT = "ÃÜ ¶È ´ó µÄ ²Ä ÁÏ £¡ ",
-        HOUNDMOUND = "Õâ Ð© ¹Ç Í· ÊÇ Ô¤ Õ× ¡£ ",
-        MERM = "Ë« Óã µÄ Á½ ×ã ¶¯ Îï £¡ ",
-        MERMHOUSE = "ÏÔ È» ÆÆ °Ü ²» ¿° ¡£ ",
-        KNIGHT = "×Ô ¶¯ Âí ¡£ ",
-        BISHOP = "·¢ Ìõ ÄÁ Ê¦ ¡£ ",
-
-        INSANITYROCK = {
-            INACTIVE = "Õâ ËÆ ºõ ÊÇ Ò» ¸ö Î¢ ÐÍ µÄ ½ð ×Ö Ëþ ¡£ ",
-            ACTIVE = "ÎÒ Ò» ¶¨ ÔÚ ×ö ÃÎ ¡£ ",
-        },
-        SANITYROCK = {
-            INACTIVE = "Ëü ËÆ ºõ ÒÑ ¾­ Ã» Èë ÍÁ ÈÀ ¡£ ",
-            ACTIVE = "Òý ÈË Èë Ê¤ ¡£ ÎÒ ÉÔ ºó ²» µÃ ²» ÑÐ ¾¿ Õâ Ð© ±ê ¼Ç ¡£ ",
-        },
-        PIGTORCH = "ÎÒ Ïë Öª µÀ Ëü Èç ºÎ µÃ µ½ È¼ ÁÏ ¡£ ",
-        WASPHIVE = "ÎÒ ×î ºÃ ±£ ³Ö ¾à Àë ¡£ ",
-        MARBLEPILLAR = "Ëü ÏÔ Ê¾ ÁË ÂÞ Âí ¹¤ ½³ µÄ À÷ º¦ Ö® ´¦ ¡£ Ì« ¾ª ÈË ÁË ¡£ ",
-        MARBLETREE = "¾ª ÈË ¡£ Ò» ¿Ã Ê÷ Íê È« ÓÉ ´ó Àí Ê¯ ÖÆ ³É ¡£ ",
-        MARBLE = "µñ Ïñ °ã µÄ ÑÒ Ê¯ ¡£ ",
-        SUNKBOAT = "Ò» ËÒ ³Á ´¬ £¬ ¿´ Æð À´ ÊÇ ÎÞ ÓÃ µÄ ¡£ ",
-        MEATRACK = 
-        {
-            GENERIC = "Èâ ¿É ÒÔ ÍÑ Ë® ¡£ ",
-            DRYING = "ÍÑ Ë® ÊÇ Ò» ¸ö »º Âý µÄ ¹ý ³Ì ¡£ ",
-            DONE = "Õâ ¸ö ¹ý ³Ì ÒÑ ¾­ Íê ³É ¡£ ",
-        },
-        SMALLMEAT_DRIED = "ÄÆ º¬ Á¿ ¸ß ¡£ ",
-        MEAT_DRIED = "»¹ ²» ¹» ÏÌ ¡£ ",
-        MONSTERMEAT_DRIED = "»¹ ²» ¹» ÏÌ ¡£ ",
-        BANDAGE = "Ò© ÓÃ ·ó ÁÏ ¡£ ",
-		HEALINGSALVE = "Ò» ÖÖ Ìì È» µÄ Ïû ¶¾ ¼Á ¡£ ",
-		CANE = "ÎÒ ²» ÊÇ Ê² Ã´ Ñ§ ¼Ò ¡£ ",
-		LIGHTNING_ROD = 
-		{
-		    GENERIC = "¸ß µ¼ µç ÐÔ £¡ ",
-		    CHARGED = "·ø Éä µç ÄÜ £¡ ",
-		},
-    },
-
-    EAT_FOOD = 
-    {
-        TALLBIRDEGG_CRACKED = "Ò§ Æð À´ Ó² ¡£ ",
-    },
-
-    DESCRIBE_TOODARK = "ÔÚ ºÚ °µ ÖÐ £¬ ÎÒ Ê² Ã´ Ò² ¿´ ²» µ½ ¡£ ",
-    DESCRIBE_GENERIC = "ÎÒ ²» Öª µÀ ÄÇ ÊÇ Ê² Ã´ ¡£ ",
-    ACTIONFAIL_GENERIC = "ÎÒ ×ö ²» µ½ ¡£ ",
-
-    BATTLECRY =
-    {
-        GENERIC = "Õ½ ¶· £¡ ",
-    },
-
-    COMBAT_QUIT =
-    {
-        GENERIC = "µÃ £¬ ½á Êø ÁË ¡£ ",
-    },
-
-	ANNOUNCE_EAT =
-	{
-		GENERIC = "ºÃ ³Ô £¡ ",
-		SPOILED = "Õâ ±» ²¿ ·Ö ·Ö ½â ¡£ ",	
-		STALE = "Õâ ²» ¹» ÐÂ ÏÊ ¡£ ",
-		PAINFUL = "ÎÒ ²» Ó¦ ¸Ã Éã Èë ¡£ ",
-	},
-
-	ANNOUNCE_COLD = "»· ¾³ ÎÂ ¶È µÍ ¡£ ",
-    ANNOUNCE_HUNGRY = "Í¼ Êé ¹Ý Ô± Ðè Òª Ê³ Æ· ¡£ ",
-    ANNOUNCE_TORCH_OUT = "ÎÒ Ðè Òª Áí Ò» ¸ö »ð ¾æ ¡£ ",
-    ANNOUNCE_DUSK = "Ò¹ Íí ¼´ ½« ½µ ÁÙ ¡£ ",
-
-    ANNOUNCE_CHARLIE_ATTACK = "°¥ Ó´ £¡ Ê² Ã´ ¶« Î÷ Ò§ ÁË ÎÒ £¡ ",
-    ANNOUNCE_CHARLIE = "Äã Ìý µ½ ÁË Âð £¿ ",
-    ANNOUNCE_BOOMERANG = "ÎÒ ´í Îó µØ ÅÐ ¶Ï Æä ·µ »Ø µÄ Ê± ¼ä ¡£ ",
-	ANNOUNCE_HOUNDS = "ÓÐ ¶« Î÷ Õý ÔÚ ¿¿ ½ü ¡£ ",
-
-    
-
-    ANNOUNCE_PECKED = "°² ¶¨ ÏÂ À´ £¬ Õâ Ò» ¿Ì £¡ ",
-
-    ANNOUNCE_ENTER_LIGHT = "×ã ¹» ÁÁ À´ ¿´ µ½ ¶« Î÷ ¡£ ",
-    ANNOUNCE_ENTER_DARK = "ÎÒ ÔÚ ºÚ °µ ÖÐ ¡£ ",
-    ANNOUNCE_INV_FULL = "ÎÒ ²» ÄÜ Ð¯ ´ø ÈÎ ºÎ ¶« Î÷ ¡£ ",
-
-    ANNOUNCE_CRAFTING_FAIL = "ÎÒ ÏÖ ÔÚ ×ö ²» µ½ ¡£ ",
-
-	ANNOUNCE_WORMHOLE = "ÔÚ Éú Îï Ñ§ ÉÏ Ò» ¸ö Ïê Ï¸ µÄ ½Ì Ñµ £¡ ",
-
-    ANNOUNCE_HUNT_LOST_TRAIL = "Õâ Ìõ Ð¡ ¾¶ ²» ÔÙ ±ç ÈÏ µÃ ³ö ¡£ ",
-    ANNOUNCE_HUNT_BEAST_NEARBY = "Õâ Ìõ µÀ µÄ Íâ ¹Û ±í Ê¾ ×î ½ü ÓÐ ¹ý »î ¶¯ ¡£ ",
-}
-
-STRINGS.CHARACTERS.WOLFGANG =
-{
-    ACTIONFAIL =
-    {
-        SHAVE =
-        {
-            GENERIC = "²» ÄÜ Ìê ¹â ¡£ ",
-            NOBITS = "Ã» ÓÐ Ã« ·¢ £¬ ÎÒ ²» ÄÜ ¹Î ºú ×Ó ¡£ ",
-            AWAKEBEEFALO = "ÎÒ »á µÈ µ½ Ëû ²» ÔÙ Ñ° ÕÒ Ê± ¡£ ",
-        }
-    },
-    DESCRIBE=
-    {
-    
-		SPOILED_FOOD = "ÊÇ ¶ñ ÐÄ µÄ ¶« Î÷ £¡ ",
-		ICEBOX = "Ïä ×Ó ÖÆ Ôì ÁË µÍ ÎÂ £¡ ",
-		
-		
-		WALL_WOOD_ITEM = "±ù ä¿ ÁÜ °ô £¡ ",
-		WALL_STONE_ITEM = "Ê¯ ¶Ñ £¡ ",
-		WALL_HAY_ITEM = "´Ì Í´ µÄ Îü ¹Ü £¡ ",
-		WALL_WOOD = "Äã ºÃ £¬ ¼â ¼â µÄ ¹÷ ×Ó £¡ ",
-		WALL_STONE = "³Ç Ïñ ÎÒ Ò» Ñù Ç¿ £¡ ",
-		WALL_HAY = "Ç½ ÓÉ ²Ý ÖÆ ³É £¡ ",
-        ADVENTURE_PORTAL = "ÊÇ ×ì ÃÅ £¡ Ëµ °¡ °¡ °¡ °¡ £¡ ",
-		
-		
-        BIRDCAGE = 
-        {
-			GENERIC = "ÎÒ Ð¡ Äñ µÄ ¼Ò ¡£ ",
-			OCCUPIED = "Ð¡ Äñ Äã ºÃ £¡ ",
-			SLEEPING = "ÎÒ Òª °² ¾² £¡ ",
-        },
-    
-        MEAT = "Èâ ÈÃ ÎÒ Ç¿ ×³ £¡ ",
-        SMALLMEAT = "ÎÒ Ðè Òª ¸ü ¶à µÄ Èâ £¡ ",
-        COOKEDSMALLMEAT = "Ëü Ðè Òª Öó Êì µã £¡ ",
-        MONSTERMEAT = "Ëü ²» Ï² »¶ Ê³ Îï ¡£ ",
-        COOKEDMEAT = "ÎÒ ÓÃ »ð ¿¾ ÁË ºÃ Èâ £¡ ",
-        UMBRELLA = "Óê ÆÆ »µ ÁË ÎÒ Ç¿ ´ó µÄ Æ¤ ·ô ¡£ ",
-        COOKEDMONSTERMEAT = "ÎÒ »¹ ÊÇ ²» Ïë ³Ô Õâ ¸ö ¡£ ",
-        MAXWELL = "»¨ ÉÚ µÄ Î÷ ×° µÐ ²» ¹ý ÎÒ µÄ ¼¡ Èâ £¡ ",
-        TENT = "ÊÇ Ê± ºò Ð¡ Ë¯ Ò» »á ¶ù ÁË ¡£ ",
-		KRAMPUS = "¿É ÅÂ µÄ É½ Ñò ÈË £¡ ¿ì ÅÜ £¡ ",
-		KRAMPUS_SACK = "ÎÒ Âé ²¼ ´ü Àï ÓÐ É½ Ñò ÈË ¡£ ",
-        BEEFALO =
-        {
-            GENERIC = "ÊÇ Ã« Å£ £¡ ",
-            FOLLOWER = "Ã« Å£ ¸ú ÎÒ ×ß £¡ ",
-            NAKED = "Ã« Å£ Ã» ÓÐ ¸ü ¶à µÄ Í· ·¢ ¡£ ",
-            SLEEPING = "Ã« Å£ Õý ÔÚ Ë¯ ¾õ ¡£ ",
-        },
-        BABYBEEFALO = "Ó¤ ¶ù Ã« Å£ £¡ ",
-		EARMUFFHAT = "ÏÖ ÔÚ ÎÒ ¿´ Æð À´ Ïñ Ö» Ð¡ ÍÃ ×Ó £¡ ",
-        WINTERHAT = "Ëü Ê¹ ¶ú ¶ä ÔÚ º® Àä Àï ¿ì ÀÖ £¡ ",
-        BUSHHAT = "ÎÒ ÊÇ Õâ Ã´ Íµ Íµ Ãþ Ãþ £¡ ",
-
-		NITRE = "ÊÇ ÑÒ Ê¯ £¬ µ« ²» Í¬ ¡£ ",
-		GUNPOWDER = "±¬ Õ¨ À± ½· £¡ ",
-		BIRD_EGG = "¿É Á¯ µÄ Äñ ÈË ¡£ ",
-		BIRD_EGG_COOKED = "ºÃ ³Ô £¡ ",
-		ROTTENEGG = "³ô £¡ ",
-        HAMBAT = "»¹ ÊÇ ²» ´í µÄ ¡£ ",
-
-
-        MANDRAKE =
-        {
-			GENERIC = "ÊÇ Ææ ¹Ö µÄ Ö² Îï ¡£ ",
-			PICKED = "Ð¡ Ö² Îï ÈË Åó ÓÑ £¡ ",
-			DEAD = "Ð¡ Ö² Îï ÈË ËÀ Íö £¡ ",
-        },
-        PINECONE = "ÎÒ ¿É ÒÔ ÓÃ ÎÒ µÄ ÊÖ ·Û Ëé Õâ ÖÖ Ê÷ µÄ ÖÖ ×Ó £¡ ",
-        ARMORWOOD = "Ïà µ± Ç¿ ×³ £¡ ",
-		ARMOR_SANITY = "¾Í Ïñ ÊÇ ´÷ ×Å ¿É ÅÂ µÄ Ð¡ ÆÆ ²¼ £¡ ",
-        SPEAR = "Ëü ¸ø ÁË ÎÒ Ò» ¸ö Ìõ ×Ó ¡£ ",
-        STRAWHAT = "ºÃ Ã± ×Ó £¡ ",
-        BEEFALOHAT = "ºÃ Ã± ×Ó £¡ ",
-        TOPHAT = "ºÃ Ã± ×Ó £¡ ",
-        FLOWERHAT = "Èç ´Ë ÃÀ Àö £¡ ",
-        ROPE = "Ç¿ ×³ £¡ ÎÒ Ï² »¶ £¡ ",
-        LOG = "Ïñ ÎÒ µÄ ¸ì ²² Ò» Ñù ºñ ¡£ ",
-        LIVINGLOG = "Áî ÈË Ã« ¹Ç ã¤ È» Ä¾ Í· £¡ ",
-
-        TWIGS = "Èõ Ð¡ µÄ Ê÷ Ö¦ £¡ ÎÒ ¿É ÒÔ ÕÛ ¶Ï Ëü ÃÇ £¡ ",
-        CARROT = "ÊÇ Ê³ Îï ¡£ ÎÒ ²Â ¡£ ",
-        BERRIES = "ºÃ ³Ô £¡ ",
-        CUTSTONE = "ÎÒ °Ñ ÑÒ Ê¯ ´ò ³É Ëé Æ¬ £¡ ",
-
-        RED_MUSHROOM =
-        {
-            GENERIC = "¸Ð ÉË µÄ ·¿ ¼ä ¡£ ",
-            PICKED = "ÎÒ ÒÑ ¾­ Õ¼ ¾Ý ÁË ÄÇ ¼þ ¸Ð ÉË µÄ ·¿ ¼ä ¡£ ",
-            INGROUND = "¸Ð ÉË µÄ ·¿ ¼ä ±» Òþ ²Ø ÁË £¡ ",
-        },
-        GREEN_MUSHROOM = 
-        {
-            GENERIC = "¸Ð ÉË µÄ ·¿ ¼ä ¡£ ",
-            PICKED = "ÎÒ ÒÑ ¾­ Õ¼ ¾Ý ÁË ÄÇ ¼þ ¸Ð ÉË µÄ ·¿ ¼ä ¡£ ",
-            INGROUND = "¸Ð ÉË µÄ ·¿ ¼ä ±» Òþ ²Ø ÁË £¡ ",
-        },
-
-        BLUE_MUSHROOM = 
-        {
-            GENERIC = "¸Ð ÉË µÄ ·¿ ¼ä ¡£ ",
-            PICKED = "ÎÒ ÒÑ ¾­ Õ¼ ¾Ý ÁË ÄÇ ¼þ ¸Ð ÉË µÄ ·¿ ¼ä ¡£ ",
-            INGROUND = "¸Ð ÉË µÄ ·¿ ¼ä ±» Òþ ²Ø ÁË £¡ ",
-        },
-
-        RED_CAP = "Å¶ £¡ Æ¯ ÁÁ ¶ø ÓÐ ¹â Ôó £¡ ",
-        GREEN_CAP = "É³ À­ ¡£ ²¼ À³ Ê² ¡£ ",
-        BLUE_CAP = "¶Ô ÎÒ ÓÐ ºÃ ´¦ £¬ ÎÒ Ïë ¡£ ",
-
-
-        SEEDS = "Ì« Ð¡ ÁË £¬ ²» ¹» ³Ô ¡£ ",
-        SILK = "Ì« »¨ ÉÚ ¡£ ",
-		SPIDERGLAND = "Õ³ ºý ºý ²¢ ²» ÎÈ ¶¨ £¡ ",
-        BOARDS = "ÎÒ ´ò ÆÆ ¼Ç Â¼ À´ ×ö ·¹ £¡ ",
-        RABBIT = {
-            GENERIC = "Ð¡ ÍÃ ×Ó £¡ ¶ã ±Ü ÎÒ £¡ ",
-            HELD = "Ëû ÊÇ ÎÒ µÄ Åó ÓÑ ¡£ ",
-        },
-        ROCK = "ºÜ ÄÑ £¡ Èç ÎÒ Ò» Ñù £¡ ",
-        TRAP = "Ã» ÓÐ ÏÝ Úå ¿É ÒÔ À§ ×¡ ÎÒ £¡ ",
-        PIGKING = "¹þ £¡ ÉÆ Á¼ µÄ ÈË £¡ ",
-        WINTEROMETER = "Àä Ïò ÉÏ £¡ ºì Íù ÏÂ £¡ ",
-        RAINOMETER = "ÆÃ £¡ ÆÃ £¡ ",
-        RESURRECTIONSTATUE = "ÎÒ ²» »á ËÀ µÄ ¡£ ",
-        RESURRECTIONSTONE = "Ìø ÉÏ Ê¯ Í· £¡ ",
-        AXE = "Õ¶ £¡ ",
-		HAMMER = "Ðè Òª Á­ µ¶ £¡ ",
-        PICKAXE = "¼ñ £¡ ",
-        SHOVEL = "Äà ²ù £¡ ",
-		PITCHFORK = "ÈÃ ÎÒ Ïë Æð Í¯ Äê ¡£ ",
-        ROCKS = "ÊÇ Ê¯ Í· ¡£ ÓÐ ¶à ÄÑ Àí ½â £¿ ",
-        FLINT = "ÊÇ Ê¯ Í· £¬ Ö» ÊÇ ±È ½Ï ¼â ¡£ ",
-        AMULET = "·Ç ³£ Æ¯ ÁÁ ¡£ ",
-        RAZOR = "ÎÒ µÄ Æ¤ ·ô Ì« Ï¸ Äå ÁË £¬ ºÍ Ã« ·¢ ²» Åä £¡ ",
-		POND = "È« Êª ÁË ¡£ ",
-		LEIF = "Ä¾ Í· ÈË £¡ ",
-		BIRDTRAP = "ÎÒ »á ×¥ Äñ £¡ ",
-        TRAP_TEETH = "Ëü »á ´Ó ÏÂ Ãæ Ò§ Æ¨ ¹É £¡ ",
-        TRAP_TEETH_MAXWELL = "Ë­ ·Å Õâ Àï Ë­ ¾Í ÊÇ »µ Òù £¡ ",
-        PIGHEAD = "¸É Âï À­ ×Å Ò» ÕÅ Á³ £¿ ",
-		MERMHEAD = "Õæ ÊÇ ¸ö Ë§ Æø µÄ Ä§ ¹í £¡ ",
-        ARMORMARBLE = "ÎÒ °Ñ Ê¯ Í· °ó ÔÚ ¼¡ Èâ ÉÏ ¡£ ",
-        ARMORGRASS = "ºÜ ¶à ´Ì ¡£ ",
-        BLUEPRINT = "Æ¯ ÁÁ µÄ »­ £¡ ",
-        MAXWELLHEAD = "¿É ÅÂ µÄ ÊÇ £¬ Í· ¾Ó È» ÓÐ 12Ó¢ ³ß ³¤ £¡ ",
-
-		TENTACLESPOTS = "¶î £¡ ð¤ ð¤ µÄ £¡ ",
-
-        PIGHOUSE =
-        {
-            GENERIC = "Õâ ÉÈ ÃÅ ¶Ô ÎÒ ¶ø ÑÔ Ì« Ð¡ ÁË ¡£ ",
-            FULL = "ºÙ £¡ ³ö À´ °¡ £¬ Öí ÈË £¡ ",
-            LIGHTSOUT = "Ëû È¥ ÁË ÄÄ Àï £¿ ",
-        },
-
-        SPIDERDEN = "À¥ ³æ È« ¶ã ÔÚ Àï Ãæ ¡£ ",
-        SPIDERQUEEN = "²Ò ÁË £¡ »á ×ß Â· µÄ À¥ ³æ ·¿ ×Ó £¡ ",
-        PIGGYBACK = "³ô ´ü ×Ó £¡ ",
-        BLOWDART_FIRE = "Ð¡ ÐÄ µã £¬ ÎÖ ¶û ·ò ¸Ô ¡£ ",
-        SPIDERHAT = "¾Í Ïñ ÔÚ ¸ú ¾Þ ÐÍ À¥ ³æ ½Ó ÎÇ ¡£ ",
-        NIGHTMAREFUEL = "¿Ö ²À µÄ ¶« Î÷ ¡£ ",       
-        NIGHTLIGHT = "¹î Òì µÄ Ó« ¹â ¡£ ",
-        NIGHTSWORD = "Õæ µÄ £¿ ²» ÊÇ Õæ µÄ £¿ ÊÇ ¼â µÄ £¡ ",
-        
-		WALRUSHAT = "ÎÒ ÓÐ º£ Å£ ÈË µÄ Ã± ×Ó £¡ ",
-        WALRUS = "º£ Å£ ÈË £¡ ",
-        WALRUS_CAMP = 
-        {
-            GENERIC = "Ëû ÃÇ ÊÊ ºÏ Âð £¿ ",
-            EMPTY = "Ëø ×Å µÄ ¡£ ",
-        },
-        LITTLE_WALRUS = "Äã ¾õ µÃ Äã ±È ÀÏ ÈË Ç¿ Âð £¿ ",
-        WALRUS_TUSK = "º£ Å£ ÈË µÄ ÑÀ ³Ý £¡ ",
-        
-        RABBITHOLE = "Äã ¶ã ²» ÁË Ò» ±² ×Ó µÄ £¬ Ìø Ìø Èâ £¡ ",
-        FIREFLIES = {
-            GENERIC = "ÉÁ ÉÁ ÁÁ £¡ ",
-            HELD = "ÎÒ µÄ ¿Ú ´ü ÉÁ ÉÁ £¡ ",
-        },
-        CROW = {
-            GENERIC = "ÎÒ ²» Ï² »¶ Äñ ¡£ ",
-            HELD = "Ëû Ö¨ Ö¨ ½Ð ¡£ ",
-        },
-        GHOST = "°¡ °¡ °¡ °¡ °¡ °¡ £¡ ",
-        CUTGRASS = "ÎÒ ÖÆ Ôì ÁË Ò» ÍÆ ²Ý ¡£ ",
-        CUTREEDS = "ÎÒ ÖÆ Ôì ÁË Ò» Ûç Â« Î­ ¡£ ",
-        PETALS = "Õâ Ð© ÎÅ Æð À´ ²» ´í ¡£ ",
-        PETALS_EVIL = "Ëû ÃÇ Áî ÎÒ µÄ ÄÔ ×Ó Í´ ¡£ ",        
-        FLOWER = "Ëû ÃÇ ºÃ Æ¯ ÁÁ ¡£ ",
-        FLOWER_EVIL = "²» ÊÇ ÍÁ ¶¹ ¡£ ",
-        GOLDNUGGET = "Ç® ÊÇ ¸ø Ð¡ ÈË µÄ £¡ ",
-        RESEARCHLAB = "ÎÒ ²» ´ó Çå ³þ ×Ô ¼º ¶Ô ¿Æ Ñ§ µÄ ¡­ ¡­ ¸Ð ¾õ ¡£ ",
-        RESEARCHLAB2 = "ÎÒ ²» ´ó Çå ³þ ×Ô ¼º ¶Ô ¿Æ Ñ§ µÄ ¡­ ¡­ ¸Ð ¾õ ¡£ ",
-        RESEARCHLAB3 = "ÎÖ ¶û ·ò ¸Ô ×ö ÁË Ê² Ã´ £¿ ",
-        POOP = "³ô ³ô £¡ ",
-        TORCH = "ÎÒ ÒÔ »ð ¹÷ ¹¥ »÷ Ò¹ Íí ¡£ ",
-        BEEFALOWOOL = "ÎÒ ÒÔ Ã« Å£ ×÷ ÒÂ ¡£ ",
-        BUGNET = "×¥ ³æ ¡£ ",
-        PANFLUTE = "ÎÒ »á µ¯ Ãñ ¸è ¡£ ",
-        ONEMANBAND = "ÓÖ ´ó ÓÖ ³³ ¡£ ÎÒ Ï² »¶ £¡ ",
-        GEARS = "¹þ £¡ ÏÖ ÔÚ Ë­ ²Å ÊÇ ¸ü ´ó ¿é Í· µÄ ¼¡ Èâ £¿ ",
-        STATUEHARP = "ÃÀ Ãî µÄ Òô ÀÖ ÄÄ Àï È¥ ÁË £¿ ",
-        STATUEMAXWELL = "ÈË ÏÖ ÔÚ ÊÇ Ê¯ Í· ÁË £¡ ·Ç ³£ ¼¬ ÊÖ ¡­ ¡­ ",
-        SKELETON = "¼¡ Èâ ²» ×ã ¡£ ",
-
-        BEE = {
-            GENERIC = "ÓÖ ·Ê ÓÖ Éú Æø µÄ Ñù ×Ó ¡£ ",
-            HELD = "°² °² È« È« ÔÚ ÎÒ µÄ ¿Ú ´ü Àï ¡£ ",
-        },
-        KILLERBEE = 
-        {
-            GENERIC = "·ß Å­ µÄ ÃÛ ·ä £¡ ",
-            HELD = "ÎÒ ·ß Å­ µÄ ÃÛ ·ä £¡ ",
-        },
-		MOSQUITO =
-		{
-			GENERIC = "ÈÃ ÎÒ Ïë Æð Êå Êå £¡ ",
-			HELD = "²» ¸ø Ñª Äã ÁË £¡ ",
-		},
-        BEEHIVE = "à¸ £¬ ·ä ³² £¡ ",
-        BEEBOX =
-        {
-            READY = "¿É ÒÔ ²É ¼¯ ÁË £¡ ",
-            GENERIC = "ÃÛ ·ä !",
-        },
-        HONEY = "ºÃ ³Ô £¡ ",
-        HONEYCOMB = "ÒÔ Ç° ÊÇ ÃÛ ·ä ¾Ó ×¡ µÄ µØ ·½ ¡£ ",
-        STINGER = "¼â ¼â µÄ ºÃ Ïñ ²æ ×Ó Ò» Ñù £¡ ",
-        BUTTERFLY = 
-        {
-            GENERIC = "ÃÀ ÃÀ µÄ ºû µû ôæ ôæ ·É £¡ ",
-            HELD = "ÎÒ µÄ ³è Îï £¡ ",
-        },
-        BUTTERFLYWINGS = "Ã» ³á °ò Ã» ·¨ ·É £¡ ",
-        BUTTER = "ÓÍ ÓÍ µÄ £¬ Î¶ µÀ Ïñ À¥ ³æ ¡£ ",
-        FROGLEGS = "ÊÇ ÎÒ ¹ú ¼Ò µÄ Ò» ÖÖ ÃÀ Ê³ £¡ ",
-
-        SPIDER = {
-            SLEEPING = "¾² ¾² ×ß £¬ Ò² Ðí Ëû ¾Í ¿´ ²» ¼û ÎÒ ¡£ ",
-            DEAD = "ÓÃ ð¤ ³í Îï Ôì ³É µÄ £¡ ",
-            GENERIC = "Ëû µÄ Ñù ×Ó ºÃ ¿Ö ²À £¡ ",
-        },
-
-        SPIDER_WARRIOR = {
-            GENERIC = "Õâ ¸ö ÌØ ±ð ¿Ö ²À ¡£ ",
-            SLEEPING = "ÎÒ Ïë £¬ Í± Ëû £¬ ²» Ã÷ ÖÇ ¡£ ",
-            DEAD = "ÏÖ ÔÚ ²» ¿Ö ²À ÁË £¡ ",
-        },
-
-        BERRYBUSH = {
-            GENERIC = "Àï Ãæ ¶¼ ÊÇ Ê³ Îï Çò £¡ ",
-            PICKED = "³Ô µÄ ÄÇ ²¿ ·Ö Íê ÁË ¡£ ",
-            BARREN = "ÈÃ ÎÒ Ò» ±ß À­ £¬ Ò» ±ß Ïë Ïë ¡£ ",
-        },
-
-        SAPLING = {
-            GENERIC = "Ãì Ð¡ µÄ Ê÷ Ä¾ £¡ ÎÒ ±È Äã Ç¿ £¡ ",
-            PICKED = "¹þ £¡ ¹þ £¡ ¹þ £¡ Ê÷ Ä¾ ðô ÁË £¡ ",
-            BURNING = "°¥ Ó´ ¡£ ",
-        },
-
-        GRASS = {
-            GENERIC = "ÊÇ ²Ý ¡£ ",
-            PICKED = "ÎÒ °Ñ ²Ý ´ò °Ü ÁË £¡ ",
-            BARREN = "Ëü Ðè Òª ÅÅ ±ã ¡£ ",
-            BURNING = "²» ºÃ £¡ ",
-        },
-
-        REEDS = {
-            GENERIC = "ÊÇ Ë® Ë® µÄ ²Ý ",
-            PICKED = "ÎÒ °Ñ Â« Î­ ´ò °Ü ÁË £¡ ",
-            BURNING = "²» ºÃ £¡ ",
-        },
-
-
-		HOMESIGN = "Ã» Ê± ¼ä ¿´ ÅÆ ×Ó ÁË £¡ ",
-		DUG_GRASS = "Ëû ÓÖ Àä ÓÖ ¹Â µ¥ ¡£ ",
-		DUG_SAPLING = "Ëû ÓÖ Àä ÓÖ ¹Â µ¥ ¡£ ",
-		DUG_BERRYBUSH = "Ëû ÓÖ Àä ÓÖ ¹Â µ¥ ¡£ ",
-
-        PLANT_NORMAL = {
-            GENERIC = "Ö¦ ·± Ò¶ Ã¯ £¡ ",
-            READY = "àÅ ¡£ ÏÖ ÔÚ ºÃ ³Ô ÁË ¡£ ",
-            GROWING = "»¹ ÔÚ ³¤ ´ó ¡£ ",
-        },
-
-        MOUND = {
-            GENERIC ="Scary! Is probably full of bones!",
-            DUG = "ÎÒ ºÜ ±§ Ç¸ £¬ ËÀ ÈË ÃÇ ¡£ ",
-        },
-
-        PIGMAN =
-        {
-            GENERIC = "Äã ºÃ Öí Öí ¡£ Äã Ôõ Ã´ Ñù ÁË £¿ ",
-            FOLLOWER = "ÏÖ ÔÚ ÊÇ Åó ÓÑ ÁË £¡ ",
-            DEAD = "²» Òª £¡ Öí ËÀ ÁË £¡ ",
-            WEREPIG = "·ß Å­ µÄ Öí Öí £¡ ",
-            GUARD = "Ëû µ½ µ× ÄÜ ²» ÄÜ ¾Ù £¿ ",
-        },
-        SPIDEREGGSACK = "¶ñ ÐÄ µÄ Ö© Öë µ° ¡£ ",
-
-		TELEPORTATO_RING = "ÎÒ »á Íä ³É Ò» ¸ö Íê ÃÀ µÄ Ô² ÐÎ ¡£ ",
-		TELEPORTATO_BOX = "ÓÐ Ð¡ °Ñ ÊÖ ¡£ ",
-		TELEPORTATO_CRANK = "Íä Íä µÄ ¶« Î÷ ÊÇ ½ð Êô ×ö µÄ £¡ ",
-		TELEPORTATO_POTATO = "¹þ ¹þ £¡ ¹þ ¹þ £¡ Õâ ÍÁ ¶¹ ÓÐ ¹» ³ó µÄ £¡ ",
-		TELEPORTATO_BASE = {
-			GENERIC = "Ææ ¹Ö µÄ Ê¯ Í· ¡£ Òª ×ø ÉÏ È¥ Âð £¿ ",
-			PARTIAL = "¿ª Ê¼ ×é ºÏ µ½ Ò» Æð ÁË ¡£ ",
-			ACTIVE = "ÎÒ ²» ÅÂ Íâ Ãæ µÄ Ò» ÇÐ £¡ ",
-		},
-
-
-
-        TRINKET_1 = "ÊÇ À¬ »ø £¬ ÎÒ ²Â µÄ ¡£ ",
-        TRINKET_2 = "ÊÇ À¬ »ø £¬ ÎÒ ²Â µÄ ¡£ ",
-        TRINKET_3 = "ÊÇ À¬ »ø £¬ ÎÒ ²Â µÄ ¡£ ",
-        TRINKET_4 = "ÊÇ À¬ »ø £¬ ÎÒ ²Â µÄ ¡£ ",
-        TRINKET_5 = "ÊÇ À¬ »ø £¬ ÎÒ ²Â µÄ ¡£ ",
-        TRINKET_6 = "ÊÇ À¬ »ø £¬ ÎÒ ²Â µÄ ¡£ ",
-        TRINKET_7 = "ÊÇ À¬ »ø £¬ ÎÒ ²Â µÄ ¡£ ",
-        TRINKET_8 = "ÊÇ À¬ »ø £¬ ÎÒ ²Â µÄ ¡£ ",
-        TRINKET_9 = "ÊÇ À¬ »ø £¬ ÎÒ ²Â µÄ ¡£ ",
-        TRINKET_10 = "ÊÇ À¬ »ø £¬ ÎÒ ²Â µÄ ¡£ ",
-        TRINKET_11 = "ÊÇ À¬ »ø £¬ ÎÒ ²Â µÄ ¡£ ",
-        TRINKET_12 = "ÊÇ À¬ »ø £¬ ÎÒ ²Â µÄ ¡£ ",
-
-        BEARDHAIR = "¶ñ ÐÄ ¡£ ¾ø ¶Ô ²» ÊÇ ´Ó ÎÒ Á³ ÉÏ À´ µÄ ¡£ ",
-
-        EVERGREEN = {
-            GENERIC = "Äã ºÃ £¬ Ê÷ Ä¾ £¡ ",
-            CHOPPED = "¹þ £¡ ÎÒ Ê¤ ³ö ÁË £¡ ",
-            BURNING = "ÎÒ °Ñ Ëü Íæ »µ ÁË ¡£ ",
-            BURNT = "ÏÖ ÔÚ ÓÖ Ð¡ ÓÖ Ëé ÁË ¡£ "
-        },
-
-        EVERGREEN_SPARSE = {
-            GENERIC = "Õñ ×÷ Æð À´ £¬ Ð¡ Ê÷ £¡ ",
-            CHOPPED = "¹þ £¡ ÎÒ Ê¤ ³ö ÁË £¡ ",
-            BURNING = "ÎÒ °Ñ Ëü Íæ »µ ÁË ¡£ ",
-            BURNT = "ÏÖ ÔÚ ÓÖ Ð¡ ÓÖ Ëé ÁË ¡£ "
-        },
-
-        FIREPIT = {
-            GENERIC = "ÔÙ ¼û ÁË ºÚ °µ Ê± ¹â £¡ ",
-            OUT = "Ôã ¡£ ¹Ø ÁË ¡£ ",
-            EMBERS = "ºÚ °µ ¿ì Òª ½µ ÁÙ £¡ ",
-            LOW = "»ð »¹ ²» ¹» ÈÈ ¡£ ",
-            NORMAL = "ÊÇ ¸ö ºÃ »ð £¡ ",
-            HIGH = "Õâ Ì« ¶à »ð ÁË £¡ ",
-        },
-		HEATROCK = {
-			COLD = "Àä Ê¯ Í· Ã» ÓÃ £¡ ",
-			GENERIC = "Õâ ¿Å Ô² Ê¯ Í· ÓÐ µã Ïñ ÎÒ µÄ Í· £¡ ",
-			WARM = "Ãþ Æð À´ Âù Ë¬ £¡ ",
-			HOT = "ÖÕ ÓÚ ¹» ÈÈ ÁË £¡ ",
-		},
-
-        CAMPFIRE = {
-            GENERIC = "ÔÙ ¼û ÁË ºÚ °µ Ê± ¹â £¡ ",
-            OUT = "Ôã ¡£ ¹Ø ÁË ¡£ ",
-            EMBERS = "ºÚ °µ ¿ì Òª ½µ ÁÙ £¡ ",
-            LOW = "»ð »¹ ²» ¹» ÈÈ ¡£ ",
-            NORMAL = "ÊÇ ¸ö ºÃ »ð £¡ ",
-            HIGH = "Õâ Ì« ¶à »ð ÁË £¡ ",
-        },
-
-        FARMPLOT = {
-            GENERIC = "ÎÒ »á ÔÚ Õâ Àï ÖÖ ÏÂ Íò ÄÜ µÄ Ö² Îï £¡ ",
-            GROWING = "³É ³¤ °É £¬ ÎÒ µÄ Ð¡ Åó ÓÑ £¡ ³É ³¤ °É £¡ ",
-            NEEDSFERTILIZER = "Äà ÍÁ »¹ ²» ¹» ÍÁ £¬ ÖÖ ²» ÁË Ö² Îï ¡£ ",
-        },
-
-        TREASURECHEST = "ÎÒ °Ñ ¶« Î÷ ·Å ÔÚ Õâ Àï £¡ ",
-        BEDROLL_STRAW = "Ë¯ Ãß Ê± ¼ä £¡ ",
-        CHARCOAL = "¾Í Ïñ ÄÃ ×Å Ò» ¿Ã Ð¡ Ð¡ ËÀ Ê÷ Ò» Ñù ¡£ ",
-        MARSH_PLANT = "ÊÇ Ö² Îï ¡£ ",
-        MARSH_BUSH = "´ø ´Ì ¡£ ",
-        PAPYRUS = "Ïñ Ö½ ÕÅ ",
-        MARSH_TREE = {
-            GENERIC = "ÓÐ µã ¼â ¡£ ",
-            CHOPPED = "ÎÒ °Ñ ¼â ´Ì ¿³ ÏÂ À´ ÁË £¡ ",
-            BURNING = "ÎÒ °Ñ ¼â ´Ì ÉÕ ÁË £¡ ",
-            BURNT = "ÏÖ ÔÚ ÓÖ ºÚ ÓÐ ±é ²¼ ¼â ´Ì ÁË "
-        },
-
-        FROG = {
-            SLEEPING = "Ë¯ ×Å ÁË ¡£ ",
-            DEAD = "ÔÚ ÎÒ ¹ú ÊÇ Ò» ÖÖ ÃÀ Ê³ ¡£ ",
-            GENERIC = "ºÙ £¬ Ð¡ Çà ÍÜ £¬ Ð¡ Çà ÍÜ ¡£ ",
-        },
-
-		WORMHOLE = {
-			GENERIC = "¾Í Ïñ ´Ó µØ Àï ³¤ ³ö À´ £¬ Èí Ãà Ãà µÄ Õí Í· ¡£ ",
-			OPEN = "Ëü ÉÏ ²» ÁË Õâ ¸ö ÄÐ ÈË µÄ £¡ ",
-		},
-
-        CHESTER = "ÓÐ ½Å µÄ Ææ ¹Ö ºÐ ×Ó ¡£ ",
-        CHESTER_EYEBONE = {
-            GENERIC = "ÊÇ ÑÛ ¹Ç ¡£ ÑÛ ¹Ç Á¬ ½Ó ×Å Ãæ ¹Ç ¡£ ",
-            WAITING = "Ëû Ë¯ ÁË ¡£ ",
-        },
-
-        TALLBIRD = "ÊÇ ×î ¸ß µÄ Äñ £¡ ",
-
-        SMALLBIRD = 
-        {
-            GENERIC = "ÊÇ ·Ç ³£ Ð¡ µÄ Äñ ¡£ ",
-            HUNGRY = "Ð¡ Äñ ¶ö ÁË ¡£ ",
-            STARVING = "Ð¡ Äñ »á ±» ¶ö ËÀ µÄ ¡£ ",
-        },
-
-        TEENBIRD = 
-        {
-            GENERIC = "¹þ £¡ Ò² ²» ÊÇ ÄÇ Ã´ ¸ß ¡£ ",
-            HUNGRY = "¶ö ÁË £¬ ³³ ÁË ¡£ ",
-            STARVING = "¶ö ÁË £¬ ³³ ÁË £¬ ¶ø ÇÒ Éú Æø ÁË £¡ ",
-        },
-
-        TALLBIRDEGG = "Àï Ãæ ÓÐ Äñ ¡£ ",
-        TALLBIRDEGG_COOKED = "Öó Êì µÄ Äñ ¡£ ×î ¼Ñ Ôç ²Í £¡ ",
-        TALLBIRDEGG_CRACKED = 
-        {
-            GENERIC = "Ð¡ Äñ Ïë ³ö À´ ¡£ ",
-            HOT = "Ð¡ Äñ ¾õ µÃ Ì« ÈÈ £¡ ",
-            COLD = "Äñ Ï² »¶ ±ù ¿é £¡ ",
-            SHORT = "Äñ ¿ì À´ ÁË ¡£ ",
-            LONG = "ÎÒ µÈ Äñ ¡£ ",
-        },
-
-        ANIMAL_TRACK = "¶¯ Îï È¥ ÄÇ ±ß ÁË ¡£ ",
-        DIRTPILE = "ÍÁ ÍÁ µÄ Äà ÍÁ ¡£ ",
-        KOALEFANT_SUMMER = "±Ç ×Ó Èâ £¡ ",
-        KOALEFANT_WINTER = "ºÃ Èí Å¶ £¬ ºÃ Ïñ Ñ¹ ±â Ëü £¡ ",
-        TRUNK_SUMMER = "ÊÇ Èí Èí µÄ ±Ç ×Ó ¡£ ",
-		TRUNK_WINTER = "ÊÇ Èí Èí ÓÐ Ã« µÄ ±Ç ×Ó ¡£ ",
-        TRUNK_COOKED = "ÊÇ Öó Êì µÄ ±Ç ×Ó ¡£ ",
-        TRUNKVEST_SUMMER = "ÊÇ ÎÂ Å¯ Ã« È× È× µÄ ±Ç ×Ó ¡£ ",
-		TRUNKVEST_WINTER = "Õâ ±Ç ×Ó Àï ºÜ ÎÂ Ü° £¡ ",
-        
-        DEERCLOPS = "Ëû ¿´ Æð À´ ±È ÎÒ Ç¿ £¡ ",
-        REDGEM = "Æ¯ ÁÁ µÄ Ê¯ Í· ¡£ ",
-        BLUEGEM = "Æ¯ ÁÁ µÄ Ê¯ Í· ¡£ ",
-        PURPLEGEM = "¸ü Æ¯ ÁÁ µÄ Ê¯ Í· ¡£ ",
-        HOUND = "à¸ £¡ ",
-        FIREHOUND = "ºð £¡ ",
-        ICEHOUND = "·Í £¡ ",
-        PENGUIN = "...",
-        DEERCLOPS_EYEBALL = "ÍÂ £¡ ¶î £¡ ",
-        BASALT = "±È ÎÒ Ç¿ £¡ ",
-        HOUNDMOUND = "ÊÇ ¹Ç Í· ÎÝ ¡£ ",
-        MERM = "ÊÇ Óã ÈË £¡ ",
-        MERMHOUSE = "ÄÇ ¼ä ·¿ ×Ó ²» ¹» Ç¿ ¡£ ",
-        KNIGHT = "Âé Âé µÄ Âí Âí £¡ ",
-        BISHOP = "ÀÏ µù £¡ ",
-
-        INSANITYROCK = {
-            INACTIVE = "¹þ £¬ ÎÒ ¿ç ¹ý ÁË Ð¡ ÕÏ °­ ¡£ ",
-            ACTIVE = "µ² ×Å ÎÒ ÁË ¡£ ",
-        },
-        SANITYROCK = {
-            INACTIVE = "¶ã ÔÚ µØ µ× ¡£ ",
-            ACTIVE = "ÃÀ Àö Å¶ £¡ ",
-        },
-        PIGTORCH = "»ð ÊÇ Ôõ Ã´ Á¶ ³É µÄ £¿ ",
-        WASPHIVE = "Ë¼ Ïë ÔÚ Ëµ ²» ¡£ ¼¡ Èâ ÔÚ Ëµ Òª £¡ ",
-        MARBLEPILLAR = "Ì« ÖØ ÁË £¬ ¾Ù ²» Æð ¡£ ",
-        MARBLETREE = "²» Òª ÊÔ Í¼ ´¸ »÷ Ê÷ Ä¾ ¡£ ",
-        MARBLE = "ÎÒ ¾Ù Æð À´ ÁË £¡ ",
-        SUNKBOAT = "»µ ÁË £¡ ",
-        MEATRACK = 
-        {
-            GENERIC = "ÎÒ »á ×ö Èâ ¸É ÁË £¡ ",
-            DRYING = "¸É Èâ Èâ ¸É £¡ ¸É £¡ ",
-            DONE = "ºÃ ³Ô µÄ Èâ Æ¤ ¸ï £¡ ",
-        },
-        SMALLMEAT_DRIED = "¿´ Æð À´ Ïñ Æ¤ ¸ï £¬ ³Ô Æð À´ Ïñ Èâ ¡£ ",
-        MEAT_DRIED = "¿´ Æð À´ Ïñ Æ¤ ¸ï £¬ ³Ô Æð À´ Ïñ Èâ ¡£ ",
-        MONSTERMEAT_DRIED = "¿´ Æð À´ Ïñ Æ¤ ¸ï £¬ ³Ô Æð À´ Ïñ Æ¤ ¸ï ¡£ ",
-        BANDAGE = "ÎÒ »á ÐÞ Àí ×Ô ¼º ÁË £¡ ",
-		HEALINGSALVE = "ÈÃ ÎÒ ¸Ð ¾õ »î ¹ý À´ ÁË £¡ ",
-		CANE = "ÎÒ ÄÜ ×ß £¬ »¹ ÄÜ »÷ ÖÐ ¶« Î÷ £¡ ",
-		LIGHTNING_ROD = 
-		{
-		    GENERIC = "ÊÇ Ìì ÖÐ µÄ Ïß £¡ ",
-		    CHARGED = "à¸ £¬ ÉÁ ÉÁ ÁÁ £¡ ",
-		},
-    },
-
-    EAT_FOOD = 
-    {
-        TALLBIRDEGG_CRACKED = "Õâ ¸ö µ° µ° Ì« ´à ¡£ ",
-    },
-
-    DESCRIBE_TOODARK = "°ï °ï ÎÒ £¡ ºÃ °µ £¡ ",
-    DESCRIBE_GENERIC = "Õâ ÊÇ Ê² Ã´ £¿ ",
-    ACTIONFAIL_GENERIC = "ÎÒ »¹ ²» ¹» Ç¿ £¬ ×ö ²» À´ ¡£ ",
-
-    BATTLECRY =
-    {
-        GENERIC = "ÎÒ »á ´ò Äã £¡ ",
-        PREY = "²È £¡ ²È £¡ ²È £¡ ",
-        PIG = "±§ Ç¸ ÁË £¬ Åó ÓÑ £¡ ",
-        SPIDER = "ËÀ °É £¬ Ð° ¶ñ µÄ ¿Ö ²À À¥ ³æ £¡ ",
-        SPIDER_WARRIOR = "ÎÒ ÒÀ È» ±È Äã Ç¿ °¡ £¬ ¿Ö ²À À¥ ³æ £¡ ",
-    },
-
-	ANNOUNCE_EAT =
-	{
-		GENERIC = "ºÃ ³Ô £¡ ",
-		SPOILED = "¶î £¬ ºÃ Ïñ ÔÚ ³Ô À¬ »ø Ò» Ñù £¡ ",	
-		STALE = "Î¶ µÀ Âú ºÃ Íæ µÄ ¡£ ",
-		PAINFUL = "àÞ ¡£ ¶Ç ×Ó Í´ ÁË ¡£ ",
-	},
-
-    COMBAT_QUIT =
-    {
-        GENERIC = "¹þ £¡ ÎÒ Ó® ÁË £¡ ",
-        PREY = "Äã ¼Ì Ðø ÅÜ °É £¡ ",
-        PIG = "ÎÒ Ô­ ÁÂ Äã £¬ Öí ÈË ¡£ ",
-        SPIDER = "Ëû Àë ¿ª ÎÒ ÁË ¡£ ",
-        SPIDER_WARRIOR = "Ëû Öª µÀ ÎÒ ±È ½Ï Ç¿ ¡£ ",
-    },
-
-
-	ANNOUNCE_COLD = "Å¶ £¡ ÓÐ µã Àä £¡ ",
-    ANNOUNCE_HUNGRY = "ÎÒ ÎÞ Ëù ²» ÄÜ µÄ Î¸ ÏÖ ÔÚ ¿Õ ¿Õ Èç Ò² £¡ ",
-    ANNOUNCE_TORCH_OUT = "Ôã ÁË £¡ ¹â Ïû Ê§ ÁË £¡ ",
-    ANNOUNCE_DUSK = "¿Ö ²À Ê± ¼ä ¿ì µ½ ÁË ¡£ ",
-
-    ANNOUNCE_CHARLIE_ATTACK = "°¡ £¡ Ëû ×¥ µ½ ÎÒ ÁË £¡ ",
-    ANNOUNCE_BOOMERANG = "àÞ £¡ ÄË Îª Ê² Ã´ Òª ÉË º¦ ÎÒ °¡ £¬ ÈÓ ÈÓ ¹÷ ×Ó £¿ ",
-    ANNOUNCE_CHARLIE = "³ö À´ £¡ ",
-	ANNOUNCE_HOUNDS = "ÎÒ Ìý µ½ Ð¡ ¹· £¡ ",
-
-
-    ANNOUNCE_PECKED = "ÎÒ ×ö ´í ÁË Ê² Ã´ £¬ Òª Õâ Ñù ³Í ·£ ÎÒ £¿ ",
-
-    ANNOUNCE_ENTER_LIGHT = "ÎÒ ÓÖ ¿´ µ½ ÁË £¡ ",
-    ANNOUNCE_ENTER_DARK = "ÎÒ ¿´ ²» ¼û £¡ ÎÒ ºÃ ÅÂ £¡ ",
-    ANNOUNCE_INV_FULL = "ÎÒ µÄ Íò ÄÜ µÄ ÊÖ ±Û Ì§ ²» ¶¯ ÁË ¡£ ",
-
-    ANNOUNCE_CRAFTING_FAIL = "ÎÒ Ðè Òª ÊÕ ¼¯ ¸ü ¶à ¶« Î÷ ²Å ÄÜ ×ö ³ö À´ ¡£ ",
-
-	ANNOUNCE_WORMHOLE = "ÈÃ ÎÒ ¸Ð ¾õ »î ¹ý À´ ÁË £¡ ",
-
-    ANNOUNCE_HUNT_LOST_TRAIL = "Õâ Àï Ã» ÓÐ ¶¯ Îï ¡£ ",
-    ANNOUNCE_HUNT_BEAST_NEARBY = "¶¯ Îï ÔÚ ¸½ ½ü £¡ ",
-}
-
-
-STRINGS.CHARACTERS.WENDY =
-{
-    DESCRIBE=
-    {
-		SPOILED_FOOD = "Ò» ÇÐ ½Ô »á »¯ Îª ·à ±ã £¬ ³Ù Ôç µÄ ÊÂ ¡£ ",
-		ICEBOX = "Èç ÎÒ ÐÄ ÄÇ °ã Àä ¡£ ",
-		
-		WALL_WOOD_ITEM = "À¦ Æð À´ µÄ Ä¾ ²Ä ¡£ ",
-		WALL_STONE_ITEM = "Õâ Ð© ÊÇ µÖ Óù ²» ÁË ÄÚ ÔÚ µÄ ¶ñ Ä§ ¡£ ",
-		WALL_HAY_ITEM = "Ëû ÃÇ µÄ ·À Óù Á¦ »¹ ÓÐ ´ý ¼ì ÌÖ ¡£ ",
-		WALL_WOOD = "ÎÒ ÏÖ ÔÚ ¿É ÒÔ ÑÓ ³Ù ÖÕ ½á µÄ À´ ÁÙ ÁË ¡£ ",
-		WALL_STONE = "ÎÒ Òª Èç ºÎ µÖ Óù ÄÚ Àï µÄ ¶« Î÷ £¿ ",
-		WALL_HAY = "Õâ Ö» ²» ¹ý ÊÇ Ò» ÖÖ ·À ÊØ µÄ ¹¹ Ë¼ ¡£ ",
-        HAMBAT = "ËÀ Íö »á Òý À´ ËÀ Íö ¡£ ",
-		
-		
-		ABIGAIL = "ÄÇ ÊÇ ÎÒ µÄ Ë« °û Ì¥ ½ã ÃÃ £¬ °¢ ±È ¸Ç ¶û ¡£ ",
-        MEAT = "»¹ ÊÇ ºÜ ¶à Ñª ¡£ ",
-        SMALLMEAT = "ÎÅ Æð À´ Ïñ Ð¡ Ð¡ µÄ ¿Ö ¾å ¡£ ",
-        COOKEDSMALLMEAT = "»ð Ñæ ÒÑ ½« Æä ¾» »¯ ¡£ ",
-        MONSTERMEAT = "Ð° ¶ñ µÃ Ê¤ ¡£ ",
-        COOKEDMEAT = "Ñª ±» Öó Ã» ÁË ¡£ ",
-        UMBRELLA = "ÔÆ ¿Þ Æü ÁË ¡£ ",
-        COOKEDMONSTERMEAT = "Öó Êì µÄ Ð° ¶ñ ÒÀ È» ÊÇ Ð° ¶ñ ¡£ ",
-        MAXWELL = "ÎÒ ¸Ð µ½ Ò» ÖÖ ºÍ Ëû µÄ Ææ ÌØ Ç× ÃÜ Áª Ïµ ¡£ ",
-        TENT = "Ë¯ Ãß Ö» ²» ¹ý ÊÇ ËÀ Íö µÄ Ç° ×à ¡£ ",
-        ADVENTURE_PORTAL = "Õâ ÊÇ ÄÄ Ò» ¹ú µÄ ¿Æ ¼¼ Ø¬ ÃÎ £¿ ",
-
-        BEEFALO =
-        {
-            GENERIC = "ÄÇ Ë« ÑÛ ¾¦ ±³ ºó ¾¿ ¾¹ Òþ ²Ø ×Å Ð© Ê² Ã´ ±ä Ì¬ Äî Í· ¡£ ",
-            FOLLOWER = "Ëû ×· Ëæ ÎÒ Ì¤ ÉÏ ×Ô ¼º »Ù Ãð µÄ Â· Í¾ ¡£ ",
-            NAKED = "Ëû µÄ ³à Âã ÏÖ ÔÚ ±» ¹« ¿ª Õ¹ ÀÀ ÁË ¡£ ",
-            SLEEPING = "Ëû Ò» ¶¨ ³£ ³£ ×ö ¶ñ ÃÎ ¡£ ",
-        },
-        BABYBEEFALO = "ºÃ ºÃ Ïí ÊÜ Äã µÄ Çà ´º Äê »ª °É ¡£ Äã ºÜ ¿ì ¾Í »á Ã÷ °× ÏÖ Êµ µÄ ²Ð ¿á ¡£ ",
-        BIRDCAGE = 
-        {
-			GENERIC = "ÎÒ ÃÇ µ± ÖÐ µÄ Ä³ Ð© ÈË ¿É ÒÔ ¿´ µ½ ×Ô ¼º µÄ ÀÎ Áý ¡£ ",
-			OCCUPIED = "Ëû ÏÖ ÔÚ ¸ü ¿ì ÀÖ ÁË ¡£ ",
-			SLEEPING = "Ëû ËÀ ÁË Âð £¿ ²» ÊÇ £¬ Ö» ÊÇ Ë¯ ×Å ÁË ¡£ ",
-        },
-
-        RED_CAP = "Ò» ¿Å Ìù ÐÄ µÄ Ä¢ ¹½ ¡£ ",
-        GREEN_CAP = "Õâ ¿Å Ä¢ ¹½ Æ½ ³£ µÃ ½Ì ÈË Ê§ Íû ¡£ ",
-        BLUE_CAP = "Ò» ¿Å ÓÃ À´ Î¬ ³Ö µ¥ µ÷ µÄ ¾ú ¹½ ¡£ ",
-        MANDRAKE =
-        {
-			GENERIC = "Éñ Ææ µÄ Âü µÂ À­ ²Ý °¡ ¡£ ÎÒ Ó¦ ¸Ã ÔÚ Íí ÉÏ À´ ²É ¼¯ £¬ ",
-			PICKED = "Ç° ½ø °É £¬ ÎÒ µÄ Êß ²Ë ¾ü ÍÅ £¡ ",
-			DEAD = "ÖÕ ÓÚ ·ü Öï ÁË £¬ ¿É Á¯ µÄ Âü µÂ À­ ²Ý £¡ ",
-        },
-
-
-        RED_MUSHROOM =
-        {
-            GENERIC = "Êª ¡£ ",
-            PICKED = "ÒÑ ²É ¼¯ ¡£ ",
-            INGROUND = "Èç ¹û ¿É ÒÔ µÄ »° £¬ ÎÒ Ò² Ïë ¶ã Æð À´ ¡£ ",
-        },
-        GREEN_MUSHROOM = 
-        {
-            GENERIC = "³± Êª ¡£ ",
-            PICKED = "ÒÑ ²É ¼¯ ¡£ ",
-            INGROUND = "Èç ¹û ¿É ÒÔ µÄ »° £¬ ÎÒ Ò² Ïë ¶ã Æð À´ ¡£ ",
-        },
-
-        BLUE_MUSHROOM = 
-        {
-            GENERIC = "·¢ Ã¹ ¡£ ",
-            PICKED = "ÒÑ ²É ¼¯ ¡£ ",
-            INGROUND = "Èç ¹û ¿É ÒÔ µÄ »° £¬ ÎÒ Ò² Ïë ¶ã Æð À´ ¡£ ",
-        },
-
-		KRAMPUS ="Hello, foul creature of the underworld.",
-		KRAMPUS_SACK = "ÎÅ Æð À´ Ïñ ¸á Ñò ¡£ ",
-        PINECONE = "Ð¡ Ð¡ µÄ Éú Ãü £¬ Çô À§ ÓÚ ´à Èõ µÄ ËÀ Íö ÖÐ ¡£ ",
-        ARMORWOOD = "ÎÒ »ò Õß ¿É ÒÔ Æ¾ ´Ë £¬ ÍÆ ÑÓ ÖÕ ½á µÄ À´ ÁÙ ¡£ ",
-		ARMOR_SANITY = "Ò» ¸ö ÈÃ ÈË ·¢ ·è µÄ Íê ÃÀ ·½ Ê½ ¡£ ",
-        SPEAR = "ÎÒ ³É Îª ÁË ÊÀ ½ç »Ù Ãð Õß ¡£ ",
-        STRAWHAT = "ÎÒ »á ±£ »¤ ºÃ ×Ô ¼º µÄ Í· ¡£ ",
-        BEEFALOHAT = "ÎÒ »á ±£ »¤ ºÃ ×Ô ¼º µÄ Í· ¡£ ",
-        TOPHAT = "ÎÒ »á ±£ »¤ ºÃ ×Ô ¼º µÄ Í· ¡£ ",
-        FLOWERHAT = "²» ¹ý ÎÒ ÔÚ °§ µ¿ ÖÐ ¡­ ¡­ ",        
-        BUSHHAT = "Å¶ £¬ Ïû Ê§ °É ¡£ ",
-        ROPE = "Õâ ¿É ÒÔ ÊÇ Àë ¿ª Õâ Àï µÄ ¼ò µ¥ ·½ ·¨ ¡£ ",
-        LOG = "Èç ¹û Ê÷ Ä¾ »á Ëµ »° £¬ Ëû ÃÇ ¿´ µ½ Õâ ¸ö Ò» ¶¨ Ò² »á ¼â ½Ð ¡£ ",
-        LIVINGLOG = "Ëü ½« ÓÀ ºã µØ ÎÞ Éù ¼â ½Ð ×Å ¡£ ",
-        TWIGS = "ÔÚ Êì Í¸ Ö® Ç° ´Ó µØ ÉÏ ²É ×ß ¡£ ",
-        CARROT = "Õâ ÊÇ Ò» ¸ù ºú ÂÜ ²· ¡£ ",
-        BERRIES = "Õâ Ð© ½¬ ¹û Âú ½´ µÄ ¡£ ",
-        CUTSTONE = "·½ ±ã ÓÃ À´ Á¢ Ä¹ Ö¾ Ãú ¡£ ",
-        SEEDS = "Éú Ãü £¬ »ò ÖÁ ÉÙ Ëü µÄ ³Ð Åµ ¡£ ",
-        SILK = "ºÃ »¬ £¬ ºÃ Ï¸ Äå ¡£ ",
-		SPIDERGLAND = "¼´ Ê¹ ÊÇ ÔÚ ËÀ Íö Ö® ÖÐ £¬ Õâ Ö» ÇÝ ÊÞ Ò² ´ø À´ Í´ ¿à ¡£ ",
-        BOARDS = "¶Ô Ê÷ Ä¾ ¶ø ÑÔ ¾Í ¸ü ¿Ö ²À ÁË ¡£ ",
-        RABBIT = {
-            GENERIC = "Ëû ÔÚ Âþ ÎÞ Ä¿ µÄ µØ Á÷ µ´ £¬ ¶Ô ×Ô ¼º µÄ Ãü Í¾ Ò» ÎÞ Ëù Öª ¡£ ",
-            HELD = "Ëû °² È« µØ Í¶ Èë ÎÒ µÄ »³ Àï ÁË ¡£ ",
-        },
-        ROCK = "¾Í Ëã Õâ ¸ö Ò² ²» ÊÇ ±Ø È» ¡£ ",
-        TRAP = "¼ò µ¥ µÄ ÔÓ ²Ý Ò² ±ä ³É ÁË Ð× Æ÷ ¡£ ",
-        PIGKING = "³Ë ÓÐ »ú »á ¾Í ºÃ ºÃ Ïí ÊÜ °É £¬ ±Ý ÏÂ ¡£ ",
-        WINTEROMETER = "ÎÒ Îª Ê² Ã´ ¾õ µÃ Ëü ÔÚ Á¿ ¶È ÎÒ µÄ Éú Ãü ¡£ ",
-        RAINOMETER = "",
-        RESURRECTIONSTATUE = "ÎÒ Ö» ÊÇ ÔÚ ÑÓ ³Ù ±Ø È» µÄ ³ö ÏÖ ¡£ ",
-        RESURRECTIONSTONE = "ÎÞ ÓÃ µÄ ·´ ¿¹ ¡£ ",
-        AXE = "Ò» ÖÖ ¸ø ¹¤ Òµ ºÍ Ä± É± µÄ ¹¤ ¾ß ¡£ ",
-        HAMMER = "à¸ £¬ ÎÒ ¿É ÄÜ »á Õ· Æ½ Õâ ¸ö ÊÀ ½ç ¡£ ",
-        PICKAXE = "ÈÃ ÎÒ ¿É ÒÔ ¹á ´© Õâ ¸ö µØ Çò ¡£ ",
-        SHOVEL = "ÎÒ »á ËÑ Ñ° ³ö Ò» Ð© Ê² Ã´ Ñù µÄ ¿Ö ²À ÃØ ÃÜ ÄØ £¿ ",
-		PITCHFORK = "ºÃ Ð° ¶ñ µÄ ¹¤ ¾ß £¡ ",
-        ROCKS = "Ò» Ð© Ð¡ Ê¯ Í· ¡£ ",
-        FLINT = "Ò» ¿é Ï¸ Ð¡ µÄ µ¶ ×´ Ê¯ Í· ¡£ ",
-        AMULET = "Ë­ »á ÊÇ Ëü µÄ Ô­ Ö÷ ÈË ÄØ £¿ ",
-        RAZOR = "Ö» ÊÇ ÓÃ À´ ¹Î ºú ×Ó µÄ ¶ø ÒÑ ¡£ ",
-		POND = "°Â ·Æ Àò æ« £¿ Äã ÔÚ ÏÂ Ãæ Âð £¿ ",
-		BIRDTRAP = "¹÷ ºÍ Ë¿ ³ñ ±ä ³É Ð× Æ÷ ÁË ¡£ ",
-		EARMUFFHAT = "Ëû ÃÇ ¿à ¿à µØ ±£ »¤ ÎÒ ²» ÊÜ ÑÏ º® ÇÖ Ï® ¡£ ",
-		WINTERHAT = "Ëü °ï ÎÒ ÒÖ ÖÆ Öð ²½ ±Æ ½ü µÄ º® Àä ¡£ ",
-        ARMORMARBLE = "±ð ÄÃ Ø° Ê× È¥ ´Á ¿ó Ê¯ ÁË ¡£ ",
-        ARMORGRASS = "ÎÒ ÑÓ ³¤ ÁË ²» ¿É ±Ü Ãâ ÐÔ ¡£ ",
-        BLUEPRINT = "²» ¹Ü Ë­ »­ µÄ £¬ Õæ ÊÇ Ì« ´ô °å ÁË ¡£ ",
-        MAXWELLHEAD = "Ëû ¿Ï ¶¨ ºÜ ¾ß Ï· ¾ç ÐÔ ¡£ ",
-
-
-        PIGHOUSE =
-        {
-            GENERIC = "ÖÁ ÉÙ Ëü ÃÇ Êæ ·þ ¡£ ",
-            FULL = "Ï£ Íû Ëû ¿ª ÐÄ °É ¡£ ",
-            LIGHTSOUT = "ÎÒ ÏÖ ÔÚ Íê È« ¹Â ¶À ÁË ¡£ ",
-        },
-
-        SPIDERDEN = "Ò» ³² °¹ Ôà ÏÂ Á÷ Ö® Îï ¡£ ",
-		SPIDERQUEEN = "ÂÛ ¼° Íò ¶ñ £¬ Ëý ¾Í ÊÇ Å® Íõ ¡£ ",
-		PIGGYBACK = "Ëû ÃÇ ËÀ ÁË ±È »î ×Å ¸ü ÓÐ ÓÃ ¡£ ",
-        BLOWDART_FIRE = "ÎÒ Òª ·ñ ÉÕ ÁË È« ÊÀ ½ç £¿ ",
-        SPIDERHAT = "ÊÇ Ê± ºò °¤ ¶ö Ö± µ½ ÓÀ ¶é Éî Ô¨ ÁË ¡£ ",
-        NIGHTMAREFUEL = "Ë¯ Ãß µÄ ÃÎ ´ø À´ ´Ë Îï ¡£ ",
-        NIGHTLIGHT = "¹î Òì µ« ÃÀ Àö ¡£ ",
-        NIGHTSWORD = "ÃÎ ×î ×î ÖÕ µ½ ´ï ÁË Ò» ¸ö ÖÕ ½á ¡£ Ò» ¸ö ¼â Èñ µÄ ÖÕ ¶Ë ¡£ ",
-		
-		NITRE = "Õâ Àï Âñ Ôá Õâ ÈË µÄ ÓÞ ´À ¡£ ",
-		GUNPOWDER = "ÎÒ ÐÐ ×ß ÓÚ Ò» Ìõ ºÚ °µ µÀ Â· ÉÏ ¡£ ",
-		BIRD_EGG = "Ì« ¶à ÆÚ Íû ÁË £¬ ÆÆ ÕÛ ºÅ ¡£ ",
-		BIRD_EGG_COOKED = "Ã» ÓÐ Ð¡ Äñ ¿É ÒÔ ´Ó ÖÐ ³ö À´ ¡£ ",
-		ROTTENEGG = "Ò» ÇÐ ÊÂ Îï µÄ ÐÐ ½ø ¹ì ¼£ ¡£ ",
-		
-		
-		WALRUSHAT = "ÏÂ Ãæ »á ²Ø ×Å Ò» Ð© Ê² Ã´ Ñù µÄ ÐË ·Ü åÚ Ïë ÄØ £¿ ",
-        WALRUS = "Ò» Î» ÀÏ ÈË £¬ Éú ÓÚ º£ Ñó ¡£ ",
-        WALRUS_CAMP = 
-        {
-            GENERIC = "¿Ö ÅÂ Õâ ²¢ ²» ÊÇ Ò» ¸ö ¿ª ÐÄ µÄ ¼Ò ¡£ ",
-            EMPTY = "²» ÔÚ Õâ Àï µÄ »° £¬ Ëû ÃÇ ÓÖ »á ÔÚ ÄÄ Àï ÄØ £¿ ",
-        },
-        LITTLE_WALRUS = "±© Á¦ Ñ­ »· ÔÙ Ðø ¡£ ",
-        WALRUS_TUSK = "ÎÒ ½« Ò§ ËÀ ¶û µÈ ¡£ ",
-		
-		
-        RABBITHOLE = "ÎÒ Ì« ´ó ÁË ÒÔ ÖÁ ÓÚ ÎÞ ·¨ Âä µ½ ÄÇ Àï È¥ ¡£ ",
-        FIREFLIES = {
-            GENERIC = "ºÚ °µ ÖÐ Î¢ Èõ µÄ ¹â Ã÷ ¡£ ",
-            HELD = "Î¢ Èõ µÄ ¹â Ã÷ £¬ ÖÍ Áô ÔÚ ÎÒ ¿Ú ´ü µÄ Íâ Ãæ ¡£ ",
-        },
-        CROW = {
-            GENERIC = "ÈÃ Äã µÄ ×ì Àë ¿ª ÎÒ µÄ ÐÄ !",
-            HELD = "Ëû ÊÇ ÎÒ µÄ ¡£ ",
-        },
-        GHOST = "Ëû ÒÑ ¾­ ´Ó ·Ø Ä¹ ÖÐ Æð À´ ÁË £¡ ",
-        CUTGRASS = "ÎÒ Ïë É± ËÀ Ò» Ð© Ð¡ ¶« Î÷ ¡£ ",
-        CUTREEDS = "ÎÒ Ï² »¶ °Ñ ¶« Î÷ ÇÐ Ëé ¡£ ",
-        PETALS = "ÎÒ ÒÑ ¾­ ´Ý »Ù ÁË Ò» Ð© ÃÀ ºÃ µÄ ¶« Î÷ ¡£ ",
-        PETALS_EVIL = "Ëû ÃÇ Í¿ Ä¨ ÁË ÎÒ Áé »ê µÄ ÑÕ É« ¡£ ",        
-        FLOWER = "Ëû ÃÇ ´Ï Ã÷ ,»î ÆÃ ¡£ ÌÖ Ñá ¹í ¡£ ",
-        FLOWER_EVIL = "ÖÁ ÉÙ Ëû ÃÇ ±È Æä Ëü µÄ »¨ Òª ºÃ ¡£ ",
-        GOLDNUGGET = "ÎÒ ½« °Ñ Ëü ´ø ÔÚ Éí ±ß ¡£ ",
-        RESEARCHLAB = "ÎÒ ½« Ñ§ Ï° ²» ¿É ¸æ ÈË µÄ ¶« Î÷ ¡£ ",
-        RESEARCHLAB2 = "ÎÒ ½« Ñ§ Ï° ²» ¿É ¸æ ÈË µÄ ¶« Î÷ ¡£ ",
-        RESEARCHLAB3 = "ÎÒ ÒÑ ¾­ Ñ§ µ½ ÁË ²» ¿É ¸æ ÈË µÄ ¶« Î÷ ¡£ ",
-        POOP = "Éú Ãü ¾Í ÊÇ ÏÊ Ñª Óë ´Ë ¡£ ",
-        TORCH = "Ò» ¸ö ¶Ô ¿¹ Ò¹ Íí µÄ Î¢ Ð¡ ±Ú ÀÝ ¡£ ",
-        BEEFALOWOOL = "ÔÚ Ä³ ´¦ £¬ Ò» Í· Æ¤ ¸¥ Â¦ Å£ ¹â ×Å Éí Ìå £¬ »ë Éí ·¢ Àä ¡£ ",
-        PANFLUTE = "Òô ÀÖ ÊÇ ÎÒ ¿Õ ·º Áé »ê µÄ ´° ¿Ú ¡£ ",
-        ONEMANBAND = "ÎÒ Ôø ¾­ Ïñ Õâ Ñù Óä ¿ì µØ Ê¹ ÓÃ Õâ Ð© ÀÖ Æ÷ ¡£ ",
-        BUGNET = "Ò» ¸ö Îª Ð¡ À¥ ³æ ¶ø Éè µÄ ¼à Óü ¡£ ",
-		HOMESIGN = "×ö ÁË Ò» ¸ö ±ê ¼Ç £¬ È» ¶ø Ö» ÊÇ ¹ý ÑÛ ÔÆ ÑÌ ¡£ ",
-        TRAP_TEETH = "Ò» ¸ö À´ ×Ô µØ ÏÂ µÄ ²» Ì¹ ÂÊ µÄ ¾ª Ï² ¡£ ",
-        TRAP_TEETH_MAXWELL = "µ± ÎÒ ×î ²» Ï£ Íû ·¢ Éú µÄ ÊÂ Çé ·¢ Éú Ê± £¬ ¾Í È¥ ËÀ °É ¡£ ",
-        GEARS = "Ò» ¸ö »ú Ðµ ¶ñ Ä§ µÄ ÄÚ ²¿ ¡£ ",
-        STATUEHARP = "Ò² Ðí Õâ Ð© µñ Ïñ »á Åã ×Å ÎÒ ¡£ ",
-        STATUEMAXWELL = "Ëû °Ñ ÎÒ ´ø µ½ Õâ ¶ù À´ ¡£ ",
-        SKELETON = "ÎÒ ÏÛ Ä½ Ëû µÄ ÌÓ ±Ü ¡£ ",
-        PIGHEAD = "É± Öí ¡£ ÈÃ Ëû Á÷ Ñª ¡£ ",
-        MERMHEAD = "¸ù ±¾ ¾Í ²» ¸ß ¹ó ",
-
-        BEE = {
-            GENERIC = "ÎÒ Ïë ±Ü ¿ª ÄÇ ´Ì Í· ¡£ ",
-            HELD = "±ð ¶¯ £¬ Ð¡ ¼Ò »ï ¡£ ",
-        },
-        KILLERBEE = 
-        {
-            GENERIC = "Ò» Ö» º® Àä ÖÐ µÄ ÃÛ ·ä £¬ ÐÄ ÒÑ ËÀ È¥ ¡£ ",
-            HELD = "±ð ¶¯ £¬ Ð¡ ¼Ò »ï ¡£ ",
-        },
-		MOSQUITO =
-		{
-			GENERIC = "ºÃ ºÃ ¶Ô ´ý Éú »î £¬ Õâ Ñù ²Å ÄÜ »î ÏÂ È¥ ¡£ ",
-			HELD = "ÎÒ ¿É ÒÔ ¸Ð µ½ Ëü ±» Íµ µÄ ÎÂ Å¯ ¡£ ",
-		},
-        BEEHIVE = "Ò» ¸ö ¸¡ Ôü ºÍ »¨ ·Û µÄ ¿É Á¯ ·ä ÎÑ ¡£ ",
-        BEEBOX =
-        {
-            READY = "Ëû ÃÇ ÐÁ ÇÚ ÀÍ ¶¯ ÊÇ ¸» ÓÐ ³É ¹û µÄ !",
-            GENERIC = "Ëû ÃÇ Ó¦ µ± ÀÍ ¶¯ £¬ Õâ Ñù ÎÒ ¾Í ¿É ÒÔ Íµ ÁË ¡£ ",
-        },
-        HONEY = "Ò» ¸ö Ìð ÃÛ µÄ ,µ« ¶Ì ÔÝ µÄ ÖÎ ÁÆ ¡£ ",
-        HONEYCOMB = "·ä ÎÑ ¿é £¬ ·Ö É¢ µÄ ¡£ ",
-        STINGER = "Èñ Àû ¶ø ÖÂ Ãü ¡£ ",
-        BUTTERFLY = 
-        {
-            GENERIC = "Æ¯ ÁÁ ,µ« ÊÇ ¶Ì ÔÝ ¡£ ",
-            HELD = "ÎÒ ½« Ëü µÄ Éú Ãü ÎÕ ÔÚ ÎÒ µÄ ÊÖ ÖÐ ¡£ ",
-        },
-        BUTTERFLYWINGS = "Ã» ÓÐ Æä Ëû ÈË ¿É ÒÔ ºû µû °ã °¿ Ïè ÁË ¡£ ",
-        BUTTER = "ÎÒ Ã» Ô¤ ÁÏ µ½ Õâ Ð© ¡£ ",
-		TENTACLESPOTS = "Õâ Ð© ²» Ëµ Îª Ãî ¡£ ",
-
-        SPIDER = {
-            SLEEPING = "Ð° ¶ñ Õý ÔÚ Ë¯ ¾õ ¡£ ",
-            DEAD = "×Ü ÓÐ Ò» Ìì ÎÒ ÃÇ »á ÔÙ Ïà Óö ¡£ ",
-            GENERIC = "Ò» ¸ö Ò¹ ¼ä Éú Îï £¡ ",
-        },
-
-        SPIDER_WARRIOR = {
-            GENERIC = "Ò» ¸ö Ò¹ ¼ä Õ½ Ê¿ £¡ ",
-            SLEEPING = "ÎÒ ±Ø Ðë Ð¡ ÐÄ ¡£ ",
-            DEAD = "°¦ ,ÓÂ ¸Ò µÄ Õ½ Ê¿ ¡£ ",
-        },
-
-        BERRYBUSH = {
-            GENERIC = "Ò» ¸ö µã ÐÄ ,Ò² Ðí °É £¿ ",
-            PICKED = "ÎÒ ±Ø Ðë µÈ ´ý ¡£ ",
-            BARREN = "Õâ ºÜ Æ¶ ñ¤ ¡£ ",
-        },
-
-        SAPLING = {
-            GENERIC = "Ëü Õý ÔÚ ÊÔ Í¼ ³¤ ´ó ¡£ ",
-            PICKED = "Ò² Ðí ÏÂ ´Î °É £¬ Äê Çá ÈË ¡£ ",
-            BURNING = "Î¯ ÍÐ ¸ø ÁË »ð Ñæ ¡£ ",
-        },
-
-        GRASS = {
-            GENERIC = "Õâ Ö» ÊÇ Ò» ´Ô ²Ý ¡£ ",
-            PICKED = "ÎÒ ÒÑ ¾­ É± ÁË Ëü ¡£ ",
-            BARREN = "Ëü Ðè Òª ÅÅ ±ã ¡£ ",
-            BURNING = "ÎÅ Æð À´ ÓÐ µã ¹Ö ¡£ ",
-        },
-
-        REEDS = {
-            GENERIC = "Õâ Ö» ²» ¹ý ÊÇ Ò» ´é Â« Î­ ¡£ ",
-            PICKED = "ÎÒ ÒÑ ¾­ ½« Ëü ÃÇ ¼ñ Æð ÁË ¡£ ",
-            BURNING = "ºÜ ¿ì ½« ³É Îª »Ò ½ý ¡£ ",
-        },
-
-        PLANT_NORMAL = {
-            GENERIC = "Ò» ÖÖ ¿É ÒÔ Ê³ ÓÃ µÄ Ö² Îï ¡£ ",
-            READY = "ÒÑ ¾­ ×ö ºÃ ÊÕ »ñ µÄ ×¼ ±¸ ÁË ¡£ ",
-            GROWING = "¼Ì Ðø ³É ³¤ ¡£ ÎÒ »á µÈ ¡£ ",
-        },
-
-        MOUND = {
-            GENERIC ="Some day, I will join you.",
-            DUG = "´ó µØ ÒÑ ¾­ ÍÂ ÁË ×Ô ¼º µÄ ÃØ ÃÜ ¡£ ",
-        },
-
-        PIGMAN =
-        {
-            GENERIC = "Ëû ÃÇ ÊÇ Èç ´Ë Àä µ­ ¡£ ",
-            FOLLOWER = "ÎÒ ÈÔ È» ¾õ µÃ ¹Â ¶À ¡£ ",
-            DEAD = "Ëû ×î ºÃ ²» Òª Õâ Ñù £¬ ¾Í ÊÇ ÏÖ ÔÚ ¡£ ",
-            WEREPIG = "Ò» ¸ö Ò¹ ¼ä Éú Îï £¡ ",
-            GUARD = "°Â Íþ ¶û Èç ºÎ ¡£ ",
-        },
-
-        SPIDEREGGSACK = "Ò» ¸ö Ð¡ °ü £¬ ³ä Âú ÁË ËÀ Íö ºÍ »Ù Ãð ¡£ ",
-
-		TELEPORTATO_RING = "Ëü Ã» ÓÐ ·æ Àû µÄ ±ß Ôµ ¡£ ",
-		TELEPORTATO_BOX = "Õâ °ü º¬ Ò» ¸ö ÖÁ ¹Ø ÖØ Òª µÄ »ð »¨ ¡£ ",
-		TELEPORTATO_CRANK = "Õâ ¿´ Æð À´ ºÜ ¸´ ÔÓ ¡£ ",
-		TELEPORTATO_POTATO = "Õæ ÊÇ Ò» ¸ö ¿É ÅÂ µÄ ´´ Ôì !",
-		TELEPORTATO_BASE = {
-			GENERIC = "²» »á ÓÐ ºÃ ½á ¹û µÄ ¡£ ",
-			PARTIAL = "Ò» °ë ½¨ ³É £¬ Ò» °ë »Ù Ãð £¿ ",
-			ACTIVE = "ÎÒ Ïà ÐÅ ÏÂ Ò» ¸ö Áì Óò ½« ¸ü ¼Ó ¿É ÅÂ !",
-		},
-
-        BEARDHAIR = "ÄÇ Õæ ÊÇ °¹ Ôà ¡£ ",
-
-        EVERGREEN = {
-            GENERIC = "×Ô È» ÊÇ Èç ´Ë µÄ ÎÞ ÁÄ ¡£ ",
-            CHOPPED = "Ò» ÇÐ ¶¼ »á ËÀ È¥ ¡£ ",
-            BURNING = "Ëü Õý ÔÚ ÐÜ ÐÜ µØ È¼ ÉÕ ¡£ ",
-            BURNT = "µ¯ ¾¡ Á¸ ¾ø £¬ Æ£ ¾ë ²» ¿° ¡£ "
-        },
-
-        EVERGREEN_SPARSE = {
-            GENERIC = "Éú Ãü ÖÜ ÆÚ Òª Íê ½á ÁË ¡£ ",
-            CHOPPED = "Ò» ÇÐ ¶¼ »á ËÀ È¥ ¡£ ",
-            BURNING = "Ëü Õý ÔÚ ÐÜ ÐÜ µØ È¼ ÉÕ ¡£ ",
-            BURNT = "µ¯ ¾¡ Á¸ ¾ø £¬ Æ£ ¾ë ²» ¿° ¡£ "
-        },
-
-        FIREPIT = {
-            GENERIC = "½ñ Íí ÎÒ ÄÜ »î ÏÂ È¥ £¡ ",
-            OUT = "Õâ ²» ÊÇ Ò» ¸ö ºÃ ¼£ Ïó ¡£ ",
-            EMBERS = "ºÚ °µ ÆÈ ÔÚ Ã¼ ½Þ ¡£ ",
-            LOW = "Òõ °µ ¿ª Ê¼ ÇÖ ÈÅ ¡£ ",
-            NORMAL = "Õâ ÊÇ Ò» ÍÅ »ð ¡£ ",
-            HIGH = "Ò» ¸± µØ Óü µÄ ¾° Ïó £¡ ",
-        },
-		HEATROCK = {
-			COLD = "ºÍ Æä Ëû ÑÒ Ê¯ Ò» Ñù £¬ º® Àä £¬ ºÁ ÎÞ Éú Ãü ¡£ ",
-			GENERIC = "×ø ÔÚ ÄÇ Àï £¬ Ö» ÊÇ Õ¼ ÓÃ ¿Õ ¼ä ¡£ ",
-			WARM = "¼´ Ê¹ ÏÖ ÔÚ ÎÂ Å¯ Õý ÔÚ Ë¥ ÍË ...",
-			HOT = "ÄÇ Ð© È¼ ÉÕ µÃ Ô½ Ã÷ ÁÁ £¬ È¼ ÉÕ µÃ ¾Í Ô½ ¿ì ¡£ ",
-		},
-
-        CAMPFIRE = {
-            GENERIC = "½ñ Íí ÎÒ ÄÜ »î ÏÂ È¥ £¡ ",
-            OUT = "Õâ ²» ÊÇ Ò» ¸ö ºÃ ¼£ Ïó ¡£ ",
-            EMBERS = "ºÚ °µ ÆÈ ÔÚ Ã¼ ½Þ ¡£ ",
-            LOW = "Òõ °µ ¿ª Ê¼ ÇÖ ÈÅ ¡£ ",
-            NORMAL = "Õâ ÊÇ Ò» ÍÅ »ð ¡£ ",
-            HIGH = "Ò» ¸± µØ Óü µÄ ¾° Ïó £¡ ",
-        },
-
-        FARMPLOT = {
-            GENERIC = "ÎÒ ÏÖ ÔÚ Òª ²¥ ÖÖ Ê² Ã´ ÖÖ ×Ó £¿ ",
-            GROWING = "¾í ×´ Ò¶ ×Ó ÆÆ ÍÁ ¶ø ³ö ¡£ ",
-            NEEDSFERTILIZER = "´ó µØ º® Àä ¶ø ËÀ ¼Å ¡£ ",
-        },
-
-        TREASURECHEST = "Æä ÖÐ °ü º¬ ÁË ÎÒ µÄ Àû Òæ ¡£ ",
-        BEDROLL_STRAW = "Ë¯ Ãß ²» ¹ý ÊÇ ÔÝ Ê± µÄ ËÀ Íö ¡£ ",
-        CHARCOAL = "º® Àä ¶ø ËÀ ¼Å £¬ ¾Í Ïñ ÎÒ µÄ ÐÄ ¡£ ",
-        MARSH_PLANT = "Ò» Öê Ö² Îï ¡£ ",
-        MARSH_BUSH = "¹à Ä¾ ×Ü ÊÇ ÉË ÈË ¡£ ",
-        PAPYRUS = "¼Ç Â¼ ×Å ÎÒ µÄ Í´ ¿à ¡£ ",
-        MARSH_TREE = {
-            GENERIC = "Ò» ¿Ã Ö» Öª µÀ Í´ ¿à µÄ Ê÷ ¡£ ",
-            CHOPPED = "Æä Í» ´Ì Î´ ÊÜ ±£ »¤ ¡£ ",
-            BURNING = "Ëü ÔÚ È¼ ÉÕ ",
-            BURNT = "Ïñ ÎÒ µÄ ÐÄ Ò» Ñù ºÚ ¡£ ",
-        },
-
-        FROG = {
-            SLEEPING = "Ëû Ë¯ ×Å ÁË ¡£ ",
-            DEAD = "Éú Ãü ´à Èõ ¶ø ¶Ì ÔÝ ¡£ ",
-            GENERIC = "Ëû Ð¡ ¶ø ¶à ²¡ ¡£ ",
-        },
-
-		WORMHOLE = {
-			GENERIC = "Éú »î ²¢ ²» ×Ü ÓÐ Òâ Òå ¡£ ",
-			OPEN = "ÎÞ ÂÛ Ëü Èç ºÎ Ïû ºÄ £¬ ÓÀ Ô¶ ²» »á Âú ×ã ¡£ ",
-		},
-
-        CHESTER = "Ò» ¸ö ¿Õ ·º µÄ Ä£ ºý Çò Ìå ¡£ ",
-        CHESTER_EYEBONE = {
-            GENERIC = "Õý ÔÚ ²é ¿´ ÎÒ µÄ Áé »ê ¡£ ",
-            WAITING = "²¢ ²» ÊÇ Èç ´Ë ÊÈ Ë¯ ...µÈ µÈ ¡£ ",
-        },
-
-        TALLBIRD = "Õõ ÍÑ ÁË Ìì ¿Õ µÄ ¼Ï Ëø ¡£ ",
-        SMALLBIRD = 
-        {
-            GENERIC = "Äã ºÃ £¬ Ð¡ ¼Ò »ï ¡£ ",
-            HUNGRY = "Äã ÄÚ ÐÄ ¿Õ Ðé £¿ ",
-            STARVING = "Ò» ¸ö ºÚ ¶´ ,ÔÚ Àï Ãæ µÄ ÖÖ ×Ó ÓÀ Ô¶ ¶¼ »Ø ²» À´ ÁË ¡£ ",
-        },
-
-        TEENBIRD = 
-        {
-            GENERIC = "Äã Ò² »á Àë ¿ª ÎÒ Âð ?",
-            HUNGRY = "ÎÒ ÃÇ ¶¼ ÊÔ Í¼ Ìî ²¹ Õâ Ò» ¿Õ °× ¡£ ",
-            STARVING = "Äã µÄ Õæ Êµ ±¾ ÐÔ ÏÔ Â¶ ³ö À´ ÁË !",
-        },
-
-        TALLBIRDEGG = "³ä Âú Ç± Á¦ ¡£ ",
-        TALLBIRDEGG_COOKED = "Ëù ÓÐ µÄ Åµ ÑÔ £¬ ¶¼ ±» ¶á ×ß ÁË ¡£ ¶Ô ÏÌ Èâ À´ Ëµ ËÆ ºõ ²» »µ ¡£ ",
-        TALLBIRDEGG_CRACKED = 
-        {
-            GENERIC = "Ò» ¸ö Î¢ Ð¡ ´à Èõ µÄ ¶« Î÷ £¬ Õõ Ôú ×Å ³¯ ¹â Ã÷ ¶ø È¥ ¡£ ",
-            HOT = "Ëü ²» ÄÜ ÈÌ ÊÜ ¿á ÈÈ ¡£ ",
-            COLD = "±» ºÚ °µ Ëù Àä ¶³ ¡£ ",
-            SHORT = "ºÜ ¿ì ¡£ ",
-            LONG = "Ò» ¸ö Éú Ãü µÄ ¿ª Ê¼ £¬ ¾Í ÊÇ Ò» ¸ö Éú Ãü µÄ ½á Êø ¡£ ",
-        },
-
-        ANIMAL_TRACK = "Ò° ÊÞ µÄ ¼£ Ïó ¡£ ",
-        DIRTPILE = "Å¶ £¬ ¿´ ¡£ ¸ü ¶à µÄ ÎÛ ¹¸ ¡£ ",
-        KOALEFANT_SUMMER = "Ò» ¸ö ¹Â ¶À µÄ Ò° ÊÞ ¡£ ",
-        KOALEFANT_WINTER = "¶Ô ¿¹ ²Ð ¿á µÄ Ôª ËØ ¡£ ",
-        TRUNK_SUMMER = "ÎÒ Äþ Ô¸ Òª ¶ú ¶ä ¡£ ",
-		TRUNK_WINTER = "Óë Ëü Î¨ Ò» µÄ Åó ÓÑ ·Ö ¸ô ¡£ ",
-        TRUNK_COOKED = "Ã² ËÆ ÏÖ ÔÚ ¸ü ¼Ó Ôã ¸â ÁË ¡£ ",
-		TRUNKVEST_SUMMER = "Ìù Éí ´© ×Å ÎÒ µÄ Æ¤ ·ô ¡£ ",
-        TRUNKVEST_WINTER = "Ëü ¿É ÒÔ ÎÂ Å¯ ÎÒ µÄ Éí Ìå ,µ« ÎÒ µÄ ¾« Éñ Ôõ Ã´ °ì £¿ ",
-        
-        DEERCLOPS = "ËÀ Íö µÄ »¯ Éí !",
-        REDGEM = "ºì µÃ ¾Í Ïñ ÎÒ ÐÄ ÖÐ Ö® Ñª Ò» Ñù ¡£ ",
-        BLUEGEM = "Ïñ À¶ É« ...ßÀ ¡­ Ò» Ö» ±¯ ÉË µÄ Äñ £¿ ",
-        PURPLEGEM = "×Ï É« Ïñ Ò» ¸ö ¡­ ×Ï É« µÄ ¶« Î÷ ¡£ ",
-        HOUND = "ÍË ºó ,Ð° ¶ñ µÄ ×¦ ÑÀ £¡ ",
-        FIREHOUND = "Ëû µÄ ÐÔ ¸ñ ºÜ ±© Ôê ¡£ ",
-        ICEHOUND = "Ëû ÓÐ Ò» ¿Å º® Àä £¬ ËÀ Íö µÄ ÐÄ ¡£ ",
-        PENGUIN = "...",
-        DEERCLOPS_EYEBALL = "Ëü ¿Ï ¶¨ ¿´ µ½ ÁË Ê² Ã´ ¿Ö ²À µÄ ¶« Î÷ ¡£ ",
-        BASALT = "ÊÔ Í¼ ´ò ÆÆ Ëü ½« ÊÇ ºÁ ÎÞ Òâ Òå µÄ ¡£ ",
-        HOUNDMOUND = "ËÍ ×î ¶ñ ÁÓ µÄ Éú Îï »Ø ¼Ò ¡£ ",
-        MERM = "¿É ÅÂ µÄ ÕÓ Ôó £¡ ",
-        MERMHOUSE = "Ê± ¼ä ÒÑ ¾­ ½« Æä ËÄ ·Ö Îå ÁÑ ¡£ ",
-        KNIGHT = "Ò» Í· º® Àä £¬ Ã» ÓÐ Áé »ê µÄ Âí ¡£ ",
-        BISHOP = "Ëû Æí Çó Ê² Ã´ ?",
-
-        INSANITYROCK = {
-            INACTIVE = "Ëü º® Àä ¶ø ºÚ °µ ¡£ ",
-            ACTIVE = "Ëü ÔÚ ºô »½ ÎÒ µÄ Ãû ×Ö ¡£ ",
-        },
-        SANITYROCK = {
-            INACTIVE = "¼´ Ê¹ Õâ ¸ö ·½ ¼â ±® ¶¼ ÒÑ ¾­ Àë ¿ª ÎÒ ÁË ¡£ ",
-            ACTIVE = "Ëü ÔÚ ºô »½ ÎÒ ¡£ ",
-        },
-        PIGTORCH = "Ëü ÔÚ ºÚ °µ ÖÐ Ï÷ ¼õ ¡£ ",
-        WASPHIVE = "Ëû ÃÇ ¶ã ÔÚ Ëû ÃÇ µÄ ³ð ºÞ ±¤ ÀÝ ÖÐ ¡£ ",
-        MARBLEPILLAR = "¼´ Ê¹ ÊÇ ÑÒ Ê¯ Ò² ÎÞ ·¨ µÖ µ² ²» ¶Ï µÄ Ë¥ ±ä ¡£ ",
-        MARBLETREE = "Õâ ¿Å º® Àä µÄ Ê÷ ÖÐ Ã» ÓÐ Éú Ãü µÄ »î Á¦ ¡£ ",
-        MARBLE = "¹â »¬ ¶ø ºÁ ÎÞ Éú Ãü ¡£ ",
-        SUNKBOAT = "Ò» ¸ö ²Ð ¿á µÄ ¹î ¼Æ !",
-        MEATRACK = 
-        {
-            GENERIC = "ÎÒ ¿É ÒÔ ÔÚ Õâ Àï ¹Ò Ò» Ð© Èâ ¡£ ",
-            DRYING = "Ëü ÔÚ ¸É Ôï µÄ ·ç ÖÐ Ò¡ Ò· ¡£ ",
-            DONE = " ¸É »¯ ½á Êø ¡£ ",
-        },
-        SMALLMEAT_DRIED = "Èâ ±ä µÃ ¸É É¬ ¶ø ÃÀ Î¶ ¡£ ",
-        MEAT_DRIED = "Èâ ±ä µÃ ¸É É¬ ¶ø ÃÀ Î¶ ¡£ ",
-        MONSTERMEAT_DRIED = "Èâ ±ä µÃ ¸É É¬ ¶ø ¹Ö Î¶ ¡£ ",
-        BANDAGE = "ÎÒ Ö» »á ÔÙ ´Î ÒÔ ÊÜ ÉË ¶ø ½á Êø ¡£ ",
-		HEALINGSALVE = "Éú »î ´ø À´ Í´ ¿à ,Í´ ¿à ´ø À´ µÄ Éú »î ¡£ ",
-		CANE = "Òª ÔÙ ¿ì µã £¬ ÎÒ ÄÄ ¶¼ È¥ ²» ÁË ¡£ ",
-		LIGHTNING_ROD = 
-		{
-		    GENERIC = "¼¯ ÖÐ Ïú »Ù ¡£ ",
-		    CHARGED = "¼´ Ê¹ Õâ ÖÖ Á¦ Á¿ Ò² »á ºÄ ¾¡ ¡£ ",
-		},
-    },
-
-    EAT_FOOD = 
-    {
-        TALLBIRDEGG_CRACKED = "ÎÒ Ãâ ÓÚ Éú »î µÄ ÕÛ Ä¥ ¡£ ",
-    },
-
-    DESCRIBE_TOODARK = "ºÚ °µ !Ì« ºÚ °µ ÁË £¡ ",
-    DESCRIBE_GENERIC = "ÄÑ ÒÔ Æô ³Ý ¡£ ",
-    ACTIONFAIL_GENERIC = "ÎÒ ²» ÄÜ ×ö ºÃ ÈÎ ºÎ ÊÂ Çé ¡£ ",
-
-    BATTLECRY =
-    {
-        GENERIC = "ËÀ Íö »á ÕÒ µ½ Äã !",
-        PREY = "ÊÜ ÄÑ °É £¬ Èä ³æ !",
-        PIG = "ÈÃ ËÀ Íö Óµ ±§ Äã !",
-        SPIDER = "ÎÒ ½« ËÍ Äã µ½ Áí Ò» ±ß !",
-        SPIDER_WARRIOR = "ÎÒ ½« ÊÇ Äã µÄ ÖÕ ½á £¡ ",
-    },
-
-    COMBAT_QUIT =
-    {
-        GENERIC = "Äã Òª »î ÏÂ È¥ ¡£ ¾Í ÊÇ ÏÖ ÔÚ ¡£ ",
-    },
-
-	ANNOUNCE_COLD = "ÎÒ Àä µ½ ¹Ç Í· Àï ÁË ¡£ ",
-    ANNOUNCE_HUNGRY = "ÎÒ ³ä Âú ÁË ¿Õ Ðé ¡£ ",
-    ANNOUNCE_TORCH_OUT = "ºÚ °µ »Ø ¹é ÁË !",
-    ANNOUNCE_DUSK = "ºÚ °µ ºÜ ¿ì ¾Í »á µ½ Õâ ¶ù ¡£ ÎÒ ±Ø Ðë ×¼ ±¸ ºÃ ¡£ ",
-
-    ANNOUNCE_CHARLIE_ATTACK = "ÎÒ Ôâ µ½ ¹¥ »÷ £¡ ",
-    ANNOUNCE_CHARLIE = "¶ñ Ä§ !ÏÖ Éí °É £¡ ",
-    ANNOUNCE_BOOMERANG = "àÞ !ÄÇ ÊÇ Òò ¹û ±¨ Ó¦ ¡£ ",
-	ANNOUNCE_HOUNDS = "ÁÔ ¹· ÔÚ ·Í ½Ð ¡£ ",
-
-    
-
-    ANNOUNCE_PECKED = "Äã ÔÚ ¿¼ Ñé ÎÒ µÄ ÄÍ ÐÄ ¡£ ",
-
-    ANNOUNCE_ENTER_LIGHT = "ÄÇ Àï ÓÐ ¹â £¡ ",
-    ANNOUNCE_ENTER_DARK = "ºÚ °µ ÍÌ ÊÉ ÁË ÎÒ ¡£ ",
-    ANNOUNCE_INV_FULL = "ÎÒ ´ø ²» ÁË ¸ü ¶à µÄ ÁË ¡£ ",
-
-    ANNOUNCE_CRAFTING_FAIL = "ÎÒ È± ÉÙ ±Ø Òª µÄ ²Ä ÁÏ ¡£ ",
-    
-	ANNOUNCE_EAT =
-	{
-		GENERIC = "ºÃ ³Ô £¡ ",
-		SPOILED = "Ê³ Îï Ò² ÔÚ Æä ÊÙ Ãü µÄ ±ß Ôµ ¡£ ",	
-		STALE = "±ä ÖÊ ÁË Âð £¿ ",
-		PAINFUL = "ÒÑ ¾­ ²» ÄÜ ³Ô ÁË ¡£ ",
-	},
-
-	ANNOUNCE_WORMHOLE = "ÎÒ ÔÙ ´Î Èë Õâ ¸ö ÊÀ ½ç ¡£ ",
-
-    ANNOUNCE_HUNT_LOST_TRAIL = "Õâ Ìõ Â· ²» »á ÓÐ Ê² Ã´ ½á ¹û ¡£ ",
-    ANNOUNCE_HUNT_BEAST_NEARBY = "ÎÒ ¸Ð ¾õ ÄÇ ÊÞ ¾Í ÔÚ ¸½ ½ü ¡£ ",
-}
-
 
 STRINGS.PIGNAMES=
 {
-	--emporers
+	--emperors
 	"Augustus",
 	"Tiberius",
 	"Caligula",
@@ -4499,41 +1154,92 @@ STRINGS.UI =
 	
 	CHARACTERSELECT=
 	{
-		PLAY = "¿ª Ê¼ ",
-		BACK = "·µ »Ø ",
+		APPLY = "Apply",
+		CANCEL = "Cancel",
 	},
 	
 	CRAFTING=
 	{	
-		PLACE = "·Å ÖÃ ",
-		BUILD = "½¨ Ôì ",
-		PROTOTYPE = "Ô­ ÐÍ ",
-		BUILD = "½¨ Ôì ",
-		RESEARCH = "ÑÐ ¾¿ ",
-		NEEDSCIENCEMACHINE = "Ê¹ ÓÃ Ò» ¸ö ¿Æ Ñ§ »ú ½¨ Á¢ Ò» ¸ö Ô­ ÐÍ !",
-		NEEDALCHEMYENGINE = "Ê¹ ÓÃ Ò» ¸ö Á¶ ½ð Êõ Òý Çæ ¹¹ ½¨ Ò» ¸ö Ô­ ÐÍ !",
-        NEEDSHADOWMANIPULATOR = "Ê¹ ÓÃ Ò» ¸ö Ó° ×Ó »ú Ðµ ½¨ Á¢ Ò» ¸ö Ô­ ÐÍ !",
-		CANTRESEARCH = "ÓÐ Ð© ÊÂ Çé ÊÇ ²» ¿É Öª µÄ ",
+		PLACE = "Place",
+		BUILD = "Build",
+		PROTOTYPE = "Prototype",
+		BUILD = "Build",
+		RESEARCH = "Research",
+		NEEDSCIENCEMACHINE = "Use a science machine to build a prototype!",
+		NEEDALCHEMYENGINE = "Use an alchemy engine to build a prototype!",
+        NEEDSHADOWMANIPULATOR = "Use a shadow manipulator to build a prototype!",
+		CANTRESEARCH = "Some things are unknowable",
 	},
 	
 	DEATHSCREEN=
 	{
-		MAINMENU = "Ö÷ ²Ë µ¥ ",
-		RETRY = "ÖØ ÊÔ ",
-		CONTINUE = "¼Ì Ðø ",
-		YOUAREDEAD = "Äã ËÀ ÁË £¡ ",
-		YOUESCAPED = "Äã ÌÓ ÍÑ ÁË £¡ ",
-		DAYS = "ÈÕ ",
-		DAY = "ÈÕ ",
-		SURVIVEDDAYS = "Äã ÐÒ ´æ ÁË ÏÂ À´ ",
-		NEXTREWARD = "ÏÂ Ò» ¸ö ½± Àø ¡­ ",
-		LEVEL = "¹Ø ¿¨ ",
+		MAINMENU = "Main Menu",
+		RETRY = "Retry",
+		CONTINUE = "Continue",
+		YOUAREDEAD = "YOU ARE DEAD!",
+		YOUESCAPED = "You escaped!",
+		DAYS = "days",
+		DAY = "day",
+		SURVIVEDDAYS = "You survived",
+		NEXTREWARD = "Next Reward...",
+		LEVEL = "Level ",
+		ATCAP = "At Cap!",
 	},
 	
+    CREDITS=
+    {
+        TITLE = "CREDITS",
+        NAMES=
+        {
+            "Kevin Forbes",
+            "Ju-Lian Kwan",
+            "Jamie Cheng",
+            "Alia McCutcheon",
+            "Tatham Johnson",
+            "Graham Jans",
+            "Brook Miles",
+            "Bryce Doig",
+            "Charles Bostik",
+            "Wade Lindley",
+            "Joe Wreggelsworth",
+            "Corey Rollins",
+            "Matthew Marteinsson",
+            "Jason Garner",
+            "Vince de Vera",
+            "Jeff Agala",
+            "Alex Savin",
+            "Sloth Trakhtenberg",
+            "Kelly Graham",
+            "Allan Cortez",
+            "Aaron Bouthillier",
+        },
+
+        ALTGAMES = 
+        {
+            TITLE = "Linux and OSX ports by Alternative Games",
+            NAMES = 
+            {
+                "Turo Lamminen",
+                "Tuomas Narvainen", 
+                "Tapio Honkonen",
+            },
+        },
+
+        THANKYOU = "Thank you!",
+        EXTRA_THANKS = "Ophir Lupu\nKo Kim\nColt McAnlis",
+        EXTRA_THANKS_2 = "Pieter Wycoff\nMatthew Nickerson\nAnna Sweet",
+        THANKS = "And a very special thanks to all our supporters who braved the challenge of the \"Early-Access Beta\".\nYou are too numerous to name - our amazing moderators, the wonderful artists, musicians, live streamers,\nto all who made a Let's Play video and everybody who chimed in to let us know exactly what you think.\nYour encouragement, passion and support has been amazing.\n\nDon't Starve is truly a better game because of all of you.",
+
+        FMOD = "FMOD Sound System,\nCopyright Firelight Technologies",
+
+        FACEBOOK = "The Facebooks",
+        TWITTER = "The Twitters",
+    },
 	
 	WORLDGEN=
 	{
-		TITLE = "Õý ÔÚ Éú ³É ÊÀ ½ç ",
+		TITLE = "GENERATING WORLD",
+		CAVETITLE = "CARVING OUT CAVE",
 		VERBS = 
 		{
 			"Wrangling",
@@ -4568,13 +1274,13 @@ STRINGS.UI =
 		INVALIDEMAIL= "We aren't psychic! If you don't enter your email address, we won't be able to tell you about new stuff!",
 		INVALIDDATETITLE= "Invalid Date", 
 		INVALIDDATE= "We need to know your birthdate, otherwise ratings people will get mad at us for emailing you content that might not be appropriate for all ages.",
-		OK = "È· ¶¨ ",
-		SUBSCRIBE = "¶© ¹º ",
-		CANCEL = "È¡ Ïû ",
-		TITLE = "Ëæ Ê± Ìæ ÎÒ ¸ü ÐÂ ¡¶ ¼¢ »Ä ¡· µÄ ÐÂ ÎÅ ",
-		EMAIL = "µç ×Ó ÓÊ ¼þ £º ",
-		BIRTHDAY = "Éú ÈÕ £º ",
-		BIRTHDAYREASON = "ÎÒ ÃÇ Ðè Òª Öª µÀ Äã µÄ ³ö Éú Äê ÔÂ ÈÕ £¬ ÒÔ ±ã Îª Äã ·¢ ËÍ ºÍ Äã Äê Áä ÊÊ µ± µÄ ¸ü ÐÂ £¡ \r\n±ð µ£ ÐÄ £¬ ÎÒ ÃÇ ²» »á ·¢ À¬ »ø ÓÊ ¼þ »ò Õß ³ö ÊÛ Äã µÄ ÐÅ Ï¢ ¡£ ",
+		OK = "Ok",
+		SUBSCRIBE = "Subscribe",
+		CANCEL = "Cancel",
+		TITLE = "Keep me updated with Don't Starve news",
+		EMAIL = "Email:",
+		BIRTHDAY = "Birthdate:",
+		BIRTHDAYREASON = "We need to know your birthdate in order to send you age appropriate updates!\r\nDon't worry, we won't spam you or sell your information.",
 		JAN="Jan",
 		FEB="Feb",
 		MAR="Mar",
@@ -4587,287 +1293,397 @@ STRINGS.UI =
 		OCT="Oct",
 		NOV="Nov",
 		DEC="Dec",
-		MONTH = "ÔÂ ",
-		DAY = "ÈÕ ",
-		YEAR = "Äê ",
+		MONTH = "M",
+		DAY = "D",
+		YEAR = "YYYY",
 	},
 	
 	MAINSCREEN =
 	{
-		NOTIFY = "Í¨ Öª ÎÒ £¡ ",
-		FORUM = "ÂÛ Ì³ ",
-		BUYNOW = "ÏÖ ÔÚ ¹º Âò ",
-		GIFT = "·¢ ËÍ Àñ Îï ",
-        MODTITLE = "ÒÑ °² ×° Ä£ ×é £¡ ",
-        MODDETAIL = "ÒÑ °² ×° µÄ Ä£ ×é £º ",
-        MODDETAIL2 = "KleiÎÞ ·¨ °ï Öú Äú ½â ¾ö ÈÎ ºÎ Ä£ ×é µ¼ ÖÂ µÄ ÎÊ Ìâ ¡£ Çë ½÷ É÷ Ê¹ ÓÃ £¡ ",
-        MODFAILTITLE = "¾¯ ¸æ £¡ ",
-        MODFAILDETAIL = "Èç ÏÂ Ä£ ×é µ¼ ÖÂ ´í Îó £º ",
-        MODFAILDETAIL2 = "Äã ¿É ÒÔ ÔÚ ¸Ã Ä¿ Â¼ É¾ ³ý Ä£ ×é £º /mod/modsettings.lua",
-        MODQUIT = "Ã» ÃÅ £¡ ",
-        MODFORUMS = "Ä£ ×é ÂÛ Ì³ ",
-        SCRIPTERRORQUIT = "ÍË ³ö ÓÎ Ï· ",
-        SCRIPTERRORMODWARNING = "¸Ã ´í Îó ¿É ÄÜ ÓÉ Ò» ¸ö ÒÑ °² ×° µÄ Ä£ ×é µ¼ ÖÂ £¡ \nÄã ÒÑ °² ×° Èç ÏÂ Ä£ ×é £º \n",
+		NOTIFY = "Notify Me!",
+		FORUM = "Forum",
+		BUYNOW = "Buy Now",
+		GIFT = "Send Gift",
+        MODTITLE = "Mods Installed!",
+        MODDETAIL = "Installed mods:",
+        MODDETAIL2 = "Klei is not able to help you should issues arise while using mods. Use with caution!",
+        MODFAILTITLE = "WARNING!",
+        MODFAILDETAIL = "The following mod(s) have caused a failure:",
+        MODFAILDETAIL2 = "You can disable the mod(s) in /mod/modsettings.lua",
+        MODQUIT = "No way!",
+        MODFORUMS = "Mod Forums",
+        SCRIPTERRORQUIT = "Exit Game",
+        SCRIPTERRORMODWARNING = "This error may have occurred due to a mod you have installed!\nYou have the following mods installed:\n",
         TESTING = "This is the testing branch!", 
-		TESTINGDETAIL = "Äã ¿É ÒÔ »á Óö µ½ bug»ò Ëð »µ µÄ ÄÚ ÈÝ £¬ Ò² ¿É ÄÜ ÔÚ Éý ¼¶ ºó ¶ª Ê§ ´æ µµ ¡£ ",
-		TESTINGNO = "²» ÁË £¬ Ð» Ð» £¡ ",
-		TESTINGYES = "ÎÒ ¶® ÁË ",
-		CONTINUE = "¼Ì Ðø ",
-		DELETE = "É¾ ³ý ",
-		RESTART = "ÖØ ÐÂ ¿ª Ê¼ ",
-		NEWADVENTURE_WARN = "ÐÂ Ã° ÏÕ Ïµ Í³ Õý ÔÚ »ý ¼« ¿ª ·¢ ÖÐ £¬ ×÷ ²â ÊÔ ÓÃ ¡£ ¿É ÄÜ ÓÐ bug¡£ ",
-		NEWADVENTURE = "Ã° ÏÕ (ÊÔ Ñé )",
-		NEWFREEPLAY = "É³ ºÐ ",
-		NEWFREEPLAYCUSTOM = "É³ ºÐ £¨ ×Ô ¶¨ Òå £© ",
-		NEWGAMESHORT = "¿Õ ",
-		UNKNOWNGAME = "Î´ Öª ",
-		NEWGAMETYPE = "Äã Ï² »¶ Íæ ÄÄ Àà ÓÎ Ï· £¿ ",
-		SLOTACTION = "Äã Ï² »¶ ×ö Ê² Ã´ £¿ ",
-		ADVENTURE = "Ã° ÏÕ ",
-		FREEPLAY = "É³ ºÐ ",
-		SLOT = "ÓÎ Ï· ²Û ",
+		TESTINGDETAIL = "You may encounter bugs or broken features, and you may lose your save game when we update. Please report all problems in the forum.",
+		TESTINGNO = "No thank you!",
+		TESTINGYES = "I understand",
+		CONTINUE = "Continue",
+		DELETE = "Delete",
+		RESTART = "Restart",
+		NEWADVENTURE_WARN = "The new adventure system is currently in active development and is provided for testing purposes. It will probably contain bugs.",
+		NEWADVENTURE = "Adventure (TEST)",
+		NEWFREEPLAY = "Sandbox",
+		NEWFREEPLAYCUSTOM = "Sandbox (Custom)",
+		NEWGAMESHORT = "Empty",
+		UNKNOWNGAME = "Unknown",
+		NEWGAMETYPE = "What kind of game would you like to play?",
+		SLOTACTION = "What would you like to do?",
+		ADVENTURE = "Adventure",
+		FREEPLAY = "Sandbox",
+		SLOT = "Game Slot",
 		SLOT_1 = "1",
 		SLOT_2 = "2",
 		SLOT_3 = "3",
 		SLOT_4 = "4",
-		IMPORT = "µ¼ Èë ",
-		CANCEL = "È¡ Ïû ",
-		SETTINGS = "Éè ÖÃ ",
-		OPTIONS = "Ñ¡ Ïî ",
-		PLAYDEMO = "Íæ Demo",
-		ENTERPRODUCTKEY = "Êä Èë ²ú Æ· ÃÜ Ô¿ ",
-		ENTERKEY = "Êä Èë ÐÂ ÃÜ Ô¿ ",
-		RESETPROFILE = "ÖØ ÖÃ µµ °¸ £¡ ",
-		UNLOCKEVERYTHING = "½â Ëø Ëù ÓÐ ",
-		SURE = "Äã È· ¶¨ Âð £¿ ",
-		YES = "ÊÇ ",
-		NO = "·ñ ",
-		CHEATS = "×÷ ±× ",
-		PLAY = "¿ª Íæ £¡ ",
-		RATE = "Îª ÓÎ Ï· ÆÀ ·Ö ",
-		ACCOUNTINFO = "ÕË ºÅ ÐÅ Ï¢ ",
-		VISITFORUM = "·Ã ÎÊ ÂÛ Ì³ ",
-		MOREGAMES = "¸ü ¶à ÓÎ Ï· ",
-		CHOOSEDIR = "±ð ÈÃ ÓÎ Ï· Êý ¾Ý ÄÖ ¼¢ »Ä ",
-		IMPORTSUCCESS = "³É ¹¦ ",
-		IMPORTSUCCESSDESC = "Êý ¾Ý ÒÑ µ¼ Èë ¡£ ",
-		OK = "È· ¶¨ ",
-		IMPORTFAIL = "ÔØ Èë Ê§ °Ü ",
+		IMPORT = "Import",
+		CANCEL = "Cancel",
+		SETTINGS = "Settings",
+		OPTIONS = "Options",
+		PLAYDEMO = "Play Demo",
+		ENTERPRODUCTKEY = "Enter Key",
+		ENTERKEY = "Enter New Key",
+		RESETPROFILE = "Reset profile!",
+		UNLOCKEVERYTHING = "Unlock Everything",
+		SURE = "Are you sure?",
+		YES = "Yes",
+		NO = "No",
+		CHEATS = "Cheats",
+		PLAY = "Play!",
+		RATE = "Rate This Game",
+		ACCOUNTINFO = "Account Info",
+		VISITFORUM = "Visit Forum",
+		MOREGAMES = "More Games",
+		CHOOSEDIR = "Don't Starve Game Data",
+		IMPORTSUCCESS = "Success",
+		IMPORTSUCCESSDESC = "Data was imported successfully.",
+		OK = "OK",
+		IMPORTFAIL = "Failed to load",
 		GREETING = "Hi ",
-		NEWWORLD = "´´ Ôì ÐÂ ÊÀ ½ç £¡ ",
-		NEWWORLDDESC = "´Ë ¾Ù ½« Çå ³ý µ± Ç° ÊÀ ½ç Óë ÈÎ ºÎ Ïà Ó¦ ´æ µµ ¡£ ¼Ì Ðø Âð £¿ ",
-		RESETGAMEDESC = "´Ë ¾Ù ½« ÖØ ÖÃ µ± Ç° ÊÀ ½ç ¡£ ¼Ì Ðø Âð £¿ ",
-		NEWGAMEDESC = "´Ë ¾Ù ½« Çå ³ý µ± Ç° ´æ µµ ¡£ ¼Ì Ðø Âð £¿ ",
-		ADVGAMEDESC = "Ìá Ê¾ £º ¸Ã Ä£ Ê½ ÈÓ ÔÚ ¿ª ·¢ ÖÐ ¡£ \n\n½ö ÏÞ ÓÐ ¾­ Ñé µÄ Íæ ¼Ò £¡ \n\nÄã ¾ö ¶¨ Òª °Ñ Õ½ ¶· ´ø µ½ Âó ¿Ë Ë¹ Î¤ ÄÇ Àï È¥ ¡£ \nÄã ÄÜ ÔÚ Ëû Îª Äã ×¼ ±¸ µÄ ¼è ¿à »· ¾³ ÏÂ ´æ »î £¬ ²¢ ÔÚ Ëû ×Ô ¼º µÄ ÓÎ Ï· Àï »÷ °Ü Ëû Âð £¿ ",
-		NEWGAME = "¿ª Ê¼ ÐÂ ÓÎ Ï· £¡ ",
-		NEWGO = "³ö ·¢ £¡ ",
-		ASKQUIT = "Äã È· ¶¨ Òª ÍË ³ö Âð £¿ ",
-		ASKQUITDESC = "Íþ ¶û Ñ· »á Ïë Äã µÄ £¡ ",
+		NEWWORLD = "Create a new world!",
+		NEWWORLDDESC = "This will erase your current world and any saved games in it. Continue?",
+		RESETGAMEDESC = "This will reset your current world. Continue?",
+		NEWGAMEDESC = "This will erase your current save. Continue?",
+		ADVGAMEDESC = "NOTE: This mode is still under development.\n\nFor experienced players only!\n\nYou've decided to bring the fight to Maxwell.\nCan you survive the increasingly harsh conditions he's created for you, and beat him at his own game?",
+		NEWGAME = "Start a new game!",
+		NEWGO = "Lets Go!",
+		ASKQUIT = "Do you really want to quit?",
+		ASKQUITDESC = "Wilson will miss you!",
 
-		FRESHBUILD = "¸Õ ¸Õ ½¨ Ôì £¡ ",
-		LASTBUILDDAYS = "ÉÏ ´Î ½¨ Ôì ÊÇ ÔÚ %dÌì Ç° ",
-		NEXTBUILDIMMINENT = "ÏÂ ´Î ½¨ Ôì ¼´ ½« µ½ À´ £¡ ",
-		NEXTUPDATEDAYS = "ÏÂ ´Î ¸ü ÐÂ £º %dÌì ",
+		FRESHBUILD = "Fresh Build!",
+		LASTBUILDDAYS = "Last build %d days ago",
+		NEXTBUILDIMMINENT = "Next build imminent!",
+		NEXTUPDATEDAYS = "Next Update: %d days",
 		
-		MOTDTITLE = "Ã¿ ÈÕ Ïû Ï¢ ",
-		MOTD = "²â ÊÔ °æ ¡£ ÔÚ ÂÛ Ì³ ·´ Ó¦ ÎÊ Ìâ ¡£ ",
-		EXIT = "ÍË ³ö ",
-		LOGOUT = "×¢ Ïú ",
+		MOTDTITLE = "Don't Starve News",
+		MOTD = "Treat your ears to some dapper melodies with the Don't Starve soundtrack!",
+		MOTDBUTTON = "More Info",
+		EXIT = "Exit",
+        LOGOUT = "Log Out",
+        CREDITS = "Credits",
 	},
 	
 	HUD=
 	{
-		MAP = "µØ Í¼ \n(tab)",
-		BUYNOW = "ÏÖ ÔÚ ¹º Âò ",
-		READYTITLE = "×¼ ±¸ ¿ª Ê¼ £¡ ",
-		READY = "Äã ÄÜ ´æ »î ¶à ¾Ã £¿ ",
-		START = "¿ª Ê¼ ",
-		CLOCKDAY = "ÈÕ ",
-		SAVING = "±£ ´æ ÖÐ ¡­ ¡­ ",
-		WORLD = "ÊÀ ½ç ",
-		BUILD = "½¨ Ôì ",
-		HERE = "Õâ Àï ",
-		STALE = "³Â ¾É ",
-		SPOILED = "±ä ÖÊ ",
+		MAP = "Show Map\n(tab)",
+		BUYNOW = "Buy Now",
+		READYTITLE = "Ready to play!",
+		READY = "How long will you survive?",
+		START = "Start",
+		CLOCKDAY = "Day",
+		SAVING = "SAVING...",
+		WORLD = "World",
+		BUILD = "Build",
+		HERE = "here",
+		STALE = "Stale",
+		SPOILED = "Spoiled",
+		ROTLEFT = "Rotate Left\n(Q)",
+		ROTRIGHT = "Rotate Right\n(E)",
+		PAUSE = "Pause\n(ESC)",
+        CAVEWARNING = "CAVE AREA PRE-ALPHA IS INCOMPLETE",
 	},
 	
 	OPTIONS=
 	{
-		ACCEPTTITLE = "½Ó ÊÜ ¸ü ¸Ä ",
-		ACCEPTBODY = "Äã Ïë ½Ó ÊÜ Õâ Ð© ¸Ä ¶¯ Âð £¿ ",
-		ACCEPT = "½Ó ÊÜ ",
-		CANCEL = "È¡ Ïû ",
-		REVERT = "È¡ Ïû ¸Ä ¶¯ ",
-		APPLY = "Ó¦ ÓÃ ",
-		CLOSE = "¹Ø ±Õ ",
-		BLOOM = "·º ¹â £º ",
-		DISTORTION = "Ê§ Õæ £º ",
-		FULLSCREEN = "È« ÆÁ £º ",
-		DISPLAY = "ÏÔ Ê¾ £º ",
-		RESOLUTION = "·Ö ±æ ÂÊ £º ",
-		REFRESHRATE = "Ë¢ ÐÂ ÂÊ £º ",
-		ENABLED = "¿ª Æô ",
-		DISABLED = "¹Ø ±Õ ",
+		ACCEPTTITLE = "Accept Changes",
+		ACCEPTBODY = "Do you wish to accept these changes?",
+		ACCEPT = "Accept",
+		CANCEL = "Cancel",
+		REVERT = "Revert Changes",
+		APPLY = "Apply",
+		CLOSE = "Close",
+		BLOOM = "Bloom:",
+		DISTORTION = "Distortion:",
+		FULLSCREEN = "Fullscreen:",
+		DISPLAY = "Display:",
+		RESOLUTION = "Resolution:",
+		REFRESHRATE = "Refresh Rate:",
+		ENABLED = "Enabled",
+		DISABLED = "Disabled",
 	},
 	
 	PAUSEMENU =
 	{
-		TITLE = "ÔÝ Í£ ",
-		SAVEANDQUITTITLE = "±£ ´æ ²¢ ·µ »Ø Ö÷ ²Ë µ¥ £¿ ",
-		SAVEANDQUITBODY = "±ð µ£ ÐÄ ¡£ ÎÒ ÃÇ »á µÈ Äã ¡£ ",
-		SAVEANDQUITYES = "ÎÒ Ëµ ÁË ÍË ³ö £¡ ",
-		SAVEANDQUITNO = "µ± ÎÒ Ã» Ëµ ¡­ ¡­ ",
-		QUITTITLE = "·µ »Ø Ö÷ ²Ë µ¥ £¿ ",
-		QUITBODY = "Õâ Ã´ ¿ì ¾Í ¹ö Çò ÁË £¿ ",
-		QUITYES = "ÎÒ Ëµ ÁË ÍË ³ö £¡ ",
-		QUITNO = "µ± ÎÒ Ã» Ëµ ¡­ ¡­ ",
-		OPTIONS = "Ñ¡ Ïî ",
-        SAVEANDQUIT = "±£ ´æ ²¢ ÍË ³ö ",
-        QUIT = "ÍË ³ö ",
-		CONTINUE = "¼Ì Ðø ",
+		TITLE = "Paused",
+		SAVEANDQUITTITLE = "Save and return to main menu?",
+		SAVEANDQUITBODY = "Don't worry - we'll be waiting for you.",
+		SAVEANDQUITYES = "I said quit!",
+		SAVEANDQUITNO = "Never mind...",
+		QUITTITLE = "Return to main menu?",
+		QUITBODY = "Leaving so soon?",
+		QUITYES = "I said quit!",
+		QUITNO = "Never mind...",
+		OPTIONS = "Options",
+        SAVEANDQUIT = "Save and Quit",
+        QUIT = "Quit",
+		CONTINUE = "Continue",
 	},
 	
-	
-    NEWGAMESCREEN =
-    {
-        TITLE = "ÐÂ ÓÎ Ï· ",
-        CANCEL = "È¡ Ïû ",
-        CHANGECHARACTER = "¸Ä ±ä ÈË Îï ",
-        CUSTOMIZE = "×Ô ¶¨ Òå ÊÀ ½ç ",
-        START = "¿ª Ê¼ ",
-    },
-
-	SLOTDETAILSSCREEN =
+	CUSTOMIZATIONSCREEN =
 	{
-		TITLE = "²Û ",
-		CANCEL = "È¡ Ïû ",
-		CONTINUE = "¼Ì Ðø ",
-        PLAY = "Íæ ",
-		RESTART = "ÖØ ÐÂ ¿ª Ê¼ ",
-		DELETE = "É¾ ³ý ",
-        CHANGECHARACTER = "¸Ä ±ä ÈË Îï ",
-	},
-	LOADGAMESCREEN=
-	{
-		CANCEL = "È¡ Ïû ",
-		TITLE = "Ñ¡ Ôñ ²Û ",
-		NEWGAME = "ÐÂ ÓÎ Ï· ",
-		ADVENTURE = "Ã° ÏÕ ",
-		SURVIVAL = "Éú ´æ ",
-		RESTART = "ÖØ ÐÂ ¿ª Ê¼ ",
+		APPLY = "Apply",
+		CANCEL = "Cancel",
+		PRESETTITLE = "Preset",
+		DEFAULT_PRESET_DESC = "Lots of pigs and spiders and a tallbird nest.",
+		LOSECHANGESTITLE = "Lose Changes?",
+		LOSECHANGESBODY = "Apply a new preset and lose custom changes?",
+		YES = "Yes",
+		NO = "No",
+		CUSTOMDESC = "Your world, your rules!",
+		CUSTOM = "(Custom)",
 		
-	},
-
-    STARTADVENTURE=
-    {
-        TITLE="Adventure Mode",
-        BODY="Do you want to take the fight to Maxwell?",
-        YES="Yes",
-        NO="No",
-    },
-
-	SANDBOXMENU =
-	{
-		TITLE = "ÊÀ ½ç ×Ô ¶¨ Òå ",
-		TITLEDETAIL = "",
-		
-		EASY = "²» ¼ò µ¥ ",
-		MEDIUM = "Ïà µ± ÄÑ ",
-		HARD = "¹ý ¶È Õ÷ Ë° ",
-
-		GENERATE = "È· ¶¨ ",
-		MAINMENU = "È¡ Ïû ",
-		
-		CHOICEMONSTERS = "¹Ö Îï ",
-		CHOICEANIMALS = "¶¯ Îï ",
-		CHOICERESOURCES = "×Ê Ô´ ",
-		CHOICEFOOD = 	"Food",
-		CHOICECOOKED = "×¼ ±¸ ºÃ µÄ Ê³ Îï ",		
-		CHOICEAMTDAY = "Ã¿ ÈÕ Êý Á¿ ",	
-		CHOICEMISC = "ÊÀ ½ç ",	
-				
-		DAY = "ÈÕ ",
-		NIGHT = "Ò¹ ",
-		DUSK = "Äº ",
-		
-		SLIDESHORT = "¶Ì ",
-		SLIDELONG = "³¤ ",
-		SLIDEALL = "½ö ÏÞ ",
-		
-		SLIDEDEFAULT = "Ä¬ ÈÏ ",
-		
-		SLIDENEVER = "ÎÞ ",
-		SLIDERARE = "½Ï ÉÙ ",
-		SLIDEOFTEN = "½Ï ¶à ",
-		SLIDEALWAYS = "ºÜ ¶à ",
-		
-		SLIDEVERYSLOW = "ºÜ Âý ",
-		SLIDESLOW = "Âý ",
-		SLIDEFAST = "¿ì ",
-		SLIDEVERYFAST = "ºÜ ¿ì ",
-		
-		SUMMER = "ÏÄ ",
-		WINTER = "¶¬ ",
-		BOTH = "Á½ Õß ",
-		
-		SLIDESMALL = "Ä¬ ÈÏ ",
-		SLIDESMEDIUM = "ÖÐ ",
-		SLIDESLARGE = "´ó ",
-		SLIDESHUGE = "¾Þ ´ó ",
-		
-		SLIDEVERYSIMPLE = "ºÜ ¼ò µ¥ ",
-		SLIDESIMPLE = "¼ò µ¥ ",
-		SLIDECOMPLEX = "¸´ ÔÓ ",
-		SLIDEVERYCOMPLEX = "ºÜ ¸´ ÔÓ ",
-
-		BRANCHINGMOST = "×î ¶à ",
-		BRANCHINGANY = "Ä¬ ÈÏ ",
-		BRANCHINGLEAST = "×î ÉÙ ",
-		BRANCHINGNEVER = "´Ó ²» ",
-
-		LOOPNEVER = "´Ó ²» ",
-		LOOPRANDOM = "Ä¬ ÈÏ ",
-		LOOPALWAYS = "×Ü ÊÇ ",
-		
-		USEPRESET = "Ô¤ Éè ",
 		PRESETLEVELS = {
 				"Default", 
-				"Default Medium", 
-				"Default Large", 	
+				"Default Plus",             -- Bootstrap the start
+				"Let's Go Caving!", 	
 				"Soggy", 					-- Too much water - swamp etc
 				"Eternal Summer", 			-- Less water, no swamp etc
 				"Winter you'll do next?", 	-- Winter focus
 				"Island you an axe", 		-- Island hopping
 				"Crazy Eddie",   			-- Focus on sanity play
 				"Nighttime Antics",  		-- Focus on nighttime play
-				},
-		ADVENTURELEVELS = {
-				"A Cold Reception", 
-				"The King of Winter", 
-				"The Game is Afoot", 
-				"Bargaining", 
-				"This Means War!", 
-				"Checkmate"
-				},
-		NONE = "ÎÞ ",
-		NONEAVAILABLE = "ÎÞ ¿É ÓÃ Ïî ",
-		MODIFYTASKS = "µ÷ Õû ÈÎ Îñ ",
-		
-		YES ="Yes",
-		NO = "·ñ ",
+				},		
+                
+		PRESETLEVELDESC = {
+			"The standard Don't Starve experience",
+			"A quicker start in a harsher world.",
+			"There's a world going on underground.",
+			"The standard Don't Starve Experience 4",
+			"The standard Don't Starve Experience 5",
+			"The standard Don't Starve Experience 6",
+			"The standard Don't Starve Experience 7",
+			"The standard Don't Starve Experience 8",
+			"The standard Don't Starve Experience 9",
+			"The standard Don't Starve Experience 10",
+		}
+				
 	},
 	
-	QUITTINGTITLE = "ÍË ³ö £¡ ",
-	QUITTING = "Õý ÔÚ Îª ¿Æ Ñ§ ´ò °ü ¡£ ",
+    NEWGAMESCREEN =
+    {
+        TITLE = "New Game",
+        CANCEL = "Cancel",
+        CHANGECHARACTER = "Change Character",
+        CUSTOMIZE = "Customize World",
+        START = "Start",
+    },
+
+	SLOTDETAILSSCREEN =
+	{
+		TITLE = "Slot",
+		CANCEL = "Cancel",
+		CONTINUE = "Continue",
+        PLAY = "Play",
+		RESTART = "Restart",
+		DELETE = "Delete",
+        CHANGECHARACTER = "Change Character",
+	},
+	LOADGAMESCREEN=
+	{
+		CANCEL = "Cancel",
+		TITLE = "Choose A Slot",
+		NEWGAME = "New Game",
+		ADVENTURE = "Adventure",
+		SURVIVAL = "Survival",
+        CAVE = "Caves",
+		RESTART = "Restart",		
+        CAVE = "Cave level",
+	},
+
+    UNLOCKMAXWELL=
+    {
+        TITLE = "Take pity?",
+        BODY1 = "The key looks like it will fit. You can free ",
+        BODY2 =", but I doubt %s captors will be pleased...",
+        YES = "Yes",
+        NO = "No",
+    },
+
+    EXITCAVE=
+    {
+        TITLE="Leave the cave?",
+        BODY="Do you want to return to the surface?",
+        YES="Yes",
+        NO="No",
+    },
+    
+    ENTERCAVE=
+    {
+        TITLE="Caves are a Work-in-Progress",
+        BODY="We are still working on the caves. More content and tuning will be added in future updates. Do you want to continue?",
+        YES="Yes",
+        NO="No",
+    },
+    
+    STARTADVENTURE=
+    {
+        TITLE="Doorway to Adventure!",
+        BODY="You're about to step into a long, arduous journey to find Maxwell. You will need to survive 5 worlds, each randomly generated to present a new challenge.\n\nShould you die, you will start back at this portal, but lose all your progress on the journey.\n\nAre you ready?",
+        YES="Yes",
+        NO="No",
+    },
+
+    ENDGAME=
+    {
+        TITLE="The End.",
+        BODY1 = "And so the cycle continues. Will ",
+        BODY2 = " ever escape?\n Perhaps %s too will tire of this wretched place, and use %s new powers to tempt the unsuspecting.\n\nThe mysterious beings that control this place still lurk in the shadows, and new challenges will soon be revealed.\n\nUntil then,\n- The Don't Starve Team -",
+        YES= "For Science!",
+    },
+
+    GENDERSTRINGS =
+    {
+        MALE = 
+        {
+            ONE = "he",
+            TWO = "his",
+        },
+        FEMALE = 
+        {
+            ONE = "she",
+            TWO = "her",
+        },
+        ROBOT =
+        {
+            ONE = "it",
+            TWO = "its",
+        },
+    },
+
+	SANDBOXMENU =
+	{
+		TITLE = "World Customisation",
+		TITLEDETAIL = "",
+		
+		EASY = "Not Easy",
+		MEDIUM = "Quite Difficult",
+		HARD = "Overly Taxing",
+
+		GENERATE = "OK",
+		MAINMENU = "Cancel",
+		
+		CHOICEMONSTERS = "Monsters",
+		CHOICEANIMALS = "Animals",
+		CHOICERESOURCES = "Resources",
+		CHOICEFOOD = 	"Food",
+		CHOICECOOKED = "Prepared Food",		
+		CHOICEAMTDAY = "Amount of Day",	
+		CHOICEMISC = "World",	
+				
+		DAY = "Day",
+		NIGHT = "Night",
+		DUSK = "Dusk",
+		
+		SLIDESHORT = "Short",
+		SLIDELONG = "Long",
+		SLIDEALL = "Only",
+		
+		SLIDEDEFAULT = "Default",
+		
+		SLIDENEVER = "None",
+		SLIDERARE = "Less",
+		SLIDEOFTEN = "More",
+		SLIDEALWAYS = "Lots",
+		
+		SLIDEVERYSLOW = "Very Slow",
+		SLIDESLOW = "Slow",
+		SLIDEFAST = "Fast",
+		SLIDEVERYFAST = "Very Fast",
+		
+		SUMMER = "Summer",
+		WINTER = "Winter",
+		BOTH = "Both",
+		
+		SLIDESMALL = "Default",
+		SLIDESMEDIUM = "Medium",
+		SLIDESLARGE = "Large",
+		SLIDESHUGE = "Huge",
+		
+		SLIDEVERYSIMPLE = "Very Simple",
+		SLIDESIMPLE = "Simple",
+		SLIDECOMPLEX = "Complex",
+		SLIDEVERYCOMPLEX = "Very Complex",
+
+		BRANCHINGMOST = "Most",
+		BRANCHINGANY = "Default",
+		BRANCHINGLEAST = "Least",
+		BRANCHINGNEVER = "Never",
+
+		LOOPNEVER = "Never",
+		LOOPRANDOM = "Default",
+		LOOPALWAYS = "Always",
+		
+		USEPRESET = "Preset",
+		CHAPTERS = {
+                "Chapter 1 of 5",
+                "Chapter 2 of 5",
+                "Chapter 3 of 5",
+                "Chapter 4 of 5",
+                "Chapter 5 of 5",
+                "Epilogue",
+        },
+        ADVENTURELEVELS = {
+                "A Cold Reception", 
+                "The King of Winter", 
+                "The Game is Afoot", 
+                "Archipelago",
+                "Two Worlds", 
+                "Darkness", 
+
+				"Checkmate",
+				},
+		NONE = "None",
+		NONEAVAILABLE = "None Available",
+		MODIFYTASKS = "Modify Tasks",
+		
+		YES ="Yes",
+		NO = "No",
+	},
 	
-	TELEPORTTITLE = "¼Ì Ðø ÂÃ ³Ì £¿ ",
-	TELEPORTBODY_SURVIVAL = "´Ë ¾Ù ½« Ïú »Ù µ± Ç° ÊÀ ½ç £¬ µ« Äã ½« ÖØ »ñ Îï Æ· ¿â ´æ ¡£ ",
-	TELEPORTBODY_ADVENTURE = "´Ë ¾Ù ½« É¾ ³ý Äã Ëù ÓÐ µÄ µÀ ¾ß ²¢ ´Ý »Ù µ± Ç° ÊÀ ½ç ¡£ Ö» ÓÐ ÔÚ »ú Æ÷ Àï µÄ µÀ ¾ß ²Å »á ³ö ÏÖ ÔÚ ÏÂ Ò» ¸ö ÊÀ ½ç Àï ¡£ ",
-	TELEPORTYES = "³ö ·¢ £¡ ",
-	TELEPORTNO = "´ý ÔÚ Õâ ¶ù ¡£ ",
+	QUITTINGTITLE = "Quitting!",
+	QUITTING = "Packing up the science.",
+	
+	TELEPORTTITLE = "Journey onwards?",
+	TELEPORTBODY_SURVIVAL = "This will destroy your current world but you will retain your inventory contents.",
+	TELEPORTBODY_ADVENTURE = "This will REMOVE ALL YOUR ITEMS and destroy your current world. Only items placed in the machine will appear in the next world.",
+	TELEPORTYES = "Lets Go!",
+	TELEPORTNO = "Stay here.",
 }
+
+--these are broken out into their own files for ease of editing
+STRINGS.CHARACTERS =
+{
+	GENERIC = require "speech_wilson",
+	WAXWELL = require "speech_maxwell",
+	WOLFGANG = require "speech_wolfgang",
+	WX78 = require "speech_wx78",
+	WILLOW = require "speech_willow",
+	WENDY = require "speech_wendy",
+	WICKERBOTTOM = require "speech_wickerbottom",
+}
+
+
 
 if TranslateStringTable ~= nil then
 	TranslateStringTable( STRINGS )
 end
-

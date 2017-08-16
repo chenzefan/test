@@ -42,20 +42,6 @@ function Weapon:OnAttack(attacker, target, projectile)
     if self.inst.components.finiteuses then
 	    self.inst.components.finiteuses:Use(self.attackwear or 1)
     end
-    	
-    if not projectile then
-	    --er.... fix this later, jerkface!
-	    if target.SoundEmitter then
-		    if self.inst:HasTag("blowdart") and self.inst:HasTag("sleepdart") then
-			    
-		    elseif self.inst:HasTag("blowdart") and self.inst:HasTag("firedart") then
-		    elseif target.prefab == "leif" then
-			    target.SoundEmitter:PlaySound("dontstarve/wilson/use_axe_tree")
-		    else
-			    target.SoundEmitter:PlaySound("dontstarve/wilson/hit_animal")
-		    end
-	    end
-	end
 end
 
 function Weapon:LaunchProjectile(attacker, target)

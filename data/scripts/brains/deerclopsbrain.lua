@@ -9,6 +9,9 @@ require "behaviours/minperiod"
 
 local SEE_DIST = 40
 
+local CHASE_DIST = 32
+local CHASE_TIME = 20
+
 local function BaseDestroy(inst)
 	local target = FindEntity(inst, SEE_DIST, function(item) 
 		if item.components.workable
@@ -54,7 +57,7 @@ function DeerclopsBrain:OnStart()
         PriorityNode(
         {
 			AttackWall(self.inst),
-            ChaseAndAttack(self.inst, nil, 50),
+            ChaseAndAttack(self.inst, CHASE_TIME, CHASE_DIST),
             WhileNode(function() return CanDestroyBase(self.inst) end, "CanDestroy",
                 DoAction(self.inst, function() return BaseDestroy(self.inst) end, "DestroyBase", true) ),
             WhileNode(function() return self.inst.components.knownlocations:GetLocation("home") end, "HasHome",

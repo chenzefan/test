@@ -9,7 +9,7 @@ local Badge = Class(Widget, function(self, anim, owner)
     --self:SetHAnchor(ANCHOR_RIGHT)
     --self:SetVAnchor(ANCHOR_TOP)
     self.percent = 1
-    self:SetScale(.33,.33, 1)
+    self:SetScale(1,1,1)
     
     
     self.pulse = self:AddChild(UIAnim())
@@ -28,8 +28,9 @@ local Badge = Class(Widget, function(self, anim, owner)
     
     self.underNumber = self:AddChild(Widget("undernumber"))
     
-    self.num = self:AddChild(Text(NUMBERFONT, 100))
-    self.num:SetPosition(10, 0, 0)
+    self.num = self:AddChild(Text(NUMBERFONT, 35))
+    self.num:SetHAlign(ANCHOR_MIDDLE)
+    self.num:SetPosition(5, 0, 0)
     self.num:Hide()
     
     self.anim:SetMouseOver( function()
@@ -47,7 +48,7 @@ function Badge:SetPercent(val, max)
     max = max or 100
 	
     self.anim:GetAnimState():SetPercent("anim", 1 - val)
-    self.num:SetString(tostring(math.floor(val*max)))
+    self.num:SetString(tostring(math.ceil(val*max)))
             
     self.percent = val
 end
@@ -155,17 +156,17 @@ Status = Class(Widget, function(self, owner)
 	
     self.brain = self:AddChild(SanityBadge(owner))
     --self.brain:SetPosition(0,35,0)
-    self.brain:SetPosition(0,-25,0)
+    self.brain:SetPosition(0,-40,0)
     self.brain:SetPercent(self.owner.components.sanity:GetPercent(), self.owner.components.health.maxhealth, self.owner.components.health:GetPenaltyPercent())
 
     self.stomach = self:AddChild(HungerBadge(owner))
     --self.stomach:SetPosition(-38,-32,0)
-    self.stomach:SetPosition(-60,25,0)
+    self.stomach:SetPosition(-40,20,0)
     self.stomach:SetPercent(self.owner.components.hunger:GetPercent(), self.owner.components.hunger.max)
 
     self.heart = self:AddChild(HealthBadge(owner))
     --self.heart:SetPosition(38,-32,0)
-    self.heart:SetPosition(60,25,0)
+    self.heart:SetPosition(40,20,0)
     
     self.heart:SetPercent(self.owner.components.health:GetPercent(), self.owner.components.health.maxhealth, self.owner.components.health:GetPenaltyPercent())
     
@@ -254,21 +255,21 @@ UIClock = Class(Widget, function(self)
     --self:SetHAnchor(ANCHOR_RIGHT)
     --self:SetVAnchor(ANCHOR_TOP)
 
-    self.base_scale = .5
+    self.base_scale = 1
     
     self:SetScale(self.base_scale,self.base_scale,self.base_scale)
     self:SetPosition(0,0,0)
 
     self.moonanim = self:AddChild(UIAnim())
-    self.moonanim:SetScale(.4,.4,.4)
+    --self.moonanim:SetScale(.4,.4,.4)
     self.moonanim:GetAnimState():SetBank("moon_phases_clock")
     self.moonanim:GetAnimState():SetBuild("moon_phases_clock")
     self.moonanim:GetAnimState():PlayAnimation("hidden")
     
     
     self.anim = self:AddChild(UIAnim())
-    local sc = 256/320
-    self.anim:SetScale(.45*sc,.45*sc,.45*sc)
+    local sc = 1
+    self.anim:SetScale(sc,sc,sc)
     self.anim:GetAnimState():SetBank("clock01")
     self.anim:GetAnimState():SetBuild("clock_transitions")
     self.anim:GetAnimState():PlayAnimation("idle_day",true)
@@ -277,10 +278,11 @@ UIClock = Class(Widget, function(self)
     
     self.face = self:AddChild(Image("data/images/clock_NIGHT.tex"))
     self.segs = {}
+	local segscale = .4
     local numsegs = 16
     for i = 1, numsegs do
 		local seg = self:AddChild(Image("data/images/clock_wedge.tex"))
-        seg:SetScale(sc,sc,sc)
+        seg:SetScale(segscale,segscale,segscale)
         seg:SetHRegPoint(ANCHOR_LEFT)
         seg:SetVRegPoint(ANCHOR_BOTTOM)
         seg:SetRotation((i-1)*(360/numsegs))
@@ -311,15 +313,16 @@ UIClock = Class(Widget, function(self)
 		self.text:SetString(clock_str)
 	end)
 
-    self.anim:SetMouseOut( function()
-		local clock_str = STRINGS.UI.HUD.CLOCKDAY.." "..tostring(GetClock().numcycles+1)
-		self.text:SetString(clock_str)
-    end)
+    local function updatedaysstring()
+        local clock_str = STRINGS.UI.HUD.CLOCKDAY.." "..tostring(GetClock().numcycles+1)
+        self.text:SetString(clock_str)
+    end
+    
+    self.anim:SetMouseOut(updatedaysstring )
 
-	local clock_str = STRINGS.UI.HUD.CLOCKDAY.." "..tostring(GetClock().numcycles+1)
-	self.text:SetString(clock_str)
+	updatedaysstring()
 
-
+    self.inst:ListenForEvent( "daycomplete", updatedaysstring, GetWorld())
 
 	self.inst:ListenForEvent( "daytime", function(inst, data) 
         self.text:SetString(STRINGS.UI.HUD.CLOCKDAY.." "..tostring(data.day)+1) 
@@ -328,23 +331,14 @@ UIClock = Class(Widget, function(self)
         self.moonanim:GetAnimState():PlayAnimation("trans_in") 
         
     end, GetWorld())
-    
+	
+	  
 	self.inst:ListenForEvent( "nighttime", function(inst, data) 
+		
         self.anim:GetAnimState():PlayAnimation("trans_dusk_night") 
         self.anim:GetAnimState():PushAnimation("idle_night", true) 
-        
-        local mp = GetClock():GetMoonPhase()
-        local moon_syms = 
-        {
-            full="moon_full",
-            quarter="moon_quarter",
-            new="moon_new",
-            threequarter="moon_three_quarter",
-            half="moon_half",
-        }
-        self.moonanim:GetAnimState():OverrideSymbol("swap_moon", "moon_phases", moon_syms[mp] or "moon_full")        
-        self.moonanim:GetAnimState():PlayAnimation("trans_out") 
-        self.moonanim:GetAnimState():PushAnimation("idle", true) 
+        self:ShowMoon()
+
     end, GetWorld())
     
 	self.inst:ListenForEvent( "dusktime", function(inst, data) 
@@ -359,9 +353,27 @@ UIClock = Class(Widget, function(self)
     self.old_t = 0 
     self:RecalcSegs()
     
+    if GetClock():IsNight() then
+		self:ShowMoon()
+    end
+    
 end)
 
 
+function UIClock:ShowMoon()
+    local mp = GetClock():GetMoonPhase()
+    local moon_syms = 
+    {
+        full="moon_full",
+        quarter="moon_quarter",
+        new="moon_new",
+        threequarter="moon_three_quarter",
+        half="moon_half",
+    }
+    self.moonanim:GetAnimState():OverrideSymbol("swap_moon", "moon_phases", moon_syms[mp] or "moon_full")        
+    self.moonanim:GetAnimState():PlayAnimation("trans_out") 
+    self.moonanim:GetAnimState():PushAnimation("idle", true) 
+end
 
 function UIClock:RecalcSegs()
     
@@ -566,17 +578,17 @@ end
 IceOver = Class(Widget, function(self, owner)
     self.owner = owner
     Widget._ctor(self, "IceOver")
-	self.anim = self:AddChild(UIAnim())
+	self.img = self:AddChild(Image("data/images/ice_over.tex"))
     self:SetScaleMode(SCALEMODE_FIXEDPROPORTIONAL)
 	self:SetClickable(false)
-	self.animstate = self.anim:GetAnimState()
-    self.animstate:SetBank("ice_over")
-    self.animstate:SetBuild("ice_over")
-    self.animstate:PlayAnimation("empty", true)
-    self:SetHAnchor(ANCHOR_LEFT)
-    self:SetVAnchor(ANCHOR_TOP)
+
+    self:SetHAnchor(ANCHOR_MIDDLE)
+    self:SetVAnchor(ANCHOR_MIDDLE)
     self:Hide()
     self.laststep = 0
+    
+    self.alpha_min = 1
+    self.alpha_min_target = 1
     
     self.alphavalues = {
 		day		= 1.0,
@@ -593,6 +605,8 @@ function IceOver:OnIceChange()
 	local temp = self.owner.components.temperature:GetCurrent()
 
 	local num_steps = 4
+	
+	
 	local all_up_thresh = {5, 0, -5, -10}
 	
 	local freeze_sounds = 
@@ -616,10 +630,13 @@ function IceOver:OnIceChange()
 	end
 	
 	if self.laststep == 0 then
-		self:Hide()
+		self.alpha_min_target = 1
 	else
-		self:Show()
-        self.anim:GetAnimState():PlayAnimation("step"..tostring(self.laststep).."_idle")
+		
+		local alpha_mins = {
+			.7, .5, .3, 0
+		}
+		self.alpha_min_target = alpha_mins[self.laststep] 
 	end
 end
 
@@ -632,7 +649,17 @@ function IceOver:Update(dt)
 		local next_alpha = self.alphavalues[ clock:GetPhase() ]
 		
 		local new_alpha = ( 1 - lerp_factor ) * cur_alpha + lerp_factor * next_alpha
-		self.animstate:SetMultColour( 1, 1, 1, new_alpha )
+		self.img:SetTint( 1, 1, 1, new_alpha )
+	end
+
+	local lspeed = dt*2
+	self.alpha_min = (1 - lspeed) * self.alpha_min + lspeed *self.alpha_min_target
+	self.img:SetAlphaRange(self.alpha_min,1)
+	
+	if self.alpha_min >= .99 then
+		self:Hide()
+	else
+		self:Show()
 	end
 end
 

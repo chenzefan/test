@@ -89,19 +89,18 @@ function Propagator:OnUpdate(dt)
         local ents = TheSim:FindEntities(pos.x, pos.y, pos.z, self.propagaterange)
         
         for k,v in pairs(ents) do
-			if v ~= self.inst and v.components.propagator and v.components.propagator.acceptsheat then
-				local inpocket = v.components.inventoryitem and v.components.inventoryitem:IsHeld()
-				if not inpocket then
+            if not v:IsInLimbo() then
+			    if v ~= self.inst and v.components.propagator and v.components.propagator.acceptsheat then
                     v.components.propagator:AddHeat(self.heatoutput*dt)
-				end
-			end
-			
-			if self.damages and v.components.health and v.components.health.vulnerabletoheatdamage then
-				local dsq = distsq(pos, Vector3(v.Transform:GetWorldPosition()))
-				if dsq < self.damagerange*self.damagerange then
-					--local percent_damage = math.min(.5, 1- (math.min(1, dsq / self.damagerange*self.damagerange)))
-					v.components.health:DoFireDamage(self.heatoutput*dt)
-				end
+			    end
+    			
+			    if self.damages and v.components.health and v.components.health.vulnerabletoheatdamage then
+				    local dsq = distsq(pos, Vector3(v.Transform:GetWorldPosition()))
+				    if dsq < self.damagerange*self.damagerange then
+					    --local percent_damage = math.min(.5, 1- (math.min(1, dsq / self.damagerange*self.damagerange)))
+					    v.components.health:DoFireDamage(self.heatoutput*dt)
+				    end
+			    end
 			end
         end
     end

@@ -29,6 +29,8 @@ local function fn(Sim)
     inst.AnimState:SetBuild("armor_wood")
     inst.AnimState:PlayAnimation("anim")
     
+    inst:AddTag("wood")
+    
     inst:AddComponent("inspectable")
     
     inst:AddComponent("inventoryitem")

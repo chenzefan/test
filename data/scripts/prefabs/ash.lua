@@ -9,7 +9,6 @@ local assets=
 -- You have to add a custom DESCRIBE for each item you
 -- mark as nonpotatable
 local function GetStatus(inst)
-	print("Getstatus!")
 	if inst.components.named.name ~= nil then
 		local mod = "REMAINS_"..inst.components.named.name
 		mod = string.gsub(mod, " ", "_")
@@ -20,29 +19,25 @@ end
 
 
 local function BlowAway(inst)
+    inst.blowawaytask = nil
+    inst.persists = false
+    inst:RemoveComponent("inventoryitem")
+    inst:RemoveComponent("inspectable")
 	inst.SoundEmitter:PlaySound("dontstarve/common/dust_blowaway")
-
-	if inst.DynamicShadow then
-        inst.DynamicShadow:Enable(false)
-    end
-
 	inst.AnimState:PlayAnimation("disappear")
-
-	inst:DoTaskInTime(2.0, function() inst:Remove() end)
+	inst:ListenForEvent("animover", function() inst:Remove() end)
 end
 
 local function StopBlowAway(inst)
 	if inst.blowawaytask then
 		inst.blowawaytask:Cancel()
+		inst.blowawaytask = nil
 	end
 end
 		
 local function PrepareBlowAway(inst)
 	StopBlowAway(inst)
-	inst.blowawaytask = inst:DoTaskInTime(25+math.random()*10,
-		function()
-			BlowAway(inst)
-		end)
+	inst.blowawaytask = inst:DoTaskInTime(25+math.random()*10, BlowAway)
 end
 
 local function fn(Sim)
@@ -66,6 +61,7 @@ local function fn(Sim)
 	inst.components.inspectable.getstatus = GetStatus
     
     inst:AddComponent("inventoryitem")
+    inst.components.inventoryitem:SetOnPutInInventoryFn(StopBlowAway)
 
 	inst:AddComponent("named")
 	inst.components.named.nameformat = STRINGS.NAMES.ASH_REMAINS
@@ -75,12 +71,7 @@ local function fn(Sim)
 		end
 	end)
    
-	inst:ListenForEvent("ondropped", function()
-			PrepareBlowAway(inst)
-		end)
-	inst:ListenForEvent("onpickup", function()
-			StopBlowAway(inst)
-		end)
+	inst:ListenForEvent("ondropped",  PrepareBlowAway)
 	PrepareBlowAway(inst)
 
     return inst

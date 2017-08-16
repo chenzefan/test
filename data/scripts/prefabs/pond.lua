@@ -1,6 +1,7 @@
 local assets =
 {
 	Asset("ANIM", "data/anim/marsh_tile.zip"),
+	Asset("ANIM", "data/anim/splash.zip"),
 }
 
 local prefabs =
@@ -50,7 +51,7 @@ end
 
 local function OnSnowCoverChange(inst, thresh)
 	thresh = thresh or .02
-	local snow_cover = GetSeasonManager():GetSnowPercent()
+	local snow_cover = GetSeasonManager() and GetSeasonManager():GetSnowPercent() or 0
 
 	if snow_cover > thresh and not inst.frozen then
 		inst.frozen = true
@@ -133,13 +134,14 @@ local function pondmos()
 	inst.components.childspawner.childname = "mosquito"
 
 	inst:ListenForEvent("dusktime", function()
-	    if not GetSeasonManager():IsWinter() then
-		    inst.components.childspawner:ReleaseAllChildren()
+	    if not GetSeasonManager() or not GetSeasonManager():IsWinter() then
+		    inst.components.childspawner:StartSpawning()
 		end
 	end, GetWorld())
 	inst:ListenForEvent("daytime", function() 
 		ReturnChildren(inst)
 		inst.components.childspawner:StopSpawning()
+		ReturnChildren(inst)
 	end, GetWorld())
 	inst:ListenForEvent("snowcoverchange", function() OnSnowCoverChange(inst) end, GetWorld())
 	return inst
@@ -149,12 +151,13 @@ local function pondfrog()
 	local inst = commonfn("")
 	inst.components.childspawner.childname = "frog"
 
-	inst:ListenForEvent("dusktime", function()	    
+	inst:ListenForEvent("dusktime", function()
+			inst.components.childspawner:StopSpawning()    
 		    ReturnChildren(inst)	
 	end, GetWorld())
 
 	inst:ListenForEvent("daytime", function()
-		if not GetSeasonManager():IsWinter() then
+		if not GetSeasonManager() or not GetSeasonManager():IsWinter() then
 			inst.components.childspawner:StartSpawning()			
 		end
 	end, GetWorld())

@@ -1,6 +1,6 @@
 
-SHAPES = { CIRCLE = 0, BOX = 1, NOISE = 3 }
 
+--TODO: REMOVE THIS - WE DONT NEED IT ANYMORE
 GROUND_VALUES =
 	{
 	    [GROUND.IMPASSABLE] = 0.25,
@@ -13,8 +13,25 @@ GROUND_VALUES =
 	    [GROUND.MARSH] = 1.0,
 	    [GROUND.WOODFLOOR] = 1.1,
 	    [GROUND.CHECKER] = 1.2,
-	    [GROUND.CARPET] = 1.3
+	    [GROUND.CARPET] = 1.3,
+
+		[GROUND.CAVE] = 1.6,
+		[GROUND.FUNGUS] = 1.75,
+	    [GROUND.SINKHOLE] = 2.0,
+
+	    [GROUND.WALL_MARSH] = 2.10,
+	    [GROUND.WALL_FUNGUS] = 2.13,
+	    [GROUND.WALL_ROCKY] = 2.18,
+	    [GROUND.WALL_DIRT] = 2.20,
+	    [GROUND.WALL_CAVE] = 2.23,
+	    [GROUND.WALL_SINKHOLE] = 2.25,
+
+	    [GROUND.GROUND_NOISE] = 3.23,
+	    [GROUND.CAVE_NOISE] = 3.25,
+	    [GROUND.FUNGUS_NOISE] = 3.3,
 	}
+
+--TODO: REMOVE THIS - WE DONT NEED IT ANYMORE
 INV_GROUND_VALUES =
 	{
 	    [0.25] = GROUND.IMPASSABLE,
@@ -27,7 +44,22 @@ INV_GROUND_VALUES =
 	    [1.0] = GROUND.MARSH,
 	    [1.1] = GROUND.WOODFLOOR,
 	    [1.2] = GROUND.CHECKER,
-	    [1.3] = GROUND.CARPET
+	    [1.3] = GROUND.CARPET,
+
+	    [1.6] = GROUND.CAVE,
+	    [1.75] = GROUND.FUNGUS,
+	    [2.0] = GROUND.SINKHOLE,
+
+	    [2.10] = GROUND.WALL_MARSH,
+	    [2.13] = GROUND.WALL_FUNGUS,
+	    [2.18] = GROUND.WALL_ROCKY,
+	    [2.20] = GROUND.WALL_DIRT,
+	    [2.22] = GROUND.WALL_CAVE,
+	    [2.25] = GROUND.WALL_SINKHOLE,
+
+	    [3.23] = GROUND.GROUND_NOISE,
+	    [3.25] = GROUND.CAVE_NOISE,
+	    [3.3] = GROUND.FUNGUS_NOISE,
 	}
 
 GROUND_NAMES=
@@ -42,32 +74,24 @@ GROUND_NAMES=
 	    [GROUND.MARSH] = "Marsh",
 		[GROUND.WOODFLOOR] = "Wood",
 		[GROUND.CHECKER] = "Checkers",
-	    [GROUND.CARPET] = "Carpet"
+	    [GROUND.CARPET] = "Carpet",
+
+		[GROUND.CAVE] = "CAVE",
+		[GROUND.FUNGUS] = "FUNGUS",
+	    [GROUND.SINKHOLE] = "SINKHOLE",
+
+		[GROUND.WALL_MARSH] = "WALL_MARSH",
+		[GROUND.WALL_FUNGUS] = "WALL_FUNGUS",
+	    [GROUND.WALL_ROCKY] = "WALL_ROCKY",
+		[GROUND.WALL_DIRT] = "WALL_DIRT",
+		[GROUND.WALL_CAVE] = "WALL_CAVE",
+	    [GROUND.WALL_SINKHOLE] = "WALL_SINKHOLE",
+
+		[GROUND.GROUND_NOISE] = "GROUND_NOISE",
+	    [GROUND.CAVE_NOISE] = "CAVE_NOISE",
+	    [GROUND.FUNGUS_NOISE] = "FUNGUS_NOISE",
 }
 
-local RoomTypes = 
-	{	
-		[SHAPES.CIRCLE] =
-		{
-			--tileset: function () return "forest" end,					-- (static) 
-			--count: function () return 8 + math.random(4) end, --(random)[ 8 - 12 ]
-			size= function () return 5 + math.random(10) end --(bell curve)[ 5 - 15 ]
-		},
-		[SHAPES.BOX] =
-		{
-			--tileset: function () return "forest" end,					-- (static) 
-			--count: function () return 8 + math.random(4) end, --(random)[ 8 - 12 ]
-			width= function () return 5 + math.random(10) end, --(bell curve)[ 5 - 15 ]
-			height= function () return 7 end --(static) 7
-		},
-		[SHAPES.NOISE] =
-		{
-			--tileset: function () return "forest" end,					-- (static) 
-			--count: function () return 8 + math.random(4) end, --(random)[ 8 - 12 ]
-			size= function () return 5 + math.random(10) end, --(bell curve)[ 5 - 15 ]
-			shape= function () return SHAPES.BOX end
-		}
-	}
 
 -- These items will not spawn on a terrain tile of the types in the list provided
 local TERRAIN_FILTER=
@@ -103,12 +127,14 @@ local TERRAIN_FILTER=
 		marsh_bush = 		{GROUND.ROAD, GROUND.WOODFLOOR, GROUND.CARPET, GROUND.CHECKER, GROUND.ROCKY },
 		marsh_tree = 		{GROUND.ROAD, GROUND.WOODFLOOR, GROUND.CARPET, GROUND.CHECKER, GROUND.ROCKY },
 		pighouse =			{GROUND.ROAD, GROUND.WOODFLOOR, GROUND.CARPET, GROUND.CHECKER },
+		pigman =			{GROUND.ROAD, GROUND.WOODFLOOR, GROUND.CARPET, GROUND.CHECKER },
 		mermhouse =			{GROUND.ROAD, GROUND.WOODFLOOR, GROUND.CARPET, GROUND.CHECKER },
 		pond = 				{GROUND.ROAD, GROUND.WOODFLOOR, GROUND.CARPET, GROUND.CHECKER, GROUND.ROCKY },
 		pond_mos = 			{GROUND.ROAD, GROUND.WOODFLOOR, GROUND.CARPET, GROUND.CHECKER, GROUND.ROCKY },
 		reeds = 			{GROUND.ROAD, GROUND.WOODFLOOR, GROUND.CARPET, GROUND.CHECKER, GROUND.ROCKY },
 		rock1 = 			{GROUND.ROAD, GROUND.WOODFLOOR, GROUND.CARPET, GROUND.CHECKER },
 		rock2 = 			{GROUND.ROAD, GROUND.WOODFLOOR, GROUND.CARPET, GROUND.CHECKER },
+		rock_flintless =	{GROUND.ROAD, GROUND.WOODFLOOR, GROUND.CARPET, GROUND.CHECKER },
 		basalt = 			{GROUND.ROAD, GROUND.WOODFLOOR, GROUND.CARPET, GROUND.CHECKER },
 		basalt_pillar =		{GROUND.ROAD, GROUND.WOODFLOOR, GROUND.CARPET, GROUND.CHECKER },
 		rocks = 			{GROUND.ROAD, GROUND.WOODFLOOR, GROUND.CARPET, GROUND.CHECKER },

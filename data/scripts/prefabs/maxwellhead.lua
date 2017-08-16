@@ -113,8 +113,8 @@ local function fn()
     --inst:DoTaskInTime(0.3, function() sound:PlaySound("dontstarve/maxwell/disappear") end)	
 
     inst.entity:AddLabel()
-    inst.Label:SetFontSize(25)
-    inst.Label:SetFont(DIALOGFONT)
+    inst.Label:SetFontSize(28)
+    inst.Label:SetFont(TALKINGFONT)
     inst.Label:SetPos(0,5,0)    
     inst.Label:Enable(false)
 

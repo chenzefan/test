@@ -10,6 +10,7 @@ local Health = Class(function(self, inst)
 	self.fire_damage_scale = 1
 	self.nofadeout = false
 	self.penalty = 0
+    self.absorb = 0
 	
 end)
 
@@ -20,20 +21,23 @@ end
 function Health:OnSave()
     return 
     {
-		health = self.currenthealth,
-		penalty = self.penalty
+		health = self.currenthealth ~= self.maxhealth and self.currenthealth or nil,
+		penalty = self.penalty > 0 and self.penalty or nil
 	}
 end
 
-function Health:AddPenalty()
-	self.penalty = self.penalty + 1
-	self:DoDelta(0)
-end
 
-function Health:RemovePenalty()
-	self.penalty = math.max(0, self.penalty - 1)
+function Health:RecalculatePenalty()
+	self.penalty = 0
+
+	for k,v in pairs(Ents) do
+		if v.components.resurrector and v.components.resurrector.penalty then
+			self.penalty = self.penalty + v.components.resurrector.penalty
+		end
+	end
+
 	self:DoDelta(0)
-	
+
 end
 
 function Health:OnLoad(data)
@@ -65,7 +69,7 @@ function Health:DoFireDamage(amount, doer)
 		
 		if time - self.takingfiredamagestarttime > FIRE_TIMESTART and amount > 0 then
 			self:DoDelta(-amount*self.fire_damage_scale, false, "fire")
-			
+            self.inst:PushEvent("firedamage")		
 		end
 	end
 end
@@ -102,6 +106,10 @@ function Health:StartRegen(amount, period)
         --print("   starting task")
         self.regen.task = self.inst:DoPeriodicTask(self.regen.period, function() self:DoRegen() end)
     end
+end
+
+function Health:SetAbsorbAmount(amount)
+    self.absorb = amount
 end
 
 function Health:StopRegen()
@@ -205,6 +213,7 @@ function Health:SetVal(val, cause)
 
 		if not self.nofadeout then
 			self.inst:AddTag("NOCLICK")
+			self.inst.persists = false
 			self.inst:DoTaskInTime(2, destroy)
 		end
     end
@@ -212,10 +221,12 @@ end
 
 function Health:DoDelta(amount, overtime, cause)
 
-    if self.invincible then
+    if self.invincible or self.inst.is_teleporting == true then
         return
     end
     
+    amount = amount - (amount * self.absorb)
+
     local old_percent = self:GetPercent()
     self:SetVal(self.currenthealth + amount, cause)
     local new_percent = self:GetPercent()

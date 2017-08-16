@@ -13,12 +13,13 @@ local function onhammered(inst, worker)
 	end
 	SpawnPrefab("collapse_big").Transform:SetPosition(inst.Transform:GetWorldPosition())
 	inst.SoundEmitter:PlaySound("dontstarve/common/destroy_wood")
+	inst.components.resurrector.penalty = 0
 	inst:Remove()
 	
 	if not inst.components.resurrector.used then
 		local player = GetPlayer()
 		if player then
-			player.components.health:RemovePenalty()
+			player.components.health:RecalculatePenalty()
 		end
 	end
 	
@@ -26,6 +27,7 @@ end
 
 local function makeused(inst)
 	inst.AnimState:PlayAnimation("debris")
+	inst.components.resurrector.penalty = 0	
 end
 
 local function onhit(inst, worker)
@@ -38,18 +40,23 @@ end
 local function doresurrect(inst, dude)
 	inst:AddTag("busy")	
     inst:RemoveComponent("lootdropper")
+    inst:RemoveComponent("workable")
+    inst:RemoveComponent("inspectable")
 	inst.MiniMapEntity:SetEnabled(false)
-    inst.components.workable:SetWorkLeft(1) -- hammer once to clear debris
     if inst.Physics then
-		MakeInventoryPhysics(inst) -- collides with world, but not character
+		RemovePhysicsColliders(inst)
     end
 
 	GetClock():MakeNextDay()
     dude.Transform:SetPosition(inst.Transform:GetWorldPosition())
     dude:Hide()
+    dude:ClearBufferedAction()
 
     if dude.HUD then
         dude.HUD:Hide()
+    end
+    if dude.components.playercontroller then
+        dude.components.playercontroller:Enable(false)
     end
 
     TheCamera:SetDistance(12)
@@ -59,37 +66,60 @@ local function doresurrect(inst, dude)
 
         inst:Hide()
         inst.AnimState:PlayAnimation("debris")
-        
-        if dude.components.hunger then
-            dude.components.hunger:SetPercent(2/3)
-        end
-
-        if dude.components.health then
-			dude.components.health:RemovePenalty()
-            dude.components.health:Respawn(TUNING.RESURRECT_HEALTH)
-        end
-        
-        if dude.components.sanity then
-			dude.components.sanity:SetPercent(.5)
-        end
-        
+		inst.components.resurrector.penalty = 0                
+		
         dude.sg:GoToState("rebirth")
-
-        --SaveGameIndex:SaveCurrent()
-        dude:DoTaskInTime(4, function() 
-			inst:Show()
-        end)
         
+        --SaveGameIndex:SaveCurrent()
         dude:DoTaskInTime(3, function() 
             if dude.HUD then
                 dude.HUD:Show()
             end
+            if dude.components.hunger then
+                dude.components.hunger:SetPercent(2/3)
+            end
+			
+            if dude.components.health then
+				dude.components.health:RecalculatePenalty()
+                dude.components.health:Respawn(TUNING.RESURRECT_HEALTH)
+                dude.components.health:SetInvincible(true)
+            end
+            
+            if dude.components.sanity then
+			    dude.components.sanity:SetPercent(.5)
+            end
+            if dude.components.playercontroller then
+                dude.components.playercontroller:Enable(true)
+            end
             TheCamera:SetDefault()
             inst:RemoveTag("busy")
         end)
+        inst:DoTaskInTime(4, function() 
+            dude.components.health:SetInvincible(false)
+			inst:Show()
+        end)
+		inst:DoTaskInTime(7, function()
+		    local tick_time = TheSim:GetTickTime()
+		    local time_to_erode = 4
+		    inst:StartThread( function()
+			    local ticks = 0
+			    while ticks * tick_time < time_to_erode do
+				    local erode_amount = ticks * tick_time / time_to_erode
+				    inst.AnimState:SetErosionParams( erode_amount, 0.1, 1.0 )
+				    ticks = ticks + 1
+				    Yield()
+			    end
+			    inst:Remove()
+		    end)
+		end)
         
     end)
 
+end
+
+local function onbuilt(inst)
+	inst.AnimState:PlayAnimation("place")
+	inst.AnimState:PushAnimation("idle", false)
 end
 
 local function fn(Sim)
@@ -114,7 +144,8 @@ local function fn(Sim)
     inst.components.resurrector.active = true
 	inst.components.resurrector.doresurrect = doresurrect
 	inst.components.resurrector.makeusedfn = makeused
-
+	inst.components.resurrector.penalty = 1
+	
     inst:AddComponent("lootdropper")
     inst:AddComponent("workable")
     inst.components.workable:SetWorkAction(ACTIONS.HAMMER)
@@ -122,6 +153,8 @@ local function fn(Sim)
 	inst.components.workable:SetOnFinishCallback(onhammered)
 	inst.components.workable:SetOnWorkCallback(onhit)
 	MakeSnowCovered(inst, .01)    
+	inst:ListenForEvent( "onbuilt", onbuilt)
+	
     return inst
 end
 

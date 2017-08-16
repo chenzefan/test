@@ -7,7 +7,12 @@ local DynamicMusic = Class(function(self, inst)
     
     self.playing_danger = false
     
-    self.inst.SoundEmitter:PlaySound( "dontstarve/music/music_work", "busy")
+    if GetWorld():IsCave() then
+		self.inst.SoundEmitter:PlaySound( "dontstarve/music/music_work_cave", "busy")
+	else
+		self.inst.SoundEmitter:PlaySound( "dontstarve/music/music_work", "busy")
+	end
+	
     self.inst.SoundEmitter:SetParameter( "busy", "intensity", 0 )
     
     self.inst:ListenForEvent( "gotnewitem", function() self:OnContinueBusy() end )  
@@ -31,6 +36,9 @@ local DynamicMusic = Class(function(self, inst)
 			self:OnStartDanger()
 		end
 	end )  
+    self.inst:ListenForEvent( "resurrect", function(inst)
+        self:StopPlayingDanger()
+    end)
     
   
     self.inst:ListenForEvent( "dusktime", function(it, data) 
@@ -70,9 +78,10 @@ function DynamicMusic:StopPlayingBusy()
 end
 
 function DynamicMusic:OnStartBusy()
-    local day = GetClock():IsDay()
+	
 
-    if day then
+    local day = GetClock():IsDay()
+    if day or GetWorld():IsCave() then
         self.busy_timeout = 15
         
         if not self.is_busy then
@@ -96,6 +105,11 @@ function DynamicMusic:OnStartDanger()
     end
 end
 
+function DynamicMusic:StopPlayingDanger()
+    self.inst.SoundEmitter:KillSound("danger")
+    self.playing_danger = false
+end
+
 function DynamicMusic:OnContinueBusy()
     if self.is_busy then
         self.busy_timeout = 10
@@ -107,8 +121,7 @@ function DynamicMusic:OnUpdate(dt)
     if self.danger_timeout and self.danger_timeout > 0 then
         self.danger_timeout = self.danger_timeout - dt
         if self.danger_timeout <= 0 then
-            self.inst.SoundEmitter:KillSound("danger")
-            self.playing_danger = false
+            self:StopPlayingDanger()
         end
     end
 

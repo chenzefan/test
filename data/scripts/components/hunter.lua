@@ -24,6 +24,7 @@ function Hunter:OnSave()
     trace("Hunter:OnSave")
     local time = GetTime()
     local data = {}
+    local references = {}
 
     if self.lastkillpos then
         trace("       last kill", self.lastkillpos)
@@ -39,6 +40,7 @@ function Hunter:OnSave()
         -- we're hunting
 
         if self.lastdirt then
+			table.insert(references, self.lastdirt.GUID)
             data.lastdirtid = self.lastdirt.GUID
             trace("       has dirt", data.lastdirtid)
     
@@ -51,10 +53,11 @@ function Hunter:OnSave()
             trace("       direction", data.direction)
         elseif self.huntedbeast then
             data.beastid = self.huntedbeast.GUID
+            table.insert(references, self.huntedbeast.GUID)
             trace("       has beast", data.beastid)
         end
     end
-    return data
+    return data, references
 end
 
 function Hunter:OnLoad(data)
@@ -394,7 +397,7 @@ function Hunter:StartCooldown(cooldown)
     end
 
     if cooldown then
-        print("The Hunt begins in", cooldown)
+        --print("The Hunt begins in", cooldown)
         self.cooldowntask = self.inst:DoTaskInTime(cooldown, function() self:OnCooldownEnd() end)
         self.cooldowntime = GetTime() + cooldown
     end

@@ -32,6 +32,8 @@ function Kramped:onkilledother(victim)
 			self:OnNaughtyAction(1)
 		elseif victim.prefab == "robin" then
 			self:OnNaughtyAction(2)
+		elseif victim.prefab == "robin_winter" then
+			self:OnNaughtyAction(2)
 		elseif victim.prefab == "smallbird" then
 			self:OnNaughtyAction(6)
 		elseif victim.prefab == "butterfly" then

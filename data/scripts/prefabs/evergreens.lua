@@ -350,7 +350,7 @@ end
 local function handler_growfromseed (inst, data)
 	inst.components.growable:SetStage(1)
 	inst.AnimState:PlayAnimation("grow_seed_to_short")
-	inst.SoundEmitter:PlaySound("dontstarve/wilson/plant_tree")
+    inst.SoundEmitter:PlaySound("dontstarve/forest/treeGrow")          
 	PushSway(inst)
 end
 
@@ -363,7 +363,9 @@ local function onsave(inst, data)
         data.stump = true
     end
 
-	data.build = inst.build
+	if inst.build ~= "normal" then
+		data.build = inst.build
+	end
 end
         
 local function onload(inst, data)

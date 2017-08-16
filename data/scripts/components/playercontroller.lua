@@ -6,6 +6,14 @@ local trace = function() end
 
 local CLICK_WALK_TIME = .5
 
+local CameraRight = TheCamera:GetRightVec()
+local CameraDown = TheCamera:GetDownVec()
+
+local function UpdateCameraHeadings()
+	CameraRight = TheCamera:GetRightVec()
+	CameraDown = TheCamera:GetDownVec()
+end
+
 local PlayerController = Class(function(self, inst)
     self.inst = inst
     self.enabled = true
@@ -17,10 +25,11 @@ local PlayerController = Class(function(self, inst)
     table.insert(self.inputhandlers, TheInput:AddMouseButtonHandler(MOUSEBUTTON_RIGHT, true, function() self:OnRightClick() end))
 
     table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_SPACE, function() self:OnPressAction() end))
-    table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_LEFT, function() if not IsHUDPaused() and TheCamera:CanControl() then TheCamera:SetHeadingTarget(TheCamera:GetHeadingTarget() + 90) end end))
-    table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_RIGHT, function() if not IsHUDPaused() and TheCamera:CanControl() then  TheCamera:SetHeadingTarget(TheCamera:GetHeadingTarget() - 90) end end))
-    table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_Q, function() if not IsHUDPaused() and TheCamera:CanControl() then  TheCamera:SetHeadingTarget(TheCamera:GetHeadingTarget() + 90) end end))
-    table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_E, function() if not IsHUDPaused() and TheCamera:CanControl() then  TheCamera:SetHeadingTarget(TheCamera:GetHeadingTarget() - 90) end end))
+    table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_LEFT, function() self:RotLeft() end))
+    table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_RIGHT, function() self:RotRight() end))
+    
+    table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_Q, function() self:RotLeft() end))
+    table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_E, function() self:RotRight() end))
 
     table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_P, function() if TheInput:IsKeyDown(KEY_CTRL) then TheCamera:SetPaused(not TheCamera.paused) end end))
     table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_H, function() 
@@ -46,6 +55,22 @@ local PlayerController = Class(function(self, inst)
     self.startdragtestpos = nil
     self.startdragtime = nil
 end)
+
+function PlayerController:RotLeft()
+	local rotamount = GetWorld():IsCave() and 22.5 or 45
+	if not IsHUDPaused() and TheCamera:CanControl() then  
+		TheCamera:SetHeadingTarget(TheCamera:GetHeadingTarget() + rotamount) 
+		UpdateCameraHeadings() 
+	end
+end
+
+function PlayerController:RotRight()
+	local rotamount = GetWorld():IsCave() and 22.5 or 45
+	if not IsHUDPaused() and TheCamera:CanControl() then  
+		TheCamera:SetHeadingTarget(TheCamera:GetHeadingTarget() - rotamount) 
+		UpdateCameraHeadings() 
+	end
+end
 
 function PlayerController:OnRemoveEntity()
     for k,v in pairs(self.inputhandlers) do
@@ -86,39 +111,67 @@ function PlayerController:Enable(val)
 end
 
 
+function PlayerController:GetAttackTarget()
+
+	local x,y,z = self.inst.Transform:GetWorldPosition()
+	local force_attack = TheInput:IsKeyDown(KEY_CTRL)
+	local rad = force_attack and 8 or 6 
+	local nearby_ents = TheSim:FindEntities(x,y,z, rad)
+	local tool = self.inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
+	local has_weapon = tool and tool.components.weapon 
+	
+	for k,guy in ipairs(nearby_ents) do
+		
+		if guy ~= self.inst and
+		   guy:IsValid() and 
+		   not guy:IsInLimbo() and
+		   guy.components.health and not guy.components.health:IsDead() and 
+		   guy.components.combat and guy.components.combat:CanBeAttacked(self.inst) and
+		   not (guy.components.follower and guy.components.follower.leader == self.inst) then
+				if (guy:HasTag("monster") and has_weapon) or
+					guy.components.combat.target == self.inst or
+					force_attack then
+						return guy
+				end
+						
+		end
+	end
+
+end
+
 function PlayerController:OnPressAction()
 
 	if self.enabled and not (self.inst.sg:HasStateTag("working") or self.inst.sg:HasStateTag("doing")) then
+
 		local tool = self.inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
-		
-		--combat
-		local rad = 3
-		local target = FindEntity(self.inst, rad, function(guy) return guy.components.health and not guy.components.health:IsDead() and guy.components.combat and not (guy.components.follower and guy.components.follower.leader == self.inst) end)
-		if target then
-			local force_attack = TheInput:IsKeyDown(KEY_CTRL)
-			if not force_attack
-			   and target.components.workable
-			   and target.components.workable.action == ACTIONS.NET
-			   and tool
-			   and tool.components.tool
-			   and tool.components.tool.action == ACTIONS.NET then
+
+		--bug catching (has to go before combat)
+		local force_attack = TheInput:IsKeyDown(KEY_CTRL)
+		if tool and tool.components.tool and tool.components.tool.action == ACTIONS.NET and not force_attack then
+			local target = FindEntity(self.inst, 5, 
+				function(guy) 
+					return  guy.components.health and not guy.components.health:IsDead() and 
+							guy.components.workable and
+							guy.components.workable.action == ACTIONS.NET
+				end)
+			if target then
 			    local action = BufferedAction(self.inst, target, ACTIONS.NET, tool)
-				self.inst:ClearBufferedAction()
-				self.inst.components.locomotor:PushAction(action, true)
-				return
-			end
-			local can_attack = target:HasTag("monster") or target.components.combat.target == self.inst or force_attack
-			if can_attack then
-				trace("   can attack")
-				local action = BufferedAction(self.inst, target, ACTIONS.ATTACK)
-				self.inst:ClearBufferedAction()
 				self.inst.components.locomotor:PushAction(action, true)
 				return
 			end
 		end
+			
+		local attack_target = self:GetAttackTarget() 			
+		if attack_target then
+			if self.inst.components.combat.target ~= attack_target or self.inst.sg:HasStateTag("idle") then
+				local action = BufferedAction(self.inst, attack_target, ACTIONS.ATTACK)
+				self.inst.components.locomotor:PushAction(action, true)
+			end
+			return
+		end
 		
 		--catching
-		rad = 8
+		local rad = 8
 		local projectile = FindEntity(self.inst, rad, function(guy)
 		    return guy.components.projectile
 		           and guy.components.projectile:IsThrown()
@@ -134,7 +187,7 @@ function PlayerController:OnPressAction()
 		--pickup
 		local pickup = FindEntity(self.inst, rad, function(guy) return (guy.components.inventoryitem and guy.components.inventoryitem.canbepickedup) or
 																		(tool and tool.components.tool and guy.components.workable and guy.components.workable.action == tool.components.tool.action) or
-																		(guy.components.pickable and guy.components.pickable:CanBePicked()) or
+																		(guy.components.pickable and guy.components.pickable:CanBePicked() and guy.components.pickable.caninteractwith) or
 																		(guy.components.crop and guy.components.crop:IsReadyForHarvest()) or
 																		(guy.components.harvestable and guy.components.harvestable:CanBeHarvested()) or
 																		(guy.components.trap and guy.components.trap.issprung) or
@@ -168,11 +221,13 @@ function PlayerController:OnPressAction()
 	end
 end
 
-local CameraRight = TheCamera:GetRightVec()
-local CameraDown = TheCamera:GetDownVec()
+
 
 function PlayerController:OnUpdate(dt)
-    if not self.enabled then return end  
+    if not self.enabled then 
+		TheInput:EnableMouseovers()
+		return 
+    end  
 
 	local active_item = self.inst.components.inventory:GetActiveItem()
 	
@@ -285,6 +340,7 @@ function PlayerController:OnUpdate(dt)
 					TheInput:IsKeyDown(KEY_S) and not
 					TheInput:IsKeyDown(KEY_D) then
 
+					
 					CameraRight = TheCamera:GetRightVec()
 					CameraDown = TheCamera:GetDownVec()
 			end
@@ -321,6 +377,8 @@ function PlayerController:OnLeftUp()
     
 	Print(VERBOSITY.DEBUG, "OnLeftUp")
 
+	local walk_key_down = TheInput:IsKeyDown(KEY_W) or TheInput:IsKeyDown(KEY_A) or TheInput:IsKeyDown(KEY_S) or TheInput:IsKeyDown(KEY_D)
+
     if not self.enabled then return end    
     
     if not self.ignore_left_up and not TheInput:GetHUDEntityUnderMouse() then 
@@ -330,7 +388,9 @@ function PlayerController:OnLeftUp()
 			self.directwalking = false
    			if self.draggingonground then
 				Print(VERBOSITY.DEBUG, "    stopping")
-				self.inst.components.locomotor:Stop()
+				if not walk_key_down then
+					self.inst.components.locomotor:Stop()
+				end
 			elseif self.startdragtime then
    				Print(VERBOSITY.DEBUG, "    not dragging")
 				local pt = TheInput:GetMouseWorldPos()
@@ -381,7 +441,7 @@ function PlayerController:DoAction(buffaction)
         if  buffaction.invobject and 
             buffaction.invobject.components.equippable and 
             buffaction.invobject.components.equippable.equipslot == EQUIPSLOTS.HANDS and 
-            (buffaction.action ~= ACTIONS.DROP) then
+            (buffaction.action ~= ACTIONS.DROP and buffaction.action ~= ACTIONS.STORE) then
             
                 if not buffaction.invobject.components.equippable.isequipped then 
                     self.inst.components.inventory:Equip(buffaction.invobject)

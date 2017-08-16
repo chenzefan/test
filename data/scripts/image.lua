@@ -11,6 +11,9 @@ Image = Class(Widget, function(self, tex)
     end
 end)
 
+function Image:SetAlphaRange(min, max)
+	self.inst.ImageWidget:SetAlphaRange(min, max)
+end
 
 function Image:SetTexture(tex)
 	self.texture = tex

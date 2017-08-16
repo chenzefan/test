@@ -26,6 +26,8 @@ end
 
 local function Dissipate(inst)
     inst.SoundEmitter:PlaySound("dontstarve/sanity/shadowhand_snuff")
+	inst.SoundEmitter:KillSound("creeping")
+	inst.SoundEmitter:KillSound("retreat")
     inst.AnimState:PlayAnimation("hand_scare")
     if inst.components.playerprox then
         inst:RemoveComponent("playerprox")
@@ -69,6 +71,7 @@ local function SeekFire(inst)
 	        inst.arm.Transform:SetPosition(inst.Transform:GetWorldPosition() )
 	        inst.arm:FacePoint(Vector3(fire.Transform:GetWorldPosition() ) )
 	        inst.arm.components.stretcher:SetStretchTarget(inst)
+	        inst.arm:ListenForEvent("enterlight", function() Dissipate(inst) end)
         end
         inst.arm:PushEvent("onfoundfire", {fire = fire, hand = inst})
         inst.components.locomotor.walkspeed = 2
@@ -119,6 +122,9 @@ local function HandleAction(inst, data)
 end
 
 
+local function onremoveentity(inst)
+    inst.SoundEmitter:KillAllSounds()
+end
 
 
 local function create_hand()
@@ -159,6 +165,7 @@ local function create_hand()
 	    
     inst:AddComponent("knownlocations")
     inst:ListenForEvent("startaction", HandleAction)
+    inst.OnRemoveEntity = onremoveentity
     
     return inst
 end
@@ -172,6 +179,8 @@ local function ArmFoundFire(inst, data)
         inst:ListenForEvent("onremove", function() inst:Remove() end, inst.hand)
     end
 end
+
+
 
 local function create_arm()
 	local inst = CreateEntity()
@@ -194,6 +203,7 @@ local function create_arm()
     inst.components.stretcher:SetRestingLength(4.75)
     inst.components.stretcher:SetWidthRatio(.35)
     inst:ListenForEvent("onfoundfire", ArmFoundFire)
+
     return inst
 end
 

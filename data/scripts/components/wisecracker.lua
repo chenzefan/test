@@ -50,6 +50,10 @@ local Wisecracker = Class(function(self, inst)
             inst.components.talker:Say(GetString(inst.prefab, "ANNOUNCE_CHARLIE_ATTACK"))
     end)
     
+    inst:ListenForEvent("thorns", function(inst, data)
+            inst.components.talker:Say(GetString(inst.prefab, "ANNOUNCE_THORNS"))
+    end)
+    
     inst:ListenForEvent("hungerdelta", 
         function(inst, data) 
             if (data.newpercent > TUNING.HUNGRY_THRESH) ~= (data.oldpercent > TUNING.HUNGRY_THRESH) then

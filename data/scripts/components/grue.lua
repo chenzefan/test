@@ -33,7 +33,7 @@ function Grue:Stop()
 end
 
 function Grue:OnUpdate(dt)
-    if self.inst.components.health:IsDead() then
+    if self.inst.components.health:IsDead() or self.inst.components.health.invincible == true then
         self:Stop()
         return
     end

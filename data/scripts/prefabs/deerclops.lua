@@ -120,7 +120,7 @@ local function fn(Sim)
     inst.components.locomotor.walkspeed = 3  
     
     ------------------------------------------
-    inst:SetStateGraph("SGDeerclops")
+    inst:SetStateGraph("SGdeerclops")
 
     ------------------------------------------
 

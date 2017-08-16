@@ -36,7 +36,7 @@ local function fn(Sim)
     anim:SetBuild("pitchfork")
     anim:PlayAnimation("idle")
     
-    
+    inst:AddTag("sharp")
     
     -------
     inst:AddComponent("finiteuses")

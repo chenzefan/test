@@ -7,7 +7,20 @@ local function onhammered(inst, worker)
 	inst:Remove()
 end
 
+local function CheckRain(inst)
+    if not inst.task then
+	    inst.task = inst:DoPeriodicTask(1, CheckRain)
+	end
+	inst.AnimState:SetPercent("meter", GetSeasonManager():GetPOP())
+end
+
 local function onhit(inst, worker)
+    if inst.task then
+        inst.task:Cancel()
+        inst.task = nil
+    end
+	inst.AnimState:PlayAnimation("hit")
+	--the global animover handler will restart the check task
 end
 
 
@@ -16,9 +29,16 @@ local assets =
 	Asset("ANIM", "data/anim/rain_meter.zip"),
 	Asset("IMAGE", "data/inventoryimages/rainometer.tex"),
 }
-local function CheckRain(inst)
-	inst.AnimState:SetPercent("meter", GetSeasonManager():GetPOP())
+
+local function onbuilt(inst)
+    if inst.task then
+        inst.task:Cancel()
+        inst.task = nil
+    end
+	inst.AnimState:PlayAnimation("place")
+	--the global animover handler will restart the check task
 end
+
 
 local function fn(Sim)
 	local inst = CreateEntity()
@@ -44,9 +64,10 @@ local function fn(Sim)
 	inst.components.workable:SetOnFinishCallback(onhammered)
 	inst.components.workable:SetOnWorkCallback(onhit)		
 	MakeSnowCovered(inst, .01)
+	inst:ListenForEvent("onbuilt", onbuilt)
+	inst:ListenForEvent("animover", CheckRain)
 	
-	inst:DoPeriodicTask(1, CheckRain, .1)
-	--CheckTemp(inst)
+	CheckRain(inst)
 	
 	return inst
 end

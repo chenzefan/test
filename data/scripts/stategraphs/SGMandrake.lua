@@ -49,10 +49,7 @@ local states=
             inst.SoundEmitter:PlaySound("dontstarve/creatures/mandrake/death")
             inst.AnimState:PlayAnimation("death")
             inst.Physics:Stop()
-            RemovePhysicsColliders(inst)            
-            inst.userfunctions.MakeItem(inst)
-            
-            inst:SetBrain(nil)
+            inst:AddTag("dead")
         end,
     },
     
@@ -61,7 +58,6 @@ local states=
         tags = {"busy"},
         onenter = function(inst)
             inst.AnimState:PlayAnimation("object")
-            inst.userfunctions.MakeItem(inst)
         end,
     },
     
@@ -87,11 +83,10 @@ local states=
         events=
         {
             EventHandler("animover", function(inst)
-                if GetClock():IsDay() then
-                    inst.sg:GoToState("death")
-                else
-	                inst.userfunctions.MakeFollower(inst)
+                if inst.components.follower then
                     inst.sg:GoToState("idle")
+                else
+                    inst.sg:GoToState("death")
                 end
             end),
         },
@@ -102,16 +97,29 @@ local states=
         tags = {"busy"},
         onenter = function(inst)
             inst.Physics:Stop()
-            inst:SetBrain(nil)
             inst.AnimState:PlayAnimation("plant")
             inst.SoundEmitter:PlaySound("dontstarve/creatures/mandrake/plant")
             inst.SoundEmitter:PlaySound("dontstarve/creatures/mandrake/plant_dirt")
-            inst.userfunctions.MakePlanted(inst)
         end,
         events=
         {
             EventHandler("animover", function(inst) inst.sg:GoToState("ground") end),
         },
+    },    
+    State{
+        name = "hit",
+        tags = {"busy"},
+        
+        onenter = function(inst)
+            inst.SoundEmitter:PlaySound("dontstarve/creatures/mandrake/hit")
+            inst.AnimState:PlayAnimation("hit")
+            inst.Physics:Stop()            
+        end,
+        
+        events=
+        {
+            EventHandler("animover", function(inst) inst.sg:GoToState("idle") end ),
+        },        
     },    
 }
 
@@ -122,7 +130,6 @@ CommonStates.AddWalkStates(states, {
         TimeEvent(7*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/mandrake/footstep") end),
     }
 })
-CommonStates.AddSimpleState(states,"hit", "hit", {"busy"})
 
 return StateGraph("mandrake", states, events, "ground", actionhandlers)
 

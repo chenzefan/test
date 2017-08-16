@@ -49,7 +49,7 @@ local states=
         {
             TimeEvent(0*FRAMES, function(inst) inst:PerformBufferedAction() inst.SoundEmitter:PlaySound("dontstarve/creatures/krampus/attack") end),
             TimeEvent(14*FRAMES, function(inst) inst:PerformBufferedAction() inst.SoundEmitter:PlaySound("dontstarve/creatures/krampus/kick_whoosh") end),
-            TimeEvent(18*FRAMES, function(inst) inst.components.combat:DoAttack() inst.SoundEmitter:PlaySound("dontstarve/creatures/krampus/kick_impact") end),
+            TimeEvent(18*FRAMES, function(inst) inst.components.combat:DoAttack() end),
         },
 
         events=

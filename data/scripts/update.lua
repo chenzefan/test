@@ -40,7 +40,11 @@ function WallUpdate(dt)
 	end	
 
     TheMixer:Update(dt)
-    TheCamera:Update(dt)
+
+	if not IsHUDPaused() then
+		TheCamera:Update(dt)
+	end
+    
 	CheckForUpsellTimeout(dt)
 
     TheInput:OnUpdate()

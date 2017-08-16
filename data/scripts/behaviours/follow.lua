@@ -60,7 +60,8 @@ function Follow:Visit()
     end
 
     if self.status == RUNNING then
-        if not self.currenttarget or not self.currenttarget.entity:IsValid() then
+        if not self.currenttarget or not self.currenttarget.entity:IsValid()
+           or (self.currenttarget.components.health and self.currenttarget.components.health:IsDead() ) then
             self.status = FAILED
             self.inst.components.locomotor:Stop()
             return

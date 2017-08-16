@@ -12,11 +12,13 @@ local FrostyBreather = Class(function(self, inst)
 end)
 
 function FrostyBreather:OnUpdate(dt)
-	local temp = GetWorld().components.seasonmanager:GetCurrentTemperature()
-	if not self.breath and temp < TUNING.FROSTY_BREATH then
-		self:Enable()
-	elseif self.breath and temp > TUNING.FROSTY_BREATH then
-		self:Disable()
+	if GetSeasonManager() then
+		local temp = GetWorld().components.seasonmanager:GetCurrentTemperature()
+		if not self.breath and temp < TUNING.FROSTY_BREATH then
+			self:Enable()
+		elseif self.breath and temp > TUNING.FROSTY_BREATH then
+			self:Disable()
+		end
 	end
 end
 

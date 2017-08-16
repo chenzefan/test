@@ -143,9 +143,8 @@ ItemTile = Class(Widget, function(self, invitem, owner)
 	end
 
     self.inst:ListenForEvent("imagechange", function() 
-        self.image = self.image:Kill()
-        self.image = self:AddChild(Image(invitem.components.inventoryitem:GetImage())) 
-        end, invitem)
+        self.image:SetTexture(invitem.components.inventoryitem:GetImage())
+    end, invitem)
     
     self.inst:ListenForEvent("stacksizechange",
             function(inst, data)
@@ -210,17 +209,41 @@ function ItemTile:OnMouseOver()
 			str = self.item.name
 		end
         
+		self.namedisp:SetHAlign(ANCHOR_LEFT)
+        local owner = self.item.components.inventoryitem and self.item.components.inventoryitem.owner
+		local actionpicker = owner and owner.components.playeractionpicker or GetPlayer().components.playeractionpicker
+		local inventory = owner and owner.components.inventory or GetPlayer().components.inventory
+        if owner and inventory and actionpicker then
         
-        self.namedisp:SetHAlign(ANCHOR_LEFT)
-        if self.item.components.inventoryitem and self.item.components.inventoryitem.owner and self.item.components.inventoryitem.owner.components.playeractionpicker then
-            local actions = self.item.components.inventoryitem.owner.components.playeractionpicker:GetInventoryActions(self.item)
+			local actions = nil
+			if inventory:GetActiveItem() then
+				actions = actionpicker:GetUseItemActions(self.item, inventory:GetActiveItem(), true)
+			end
+            if not actions then
+				actions = actionpicker:GetInventoryActions(self.item)
+			end
+			
             if actions then
                 str = str.."\n" .. STRINGS.RMB .. ": " .. actions[1]:GetActionString()
             end
         end
         
         self.namedisp:SetString(str)
-        self.namedisp:SetPosition(0,80,0)
+        
+        local scr_w, scr_h = TheSim:GetScreenSize()
+
+        local w, h = self.namedisp:GetRegionSize()
+        local pos = self:GetWorldPosition()
+        pos.y = pos.y + 80
+        local x = math.min(math.max(pos.x, w/2), scr_w - w/2)
+        local y = math.min(math.max(pos.y, h/2 + 80), scr_h - h/2)
+
+        if self.parent then
+            local parentpos = self.parent:GetWorldPosition()
+            x = x - parentpos.x
+            y = y - parentpos.y
+        end
+        self.namedisp:SetPosition(x,y,0)
     end
     
     if self.namedisp then
@@ -249,7 +272,11 @@ function ItemTile:SetPercent(percent)
 		self.percent = self:AddChild(Text(NUMBERFONT, 42))
 		self.percent:SetPosition(5,-32+15,0)
 	end
-	self.percent:SetString(string.format("%2.0f%%", math.max(1, percent*100)))
+    local val_to_show = percent*100
+    if val_to_show > 0 and val_to_show < 1 then
+        val_to_show = 1
+    end
+	self.percent:SetString(string.format("%2.0f%%", val_to_show))
         
     --end
 end
@@ -275,7 +302,7 @@ end
 
 function ItemTile:StartDrag()
     self:SetScale(1,1,1)
-    self:FollowMouse(true)
+    --self:FollowMouse(true)
     self.spoilage:Hide()
     self.bg:Hide( )
 end

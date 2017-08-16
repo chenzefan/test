@@ -33,9 +33,9 @@ local function fn()
 	inst.entity:AddLightWatcher()
     inst.LightWatcher:SetLightThresh(.2)
     inst.LightWatcher:SetDarkThresh(.19)
-    inst:ListenForEvent("enterlight", Disappear)
+    inst:ListenForEvent("enterlight", function(inst) inst:Remove() end)
     inst.persists = false
-    
+    inst:AddTag("NOCLICK")
     inst:AddComponent("playerprox")
     inst.components.playerprox:SetDist(3,5)
     inst.components.playerprox:SetOnPlayerNear(Disappear)

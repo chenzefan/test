@@ -11,7 +11,9 @@ local Sleeper = Class(function(self, inst)
     self.sleepiness = 0
     self.wearofftime = 10
     self.hibernate = false
+    self.nocturnal = false
     
+    self.inst:ListenForEvent("onignite", function(inst, data) self:WakeUp() end)
     self.inst:ListenForEvent("attacked", function(inst, data) self:WakeUp() end)
     self.inst:ListenForEvent("newcombattarget", function(inst, data)
         if data.target then self:StartTesting() end end)
@@ -26,17 +28,49 @@ end
 
 
 function DefaultSleepTest(inst)
-    return GetClock():IsNight()
-    and not (inst.components.combat and inst.components.combat.target)
-    and not (inst.components.burnable and inst.components.burnable:IsBurning() )
-   and not (inst.components.freezable and inst.components.freezable:IsFrozen() )
+
+	local near_home_dist = 40
+	local has_home_near = inst.components.homeseeker and 
+					 inst.components.homeseeker.home and 
+					 inst.components.homeseeker.home:IsValid() and
+					 inst:GetDistanceSqToInst(inst.components.homeseeker.home) < near_home_dist*near_home_dist
+
+
+    if not inst.components.sleeper.nocturnal then
+        return GetClock():IsNight()
+        and not (inst.components.combat and inst.components.combat.target)
+        and not (inst.components.burnable and inst.components.burnable:IsBurning() )
+       and not (inst.components.freezable and inst.components.freezable:IsFrozen() )
+       and not (inst.components.teamattacker and inst.components.teamattacker.inteam)
+       and not has_home_near
+   else
+        return GetClock():IsDay()
+        and not (inst.components.combat and inst.components.combat.target)
+        and not (inst.components.burnable and inst.components.burnable:IsBurning() )
+       and not (inst.components.freezable and inst.components.freezable:IsFrozen() )
+       and not (inst.components.teamattacker and inst.components.teamattacker.inteam)
+       and not has_home_near
+   end
 end
 
 function DefaultWakeTest(inst)
-    return GetClock():IsDay()
-    or (inst.components.combat and inst.components.combat.target)
-    or (inst.components.burnable and inst.components.burnable:IsBurning() )
-    or (inst.components.freezable and inst.components.freezable:IsFrozen() )
+    if not inst.components.sleeper.nocturnal then
+        return GetClock():IsDay()
+        or (inst.components.combat and inst.components.combat.target)
+        or (inst.components.burnable and inst.components.burnable:IsBurning() )
+        or (inst.components.freezable and inst.components.freezable:IsFrozen() )
+        or (inst.components.teamattacker and inst.components.teamattacker.inteam)
+    else
+        return GetClock():IsDusk() or GetClock():IsNight()
+        or (inst.components.combat and inst.components.combat.target)
+        or (inst.components.burnable and inst.components.burnable:IsBurning() )
+        or (inst.components.freezable and inst.components.freezable:IsFrozen() )
+        or (inst.components.teamattacker and inst.components.teamattacker.inteam)
+    end
+end
+
+function Sleeper:SetNocturnal(b)
+    self.nocturnal = b
 end
 
 
@@ -116,6 +150,9 @@ end
 
 function Sleeper:IsAsleep( )
     return self.isasleep
+end
+function Sleeper:IsHibernating( )
+    return self.hibernate
 end
 
 --- Deep sleep means the sleeper was drugged, and shouldn't wake up to chase targets
@@ -206,7 +243,7 @@ function Sleeper:SetTest(fn, time)
 end
 
 function Sleeper:WakeUp()
-
+    self.hibernate = false
     if (not self.inst.components.health or not self.inst.components.health:IsDead()) and self.isasleep and not self.hibernate then
 
         self.lasttransitiontime = GetTime()

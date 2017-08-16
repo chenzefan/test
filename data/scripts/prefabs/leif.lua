@@ -20,15 +20,26 @@ local prefabs =
 }
 
 local onloadfn = function(inst, data)
-	if data and data.sleeping then
-		inst.components.sleeper:GoToSleep()
-	end
+    if data and data.hibernate then
+        inst.components.sleeper.hibernate = true
+    end
+    if data and data.sleep_time then
+         inst.components.sleeper.testtime = data.sleep_time
+    end
+    if data and data.sleeping then     
+         inst.components.sleeper:GoToSleep()
+    end
 end
 
 local onsavefn = function(inst, data)
-	if inst.components.sleeper:IsAsleep() then
-		data.sleeping = true
-	end
+    if inst.components.sleeper:IsAsleep() then
+        data.sleeping = true
+        data.sleep_time = inst.components.sleeper.testtime
+    end
+
+    if inst.components.sleeper:IsHibernating() then
+        data.hibernate = true
+    end
 end
 
 
@@ -71,6 +82,7 @@ local function fn(Sim)
 
     inst:AddTag("monster")
     inst:AddTag("leif")
+    inst:AddTag("tree")
     inst:AddTag("largecreature")
 
     anim:SetBank("leif")

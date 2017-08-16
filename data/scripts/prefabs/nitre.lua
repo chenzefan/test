@@ -9,10 +9,15 @@ local function fn(Sim)
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
     MakeInventoryPhysics(inst)
+    inst.entity:AddSoundEmitter()
     
     inst.AnimState:SetBank("nitre")
     inst.AnimState:SetBuild("nitre")
     inst.AnimState:PlayAnimation("idle")
+
+    inst:AddComponent("edible")
+    inst.components.edible.foodtype = "ELEMENTAL"
+    inst.components.edible.hungervalue = 2
     
     inst:AddComponent("stackable")
 	inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM

@@ -147,6 +147,7 @@ local function fn(Sim)
     inst:ListenForEvent( "onbuilt", function()
         anim:PlayAnimation("place")
         anim:PushAnimation("idle",false)
+        inst.SoundEmitter:PlaySound("dontstarve/common/fireAddFuel")
     end)
     
     return inst

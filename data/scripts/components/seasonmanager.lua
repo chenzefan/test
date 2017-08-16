@@ -56,7 +56,11 @@ local SeasonManager = Class(function(self, inst)
 end)
 
 
+function SeasonManager:SetCaves()
+	self.seasonmode = "caves"
+	self.current_season = SEASONS.CAVES
 
+end
 function SeasonManager:SetMoiustureMult(mult)
 	self.base_atmo_moiseture_rate = mult
 end
@@ -87,6 +91,7 @@ end
 function SeasonManager:AlwaysWinter()
 	self.seasonmode = "alwayswinter"
 	self.percent_season = .5
+	self:StartWinter()
 	self:UpdateSegs()
 end
 
@@ -204,6 +209,8 @@ function SeasonManager:OnDayComplete()
 end
 
 function SeasonManager:UpdateSegs()
+	if self.seasonmode == "caves" then return end
+
 	if self.seasonmode == "cycle" or self.seasonmode == "endlesswinter" then
 
 		local p = math.sin(PI*self.percent_season)*.5
@@ -336,6 +343,7 @@ function SeasonManager:OnLoad(data)
 	self.inst:PushEvent("snowcoverchange", {snow = self.ground_snow_level})
 	if self:IsWinter() then
 		self:ApplyDSP(0)
+		self.inst:PushEvent( "seasonChange", {season = self.current_season} )		
 	end
 	
 	if self.precip and self.preciptype == "rain" then
@@ -367,8 +375,14 @@ end
 
 function SeasonManager:GetWeatherLightPercent()
 
-	local dyn_range = GetClock():IsDay() and .4 or .25
-
+	local dyn_range = .5
+	
+	if self:IsWinter() then
+		dyn_range = GetClock():IsDay() and .05 or 0
+	else
+		dyn_range = GetClock():IsDay() and .4 or .25
+	end
+	
 	if self.precipmode == "always" then
 		return 1 - dyn_range
 	elseif self.precipmode == "never" then
@@ -503,6 +517,8 @@ end
 
 
 function SeasonManager:OnUpdate( dt )
+	
+	if self.seasonmode == "caves" then return end
 
     if self.precip and self.preciptype == "rain" then
 	    self.inst.SoundEmitter:SetParameter("rain", "intensity", self.precip_rate)
@@ -655,11 +671,15 @@ function SeasonManager:OnUpdate( dt )
 		end
 	end
 	
-	TheMap:SetOverlayLerp( self.ground_snow_level * 3)
+	GetWorld().Map:SetOverlayLerp( self.ground_snow_level * 3)
 end
 
 function SeasonManager:GetPrecipitationRate()
 	return self.precip_rate
+end
+
+function SeasonManager:GetMoistureLimit()
+	return self.moisture_limit
 end
 
 function SeasonManager:StartWinter()

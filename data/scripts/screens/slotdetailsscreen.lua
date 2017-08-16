@@ -20,15 +20,12 @@ SlotDetailsScreen = Class(Screen, function(self, slotnum)
 	self.root = self:AddChild(Widget("ROOT"))
     self.root:SetVAnchor(ANCHOR_MIDDLE)
     self.root:SetHAnchor(ANCHOR_MIDDLE)
-    self.root:SetPosition(0,-20,0)
+    self.root:SetPosition(0,0,0)
     self.root:SetScaleMode(SCALEMODE_PROPORTIONAL)
 	
-    self.bg = self.root:AddChild(UIAnim())
-    self.bg:GetAnimState():SetBuild("panel_saveslots")
-    self.bg:GetAnimState():SetBank("panel_saveslots")
-    self.bg:GetAnimState():PlayAnimation("anim")
+    self.bg = self.root:AddChild(Image("data/images/panel_saveslots.tex"))
     
-	self.cancelbutton = self.root:AddChild(AnimButton("button"))
+	--[[self.cancelbutton = self.root:AddChild(AnimButton("button"))
 	self.cancelbutton:SetScale(.8,.8,.8)
     self.cancelbutton:SetText(STRINGS.UI.SLOTDETAILSSCREEN.CANCEL)
     self.cancelbutton:SetOnClick( function() TheFrontEnd:PopScreen(self) end )
@@ -36,35 +33,28 @@ SlotDetailsScreen = Class(Screen, function(self, slotnum)
     self.cancelbutton:SetTextSize(35)
     self.cancelbutton.text:SetVAlign(ANCHOR_MIDDLE)
     self.cancelbutton.text:SetColour(0,0,0,1)
-    self.cancelbutton:SetPosition( 0, -235, 0)
+    self.cancelbutton:SetPosition( 0, -235, 0)--]]
     
-    self.title = self.root:AddChild(Text(TITLEFONT, 60))
+    --[[self.title = self.root:AddChild(Text(TITLEFONT, 60))
     self.title:SetPosition( 0, 230, 0)
     self.title:SetRegionSize(250,70)
     self.title:SetString(STRINGS.UI.SLOTDETAILSSCREEN.TITLE .. " " .. tostring(slotnum))
-    self.title:SetVAlign(ANCHOR_MIDDLE)
+    self.title:SetVAlign(ANCHOR_MIDDLE)--]]
 
-    self.text = self.root:AddChild(Text(TITLEFONT, 40))
-    self.text:SetPosition( 30, 150, 0)
-    self.text:SetRegionSize(200,50)
+    self.text = self.root:AddChild(Text(TITLEFONT, 60))
+    self.text:SetPosition( 75, 135, 0)
+    self.text:SetRegionSize(250,60)
     self.text:SetHAlign(ANCHOR_LEFT)
 
 
-	self.playerimage = self.root:AddChild(Widget("playerimage"))
-	self.playerimage:SetPosition(-130, 150, 0)
-	self.playerimage:SetScale(1.5,1.5,1.5)
-	self.portrait_bg = self.playerimage:AddChild(Image("data/images/portrait_bg.tex"))
-	self.portrait_bg:SetClickable(false)		
-	self.portrait_bg:SetScale(.6,.6,1)
-	self.portrait_bg:SetVRegPoint(ANCHOR_MIDDLE)
-   	self.portrait_bg:SetHRegPoint(ANCHOR_MIDDLE)
-	
-	self.portrait = self.playerimage:AddChild(Image())
-	self.portrait:SetVRegPoint(ANCHOR_MIDDLE)
-   	self.portrait:SetHRegPoint(ANCHOR_MIDDLE)
+	self.portraitbg = self.root:AddChild(Image("data/images/saveslot_portraits/background.tex"))
+	self.portraitbg:SetPosition(-120, 135, 0)	
+	self.portraitbg:SetClickable(false)	
+
+	self.portrait = self.root:AddChild(Image())
 	self.portrait:SetClickable(false)		
-	self.portrait:SetTexture("data/portraits/"..character..".tex")
-	self.portrait:SetScale(.5,.5,1)
+	self.portrait:SetTexture("data/images/saveslot_portraits/"..character..".tex")
+	self.portrait:SetPosition(-120, 135, 0)
     
 
     self:BuildMenu()
@@ -90,12 +80,16 @@ function SlotDetailsScreen:BuildMenu()
     {
 		{name = STRINGS.UI.SLOTDETAILSSCREEN.CONTINUE, fn = function() self:Continue() end},
 		{name = STRINGS.UI.SLOTDETAILSSCREEN.DELETE, fn = function() self:Delete() end},
+		{name = STRINGS.UI.SLOTDETAILSSCREEN.CANCEL, fn = function() TheFrontEnd:PopScreen(self) end},
+		
 	}
 
 	if mode == "adventure" then
 		self.text:SetString(string.format("%s %d-%d",STRINGS.UI.LOADGAMESCREEN.ADVENTURE, world, day))
 	elseif mode == "survival" then
 		self.text:SetString(string.format("%s %d-%d",STRINGS.UI.LOADGAMESCREEN.SURVIVAL, world, day))
+	elseif mode == "cave" then
+		self.text:SetString(string.format("%s %d-%d",STRINGS.UI.LOADGAMESCREEN.CAVE, world, day))
 	else
 		--shouldn't actually happen...
 		self.text:SetString(string.format("%s",STRINGS.UI.LOADGAMESCREEN.NEWGAME))
@@ -107,10 +101,10 @@ function SlotDetailsScreen:BuildMenu()
 		button:SetText(v.name)
 		button:SetOnClick( v.fn )
 		button:SetFont(BUTTONFONT)
-		button:SetTextSize(35)
+		button:SetTextSize(40)
 		button.text:SetVAlign(ANCHOR_MIDDLE)
 		button.text:SetColour(0,0,0,1)
-		button:SetPosition( 0, 100 - k*75, 0)
+		button:SetPosition( 0, 50 - k*65, 0)
     end
 
 end

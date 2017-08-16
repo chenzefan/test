@@ -2,16 +2,12 @@ require "fonthelper"
 
 local assets =
 {
+	Asset("ANIM", "data/anim/maxwell_build.zip"),
 	Asset("ANIM", "data/anim/maxwell_basic.zip"),
+	Asset("ANIM", "data/anim/maxwell_adventure.zip"),
 	Asset("SOUND", "data/sound/maxwell.fsb"),
 }
 
-local FONTS = {
-	{ filename = "data/fonts/opensans50.zip", alias = DIALOGFONT },
-}
-
-AddFontAssets( assets, FONTS )
- 
 local function fn(Sim)
 	local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
@@ -22,14 +18,17 @@ local function fn(Sim)
     inst.Transform:SetTwoFaced()
 
     anim:SetBank("maxwell")
-    anim:SetBuild("maxwell_basic")
+    anim:SetBuild("maxwell_build")
     anim:PlayAnimation("appear")
 
     inst.entity:AddLabel()
-    inst.Label:SetFontSize(25)
-    inst.Label:SetFont(DIALOGFONT)
+    
+    inst.Label:SetFontSize(28)
+    inst.Label:SetFont(TALKINGFONT)
+    inst.Label:SetColour(133/255, 140/255, 167/255)
+
     inst.Label:SetPos(0,5,0)
-    --inst.Label:SetColour(255/255, 100/255, 100/255)
+    inst.Label:SetColour(133/255, 140/255, 167/255)
     inst.Label:Enable(false)
     
     inst:AddComponent("talker")

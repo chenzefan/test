@@ -55,6 +55,8 @@ local function fn(Sim)
  	inst.entity:AddSoundEmitter()
 
     inst:AddTag("monster")    
+    inst:AddTag("wet")
+    inst:AddTag("WORM_DANGER")
 
     inst:AddComponent("health")
     inst.components.health:SetMaxHealth(TUNING.TENTACLE_HEALTH)

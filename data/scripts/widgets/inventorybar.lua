@@ -129,8 +129,9 @@ function Inv:OnNewActiveItem(item)
         self.hovertile:Kill()
     end
 
-    if item then
-        self.hovertile = ItemTile(item, self)
+    if item and self.owner.HUD.controls then
+        
+        self.hovertile = self.owner.HUD.controls.mousefollow:AddChild(ItemTile(item, self))
         --self.owner.Controller:DoDragAndDrop(true)
         self.hovertile:StartDrag()
     else
@@ -146,16 +147,25 @@ end
 function Inv:UseSlot(slot)
     local item = self.owner.components.inventory:GetItemInSlot(slot)
     if item then
-        if item.components.equippable then
-            self.owner.components.inventory:Equip(item)
-            --self.owner.components.inventory:ReturnActiveItem(slot.num)
-        else
-            local actions = self.owner.components.playeractionpicker:GetInventoryActions(item)
-            if actions then
-                self.owner.components.locomotor:PushAction(actions[1], true)
-                --self.owner.components.inventory:ReturnActiveItem(slot.num)
-            end
-        end
+    
+		if self.owner.components.inventory:GetActiveItem() then
+			local actions = self.owner.components.playeractionpicker:GetUseItemActions(item, self.owner.components.inventory:GetActiveItem(), true)
+			if actions then
+				self.owner.components.locomotor:PushAction(actions[1], true)
+			end
+		else
+    
+			if item.components.equippable then
+				self.owner.components.inventory:Equip(item)
+				--self.owner.components.inventory:ReturnActiveItem(slot.num)
+			else
+				local actions = self.owner.components.playeractionpicker:GetInventoryActions(item)
+				if actions then
+					self.owner.components.locomotor:PushAction(actions[1], true)
+					--self.owner.components.inventory:ReturnActiveItem(slot.num)
+				end
+			end
+		end
     end
 end
 
@@ -166,12 +176,18 @@ end
 
 
 function Inv:RightEquipSlot(slot)
-
     if slot.tile and slot.tile.item then
-        local actions = self.owner.components.playeractionpicker:GetInventoryActions(slot.tile.item)
-		if actions then
-			self.owner.components.locomotor:PushAction(actions[1], true)
-		end
+        if self.owner.components.inventory:GetActiveItem() then
+            local actions = self.owner.components.playeractionpicker:GetUseItemActions(slot.tile.item, self.owner.components.inventory:GetActiveItem(), true)
+            if actions then
+                self.owner.components.locomotor:PushAction(actions[1], true)
+            end
+        else
+            local actions = self.owner.components.playeractionpicker:GetInventoryActions(slot.tile.item)
+        	if actions then
+        		self.owner.components.locomotor:PushAction(actions[1], true)
+        	end
+        end
 	end
 end
 

@@ -50,7 +50,6 @@ local function MakeShadowCreature(data)
         attack = "dontstarve/sanity/creature"..data.num.."/attack",
         attack_grunt = "dontstarve/sanity/creature"..data.num.."/attack_grunt",
         death = "dontstarve/sanity/creature"..data.num.."/die",
-        hit = "dontstarve/sanity/creature"..data.num.."/hit_response",
         idle = "dontstarve/sanity/creature"..data.num.."/idle",
         taunt = "dontstarve/sanity/creature"..data.num.."/taunt",
         appear = "dontstarve/sanity/creature"..data.num.."/appear",

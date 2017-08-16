@@ -225,17 +225,17 @@ function EmailSignupScreen:DoInit()
 	local space_between = 30
 	local height_offset = 60
 
-	local email_fontsize = 24
+	local email_fontsize = 30
 
 	
 	
 	
-	self.email_label = self.root:AddChild( Text( DEFAULTFONT, email_fontsize, STRINGS.UI.EMAILSCREEN.EMAIL ) )
+	self.email_label = self.root:AddChild( Text( BODYTEXTFONT, email_fontsize, STRINGS.UI.EMAILSCREEN.EMAIL ) )
 	self.email_label:SetPosition( -(label_width * .5 + label_offset), height_offset, 0 )
 	self.email_label:SetRegionSize( label_width, label_height )
 	self.email_label:SetHAlign(ANCHOR_RIGHT)
 
-	self.bday_label = self.root:AddChild( Text( DEFAULTFONT, email_fontsize, STRINGS.UI.EMAILSCREEN.BIRTHDAY ) )
+	self.bday_label = self.root:AddChild( Text( BODYTEXTFONT, email_fontsize, STRINGS.UI.EMAILSCREEN.BIRTHDAY ) )
 	self.bday_label:SetPosition( -(label_width * .5 + label_offset), 0, 0 )
 	self.bday_label:SetRegionSize( label_width, label_height )
 	self.bday_label:SetHAlign(ANCHOR_RIGHT)
@@ -243,7 +243,7 @@ function EmailSignupScreen:DoInit()
 	local edit_width = 550
 	local edit_bg_padding = 60
 	
-	self.bday_message = self.root:AddChild( Text( DEFAULTFONT, 18,  STRINGS.UI.EMAILSCREEN.BIRTHDAYREASON ) )
+	self.bday_message = self.root:AddChild( Text( BODYTEXTFONT, 24,  STRINGS.UI.EMAILSCREEN.BIRTHDAYREASON ) )
 	self.bday_message:SetPosition( 0, -height_offset, 0 )
 	self.bday_message:SetRegionSize( edit_width, label_height * 2 )
 	self.bday_message:EnableWordWrap(true)
@@ -255,7 +255,7 @@ function EmailSignupScreen:DoInit()
 	self.edit_bg:SetPosition( (edit_width * .5) - label_offset + space_between, height_offset, 0 )
 	self.edit_bg:ScaleToSize( edit_width + edit_bg_padding, label_height )
 
-	self.email_edit = self.root:AddChild( TextEdit( DEFAULTFONT, email_fontsize, "" ) )
+	self.email_edit = self.root:AddChild( TextEdit( BODYTEXTFONT, email_fontsize, "" ) )
 	self.email_edit:SetPosition( (edit_width * .5) - label_offset + space_between, height_offset, 0 )
 	self.email_edit:SetRegionSize( edit_width, label_height )
 	self.email_edit:SetHAlign(ANCHOR_LEFT)
@@ -271,7 +271,7 @@ function EmailSignupScreen:DoInit()
 		bgtexture = "data/images/textbox_short.tex",
 	}
 
-	local text_font = DEFAULTFONT
+	local text_font = BODYTEXTFONT
 
 
 	local months = {
@@ -320,7 +320,7 @@ function EmailSignupScreen:DoInit()
 	local menu_spacing = button_w + space_between
 
 	self.menu = self.root:AddChild( MakeMenu( Vector3(menu_spacing, 0, 0), menu_items) )
-	self.menu:SetPosition(0, -120, 0) 
+	self.menu:SetPosition(-115, -120, 0) 
 	
 	self:PushFocusWidget(self.email_edit)
 	--self:PushFocusWidget(self.monthSpinner)

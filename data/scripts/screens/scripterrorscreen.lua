@@ -13,7 +13,7 @@ ScriptErrorScreen = Class(Screen, function(self, title, text, buttons, texthalig
 	local w, h = self.blackoverlay:GetSize()
 
 	--throw up the background
-    self.bg = self:AddChild(Image("data/images/map.tex"))
+    self.bg = self:AddChild(Image("data/images/bg_red.tex"))
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
     self.bg:SetHRegPoint(ANCHOR_MIDDLE)
     self.bg:SetVAnchor(ANCHOR_MIDDLE)
@@ -38,7 +38,7 @@ ScriptErrorScreen = Class(Screen, function(self, title, text, buttons, texthalig
 	end
 
 	
-    self.text = self.root:AddChild(Text(DIALOGFONT, defaulttextsize))
+    self.text = self.root:AddChild(Text(BODYTEXTFONT, defaulttextsize))
 	self.text:SetVAlign(ANCHOR_TOP)
 
 	if texthalign then
@@ -52,7 +52,7 @@ ScriptErrorScreen = Class(Screen, function(self, title, text, buttons, texthalig
     self.text:SetRegionSize(480*2, 200)
     
     if additionaltext then
-	    self.additionaltext = self.root:AddChild(Text(DIALOGFONT, 24))
+	    self.additionaltext = self.root:AddChild(Text(BODYTEXTFONT, 24))
 		self.additionaltext:SetVAlign(ANCHOR_TOP)
 	    self.additionaltext:SetPosition(0, -210, 0)
 	    self.additionaltext:SetString(additionaltext)

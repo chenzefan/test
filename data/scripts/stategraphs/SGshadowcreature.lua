@@ -31,12 +31,12 @@ local states=
             inst.components.combat:StartAttack()
             inst.AnimState:PlayAnimation("atk_pre")
             inst.AnimState:PushAnimation("atk", false)
-            inst.SoundEmitter:PlaySound(inst.sounds.attack_grunt, GetVolume(inst))
+            inst.SoundEmitter:PlaySound(inst.sounds.attack_grunt, nil, GetVolume(inst))
         end,
 
         timeline=
         {
-			TimeEvent(14*FRAMES, function(inst) inst.SoundEmitter:PlaySound(inst.sounds.attack, GetVolume(inst)) end),
+			TimeEvent(14*FRAMES, function(inst) inst.SoundEmitter:PlaySound(inst.sounds.attack, nil, GetVolume(inst)) end),
             TimeEvent(16*FRAMES, function(inst) inst.components.combat:DoAttack(inst.sg.statemem.target) end),
         },
 
@@ -60,13 +60,12 @@ local states=
         onenter = function(inst)
             inst.Physics:Stop()
             inst.AnimState:PlayAnimation("disappear")
-            inst.SoundEmitter:PlaySound(inst.sounds.hit, GetVolume(inst))
         end,
 
         events=
         {
 			EventHandler("animover", function(inst)
-                if TheMap then
+                if GetWorld().Map then
                 
 					local max_tries = 4
 					for k = 1,max_tries do
@@ -74,7 +73,7 @@ local states=
 						local offset = 10
 						pos.x = pos.x + (math.random(2*offset)-offset)          
 						pos.z = pos.z + (math.random(2*offset)-offset)
-						if TheMap:GetTileAtPoint(pos:Get()) ~= GROUND.IMPASSABLE then
+						if GetWorld().Map:GetTileAtPoint(pos:Get()) ~= GROUND.IMPASSABLE then
 							inst.Transform:SetPosition(pos:Get() )
 							break
 						end
@@ -95,7 +94,7 @@ local states=
         onenter = function(inst)
             inst.Physics:Stop()
             inst.AnimState:PlayAnimation("taunt")
-            inst.SoundEmitter:PlaySound(inst.sounds.taunt, GetVolume(inst))
+            inst.SoundEmitter:PlaySound(inst.sounds.taunt, nil, GetVolume(inst))
         end,
 
 		--timeline=
@@ -116,7 +115,7 @@ local states=
         onenter = function(inst)
             inst.AnimState:PlayAnimation("appear")
             inst.Physics:Stop()
-            inst.SoundEmitter:PlaySound(inst.sounds.appear, GetVolume(inst))
+            inst.SoundEmitter:PlaySound(inst.sounds.appear, nil, GetVolume(inst))
         end,
         
         events = 
@@ -130,7 +129,7 @@ local states=
         tags = {"busy"},
 
         onenter = function(inst)
-			inst.SoundEmitter:PlaySound(inst.sounds.death, GetVolume(inst))
+			inst.SoundEmitter:PlaySound(inst.sounds.death, nil, GetVolume(inst))
             inst.AnimState:PlayAnimation("disappear")
             inst.Physics:Stop()
             RemovePhysicsColliders(inst)            
@@ -146,7 +145,7 @@ local states=
 
         onenter = function(inst)
 			inst.persists = false
-			inst.SoundEmitter:PlaySound(inst.sounds.death, GetVolume(inst))
+			inst.SoundEmitter:PlaySound(inst.sounds.death, nil, GetVolume(inst))
             inst.AnimState:PlayAnimation("disappear")
             inst.Physics:Stop()
         end,

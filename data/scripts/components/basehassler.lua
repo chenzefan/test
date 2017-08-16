@@ -111,7 +111,7 @@ function BaseHassler:OnUpdate(dt)
 			self.announcewarningsoundinterval = self.announcewarningsoundinterval - 1
 			if self.announcewarningsoundinterval <= 0 then
 				self.announcewarningsoundinterval = 10 + math.random(5)
-					self.inst.components.talker:Say(GetString(self.inst.prefab, "ANNOUNCE_DEERCLOPS"))
+					GetPlayer().components.talker:Say(GetString(GetPlayer().prefab, "ANNOUNCE_DEERCLOPS"))
 			end
 		
 			local inst = CreateEntity()
@@ -134,7 +134,7 @@ function BaseHassler:OnUpdate(dt)
 				radius = radius + 20
 			end
 
-			local offset = Vector3(self.inst.Transform:GetWorldPosition()) +  Vector3(radius * math.cos( theta ), 0, -radius * math.sin( theta ))
+			local offset = Vector3(GetPlayer().Transform:GetWorldPosition()) +  Vector3(radius * math.cos( theta ), 0, -radius * math.sin( theta ))
 			
 			inst.Transform:SetPosition(offset.x,offset.y,offset.z)
 			inst.SoundEmitter:PlaySound(self.warningsound)
@@ -208,7 +208,7 @@ function BaseHassler:GetWanderAwayPoint(pt)
 end
 
 function BaseHassler:ReleaseHassler()
-	local pt = Vector3(self.inst.Transform:GetWorldPosition())
+	local pt = Vector3(GetPlayer().Transform:GetWorldPosition())
 	
     local spawn_pt = self:GetSpawnPoint(pt)
 	
@@ -219,7 +219,7 @@ function BaseHassler:ReleaseHassler()
 	    end
         if hassler then
             hassler.Physics:Teleport(spawn_pt:Get())
-            local target = GetClosestInstWithTag("structure", self.inst, 40)
+            local target = GetClosestInstWithTag("structure", GetPlayer(), 40)
             if target then
                 local targetPos = Vector3(target.Transform:GetWorldPosition() )
 		        hassler.components.knownlocations:RememberLocation("targetbase", targetPos)
@@ -228,7 +228,7 @@ function BaseHassler:ReleaseHassler()
                     hassler.components.knownlocations:RememberLocation("home", wanderAwayPoint)
                 end
 		    else
-		        hassler.components.combat:SetTarget(self.inst)
+		        hassler.components.combat:SetTarget(GetPlayer())
 		    end
 		end
 	end

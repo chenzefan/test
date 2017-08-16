@@ -27,7 +27,8 @@ end
 
 
 function GetSpecialCharacterString(character)
-    if character == "WILTON" then
+    character = string.lower(character)
+    if character == "wilton" then
 
 		local sayings =
 		{
@@ -42,8 +43,10 @@ function GetSpecialCharacterString(character)
 		}
 
 		return sayings[math.random(#sayings)]
-    elseif character == "WES" then
+    elseif character == "wes" then
 		return ""
+    --else
+		--print (character)
     end
 end
 
@@ -92,6 +95,11 @@ end
 
 function GetActionFailString(character, action, reason)
     local ret = nil
+
+	local ret = GetSpecialCharacterString(character)
+	if ret then
+		return ret
+	end
 
     if STRINGS.CHARACTERS[character] then
         ret = getcharacterstring(STRINGS.CHARACTERS[character].ACTIONFAIL, action, reason)

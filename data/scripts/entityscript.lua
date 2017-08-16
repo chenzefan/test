@@ -53,8 +53,8 @@ function EntityScript:GetSaveRecord()
     local record = 
     {
         prefab = self.prefab,
-        id = self.GUID,
-        age = self:GetTimeAlive()
+        --id = self.GUID,
+        --age = math.floor(self:GetTimeAlive()*10)/10
     }
     
     if self.Transform then
@@ -67,9 +67,10 @@ function EntityScript:GetSaveRecord()
         end
     end
     
-    record.data = self:GetPersistData()
-            
-    return record
+    local references = nil
+    record.data, references = self:GetPersistData()
+    
+    return record, references
 end
 
 
@@ -838,10 +839,13 @@ function EntityScript:CanInteractWith(inst)
 end
 
 
-function EntityScript:IsActionValid(action)
+function EntityScript:IsActionValid(action, right)
 
+    if action.rmb and action.rmb ~= right then
+        return false
+    end
     for k,v in pairs(self.components) do
-        if v.IsActionValid and v:IsActionValid(action) then
+        if v.IsActionValid and v:IsActionValid(action, right) then
             return true
         end
     end
@@ -889,11 +893,11 @@ end
 
 function EntityScript:GetCurrentTileType()
 
-    if TheMap then
+    if GetWorld().Map then
 		local pt = Vector3(self.Transform:GetWorldPosition())
-		local tilecenter = Vector3(TheMap:GetTileCenterPoint(pt.x,0,pt.z))
-		local tx, ty = TheMap:GetTileCoordsAtPoint(pt.x, 0, pt.z)
-		local actual_tile = TheMap:GetTile(tx, ty)
+		local tilecenter = Vector3(GetWorld().Map:GetTileCenterPoint(pt.x,0,pt.z))
+		local tx, ty = GetWorld().Map:GetTileCoordsAtPoint(pt.x, 0, pt.z)
+		local actual_tile = GetWorld().Map:GetTile(tx, ty)
 		
 		if actual_tile then
 			local xpercent = (tilecenter.x - pt.x)/TILE_SCALE + .5
@@ -919,7 +923,7 @@ function EntityScript:GetCurrentTileType()
 				
 				for k, x in pairs(x_checks) do
 					for k, y in pairs(y_checks) do
-						local tile = TheMap:GetTile(tx + x, ty + y)
+						local tile = GetWorld().Map:GetTile(tx + x, ty + y)
 						if tile > actual_tile then
 							actual_tile = tile
 							x_off = x
@@ -940,17 +944,29 @@ function EntityScript:GetCurrentTileType()
 end
 
 function EntityScript:GetPersistData()
-    
+    local references = nil
     local data = nil
     for k,v in pairs(self.components) do
         if v.OnSave then
-            local t = v:OnSave()
-            if t and not data then
-                data = {}
-            end
-            if t then
-                data[k] = t
-            end
+            local t, refs = v:OnSave()
+            if type(t) == "table" then
+				if t and next(t) and not data then
+					data = {}
+				end
+				if t and data then
+					data[k] = t
+				end
+			end
+			
+			if refs then
+				if not references then
+					references = {}
+				end
+				for k,v in pairs(refs) do
+					
+					table.insert(references, v)
+				end
+			end
         end
     end
     
@@ -961,10 +977,8 @@ function EntityScript:GetPersistData()
         self.OnSave(self, data)
     end
     
-    if data then
-        for k,v in pairs(data) do 
-            return data    
-        end
+    if (data and next(data)) or references then
+		return data, references
     end
 end
 
@@ -978,7 +992,7 @@ function EntityScript:LoadPostPass(newents, savedata)
             end
         end
     end
-        
+    
     if self.OnLoadPostPass then
         self:OnLoadPostPass(newents, savedata)
     end

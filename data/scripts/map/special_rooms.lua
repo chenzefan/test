@@ -1,17 +1,29 @@
 
+local function MakeSetpieceBlockerRoom(blocker_name)
+	return	{
+				colour={r=0.2,g=0.0,b=0.2,a=0.3},
+				value = GROUND_VALUES[GROUND.IMPASSABLE],
+				tags = {"ForceConnected", "RoadPoison"},
+				contents =  {
+								countstaticlayouts= {
+									[blocker_name]=1,
+								}, 
+							}
+			}
+end
+
+
+
 local SpecialRooms = 
 	{
 ------------------------------------------------------------------------------------
 -- TEST ROOMS -----------------------------------------------------------------------
 ------------------------------------------------------------------------------------
 		["MaxPuzzle1"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=5,
 					colour={r=0.3,g=.8,b=.5,a=.50},
 					value = GROUND_VALUES[GROUND.MARSH],
 					contents =  {
-									countspecialprefabs={
+									countstaticlayouts={
 										["MaxPuzzle1"]=1,
 									},
 					                distributepercent = 0.2,
@@ -26,13 +38,10 @@ local SpecialRooms =
 					            }
 					       },
 		["MaxPuzzle2"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=5,
 					colour={r=0.3,g=.8,b=.5,a=.50},
 					value = GROUND_VALUES[GROUND.MARSH],
 					contents =  {
-									countspecialprefabs={
+									countstaticlayouts={
 										["MaxPuzzle2"]=1,
 									},
 					                distributepercent = 0.5,
@@ -46,13 +55,10 @@ local SpecialRooms =
 					            }
 					       },
 		["MaxPuzzle3"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=5,
 					colour={r=0.3,g=.8,b=.5,a=.50},
 					value = GROUND_VALUES[GROUND.MARSH],
 					contents =  {
-									countspecialprefabs={
+									countstaticlayouts={
 										["MaxPuzzle3"]=1,
 									},
 					                distributepercent = 0.3,
@@ -66,26 +72,20 @@ local SpecialRooms =
 					            }
 					       },
 		["SymmetryRoom"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=5,
 					colour={r=0.3,g=.8,b=.5,a=.50},
 					value = GROUND_VALUES[GROUND.GRASS],
 					contents =  {
-									countspecialprefabs={
+									countstaticlayouts={
 										["SymmetryTest"]=2,
 										["SymmetryTest2"]=2,
 									},
 					            }
 					       },
 		["TEST_ROOM"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size= function () return 3 + math.random(1) end,
 					colour={r=0.3,g=0.2,b=0.1,a=0.3},
-					value = GROUND_VALUES[GROUND.GRASS], --GetRandomItem(GROUND_VALUES),
+					value = GROUND_VALUES[GROUND.FUNGUS], --GetRandomItem(GROUND_VALUES),
 					contents =  {
-									countspecialprefabs={
+									countstaticlayouts={
 										["test"]=1,
 									},
 					                countprefabs= {
@@ -99,21 +99,15 @@ local SpecialRooms =
 					            }
 					},
 		["MaxHome"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=5,
 					colour={r=0.3,g=.8,b=.5,a=.50},
 					value = GROUND_VALUES[GROUND.IMPASSABLE],
 					contents =  {
-									countspecialprefabs={
+									countstaticlayouts={
 										["MaxwellHome"]=1,
 									},
 					            }
 					       },
 		["TestMixedForest"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=5,
 					colour={r=0.3,g=.8,b=.5,a=.50},
 					value = GROUND_VALUES[GROUND.FOREST],
 					contents =  {
@@ -125,9 +119,6 @@ local SpecialRooms =
 					            }
 					       },
 		["TestSparseForest"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=5,
 					colour={r=0.3,g=.8,b=.5,a=.50},
 					value = GROUND_VALUES[GROUND.FOREST],
 					contents =  {
@@ -138,9 +129,6 @@ local SpecialRooms =
 					            }
 					       },
 		["TestPineForest"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=5,
 					colour={r=0.3,g=.8,b=.5,a=.50},
 					value = GROUND_VALUES[GROUND.FOREST],
 					contents =  {
@@ -155,9 +143,6 @@ local SpecialRooms =
 -- Merms 
 --------------------------------------------------------------------------------
 		["MermTown"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=5,
 					colour={r=0.5,g=.18,b=.35,a=.50},
 					value = GROUND_VALUES[GROUND.MARSH],
 					contents =  {
@@ -178,14 +163,11 @@ local SpecialRooms =
 -- Pigs 
 --------------------------------------------------------------------------------
 		["PigTown"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=5,
 					colour={r=0.3,g=.8,b=.5,a=.50},
 					value = GROUND_VALUES[GROUND.GRASS],
 					tags = {"Town"},
 					contents =  {
-									countspecialprefabs={
+									countstaticlayouts={
 										["PigTown"]=1, 
 									},
 									distributepercent = .1,
@@ -196,14 +178,11 @@ local SpecialRooms =
 					            }
 					 },
 		["PigVillage"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=5,
 					colour={r=0.3,g=.8,b=.5,a=.50},
 					value = GROUND_VALUES[GROUND.GRASS],
 					tags = {"Town"},
 					contents =  {
-									countspecialprefabs={
+									countstaticlayouts={
 										["Farmplot"]=function() return math.random(2,5) end,
 										["VillageSquare"]= function()	
 																		if math.random() > 0.97 then 
@@ -225,14 +204,11 @@ local SpecialRooms =
 					            }
 					       },
 		["PigKingdom"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=5,
 					colour={r=0.8,g=.8,b=.1,a=.50},
 					value = GROUND_VALUES[GROUND.GRASS],
 					tags = {"Town"},
 					contents =  {
-									countspecialprefabs=
+									countstaticlayouts=
 									{
 										["DefaultPigking"]=1,
 										["CropCircle"]=function() return math.random(0,1) end,
@@ -249,14 +225,11 @@ local SpecialRooms =
 					            }
 					       },
 		["PigCity"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=5,
 					colour={r=0.9,g=.9,b=.2,a=.50},
 					value = GROUND_VALUES[GROUND.ROCKY],
 					tags = {"Town"},
 					contents =  {
-									countspecialprefabs=
+									countstaticlayouts=
 									{
 										["PigTown"]=function () return 1 + math.random(2) end,
 										["TorchPigking"]=1,
@@ -267,9 +240,6 @@ local SpecialRooms =
 					            }
 					       },
 		["PigCamp"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=5,
 					colour={r=1,g=.8,b=.8,a=.50},
 					value = GROUND_VALUES[GROUND.GRASS],
 					tags = {"Town"},
@@ -288,13 +258,10 @@ local SpecialRooms =
 					                }
 					       },
 		["PigShrine"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size= function () return 3 + math.random(1) end,
 					colour={r=0.3,g=0.2,b=0.1,a=0.3},
 					value = GROUND_VALUES[GROUND.FOREST], 
 					contents =  {
-									countspecialprefabs={
+									countstaticlayouts={
 										["MaxPigShrine"]=1,
 									},
 					                countprefabs= {
@@ -308,9 +275,6 @@ local SpecialRooms =
 					            }
 					},
 		["Pondopolis"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=5,
 					colour={r=.30,g=.20,b=.50,a=.50},
 					value = GROUND_VALUES[GROUND.GRASS],
 					contents =  {
@@ -329,9 +293,6 @@ local SpecialRooms =
 -- Spider 
 --------------------------------------------------------------------------------
 		["SpiderCity"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=5,
 					colour={r=.30,g=.20,b=.50,a=.50},
 					value = GROUND_VALUES[GROUND.FOREST],
 					contents =  {
@@ -355,9 +316,6 @@ local SpecialRooms =
 					       },
 
 		["SpiderVillage"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=5,
 					colour={r=.30,g=.20,b=.50,a=.50},
 					value = GROUND_VALUES[GROUND.ROCKY],
 					contents =  {
@@ -382,9 +340,6 @@ local SpecialRooms =
 					            }
 					       },
 		["SpiderVillageSwamp"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=5,
 					colour={r=.30,g=.20,b=.50,a=.50},
 					value = GROUND_VALUES[GROUND.MARSH],
 					contents =  {
@@ -411,9 +366,6 @@ local SpecialRooms =
 -- Walrus 
 --------------------------------------------------------------------------------
 		["WalrusHut_Plains"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=5,
 					colour={r=.30,g=.20,b=.50,a=.50},
 					value = GROUND_VALUES[GROUND.SAVANNA],
 					contents =  {
@@ -429,9 +381,6 @@ local SpecialRooms =
 					            }
 					       },
 		["WalrusHut_Grassy"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=5,
 					colour={r=.30,g=.20,b=.50,a=.50},
 					value = GROUND_VALUES[GROUND.GRASS],
 					contents =  {
@@ -452,9 +401,6 @@ local SpecialRooms =
 					            }
 					       },
 		["WalrusHut_Rocky"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=5,
 					colour={r=.30,g=.20,b=.50,a=.50},
 					value = GROUND_VALUES[GROUND.ROCKY],
 					contents =  {
@@ -472,9 +418,6 @@ local SpecialRooms =
 					            }
 					       },
 		["BeeClearing"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=5,
 					colour={r=.8,g=1,b=.8,a=.50},
 					value = GROUND_VALUES[GROUND.GRASS],
 					contents =  {
@@ -486,9 +429,6 @@ local SpecialRooms =
 					            }
 					       },
 		["Graveyard"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=3,
 					colour={r=.010,g=.010,b=.10,a=.50},
 					value = GROUND_VALUES[GROUND.FOREST],
 					tags = {"Town"},
@@ -502,9 +442,6 @@ local SpecialRooms =
 					            }
 					       },
 		["BurntForestStart"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=3,
 					colour={r=.010,g=.010,b=.010,a=.50},
 					value = GROUND_VALUES[GROUND.FOREST],
 					contents =  {
@@ -522,9 +459,6 @@ local SpecialRooms =
 								}
 						   },
 		["BeefalowPlain"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size= function () return 7 + math.random(4) end,
 					colour={r=.45,g=.5,b=.85,a=.50},
 					value = GROUND_VALUES[GROUND.SAVANNA],
 					contents =  {
@@ -536,13 +470,10 @@ local SpecialRooms =
 					            }
 					       },
 		["MandrakeHome"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=1,
 					colour={r=0.3,g=0.4,b=0.8,a=0.3},
 					value = GROUND_VALUES[GROUND.GRASS],
 					contents =  {
-									countspecialprefabs=
+									countstaticlayouts=
 									{
 										["InsanePighouse"]=function() if math.random(1000)> 995 then 
 																		return 1 
@@ -568,9 +499,6 @@ local SpecialRooms =
 					       },
 
 		["TallbirdNests"] = {
-					shape =  function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size=  function () return 3 + math.random(1) end,
 					colour={r=.55,g=.75,b=.75,a=.50},
 					value = GROUND_VALUES[GROUND.DIRT],
 					tags = {"ExitPiece", "Chester_Eyebone"},
@@ -587,9 +515,6 @@ local SpecialRooms =
 					            }
 					},
 		["Rockpile"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size = 3,
 					colour={r=0.6,g=0.1,b=0.8,a=0.3},
 					value = GROUND_VALUES[GROUND.IMPASSABLE],
 					contents =  {
@@ -602,9 +527,6 @@ local SpecialRooms =
 					            }
 					},
 		["Woodpile"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size = 3,
 					colour={r=0.6,g=0.8,b=0.2,a=0.3},
 					value = GROUND_VALUES[GROUND.FOREST],
 					contents =  {
@@ -624,12 +546,12 @@ local SpecialRooms =
 					            }
 					},
 		["SafeSwamp"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size = 3,
 					colour={r=0.2,g=0.0,b=0.2,a=0.3},
 					value = GROUND_VALUES[GROUND.SWAMP],
 					contents =  {
+					                countprefabs= {
+					                    mandrake = math.random(1,2),
+					                },
 					                distributepercent = 0.2,
 									distributeprefabs = {
 										marsh_tree=1,
@@ -644,9 +566,6 @@ local SpecialRooms =
 ------------------------------------------------------------------------------------
 
 		["Wormhole_Swamp"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=1,
 					colour={r=1,g=0,b=0,a=0.3},
 					value = GROUND_VALUES[GROUND.MARSH],
 					contents =  {
@@ -662,9 +581,6 @@ local SpecialRooms =
 					            }
 					},
 		["Wormhole_Plains"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=1,
 					colour={r=1,g=0,b=0,a=0.3},
 					value = GROUND_VALUES[GROUND.SAVANNA],
 					contents =  {
@@ -681,9 +597,6 @@ local SpecialRooms =
 					            }
 					},
 		["Wormhole_Burnt"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=1,
 					colour={r=1,g=0,b=0,a=0.3},
 					value = GROUND_VALUES[GROUND.FOREST],
 					contents =  {
@@ -703,9 +616,6 @@ local SpecialRooms =
 					            }
 					},
 		["Wormhole"] = {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size=1,
 					colour={r=1,g=0,b=0,a=0.3},
 					value = GROUND_VALUES[GROUND.FOREST],
 					contents =  {
@@ -723,14 +633,32 @@ local SpecialRooms =
 					                }
 					            }
 					},
+		["Sinkhole"] = { -- This room is used to tag for the caves - it will be removed later
+					colour={r=0,g=0,b=0,a=0.9},
+					value = GROUND_VALUES[GROUND.FOREST],
+					contents =  {
+									countprefabs = {
+										cave_entrance = 1,
+									},
+									distributepercent=0.3,
+					                distributeprefabs= {
+					                    grass = 1,
+										sapling = 1,
+										rocks = 3,
+										evergreen_normal = 1,
+										evergreen_short = 5,
+										evergreen_tall = 1,
+					                }
+					            }
+					},
+------------------------------------------------------------------------------------
+-- CHESS CORRUPTION ----------------------------------------------------------------
+------------------------------------------------------------------------------------
 		["ChessArea"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size = 8,
 					colour={r=0.5,g=0.7,b=0.5,a=0.3},
 					value = GROUND_VALUES[GROUND.CHECKER],
 					contents =  {
-									countspecialprefabs={
+									countstaticlayouts={
 										["Maxwell1"] = function() return math.random(0,3) < 1 and 1 or 0 end,
 										["Maxwell2"] = function() return math.random(0,3) < 1 and 1 or 0 end,
 										["Maxwell3"] = function() return math.random(0,3) < 1 and 1 or 0 end,
@@ -752,13 +680,10 @@ local SpecialRooms =
 					            }
 					},
 		["MarbleForest"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size = 8,
 					colour={r=0.5,g=0.7,b=0.5,a=0.3},
 					value = GROUND_VALUES[GROUND.CHECKER],
 					contents =  {
-									countspecialprefabs={
+									countstaticlayouts={
 										["Maxwell1"] = function() return math.random(0,3) < 1 and 1 or 0 end,
 										["Maxwell2"] = function() return math.random(0,3) < 1 and 1 or 0 end,
 										["Maxwell3"] = function() return math.random(0,3) < 1 and 1 or 0 end,
@@ -780,17 +705,11 @@ local SpecialRooms =
 					            }
 					},
 
-------------------------------------------------------------------------------------
--- CHESS CORRUPTION ----------------------------------------------------------------
-------------------------------------------------------------------------------------
 		["ChessMarsh"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size = 8,
 					colour={r=0.5,g=0.7,b=0.5,a=0.3},
 					value = GROUND_VALUES[GROUND.MARSH],
 					contents =  {
-									countspecialprefabs={
+									countstaticlayouts={
 										["Maxwell1"] = function() return math.random(0,3) < 1 and 1 or 0 end,
 										["Maxwell2"] = function() return math.random(0,3) < 1 and 1 or 0 end,
 										["Maxwell3"] = function() return math.random(0,3) < 1 and 1 or 0 end,
@@ -808,13 +727,10 @@ local SpecialRooms =
 					            }
 					},
 		["ChessForest"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size = 3,
 					colour={r=0.2,g=0.0,b=0.2,a=0.3},
 					value = GROUND_VALUES[GROUND.FOREST],
 					contents =  {
-									countspecialprefabs = {
+									countstaticlayouts = {
 										["Maxwell2"] = function() return math.random(0,3) < 1 and 1 or 0 end,
 										["Maxwell3"] = function() return math.random(0,3) < 1 and 1 or 0 end,
 										["Maxwell5"] = function() return math.random(0,3) < 1 and 1 or 0 end,
@@ -843,14 +759,11 @@ local SpecialRooms =
 					            }
 					},
 		["ChessBarrens"] = {
-					shape =  function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size=  function () return 3 + math.random(1) end,
 					colour={r=.66,g=.66,b=.66,a=.50},
 					value = GROUND_VALUES[GROUND.ROCKY],
 					tags = {"ExitPiece", "Chester_Eyebone"},
 					contents =  {
-									countspecialprefabs = {
+									countstaticlayouts = {
 										["Maxwell1"] = function() return math.random(0,3) < 1 and 1 or 0 end,
 										["Maxwell3"] = function() return math.random(0,3) < 1 and 1 or 0 end,
 										["Maxwell5"] = function() return math.random(0,3) < 1 and 1 or 0 end,
@@ -873,12 +786,9 @@ local SpecialRooms =
 -- BLOCKERS ------------------------------------------------------------------------
 ------------------------------------------------------------------------------------
 		["Deerclopsfield"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size = 3,
 					colour={r=0.2,g=0.0,b=0.2,a=0.3},
 					value = GROUND_VALUES[GROUND.FOREST],
-					tags = {"ForceConnected"},
+					tags = {"ForceConnected", "RoadPoison"},
 					contents =  {
 					                countprefabs= {
 										deerclops = 1,
@@ -904,12 +814,9 @@ local SpecialRooms =
 					            }
 					},
 		["Walrusfield"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size = 3,
 					colour={r=0.2,g=0.0,b=0.2,a=0.3},
 					value = GROUND_VALUES[GROUND.GRASS],
-					tags = {"ForceConnected"},
+					tags = {"ForceConnected", "RoadPoison"},
 					contents =  {
 					                countprefabs= {
 										walrus_camp = 6,
@@ -928,40 +835,50 @@ local SpecialRooms =
 					            }
 					},
 		["Chessfield"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size = 3,
 					colour={r=0.2,g=0.0,b=0.2,a=0.3},
-					value = GROUND_VALUES[GROUND.IMPASSABLE],
-					tags = {"ForceConnected"},
+					value = GROUND_VALUES[GROUND.CHECKER],
+					tags = {"ForceConnected", "RoadPoison"},
 					contents =  {
-									countspecialprefabs=
-									{
-										["ChessBlocker"] = 1,
+									countstaticlayouts = {
+										["ChessSpot1"] = function() return math.random(2,3) end,
+										["ChessSpot2"] = function() return math.random(2,3) end,
 									},
+					                distributepercent = 0.4,
+									distributeprefabs = {
+					                    marblepillar=1,
+					                    knight=0.8,
+										bishop=0.5,
+										marbletree=2,
+										flower_evil=2,
+					                }
 					            }
 					},
+		["ChessfieldA"] = MakeSetpieceBlockerRoom("ChessBlocker"),
+		["ChessfieldB"] = MakeSetpieceBlockerRoom("ChessBlockerB"),
+		["ChessfieldC"] = MakeSetpieceBlockerRoom("ChessBlockerC"),
 		["Tallbirdfield"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size = 3,
 					colour={r=0.2,g=0.0,b=0.2,a=0.3},
-					value = GROUND_VALUES[GROUND.IMPASSABLE],
-					tags = {"ForceConnected"},
+					value = GROUND_VALUES[GROUND.ROCKY],
+					tags = {"ForceConnected", "RoadPoison"},
 					contents =  {
-									countspecialprefabs=
-									{
-										["TallbirdBlocker"] = 1,
+									countprefabs={
+										tallbirdnest=1,
 									},
+					                distributepercent = 0.1,
+									distributeprefabs = {
+					                    rock1=1,
+					                    rock2=1,
+										tallbirdnest=1,
+					                }
 					            }
 					},
+		["TallbirdfieldSmallA"] = MakeSetpieceBlockerRoom("TallbirdBlockerSmall"),
+		["TallbirdfieldA"] = MakeSetpieceBlockerRoom("TallbirdBlocker"),
+		["TallbirdfieldB"] = MakeSetpieceBlockerRoom("TallbirdBlockerB"),
 		["Mermfield"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size = 3,
 					colour={r=0.2,g=0.0,b=0.2,a=0.3},
 					value = GROUND_VALUES[GROUND.MARSH],
-					tags = {"ForceConnected"},
+					tags = {"ForceConnected", "RoadPoison"},
 					contents =  {
 									countprefabs={
 										pighead=function() return math.random(6) end,
@@ -971,17 +888,14 @@ local SpecialRooms =
 					                    mermhouse = 1,
 					                    reeds =  2,
 					                    pond_mos=0.5,
-										swampbush = 2,
+										marsh_bush = 2,
 					                }
 					            }
 					},
 		["Moundfield"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size = 3,
 					colour={r=0.2,g=0.0,b=0.2,a=0.3},
 					value = GROUND_VALUES[GROUND.DIRT],
-					tags = {"ForceConnected"},
+					tags = {"ForceConnected", "RoadPoison"},
 					contents =  {
 									countprefabs = {
 										houndmound=1, -- sometimes zero spawn, so lets have at least one
@@ -1000,12 +914,9 @@ local SpecialRooms =
 					},
 		["Minefield"] =    {
 			-- DO NOT USE -- it destroys performance, so many mosquitos!!
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size = 3,
 					colour={r=0.2,g=0.0,b=0.2,a=0.3},
 					value = GROUND_VALUES[GROUND.SWAMP],
-					tags = {"ForceConnected"},
+					tags = {"ForceConnected", "RoadPoison"},
 					contents =  {
 					                distributepercent = 0.5,
 									distributeprefabs = {
@@ -1015,14 +926,26 @@ local SpecialRooms =
 					            }
 					},
 		["Trapfield"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size = 3,
+					colour={r=0.0,g=0.4,b=0.2,a=0.3},
+					value = GROUND_VALUES[GROUND.DIRT],
+					tags = {"ForceConnected", "RoadPoison"},
+					contents =  {
+									countprefabs = {
+										homesign = 2,
+									},
+					                distributepercent = .4,
+									distributeprefabs = {
+										houndbone=1,
+										trap_teeth_maxwell=1,
+					                }
+					            }
+					},
+		["TrappedForest"] =    {
 					colour={r=0.0,g=0.4,b=0.2,a=0.3},
 					value = GROUND_VALUES[GROUND.FOREST],
-					tags = {"ForceConnected"},
+					tags = {"ForceConnected", "RoadPoison"},
 					contents =  {
---									countspecialprefabs={
+--									countstaticlayouts={
 --										["FisherPig"]=1--function() return math.random(0,1) end,
 --										},
 					                distributepercent = 1.0,
@@ -1032,97 +955,60 @@ local SpecialRooms =
 					                }
 					            }
 					},
-		["SpiderField"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size = 5,
-					colour={r=0.7,g=0.7,b=0.7,a=0.3},
-					value = GROUND_VALUES[GROUND.IMPASSABLE],
-					tags = {"ForceConnected"},
+		["SpiderfieldEasy"] =    {
+					colour={r=0.0,g=0.4,b=0.2,a=0.3},
+					value = GROUND_VALUES[GROUND.FOREST],
+					tags = {"ForceConnected", "RoadPoison"},
 					contents =  {
-									countspecialprefabs={
-										["SpiderBlocker"]=1,
+--									countstaticlayouts={
+--										["FisherPig"]=1--function() return math.random(0,1) end,
+--										},
+					                distributepercent = .4,
+									distributeprefabs = {
+										evergreen_sparse=1,
+										spiderden=0.1,
+					                },
+									prefabdata={
+										spiderden={growable={stage=2}},
 									},
 					            }
 					},
-		["DenseForest"] =    {
-			-- DO NOT USE! The trees right now don't block...
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size = 5,
-					colour={r=0.7,g=0.7,b=0.7,a=0.3},
-					value = GROUND_VALUES[GROUND.IMPASSABLE],
-					tags = {"ForceConnected"},
+		["Spiderfield"] =    {
+					colour={r=0.0,g=0.4,b=0.2,a=0.3},
+					value = GROUND_VALUES[GROUND.FOREST],
+					tags = {"ForceConnected", "RoadPoison"},
 					contents =  {
-									countspecialprefabs={
-										["TreeBlocker"]=1,
+--									countstaticlayouts={
+--										["FisherPig"]=1--function() return math.random(0,1) end,
+--										},
+					                distributepercent = .4,
+									distributeprefabs = {
+										evergreen_sparse=1,
+										spiderden=0.15,
+					                },
+									prefabdata={
+										spiderden={growable={stage=3}},
 									},
 					            }
 					},
-		["DenseRocks"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size = 5,
-					colour={r=0.7,g=0.7,b=0.7,a=0.3},
-					value = GROUND_VALUES[GROUND.IMPASSABLE],
-					tags = {"ForceConnected"},
-					contents =  {
-									countspecialprefabs={
-										["RockBlocker"]=1,
-									},
-					            }
-					},
-		["InsanityWall"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size = 5,
-					colour={r=0.7,g=0.7,b=0.7,a=0.3},
-					value = GROUND_VALUES[GROUND.IMPASSABLE],
-					tags = {"ForceConnected"},
-					contents =  {
-									countspecialprefabs={
-										["InsanityBlocker"]=1,
-									},
-					            }
-					},
-		["SanityWall"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size = 5,
-					colour={r=0.7,g=0.7,b=0.7,a=0.3},
-					value = GROUND_VALUES[GROUND.IMPASSABLE],
-					tags = {"ForceConnected"},
-					contents =  {
-									countspecialprefabs={
-										["SanityBlocker"]=1,
-									},
-					            }
-					},
-		["PigGuardpost"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size = 5,
-					colour={r=0.7,g=0.7,b=0.7,a=0.3},
-					value = GROUND_VALUES[GROUND.IMPASSABLE],
-					tags = {"ForceConnected"},
-					contents =  {
-									countspecialprefabs={
-										["PigGuards"]=1,
-									},
-									countprefabs={
-										["mermhead"]=2,
-									},
-					            }
-					},
+		["SpiderfieldEasyA"] = MakeSetpieceBlockerRoom("SpiderBlockerEasy"),
+		["SpiderfieldEasyB"] = MakeSetpieceBlockerRoom("SpiderBlockerEasyB"),
+		["SpiderfieldA"] = MakeSetpieceBlockerRoom("SpiderBlocker"),
+		["SpiderfieldB"] = MakeSetpieceBlockerRoom("SpiderBlockerB"),
+		["SpiderfieldC"] = MakeSetpieceBlockerRoom("SpiderBlockerC"),
+		["DenseForest"] = MakeSetpieceBlockerRoom("TreeBlocker"), -- DO NOT USE! The trees right now don't block...
+		["DenseRocks"] = MakeSetpieceBlockerRoom("RockBlocker"),
+		["InsanityWall"] = MakeSetpieceBlockerRoom("InsanityBlocker"),
+		["SanityWall"] = MakeSetpieceBlockerRoom("SanityBlocker"),
+		["PigGuardpostEasy"] = MakeSetpieceBlockerRoom("PigGuardsEasy"),
+		["PigGuardpost"] = MakeSetpieceBlockerRoom("PigGuards"),
+		["PigGuardpostB"] = MakeSetpieceBlockerRoom("PigGuardsB"),
 		["SpiderCon"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size = 8,
 					colour={r=0.5,g=0.7,b=0.5,a=0.3},
 					value = GROUND_VALUES[GROUND.MARSH],
-					tags = {"ForceConnected"},
+					tags = {"ForceConnected", "RoadPoison"},
 					contents =  {
-									countspecialprefabs={["StoneHenge"]=function() return math.random(0,1) end},
+									countstaticlayouts={["StoneHenge"]=function() return math.random(0,1) end},
 					                distributepercent = 0.2,
 									distributeprefabs = {
 										spider=0.5,
@@ -1134,12 +1020,9 @@ local SpecialRooms =
 					            }
 					},
 		["Waspnests"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size = 8,
 					colour={r=0.9,g=0.1,b=0.1,a=0.3},
 					value = GROUND_VALUES[GROUND.GRASS],
-					tags = {"ForceConnected"},
+					tags = {"ForceConnected", "RoadPoison"},
 					contents =  {
 					                distributepercent = 0.5,
 									distributeprefabs = {
@@ -1150,13 +1033,11 @@ local SpecialRooms =
 					                }
 					            }
 					},
-		["TentacleLand"] = {
-					shape =  function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size=  function () return 3 + math.random(1) end,
+
+		["Tentacleland"] = {
 					colour={r=.45,g=.75,b=.45,a=.50},
 					value = GROUND_VALUES[GROUND.MARSH],
-					tags = {"ForceConnected"},
+					tags = {"ForceConnected", "RoadPoison"},
 					contents =  {
 					                distributepercent = .3,
 					                distributeprefabs=
@@ -1170,26 +1051,205 @@ local SpecialRooms =
 					                },
 					            }
 					},
+		["TentaclelandA"] = MakeSetpieceBlockerRoom("TentacleBlocker"),
+		["TentaclelandSmallA"] = MakeSetpieceBlockerRoom("TentacleBlockerSmall"),
 
 		["SanityWormholeBlocker"] = {
-					shape =  function () return SHAPES.CIRCLE end, 
-					position={x=0,y=0},
-					size=  function () return 3 + math.random(1) end,
 					colour={r=.45,g=.75,b=.45,a=.50},
 					type = "blank",
-					tags = {"InsanityWormhole", "RoadPoison"},
+					tags = {"OneshotWormhole", "ForceDisconnected"},
+					value = GROUND_VALUES[GROUND.IMPASSABLE],
+					contents = {},
+					},
+		["ForceDisconnectedRoom"] = {
+					colour={r=.45,g=.75,b=.45,a=.50},
+					type = "blank",
+					tags = {"ForceDisconnected"},
 					value = GROUND_VALUES[GROUND.IMPASSABLE],
 					contents = {},
 					},
 
 
 ------------------------------------------------------------------------------------
+-- Caves -----------------------------------------------------------------------
+------------------------------------------------------------------------------------
+		["FungusRoom"] = {
+					colour={r=.36,g=.32,b=.38,a=.50},
+					value = GROUND_VALUES[GROUND.FUNGUS],
+					contents =  {
+									countstaticlayouts={["MushroomRingMedium"] = function()  
+																				if math.random(0,200) > 185 then 
+																					return 1 
+																				end
+																				return 0 
+																			   end},
+					                distributepercent = .25,
+					                distributeprefabs=
+					                {
+					                    mushtree_tall = 1.5,
+										--mushroomtree_normal = 0.5,
+										--mushroomtree_short = 0.5,
+					                    spiderhole=.025,
+										fireflies=0.01,
+										flower_cave=0.05,
+										tentacle=0.001,
+										rabbithouse=0.01,
+					                    blue_mushroom = .01,
+					                },
+					            }
+					},
+		["CaveRoom"] = {
+					colour={r=.25,g=.28,b=.25,a=.50},
+					value = GROUND_VALUES[GROUND.CAVE],
+					contents =  {
+					                distributepercent = .275,
+					                distributeprefabs=
+					                {
+					                    spiderhole= .025,
+										flint=0.05,
+										fireflies=0.01,
+					                    blue_mushroom = .005,
+					                    green_mushroom = .003,
+					                    red_mushroom = .004,
+					                    slurtlehole = 0.001,
+					                },
+					            }
+					},
+		["SinkholeRoom"] = {
+					colour={r=.15,g=.18,b=.15,a=.50},
+					value = GROUND_VALUES[GROUND.SINKHOLE],
+					contents =  {
+					                distributepercent = .275,
+					                distributeprefabs=
+					                {
+										grass=0.0025,
+										cavelight=0.25,
+										sapling=0.15,
+										evergreen=0.0025,
+										berrybush=0.005,
+										spiderden=0.001,
+					                    slurtlehole = 0.001,
+										fireflies=0.01,
+					                    blue_mushroom = .005,
+					                    green_mushroom = .003,
+					                    red_mushroom = .004,
+										rabbithouse=0.01,
+					                },
+									prefabdata = {
+										spiderden = function() if math.random() < 0.1 then
+																	return { growable={stage=3}}
+																else
+																	return { growable={stage=2}}
+																end
+															end,
+									},
+					            }
+					},
+		["TentacleCaveRoom"] = {
+					colour={r=.45,g=.75,b=.45,a=.50},
+					value = GROUND_VALUES[GROUND.MARSH],
+					contents =  {
+					                distributepercent = .3,
+					                distributeprefabs=
+					                {
+					                    tentacle = 2,
+					                    --tentaclepillar = 2,
+					                    flower_cave= 0.5,
+					                    spiderhole= .125,
+					                },
+					            }
+					},
+		["RabitFungusRoom"] =    {
+					colour={r=0.3,g=0.2,b=0.1,a=0.3},
+					value = GROUND_VALUES[GROUND.FUNGUS], 
+					--tags = {"ForceConnected"},
+					contents =  {
+					                distributepercent = .3,
+					                distributeprefabs=
+					                {
+					                	mushtree_tall = 1.5,
+					                	flower_cave=0.75,
+					                	carrot_planted = 1,
+					                    --mushroomtree_tall = 0.5,
+										--mushroomtree_normal = 0.5,
+										--mushroomtree_short = 0.5,
+					                    rabbithouse = 0.51,
+					                }
+					            }
+					},
+		["NoisyFungus"] =    {
+					colour={r=0.3,g=0.2,b=0.1,a=0.3},
+					value = GROUND_VALUES[GROUND.FUNGUS_NOISE], 
+					--tags = {"ForceConnected"},
+					contents =  {
+					                distributepercent = .3,
+					                distributeprefabs=
+					                {
+					                    spiderhole= .125,
+					                    mushtree_tall = 1.5,
+					                    flower_cave=2,
+					                    --mushroomtree_tall = 0.5,
+										--mushroomtree_normal = 0.5,
+										--mushroomtree_short = 0.5,
+					                    slurtlehole = 0.001,
+					                    goldnugget=.05,
+					                }
+					            }
+					},
+		["NoisyCave"] =    {
+					colour={r=0.3,g=0.2,b=0.1,a=0.3},
+					value = GROUND_VALUES[GROUND.CAVE_NOISE], 
+					contents =  {
+					                distributepercent = .3,
+					                distributeprefabs=
+					                {
+					                	stalagmite = 1,
+					                	--stalagmite_gold = 0.05,
+					                    spiderhole= .125,
+					                    slurtlehole = 0.01,
+					                }
+					            }
+					},
+		["BatCaveRoom"] =    {
+					colour={r=0.3,g=0.2,b=0.1,a=0.3},
+					value = GROUND_VALUES[GROUND.CAVE], 
+					contents =  {
+					                distributepercent = .3,
+					                distributeprefabs=
+					                {
+					                    bat = 0.25,
+					                    spiderhole= 0.05,
+										goldnugget=.05,
+										flint=0.05,
+					                    slurtlehole = 0.0001,
+					                	stalagmite = 0.25,
+					                }
+					            }
+					},
+		["PitRoom"] = {
+					colour={r=.25,g=.28,b=.25,a=.50},
+					value = GROUND_VALUES[GROUND.IMPASSABLE],
+					},
+		["Stairs"] = { -- This room is used to tag for the next level of caves - it will be removed later
+					colour={r=0,g=0,b=0,a=0.9},
+					value = GROUND_VALUES[GROUND.CAVE],
+					contents =  {
+									countprefabs = {
+										cave_stairs = 1,
+									},
+									distributepercent=0.3,
+					                distributeprefabs= {
+					                    bat = 0.25,
+					                    spiderhole= 0.25,
+					                	stalagmite = 0.25,
+					                }
+					            }
+					},
+
+------------------------------------------------------------------------------------
 -- EXIT ROOM -----------------------------------------------------------------------
 ------------------------------------------------------------------------------------
 		["Exit"] =    {
-					shape = function () return SHAPES.CIRCLE end, 
-					position = {x=0,y=0},
-					size= function () return 3 + math.random(1) end,
 					colour={r=0.3,g=0.2,b=0.1,a=0.3},
 					value = GROUND_VALUES[GROUND.FOREST], --GetRandomItem(GROUND_VALUES),
 					contents =  {

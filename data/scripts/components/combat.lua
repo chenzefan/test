@@ -112,8 +112,8 @@ function Combat:TryRetarget()
 					self:SetTarget(newtarget)
 				else
 					self:SuggestTarget(newtarget)
-				end
-			end
+				end			
+            end
         end
         
         if self.retargetperiod then
@@ -190,6 +190,10 @@ function Combat:SetTarget(target)
         else
             self.inst:StopUpdatingComponent(self)
         end
+        
+        if target and self.inst.components.follower and self.inst.components.follower.leader == target and self.inst.components.follower.leader.components.leader then
+			self.inst.components.follower.leader.components.leader:RemoveFollower(self.inst)
+        end
     end
 end
 
@@ -235,16 +239,16 @@ function Combat:GetDebugString()
     return str
 end
 
+function Combat:GetGiveUpString(target)
+    return nil
+end
+
 function Combat:GiveUp()
     if self.inst.components.talker then
-        local str = ""
-        if self.target and self.target:HasTag("prey") then
-            str = GetString(self.inst.prefab, "COMBAT_QUIT", "prey")
-        else
-            str = GetString(self.inst.prefab, "COMBAT_QUIT")
+        local str = self:GetGiveUpString(self.target)
+        if str then
+            self.inst.components.talker:Say(str)
         end
-        
-        self.inst.components.talker:Say(str)
         
     end
     self.inst:PushEvent("giveuptarget", {target = self.target})
@@ -258,8 +262,8 @@ end
 function Combat:BattleCry()
 
     if not self.nextbattlecrytime or GetTime() > self.nextbattlecrytime then
-        if self.inst.components.talker then
-            self.nextbattlecrytime = GetTime() + 2+math.random()*3
+        self.nextbattlecrytime = GetTime() + 5+math.random()*3
+        if self.inst.components.talker then            
             local cry = self:GetBattleCryString(self.target)
             if cry then
                 self.inst.components.talker:Say{Line(cry, 2)}
@@ -313,12 +317,92 @@ function Combat:GetAttacked(attacker, damage, weapon)
             if attacker.components.combat and attacker.components.combat.onhitotherfn then
                 attacker.components.combat.onhitotherfn(attacker, self.inst, damage)
             end
+            if self.inst.SoundEmitter then
+                local hitsound = self:GetImpactSound(self.inst, weapon)
+                if hitsound then
+                    self.inst.SoundEmitter:PlaySound(hitsound)
+                end
+            end
         end
     else
         self.inst:PushEvent("blocked", {attacker = attacker})
     end
     
     return not blocked
+end
+
+function Combat:GetImpactSound(target, weapon)
+    if not target then
+        return
+    end
+    local hitsound = "dontstarve/impacts/impact_"
+    local specialtype = nil
+    if target.components.inventory and target.components.inventory:IsWearingArmor() then
+        if target.components.inventory:ArmorHasTag("grass") then
+            hitsound = hitsound.."straw_"
+        elseif target.components.inventory:ArmorHasTag("sanity") then
+            hitsound = hitsound.."sanity_"
+        elseif target.components.inventory:ArmorHasTag("sanity") then
+            hitsound = hitsound.."sanity_"
+        elseif target.components.inventory:ArmorHasTag("marble") then
+            hitsound = hitsound.."marble_"
+        elseif target.components.inventory:ArmorHasTag("shell") then
+            hitsound = hitsound.."shell_"                
+        else
+            hitsound = hitsound.."wood_"
+        end
+        specialtype = "armour"
+    elseif target:HasTag("wall") then
+        if target:HasTag("grass") then
+            hitsound = hitsound.."straw_"
+        elseif target:HasTag("stone") then
+            hitsound = hitsound.."stone_"
+        elseif target:HasTag("marble") then
+            hitsound = hitsound.."marble_"
+        else
+            hitsound = hitsound.."wood_"
+        end
+        specialtype = "wall"
+    elseif target:HasTag("hive") then
+        hitsound = hitsound.."hive_"
+    elseif target:HasTag("ghost") then
+        hitsound = hitsound.."ghost_"
+    elseif target:HasTag("insect") or target:HasTag("spider") then
+        hitsound = hitsound.."insect_"
+    elseif target:HasTag("chess") or target:HasTag("mech") then
+        hitsound = hitsound.."mech_"
+    elseif target:HasTag("mound") then
+        hitsound = hitsound.."mound_"
+    elseif target:HasTag("shadow") then
+        hitsound = hitsound.."shadow_"
+    elseif target:HasTag("tree") then
+        hitsound = hitsound.."tree_"
+    elseif target:HasTag("veggie") then
+        hitsound = hitsound.."vegetable_"
+    elseif target:HasTag("shell") then
+        hitsound = hitsound.."shell_"
+    else
+        hitsound = hitsound.."flesh_"
+    end
+    
+    if specialtype then
+        hitsound = hitsound..specialtype.."_"
+    elseif target:HasTag("smallcreature") or target:HasTag("small") then
+        hitsound = hitsound.."sml_"
+    elseif target:HasTag("largecreature") or target:HasTag("epic") or target:HasTag("large") then
+        hitsound = hitsound.."lrg_"
+    elseif target:HasTag("wet") then
+        hitsound = hitsound.."wet_"
+    else
+        hitsound = hitsound.."med_"
+    end
+    
+    if weapon and weapon:HasTag("sharp") then
+        hitsound = hitsound.."sharp"
+    else
+        hitsound = hitsound.."dull"
+    end
+    return hitsound
 end
 
 function Combat:StartAttack()
@@ -328,13 +412,14 @@ end
 function Combat:CanTarget(target)
     
     return target and 
+		(not self.panic_thresh or self.inst.components.health:GetPercent() >= self.panic_thresh) and
 		target.entity:IsValid() and
 		not target:IsInLimbo() and
 		target.components.combat and 
 		not (target.sg and target.sg:HasStateTag("invisible")) and
         target.components.health and
         not target.components.health:IsDead()
-
+        and self.inst.components.combat:IsValidTarget(target)
 end
 
 function Combat:CanAttack(target)
@@ -566,7 +651,7 @@ end
 
 function Combat:OnSave()
     if self.target then
-        return { target = self.target.GUID }
+        return { target = self.target.GUID }, {self.target.GUID}
     end
 end
 

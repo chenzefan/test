@@ -48,6 +48,11 @@ local function OnActivate(inst, doer)
 		if doer:HasTag("player") then
 			doer.components.health:SetInvincible(true)
 			doer.components.playercontroller:Enable(false)
+
+			if inst.components.teleporter.targetTeleporter ~= nil then
+				DeleteCloseEntsWithTag(inst.components.teleporter.targetTeleporter, "WORM_DANGER", 15)
+			end
+
 			TheFrontEnd:SetFadeLevel(1)
 			doer:DoTaskInTime(4, function()
 				TheFrontEnd:Fade(true, 2)
@@ -78,8 +83,12 @@ local function onfar(inst)
 end
 
 local function onaccept(reciever, giver, item)
-	reciever.components.inventory:DropItem(item)
-	inst.components.teleporter:Activate(item)
+	if giver and giver.components.inventory then
+		giver.components.inventory:DropItem(item)
+	end
+	if reciever and reciever.components.teleporter then
+		reciever.components.teleporter:Activate(item)
+	end
 end
 local function makewormhole(uses)
 

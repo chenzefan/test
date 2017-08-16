@@ -7,7 +7,6 @@ local Clock = Class(function(self, inst)
     self.inst = inst
     self.task = nil
     self.numcycles = 0
-    self:StartDay()
 
     self.dayColour = Point(255/255, 230/255, 158/255)
     self.duskColour = Point(100/255, 100/255, 100/255)
@@ -121,6 +120,16 @@ function Clock:GetNormTime()
     
 end
 
+function Clock:CurrentPhaseIsAlways()
+    if self.phase == "day" then
+        return self:GetDaySegs() == 16
+    elseif self.phase == "dusk" then
+        return self:GetDuskSegs() == 16
+    else
+        return self:GetNightSegs() == 16
+    end
+end
+
 function Clock:IsDay()
     return self.phase == "day"
 end
@@ -138,6 +147,16 @@ function Clock:GetPhase()
 end
 
 function Clock:GetNextPhase()
+    if self:CurrentPhaseIsAlways() then
+        if self.phase == "day" then
+            return "day"
+        elseif self.phase == "dusk" then
+            return "dusk"
+        end
+
+        return "night"
+     end
+
 	if self.phase == "day" then
 		return "dusk"
 	elseif self.phase == "dusk" then
@@ -148,6 +167,16 @@ function Clock:GetNextPhase()
 end
 
 function Clock:GetPrevPhase()
+    if self:CurrentPhaseIsAlways() then
+        if self.phase == "day" then
+            return "day"
+        elseif self.phase == "dusk" then
+            return "dusk"
+        end
+        
+        return "night"
+    end
+
 	if self.phase == "day" then
 		return "night"
 	elseif self.phase == "dusk" then
@@ -164,6 +193,21 @@ function Clock:MakeNextDay()
 end
 
 function Clock:NextPhase()
+    if self:CurrentPhaseIsAlways() then
+        self.numcycles = self.numcycles +1
+        self.inst:PushEvent("daycomplete", {day= self.numcycles})
+
+        if self.phase == "day" then
+            self:StartDay()
+        elseif self.phase == "dusk" then
+            self:StartDusk()
+        else
+            self:StartNight()
+        end
+
+        return
+    end
+
     if self.phase == "day" then
         self:StartDusk()
     elseif self.phase == "dusk" then
@@ -215,7 +259,6 @@ function Clock:DoLightningLighting()
 end
 
 function Clock:OnUpdate(dt)
-
 	
 	self.timeLeftInEra = self.timeLeftInEra - dt
 	
@@ -262,7 +305,7 @@ function Clock:OnUpdate(dt)
         end
 
     else
-        local p = GetSeasonManager():GetWeatherLightPercent()
+        local p = GetSeasonManager() and GetSeasonManager():GetWeatherLightPercent() or 1
         TheSim:SetAmbientColour( p*self.currentColour.x, p*self.currentColour.y, p*self.currentColour.z )
     end
 
@@ -281,6 +324,12 @@ function Clock:LerpAmbientColour(src, dest, time)
 		self.lerpFromColour = src
 		self.lerpToColour = dest
 	end
+
+    local p = GetSeasonManager() and GetSeasonManager():GetWeatherLightPercent() or 1
+    if not self.currentColour then
+		self.currentColour = src
+    end
+    TheSim:SetAmbientColour( p*self.currentColour.x, p*self.currentColour.y, p*self.currentColour.z )
 end
 
 function Clock:__tostring()

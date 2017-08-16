@@ -10,14 +10,15 @@ local actionhandlers =
 local events=
 {
     
-    EventHandler("attacked", function(inst) if inst.components.health:GetPercent() > 0 and not inst.sg:HasStateTag("attack") and not inst.sg:HasStateTag("hit") then inst.sg:GoToState("hit") end end),
+    
+    CommonHandlers.OnAttacked(),
     EventHandler("doattack", function(inst) 
-        if inst.components.health:GetPercent() > 0 and not inst.sg:HasStateTag("busy") then 
-            if inst:HasTag("teenbird") and inst:HasTag("peck_attack") then
-                inst.sg:GoToState("peck") 
-            else
-                inst.sg:GoToState("attack") 
-            end
+        if not inst.components.health:IsDead() and (inst.sg:HasStateTag("hit") or not inst.sg:HasStateTag("busy")) then 
+			if inst:HasTag("teenbird") and inst:HasTag("peck_attack") then
+				inst.sg:GoToState("peck") 
+			else
+				inst.sg:GoToState("attack") 
+			end
         end 
     end),
     EventHandler("death", function(inst) inst.sg:GoToState("death") end),
@@ -184,7 +185,7 @@ local states=
 
     State{
         name = "taunt",
-        tags = {"busy", "canrotate"},
+        tags = {"canrotate"},
         
         onenter = function(inst)
             inst.Physics:Stop()
@@ -222,6 +223,10 @@ local states=
         {
             TimeEvent(10*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/tallbird/attack") end),
             TimeEvent(12*FRAMES, function(inst) inst.components.combat:DoAttack() end),
+            TimeEvent(14*FRAMES, function(inst) 
+				inst.sg:RemoveStateTag("attack")
+				inst.sg:RemoveStateTag("busy")
+			end),
         },
         
         events=
@@ -264,7 +269,7 @@ local states=
     
     State{
         name = "hit",
-        tags = {"busy"},
+        tags = {"hit"},
         
         onenter = function(inst)
             inst.SoundEmitter:PlaySound("dontstarve/creatures/tallbird/hurt")

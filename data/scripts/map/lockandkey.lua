@@ -22,6 +22,9 @@ LOCKS_ARRAY =
 	"TIER3",
 	"TIER4",
 	"TIER5",
+	"LIGHT",
+	"FUNGUS",
+	"CAVE",
 	--"ADVANCED_COMBAT",
 }
 LOCKS = {}
@@ -67,6 +70,9 @@ KEYS_ARRAY =
 	"TIER4",
 	"TIER5",
 	"TIER6",
+	"LIGHT",
+	"FUNGUS",
+	"CAVE",
 }
 KEYS = {}
 for i,v in ipairs(KEYS_ARRAY) do
@@ -190,6 +196,19 @@ LOCKS_KEYS =
 	{
 		KEYS.TIER5,
 		KEYS.TIER6,
+	},
+	
+	[LOCKS.LIGHT] = 
+	{
+		KEYS.LIGHT,
+	},
+	[LOCKS.CAVE] = 
+	{
+		KEYS.CAVE,
+	},
+	[LOCKS.FUNGUS] = 
+	{
+		KEYS.FUNGUS,
 	},
 }
 

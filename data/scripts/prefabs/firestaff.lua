@@ -61,6 +61,11 @@ local function onattack(inst, attacker, target)
     attacker.SoundEmitter:PlaySound("dontstarve/wilson/fireball_explo")
 end
 
+local function onlight(inst, target)
+    if inst.components.finiteuses then
+        inst.components.finiteuses:Use(1)
+    end
+end
 
 local function fn(Sim)
 	local inst = CreateEntity()
@@ -83,11 +88,12 @@ local function fn(Sim)
     
     -------
     inst:AddComponent("lighter")
+    inst.components.lighter:SetOnLightFn(onlight)
 
     inst:AddComponent("finiteuses") 
     --Make firestaff use tuning variables
-    inst.components.finiteuses:SetMaxUses(TUNING.ICESTAFF_USES)
-    inst.components.finiteuses:SetUses(TUNING.ICESTAFF_USES)
+    inst.components.finiteuses:SetMaxUses(TUNING.FIRESTAFF_USES)
+    inst.components.finiteuses:SetUses(TUNING.FIRESTAFF_USES)
     
     inst.components.finiteuses:SetOnFinished( onfinished )
 

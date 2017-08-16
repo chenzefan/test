@@ -59,7 +59,10 @@ end)
 
 function Button:Enable()
 	self._base.Enable(self)
-	self.image:SetTexture(self.normaltex)
+	
+	if not self.over then
+		self.image:SetTexture(self.normaltex)
+	end
 	--self.text:SetColour(1,1,1,1)
 end
 
@@ -84,7 +87,10 @@ end
 
 function Button:SetImage(tex)
     self.normaltex = tex
-    self.image:SetTexture(tex)
+    
+    if not self.mouseovertex or not self.over then
+		self.image:SetTexture(tex)
+	end
 end
 
 function Button:SetMouseOverImage(tex)

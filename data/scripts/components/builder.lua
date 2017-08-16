@@ -93,21 +93,22 @@ end
 function Builder:EvaluateTechLevel()
 	local x,y,z = self.inst.Transform:GetWorldPosition()
 	local ents = TheSim:FindEntities(x,y,z, TUNING.RESEARCH_MACHINE_DIST, {"researchmachine"})
-	local level_changed = false
+	
+	
+	local old_level = self.current_tech_level or 0
 	
 	local old_machine = self.current_machine	
 	self.current_machine = nil
 	
-	local active = true
+	local machine_active = false
 	for k,v in pairs(ents) do
 		
 		if v.components.researchpointconverter then
 			local distsq = self.inst:GetDistanceSqToInst(v)
-			if active and distsq < TUNING.RESEARCH_MACHINE_DIST*TUNING.RESEARCH_MACHINE_DIST then 
+			if not machine_active and distsq < TUNING.RESEARCH_MACHINE_DIST*TUNING.RESEARCH_MACHINE_DIST then 
 				v.components.researchpointconverter:TurnOn()
-				level_changed = self.current_tech_level ~= v.components.researchpointconverter.level
 				self.current_tech_level = v.components.researchpointconverter.level
-				active = false
+				machine_active = true
 				self.current_machine = v
 			else
 				v.components.researchpointconverter:TurnOff()
@@ -118,10 +119,11 @@ function Builder:EvaluateTechLevel()
 	
 	self.current_tech_level = self.current_tech_level + self.bonus_tech_level
 
-	if active then
-		level_changed = self.current_tech_level ~= self.bonus_tech_level
+	if not machine_active then
 		self.current_tech_level = self.bonus_tech_level	
 	end
+	
+	local level_changed = self.current_tech_level ~= old_level
 	
 	
 	

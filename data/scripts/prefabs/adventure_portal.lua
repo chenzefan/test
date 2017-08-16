@@ -24,7 +24,7 @@ local function OnActivate(inst)
 		GetPlayer():DoTaskInTime(5, function() SaveGameIndex:StartAdventure(onsaved) end)
 	end
 
-	TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.STARTADVENTURE.TITLE, STRINGS.UI.STARTADVENTURE.BODY, 
+	TheFrontEnd:PushScreen(BigPopupDialogScreen(STRINGS.UI.STARTADVENTURE.TITLE, STRINGS.UI.STARTADVENTURE.BODY, 
 			{{text=STRINGS.UI.STARTADVENTURE.YES, cb = startadventure},
 			 {text=STRINGS.UI.STARTADVENTURE.NO, cb = function() SetHUDPause(false) inst.components.activatable.inactive = true end}  }))
 end
@@ -52,6 +52,15 @@ local function fn(Sim)
 		inst.AnimState:PushAnimation("idle_loop_on", true)
 		inst.SoundEmitter:PlaySound("dontstarve/common/maxwellportal_activate")
 		inst.SoundEmitter:PlaySound("dontstarve/common/maxwellportal_idle", "idle")
+
+		inst:DoTaskInTime(1, function()
+			if inst.ragtime_playing == nil then
+				inst.ragtime_playing = true
+				inst.SoundEmitter:PlaySound("dontstarve/common/teleportato/ragtime", "ragtime")
+			else
+				inst.SoundEmitter:SetVolume("ragtime",1)
+			end
+		end)
 	end
 	
 	inst.components.playerprox.onfar = function()
@@ -59,13 +68,17 @@ local function fn(Sim)
 		inst.AnimState:PushAnimation("idle_off", true)
 		inst.SoundEmitter:KillSound("idle")
 		inst.SoundEmitter:PlaySound("dontstarve/common/maxwellportal_shutdown")
+
+		inst:DoTaskInTime(1, function()
+			inst.SoundEmitter:SetVolume("ragtime",0)
+		end)
 	end
 
 	inst:AddComponent("activatable")
     inst.components.activatable.OnActivate = OnActivate
     inst.components.activatable.inactive = true
     inst.components.activatable.getverb = GetVerb
-
+	inst.components.activatable.quickaction = true
 
     return inst
 end

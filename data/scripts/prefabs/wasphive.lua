@@ -52,6 +52,15 @@ local function onhitbyplayer(inst, attacker, damage)
     end
 end
 
+local function OnEntityWake(inst)
+    inst.SoundEmitter:PlaySound("dontstarve/bee/killerbee_hive_LP", "loop")
+end
+
+local function OnEntitySleep(inst)
+	inst.SoundEmitter:KillSound("loop")
+end
+
+
 local function fn(Sim)
 	local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
@@ -61,13 +70,15 @@ local function fn(Sim)
 	MakeObstaclePhysics(inst, 0.5)
 
 	local minimap = inst.entity:AddMiniMapEntity()
-	minimap:SetIcon("beehive.png") --replace with wasp version if there is one.
+	minimap:SetIcon("wasphive.png") --replace with wasp version if there is one.
 
 	anim:SetBank("wasphive")
 	anim:SetBuild("wasphive")
 	anim:PlayAnimation("cocoon_small", true)
 
 	inst:AddTag("structure")
+	inst:AddTag("hive")
+	inst:AddTag("WORM_DANGER")
 
 	-------------------------
 	inst:AddComponent("health")
@@ -99,7 +110,8 @@ local function fn(Sim)
 	MakeSnowCovered(inst)
 	-------------------------
 	inst:AddComponent("inspectable")
-	inst.SoundEmitter:PlaySound("dontstarve/bee/bee_hive_LP", "loop") --change to wasp
+	inst.OnEntitySleep = OnEntitySleep
+	inst.OnEntityWake = OnEntityWake
 
 	return inst
 end

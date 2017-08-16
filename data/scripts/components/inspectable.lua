@@ -12,7 +12,9 @@ end
 
 function Inspectable:CollectSceneActions(doer, actions)
     if not self.onlyforcedinspect then
-        table.insert(actions, ACTIONS.LOOKAT)
+        if not (doer.sg and doer.sg:HasStateTag("moving")) then
+            table.insert(actions, ACTIONS.LOOKAT)
+        end
     end
 end
 
@@ -45,7 +47,6 @@ function Inspectable:GetStatus()
 end
 
 function Inspectable:GetDescription(viewer)
-
     local desc = self.description
     if desc == nil then
         desc = GetDescription(string.upper(viewer.prefab), string.upper(self.nameoverride or self.inst.prefab), self:GetStatus() )

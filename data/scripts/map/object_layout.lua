@@ -144,10 +144,14 @@ local function LayoutForDefinition(name)
 	local objs = require("map/layouts")
 	local traps = require("map/traps")
 	local pois = require("map/pointsofinterest")
+	local protres = require("map/protected_resources")
+	local boons = require("map/boons")
 
 	local layout = {}
 	
-	if objs.Layouts[name] == nil and traps.Layouts[name] == nil and pois.Layouts[name] == nil  then
+	if objs.Layouts[name] == nil and traps.Layouts[name] == nil 
+		and pois.Layouts[name] == nil and protres.Layouts[name] == nil  
+		and boons.Layouts[name] == nil then
 		print("No layout available for", name)
 		return
 	else
@@ -155,6 +159,10 @@ local function LayoutForDefinition(name)
 			layout = deepcopy(objs.Layouts[name])
 		elseif traps.Layouts[name] ~= nil then
 			layout = deepcopy(traps.Layouts[name])
+		elseif protres.Layouts[name] ~= nil then
+			layout = deepcopy(protres.Layouts[name])
+		elseif boons.Layouts[name] ~= nil then
+			layout = deepcopy(boons.Layouts[name])
 		else 
 			layout = deepcopy(pois.Layouts[name])
 		end
@@ -175,17 +183,19 @@ local function ConvertLayoutToEntitylist(layout)
 				if layout.areas[current_prefab] ~= nil then
 					local area_contents = layout.areas[current_prefab]
 					if type(area_contents) == "function" then
-						area_contents = area_contents()
+						area_contents = area_contents(current_prefab_data.width * current_prefab_data.height)
 					end
 
-					for i,r_prefab in ipairs(area_contents) do
-						local x = (current_prefab_data.x-current_prefab_data.width/2.0) + (math.random()*current_prefab_data.width)
-						local y = (current_prefab_data.y-current_prefab_data.height/2.0) + (math.random()*current_prefab_data.height)
-						local properties = {}
-						if to_add[r_prefab] == nil then
-							to_add[r_prefab] = {}
+					if area_contents ~= nil then
+						for i,r_prefab in ipairs(area_contents) do
+							local x = (current_prefab_data.x-current_prefab_data.width/2.0) + (math.random()*current_prefab_data.width)
+							local y = (current_prefab_data.y-current_prefab_data.height/2.0) + (math.random()*current_prefab_data.height)
+							local properties = current_prefab_data.properties
+							if to_add[r_prefab] == nil then
+								to_add[r_prefab] = {}
+							end
+							table.insert(to_add[r_prefab], {x=x, y=y, properties=properties})
 						end
-						table.insert(to_add[r_prefab], {x=x, y=y, properties=properties})
 					end
 				end
 			end

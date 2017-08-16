@@ -83,7 +83,7 @@ local function fn(Sim)
     inst.components.fueled.ontakefuelfn = function() inst.SoundEmitter:PlaySound("dontstarve/common/fireAddFuel") end
     
     inst.components.fueled:SetUpdateFn( function()
-        if GetSeasonManager():IsRaining() then
+        if GetSeasonManager() and GetSeasonManager():IsRaining() then
             inst.components.fueled.rate = 1 + TUNING.FIREPIT_RAIN_RATE*GetSeasonManager():GetPrecipitationRate()
         else
             inst.components.fueled.rate = 1
@@ -125,6 +125,7 @@ local function fn(Sim)
     inst:ListenForEvent( "onbuilt", function()
         anim:PlayAnimation("place")
         anim:PushAnimation("idle",false)
+        inst.SoundEmitter:PlaySound("dontstarve/common/fireAddFuel")
     end)
     
     return inst

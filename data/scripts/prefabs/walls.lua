@@ -51,11 +51,41 @@ function MakeWallType(data)
 		return true
 	end
 
+	local function makeobstacle(inst)
+	
+	    inst.Physics:ClearCollisionMask()
+		inst.Physics:CollidesWith(COLLISION.WORLD)
+		inst.Physics:CollidesWith(COLLISION.ITEMS)
+		inst.Physics:CollidesWith(COLLISION.CHARACTERS)
+
+	    local ground = GetWorld()
+	    if ground then
+	    	local pt = Point(inst.Transform:GetWorldPosition())
+			--print("    at: ", pt)
+	    	ground.Pathfinder:AddWall(pt.x, pt.y, pt.z)
+	    end
+		
+		
+	end
+
+	local function clearobstacle(inst)
+	    inst.Physics:ClearCollisionMask()
+		inst.Physics:CollidesWith(COLLISION.WORLD)
+		inst.Physics:CollidesWith(COLLISION.ITEMS)
+	    local ground = GetWorld()
+	    if ground then
+	    	local pt = Point(inst.Transform:GetWorldPosition())
+	    	--print("    at: ", pt)
+	    	ground.Pathfinder:RemoveWall(pt.x, pt.y, pt.z)
+	    end
+		
+	end
+
 
 	local function onhealthchange(inst, old_percent, new_percent)
 		
-		if old_percent <= 0 and new_percent > 0 then inst.Physics:SetCollides(true) end
-		if old_percent > 0 and new_percent <= 0 then inst.Physics:SetCollides(false) end
+		if old_percent <= 0 and new_percent > 0 then makeobstacle(inst) end
+		if old_percent > 0 and new_percent <= 0 then clearobstacle(inst) end
 
 		local anim_to_play = nil
 		if new_percent <= 0 then
@@ -122,6 +152,9 @@ function MakeWallType(data)
 		return inst
 	end
 
+
+
+	
 	local function onhit(inst)
 		if data.destroysound then
 			inst.SoundEmitter:PlaySound(data.destroysound)		
@@ -132,26 +165,20 @@ function MakeWallType(data)
 		if data.buildsound then
 			inst.SoundEmitter:PlaySound(data.buildsound)		
 		end
+		makeobstacle(inst)
 	end
 	    
 	local function onload(inst, data)
 		--print("walls - onload")
-	    local ground = GetWorld()
-	    if ground then
-	    	local pt = Point(inst.Transform:GetWorldPosition())
-			--print("    at: ", pt)
-	    	ground.Pathfinder:AddWall(pt.x, pt.y, pt.z)
-	    end
+		makeobstacle(inst)
+		if inst.components.health:GetPercent() <= 0 then
+			clearobstacle(inst)
+		end
 	end
 
 	local function onremoveentity(inst)
 		--print("walls - onremoveentity")
-	    local ground = GetWorld()
-	    if ground then
-	    	local pt = Point(inst.Transform:GetWorldPosition())
-	    	--print("    at: ", pt)
-	    	ground.Pathfinder:RemoveWall(pt.x, pt.y, pt.z)
-	    end
+		clearobstacle(inst)
 	end
 
 	local function fn(Sim)
@@ -169,6 +196,10 @@ function MakeWallType(data)
 	    
 		inst:AddComponent("inspectable")
 		inst:AddComponent("lootdropper")
+		
+		for k,v in ipairs(data.tags) do
+		    inst:AddTag(v)
+		end
 		
 		
 		inst:AddComponent("repairable")
@@ -229,9 +260,9 @@ local wallprefabs = {}
 
 --6 rock, 8 wood, 4 straw
 local walldata = {
-			{name = "stone", loot = "rocks", maxloots = 2, stacksize = 6, maxhealth=TUNING.STONEWALL_HEALTH, buildsound="dontstarve/common/place_structure_stone", destroysound="dontstarve/common/destroy_stone"},
-			{name = "wood", loot = "log", maxloots = 2, stacksize = 8, maxhealth=TUNING.WOODWALL_HEALTH, flammable = true, buildsound="dontstarve/common/place_structure_wood", destroysound="dontstarve/common/destroy_wood"},
-			{name = "hay", loot = "cutgrass", maxloots = 2, stacksize = 4, maxhealth=TUNING.HAYWALL_HEALTH, flammable = true, buildsound="dontstarve/common/place_structure_straw", destroysound="dontstarve/common/destroy_straw"}}
+			{name = "stone", tags={"stone"}, loot = "rocks", maxloots = 2, stacksize = 6, maxhealth=TUNING.STONEWALL_HEALTH, buildsound="dontstarve/common/place_structure_stone", destroysound="dontstarve/common/destroy_stone"},
+			{name = "wood", tags={"wood"}, loot = "log", maxloots = 2, stacksize = 8, maxhealth=TUNING.WOODWALL_HEALTH, flammable = true, buildsound="dontstarve/common/place_structure_wood", destroysound="dontstarve/common/destroy_wood"},
+			{name = "hay", tags={"grass"}, loot = "cutgrass", maxloots = 2, stacksize = 4, maxhealth=TUNING.HAYWALL_HEALTH, flammable = true, buildsound="dontstarve/common/place_structure_straw", destroysound="dontstarve/common/destroy_straw"}}
 
 for k,v in pairs(walldata) do
 	local wall, item, placer = MakeWallType(v)

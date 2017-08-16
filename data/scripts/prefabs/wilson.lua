@@ -43,4 +43,4 @@ local fn = function(inst)
 end
 
 
-return MakePlayerCharacter("wilson", "data/fonts/opensans50.zip", prefabs, assets, fn)
+return MakePlayerCharacter("wilson", prefabs, assets, fn)

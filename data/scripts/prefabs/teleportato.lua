@@ -1,8 +1,9 @@
-local function makeassetlist()
-    return {
-		Asset("ANIM", "data/anim/teleportato.zip"),
-    }
-end
+local assets = 
+{
+	Asset("ANIM", "data/anim/teleportato.zip"),
+	Asset("ANIM", "data/anim/teleportato_build.zip"),
+	Asset("ANIM", "data/anim/teleportato_adventure_build.zip"),
+}
 
 local prefabs = {
 	"ash",
@@ -10,19 +11,36 @@ local prefabs = {
 
 
 local function TransitionToNextLevel(inst, wilson)
-	wilson.sg:GoToState("teleportato_teleport")
-
-	local days_survived, start_xp, reward_xp, new_xp = CalculatePlayerRewards(wilson)
-	scheduler:ExecuteInTime(110*FRAMES, function() 
-		inst.AnimState:PlayAnimation("laugh", false)
-		inst.AnimState:PushAnimation("active_idle", true)
-		inst.SoundEmitter:PlaySound("dontstarve/common/teleportato/teleportato_maxwelllaugh", "teleportato_laugh")
-		
-	end)
 	
-	scheduler:ExecuteInTime(110*FRAMES+3, function() 
-		SaveGameIndex:CompleteLevel(function() TheFrontEnd:PushScreen(DeathScreen(days_survived, start_xp, true)) end )
-	end)
+	wilson.sg:GoToState("teleportato_teleport")
+	local days_survived, start_xp, reward_xp, new_xp = CalculatePlayerRewards(wilson)
+	
+	local function onsave()
+		scheduler:ExecuteInTime(110*FRAMES, function() 
+			inst.AnimState:PlayAnimation("laugh", false)
+			inst.AnimState:PushAnimation("active_idle", true)
+			inst.SoundEmitter:PlaySound("dontstarve/common/teleportato/teleportato_maxwelllaugh", "teleportato_laugh")
+			
+		end)
+		
+		scheduler:ExecuteInTime(110*FRAMES+3, function() 
+			if inst.action == "restart" then
+				local function onsaved()
+					local params = json.encode{reset_action="loadslot", save_slot = SaveGameIndex:GetCurrentSaveSlot(), maxwell=inst.maxwell}
+					TheSim:SetInstanceParameters(params)
+					TheSim:Reset()
+				end
+				if inst.teleportpos then
+					GetPlayer().Transform:SetPosition(inst.teleportpos:Get() )
+				end
+				SaveGameIndex:SaveCurrent(onsaved)
+			else
+				SaveGameIndex:CompleteLevel(function() TheFrontEnd:PushScreen(DeathScreen(days_survived, start_xp, true)) end )
+			end
+		end)
+	end
+	
+	wilson.profile:Save(onsave)	
 end
 
 local function GetBodyText()
@@ -33,7 +51,6 @@ local function GetBodyText()
 end
 
 local function CheckNextLevelSure(inst, doer)
-
 	TheSim:SetTimeScale(0)
 	TheMixer:PushMix("pause")	
 	
@@ -45,6 +62,8 @@ local function CheckNextLevelSure(inst, doer)
 											print("Lets Go!")
 											TheSim:SetTimeScale(1) 
 											TheMixer:PopMix("pause") 
+											local wilson = GetPlayer()
+											wilson.is_teleporting = true
 											scheduler:ExecuteInTime(1, function()
 												TransitionToNextLevel(inst, doer)
 											end)
@@ -72,7 +91,9 @@ local function OnActivate(inst, doer)
 			inst.SoundEmitter:PlaySound("dontstarve/common/teleportato/teleportato_activate_mouth", "teleportato_activatemouth")
 		end)
 
-        if SaveGameIndex:GetCurrentMode(Settings.save_slot) == "adventure" then
+        if inst.action == "restart" then
+		    inst:DoTaskInTime(2.0, function() TransitionToNextLevel(inst, doer) end)
+        elseif SaveGameIndex:GetCurrentMode(Settings.save_slot) == "adventure" then
             inst.components.container.canbeopened = true
 		    inst:DoTaskInTime(2.0, function()
 			    inst.components.container:Open(doer)
@@ -85,6 +106,7 @@ local function OnActivate(inst, doer)
 	end
 end
 
+
 local function GetStatus(inst)
 	local partsCount = 0
 	for part,found in pairs(inst.collectedParts) do
@@ -94,7 +116,14 @@ local function GetStatus(inst)
 	end
 
 	if partsCount == 4 then
-		return "ACTIVE"
+        if SaveGameIndex:GetCurrentMode(Settings.save_slot) == "adventure" then
+            local rodbase = TheSim:FindFirstEntityWithTag("rodbase")
+            if rodbase and rodbase.components.lock and rodbase.components.lock:IsLocked() then
+                return "LOCKED"
+            end
+        else
+		    return "ACTIVE"
+        end
 	elseif partsCount > 0 then
 		return "PARTIAL"
 	end
@@ -131,9 +160,13 @@ local function TestForPowerUp(inst)
 		end
 		if allParts == true then
 	        inst.components.trader:Disable()
-			scheduler:ExecuteInTime(0.5, function()
-				PowerUp(inst)
-			end)
+            local rodbase = TheSim:FindFirstEntityWithTag("rodbase")
+            if rodbase and rodbase.components.lock and rodbase.components.lock:IsLocked() then
+                rodbase:PushEvent("ready")
+                inst:ListenForEvent("powerup", PowerUp)
+            else
+			    inst:DoTaskInTime(0.5, PowerUp)
+            end
 		end
 end
 
@@ -145,10 +178,28 @@ local function ItemGet(inst, giver, item)
 	end
 end
 
+
+local function MakeComplete(inst)
+	print("Made Complete")
+	inst.collectedParts = {teleportato_ring = true, teleportato_crank = true, teleportato_box = true, teleportato_potato = true }
+end
+
 local function OnLoad(inst, data)
-	if data and data.collectedParts then
-		inst.collectedParts = data.collectedParts
-		TestForPowerUp(inst)
+	if data then
+		if data.makecomplete == 1 then
+			print("has make complete data")
+			MakeComplete(inst)
+			TestForPowerUp(inst)
+		end
+	    if data.collectedParts then
+		    inst.collectedParts = data.collectedParts
+		    TestForPowerUp(inst)
+		end
+		inst.action = data.action
+		inst.maxwell = data.maxwell
+		if data.teleportposx and data.teleportposz then
+		    inst.teleportpos = Vector3(data.teleportposx, 0, data.teleportposz)
+		end
 	end
 end
 
@@ -173,6 +224,12 @@ end
 
 local function OnSave(inst, data)
 	data.collectedParts = inst.collectedParts
+	data.action = inst.action
+	data.maxwell = inst.maxwell
+	if inst.teleportpos then
+	    data.teleportposx = inst.teleportpos.x
+	    data.teleportposz = inst.teleportpos.z
+	end
 end
 
 local function fn(Sim)
@@ -181,7 +238,12 @@ local function fn(Sim)
 	local anim = inst.entity:AddAnimState()
 
 	anim:SetBank("teleporter")
-	anim:SetBuild("teleportato")
+	
+    if SaveGameIndex:GetCurrentMode(Settings.save_slot) == "adventure" then
+	    anim:SetBuild("teleportato_adventure_build")
+	else
+	    anim:SetBuild("teleportato_build")
+	end
 	
 	inst:AddTag("teleportato")
 	
@@ -234,5 +296,5 @@ local function fn(Sim)
 	return inst
 end
 
-return Prefab( "common/objects/teleportato_base", fn, makeassetlist(), prefabs )
+return Prefab( "common/objects/teleportato_base", fn, assets, prefabs )
 

@@ -248,51 +248,52 @@ local function OverrideTweeks(level, world_gen_choices)
 	local customise = require("map/customise")
 	for i,v in ipairs(level.overrides) do
 		local name = v[1]
+		local value = v[2]
+		
 		if type(name) == type({}) then
 			name = name[math.random(#name)]
 		end
+		if type(value) == type({}) then
+			value = value[math.random(#value)]
+		end
+
 		local area = customise.GetGroupForItem(name)
 		-- Modify world now
-		if world_gen_choices["tweak"] == nil then
-			world_gen_choices["tweak"] = {}
+		if not (world_gen_choices["tweak"] and world_gen_choices["tweak"][area] and world_gen_choices["tweak"][area][name]) then
+			if world_gen_choices["tweak"] == nil then
+				world_gen_choices["tweak"] = {}
+			end
+			if world_gen_choices["tweak"][area] == nil then
+				world_gen_choices["tweak"][area] = {}
+			end
+			world_gen_choices["tweak"][area][name] = value
 		end
-		if world_gen_choices["tweak"][area] == nil then
-			world_gen_choices["tweak"][area] = {}
-		end
-		world_gen_choices["tweak"][area][name]=v[2]
 	end
 end
 
-function GetPOIandTrap(trapchoices, poichoices)
-	-- Get some random POI or traps
-	local target_area_keys = {}
-	for k,v in pairs(trapchoices) do
-		table.insert(target_area_keys, k)
+local function GetRandomFromLayouts( layouts )
+	local area_keys = {}
+	for k,v in pairs(layouts) do
+		table.insert(area_keys, k)
 	end
-	local trap_area = target_area_keys[math.random(#target_area_keys)]
-	local trap_target = nil
-	if (trap_area == "Rare" and math.random()<0.98) or GetTableSize(trapchoices[trap_area]) <1 then
-		trap_target = nil
-	else
-		trap_target = {target_area=trap_area, choice=GetRandomKey(trapchoices[trap_area])}--GetRandomItem
-	end
-
-	target_area_keys = {}
-	for k,v in pairs(poichoices) do
-		table.insert(target_area_keys, k)
-	end
-	local POI_area = target_area_keys[math.random(#target_area_keys)]
-	local POI_target = nil
-	if (POI_area == "Rare" and math.random()<0.98) or GetTableSize(poichoices[POI_area]) < 1 then
-		POI_target = nil
-	else
-		POI_target = {target_area=POI_area, choice=GetRandomKey(poichoices[POI_area])}
+	local area_idx =  math.random(#area_keys)
+	local area = area_keys[area_idx]
+	local target = nil
+	if (area == "Rare" and math.random()<0.98) or GetTableSize(layouts[area]) <1 then
+		table.remove(area_keys, area_idx)
+		area = area_keys[math.random(#area_keys)]
 	end
 
-	return trap_target, POI_target
+	if GetTableSize(layouts[area]) <1 then
+		return nil
+	end
+
+	target = {target_area=area, choice=GetRandomKey(layouts[area])} 	
+
+	return target
 end
 
-function GetAreasForChoice(area, level)
+local function GetAreasForChoice(area, level)
 	local areas = {}
 
 	for i, task_name in ipairs(level.tasks) do
@@ -307,6 +308,102 @@ function GetAreasForChoice(area, level)
 	return areas
 end
 
+local function AddSingleSetPeice(level, choicefile)
+	local choices = require(choicefile)
+	assert(choices.Sandbox)
+	local chosen = GetRandomFromLayouts(choices.Sandbox)
+	if chosen ~= nil then
+		if level.set_pieces == nil then
+			level.set_pieces = {}
+		end
+
+		local areas = GetAreasForChoice(chosen.target_area, level)
+		if areas then
+			local num_peices = 1
+			if level.set_pieces[chosen.choice] ~= nil then
+				num_peices = level.set_pieces[chosen.choice].count + 1
+			end
+			level.set_pieces[chosen.choice] = {count = num_peices, tasks=areas}
+		end
+	end
+end
+
+local function AddSetPeices(level, world_gen_choices)
+
+	local boons_override = "default"
+	local touchstone_override = "default"
+	local traps_override = "default"
+	local poi_override = "default"
+	local protected_override = "default"
+
+	if world_gen_choices["tweak"] ~=nil and 
+		world_gen_choices["tweak"]["misc"] ~= nil then
+
+		if world_gen_choices["tweak"]["misc"]["boons"] ~= nil then
+			boons_override = world_gen_choices["tweak"]["misc"]["boons"]
+		end
+		if world_gen_choices["tweak"]["misc"]["touchstone"] ~= nil then
+			touchstone_override = world_gen_choices["tweak"]["misc"]["touchstone"]
+		end
+		if world_gen_choices["tweak"]["misc"]["traps"] ~= nil then
+			traps_override = world_gen_choices["tweak"]["misc"]["traps"]
+		end
+		if world_gen_choices["tweak"]["misc"]["poi"] ~= nil then
+			poi_override = world_gen_choices["tweak"]["misc"]["poi"]
+		end
+		if world_gen_choices["tweak"]["misc"]["protected"] ~= nil then
+			protected_override = world_gen_choices["tweak"]["misc"]["protected"]
+		end
+	end
+
+	if traps_override ~= "never" then
+		AddSingleSetPeice(level, "map/traps")
+	end
+	if poi_override ~= "never" then
+		AddSingleSetPeice(level, "map/pointsofinterest")
+	end
+	if protected_override ~= "never" then
+		AddSingleSetPeice(level, "map/protected_resources")
+	end
+
+	local multiply = {
+		["rare"] = 0.5,
+		["default"] = 1,
+		["often"] = 1.5,
+		["mostly"] = 2.2,
+		["always"] = 3,		
+	}
+
+	if touchstone_override ~= "default" and level.set_pieces ~= nil and 
+								level.set_pieces["ResurrectionStone"] ~= nil then
+
+		if touchstone_override == "never" then
+			level.set_pieces["ResurrectionStone"] = nil
+		else
+			level.set_pieces["ResurrectionStone"].count = math.ceil(level.set_pieces["ResurrectionStone"].count*multiply[touchstone_override])
+		end
+	end
+
+	if boons_override ~= "never" then
+
+		-- Quick hack to get the boons in
+		for idx=1, math.random(math.floor(3*multiply[boons_override]), math.ceil(8*multiply[boons_override])) do
+			AddSingleSetPeice(level, "map/boons")
+		end
+	end
+
+end
+
+local function FixWesUnlock(level, progress, profile)
+	local should_wes = profile and profile.unlocked_characters["wes"] ~= true and progress == 3
+	if not should_wes then
+		print("No wes allowed on this level!")
+		level.set_pieces["WesUnlock"] = nil
+	else
+		print("Wes setpiece allowed in this level.")
+	end
+end
+
 function GenerateNew(debug, parameters)
     
     --print("Generate New map",debug, parameters.gen_type, parameters.level_type, parameters.current_level, parameters.world_gen_choices)
@@ -315,67 +412,57 @@ function GenerateNew(debug, parameters)
 	
 	require("map/levels")
 
-	local Traps = require("map/traps")
-	local PointsOfInterest = require("map/pointsofinterest")
+	local level = levels.test_level
 
-	local choose_tasks = nil
-	local level_area_triggers = nil
-	local maxwell = STRINGS.MAXWELL_QUEST_SURVIVE[1]
-	local name = nil
-	local hideminimap = false
-	if parameters.level_type and string.upper(parameters.level_type) == "ADVENTURE" then
-		if parameters.current_level > #levels.story_levels then
-			parameters.current_level = #levels.story_levels
-		end
-		local level = levels.story_levels[parameters.current_level]
-		maxwell = level.maxwell 
-		name = level.name
-		hideminimap = level.hideminimap
-		OverrideTweeks(level, parameters.world_gen_choices)
+	if parameters.level_type and string.upper(parameters.level_type) == "CAVE" then
+		level = levels.cave_levels[1] -- should look at cave depth!
+	elseif parameters.level_type and string.upper(parameters.level_type) == "ADVENTURE" then
+		level = levels.story_levels[parameters.current_level]
+
+		-- makes the levels loop when we are pushing testing branches
+		--if parameters.adventure_progress == levels.CAMPAIGN_LENGTH then
+		--	level.teleportaction = "restart"
+		--end
+
+		FixWesUnlock(level, parameters.adventure_progress, parameters.profiledata)
 		print("\n#######\n#\n# Generating "..level.name.."("..parameters.current_level..")".."\n#\n#######\n")
-		choose_tasks = level:GetTasksForLevel(tasks.sampletasks)
-		level_area_triggers = level.override_triggers
 	elseif parameters.level_type and string.upper(parameters.level_type) == "TEST" then
 		print("\n#######\n#\n# Generating TEST Mode Level\n#\n#######\n")
-		OverrideTweeks(levels.test_level, parameters.world_gen_choices)
-		choose_tasks = levels.test_level:GetTasksForLevel(tasks.sampletasks)
-		level_area_triggers = levels.test_level.override_triggers
 	else
+		if parameters.world_gen_choices.preset ~= nil then
+			for i,v in ipairs(levels.sandbox_levels) do
+				if v.id == parameters.world_gen_choices.preset then
+					parameters.world_gen_choices.level_id = i
+					break
+				end
+			end
+		end
+		
 		if parameters.world_gen_choices.level_id == nil or parameters.world_gen_choices.level_id > #levels.sandbox_levels then
 			parameters.world_gen_choices.level_id = 1
 		end
 		
-		local level = levels.sandbox_levels[parameters.world_gen_choices.level_id]
+		level = levels.sandbox_levels[parameters.world_gen_choices.level_id]
+
 		print("\n#######\n#\n# Generating Normal Mode "..level.name.." Level\n#\n#######\n")
-		OverrideTweeks(level, parameters.world_gen_choices)
-		level_area_triggers = level.override_triggers
-
-		local trap_choice, poi_choice = GetPOIandTrap(Traps.Sandbox, PointsOfInterest.Sandbox)
-		if trap_choice ~= nil or poi_choice ~= nil then
-			if level.set_pieces == nil then
-				level.set_pieces = {}
-			end
-
-			if trap_choice ~= nil then				
-				local areas = GetAreasForChoice(trap_choice.target_area, level)
-				if areas then
-					level.set_pieces[trap_choice.choice] = {tasks=areas}
-				end
-			end
-			if poi_choice ~= nil then				
-				local areas = GetAreasForChoice(poi_choice.target_area, level)
-				if areas then
-					level.set_pieces[poi_choice.choice] = {tasks=areas}
-				end
-			end
-
-		end
-		maxwell = level.maxwell 
-		hideminimap = level.hideminimap
-		choose_tasks = level:GetTasksForLevel(tasks.sampletasks)
 	end
-	
-	
+
+	OverrideTweeks(level, parameters.world_gen_choices)	
+	local level_area_triggers = level.override_triggers or nil
+	AddSetPeices(level, parameters.world_gen_choices)
+
+	local id = level.id
+	local override_level_string = level.override_level_string or false
+	local name = level.name or "ERROR"
+	local hideminimap = level.hideminimap or false
+
+	local teleportaction = level.teleportaction or false
+	local teleportmaxwell = level.teleportmaxwell or nil
+	local nomaxwell = level.nomaxwell or false
+
+	local prefab = parameters.world_gen_choices.tweak.misc["location"] or "forest"
+
+	local choose_tasks = level:GetTasksForLevel(tasks.sampletasks)
 	if debug == true then
 	 	 choose_tasks = tasks.oneofeverything
 	end
@@ -387,10 +474,10 @@ function GenerateNew(debug, parameters)
 	local max_map_height = 1024 -- 1024--256 
 	
 	local try = 1
-	local maxtries = 15
+	local maxtries = 25
 	
 	while savedata == nil do
-		savedata = Gen.Generate("forest", max_map_width, max_map_height, choose_tasks, parameters.world_gen_choices, parameters.level_type)	
+		savedata = Gen.Generate(prefab, max_map_width, max_map_height, choose_tasks, parameters.world_gen_choices, parameters.level_type)	
 		
 		if savedata == nil then
 			print("An error occured during world gen we will retry! [",try," of ",maxtries,"]")
@@ -404,11 +491,22 @@ function GenerateNew(debug, parameters)
 		end
 	end
 	
+	
+	savedata.map.prefab = "forest" 
+	
+	if parameters.level_type == "cave" then
+		savedata.map.prefab = "cave" 
+	end
+		
 	savedata.map.topology.level_type = parameters.level_type
 	savedata.map.topology.level_number = parameters.current_level
-	savedata.map.maxwell = maxwell
+	savedata.map.level_id = id or "survival"
+	savedata.map.override_level_string = override_level_string
 	savedata.map.name = name
+	savedata.map.nomaxwell = nomaxwell
 	savedata.map.hideminimap = hideminimap
+	savedata.map.teleportaction = teleportaction
+	savedata.map.teleportmaxwell = teleportmaxwell
 	
 	savedata.map.topology.override_triggers = level_area_triggers
 	CheckMapSaveData(savedata)
@@ -438,7 +536,7 @@ local function LoadParametersAndGenerate(debug)
 	local parameters = nil
 	if GEN_PARAMETERS == "" then
 		print("WARNING: No parameters found, using defaults. This should only happen from the test harness!")
-		parameters = { level_type="adventure", current_level=5 }
+		parameters = { level_type="adventure", current_level=5, adventure_progress=3, profiledata={unlocked_characters={wes=true}} }
 	else
 		parameters = json.decode(GEN_PARAMETERS)
 	end

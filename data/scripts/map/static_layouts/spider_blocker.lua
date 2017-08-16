@@ -87,7 +87,7 @@ return {
       objects = {
         {
           name = "",
-          type = "evergreen_normal",
+          type = "evergreen",
           shape = "rectangle",
           x = 256,
           y = 480,
@@ -98,7 +98,7 @@ return {
         },
         {
           name = "",
-          type = "evergreen_normal",
+          type = "evergreen",
           shape = "rectangle",
           x = 208,
           y = 432,
@@ -109,7 +109,7 @@ return {
         },
         {
           name = "",
-          type = "evergreen_normal",
+          type = "evergreen",
           shape = "rectangle",
           x = 336,
           y = 400,
@@ -120,7 +120,7 @@ return {
         },
         {
           name = "",
-          type = "evergreen_normal",
+          type = "evergreen",
           shape = "rectangle",
           x = 448,
           y = 272,
@@ -131,7 +131,7 @@ return {
         },
         {
           name = "",
-          type = "evergreen_normal",
+          type = "evergreen",
           shape = "rectangle",
           x = 208,
           y = 240,
@@ -142,7 +142,7 @@ return {
         },
         {
           name = "",
-          type = "evergreen_normal",
+          type = "evergreen",
           shape = "rectangle",
           x = 336,
           y = 160,
@@ -153,7 +153,7 @@ return {
         },
         {
           name = "",
-          type = "evergreen_normal",
+          type = "evergreen",
           shape = "rectangle",
           x = 256,
           y = 32,
@@ -164,7 +164,7 @@ return {
         },
         {
           name = "",
-          type = "evergreen_normal",
+          type = "evergreen",
           shape = "rectangle",
           x = 576,
           y = 112,
@@ -175,7 +175,7 @@ return {
         },
         {
           name = "",
-          type = "evergreen_normal",
+          type = "evergreen",
           shape = "rectangle",
           x = 512,
           y = 608,
@@ -186,7 +186,7 @@ return {
         },
         {
           name = "",
-          type = "evergreen_normal",
+          type = "evergreen",
           shape = "rectangle",
           x = 352,
           y = 608,
@@ -197,7 +197,7 @@ return {
         },
         {
           name = "",
-          type = "evergreen_normal",
+          type = "evergreen",
           shape = "rectangle",
           x = 400,
           y = 480,
@@ -208,7 +208,7 @@ return {
         },
         {
           name = "",
-          type = "evergreen_normal",
+          type = "evergreen",
           shape = "rectangle",
           x = 128,
           y = 608,
@@ -219,7 +219,7 @@ return {
         },
         {
           name = "",
-          type = "evergreen_normal",
+          type = "evergreen",
           shape = "rectangle",
           x = 16,
           y = 448,
@@ -230,7 +230,7 @@ return {
         },
         {
           name = "",
-          type = "evergreen_normal",
+          type = "evergreen",
           shape = "rectangle",
           x = 80,
           y = 224,
@@ -241,7 +241,7 @@ return {
         },
         {
           name = "",
-          type = "evergreen_normal",
+          type = "evergreen",
           shape = "rectangle",
           x = 48,
           y = 176,
@@ -252,7 +252,7 @@ return {
         },
         {
           name = "",
-          type = "evergreen_normal",
+          type = "evergreen",
           shape = "rectangle",
           x = 112,
           y = 32,
@@ -263,7 +263,7 @@ return {
         },
         {
           name = "",
-          type = "evergreen_normal",
+          type = "evergreen",
           shape = "rectangle",
           x = 608,
           y = 176,
@@ -274,7 +274,7 @@ return {
         },
         {
           name = "",
-          type = "evergreen_normal",
+          type = "evergreen",
           shape = "rectangle",
           x = 528,
           y = 528,
@@ -285,7 +285,7 @@ return {
         },
         {
           name = "",
-          type = "evergreen_normal",
+          type = "evergreen",
           shape = "rectangle",
           x = 208,
           y = 352,

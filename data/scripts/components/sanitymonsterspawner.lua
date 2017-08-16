@@ -22,6 +22,7 @@ end)
 
 
 function SanityMonsterSpawner:OnSave()
+    local refs = {}
     local data = {
 		monsters={},
 		shadowhands = {},
@@ -29,18 +30,19 @@ function SanityMonsterSpawner:OnSave()
 		popchangetimer = self.popchangetimer,
 		spawntimer = self.spawntimer,
 		creepyhandtimer = self.creepyhandtimer
-		
 	}
 
     for k,v in pairs(self.monsters) do
 		table.insert(data.monsters, v.GUID)
+		table.insert(refs, v.GUID)
     end
 
     for k,v in pairs(self.shadowhands) do
 		table.insert(data.shadowhands, v.GUID)
+		table.insert(refs, v.GUID)
     end
 	
-    return data
+    return data, refs
 end
 
 
@@ -270,7 +272,7 @@ function SanityMonsterSpawner:UpdateMonsters(dt)
 	if self.currenttargetpop > self.currentpop and (not self.spawntimer or self.spawntimer <= 0) then
 		
 		local pt = self:FindSpawnPoint()	
-		if pt and TheMap:GetTileAtPoint(pt:Get()) ~= GROUND.IMPASSABLE then
+		if pt and GetMap():GetTileAtPoint(pt:Get()) ~= GROUND.IMPASSABLE then
 			local prefab = "crawlinghorror"
 			if sanity < 20/200 and math.random() < .5 then
 				prefab = "terrorbeak"
