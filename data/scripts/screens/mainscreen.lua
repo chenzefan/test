@@ -25,6 +25,8 @@ local BroadcastingOptionsScreen = require "screens/broadcastingoptionsscreen"
 
 local RoGUpgrade = require "widgets/rogupgrade"
 
+local BetaRegistration = require "widgets/betaregistration"
+
 local rcol = RESOLUTION_X/2 -200
 local lcol = -RESOLUTION_X/2 +200
 
@@ -71,15 +73,68 @@ function MainScreen:DoInit( )
     self.fixed_root:SetHAnchor(ANCHOR_MIDDLE)
     self.fixed_root:SetScaleMode(SCALEMODE_PROPORTIONAL)
 
- 	self.RoGUpgrade = self.fixed_root:AddChild(RoGUpgrade())
-    self.RoGUpgrade:SetScale(.9)
-    self.RoGUpgrade:SetPosition(-435, -185, 0)
+    self.right_col = self.fixed_root:AddChild(Widget("right"))
+	self.right_col:SetPosition(rcol, 0)
+
+	self.left_col = self.fixed_root:AddChild(Widget("left"))
+	self.left_col:SetPosition(lcol, 0)
+
+
+	-- UPSELLS (mixed loc)
+
+	--on Steam and does not own DST beta SKU or not on Steam
+    if ((PLATFORM == "WIN32_STEAM" or PLATFORM == "LINUX_STEAM" or PLATFORM == "OSX_STEAM") and not TheSim:GetUserHasLicenseForApp(DONT_STARVE_TOGETHER_APPID)) 
+    	or (PLATFORM ~= "WIN32_STEAM" and PLATFORM ~= "LINUX_STEAM" and PLATFORM ~= "OSX_STEAM" and PLATFORM ~= "PS4") then
+
+    	self.RoGUpgrade = self.right_col:AddChild(RoGUpgrade())
+	    self.RoGUpgrade:SetScale(.7)
+	    self.RoGUpgrade:SetPosition(0, 215, 0)
+
+	    self.beta_reg = self.left_col:AddChild(BetaRegistration())
+	    self.beta_reg:SetScale(.76)
+	    self.beta_reg:SetPosition(0, -185, 0)
+
+   	else --owns DST beta SKU and on Steam
+
+   		self.RoGUpgrade = self.left_col:AddChild(RoGUpgrade())
+	    self.RoGUpgrade:SetScale(.9)
+	    self.RoGUpgrade:SetPosition(0, -185, 0)
+
+   		local function KickOffScreecherMod()
+			KnownModIndex:Enable("screecher")
+			KnownModIndex:Save()
+			TheSim:Quit()
+		end
+
+	    self.screecher = self.right_col:AddChild(ImageButton("images/fepanels.xml", "DS_Scary_button.tex", "DS_Scary_button-rollover.tex"))
+	    self.screecher:SetPosition(0, 225, 0)
+		self.screecher:SetScale(.6)
+		self.screecher:SetOnClick( function() 
+			if PLATFORM == "NACL" then
+				TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.MAINSCREEN.SCREECHER_NACL_DIALOG_TITLE, STRINGS.UI.MAINSCREEN.SCREECHER_NACL_DIALOG_TEXT,
+				{
+					{text=STRINGS.UI.MODSSCREEN.CANCEL, cb = function() TheFrontEnd:PopScreen() end},
+					{text=STRINGS.UI.MAINSCREEN.SCREECHER_NACL_OKAY, cb = function() VisitURL("http://www.dontstarvegame.com/chrome-version-retired") end },
+				}))
+			else
+				TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.MAINSCREEN.SCREECHER_DIALOG_TITLE, STRINGS.UI.MAINSCREEN.SCREECHER_DIALOG_TEXT,
+				{
+					{text=STRINGS.UI.MODSSCREEN.CANCEL, cb = function() TheFrontEnd:PopScreen() end},
+					{text=STRINGS.UI.MODSSCREEN.RESTART, cb = function() KickOffScreecherMod() end },
+				}))
+			end
+		end)
+
+   		-- self.wilson = self.left_col:AddChild(UIAnim())
+	    -- self.wilson:GetAnimState():SetBank("corner_dude")
+	    -- self.wilson:GetAnimState():SetBuild("corner_dude")
+	    -- self.wilson:GetAnimState():PlayAnimation("idle", true)
+	    -- self.wilson:SetPosition(0,-370,0)
+
+   	end
 
 
 	--RIGHT COLUMN
-
-    self.right_col = self.fixed_root:AddChild(Widget("right"))
-	self.right_col:SetPosition(rcol, 0)
 
 	self.menu = self.right_col:AddChild(Menu(nil, 70))
 	self.menu:SetPosition(0, -120, 0)
@@ -118,9 +173,6 @@ function MainScreen:DoInit( )
 
 	
 	--LEFT COLUMN
-    
-    self.left_col = self.fixed_root:AddChild(Widget("left"))
-	self.left_col:SetPosition(lcol, 0)
 
 	self.motd = self.left_col:AddChild(Widget("motd"))
 	self.motd:SetScale(.9,.9,.9)
@@ -146,20 +198,6 @@ function MainScreen:DoInit( )
     self.motd.button:SetText(STRINGS.UI.MAINSCREEN.MOTDBUTTON)
     self.motd.button:SetOnClick( function() VisitURL("http://forums.kleientertainment.com/index.php?/topic/28171-halloween-mod-challenge/") end )
 	self.motd.motdtext:EnableWordWrap(true)   
-    
-
-    -- self.wilson = self.left_col:AddChild(UIAnim())
-    -- self.wilson:GetAnimState():SetBank("corner_dude")
-    -- self.wilson:GetAnimState():SetBuild("corner_dude")
-    -- self.wilson:GetAnimState():PlayAnimation("idle", true)
-    -- self.wilson:SetPosition(0,-370,0)
-
-
-	local function KickOffScreecherMod()
-		KnownModIndex:Enable("screecher")
-		KnownModIndex:Save()
-		TheSim:Quit()
-	end
 
 	local PopupDialogScreen = require("screens/popupdialog")
 	local ImageButton = require("widgets/imagebutton")
@@ -342,13 +380,17 @@ function MainScreen:Refresh()
 	TheFrontEnd:GetSound():PlaySound("dontstarve/music/music_FE","FEMusic")
 end
 
-function MainScreen:ShowMenu(menu_items)
+function MainScreen:ShowMenu(menu_items, posX, posY)
 	self.mainmenu = false
 	self.menu:Clear()
 	
 	for k = #menu_items, 1, -1  do
 		local v = menu_items[k]
 		self.menu:AddItem(v.text, v.cb, v.offset)
+	end
+
+	if posX and posY then
+		self.menu:SetPosition(posX, posY, 0)
 	end
 
 	self.menu:SetFocus()
@@ -387,7 +429,12 @@ function MainScreen:DoOptionsMenu()
 	end
 		
 	table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.CANCEL, cb= function() self:MainMenu() end})
-	self:ShowMenu(menu_items)
+
+	if BRANCH ~= "release" then
+		self:ShowMenu(menu_items, 0, -195)
+	else
+		self:ShowMenu(menu_items, 0, -175)
+	end
 end
 
 function MainScreen:OnModsButton()
@@ -419,7 +466,7 @@ function MainScreen:CheatMenu()
 	table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.UNLOCKEVERYTHING, cb= function() self:UnlockEverything() end})
 	table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.RESETPROFILE, cb= function() self:ResetProfile() end})
 	table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.CANCEL, cb= function() self:DoOptionsMenu() end})
-	self:ShowMenu(menu_items)
+	self:ShowMenu(menu_items, 0, -120)
 end
 
 function MainScreen:OnPlayButtonNACL()
@@ -465,7 +512,7 @@ function MainScreen:MainMenu()
 	else
 		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.EXIT, cb= function() self:OnExitButton() end})
 	end
-	self:ShowMenu(menu_items)
+	self:ShowMenu(menu_items, 0, -120)
 	self.mainmenu = true
 end
 
@@ -564,7 +611,7 @@ function MainScreen:OnCachedMOTDLoad(load_success, str)
 	if load_success and string.len(str) > 1 then
 		self:SetMOTD(str, false)
 	end
-	TheSim:QueryServer( "http://www.dontstarvegame.com/hosted-files/game-motd/ds_motd.json", function(...) self:OnMOTDQueryComplete(...) end, "GET" )
+	TheSim:QueryServer( "https://s3-us-west-2.amazonaws.com/kleifiles/external/ds_motd.json", function(...) self:OnMOTDQueryComplete(...) end, "GET" )
 end
 
 function MainScreen:UpdateMOTD()

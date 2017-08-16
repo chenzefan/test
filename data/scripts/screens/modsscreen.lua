@@ -19,7 +19,7 @@ local display_rows = 5
 
 local DISABLE = 0
 local ENABLE = 1
-
+    
 local mid_col = RESOLUTION_X*.07
 local left_col = -RESOLUTION_X*.3
 local right_col = RESOLUTION_X*.37
@@ -55,7 +55,7 @@ local ModsScreen = Class(Screen, function(self, cb)
     self.bg:SetVAnchor(ANCHOR_MIDDLE)
     self.bg:SetHAnchor(ANCHOR_MIDDLE)
     self.bg:SetScaleMode(SCALEMODE_FILLSCREEN)
-
+    
     self.root = self:AddChild(Widget("root"))
     self.root:SetVAnchor(ANCHOR_MIDDLE)
     self.root:SetHAnchor(ANCHOR_MIDDLE)
@@ -70,23 +70,23 @@ local ModsScreen = Class(Screen, function(self, cb)
     -- self.applybutton:SetText(STRINGS.UI.MODSSCREEN.APPLY)
     -- self.applybutton:SetPosition(Vector3(-80, -220, 0))
     -- self.applybutton:SetOnClick(function() self:Apply() end)
-
+	
 	-- mod details panel
 	self:CreateDetailPanel()
-
+    
 	self.mainmenu = self.root:AddChild(Menu(nil, 0, true))
     self.mainmenu:SetPosition(mid_col, 0, 0)
 	self.applybutton = self.mainmenu:AddItem(STRINGS.UI.MODSSCREEN.APPLY, function() self:Apply() end, Vector3(-90,-285,0))
 	self.cancelbutton = self.mainmenu:AddItem(STRINGS.UI.MODSSCREEN.CANCEL, function() self:Cancel() end, Vector3(90,-285,0))
 	self.modconfigbutton = self.mainmenu:AddItem(STRINGS.UI.MODSSCREEN.CONFIGUREMOD, function() self:ConfigureSelectedMod() end, Vector3(0, -165, 0))
 	self.modconfigbutton:SetScale(.85)
-
+	
 
 	self.option_offset = 0
     self.optionspanel = self.root:AddChild(Menu(nil, -98, false))
     self.optionspanel:SetPosition(left_col,0,0)
     self.optionspanelbg = self.optionspanel:AddChild(Image("images/fepanels.xml", "panel_mod1.tex"))
-
+	
 	self:CreateTopModsPanel()
 
 	--------Build controller support
@@ -134,11 +134,11 @@ local ModsScreen = Class(Screen, function(self, cb)
 	--self.leftbutton:SetScale(-1,1,1)
 	self.leftbutton:SetRotation(-90)
     self.leftbutton:SetOnClick( function() self:Scroll(-display_rows) end)
-
+	
 	self.rightbutton = self.optionspanel:AddChild(ImageButton("images/ui.xml", "scroll_arrow.tex", "scroll_arrow_over.tex", "scroll_arrow_disabled.tex"))
     self.rightbutton:SetPosition(0, -300, 0)
 	self.rightbutton:SetRotation(90)
-    self.rightbutton:SetOnClick( function() self:Scroll(display_rows) end)
+    self.rightbutton:SetOnClick( function() self:Scroll(display_rows) end)	
 
 	---- Workshop blinker
 
@@ -170,7 +170,7 @@ function ModsScreen:GenerateRandomPicks(num, numrange)
 	return picks
 end
 
-function ModsScreen:OnStatsQueried( result, isSuccessful, resultCode )
+function ModsScreen:OnStatsQueried( result, isSuccessful, resultCode )	
 
 	if TheFrontEnd.screenstack[#TheFrontEnd.screenstack] ~= self then
 		return
@@ -186,7 +186,7 @@ function ModsScreen:OnStatsQueried( result, isSuccessful, resultCode )
 
 	for i = 1, #self.modlinks do
 		local title = jsonresult["modnames"][randomPicks[i]]
-		if title then
+		if title then 
 			local url = jsonresult["modlinks"][title]
 			title = string.gsub(title, "(ws%-)", "")
 			if string.len(title) > 25 then
@@ -226,7 +226,7 @@ function ModsScreen:CreateTopModsPanel()
     self.title:SetString(STRINGS.UI.MODSSCREEN.TOPMODS)
 
 	self.modlinks = {}
-
+	
 	local yoffset = 170
 	for i = 1, 5 do
 		local modlink = self.topmods:AddChild(TextButton("images/ui.xml", "blank.tex","blank.tex","blank.tex","blank.tex"))
@@ -237,12 +237,12 @@ function ModsScreen:CreateTopModsPanel()
 		modlink:SetTextFocusColour(1,1,1,1)
 	    table.insert(self.modlinks, modlink)
 	    yoffset = yoffset - 45
-	end
-
+	end 
+    
 	self.featuredtitle = self.topmods:AddChild(Text(TITLEFONT, 40))
     self.featuredtitle:SetPosition(Vector3(0,-70,0))
     self.featuredtitle:SetString(STRINGS.UI.MODSSCREEN.FEATUREDMOD)
-
+    
 	self.featuredbutton = self.topmods:AddChild(TextButton("images/ui.xml", "blank.tex","blank.tex","blank.tex","blank.tex"))
     self.featuredbutton:SetPosition(Vector3(0,-130,0))
     self.featuredbutton:SetText(STRINGS.UI.MODSSCREEN.LOADING.."...")
@@ -252,7 +252,7 @@ function ModsScreen:CreateTopModsPanel()
 
 	local linkpref = (PLATFORM == "WIN32_STEAM" and "external") or "klei"
 	--Talk to server here
-	TheSim:QueryStats( '{ "req":"modrank", "field":"Session.Loads.Mods.list", "fieldop":"unwind", "linkpref":"'..linkpref..'", "limit": 20}',
+	TheSim:QueryStats( '{ "req":"modrank", "field":"Session.Loads.Mods.list", "fieldop":"unwind", "linkpref":"'..linkpref..'", "limit": 20}', 
 		function(result, isSuccessful, resultCode) self:OnStatsQueried(result, isSuccessful, resultCode) end)
 
 end
@@ -308,7 +308,7 @@ function ModsScreen:CreateDetailPanel()
 		self.detailwarning:SetPosition(15, -160, 0)
 		self.detailwarning:SetRegionSize( 600, 107 )
 		self.detailwarning:EnableWordWrap(true)
-
+		
 		self.modlinkbutton = self.detailpanel:AddChild(TextButton("images/ui.xml", "blank.tex","blank.tex","blank.tex","blank.tex" ))
 		self.modlinkbutton:SetPosition(5, -119, 0)
 		self.modlinkbutton:SetText(STRINGS.UI.MODSSCREEN.MODLINK)
@@ -317,7 +317,7 @@ function ModsScreen:CreateDetailPanel()
 		self.modlinkbutton:SetTextColour(0.9,0.8,0.6,1)
 		self.modlinkbutton:SetTextFocusColour(1,1,1,1)
 		self.modlinkbutton:SetOnClick( function() self:ModLinkCurrent() end )
-
+		
 		--local enableoptions = {{text="Disabled", data=DISABLE},{text="Enabled",data=ENABLE}}
 		--self.enablespinner = self.detailpanel:AddChild(Spinner(enableoptions, 200, 60))
 		--self.enablespinner:SetTextColour(0,0,0,1)
@@ -341,7 +341,7 @@ function ModsScreen:CreateDetailPanel()
 		self.modlinkbutton:SetTextFocusColour(1,1,1,1)
 		self.modlinkbutton:SetText(STRINGS.UI.MODSSCREEN.NO_MODS_LINK)
 		self.modlinkbutton:SetOnClick( function() self:MoreMods() end )
-
+		
 	end
 
 end
@@ -370,7 +370,7 @@ self:WorkshopUpdateComplete()
 end
 
 function ModsScreen:WorkshopUpdateComplete(status, message) --bool, string
-
+	
 	if self.updatetask then
 		self.updatetask:Cancel()
 		self.updatetask = nil
@@ -397,7 +397,7 @@ function ModsScreen:WorkshopUpdateComplete(status, message) --bool, string
 	if #self.modnames > 0 then
 		self:ShowModDetails(1)
 	end
-
+	
 end
 
 function ModsScreen:ShowWorkshopStatus()
@@ -426,7 +426,7 @@ end
 
 function ModsScreen:OnControl(control, down)
 	if ModsScreen._base.OnControl(self, control, down) then return true end
-
+	
 	if not down and control == CONTROL_CANCEL then TheFrontEnd:PopScreen() return true end
 end
 
@@ -437,20 +437,20 @@ function ModsScreen:RefreshOptions()
 	end
 	self.optionwidgets = {}
 	self.optionspanel:Clear()
-
-
+	
+	
 	local page_total = math.min(#self.modnames - self.option_offset, display_rows)
 	for k = 1, page_total do
-
+	
 		local idx = self.option_offset+k
 
 		local modname = self.modnames[idx]
 		local modinfo = KnownModIndex:GetModInfo(modname)
-
+		
 		local opt = self.optionspanel:AddCustomItem(Widget("option"))
 
 		opt.idx = idx
-
+		
 		opt.bg = opt:AddChild(UIAnim())
 		opt.bg:GetAnimState():SetBuild("savetile")
 		opt.bg:GetAnimState():SetBank("savetile")
@@ -542,10 +542,10 @@ function ModsScreen:RefreshOptions()
 			opt.RoGcompatible:SetTint(1.0,0.5,0.5,1)
 			opt.DScompatible:SetTint(1.0,0.5,0.5,1)
 		end
-
+		
 		local spacing = 105
-
-
+		
+		
 		opt.OnGainFocus =
 			function()
 				TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/click_mouseover")
@@ -559,8 +559,8 @@ function ModsScreen:RefreshOptions()
 				opt:SetScale(1,1,1)
 				opt.bg:GetAnimState():PlayAnimation("anim")
 			end
-
-		opt.OnControl =function(_, control, down)
+			
+		opt.OnControl =function(_, control, down) 
 				if Widget.OnControl(opt, control, down) then return true end
 				if control == CONTROL_ACCEPT and not down then
 					self:EnableCurrent()
@@ -570,7 +570,7 @@ function ModsScreen:RefreshOptions()
 			end
 
 		opt:SetPosition(0, (display_rows-1)*spacing*.5 - (k-1)*spacing - 00, 0)
-
+		
 		table.insert(self.optionwidgets, opt)
 	end
 
@@ -580,8 +580,8 @@ function ModsScreen:RefreshOptions()
 				self:ShowModDetails(self.optionspanel.items[k-1].idx)
 				return self.optionspanel.items[k-1]
 			end)
-		end
-
+		end		
+		
 		if k < #self.optionspanel.items then
 			self.optionspanel.items[k]:SetFocusChangeDir(MOVE_DOWN, function()
 				self:ShowModDetails(self.optionspanel.items[k+1].idx)
@@ -593,7 +593,7 @@ function ModsScreen:RefreshOptions()
 	if self.optionspanel.items == nil or #self.optionspanel.items == 0 then
 		return
 	end
-
+	
 	self.optionspanel.items[1]:SetFocusChangeDir(MOVE_UP, function()
 		if not self:OnFirstPage() then
 			self:ShowModDetails(self.optionspanel.items[1].idx-1)
@@ -611,7 +611,7 @@ function ModsScreen:RefreshOptions()
 		end
 		return self.optionspanel.items[#self.optionspanel.items]
 	end)
-
+	
 
 end
 
@@ -626,10 +626,10 @@ end
 function ModsScreen:Scroll(dir)
 	if (dir > 0 and (self.option_offset + display_rows) < #self.modnames) or
 		(dir < 0 and self.option_offset + dir >= 0) then
-
+	
 		self.option_offset = self.option_offset + dir
 	end
-
+	
 	self:RefreshOptions()
 
 	if self.option_offset > 0 then
@@ -637,7 +637,7 @@ function ModsScreen:Scroll(dir)
 	else
 		self.leftbutton:Hide()
 	end
-
+	
 	if self.option_offset + display_rows < #self.modnames then
 		self.rightbutton:Show()
 	else
@@ -799,7 +799,7 @@ function ModsScreen:EnableCurrent(data)
 
 	if modinfo.restart_required then
 		print("RESTART REQUIRED")
-		TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.MODSSCREEN.RESTART_TITLE, STRINGS.UI.MODSSCREEN.RESTART_REQUIRED,
+		TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.MODSSCREEN.RESTART_TITLE, STRINGS.UI.MODSSCREEN.RESTART_REQUIRED, 
 		{
 			{text=STRINGS.UI.MODSSCREEN.RESTART, cb = function() self:OnConfirmEnableCurrent(data, true) end },
 			{text=STRINGS.UI.MODSSCREEN.CANCEL, cb = function() TheFrontEnd:PopScreen() end}
@@ -812,7 +812,7 @@ end
 function ModsScreen:ModLinkCurrent()
 	local modname = self.modnames[self.currentmod]
 	local thread = KnownModIndex:GetModInfo(modname).forumthread
-
+	
 	local url = ""
 	if thread then
 		url = "http://forums.kleientertainment.com/index.php?%s"
@@ -896,11 +896,11 @@ end
 function ModsScreen:GetHelpText()
     local controller_id = TheInput:GetControllerID()
     local t = {}
-
+    
 
     -- table.insert(t,  TheInput:GetLocalizedControl(controller_id, CONTROL_PAGELEFT) .. " " .. STRINGS.UI.HELP.SCROLLBACK)
     -- table.insert(t,  TheInput:GetLocalizedControl(controller_id, CONTROL_PAGERIGHT) .. " " .. STRINGS.UI.HELP.SCROLLFWD)
-
+    
     --table.insert(t,  TheInput:GetLocalizedControl(controller_id, CONTROL_FOCUS_LEFT) .. " " .. STRINGS.UI.HELP.NEXTCHARACTER)
     --table.insert(t,  TheInput:GetLocalizedControl(controller_id, CONTROL_FOCUS_RIGHT) .. " " .. STRINGS.UI.HELP.PREVCHARACTER)
 
@@ -911,7 +911,7 @@ function ModsScreen:GetHelpText()
     if not self.no_cancel then
     	table.insert(t,  TheInput:GetLocalizedControl(controller_id, CONTROL_CANCEL) .. " " .. STRINGS.UI.HELP.BACK)
     end
-
+    
 
     return table.concat(t, "  ")
 end

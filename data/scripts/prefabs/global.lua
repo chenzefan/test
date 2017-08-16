@@ -18,6 +18,9 @@ local assets =
 	
     Asset("ATLAS", "images/fepanels.xml"),
     Asset("IMAGE", "images/fepanels.tex"),
+
+    Asset("ATLAS", "images/fepanels_DSTbeta.xml"),
+    Asset("IMAGE", "images/fepanels_DSTbeta.tex"),
 	
 	--Asset("IMAGE", "images/river_bed.tex"),
 	--Asset("IMAGE", "images/water_river.tex"),
@@ -89,6 +92,8 @@ local assets =
 if PLATFORM == "PS4" then
     table.insert(assets, Asset("ATLAS", "images/ps4_controllers.xml"))
     table.insert(assets, Asset("IMAGE", "images/ps4_controllers.tex"))
+    table.insert(assets, Asset("ATLAS", "images/fepanels_ps4.xml"))
+    table.insert(assets, Asset("IMAGE", "images/fepanels_ps4.tex"))
 end
 
 

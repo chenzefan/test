@@ -1867,7 +1867,8 @@ STRINGS.UI =
         CANT_LOAD_TITLE = "Load Failed",
         CANT_LOAD_ROG = "Reign of Giants is not installed. Unable to load",
 
-        CONSOLE_EDITION_TEXT = "Console Edition"
+        CONSOLE_EDITION_TEXT = "Console Edition",
+        ROG_UPSELL = "Buy Reign of Giants"
     },
     
     HUD =

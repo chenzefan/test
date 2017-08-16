@@ -99,7 +99,7 @@ local function OnAttacked(inst, data)
 end
 
 local function oncollide(inst, other)
-    if not other:HasTag("tree") then return end
+    if other == nil or not other:HasTag("tree") then return end
     
     local v1 = Vector3(inst.Physics:GetVelocity())
     if v1:LengthSq() < 1 then return end

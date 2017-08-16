@@ -129,7 +129,7 @@ function Menu:AddCustomItem(widget, offset)
 	return widget
 end
 
-function Menu:AddItem(text, cb, offset, style)
+function Menu:AddItem(text, cb, offset, style, textsize)
 	local pos = Vector3(0,0,0)
 	
 	if self.horizontal then
@@ -142,6 +142,8 @@ function Menu:AddItem(text, cb, offset, style)
 		pos = pos + offset	
 	end	
 
+	textsize = textsize or 1
+
 	local button = self:AddChild(ImageButton())
 	button:SetPosition(pos)
 	button:SetText(text)
@@ -149,12 +151,12 @@ function Menu:AddItem(text, cb, offset, style)
 	button:SetOnClick( cb )
 	button:SetFont(BUTTONFONT)
 	if self.textSize then
-		button:SetTextSize(self.textSize)
+		button:SetTextSize(self.textSize*textsize)
 	else
 		if JapaneseOnPS4() then
-			button:SetTextSize(40*0.8)
+			button:SetTextSize(40*0.8*textsize)
 		else
-			button:SetTextSize(40)
+			button:SetTextSize(40*textsize)
 		end
 	end
 	table.insert(self.items, button)

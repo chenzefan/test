@@ -56,7 +56,9 @@ local function loadpostpass(inst,ents, data)
     if data then
 		if data.leader then  
 			local leader = ents[data.leader]
-			inst.leader = leader.entity
+            if leader then
+                inst.leader = leader.entity
+            end
 	    end
 	end
 end

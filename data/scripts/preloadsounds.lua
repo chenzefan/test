@@ -75,7 +75,7 @@ local MainSounds =
 	"woodrow.fsb",
 	"worm.fsb",
 	"wx78.fsb",
-	"wyro.fsb",
+	-- "wyro.fsb",
 }
 
 function PreloadSoundList(list)

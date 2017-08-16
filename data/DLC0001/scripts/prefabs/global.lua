@@ -22,6 +22,9 @@ local assets =
 
     Asset("ATLAS", "images/fepanels_DLC.xml"),
     Asset("IMAGE", "images/fepanels_DLC.tex"),
+
+    Asset("ATLAS", "images/fepanels_DSTbeta.xml"),
+    Asset("IMAGE", "images/fepanels_DSTbeta.tex"),
 	
 	--Asset("IMAGE", "images/river_bed.tex"),
 	--Asset("IMAGE", "images/water_river.tex"),
