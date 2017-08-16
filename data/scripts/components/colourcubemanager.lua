@@ -1,41 +1,39 @@
 local easing = require("easing")
 
-
-local IDENTITY_COLOURCUBE = "images/colour_cubes/identity_colourcube.tex"
-
-local INSANITY_CCS =
-{
-	DAY = "images/colour_cubes/insane_day_cc.tex",
-	DUSK = "images/colour_cubes/insane_dusk_cc.tex",
-	NIGHT = "images/colour_cubes/insane_night_cc.tex",
-}
-
-local SEASON_CCS = {
-	[SEASONS.SUMMER] = {	DAY = "images/colour_cubes/day05_cc.tex",
-							DUSK = "images/colour_cubes/dusk03_cc.tex",
-							NIGHT = "images/colour_cubes/night03_cc.tex",
-					   },
-	[SEASONS.WINTER] = {	DAY = "images/colour_cubes/snow_cc.tex",
-							DUSK = "images/colour_cubes/snowdusk_cc.tex",
-							NIGHT = "images/colour_cubes/night04_cc.tex",
-						},
-	[SEASONS.CAVES] = {		DAY = "images/colour_cubes/caves_default.tex",
-							DUSK = "images/colour_cubes/caves_default.tex",
-							NIGHT = "images/colour_cubes/caves_default.tex",
-						},
-}
-
-local NIGHTMARE_CCS = 
-{
-	CALM = "images/colour_cubes/ruins_dark_cc.tex",
-	WARN = "images/colour_cubes/ruins_dim_cc.tex",
-	NIGHTMARE = "images/colour_cubes/ruins_light_cc.tex",
-	DAWN = "images/colour_cubes/ruins_dim_cc.tex",
-}
-
-
 local ColourCubeManager = Class(function(self, inst)
 	self.inst = inst
+
+	self.IDENTITY_COLOURCUBE = "images/colour_cubes/identity_colourcube.tex"
+	self.INSANITY_CCS =
+	{
+		DAY = "images/colour_cubes/insane_day_cc.tex",
+		DUSK = "images/colour_cubes/insane_dusk_cc.tex",
+		NIGHT = "images/colour_cubes/insane_night_cc.tex",
+	}
+
+	self.SEASON_CCS = {
+		[SEASONS.SUMMER] = {	DAY = "images/colour_cubes/day05_cc.tex",
+								DUSK = "images/colour_cubes/dusk03_cc.tex",
+								NIGHT = "images/colour_cubes/night03_cc.tex",
+						   },
+		[SEASONS.WINTER] = {	DAY = "images/colour_cubes/snow_cc.tex",
+								DUSK = "images/colour_cubes/snowdusk_cc.tex",
+								NIGHT = "images/colour_cubes/night04_cc.tex",
+							},
+		[SEASONS.CAVES] = {		DAY = "images/colour_cubes/caves_default.tex",
+								DUSK = "images/colour_cubes/caves_default.tex",
+								NIGHT = "images/colour_cubes/caves_default.tex",
+							},
+	}
+
+	self.NIGHTMARE_CCS = 
+	{
+		CALM = "images/colour_cubes/ruins_dark_cc.tex",
+		WARN = "images/colour_cubes/ruins_dim_cc.tex",
+		NIGHTMARE = "images/colour_cubes/ruins_light_cc.tex",
+		DAWN = "images/colour_cubes/ruins_dim_cc.tex",
+	}
+
 	local cc, insanity_cc = self:GetDestColourCubes()
 	self.current_cc = 
 	{
@@ -107,14 +105,14 @@ function ColourCubeManager:GetDestColourCubes()
 		end
 	end
 
-	local cc = SEASON_CCS[ season_idx ][time_idx]
+	local cc = self.SEASON_CCS[ season_idx ][time_idx]
 	
 	if GetWorld() ~= nil and GetWorld():IsCave() and GetWorld().topology ~= nil and GetWorld().topology.level_number == 2 then
 		--We're in the ruins, use the nightmare colour cubes
-		cc = NIGHTMARE_CCS[nightmare_idx]
+		cc = self.NIGHTMARE_CCS[nightmare_idx]
 	end
 
-	local insanity_cc = INSANITY_CCS[time_idx]
+	local insanity_cc = self.INSANITY_CCS[time_idx]
 
 	return cc, insanity_cc
 end

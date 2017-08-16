@@ -1883,6 +1883,42 @@ local states=
             end),
         },
     },
+
+    State{
+        name = "shoot",
+        tags = {"attack", "notalking", "abouttoattack", "busy"},
+        
+        onenter = function(inst)
+            inst.AnimState:PlayAnimation("shoot")            
+            if inst.components.combat.target then
+                inst.components.combat:BattleCry()
+                if inst.components.combat.target and inst.components.combat.target:IsValid() then
+                    inst:FacePoint(Point(inst.components.combat.target.Transform:GetWorldPosition()))
+                end
+            end
+            inst.sg.statemem.target = inst.components.combat.target
+            inst.components.combat:StartAttack()
+            inst.components.locomotor:Stop()            
+        end,
+        
+        timeline=
+        {
+            TimeEvent(17*FRAMES, function(inst) 
+                inst.components.combat:DoAttack(inst.sg.statemem.target) 
+                inst.sg:RemoveStateTag("abouttoattack") 
+            end),            
+            TimeEvent(20*FRAMES, function(inst)
+                    inst.sg:RemoveStateTag("attack")
+            end),                       
+        },
+        
+        events=
+        {
+            EventHandler("animover", function(inst)
+                inst.sg:GoToState("idle")
+            end ),
+        },
+    },
     
     State{
         name = "attack",
@@ -1895,6 +1931,12 @@ local states=
             inst.components.locomotor:Stop()
             local weapon = inst.components.combat:GetWeapon()
             local otherequipped = inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
+
+            if (weapon and weapon:HasTag("gun")) or (otherequipped and otherequipped:HasTag("gun")) then
+                inst.sg:GoToState("shoot")
+                return
+            end
+
             if weapon then
                 inst.AnimState:PlayAnimation("atk")
 				if weapon:HasTag("icestaff") then

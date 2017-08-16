@@ -1,3 +1,6 @@
+require "brains/shadowwaxwellbrain"
+require "stategraphs/SGshadowwaxwell"
+
 local assets = 
 {
     Asset("ANIM", "anim/waxwell_shadow_mod.zip"),

@@ -1,3 +1,5 @@
+require "stategraphs/SGtentacle_arm"
+
 -- TODO
 --      change gotoState to eventpush
 --      move newcombat event handling to stategraph

@@ -54,6 +54,7 @@ end
 local function itemtest(inst, item, slot)
 	return (item.components.edible and item.components.perishable) or 
 	item.prefab == "spoiled_food" or 
+	item.prefab == "rottenegg" or 
 	item.prefab == "heatrock" or 
 	item:HasTag("frozen") or
 	item:HasTag("icebox_valid")

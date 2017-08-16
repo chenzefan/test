@@ -1,3 +1,6 @@
+require("brains/beargerbrain")
+require "stategraphs/SGbearger"
+
 local assets =
 {
 	Asset("ANIM", "anim/bearger_build.zip"),

@@ -35,7 +35,7 @@ return {
 	ANNOUNCE_COLD = "My heart grows cold.",
 	ANNOUNCE_HOT = "My heart can't stand the heat!",
 	ANNOUNCE_CRAFTING_FAIL = "Er... I can't do that.",
-	ANNOUNCE_DEERCLOPS = "I hear the one of them coming.",
+	ANNOUNCE_DEERCLOPS = "I hear one of them coming.",
 	ANNOUNCE_DUSK = "It'll be dark soon. Charlie will be waking up.",
 	ANNOUNCE_EAT =
 	{
@@ -93,7 +93,11 @@ return {
 	DESCRIBE =
 	{
 		GLOMMER = "A flying goop factory.",
-        GLOMMERFLOWER = "Flower power.",
+        GLOMMERFLOWER = 
+        {
+        	GENERIC = "Flower power.",
+        	DEAD = "Flower power forever.",
+        },
         GLOMMERWINGS = "They're sticky.",
         GLOMMERFUEL = "Well, that's rank.",
         BELL = "More bell.",
@@ -105,6 +109,7 @@ return {
 		WEBBERSKULL = "Don't think you'll be able to escape that easily.",
 		MOLE =
 		{
+			HELD = "End of the line.",
 			UNDERGROUND = "Do you pick up what I'm laying down? Do you dig what I'm burying?",
 			ABOVEGROUND = "I'll take that as a yes.",
 		},
@@ -150,6 +155,7 @@ return {
 			EMPTY = "Well, I guess that's that.",
 		},
 		CATCOONHAT = "Dead head.",
+		COONTAIL = "Tale of tails.",
 		COOKPOT =
 		{
 			COOKING_LONG = "Wait for it...",

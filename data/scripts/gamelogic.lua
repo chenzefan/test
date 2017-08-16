@@ -5,7 +5,7 @@ require "saveindex"
 require "map/extents"
 
 
-local LOAD_UPFRONT_MODE = PLATFORM == "PS4"
+local LOAD_UPFRONT_MODE = false
 
 local MainScreen = nil
 if PLATFORM == "PS4" then
@@ -20,6 +20,14 @@ if PLATFORM == "WIN32_STEAM" or PLATFORM == "WIN32" then
 	global_broadcastnig_widget = BroadcastingWidget()
 	global_broadcastnig_widget:SetHAnchor(ANCHOR_LEFT)
 	global_broadcastnig_widget:SetVAnchor(ANCHOR_TOP)
+end
+
+global_loading_widget = nil
+if PLATFORM == "PS4" then
+	LoadingWidget = require "widgets/loadingwidget"
+	global_loading_widget = LoadingWidget()
+	global_loading_widget:SetHAnchor(ANCHOR_LEFT)
+	global_loading_widget:SetVAnchor(ANCHOR_BOTTOM)
 end
 
 local DeathScreen = require "screens/deathscreen"
@@ -62,6 +70,14 @@ local function DoAgeWorld()
 	end
 end
 
+local function KeepAlive()
+	if global_loading_widget then 
+		global_loading_widget:ShowNextFrame()
+		TheSim:RenderOneFrame()
+		global_loading_widget:ShowNextFrame()
+	end
+end
+
 local function LoadAssets(asset_set)
 	
 	if LOAD_UPFRONT_MODE then return end
@@ -81,6 +97,8 @@ local function LoadAssets(asset_set)
 	local in_backend = Settings.last_reset_action ~= nil
 	local in_frontend = not in_backend
 
+	KeepAlive()
+
 	if Settings.current_asset_set == "FRONTEND" then
 		if Settings.last_asset_set == "FRONTEND" then
 			print( "\tFE assets already loaded" )			
@@ -91,10 +109,14 @@ local function LoadAssets(asset_set)
 		else
 			print("\tUnload BE")
 			TheSim:UnloadPrefabs(RECIPE_PREFABS)
+			KeepAlive()
+			TheSystemService:SetStalling(true)
 			TheSim:UnloadPrefabs(BACKEND_PREFABS)
 			print("\tUnload BE done")
 			TheSim:UnregisterAllPrefabs()
-
+			TheSystemService:SetStalling(false)
+			KeepAlive()
+			TheSystemService:SetStalling(true)
 			RegisterAllDLC()
 			for i,file in ipairs(PREFABFILES) do -- required from prefablist.lua
 				LoadPrefabFile("prefabs/"..file)
@@ -102,7 +124,9 @@ local function LoadAssets(asset_set)
 			ModManager:RegisterPrefabs()
 			print("\tLoad FE")
 			TheSim:LoadPrefabs(FRONTEND_PREFABS)
-			print("\tLoad FE: done")		
+			print("\tLoad FE: done")	
+			TheSystemService:SetStalling(false)
+			KeepAlive()
 		end
 	else
 		if Settings.last_asset_set == "BACKEND" then
@@ -116,7 +140,9 @@ local function LoadAssets(asset_set)
 			print("\tUnload FE")
 			TheSim:UnloadPrefabs(FRONTEND_PREFABS)
 			print("\tUnload FE done")
+			KeepAlive()
 
+			TheSystemService:SetStalling(true)
 			TheSim:UnregisterAllPrefabs()
 			RegisterAllDLC()
 			for i,file in ipairs(PREFABFILES) do -- required from prefablist.lua
@@ -124,11 +150,19 @@ local function LoadAssets(asset_set)
 			end
 			InitAllDLC()
 			ModManager:RegisterPrefabs()
+			TheSystemService:SetStalling(false)
+			KeepAlive()
 
 			print ("\tLOAD BE")
+			TheSystemService:SetStalling(true)
 			TheSim:LoadPrefabs(BACKEND_PREFABS)
+			TheSystemService:SetStalling(false)
+			KeepAlive()
+			TheSystemService:SetStalling(true)
 			TheSim:LoadPrefabs(RECIPE_PREFABS)
+			TheSystemService:SetStalling(false)
 			print ("\tLOAD BE: done")
+			KeepAlive()
 		end
 	end
 
@@ -367,7 +401,6 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
         local travel_direction = SaveGameIndex:GetDirectionOfTravel()	
         local cave_num = SaveGameIndex:GetCaveNumber()
         --print("travel_direction:", travel_direction, "cave#:",cave_num)
-        local spawn_ent = nil
         local spawn_ent = nil
         if travel_direction == "ascend" then
 			if savedata.ents["cave_entrance"] then
@@ -817,6 +850,9 @@ function DoInitGame(playercharacter, savedata, profile, next_world_playerdata, f
 		TheFrontEnd:PushScreen(hud)
 		hud:SetMainCharacter(wilson)
 		
+		if wilson.HUDPostInit then
+			wilson.HUDPostInit(hud)
+		end
 	    --clear the player stats, so that it doesn't count items "acquired" from the save file
 	    GetProfileStats(true)
 

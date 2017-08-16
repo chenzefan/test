@@ -66,6 +66,14 @@ local function stopgrowing(inst)
     inst.growtime = nil
 end
 
+local function restartgrowing(inst)
+    if inst and not inst.growtask then
+        local growtime = GetRandomWithVariance(TUNING.PINECONE_GROWTIME.base, TUNING.PINECONE_GROWTIME.random)
+        inst.growtime = GetTime() + growtime
+        inst.growtask = inst:DoTaskInTime(growtime, growtree)
+    end
+end
+
 
 local notags = {'NOBLOCK', 'player', 'FX'}
 local function test_ground(inst, pt)
@@ -145,6 +153,7 @@ local function fn(Sim)
     
 	MakeSmallBurnable(inst, TUNING.SMALL_BURNTIME)
 	inst:ListenForEvent("onignite", stopgrowing)
+    inst:ListenForEvent("onextinguish", restartgrowing)
     MakeSmallPropagator(inst)
     inst.components.burnable:MakeDragonflyBait(3)
     

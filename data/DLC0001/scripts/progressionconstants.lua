@@ -17,6 +17,7 @@ local XP_levels =
 
 --Wes & Maxwell unlocked through other means.
 local Level_rewards = {'willow', 'wolfgang', 'wendy', 'wx78', 'wickerbottom', 'woodie', 'wathgrithr'} 
+
 local Level_cap = #XP_levels
 
 local function GetLevelForXP(xp)

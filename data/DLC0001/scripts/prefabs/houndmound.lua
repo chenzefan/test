@@ -40,7 +40,7 @@ end
 local function SpawnGuardHound(inst, attacker)
     local prefab = "hound"
     if math.random() < GetSpecialHoundChance() then
-        if GetSeasonManager():IsWinter() then
+        if GetSeasonManager():IsWinter() or GetSeasonManager():IsSpring() then
             prefab = "icehound"
         else
 	        prefab = "firehound"

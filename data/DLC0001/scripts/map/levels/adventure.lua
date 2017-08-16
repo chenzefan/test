@@ -215,7 +215,7 @@ AddLevel(LEVELTYPE.ADVENTURE, {
 			{"start_setpeice", 	"PreSummerStart"},
 			{"start_node",		"Clearing"},
 					
-			{"season", 			"preonlysummer"}, --This is actually autumn, it was changed in tuningoverride ln 414. 
+			{"season", 			"preonlysummer"}, --The world begins in winter, and will turn to endless spring (summer in vanilla) after 10 days
 			{"season_start", 	"winter"},
 			{"spiders",			"often"},
 

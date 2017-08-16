@@ -1,3 +1,6 @@
+require "brains/mandrakebrain"
+require "stategraphs/SGMandrake"
+
 local assets =
 {
 	Asset("ANIM", "anim/mandrake.zip"),

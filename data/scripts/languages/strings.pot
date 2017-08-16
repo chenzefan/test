@@ -1411,6 +1411,26 @@ msgctxt "STRINGS.ACTIONS.LOOKAT"
 msgid "Examine"
 msgstr ""
 
+#. STRINGS.ACTIONS.TOGGLE_DEPLOY_MODE.GENERIC
+msgctxt "STRINGS.ACTIONS.TOGGLE_DEPLOY_MODE.GENERIC"
+msgid "Plant"
+msgstr ""
+
+#. STRINGS.ACTIONS.TOGGLE_DEPLOY_MODE.TURRET
+msgctxt "STRINGS.ACTIONS.TOGGLE_DEPLOY_MODE.TURRET"
+msgid "Place"
+msgstr ""
+
+#. STRINGS.ACTIONS.TOGGLE_DEPLOY_MODE.GROUNDTILE
+msgctxt "STRINGS.ACTIONS.TOGGLE_DEPLOY_MODE.GROUNDTILE"
+msgid "Place Ground"
+msgstr ""
+
+#. STRINGS.ACTIONS.TOGGLE_DEPLOY_MODE.WALL
+msgctxt "STRINGS.ACTIONS.TOGGLE_DEPLOY_MODE.WALL"
+msgid "Build Wall"
+msgstr ""
+
 #. STRINGS.ACTIONS.ADDFUEL
 msgctxt "STRINGS.ACTIONS.ADDFUEL"
 msgid "Add Fuel"
@@ -2731,11 +2751,6 @@ msgctxt "STRINGS.NAMES.MONSTERMEAT_DRIED"
 msgid "Monster Jerky"
 msgstr ""
 
-#. STRINGS.NAMES.NOTE
-msgctxt "STRINGS.NAMES.NOTE"
-msgid "Note"
-msgstr ""
-
 #. STRINGS.NAMES.ASH_REMAINS
 msgctxt "STRINGS.NAMES.ASH_REMAINS"
 msgid "Ashes of %s"
@@ -3346,6 +3361,11 @@ msgctxt "STRINGS.NAMES.FLINT"
 msgid "Flint"
 msgstr ""
 
+#. STRINGS.NAMES.BONESTEW
+msgctxt "STRINGS.NAMES.BONESTEW"
+msgid "Meaty Stew"
+msgstr ""
+
 #. STRINGS.NAMES.FEATHER_ROBIN
 msgctxt "STRINGS.NAMES.FEATHER_ROBIN"
 msgid "Crimson Feather"
@@ -3354,11 +3374,6 @@ msgstr ""
 #. STRINGS.NAMES.TORNADO
 msgctxt "STRINGS.NAMES.TORNADO"
 msgid "Tornado"
-msgstr ""
-
-#. STRINGS.NAMES.ARMORDRAGONFLY
-msgctxt "STRINGS.NAMES.ARMORDRAGONFLY"
-msgid "Scalemail"
 msgstr ""
 
 #. STRINGS.NAMES.ACCOMPLISHMENT_SHRINE
@@ -3371,9 +3386,9 @@ msgctxt "STRINGS.NAMES.CUTREEDS"
 msgid "Cut Reeds"
 msgstr ""
 
-#. STRINGS.NAMES.TELEPORTATO_BOX
-msgctxt "STRINGS.NAMES.TELEPORTATO_BOX"
-msgid "Box thing"
+#. STRINGS.NAMES.ARMORDRAGONFLY
+msgctxt "STRINGS.NAMES.ARMORDRAGONFLY"
+msgid "Scalemail"
 msgstr ""
 
 #. STRINGS.NAMES.GOATMILK
@@ -3426,6 +3441,11 @@ msgctxt "STRINGS.NAMES.TURF_MUD"
 msgid "Mud Turf"
 msgstr ""
 
+#. STRINGS.NAMES.TELEPORTATO_BOX
+msgctxt "STRINGS.NAMES.TELEPORTATO_BOX"
+msgid "Box thing"
+msgstr ""
+
 #. STRINGS.NAMES.COONTAIL
 msgctxt "STRINGS.NAMES.COONTAIL"
 msgid "Cat Tail"
@@ -3436,19 +3456,14 @@ msgctxt "STRINGS.NAMES.CATCOONDEN"
 msgid "Hollow Stump"
 msgstr ""
 
-#. STRINGS.NAMES.CATCOONHAT
-msgctxt "STRINGS.NAMES.CATCOONHAT"
-msgid "Cat Cap"
-msgstr ""
-
 #. STRINGS.NAMES.FROGLEGS
 msgctxt "STRINGS.NAMES.FROGLEGS"
 msgid "Frog Legs"
 msgstr ""
 
-#. STRINGS.NAMES.WATERMELONHAT
-msgctxt "STRINGS.NAMES.WATERMELONHAT"
-msgid "Fashion Melon"
+#. STRINGS.NAMES.CATCOONHAT
+msgctxt "STRINGS.NAMES.CATCOONHAT"
+msgid "Cat Cap"
 msgstr ""
 
 #. STRINGS.NAMES.WILSON
@@ -3456,14 +3471,14 @@ msgctxt "STRINGS.NAMES.WILSON"
 msgid "Wilson"
 msgstr ""
 
+#. STRINGS.NAMES.WATERMELONHAT
+msgctxt "STRINGS.NAMES.WATERMELONHAT"
+msgid "Fashion Melon"
+msgstr ""
+
 #. STRINGS.NAMES.WEBBERSKULL
 msgctxt "STRINGS.NAMES.WEBBERSKULL"
 msgid "Webber's Skull"
-msgstr ""
-
-#. STRINGS.NAMES.ACORN_COOKED
-msgctxt "STRINGS.NAMES.ACORN_COOKED"
-msgid "Roasted Birchnut"
 msgstr ""
 
 #. STRINGS.NAMES.THULECITE_PIECES
@@ -3471,9 +3486,9 @@ msgctxt "STRINGS.NAMES.THULECITE_PIECES"
 msgid "Thulecite Fragments"
 msgstr ""
 
-#. STRINGS.NAMES.FERTILIZER
-msgctxt "STRINGS.NAMES.FERTILIZER"
-msgid "Bucket-o-poop"
+#. STRINGS.NAMES.ACORN_COOKED
+msgctxt "STRINGS.NAMES.ACORN_COOKED"
+msgid "Roasted Birchnut"
 msgstr ""
 
 #. STRINGS.NAMES.WILLOW
@@ -3481,9 +3496,9 @@ msgctxt "STRINGS.NAMES.WILLOW"
 msgid "Willow"
 msgstr ""
 
-#. STRINGS.NAMES.SMALLMEAT
-msgctxt "STRINGS.NAMES.SMALLMEAT"
-msgid "Morsel"
+#. STRINGS.NAMES.FERTILIZER
+msgctxt "STRINGS.NAMES.FERTILIZER"
+msgid "Bucket-o-poop"
 msgstr ""
 
 #. STRINGS.NAMES.ROBIN
@@ -3496,9 +3511,9 @@ msgctxt "STRINGS.NAMES.RESEARCHLAB2"
 msgid "Alchemy Engine"
 msgstr ""
 
-#. STRINGS.NAMES.MOLEHILL
-msgctxt "STRINGS.NAMES.MOLEHILL"
-msgid "Burrow"
+#. STRINGS.NAMES.SMALLMEAT
+msgctxt "STRINGS.NAMES.SMALLMEAT"
+msgid "Morsel"
 msgstr ""
 
 #. STRINGS.NAMES.GUACAMOLE
@@ -3506,9 +3521,9 @@ msgctxt "STRINGS.NAMES.GUACAMOLE"
 msgid "Guacamole"
 msgstr ""
 
-#. STRINGS.NAMES.LEIF
-msgctxt "STRINGS.NAMES.LEIF"
-msgid "Treeguard"
+#. STRINGS.NAMES.MOLEHILL
+msgctxt "STRINGS.NAMES.MOLEHILL"
+msgid "Burrow"
 msgstr ""
 
 #. STRINGS.NAMES.LIVINGLOG
@@ -3531,6 +3546,11 @@ msgctxt "STRINGS.NAMES.MARSH_BUSH"
 msgid "Spiky Bush"
 msgstr ""
 
+#. STRINGS.NAMES.LEIF
+msgctxt "STRINGS.NAMES.LEIF"
+msgid "Treeguard"
+msgstr ""
+
 #. STRINGS.NAMES.MOLE_ABOVEGROUND
 msgctxt "STRINGS.NAMES.MOLE_ABOVEGROUND"
 msgid "Moleworm"
@@ -3546,24 +3566,24 @@ msgctxt "STRINGS.NAMES.WOLFGANG"
 msgid "Wolfgang"
 msgstr ""
 
-#. STRINGS.NAMES.MOLEHAT
-msgctxt "STRINGS.NAMES.MOLEHAT"
-msgid "Moggles"
-msgstr ""
-
 #. STRINGS.NAMES.BANDAGE
 msgctxt "STRINGS.NAMES.BANDAGE"
 msgid "Honey Poultice"
 msgstr ""
 
-#. STRINGS.NAMES.ICEHAT
-msgctxt "STRINGS.NAMES.ICEHAT"
-msgid "Ice Cube"
+#. STRINGS.NAMES.MOLEHAT
+msgctxt "STRINGS.NAMES.MOLEHAT"
+msgid "Moggles"
 msgstr ""
 
 #. STRINGS.NAMES.TRINKET_12
 msgctxt "STRINGS.NAMES.TRINKET_12"
 msgid "Dessicated Tentacle"
+msgstr ""
+
+#. STRINGS.NAMES.ICEHAT
+msgctxt "STRINGS.NAMES.ICEHAT"
+msgid "Ice Cube"
 msgstr ""
 
 #. STRINGS.NAMES.GRASS_UMBRELLA
@@ -3576,19 +3596,14 @@ msgctxt "STRINGS.NAMES.RAINHAT"
 msgid "Rain Hat"
 msgstr ""
 
-#. STRINGS.NAMES.MOSQUITOSACK
-msgctxt "STRINGS.NAMES.MOSQUITOSACK"
-msgid "Mosquito Sack"
-msgstr ""
-
 #. STRINGS.NAMES.DEFAULT
 msgctxt "STRINGS.NAMES.DEFAULT"
 msgid "INVENTORY ITEM"
 msgstr ""
 
-#. STRINGS.NAMES.BONESTEW
-msgctxt "STRINGS.NAMES.BONESTEW"
-msgid "Meaty Stew"
+#. STRINGS.NAMES.MOSQUITOSACK
+msgctxt "STRINGS.NAMES.MOSQUITOSACK"
+msgid "Mosquito Sack"
 msgstr ""
 
 #. STRINGS.NAMES.MARSH_PLANT
@@ -4966,91 +4981,6 @@ msgctxt "STRINGS.RABBIT_MEAT_BATTLECRY.5"
 msgid "MONSTER!"
 msgstr ""
 
-#. STRINGS.NOTEREADER.THREE
-msgctxt "STRINGS.NOTEREADER.THREE"
-msgid "."
-msgstr ""
-
-#. STRINGS.NOTEREADER.EIGHT
-msgctxt "STRINGS.NOTEREADER.EIGHT"
-msgid "t"
-msgstr ""
-
-#. STRINGS.NOTEREADER.SIX
-msgctxt "STRINGS.NOTEREADER.SIX"
-msgid "I"
-msgstr ""
-
-#. STRINGS.NOTEREADER.NINE
-msgctxt "STRINGS.NOTEREADER.NINE"
-msgid "s"
-msgstr ""
-
-#. STRINGS.NOTEREADER.FOURTEEN
-msgctxt "STRINGS.NOTEREADER.FOURTEEN"
-msgid "e"
-msgstr ""
-
-#. STRINGS.NOTEREADER.TWO
-msgctxt "STRINGS.NOTEREADER.TWO"
-msgid "G"
-msgstr ""
-
-#. STRINGS.NOTEREADER.SEVEN
-msgctxt "STRINGS.NOTEREADER.SEVEN"
-msgid "m"
-msgstr ""
-
-#. STRINGS.NOTEREADER.FOUR
-msgctxt "STRINGS.NOTEREADER.FOUR"
-msgid "o"
-msgstr ""
-
-#. STRINGS.NOTEREADER.FIVE
-msgctxt "STRINGS.NOTEREADER.FIVE"
-msgid "e"
-msgstr ""
-
-#. STRINGS.NOTEREADER.SEVENTEEN
-msgctxt "STRINGS.NOTEREADER.SEVENTEEN"
-msgid " "
-msgstr ""
-
-#. STRINGS.NOTEREADER.ONE
-msgctxt "STRINGS.NOTEREADER.ONE"
-msgid "'"
-msgstr ""
-
-#. STRINGS.NOTEREADER.TWELVE
-msgctxt "STRINGS.NOTEREADER.TWELVE"
-msgid "k"
-msgstr ""
-
-#. STRINGS.NOTEREADER.SIXTEEN
-msgctxt "STRINGS.NOTEREADER.SIXTEEN"
-msgid "e"
-msgstr ""
-
-#. STRINGS.NOTEREADER.THIRTEEN
-msgctxt "STRINGS.NOTEREADER.THIRTEEN"
-msgid "t"
-msgstr ""
-
-#. STRINGS.NOTEREADER.ELEVEN
-msgctxt "STRINGS.NOTEREADER.ELEVEN"
-msgid " "
-msgstr ""
-
-#. STRINGS.NOTEREADER.TEN
-msgctxt "STRINGS.NOTEREADER.TEN"
-msgid " "
-msgstr ""
-
-#. STRINGS.NOTEREADER.FIFTEEN
-msgctxt "STRINGS.NOTEREADER.FIFTEEN"
-msgid "r"
-msgstr ""
-
 #. STRINGS.WITHEREDITEM
 msgctxt "STRINGS.WITHEREDITEM"
 msgid "Withered"
@@ -5126,9 +5056,9 @@ msgctxt "STRINGS.WET_PREFIX.NONE"
 msgid ""
 msgstr ""
 
-#. STRINGS.WET_PREFIX.GOOP
-msgctxt "STRINGS.WET_PREFIX.GOOP"
-msgid "Very"
+#. STRINGS.WET_PREFIX.FUEL
+msgctxt "STRINGS.WET_PREFIX.FUEL"
+msgid "Water-Logged"
 msgstr ""
 
 #. STRINGS.WET_PREFIX.CLOTHING
@@ -5136,9 +5066,9 @@ msgctxt "STRINGS.WET_PREFIX.CLOTHING"
 msgid "Soaked"
 msgstr ""
 
-#. STRINGS.WET_PREFIX.FUEL
-msgctxt "STRINGS.WET_PREFIX.FUEL"
-msgid "Water-Logged"
+#. STRINGS.WET_PREFIX.WETGOOP
+msgctxt "STRINGS.WET_PREFIX.WETGOOP"
+msgid "Very"
 msgstr ""
 
 #. STRINGS.WET_PREFIX.FOOD
@@ -32116,6 +32046,21 @@ msgctxt "STRINGS.UI.BROADCASTING.BACKTITLE"
 msgid "Revert Changes?"
 msgstr ""
 
+#. STRINGS.UI.BROADCASTING.HELP
+msgctxt "STRINGS.UI.BROADCASTING.HELP"
+msgid "Help"
+msgstr ""
+
+#. STRINGS.UI.BROADCASTING.STOPSTREAM
+msgctxt "STRINGS.UI.BROADCASTING.STOPSTREAM"
+msgid "Stop Stream"
+msgstr ""
+
+#. STRINGS.UI.BROADCASTING.STARTSTREAM
+msgctxt "STRINGS.UI.BROADCASTING.STARTSTREAM"
+msgid "Start Stream"
+msgstr ""
+
 #. STRINGS.UI.BROADCASTING.YES
 msgctxt "STRINGS.UI.BROADCASTING.YES"
 msgid "Yes"
@@ -32139,6 +32084,11 @@ msgstr ""
 #. STRINGS.UI.BROADCASTING.ACCEPTBODY
 msgctxt "STRINGS.UI.BROADCASTING.ACCEPTBODY"
 msgid "Do you wish to accept these changes?"
+msgstr ""
+
+#. STRINGS.UI.BROADCASTING.VIEWSTREAM
+msgctxt "STRINGS.UI.BROADCASTING.VIEWSTREAM"
+msgid "View Stream"
 msgstr ""
 
 #. STRINGS.UI.BROADCASTING.BANDWIDTH
@@ -32881,6 +32831,41 @@ msgctxt "STRINGS.UI.ENDGAME.YES"
 msgid "For Science!"
 msgstr ""
 
+#. STRINGS.UI.HELP.RANDOM
+msgctxt "STRINGS.UI.HELP.RANDOM"
+msgid "Random"
+msgstr ""
+
+#. STRINGS.UI.HELP.TOGGLE
+msgctxt "STRINGS.UI.HELP.TOGGLE"
+msgid "Toggle"
+msgstr ""
+
+#. STRINGS.UI.HELP.SELECT
+msgctxt "STRINGS.UI.HELP.SELECT"
+msgid "Select"
+msgstr ""
+
+#. STRINGS.UI.HELP.CONFIGUREMOD
+msgctxt "STRINGS.UI.HELP.CONFIGUREMOD"
+msgid "Configure Mod"
+msgstr ""
+
+#. STRINGS.UI.HELP.ROTATE_RIGHT
+msgctxt "STRINGS.UI.HELP.ROTATE_RIGHT"
+msgid "Rotate Right"
+msgstr ""
+
+#. STRINGS.UI.HELP.REVERT
+msgctxt "STRINGS.UI.HELP.REVERT"
+msgid "Revert Changes"
+msgstr ""
+
+#. STRINGS.UI.HELP.PREVCHARACTER
+msgctxt "STRINGS.UI.HELP.PREVCHARACTER"
+msgid "Left"
+msgstr ""
+
 #. STRINGS.UI.HELP.BACK
 msgctxt "STRINGS.UI.HELP.BACK"
 msgid "Back"
@@ -32901,11 +32886,6 @@ msgctxt "STRINGS.UI.HELP.ACCEPT"
 msgid "Accept Changes"
 msgstr ""
 
-#. STRINGS.UI.HELP.SELECT
-msgctxt "STRINGS.UI.HELP.SELECT"
-msgid "Select"
-msgstr ""
-
 #. STRINGS.UI.HELP.NEXTVALUE
 msgctxt "STRINGS.UI.HELP.NEXTVALUE"
 msgid "Next Value"
@@ -32924,21 +32904,6 @@ msgstr ""
 #. STRINGS.UI.HELP.ZOOM_OUT
 msgctxt "STRINGS.UI.HELP.ZOOM_OUT"
 msgid "Zoom Out"
-msgstr ""
-
-#. STRINGS.UI.HELP.ROTATE_RIGHT
-msgctxt "STRINGS.UI.HELP.ROTATE_RIGHT"
-msgid "Rotate Right"
-msgstr ""
-
-#. STRINGS.UI.HELP.REVERT
-msgctxt "STRINGS.UI.HELP.REVERT"
-msgid "Revert Changes"
-msgstr ""
-
-#. STRINGS.UI.HELP.PREVCHARACTER
-msgctxt "STRINGS.UI.HELP.PREVCHARACTER"
-msgid "Left"
 msgstr ""
 
 #. STRINGS.UI.HELP.SCROLLFWD
@@ -33066,19 +33031,14 @@ msgctxt "STRINGS.UI.TELEPORTBODY_SURVIVAL"
 msgid "This will destroy your current world but you will retain your inventory contents."
 msgstr ""
 
-#. STRINGS.UI.MODSSCREEN.MODLINK
-msgctxt "STRINGS.UI.MODSSCREEN.MODLINK"
-msgid "Take me to the mod page!"
-msgstr ""
-
 #. STRINGS.UI.MODSSCREEN.MODLINKGENERIC
 msgctxt "STRINGS.UI.MODSSCREEN.MODLINKGENERIC"
 msgid "Mod discussion forums"
 msgstr ""
 
-#. STRINGS.UI.MODSSCREEN.TOPMODS
-msgctxt "STRINGS.UI.MODSSCREEN.TOPMODS"
-msgid "Top Mods"
+#. STRINGS.UI.MODSSCREEN.CONFIGUREMOD
+msgctxt "STRINGS.UI.MODSSCREEN.CONFIGUREMOD"
+msgid "Configure Mod"
 msgstr ""
 
 #. STRINGS.UI.MODSSCREEN.RESTART_REQUIRED
@@ -33101,29 +33061,44 @@ msgctxt "STRINGS.UI.MODSSCREEN.AUTHORBY"
 msgid "by %s"
 msgstr ""
 
-#. STRINGS.UI.MODSSCREEN.NO_MODS
-msgctxt "STRINGS.UI.MODSSCREEN.NO_MODS"
-msgid "You don't have any mods installed, but you can download some from the Klei forums."
-msgstr ""
-
-#. STRINGS.UI.MODSSCREEN.RESTART
-msgctxt "STRINGS.UI.MODSSCREEN.RESTART"
-msgid "Exit Now"
-msgstr ""
-
 #. STRINGS.UI.MODSSCREEN.DISABLED_MANUAL
 msgctxt "STRINGS.UI.MODSSCREEN.DISABLED_MANUAL"
 msgid "This mod has been disabled."
 msgstr ""
 
-#. STRINGS.UI.MODSSCREEN.RESTART_TITLE
-msgctxt "STRINGS.UI.MODSSCREEN.RESTART_TITLE"
-msgid "Restart Required"
+#. STRINGS.UI.MODSSCREEN.BACKBODY
+msgctxt "STRINGS.UI.MODSSCREEN.BACKBODY"
+msgid "Do you want to discard the changes you made to the mod's options?"
 msgstr ""
 
 #. STRINGS.UI.MODSSCREEN.APPLY
 msgctxt "STRINGS.UI.MODSSCREEN.APPLY"
-msgid "OK"
+msgid "Apply"
+msgstr ""
+
+#. STRINGS.UI.MODSSCREEN.LOADING
+msgctxt "STRINGS.UI.MODSSCREEN.LOADING"
+msgid "Loading"
+msgstr ""
+
+#. STRINGS.UI.MODSSCREEN.COMPATIBILITY_ROG_ONLY
+msgctxt "STRINGS.UI.MODSSCREEN.COMPATIBILITY_ROG_ONLY"
+msgid "Compatible with Reign of Giants only."
+msgstr ""
+
+#. STRINGS.UI.MODSSCREEN.NO
+msgctxt "STRINGS.UI.MODSSCREEN.NO"
+msgid "No"
+msgstr ""
+
+#. STRINGS.UI.MODSSCREEN.COMPATIBILITY_NONE
+msgctxt "STRINGS.UI.MODSSCREEN.COMPATIBILITY_NONE"
+msgid "Compatible with nothing. I'm sure it's fine."
+msgstr ""
+
+#. STRINGS.UI.MODSSCREEN.CANCEL
+msgctxt "STRINGS.UI.MODSSCREEN.CANCEL"
+msgid "Cancel"
 msgstr ""
 
 #. STRINGS.UI.MODSSCREEN.NO_MODS_LINK
@@ -33131,9 +33106,29 @@ msgctxt "STRINGS.UI.MODSSCREEN.NO_MODS_LINK"
 msgid "Take me to the mods!"
 msgstr ""
 
-#. STRINGS.UI.MODSSCREEN.FEATUREDMOD
-msgctxt "STRINGS.UI.MODSSCREEN.FEATUREDMOD"
-msgid "Featured Mod"
+#. STRINGS.UI.MODSSCREEN.MODLINK
+msgctxt "STRINGS.UI.MODSSCREEN.MODLINK"
+msgid "Take me to the mod page!"
+msgstr ""
+
+#. STRINGS.UI.MODSSCREEN.COMPATIBILITY_DS_ONLY
+msgctxt "STRINGS.UI.MODSSCREEN.COMPATIBILITY_DS_ONLY"
+msgid "Compatible with Don't Starve only."
+msgstr ""
+
+#. STRINGS.UI.MODSSCREEN.BACKTITLE
+msgctxt "STRINGS.UI.MODSSCREEN.BACKTITLE"
+msgid "Discard Changes"
+msgstr ""
+
+#. STRINGS.UI.MODSSCREEN.YES
+msgctxt "STRINGS.UI.MODSSCREEN.YES"
+msgid "Yes"
+msgstr ""
+
+#. STRINGS.UI.MODSSCREEN.COMPATIBILITY_ALL
+msgctxt "STRINGS.UI.MODSSCREEN.COMPATIBILITY_ALL"
+msgid "Compatible with everything."
 msgstr ""
 
 #. STRINGS.UI.MODSSCREEN.WORKSHOP.UPDATE_TITLE
@@ -33166,14 +33161,29 @@ msgctxt "STRINGS.UI.MODSSCREEN.WORKSHOP.STATE_LIST"
 msgid "Checking Workshop subscriptions..."
 msgstr ""
 
-#. STRINGS.UI.MODSSCREEN.LOADING
-msgctxt "STRINGS.UI.MODSSCREEN.LOADING"
-msgid "Loading"
+#. STRINGS.UI.MODSSCREEN.NO_MODS
+msgctxt "STRINGS.UI.MODSSCREEN.NO_MODS"
+msgid "You don't have any mods installed, but you can download some from the Klei forums."
 msgstr ""
 
-#. STRINGS.UI.MODSSCREEN.MOREMODS
-msgctxt "STRINGS.UI.MODSSCREEN.MOREMODS"
-msgid "More Mods"
+#. STRINGS.UI.MODSSCREEN.RESTART_TITLE
+msgctxt "STRINGS.UI.MODSSCREEN.RESTART_TITLE"
+msgid "Restart Required"
+msgstr ""
+
+#. STRINGS.UI.MODSSCREEN.RESTART
+msgctxt "STRINGS.UI.MODSSCREEN.RESTART"
+msgid "Exit Now"
+msgstr ""
+
+#. STRINGS.UI.MODSSCREEN.FEATUREDMOD
+msgctxt "STRINGS.UI.MODSSCREEN.FEATUREDMOD"
+msgid "Featured Mod"
+msgstr ""
+
+#. STRINGS.UI.MODSSCREEN.TOPMODS
+msgctxt "STRINGS.UI.MODSSCREEN.TOPMODS"
+msgid "Top Mods"
 msgstr ""
 
 #. STRINGS.UI.MODSSCREEN.STATUS.DISABLED_MANUAL
@@ -33206,6 +33216,21 @@ msgctxt "STRINGS.UI.MODSSCREEN.STATUS.DISABLED_ERROR"
 msgid "Crashed!"
 msgstr ""
 
+#. STRINGS.UI.MODSSCREEN.DISABLED_OLD
+msgctxt "STRINGS.UI.MODSSCREEN.DISABLED_OLD"
+msgid "Mod is out-of-date, automatically disabled."
+msgstr ""
+
+#. STRINGS.UI.MODSSCREEN.MOREMODS
+msgctxt "STRINGS.UI.MODSSCREEN.MOREMODS"
+msgid "More Mods"
+msgstr ""
+
+#. STRINGS.UI.MODSSCREEN.UNKNOWN_MOD_CONFIG_SETTING
+msgctxt "STRINGS.UI.MODSSCREEN.UNKNOWN_MOD_CONFIG_SETTING"
+msgid "[NAME UNDEFINED]"
+msgstr ""
+
 #. STRINGS.UI.MODSSCREEN.DISABLE
 msgctxt "STRINGS.UI.MODSSCREEN.DISABLE"
 msgid "Disable"
@@ -33216,9 +33241,9 @@ msgctxt "STRINGS.UI.MODSSCREEN.ENABLE"
 msgid "Enable"
 msgstr ""
 
-#. STRINGS.UI.MODSSCREEN.DISABLED_OLD
-msgctxt "STRINGS.UI.MODSSCREEN.DISABLED_OLD"
-msgid "Mod is out-of-date, automatically disabled."
+#. STRINGS.UI.MODSSCREEN.COMPATIBILITY_UNKNOWN
+msgctxt "STRINGS.UI.MODSSCREEN.COMPATIBILITY_UNKNOWN"
+msgid "Compatibility unknown."
 msgstr ""
 
 #. STRINGS.UI.MODSSCREEN.WILL_DISABLE
@@ -33226,14 +33251,14 @@ msgctxt "STRINGS.UI.MODSSCREEN.WILL_DISABLE"
 msgid "Mod will be disabled."
 msgstr ""
 
+#. STRINGS.UI.MODSSCREEN.CONFIGSCREENTITLESUFFIX
+msgctxt "STRINGS.UI.MODSSCREEN.CONFIGSCREENTITLESUFFIX"
+msgid "Configuration Options"
+msgstr ""
+
 #. STRINGS.UI.MODSSCREEN.WORKING_NORMALLY
 msgctxt "STRINGS.UI.MODSSCREEN.WORKING_NORMALLY"
 msgid "Mod is installed."
-msgstr ""
-
-#. STRINGS.UI.MODSSCREEN.CANCEL
-msgctxt "STRINGS.UI.MODSSCREEN.CANCEL"
-msgid "Cancel"
 msgstr ""
 
 #. STRINGS.UI.MODSSCREEN.DISABLED_ERROR
@@ -36008,7 +36033,7 @@ msgstr ""
 
 #. STRINGS.UI.OPTIONS.WATHGRITHRFONT
 msgctxt "STRINGS.UI.OPTIONS.WATHGRITHRFONT"
-msgid "Wigfrid's Font"
+msgid "Wigfrid's Umlauts"
 msgstr ""
 
 #. STRINGS.UI.OPTIONS.FX

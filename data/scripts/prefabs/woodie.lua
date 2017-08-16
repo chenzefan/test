@@ -1,6 +1,8 @@
 local MakePlayerCharacter = require "prefabs/player_common"
 local Badge = require "widgets/badge"
 local easing = require "easing"
+require "stategraphs/SGwilson"
+require "stategraphs/SGwerebeaver"
 
 local prefabs=
 {

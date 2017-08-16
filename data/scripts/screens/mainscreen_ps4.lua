@@ -39,7 +39,12 @@ function MainScreen:DoInit( )
 	
 	TheInputProxy:SetCursorVisible(true)
 
-	self.bg = self:AddChild(Image("images/ps4.xml", "ps4_mainmenu.tex"))
+	if IsDLCInstalled(REIGN_OF_GIANTS) then
+		self.bg = self:AddChild(Image("images/ps4_dlc0001.xml", "ps4_mainmenu.tex"))
+	else
+		self.bg = self:AddChild(Image("images/ps4.xml", "ps4_mainmenu.tex"))
+	end
+
     --self.bg:SetTint(BGCOLOURS.RED[1],BGCOLOURS.RED[2],BGCOLOURS.RED[3], 1)
 
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
@@ -64,14 +69,18 @@ function MainScreen:DoInit( )
     self.anim:SetHAnchor(ANCHOR_MIDDLE)
     self.anim:GetAnimState():OverrideSymbol("willow_title_fire", "title_fire", "willow_title_fire")
     self.anim:GetAnimState():OverrideSymbol("wilson_title_fire", "title_fire", "wilson_title_fire")
-
 	
 	--center stuff
-    self.shield = self.fixed_root:AddChild(Image("images/ps4.xml", "ps4_mainmenu_title.tex"))
+	if IsDLCInstalled(REIGN_OF_GIANTS) then
+		self.shield = self.fixed_root:AddChild(Image("images/ps4_dlc0001.xml", "ps4_mainmenu_title.tex"))
+	else
+		self.shield = self.fixed_root:AddChild(Image("images/ps4.xml", "ps4_mainmenu_title.tex"))
+	end
+
     self.shield:SetVRegPoint(ANCHOR_MIDDLE)
     self.shield:SetHRegPoint(ANCHOR_MIDDLE)
     self.shield:SetPosition(0,30,0)
-    self.shield:SetScale(.95)
+    self.shield:SetScale(1, 0.95)
 
     self.bannerroot = self.shield:AddChild(Widget("bann"))
 

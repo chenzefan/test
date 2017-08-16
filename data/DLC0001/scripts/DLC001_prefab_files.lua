@@ -101,6 +101,7 @@ local PREFABFILES = {
   "groundpoundringfx",
   "guano",
   "gunpowder",
+  "hambat",
   "hammer",
   "hats",
   "hawaiianshirt",

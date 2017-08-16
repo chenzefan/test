@@ -64,8 +64,21 @@ local bearger =
 }
 
 local function onspawn_moose(inst)
-    GetPlayer().components.talker:Say(GetString(GetPlayer().prefab, "ANNOUNCE_DEERCLOPS"))    
-    inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/distant")
+    local sound = CreateEntity()
+    sound.entity:AddTransform()
+    sound.entity:AddSoundEmitter()
+    sound.persists = false
+    local theta = inst:GetAngleToPoint(GetPlayer().Transform:GetWorldPosition())
+    local radius = math.clamp(Lerp(5, 25, 1/90), 5, 25)
+    local offset = GetPlayer():GetPosition() +  Vector3(radius * math.cos( theta ), 0, -radius * math.sin( theta ))
+
+    sound.Transform:SetPosition(offset:Get())
+    sound.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/distant")
+    sound:DoTaskInTime(1.5, function() sound:Remove() end)
+
+    inst:DoTaskInTime(2.5, function()
+        GetPlayer().components.talker:Say(GetString(GetPlayer().prefab, "ANNOUNCE_DEERCLOPS"))    
+    end)
 	inst.components.timer:StartTimer("WantsToLayEgg", TUNING.TOTAL_DAY_TIME + (TUNING.TOTAL_DAY_TIME * math.random()))
 end
 

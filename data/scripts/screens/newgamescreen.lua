@@ -122,7 +122,7 @@ end
 
 function NewGameScreen:ChangeCharacter(  )
 	
-	local function onSet(character)
+	local function onSet(character, random)
 		TheFrontEnd:PopScreen()
 		if character and IsDLCInstalled(REIGN_OF_GIANTS) then
 			package.loaded["map/customise"] = nil
@@ -134,10 +134,18 @@ function NewGameScreen:ChangeCharacter(  )
 
 			local atlas = (table.contains(MODCHARACTERLIST, character) and "images/saveslot_portraits/"..character..".xml") or "images/saveslot_portraits.xml"
 			self.portrait:SetTexture(atlas, self.character..".tex")
+			if random then
+				atlas = "images/saveslot_portraits.xml"
+				self.portrait:SetTexture(atlas, "random.tex")
+			end
 		elseif character then
 			self.character = character			
 			local atlas = (table.contains(MODCHARACTERLIST, character) and "images/saveslot_portraits/"..character..".xml") or "images/saveslot_portraits.xml"
 			self.portrait:SetTexture(atlas, self.character..".tex")
+			if random then
+				atlas = "images/saveslot_portraits.xml"
+				self.portrait:SetTexture(atlas, "random.tex")
+			end
 		end
 	end
 
@@ -156,12 +164,12 @@ function NewGameScreen:Start()
 		return dlc
 	end
 
-	local xp = PlayerProfile():GetXP()
-	if IsDLCInstalled(REIGN_OF_GIANTS) and self.RoG and xp <= REIGN_OF_GIANTS_DIFFICULTY_WARNING_XP_THRESHOLD and not PlayerProfile():HaveWarnedDifficultyRoG() then
+	local xp = Profile:GetXP()
+	if IsDLCInstalled(REIGN_OF_GIANTS) and self.RoG and xp <= REIGN_OF_GIANTS_DIFFICULTY_WARNING_XP_THRESHOLD and not Profile:HaveWarnedDifficultyRoG() then
 		TheFrontEnd:PushScreen(BigPopupDialogScreen(STRINGS.UI.NEWGAMESCREEN.ROG_WARNING_TITLE, STRINGS.UI.NEWGAMESCREEN.ROG_WARNING_BODY, 
 			{{text=STRINGS.UI.NEWGAMESCREEN.YES, 
 				cb = function() 
-					PlayerProfile():SetHaveWarnedDifficultyRoG()
+					Profile:SetHaveWarnedDifficultyRoG()
 					TheFrontEnd:PopScreen()
 					self:Start()
 				end},
@@ -249,6 +257,13 @@ function NewGameScreen:MakeReignOfGiantsButton()
 			end
 			return true
 		end
+	end
+
+	self.RoGbutton.GetHelpText = function()
+		local controller_id = TheInput:GetControllerID()
+		local t = {}
+	    table.insert(t, TheInput:GetLocalizedControl(controller_id, CONTROL_ACCEPT) .. " " .. STRINGS.UI.HELP.TOGGLE)	
+		return table.concat(t, "  ")
 	end
 end
 

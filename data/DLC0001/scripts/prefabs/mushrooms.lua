@@ -167,6 +167,12 @@ local function MakeMushroom(data)
         inst:AddComponent("transformer")
         inst.components.transformer:SetTransformEvent("fullmoon")
         inst.components.transformer:SetRevertEvent("daytime")
+        inst.components.transformer:SetOnLoadCheck( function() 
+            if not GetWorld():IsCave() then
+                return (GetClock():IsNight() and GetClock():GetMoonPhase() == "full")
+            end
+            return false
+        end )
         
         local isopen = false
         if data.open_time == "night" then

@@ -1,3 +1,9 @@
+require "brains/pigbrain"
+require "brains/pigguardbrain"
+require "brains/werepigbrain"
+require "stategraphs/SGpig"
+require "stategraphs/SGwerepig"
+
 local assets =
 {
 	Asset("ANIM", "anim/ds_pig_basic.zip"),

@@ -163,6 +163,17 @@ local TUNING_OVERRIDES =
 	["hunt"] = 	{
 					doit = 	function(difficulty)
 						local tuning_vars = {
+								["never"] =  {HUNT_ALTERNATE_BEAST_CHANCE_MIN = -1, HUNT_ALTERNATE_BEAST_CHANCE_MAX = 0},
+								["rare"] = 	 {HUNT_ALTERNATE_BEAST_CHANCE_MIN = .025, HUNT_ALTERNATE_BEAST_CHANCE_MAX = .167},
+								["often"] =  {HUNT_ALTERNATE_BEAST_CHANCE_MIN = .1, HUNT_ALTERNATE_BEAST_CHANCE_MAX = .5},
+								["always"] = {HUNT_ALTERNATE_BEAST_CHANCE_MIN = .2, HUNT_ALTERNATE_BEAST_CHANCE_MAX = .67},
+							}
+						OverrideTuningVariables(tuning_vars[difficulty])
+					end,
+				},				
+	["warg"] = 	{
+					doit = 	function(difficulty)
+						local tuning_vars = {
 								["never"] =  {HUNT_COOLDOWN = -1, HUNT_COOLDOWNDEVIATION = 0, HUNT_RESET_TIME = 0, HUNT_SPRING_RESET_TIME = -1},
 								["rare"] = 	 {HUNT_COOLDOWN = TUNING.TOTAL_DAY_TIME*2.4, HUNT_COOLDOWNDEVIATION = TUNING.TOTAL_DAY_TIME*.3, HUNT_RESET_TIME = 5, HUNT_SPRING_RESET_TIME = TUNING.TOTAL_DAY_TIME*5},
 								["often"] =  {HUNT_COOLDOWN = TUNING.TOTAL_DAY_TIME*.6, HUNT_COOLDOWNDEVIATION = TUNING.TOTAL_DAY_TIME*.3, HUNT_RESET_TIME = 5, HUNT_SPRING_RESET_TIME = TUNING.TOTAL_DAY_TIME*2},
@@ -368,6 +379,22 @@ local TUNING_OVERRIDES =
 					doit = function(difficulty)
 						local seasonmgr = GetSeasonManager()
 						if not seasonmgr then return end
+						if difficulty == "random" then
+							local rand = math.random()
+							if rand <= 1/6 then
+								difficulty = "noseason"
+							elseif rand <= 2/6 then
+								difficulty = "veryshortseason"
+							elseif rand <= 3/6 then
+								difficulty = "shortseason"
+							elseif rand <= 4/6 then
+								difficulty = "longseason"
+							elseif rand <= 5/6 then
+								difficulty = "verylongseason"
+							else
+								difficulty = "default"
+							end
+						end
 						if difficulty == "noseason" then
 							seasonmgr:SetAutumnLength(0)
 						elseif difficulty == "veryshortseason" then
@@ -387,6 +414,22 @@ local TUNING_OVERRIDES =
 					doit = function(difficulty)
 						local seasonmgr = GetSeasonManager()
 						if not seasonmgr then return end
+						if difficulty == "random" then
+							local rand = math.random()
+							if rand <= 1/6 then
+								difficulty = "noseason"
+							elseif rand <= 2/6 then
+								difficulty = "veryshortseason"
+							elseif rand <= 3/6 then
+								difficulty = "shortseason"
+							elseif rand <= 4/6 then
+								difficulty = "longseason"
+							elseif rand <= 5/6 then
+								difficulty = "verylongseason"
+							else
+								difficulty = "default"
+							end
+						end
 						if difficulty == "noseason" then
 							seasonmgr:SetWinterLength(0)
 						elseif difficulty == "veryshortseason" then
@@ -406,6 +449,22 @@ local TUNING_OVERRIDES =
 					doit = function(difficulty)
 						local seasonmgr = GetSeasonManager()
 						if not seasonmgr then return end
+						if difficulty == "random" then
+							local rand = math.random()
+							if rand <= 1/6 then
+								difficulty = "noseason"
+							elseif rand <= 2/6 then
+								difficulty = "veryshortseason"
+							elseif rand <= 3/6 then
+								difficulty = "shortseason"
+							elseif rand <= 4/6 then
+								difficulty = "longseason"
+							elseif rand <= 5/6 then
+								difficulty = "verylongseason"
+							else
+								difficulty = "default"
+							end
+						end
 						if difficulty == "noseason" then
 							seasonmgr:SetSpringLength(0)
 						elseif difficulty == "veryshortseason" then
@@ -425,6 +484,22 @@ local TUNING_OVERRIDES =
 					doit = function(difficulty)
 						local seasonmgr = GetSeasonManager()
 						if not GetSeasonManager() then return end
+						if difficulty == "random" then
+							local rand = math.random()
+							if rand <= 1/6 then
+								difficulty = "noseason"
+							elseif rand <= 2/6 then
+								difficulty = "veryshortseason"
+							elseif rand <= 3/6 then
+								difficulty = "shortseason"
+							elseif rand <= 4/6 then
+								difficulty = "longseason"
+							elseif rand <= 5/6 then
+								difficulty = "verylongseason"
+							else
+								difficulty = "default"
+							end
+						end
 						if difficulty == "noseason" then
 							seasonmgr:SetSummerLength(0)
 						elseif difficulty == "veryshortseason" then
@@ -488,7 +563,7 @@ local TUNING_OVERRIDES =
 							if difficulty == "preonlywinter" then
 								GetSeasonManager():EndlessWinter(10,10)
 							elseif difficulty == "preonlysummer" then
-								GetSeasonManager():EndlessAutumn(10,10)
+								GetSeasonManager():EndlessSpring(10,10)
 							elseif difficulty == "onlysummer" then
 								GetSeasonManager():AlwaysAutumn()
 							elseif difficulty == "onlywinter" then
@@ -594,13 +669,12 @@ local TUNING_OVERRIDES =
 	["frograin"] = {
 					doit = 	function(difficulty)
 						local tuning_vars = {
-							["default"] =  {FROG_RAIN_CHANCE=.16},
-							["never"] = {FROG_RAIN_CHANCE= -1},
-							["rare"] =  {FROG_RAIN_CHANCE=.08},
-							["sometimes"] =  {FROG_RAIN_CHANCE=.33},
-							["often"] =  {FROG_RAIN_CHANCE=.5},
-							["always"] =  {FROG_RAIN_CHANCE=1},
-							["force"] =  {FROG_RAIN_CHANCE=1},
+							["default"] =  {FROG_RAIN_CHANCE=.16, FROG_RAIN_LOCAL_MIN_EARLY = 7, FROG_RAIN_LOCAL_MAX_EARLY = 15, FROG_RAIN_LOCAL_MIN_LATE = 12, FROG_RAIN_LOCAL_MAX_LATE = 30},
+							["never"] = {FROG_RAIN_CHANCE= -1, FROG_RAIN_LOCAL_MIN_EARLY = 0, FROG_RAIN_LOCAL_MAX_EARLY = 1, FROG_RAIN_LOCAL_MIN_LATE = 0, FROG_RAIN_LOCAL_MAX_LATE = 1},
+							["rare"] =  {FROG_RAIN_CHANCE=.08, FROG_RAIN_LOCAL_MIN_EARLY = 3, FROG_RAIN_LOCAL_MAX_EARLY = 7, FROG_RAIN_LOCAL_MIN_LATE = 7, FROG_RAIN_LOCAL_MAX_LATE = 20},
+							["often"] =  {FROG_RAIN_CHANCE=.33, FROG_RAIN_LOCAL_MIN_EARLY = 10, FROG_RAIN_LOCAL_MAX_EARLY = 23, FROG_RAIN_LOCAL_MIN_LATE = 15, FROG_RAIN_LOCAL_MAX_LATE = 40},
+							["always"] =  {FROG_RAIN_CHANCE=.5, FROG_RAIN_LOCAL_MIN_EARLY = 10, FROG_RAIN_LOCAL_MAX_EARLY = 30, FROG_RAIN_LOCAL_MIN_LATE = 20, FROG_RAIN_LOCAL_MAX_LATE = 50},
+							["force"] =  {FROG_RAIN_CHANCE=1, FROG_RAIN_LOCAL_MIN_EARLY = 10, FROG_RAIN_LOCAL_MAX_EARLY = 30, FROG_RAIN_LOCAL_MIN_LATE = 20, FROG_RAIN_LOCAL_MAX_LATE = 50},
 						}
 						OverrideTuningVariables(tuning_vars[difficulty])
 					end

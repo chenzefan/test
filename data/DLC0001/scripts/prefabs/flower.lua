@@ -64,6 +64,12 @@ local function fn(Sim)
     inst:AddComponent("transformer")
     inst.components.transformer:SetTransformEvent("fullmoon")
     inst.components.transformer:SetRevertEvent("daytime")
+    inst.components.transformer:SetOnLoadCheck( function() 
+        if not GetWorld():IsCave() then
+            return (GetClock():IsNight() and GetClock():GetMoonPhase() == "full")
+        end
+        return false
+    end )
     inst.components.transformer.transformPrefab = "flower_evil"
 
 

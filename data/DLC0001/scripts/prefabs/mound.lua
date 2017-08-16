@@ -138,6 +138,19 @@ local function fn(Sim)
             inst.AnimState:PlayAnimation("dug")
             inst.components.hole.canbury = true
         end
+
+        inst:DoTaskInTime(0, function(inst)
+        	if inst.components.childspawner then
+		        if GetClock():IsNight() and GetClock():GetMoonPhase() == "full" then
+		        	inst.components.childspawner:StartSpawning()
+		    		inst.components.childspawner:StopRegen()
+		        else
+		        	inst.components.childspawner:StopSpawning()
+			    	inst.components.childspawner:StartRegen()
+			    	ReturnChildren(inst) 
+	        	end
+	        end
+	    end)
     end           
     
     

@@ -127,11 +127,14 @@ function LootDropper:GenerateLoot()
 			local amt = math.ceil( (v.amount * TUNING.HAMMER_LOOT_PERCENT) * percent)
 			if self.inst:HasTag("burnt") then
 				amt = math.ceil( (v.amount * TUNING.BURNT_HAMMER_LOOT_PERCENT) * percent)
-				table.insert(loots, "charcoal") -- Add charcoal to loot for burnt structures
 			end
 			for n = 1, amt do
 				table.insert(loots, v.type)
 			end
+		end
+
+		if self.inst:HasTag("burnt") and math.random() < .4 then
+			table.insert(loots, "charcoal") -- Add charcoal to loot for burnt structures
 		end
 	end
     

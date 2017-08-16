@@ -1,5 +1,6 @@
 require "prefabutil"
 local brain = require "brains/chesterbrain"
+require "stategraphs/SGchester"
 
 local WAKE_TO_FOLLOW_DISTANCE = 14
 local SLEEP_NEAR_LEADER_DISTANCE = 7

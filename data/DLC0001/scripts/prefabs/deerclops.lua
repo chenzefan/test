@@ -1,4 +1,5 @@
 local brain = require "brains/deerclopsbrain"
+require "stategraphs/SGdeerclops"
 
 local assets =
 {
@@ -12,7 +13,6 @@ local prefabs =
 {
 	"meat",
 	"deerclops_eyeball",
-    "eyebrella",
     "collapse_small",
     "icespike_fx_1",
     "icespike_fx_2",

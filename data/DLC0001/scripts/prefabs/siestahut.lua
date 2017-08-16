@@ -125,13 +125,18 @@ local function onsleep(inst, sleeper)
 			sleeper.components.temperature:SetTemperature(TUNING.TARGET_SLEEP_TEMP - 20)
 		end
 
+		local moisture_start = nil
 		if sleeper.components.moisture and sleeper.components.moisture:GetMoisture() > 0 then
-			sleeper.components.moisture.moisture = 0
+			moisture_start = sleeper.components.moisture.moisture
 		end
-		
 		
 		inst.components.finiteuses:Use()
 		GetClock():MakeNextDusk()
+
+		if moisture_start then
+			sleeper.components.moisture.moisture = moisture_start - TUNING.SLEEP_MOISTURE_DELTA
+			if sleeper.components.moisture.moisture < 0 then sleeper.components.moisture.moisture = 0 end
+		end
 		
 		sleeper.components.health:SetInvincible(false)
 		sleeper.components.playercontroller:Enable(true)

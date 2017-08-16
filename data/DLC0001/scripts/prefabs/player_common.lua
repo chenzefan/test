@@ -1,4 +1,5 @@
 local easing = require("easing")
+require "stategraphs/SGwilson"
 
 local function OnSane(inst)
 	print ("SANE!")
@@ -70,7 +71,9 @@ local function giveupstring(combat, target)
     return str
 end
 
+local function onattackother(inst, data)
 
+end
 
 
 local function MakePlayerCharacter(name, customprefabs, customassets, customfn, starting_inventory)
@@ -417,13 +420,22 @@ local function MakePlayerCharacter(name, customprefabs, customassets, customfn, 
             inst.components.talker:Say(GetString(inst.prefab, "ANNOUNCE_EAT", "INVALID"))
         end)
 
+        if BRANCH ~= "RELEASE" or (PLATFORM == "WIN32_STEAM" or PLATFORM == "LINUX_STEAM" or PLATFORM == "OSX_STEAM") then
+            inst:ListenForEvent("onattackother", onattackother)
+        end
+
         inst.CanExamine = function() return not inst.beaver end
+
+        inst.OnSave = function(inst, data)
+            data.summertrapped = inst.summertrapped
+        end
+        inst.OnLoad = function(inst, data)
+            inst.summertrapped = data.summertrapped
+        end
 
         if customfn then
             customfn(inst)
         end
-
-        inst:AddComponent("notereader")
         
         return inst
     end

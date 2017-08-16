@@ -268,8 +268,10 @@ end
 
 local function OnEntitySleep(inst)
     trace("OnEntitySleep", inst)
-    UpdateCampOccupied(inst)
-    CheckSpawnHuntingParty(inst, nil, not GetClock():IsDay())
+    if not POPULATING then
+	    UpdateCampOccupied(inst)
+    	CheckSpawnHuntingParty(inst, nil, not GetClock():IsDay())
+	end
 end
 
 local function OnEntityWake(inst)

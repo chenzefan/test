@@ -148,6 +148,13 @@ STRINGS=
             GENERIC = "Open",
             CLOSE = "Close",
         },
+        TOGGLE_DEPLOY_MODE =
+        {
+            GENERIC = "Plant",
+            GROUNDTILE = "Place Ground",
+            WALL = "Build Wall",
+            TURRET = "Place",
+        },
         DEPLOY = 
         {
             GENERIC = "Plant",
@@ -244,13 +251,11 @@ STRINGS=
         FUEL = "Water-Logged",
         TOOL = "Slippery",
         FOOD = "Soggy",
-        GOOP = "Very",
+        WETGOOP = "Very",
     },
 
     NAMES =
     {
-
-
         DEFAULT = "INVENTORY ITEM",
 
         LUCY = "Lucy the Axe",
@@ -914,9 +919,6 @@ STRINGS=
         TORNADO = "Tornado",
         EYEBRELLAHAT = "Eyebrella",
         FEATHERFAN = "Luxury Fan",
-
-        NOTE = "Note",
-
     },
 
     DIRECTIONS=
@@ -1095,7 +1097,6 @@ STRINGS=
         BELL = "This isn't just any bell.",
 
         CATCOONHAT = "For those who value warmth over friends.",
-
     },
 
     -- MAXWELL_TEST = {"Say pal, you don't look so good.", "You better find something to eat before night comes!"},
@@ -1562,7 +1563,9 @@ STRINGS.UI =
         ROTATE_RIGHT = "Rotate Right",
         ZOOM_IN = "Zoom In",
         ZOOM_OUT = "Zoom Out",
-
+        TOGGLE = "Toggle",   
+        RANDOM = "Random",
+        CONFIGUREMOD = "Configure Mod",
     },
     CHARACTERSELECT=
     {
@@ -1933,6 +1936,7 @@ STRINGS.UI =
         VIEWSTREAM= "View Stream",
         STARTSTREAM= "Start Stream",
         STOPSTREAM= "Stop Stream",
+        HELP= "Help",
     },
     
     OPTIONS=
@@ -1966,7 +1970,7 @@ STRINGS.UI =
         AMBIENT = "Ambient",
         HUDSIZE = "HUD size",
         VIBRATION = "Vibration",
-        WATHGRITHRFONT = "Wigfrid's Font",
+        WATHGRITHRFONT = "Wigfrid's Umlauts",
         DISPLAY_AREA_LABEL = "Display Area",
         DISPLAY_AREA_BUTTON = "Adjust",
         -- INPUTFREQENCY = "Input Frequency(hz):",
@@ -1992,13 +1996,25 @@ STRINGS.UI =
     },
 
     MODSSCREEN = {
-        APPLY = "OK",
+        APPLY = "Apply",
         CANCEL = "Cancel",
         MOREMODS = "More Mods",
         VERSION = "version %s",
         AUTHORBY = "by %s",
         MODLINK = "Take me to the mod page!",
         MODLINKGENERIC = "Mod discussion forums",
+        COMPATIBILITY_UNKNOWN = "Compatibility unknown.",
+        COMPATIBILITY_ALL = "Compatible with everything.",
+        COMPATIBILITY_DS_ONLY = "Compatible with Don't Starve only.",
+        COMPATIBILITY_ROG_ONLY = "Compatible with Reign of Giants only.",
+        COMPATIBILITY_NONE = "Compatible with nothing. I'm sure it's fine.",
+        CONFIGUREMOD = "Configure Mod",
+        CONFIGSCREENTITLESUFFIX = "Configuration Options",
+        BACKTITLE = "Discard Changes",
+        BACKBODY = "Do you want to discard the changes you made to the mod's options?",
+        UNKNOWN_MOD_CONFIG_SETTING = "[NAME UNDEFINED]",
+        YES = "Yes",
+        NO = "No",
         ENABLE = "Enable",
         DISABLE = "Disable",
         WORKING_NORMALLY = "Mod is installed.",
@@ -2735,6 +2751,11 @@ STRINGS.CHARACTERS =
     WOODIE = require "speech_woodie",
     WICKERBOTTOM = require "speech_wickerbottom",
 }
+
+if IsDLCEnabled(REIGN_OF_GIANTS) then
+    STRINGS.CHARACTERS.WATHGRITHR = require "speech_wathgrithr"
+    STRINGS.CHARACTERS.WEBBER = require "speech_webber"
+end
 
 STRINGS.LUCY =
 {

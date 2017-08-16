@@ -9,6 +9,7 @@ local prefabs =
 }
 
 local function OnLoseChild(inst, child)
+    print("bye bye glommer")
     inst:AddComponent("perishable")
     inst.components.perishable:SetPerishTime(TUNING.PERISH_FAST)
     inst:AddTag("show_spoilage")
@@ -32,7 +33,21 @@ local function OnLoseChild(inst, child)
     MakeSmallBurnable(inst, TUNING.SMALL_BURNTIME)
     MakeSmallPropagator(inst)
     inst.components.burnable:MakeDragonflyBait(3)
+end
 
+local function RebindGlommer(inst)
+    local glommer = TheSim:FindFirstEntityWithTag("glommer")
+    if not inst.deadchild and glommer and glommer.components.health and not glommer.components.health:IsDead() then
+        if glommer.components.follower.leader ~= inst then
+            glommer.components.follower:SetLeader(inst)
+        end
+    end
+end
+
+local function getstatus(inst)
+    if inst.deadchild then
+        return "DEAD"
+    end
 end
 
 local function IsActive(inst)
@@ -47,6 +62,10 @@ local function OnPreLoad(inst, data)
     if inst.deadchild then
         OnLoseChild(inst)
     end
+end
+
+local function OnLoad(inst, data)
+    inst:DoTaskInTime(1, function() RebindGlommer(inst) end)
 end
 
 local function OnSave(inst, data)
@@ -69,11 +88,13 @@ local function fn(Sim)
     inst:AddComponent("leader")
     inst.components.leader.onremovefollower = OnLoseChild
     inst:AddComponent("inspectable")
+    inst.components.inspectable.getstatus = getstatus
     inst:AddComponent("inventoryitem")
     inst.components.inventoryitem:ChangeImageName("glommerflower")
 
     inst.IsActive = IsActive
     inst.OnPreLoad = OnPreLoad
+    inst.OnLoad = OnLoad
     inst.OnSave = OnSave
 
     return inst

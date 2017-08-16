@@ -47,6 +47,7 @@ local season_length_descriptions = {
 	{ text = STRINGS.UI.SANDBOXMENU.SLIDEDEFAULT, data = "default" },
 	{ text = STRINGS.UI.SANDBOXMENU.SLIDELONG, data = "longseason" },
 	{ text = STRINGS.UI.SANDBOXMENU.SLIDEVERYLONG, data = "verylongseason" },
+	{ text = STRINGS.UI.SANDBOXMENU.RANDOM, data = "random"},
 }
 
 -- local season_mode_descriptions = {
@@ -157,22 +158,23 @@ local GROUP = {
 						enable = false,
 						items={
 							["pigs"] = {value = "default", enable = false, spinner = nil, image = "pigs.tex", order = 9}, 
-							["tallbirds"] = {value = "default", enable = false, spinner = nil, image = "tallbirds.tex", order = 18}, 
+							["tallbirds"] = {value = "default", enable = false, spinner = nil, image = "tallbirds.tex", order = 19}, 
 							["rabbits"] = {value = "default", enable = false, spinner = nil, image = "rabbits.tex", order = 2}, 
 							["beefalo"] = {value = "default", enable = false, spinner = nil, image = "beefalo.tex", order = 11}, 
 							["beefaloheat"] = {value = "default", enable = false, spinner = nil, image = "beefaloheat.tex", order = 12}, 
 							["hunt"] = {value = "default", enable = false, spinner = nil, image = "tracks.tex", order = 13}, 
-							["bees"] = {value = "default", enable = false, spinner = nil, image = "beehive.tex", order = 16}, 
-							["angrybees"] = {value = "default", enable = false, spinner = nil, image = "wasphive.tex", order = 17}, 
+							["warg"] = {value = "default", enable = false, spinner = nil, image = "warg.tex", order = 14}, 
+							["bees"] = {value = "default", enable = false, spinner = nil, image = "beehive.tex", order = 17}, 
+							["angrybees"] = {value = "default", enable = false, spinner = nil, image = "wasphive.tex", order = 18}, 
 							["birds"] = {value = "default", enable = false, spinner = nil, image = "birds.tex", order = 5}, 
 							["perd"] = {value = "default", enable = false, spinner = nil, image = "perd.tex", order = 8}, 
-							["ponds"] = {value = "default", enable = false, spinner = nil, image = "ponds.tex", order = 15}, 
+							["ponds"] = {value = "default", enable = false, spinner = nil, image = "ponds.tex", order = 16}, 
 							["moles"] = {value = "default", enable = false, spinner = nil, image = "mole.tex", order = 3}, 
 							["lightninggoat"] = {value = "default", enable = false, spinner = nil, image = "lightning_goat.tex", order = 10}, 
 							["catcoon"] = {value = "default", enable = false, spinner = nil, image = "catcoon.tex", order = 7}, 
 							["buzzard"] = {value = "default", enable = false, spinner = nil, image = "buzzard.tex", order = 6}, 
 							["butterfly"] = {value = "default", enable = false, spinner = nil, image = "butterfly.tex", order = 4}, 
-							["penguins"] = {value = "default", enable = false, spinner = nil, image = "pengull.tex", order = 14}, 
+							["penguins"] = {value = "default", enable = false, spinner = nil, image = "pengull.tex", order = 15}, 
 							["mandrake"] = {value = "default", enable = false, spinner = nil, image = "mandrake.tex", order = 1}, 
 						}
 					},

@@ -54,8 +54,9 @@ function MoistureListener:GetMoisture()
 end
 
 function MoistureListener:GetTargetMoisture()
-	if not GetWorld().components.seasonmanager:IsRaining() or not 
-		self.inst.components.inventoryitem then
+	if (not GetWorld().components.seasonmanager:IsRaining() and not 
+	(self.inst.components.inventoryitem and self.inst.components.inventoryitem.owner)) or not 
+	self.inst.components.inventoryitem then
 		return 0
 	end
 	local owner = self.inst.components.inventoryitem.owner

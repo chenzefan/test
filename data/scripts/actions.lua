@@ -856,7 +856,8 @@ end
 ACTIONS.COMBINESTACK.fn = function(act)
     local target = act.target
     local invobj = act.invobject
-    if invobj and target and invobj.prefab == target.prefab and target.components.stackable and not target.components.stackable:IsFull() then
+    if invobj and target and invobj.prefab == target.prefab and target.components.stackable and not target.components.stackable:IsFull()
+        and target.components.inventoryitem and target.components.inventoryitem.canbepickedup then
         target.components.stackable:Put(invobj)
         return true
     end 

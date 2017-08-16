@@ -27,8 +27,8 @@ local assets =
 }
 
 if PLATFORM == "PS4" then
-    table.insert(assets, Asset("ATLAS", "images/ps4.xml"))
-    table.insert(assets, Asset("IMAGE", "images/ps4.tex"))
+    table.insert(assets, Asset("ATLAS", "images/ps4_dlc0001.xml"))
+    table.insert(assets, Asset("IMAGE", "images/ps4_dlc0001.tex"))
     table.insert(assets, Asset("ATLAS", "images/ps4_controllers.xml"))
     table.insert(assets, Asset("IMAGE", "images/ps4_controllers.tex"))
     table.insert(assets, Asset("ANIM", "anim/animated_title.zip"))

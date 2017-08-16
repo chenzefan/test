@@ -322,6 +322,8 @@ local function OnChangeLeaves(inst, monster, monsterout)
         if inst.leaf_state == "barren" then
             if GetBuild(inst).leavesbuild then
                 inst.AnimState:OverrideSymbol("swap_leaves", GetBuild(inst).leavesbuild, "swap_leaves")
+            else
+                inst.AnimState:ClearOverrideSymbol("swap_leaves")
             end
             inst.AnimState:PlayAnimation(inst.anims.growleaves)
             inst.SoundEmitter:PlaySound("dontstarve/forest/treeGrow")
@@ -763,10 +765,17 @@ local function StartMonster(inst, force, starttimeoffset)
             inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/decidous/transform_in")
             inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/decidous/transform_voice")
             SpawnLeafFX(inst, 7*FRAMES)
-            inst.AnimState:OverrideSymbol("legs", GetBuild(inst).leavesbuild, "legs")
-            inst.AnimState:OverrideSymbol("legs_mouseover", GetBuild(inst).leavesbuild, "legs_mouseover")
-            inst.AnimState:OverrideSymbol("eye", GetBuild(inst).leavesbuild, "eye")
-            inst.AnimState:OverrideSymbol("mouth", GetBuild(inst).leavesbuild, "mouth")
+            if GetBuild(inst).leavesbuild then
+                inst.AnimState:OverrideSymbol("legs", GetBuild(inst).leavesbuild, "legs")
+                inst.AnimState:OverrideSymbol("legs_mouseover", GetBuild(inst).leavesbuild, "legs_mouseover")
+                inst.AnimState:OverrideSymbol("eye", GetBuild(inst).leavesbuild, "eye")
+                inst.AnimState:OverrideSymbol("mouth", GetBuild(inst).leavesbuild, "mouth")
+            else
+                inst.AnimState:ClearOverrideSymbol("legs")
+                inst.AnimState:ClearOverrideSymbol("legs_mouseover")
+                inst.AnimState:ClearOverrideSymbol("eye")
+                inst.AnimState:ClearOverrideSymbol("mouth")
+            end
             inst:AddComponent("combat")
             inst.components.combat.canbeattackedfn = function(inst) return false end
             if not inst.components.deciduoustreeupdater then
@@ -974,8 +983,13 @@ local function onload(inst, data)
             if not inst:HasTag("stump") then inst:AddTag("stump") end
             if data.monster then
                 inst.AnimState:SetBank("tree_leaf_monster")
-                inst.AnimState:OverrideSymbol("legs", GetBuild(inst).leavesbuild, "legs")
-                inst.AnimState:OverrideSymbol("legs_mouseover", GetBuild(inst).leavesbuild, "legs_mouseover")
+                if GetBuild(inst).leavesbuild then
+                    inst.AnimState:OverrideSymbol("legs", GetBuild(inst).leavesbuild, "legs")
+                    inst.AnimState:OverrideSymbol("legs_mouseover", GetBuild(inst).leavesbuild, "legs_mouseover")
+                else
+                    inst.AnimState:ClearOverrideSymbol("legs")
+                    inst.AnimState:ClearOverrideSymbol("legs_mouseover")
+                end
             end
             inst.AnimState:PlayAnimation(inst.anims.stump)
 
@@ -1042,7 +1056,10 @@ local function makefn(build, stage, data)
         anim:SetBank("tree_leaf")
         inst.build = build
         anim:SetBuild("tree_leaf_trunk_build")
-        anim:OverrideSymbol("swap_leaves", GetBuild(inst).leavesbuild, "swap_leaves")
+
+        if GetBuild(inst).leavesbuild then
+            anim:OverrideSymbol("swap_leaves", GetBuild(inst).leavesbuild, "swap_leaves")
+        end
         inst.color = 0.5 + math.random() * 0.5
         anim:SetMultColour(inst.color, inst.color, inst.color, 1)
             

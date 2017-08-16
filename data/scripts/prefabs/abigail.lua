@@ -1,3 +1,5 @@
+require "stategraphs/SGghost"
+
 local assets =
 {
 	Asset("ANIM", "anim/ghost.zip"),
@@ -8,6 +10,8 @@ local assets =
 local prefabs = 
 {
 }
+ 
+require "brains/abigailbrain"
 
 local function Retarget(inst)
 

@@ -47,7 +47,7 @@ for y = 2, 0, -1 do
 end
 
 local function itemtest(inst, item, slot)
-	return (item.components.edible and item.components.perishable) or item.prefab == "spoiled_food"
+	return (item.components.edible and item.components.perishable) or item.prefab == "spoiled_food" or item.prefab == "rottenegg"
 end
 
 		

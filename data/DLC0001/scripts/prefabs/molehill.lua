@@ -14,11 +14,12 @@ local function GetChild(inst)
 end
 
 local function dig_up(inst, chopper)
+	if inst.components.spawner.child and not inst.components.spawner.child:HasTag("INLIMBO") then
+		inst.components.spawner.child.needs_home_time = GetTime()
+	end
 	if inst.components.spawner:IsOccupied() then
 		inst.components.spawner:ReleaseChild()
-	end
-	if inst.components.spawner.child and not inst.components.spawner.child:HasTag("INLIMBO") then
-		inst.components.spawner.child:PushEvent("molehilldug")
+		inst.components.spawner.child.needs_home_time = GetTime()
 	end
 	inst.components.lootdropper:DropLoot()
 	inst.components.inventory:DropEverything(false, true)

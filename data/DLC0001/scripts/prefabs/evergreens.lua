@@ -341,7 +341,7 @@ local function chop_down_tree(inst, chopper)
 					target.noleif = true
 					target.leifscale = growth_stages[target.components.growable.stage].leifscale or 1
 					target:DoTaskInTime(1 + math.random()*3, function() 
-                        if target then
+                        if target and not target:HasTag("stump") and not target:HasTag("burnt") then
     						local target = target
     						local leif = SpawnPrefab(builds[target.build].leif)
     						local scale = target.leifscale

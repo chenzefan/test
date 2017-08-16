@@ -1,3 +1,6 @@
+require "brains/knightbrain"
+require "stategraphs/SGknight"
+
 local assets=
 {
 	Asset("ANIM", "anim/knight.zip"),

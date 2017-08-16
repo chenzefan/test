@@ -1,4 +1,5 @@
 local brain = require "brains/deerclopsbrain"
+require "stategraphs/SGdeerclops"
 
 local assets =
 {

@@ -75,7 +75,7 @@ return {
 	ANNOUNCE_DAMP = "Oh, H2O.",
 	ANNOUNCE_WET = "My clothes appear to be permeable.",
 	ANNOUNCE_WETTER = "Water way to go!",
-	ANNOUNCE_SOAKED = "I've reached my saturation point.",
+	ANNOUNCE_SOAKED = "I've nearly reached my saturation point.",
 	
 	BATTLECRY =
 	{
@@ -96,7 +96,11 @@ return {
 	DESCRIBE =
 	{
         GLOMMER = "It's cute, in a gross kind of way.",
-        GLOMMERFLOWER = "The petals shimmer in the light.",
+        GLOMMERFLOWER = 
+        {
+        	GENERIC = "The petals shimmer in the light.",
+        	DEAD = "The petals droop and shimmer in the light.",
+        },
         GLOMMERWINGS = "These would look awesome on a helmet!",
         GLOMMERFUEL = "This goop smells foul.",
         BELL = "Dingalingaling.",
@@ -116,6 +120,7 @@ return {
 		},
 		MOLE =
 		{
+			HELD = "Nowhere left to dig, my friend.",
 			UNDERGROUND = "Something's under there, searching for minerals.",
 			ABOVEGROUND = "I'd sure like to whack that mole... thing.",
 		},
@@ -332,7 +337,7 @@ return {
 			GENERIC = "Bees!",
 			NOHONEY = "It's empty.",
 			SOMEHONEY = "I should wait a bit.",
-			BURNT = "No honey getting made in that husk.",
+			BURNT = "How did it get burned?!!",
 		},
 		BEEFALO =
 		{
@@ -432,6 +437,7 @@ return {
 			EMPTY = "It's owner ran out of lives.",
 		},
 		CATCOONHAT = "Ears hat!",
+		COONTAIL = "I think it's still swishing.",
 		CARROT = "Yuck. It's all vegetabley.",
 		CARROT_COOKED = "Mushy.",
 		CARROT_PLANTED = "The earth is making plantbabies.",
@@ -875,7 +881,7 @@ return {
 			GENERIC = "It measures cloudiness.",
 			BURNT = "The measuring parts went up in a cloud of smoke.",
 		},
-		RAINCOAT = "Keeps the rain where it ought to be: outside my body.",
+		RAINCOAT = "Keeps the rain where it ought to be. Outside my body.",
 		RAINHAT = "It'll mess up my hair, but I'll stay nice and dry.",
 		RATATOUILLE = "I cooked it myself!",
 		RAZOR = "A sharpened rock tied to a stick. Hygienic!",
@@ -1155,7 +1161,7 @@ return {
 		WINTEROMETER = 
 		{
 			GENERIC = "I am one heck of a scientist.",
-			BURNT = "It's measuring days are over.",
+			BURNT = "Its measuring days are over.",
 		},
 		WORMHOLE =
 		{

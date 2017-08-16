@@ -1,3 +1,6 @@
+require "brains/lureplantbrain"
+require "stategraphs/SGlureplant"
+
 local assets =
 {
 	Asset("ANIM", "anim/eyeplant_trap.zip"),
@@ -22,6 +25,7 @@ local function TryRevealBait(inst)
         inst.lure.onperishfn = function() inst.sg:GoToState("hidebait") end
         inst:ListenForEvent("onremoved", inst.lure.onperishfn, inst.lure )
         inst.components.shelf.cantakeitem = true
+        inst.components.inventory.nosteal = false
         inst.components.shelf.itemonshelf = inst.lure
         inst.sg:GoToState("showbait")
 
@@ -39,6 +43,7 @@ local function HideBait(inst)
     if not inst.sg:HasStateTag("hiding") and not inst.components.health:IsDead() then   --Won't hide if it's already hiding.        
         if not inst.task then
             inst.components.shelf.cantakeitem = false
+            inst.components.inventory.nosteal = true
             inst.sg:GoToState("hidebait")
         end
 
@@ -78,6 +83,7 @@ end
 local function ResumeSleep(inst, seconds)
     inst.sg:GoToState("hibernate")
     inst.components.shelf.cantakeitem = false
+    inst.components.inventory.nosteal = true
 
     if inst.task then
         inst.task:Cancel()
@@ -99,6 +105,7 @@ local function OnPicked(inst)
 		inst.lure = nil
     end
     inst.components.shelf.cantakeitem = false
+    inst.components.inventory.nosteal = true
     inst.sg:GoToState("picked")
 
     if inst.task then
@@ -121,6 +128,7 @@ end
 
 local function FreshSpawn(inst)
     inst.components.shelf.cantakeitem = false
+    inst.components.inventory.nosteal = true
     if inst.task then
         inst.task:Cancel()
         inst.task = nil
@@ -190,7 +198,7 @@ local function OnDeath(inst)
 end
 
 local function CanDigest(owner, item)
-    if owner.components.shelf.itemonshelf and owner.components.shelf.itemonshelf.components.stackable.stacksize <= 5 then
+    if owner.components.shelf.itemonshelf and owner.components.shelf.itemonshelf.components.stackable and owner.components.shelf.itemonshelf.components.stackable.stacksize <= 5 then
         return item ~= owner.components.shelf.itemonshelf
     else
         return true
@@ -319,7 +327,7 @@ local function fn()
     inst.OnEntitySleep = OnEntitySleep
     inst.OnEntityWake = OnEntityWake
 
-    MakeMediumBurnableCharacter(inst, "bulb_leaf")
+    MakeMediumBurnableCharacter(inst, "swap_fire")
     MakeLargePropagator(inst)
     inst:AddTag("wildfirestarter_highprio")
 

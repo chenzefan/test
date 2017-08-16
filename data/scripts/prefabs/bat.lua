@@ -1,3 +1,6 @@
+require "brains/batbrain"
+require "stategraphs/SGbat"
+
 local assets=
 {
 	Asset("ANIM", "anim/bat_basic.zip"),

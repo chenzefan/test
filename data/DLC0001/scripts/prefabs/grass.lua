@@ -22,7 +22,7 @@ local function dig_up(inst, chopper)
 	if inst.components.pickable and inst.components.pickable:CanBePicked() then
 		inst.components.lootdropper:SpawnLootPrefab("cutgrass")
 	end
-	if not inst.components.pickable.withered then
+	if inst.components.pickable and not inst.components.pickable.withered then
 		local bush = inst.components.lootdropper:SpawnLootPrefab("dug_grass")
 	else
 		inst.components.lootdropper:SpawnLootPrefab("cutgrass")
@@ -62,7 +62,7 @@ local function onpickedfn(inst)
 	inst.SoundEmitter:PlaySound("dontstarve/wilson/pickup_reeds") 
 	inst.AnimState:PlayAnimation("picking") 
 	
-	if inst.components.pickable:IsBarren() then
+	if inst.components.pickable and inst.components.pickable:IsBarren() then
 		inst.AnimState:PushAnimation("idle_dead")
 	else
 		inst.AnimState:PushAnimation("picked")
@@ -99,7 +99,9 @@ local function makefn(stage)
 		inst.components.pickable.max_cycles = 20
 		inst.components.pickable.cycles_left = 20   
 		inst.components.pickable.ontransplantfn = ontransplantfn
-		inst.makewitherabletask = inst:DoTaskInTime(TUNING.WITHER_BUFFER_TIME, function(inst) inst.components.pickable:MakeWitherable() end)
+
+		local variance = math.random() * 4 - 2
+		inst.makewitherabletask = inst:DoTaskInTime(TUNING.WITHER_BUFFER_TIME + variance, function(inst) inst.components.pickable:MakeWitherable() end)
 
 	    if stage == 1 then
 			inst.components.pickable:MakeBarren()

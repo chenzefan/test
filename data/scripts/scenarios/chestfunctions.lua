@@ -60,6 +60,9 @@ end
 
 local function OnOpenChestTrap(inst, openfn, data) 
 	if math.random() < .66 then
+		local bail = openfn(inst, data)
+		if bail then return end
+
 		local talkabouttrap = function(inst, txt)
 			inst.components.talker:Say(txt)
 		end
@@ -78,7 +81,6 @@ local function OnOpenChestTrap(inst, openfn, data)
 	        fx.AnimState:SetScale(1,1.5,1)
 	    end
 
-		openfn(inst, data)
 			--get the player, and get him to say oops
 		player:DoTaskInTime(1, talkabouttrap, GetString(player.prefab, "ANNOUNCE_TRAP_WENT_OFF"))
 

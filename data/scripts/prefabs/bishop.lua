@@ -1,3 +1,6 @@
+require "brains/bishopbrain"
+require "stategraphs/SGbishop"
+
 local assets=
 {
 	Asset("ANIM", "anim/bishop.zip"),

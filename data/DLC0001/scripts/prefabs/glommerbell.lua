@@ -17,7 +17,7 @@ local function shine(inst)
 end
 
 local function OnPutInInv(inst, owner)
-    if owner.prefab == "mole" then
+    if owner.prefab == "mole" or owner.prefab == "krampus" then
         inst.SoundEmitter:PlaySound("dontstarve_DLC001/common/glommer_bell")
         OnPlayed(inst, owner)
         if inst.components.finiteuses then inst.components.finiteuses:Use() end

@@ -155,6 +155,16 @@ local function OnLoad(inst, data)
 	else
 		MakeWorked(inst)
 	end
+
+	inst:DoTaskInTime(0, function(inst)
+		if (GetClock():IsNight() and GetClock():GetMoonPhase() == "full") then
+			if not inst.components.pickable.canbepicked then -- If it can't be picked, we don't have a flower on the shelf
+				SpawnGland(inst) -- SpawnGland will handle the case where it has been picked recently
+			end
+		else
+			RemoveGland(inst) -- RemoveGland will handle the case where the flower isn't on the shelf any longer
+		end
+	end)
 end
 
 local function fn() 

@@ -1,3 +1,5 @@
+require "stategraphs/SGbigfoot"
+
 local assets = 
 {
 	Asset("ANIM", "anim/foot_build.zip"),

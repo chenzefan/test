@@ -5,6 +5,20 @@ local UIAnim = Class(function(self, inst)
     self.inst = inst
 end)
 
+function UIAnim:ForceStartWallUpdating( widget )
+    if not widget.GetAnimState then
+        return
+    end
+    self.forceWallUpdateTime = 0
+    self.forceWallUpdatingWidget = widget
+    self.inst:StartWallUpdatingComponent(self)
+end
+
+function UIAnim:ForceStopWallUpdating()
+    self.forceWallUpdateTime = nil
+    self.forceWallUpdatingWidget = nil
+    self.inst:StopWallUpdatingComponent(self)
+end
 
 function UIAnim:ScaleTo(start, dest, duration, whendone)
     self.scale_start = start
@@ -39,6 +53,14 @@ function UIAnim:OnWallUpdate(dt)
     if not self.inst:IsValid() then
 		self.inst:StopWallUpdatingComponent(self)
 		return
+    end
+
+    if self.forceWallUpdateTime then
+       local animState = self.forceWallUpdatingWidget:GetAnimState()
+       if animState then
+           self.forceWallUpdateTime = self.forceWallUpdateTime + dt
+           self.forceWallUpdatingWidget:GetAnimState():SetTime(self.forceWallUpdateTime)
+       end
     end
     
     local done = false
@@ -89,7 +111,7 @@ function UIAnim:OnWallUpdate(dt)
         self.inst.UITransform:SetPosition(valx, valy, valz)
     end
     
-    if not self.scale_t and not self.pos_t then
+    if not self.scale_t and not self.pos_t and not self.forceWallUpdateTime then
         self.inst:StopWallUpdatingComponent(self)
     end
 end

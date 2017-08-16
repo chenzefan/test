@@ -1,3 +1,6 @@
+require "brains/beefalobrain"
+require "stategraphs/SGBeefalo"
+
 local assets=
 {
 	Asset("ANIM", "anim/beefalo_basic.zip"),

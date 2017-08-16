@@ -387,24 +387,40 @@ function Inventory:DropItem(item, wholestack, randomdir, pos)
     return dropped
 end
 
-function Inventory:GetEquippedMoistureRate()
+function Inventory:GetEquippedMoistureRate(slot)
     local moisture = 0
     local max = 0
-    for k,v in pairs(self.equipslots) do
-        if v and v.components.equippable then
-            local data = v.components.equippable:GetEquippedMoisture()
+    if slot then
+        local item = self:GetItemInSlot(slot)
+        if item and item.components.equippable then
+            local data = item.components.equippable:GetEquippedMoisture()
             moisture = moisture + data.moisture
             max = max + data.max
+        end
+    else
+        for k,v in pairs(self.equipslots) do
+            if v and v.components.equippable then
+                local data = v.components.equippable:GetEquippedMoisture()
+                moisture = moisture + data.moisture
+                max = max + data.max
+            end
         end
     end
     return moisture, max
 end
 
-function Inventory:GetWaterproofness()
+function Inventory:GetWaterproofness(slot)
     local waterproofness = 0
-    for k,v in pairs(self.equipslots) do
-        if v and v.components.waterproofer then
-            waterproofness = waterproofness + v.components.waterproofer:GetEffectiveness()  
+    if slot then
+        local item = self:GetItemInSlot(slot)
+        if item and item.components.waterproofer then
+            waterproofness = waterproofness + item.components.waterproofer:GetEffectiveness()
+        end
+    else
+        for k,v in pairs(self.equipslots) do
+            if v and v.components.waterproofer then
+                waterproofness = waterproofness + v.components.waterproofer:GetEffectiveness()  
+            end
         end
     end
     return waterproofness

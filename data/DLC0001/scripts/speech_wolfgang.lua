@@ -94,7 +94,11 @@ return {
 	DESCRIBE =
 	{
 		GLOMMER = "Why you follow me, weird bug?",
-        GLOMMERFLOWER = "Is shiny flower.",
+        GLOMMERFLOWER = 
+        {
+        	GENERIC = "Is shiny flower.",
+        	DEAD = "Is sad and shiny flower.",
+        },
         GLOMMERWINGS = "Small like fairy wings.",
         GLOMMERFUEL = "Weird bug make weird poop.",
         BELL = "Bell make dainty sound.",
@@ -106,6 +110,7 @@ return {
 		WEBBERSKULL = "I crush skull!",
 		MOLE =
 		{
+			HELD = "Wolfgang have mercy for tiny soft animal.",
 			UNDERGROUND = "Stay underground where you are safe from Wolfgang.",
 			ABOVEGROUND = "Now you will know Wolfgang's strength!",
 		},
@@ -151,6 +156,7 @@ return {
 			EMPTY = "Wolfgang more comfortable now that stump is empty.",
 		},
 		CATCOONHAT = "Now Wolfgang not trust himself.",
+		COONTAIL = "Wiggly cat part!",
 		COOKPOT =
 		{
 			COOKING_LONG = "This take long time.",

@@ -1,4 +1,6 @@
 require "prefabutil"
+require "brains/eyeturretbrain"
+require "stategraphs/SGeyeturret"
 
 local assets=
 {

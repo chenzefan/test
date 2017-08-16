@@ -20,8 +20,8 @@ local MoistureManager = Class(function(self, inst)
 
     self.optimalDryingTemp = 70
 
-    self.worldDryLevel = 30
-    self.worldWetLevel = 70
+    self.worldDryLevel = TUNING.MOISTURE_DRY_THRESHOLD--30
+    self.worldWetLevel = TUNING.MOISTURE_WET_THRESHOLD--70
 
 	-- self.inst:ListenForEvent("rainstart", function() self:StartMakeWorldWet() end)
 	-- self.inst:ListenForEvent("rainstop", function() self:StartMakeWorldDry() end)

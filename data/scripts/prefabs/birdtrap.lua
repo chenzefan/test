@@ -1,3 +1,5 @@
+require "stategraphs/SGtrap"
+
 local assets=
 {
 	Asset("ANIM", "anim/birdtrap.zip"),

@@ -1,3 +1,6 @@
+require "brains/perdbrain"
+require "stategraphs/SGperd"
+
 local assets=
 {
 	Asset("ANIM", "anim/perd_basic.zip"),

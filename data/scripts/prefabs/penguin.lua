@@ -1,3 +1,6 @@
+require "brains/penguinbrain"
+require "stategraphs/SGpenguin"
+
 local assets=
 {
 	Asset("ANIM", "anim/penguin.zip"),

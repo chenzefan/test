@@ -10,6 +10,7 @@ local Widget = require "widgets/widget"
 local UIAnim = require "widgets/uianim"
 local Menu = require "widgets/menu"
 local PopupDialogScreen = require "screens/popupdialog"
+local ModConfigurationScreen = require "screens/modconfigurationscreen"
 
 
 local text_font = DEFAULTFONT--NUMBERFONT
@@ -43,7 +44,11 @@ local ModsScreen = Class(Screen, function(self, cb)
 	self.infoprefabs = {}
 
     self.bg = self:AddChild(Image("images/ui.xml", "bg_plain.tex"))
-    self.bg:SetTint(BGCOLOURS.RED[1],BGCOLOURS.RED[2],BGCOLOURS.RED[3], 1)
+    if IsDLCEnabled(REIGN_OF_GIANTS) then
+   	    self.bg:SetTint(BGCOLOURS.PURPLE[1],BGCOLOURS.PURPLE[2],BGCOLOURS.PURPLE[3], 1)
+   	else
+   		self.bg:SetTint(BGCOLOURS.RED[1],BGCOLOURS.RED[2],BGCOLOURS.RED[3], 1)
+   	end
 
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
     self.bg:SetHRegPoint(ANCHOR_MIDDLE)
@@ -71,8 +76,10 @@ local ModsScreen = Class(Screen, function(self, cb)
     
 	self.mainmenu = self.root:AddChild(Menu(nil, 0, true))
     self.mainmenu:SetPosition(mid_col, 0, 0)
-	self.applybutton = self.mainmenu:AddItem(STRINGS.UI.MODSSCREEN.APPLY, function() self:Apply() end, Vector3(-90, -220, 0))
-	self.cancelbutton = self.mainmenu:AddItem(STRINGS.UI.MODSSCREEN.CANCEL, function() self:Cancel() end, Vector3(90,-220,0))
+	self.applybutton = self.mainmenu:AddItem(STRINGS.UI.MODSSCREEN.APPLY, function() self:Apply() end, Vector3(-90,-285,0))
+	self.cancelbutton = self.mainmenu:AddItem(STRINGS.UI.MODSSCREEN.CANCEL, function() self:Cancel() end, Vector3(90,-285,0))
+	self.modconfigbutton = self.mainmenu:AddItem(STRINGS.UI.MODSSCREEN.CONFIGUREMOD, function() self:ConfigureSelectedMod() end, Vector3(0, -165, 0))
+	self.modconfigbutton:SetScale(.85)
 	
 
 	self.option_offset = 0
@@ -82,16 +89,16 @@ local ModsScreen = Class(Screen, function(self, cb)
 	
 	self:CreateTopModsPanel()
 
-	
-
 	--------Build controller support
 	self.optionspanel:SetFocusChangeDir(MOVE_RIGHT, self.mainmenu)
 
 	self.applybutton:SetFocusChangeDir(MOVE_LEFT, self.optionspanel)
 	self.applybutton:SetFocusChangeDir(MOVE_RIGHT, self.cancelbutton)
+	self.applybutton:SetFocusChangeDir(MOVE_UP, self.modconfigbutton)
 
 	self.cancelbutton:SetFocusChangeDir(MOVE_LEFT, self.applybutton)
 	self.cancelbutton:SetFocusChangeDir(MOVE_RIGHT, self.morebutton)
+	self.cancelbutton:SetFocusChangeDir(MOVE_UP, self.modconfigbutton)
 
 	self.morebutton:SetFocusChangeDir(MOVE_LEFT, self.cancelbutton)
 	self.morebutton:SetFocusChangeDir(MOVE_UP, self.featuredbutton)
@@ -100,6 +107,10 @@ local ModsScreen = Class(Screen, function(self, cb)
 	self.featuredbutton:SetFocusChangeDir(MOVE_DOWN, self.morebutton)
 	self.featuredbutton:SetFocusChangeDir(MOVE_UP, self.modlinks[5])
 	self.featuredbutton:SetFocusChangeDir(MOVE_LEFT, self.cancelbutton)
+
+	self.modconfigbutton:SetFocusChangeDir(MOVE_LEFT, self.optionspanel)
+	self.modconfigbutton:SetFocusChangeDir(MOVE_RIGHT, self.morebutton)
+	self.modconfigbutton:SetFocusChangeDir(MOVE_DOWN, self.applybutton)
 
 	for i = 1, 5 do
 		if self.modlinks[i+1] ~= nil then
@@ -260,11 +271,11 @@ function ModsScreen:CreateDetailPanel()
 		self.detailimage = self.detailpanel:AddChild(Image("images/ui.xml", "portrait_bg.tex"))
 		self.detailimage:SetSize(102, 102)
 		--self.detailimage:SetScale(0.8,0.8,0.8)
-		self.detailimage:SetPosition(-130,117,0)
+		self.detailimage:SetPosition(-130,127,0)
 
 		self.detailtitle = self.detailpanel:AddChild(Text(TITLEFONT, 40))
 		self.detailtitle:SetHAlign(ANCHOR_LEFT)
-		self.detailtitle:SetPosition(70, 140, 0)
+		self.detailtitle:SetPosition(70, 155, 0)
 		self.detailtitle:SetRegionSize( 270, 70 )
 
 		--self.detailversion = self.detailpanel:addchild(text(titlefont, 20))
@@ -277,9 +288,15 @@ function ModsScreen:CreateDetailPanel()
 		self.detailauthor:SetColour(1.0,1.0,1.0,1)
 		--self.detailauthor:SetColour(0.9,0.8,0.6,1) -- link colour
 		self.detailauthor:SetHAlign(ANCHOR_LEFT)
-		self.detailauthor:SetPosition(70, 95, 0)
+		self.detailauthor:SetPosition(70, 113, 0)
 		self.detailauthor:SetRegionSize( 270, 70 )
 		self.detailauthor:EnableWordWrap(true)
+
+		self.detailcompatibility = self.detailpanel:AddChild(Text(TITLEFONT, 25))
+		self.detailcompatibility:SetColour(1.0,1.0,1.0,1)
+		self.detailcompatibility:SetHAlign(ANCHOR_LEFT)
+		self.detailcompatibility:SetPosition(70, 83, 0)
+		self.detailcompatibility:SetRegionSize( 270, 70 )
 
 		self.detaildesc = self.detailpanel:AddChild(Text(BODYTEXTFONT, 25))
 		self.detaildesc:SetPosition(6, -8, 0)
@@ -349,11 +366,7 @@ end
 
 
 function ModsScreen:StartWorkshopUpdate()
-	if TheSim:UpdateWorkshopMods( function() self:WorkshopUpdateComplete() end ) then
-		self.updatetask = scheduler:ExecutePeriodic(0, self.ShowWorkshopStatus, nil, 0, "workshopupdate", self )
-	else
-		self:WorkshopUpdateComplete()
-	end
+self:WorkshopUpdateComplete()
 end
 
 function ModsScreen:WorkshopUpdateComplete(status, message) --bool, string
@@ -490,16 +503,44 @@ function ModsScreen:RefreshOptions()
 		opt.status:SetPosition(66, -22, 0)
 		opt.status:SetRegionSize( 200, 50 )
 
+		opt.RoGcompatible = opt:AddChild(Image("images/ui.xml", "rog_off.tex"))
+		if modinfo and modinfo.reign_of_giants_compatible then
+			if modinfo.reign_of_giants_compatibility_specified == false then
+				opt.RoGcompatible:SetTexture("images/ui.xml", "rog_unknown.tex")
+			else
+				opt.RoGcompatible:SetTexture("images/ui.xml", "rog_on.tex")
+			end
+		end
+		opt.RoGcompatible:SetClickable(false)
+		opt.RoGcompatible:SetScale(.35,.33,1)
+		opt.RoGcompatible:SetPosition(144, -21, 0)
+
+		opt.DScompatible = opt:AddChild(Image("images/ui.xml", "ds_off.tex"))
+		if modinfo and modinfo.dont_starve_compatible then
+			if modinfo.dont_starve_compatibility_specified == false then
+				opt.DScompatible:SetTexture("images/ui.xml", "ds_unknown.tex")
+			else
+				opt.DScompatible:SetTexture("images/ui.xml", "ds_on.tex")
+			end
+		end
+		opt.DScompatible:SetClickable(false)
+		opt.DScompatible:SetScale(.35,.33,1)
+		opt.DScompatible:SetPosition(100, -21, 0)
+
 		if KnownModIndex:IsModEnabled(modname) then
 			opt.image:SetTint(1,1,1,1)
 			opt.checkbox:SetTexture("images/ui.xml", "button_checkbox2.tex")
 			opt.checkbox:SetTint(1,1,1,1)
 			opt.name:SetColour(1,1,1,1)
+			opt.RoGcompatible:SetTint(1,1,1,1)
+			opt.DScompatible:SetTint(1,1,1,1)
 		else
 			opt.image:SetTint(1.0,0.5,0.5,1)
 			opt.checkbox:SetTexture("images/ui.xml", "button_checkbox1.tex")
 			opt.checkbox:SetTint(1.0,0.5,0.5,1)
 			opt.name:SetColour(.7,.7,.7,1)
+			opt.RoGcompatible:SetTint(1.0,0.5,0.5,1)
+			opt.DScompatible:SetTint(1.0,0.5,0.5,1)
 		end
 		
 		local spacing = 105
@@ -667,6 +708,44 @@ function ModsScreen:ShowModDetails(idx)
 		self.modlinkbutton:SetText(STRINGS.UI.MODSSCREEN.MODLINKGENERIC)
 	end
 
+	if modinfo.dont_starve_compatible and modinfo.reign_of_giants_compatible then
+		if modinfo.dont_starve_compatibility_specified == false and modinfo.reign_of_giants_compatibility_specified == false then
+			self.detailcompatibility:SetString(STRINGS.UI.MODSSCREEN.COMPATIBILITY_UNKNOWN)
+		else
+			self.detailcompatibility:SetString(STRINGS.UI.MODSSCREEN.COMPATIBILITY_ALL)
+		end
+	else
+		if modinfo.dont_starve_compatible and not modinfo.reign_of_giants_compatible then
+			self.detailcompatibility:SetString(STRINGS.UI.MODSSCREEN.COMPATIBILITY_DS_ONLY)
+		elseif not modinfo.dont_starve_compatible and modinfo.reign_of_giants_compatible then
+			self.detailcompatibility:SetString(STRINGS.UI.MODSSCREEN.COMPATIBILITY_ROG_ONLY)
+		else
+			self.detailcompatibility:SetString(STRINGS.UI.MODSSCREEN.COMPATIBILITY_NONE)
+		end
+	end
+
+	if KnownModIndex:HasModConfigurationOptions(modname) then
+		self.modconfigbutton:Show()
+
+		-- Rebuild controller focus directions
+		if (TheInput:ControllerAttached() and not TheFrontEnd.tracking_mouse) then
+			self.applybutton:SetFocusChangeDir(MOVE_UP, self.modconfigbutton)
+			self.cancelbutton:SetFocusChangeDir(MOVE_UP, self.modconfigbutton)
+			self.modconfigbutton:SetFocusChangeDir(MOVE_LEFT, self.optionspanel)
+			self.modconfigbutton:SetFocusChangeDir(MOVE_RIGHT, self.morebutton)
+			self.modconfigbutton:SetFocusChangeDir(MOVE_DOWN, self.applybutton)
+		end
+	else
+		self.modconfigbutton:Hide()
+
+		-- Clear out controller focus directions when we hide it
+		if (TheInput:ControllerAttached() and not TheFrontEnd.tracking_mouse) then
+			self.applybutton:SetFocusChangeDir(MOVE_UP, nil)
+			self.cancelbutton:SetFocusChangeDir(MOVE_UP, nil)
+			self.modconfigbutton:ClearFocusDirs()
+		end
+	end
+
 	self.detailwarning:SetColour(1,1,1,1)
 	local modStatus = self:GetBestModStatus(modname)
 	if modStatus == "WORKING_NORMALLY" then
@@ -759,6 +838,12 @@ function ModsScreen:Apply()
 	self.cb(true)
 end
 
+function ModsScreen:ConfigureSelectedMod()
+	local modname = self.modnames[self.currentmod]
+	local modinfo = KnownModIndex:GetModInfo(modname)
+	TheFrontEnd:PushScreen(ModConfigurationScreen(modname))
+end
+
 function ModsScreen:LoadModInfoPrefabs(prefabtable)
 	for i,modname in ipairs(KnownModIndex:GetModNames()) do
 		local info = KnownModIndex:GetModInfo(modname)
@@ -805,6 +890,29 @@ function ModsScreen:ReloadModInfoPrefabs()
 	self:LoadModInfoPrefabs(newprefabs)
 	self:UnloadModInfoPrefabs(oldprefabs)
 	self.infoprefabs = newprefabs
+end
+
+function ModsScreen:GetHelpText()
+    local controller_id = TheInput:GetControllerID()
+    local t = {}
+    
+
+    -- table.insert(t,  TheInput:GetLocalizedControl(controller_id, CONTROL_PAGELEFT) .. " " .. STRINGS.UI.HELP.SCROLLBACK)
+    -- table.insert(t,  TheInput:GetLocalizedControl(controller_id, CONTROL_PAGERIGHT) .. " " .. STRINGS.UI.HELP.SCROLLFWD)
+    
+    --table.insert(t,  TheInput:GetLocalizedControl(controller_id, CONTROL_FOCUS_LEFT) .. " " .. STRINGS.UI.HELP.NEXTCHARACTER)
+    --table.insert(t,  TheInput:GetLocalizedControl(controller_id, CONTROL_FOCUS_RIGHT) .. " " .. STRINGS.UI.HELP.PREVCHARACTER)
+
+   	if table.contains(self.optionwidgets, TheFrontEnd:GetFocusWidget()) then
+   		table.insert(t, TheInput:GetLocalizedControl(controller_id, CONTROL_ACCEPT) .. " " .. STRINGS.UI.HELP.TOGGLE)
+   	end
+
+    if not self.no_cancel then
+    	table.insert(t,  TheInput:GetLocalizedControl(controller_id, CONTROL_CANCEL) .. " " .. STRINGS.UI.HELP.BACK)
+    end
+    
+
+    return table.concat(t, "  ")
 end
 
 return ModsScreen

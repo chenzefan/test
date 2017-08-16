@@ -1,3 +1,5 @@
+require "stategraphs/SGeyeplant"
+
 local assets =
 {
 	Asset("ANIM", "anim/eyeplant.zip"),

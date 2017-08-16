@@ -4,28 +4,32 @@ local quakelevels =
 		prequake = 7, 																								--the warning before the quake
 		quaketime = function() return math.random(5, 10) + 5 end, 													--how long the quake lasts
 		debrispersecond = function() return math.random(5, 6) end, 													--how much debris falls every second
-		nextquake = function() return TUNING.TOTAL_DAY_TIME * 0.5 + math.random() * TUNING.TOTAL_DAY_TIME end 	--how long until the next quake
+		nextquake = function() return TUNING.TOTAL_DAY_TIME * 0.5 + math.random() * TUNING.TOTAL_DAY_TIME end, 	--how long until the next quake
+		mammals = 1,
 	},
 
 	level2={
 		prequake = 6,
 		quaketime = function() return math.random(7, 12) + 5 end, 
 		debrispersecond = function() return math.random(6, 7) end, 
-		nextquake =  function() return TUNING.TOTAL_DAY_TIME * 2 + math.random() * TUNING.TOTAL_DAY_TIME * 1 end
+		nextquake =  function() return TUNING.TOTAL_DAY_TIME * 2 + math.random() * TUNING.TOTAL_DAY_TIME * 1 end,
+		mammals = 2,
 	},
 
 	level3={
 		prequake = 5, 
 		quaketime = function() return math.random(10, 15) + 5 end, 
 		debrispersecond = function() return math.random(7, 8) end, 
-		nextquake =  function() return TUNING.TOTAL_DAY_TIME * 1 + math.random() * TUNING.TOTAL_DAY_TIME * 1 end
+		nextquake =  function() return TUNING.TOTAL_DAY_TIME * 1 + math.random() * TUNING.TOTAL_DAY_TIME * 1 end,
+		mammals = 3,
 	},
 
 	level4={
 		prequake = 4, 
 		quaketime = function() return math.random(12, 17) + 5 end, 
 		debrispersecond = function() return math.random(8, 9) end, 
-		nextquake =  function() return TUNING.TOTAL_DAY_TIME * 1 + math.random() * TUNING.TOTAL_DAY_TIME * 0.5 end
+		nextquake =  function() return TUNING.TOTAL_DAY_TIME * 1 + math.random() * TUNING.TOTAL_DAY_TIME * 0.5 end,
+		mammals = 4,
 	},
 
 	level5=
@@ -33,7 +37,8 @@ local quakelevels =
 		prequake = 3, 
 		quaketime = function() return math.random(15, 20) + 5 end, 
 		debrispersecond = function() return math.random(9, 10) end, 
-		nextquake =  function() return TUNING.TOTAL_DAY_TIME * 0.5 + math.random() * TUNING.TOTAL_DAY_TIME end
+		nextquake =  function() return TUNING.TOTAL_DAY_TIME * 0.5 + math.random() * TUNING.TOTAL_DAY_TIME end,
+		mammals = 4,
 	},
 
 	tentacleQuake=
@@ -42,6 +47,7 @@ local quakelevels =
 		quaketime = function() return GetRandomWithVariance(3,.5) end, 	        --how long the quake lasts
 		debrispersecond = function() return GetRandomWithVariance(20,.5) end, 	--how much debris falls every second
 		nextquake = function() return TUNING.TOTAL_DAY_TIME * 100 end, 	        --how long until the next quake
+		mammals = 3,
 	},
 }
 
@@ -57,6 +63,7 @@ local Quaker = Class(function(self,inst)
 	self.quaketime = self.quakelevel.quaketime()
 	self.debrispersecond = self.quakelevel.debrispersecond()
 	self.nextquake = self.quakelevel.nextquake()
+	self.mammals_per_quake = self.quakelevel.mammals,
 
 	self.inst:ListenForEvent("explosion", function(inst, data)
 		if not self.quake and self.nextquake > self.prequake + 1 then
@@ -102,6 +109,7 @@ function Quaker:OnSave()
             self.quaketime = self.quakelevel.quaketime()
             self.debrispersecond = self.quakelevel.debrispersecond()
             self.nextquake = self.quakelevel.nextquake()
+            self.mammals_per_quake = self.quakelevel.mammals
         end
 		return
 		{
@@ -109,6 +117,7 @@ function Quaker:OnSave()
 			quaketime = self.quaketime,
 			debrispersecond = self.debrispersecond,
 			nextquake = self.nextquake,
+			mammals = self.mammals_per_quake
 		}
 	end
 	self.noserial = false
@@ -119,6 +128,7 @@ function Quaker:OnLoad(data)
 	self.quaketime = data.quaketime or self.quakelevel.quaketime()
 	self.debrispersecond = data.debrispersecond or self.quakelevel.debrispersecond()
 	self.nextquake = data.nextquake or self.quakelevel.nextquake()
+	self.mammals_per_quake = data.mammals or self.quakelevel.mammals
 end
 
 function Quaker:OnProgress()
@@ -139,6 +149,7 @@ function Quaker:SetNextQuake()
 	self.quaketime = self.quakelevel.quaketime()
 	self.debrispersecond = self.quakelevel.debrispersecond()
 	self.nextquake = self.quakelevel.nextquake()
+	self.mammals_per_quake = self.quakelevel.mammals
 end
 
 function Quaker:GetTimeForNextDebris()
@@ -196,6 +207,7 @@ function Quaker:EndQuake()
         self.quaketime = self.quakelevel.quaketime()
         self.debrispersecond = self.quakelevel.debrispersecond()
         self.nextquake = self.quakelevel.nextquake()
+        self.mammals_per_quake = self.quakelevel.mammals
     end
 	self.quake = false
 	self.inst:PushEvent("endquake")
@@ -217,6 +229,7 @@ function Quaker:ForceQuake(level)
         self.quaketime = self.quakelevel.quaketime()
         self.debrispersecond = self.quakelevel.debrispersecond()
         self.nextquake = self.quakelevel.nextquake()
+        self.mammals_per_quake  = self.quakelevel.mammals
     end
 	self.nextquake = self.prequake
 
@@ -243,7 +256,15 @@ function Quaker:GetDebris()
 	if rng < 0.75 then
 		todrop = debris.common[math.random(1, #debris.common)]
 	elseif rng >= 0.75 and rng < 0.95 then
+		if self.mammals_per_quake > 0 and GetWorld():IsRuins() then self.mammals_per_quake = 0 end -- Don't allow mammals to spawn from quakes in the ruins
 		todrop = debris.rare[math.random(1, #debris.rare)]
+		-- Make sure we don't spawn a ton of mammals per quake
+		local attempts = 0
+		while self.mammals_per_quake <= 0 and (todrop == "mole" or todrop == "rabbit") do
+			todrop = debris.rare[math.random(1, #debris.rare)]
+			attempts = attempts + 1
+			if attempts > 10 then break end
+		end
 	else
 		todrop = debris.veryrare[math.random(1, #debris.veryrare)]
 	end
@@ -255,6 +276,7 @@ function Quaker:SpawnDebris(spawn_point)
 	if prefab then
 	    local db = SpawnPrefab(prefab)
 	    if db and (prefab == "rabbit" or prefab == "mole") and db.sg then
+	    	self.mammals_per_quake = self.mammals_per_quake - 1
 	    	db.sg:GoToState("fall")
 	    end
 	    if math.random() < .5 then
@@ -292,6 +314,7 @@ local function grounddetection_update(inst)
 	end
 
 	if pt.y < 2 then
+		inst.fell = true
 		inst.Physics:SetMotorVel(0,0,0)
     end
 
@@ -326,6 +349,15 @@ local function grounddetection_update(inst)
 			inst:Remove()
 		end
 	end
+
+	-- Failsafe: if the entity has been alive for at least 1 second, hasn't changed height significantly since last tick, and isn't near the ground, remove it and its shadow
+	if inst.last_y and pt.y > 2 and inst.last_y > 2 and (inst.last_y - pt.y  < 1) and inst:GetTimeAlive() > 1 and not inst.fell then
+		if inst.shadow then
+			inst.shadow:Remove()
+		end
+		inst:Remove()
+	end
+	inst.last_y = pt.y
 end
 
 local function start_grounddetection(inst)

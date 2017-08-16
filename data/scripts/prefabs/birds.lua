@@ -8,6 +8,9 @@ This assumes the bird already has a build, inventory icon, sounds and a feather_
 
 ]]--
 
+require "brains/birdbrain"
+require "stategraphs/SGbird"
+
 local function TrackInSpawner(inst)
     local ground = GetWorld()
     if ground and ground.components.birdspawner then

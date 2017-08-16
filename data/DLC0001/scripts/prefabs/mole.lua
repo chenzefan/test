@@ -1,3 +1,6 @@
+require("brains/molebrain")
+require "stategraphs/SGmole"
+
 local assets=
 {
 	Asset("ANIM", "anim/mole_build.zip"),
@@ -17,6 +20,9 @@ local prefabs =
 }
 
 local function OnAttacked(inst, data)
+    -- Don't spread the word when whacked
+    if data and data.weapon and data.weapon == "hammer" then return end 
+
     local x,y,z = inst.Transform:GetWorldPosition()
     local ents = TheSim:FindEntities(x,y,z, 30, {'mole'})
     
@@ -53,17 +59,21 @@ end
 
 local function onpickup(inst)
     inst:PushEvent("ontrapped")
+    inst.SoundEmitter:KillSound("move")
+    inst.SoundEmitter:KillSound("sniff")
     inst.SoundEmitter:KillSound("stunned")
     if inst.stunnedkillsleepsfxtask then inst.stunnedkillsleepsfxtask:Cancel() inst.stunnedkillsleepsfxtask = nil end
     if inst.stunnedsleepsfxtask then inst.stunnedsleepsfxtask:Cancel() inst.stunnedsleepsfxtask = nil end
 end
 
 local function OnLoad(inst, data)
-
+    if data then
+        inst.needs_home_time = data.needs_home_time and -data.needs_home_time or nil 
+    end
 end
 
 local function OnSave(inst, data)
-
+    data.needs_home_time = inst.needs_home_time and (GetTime() - inst.needs_home_time) or nil
 end
 
 local function SetState(inst, state)
@@ -96,7 +106,9 @@ local function displaynamefn(inst)
 end
 
 local function getstatus(inst)
-    if inst.State == "under" then
+    if inst.components.inventoryitem and inst.components.inventoryitem:IsHeld() then
+        return "HELD"
+    elseif inst.State == "under" then
         return "UNDERGROUND"
     else
         return "ABOVEGROUND"
@@ -104,8 +116,14 @@ local function getstatus(inst)
 end
 
 local function ondrop(inst)
+    inst.SoundEmitter:KillSound("move")
+    inst.SoundEmitter:KillSound("sniff")
+    inst.SoundEmitter:KillSound("stunned")
     inst:SetState("above")
     inst.sg:GoToState("stunned", true)
+    if not (inst.components.homeseeker and inst.components.homeseeker.home and inst.components.homeseeker.home:IsValid()) and not GetWorld():IsCave() then
+        inst.needs_home_time = GetTime()
+    end
 end
 
 local function OnSleep(inst)
@@ -183,14 +201,8 @@ local function fn(Sim)
     -- inst.components.inventoryitem:SetOnDroppedFn(ondrop) Done in MakeFeedablePet
 
     inst:AddComponent("knownlocations")
-    inst.needs_home = false
-    inst:ListenForEvent("molehilldug", function(inst) 
-        inst:DoTaskInTime(math.random(5,10), function(inst)
-            inst:ClearBufferedAction()
-            inst.needs_home = true 
-        end)
-    end)
     inst.last_above_time = 0
+    inst.make_home_delay = math.random(5,10)
     inst.peek_interval = math.random(15,25)
 
     inst:AddComponent("inspectable")

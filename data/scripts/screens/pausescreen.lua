@@ -101,7 +101,7 @@ local PauseScreen = Class(Screen, function(self)
 	local button_w = 160
 	
 	local buttons = {}
-	table.insert(buttons, {text=STRINGS.UI.PAUSEMENU.CONTINUE, cb=function() TheFrontEnd:PopScreen(self) if not self.was_paused then SetPause(false) end end })
+	table.insert(buttons, {text=STRINGS.UI.PAUSEMENU.CONTINUE, cb=function() TheFrontEnd:PopScreen(self) if not self.was_paused then SetPause(false) end GetWorld():PushEvent("continuefrompause") end })
 	table.insert(buttons, {text=STRINGS.UI.PAUSEMENU.CONTROLS, cb=function() TheFrontEnd:PushScreen( ControlsScreen(true)) end })    	    
     table.insert(buttons, {text=STRINGS.UI.PAUSEMENU.OPTIONS, cb=function() TheFrontEnd:PushScreen( OptionsScreen(true))	end })
     table.insert(buttons, {text=can_save and STRINGS.UI.PAUSEMENU.SAVEANDQUIT or STRINGS.UI.PAUSEMENU.QUIT, cb=function() self:doconfirmquit() end})
@@ -150,6 +150,7 @@ function PauseScreen:OnControl(control, down)
 		self.active = false
 		TheFrontEnd:PopScreen() 
 		SetPause(false)
+		GetWorld():PushEvent("continuefrompause")
 		return true
 	end
 

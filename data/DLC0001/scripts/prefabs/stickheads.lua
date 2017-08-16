@@ -65,7 +65,15 @@ end
 local function onload(inst, data)
 	if data and data.burnt then
         inst.components.burnable.onburnt(inst)
-    end
+    else
+    	inst:DoTaskInTime(0, function(inst) 
+		    if (GetClock():IsNight() and GetClock():GetMoonPhase() == "full") then
+		    	OnFullMoon(inst)
+		    else
+		    	OnDayTime(inst)
+		    end
+		end)
+	end
 end
 
 local function create_common(inst)

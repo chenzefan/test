@@ -16,7 +16,11 @@ local CharacterSelectScreen = Class(Screen, function(self, profile, cb, no_backb
     self.currentcharacter = nil
 
     self.bg = self:AddChild(Image("images/ui.xml", "bg_plain.tex"))
-    self.bg:SetTint(BGCOLOURS.RED[1],BGCOLOURS.RED[2],BGCOLOURS.RED[3], 1)
+    if IsDLCEnabled(REIGN_OF_GIANTS) then
+   		self.bg:SetTint(BGCOLOURS.PURPLE[1],BGCOLOURS.PURPLE[2],BGCOLOURS.PURPLE[3], 1)
+   	else
+   		self.bg:SetTint(BGCOLOURS.RED[1],BGCOLOURS.RED[2],BGCOLOURS.RED[3], 1)
+   	end
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
     self.bg:SetHRegPoint(ANCHOR_MIDDLE)
     self.bg:SetVAnchor(ANCHOR_MIDDLE)
@@ -78,12 +82,39 @@ local CharacterSelectScreen = Class(Screen, function(self, profile, cb, no_backb
 		self.startbutton:SetTextSize(40)
 		--self.startbutton.text:SetVAlign(ANCHOR_MIDDLE)
 		self.startbutton.text:SetColour(0,0,0,1)
-		self.startbutton:SetPosition( 820+ adjust, 80, 0)
+		self.startbutton:SetPosition( 820 + 90 + adjust, 75, 0)
+
+		self.randomcharbutton = self.fixed_root:AddChild(ImageButton())
+		self.randomcharbutton:SetText(STRINGS.UI.SANDBOXMENU.RANDOM)
+		self.randomcharbutton:SetOnClick(
+			function()
+				self.randomcharbutton:Disable()
+				local all_chars = GetActiveCharacterList()
+				local rand_char = all_chars[math.random(#all_chars)]
+				local num_attempts = 0
+				while not self.profile:IsCharacterUnlocked(rand_char) do
+					rand_char = all_chars[math.random(#all_chars)]
+					num_attempts = num_attempts + 1
+					if num_attempts > 10 then 
+						rand_char = "wilson"
+						break
+					end
+				end
+				if self.cb then
+					self.cb(rand_char, true)
+				end
+			end
+		)
+		self.randomcharbutton:SetFont(BUTTONFONT)
+		self.randomcharbutton:SetTextSize(40)
+		self.randomcharbutton.text:SetColour(0,0,0,1)
+		self.randomcharbutton:SetPosition( 820 - 83 + adjust, 75, 0)
 
 
 		if not no_backbutton then
 		
-			self.startbutton:SetPosition( 820 + 100+ adjust, 80, 0)
+			self.startbutton:SetPosition( 820 + 175+ adjust, 75, 0)
+			self.randomcharbutton:SetPosition( 820 + 5 + adjust, 75, 0)
 
 			self.backbutton = self.fixed_root:AddChild(ImageButton())
 			--button:SetScale(.8,.8,.8)
@@ -92,7 +123,7 @@ local CharacterSelectScreen = Class(Screen, function(self, profile, cb, no_backb
 			self.backbutton:SetFont(BUTTONFONT)
 			self.backbutton:SetTextSize(40)
 			self.backbutton.text:SetColour(0,0,0,1)
-			self.backbutton:SetPosition( 820 - 100+ adjust, 80, 0)
+			self.backbutton:SetPosition( 820 - 165+ adjust, 75, 0)
 		end
 	end
     
@@ -219,7 +250,7 @@ function CharacterSelectScreen:OnControl(control, down)
     		return true 
     	end
     end
-    
+
     if TheInput:ControllerAttached() then
 		if self.can_accept and not down and control == CONTROL_ACCEPT then
 			if self.cb then
@@ -229,6 +260,24 @@ function CharacterSelectScreen:OnControl(control, down)
 		
 		end
     end
+
+    if not down and control == CONTROL_INSPECT then
+		local all_chars = GetActiveCharacterList()
+		local rand_char = all_chars[math.random(#all_chars)]
+		local num_attempts = 0
+		while not self.profile:IsCharacterUnlocked(rand_char) do
+			rand_char = all_chars[math.random(#all_chars)]
+			num_attempts = num_attempts + 1
+			if num_attempts > 10 then 
+				rand_char = "wilson"
+				break
+			end
+		end
+		if self.cb then
+			self.cb(rand_char, true)
+		end
+		return true
+	end
     
     
     if not down and control == CONTROL_PAGELEFT then
@@ -322,6 +371,8 @@ function CharacterSelectScreen:GetHelpText()
    	if self.can_accept then
    		table.insert(t,  TheInput:GetLocalizedControl(controller_id, CONTROL_ACCEPT) .. " " .. STRINGS.UI.HELP.SELECT)
    	end
+
+   	table.insert(t, TheInput:GetLocalizedControl(controller_id, CONTROL_INSPECT) .. " " .. STRINGS.UI.HELP.RANDOM)
 
     if not self.no_cancel then
     	table.insert(t,  TheInput:GetLocalizedControl(controller_id, CONTROL_CANCEL) .. " " .. STRINGS.UI.HELP.BACK)

@@ -9,8 +9,8 @@ local Clock = Class(function(self, inst)
     self.numcycles = 0
     self.lmax = 1
 
-    self.dayColour =         Point(255/255, 230/255, 158/255)
-    self.duskColour =        Point(100/255, 100/255, 100/255)
+    self.dayColour =         Point(255/255, 230/255, 158/255) -- This isn't being used any longer: now use GetDayColour to do special casing for Spring
+    self.duskColour =        Point(100/255, 100/255, 100/255) -- This isn't being used any longer: now use GetDuskColour to do special casing for Spring
     self.nightColour =       Point(0/255,   0/255,   0/255)
     self.fullMoonColour =    Point(84/255,  122/255, 156/255)
     self.caveColour =        Point(0/255,   0/255,   0/255)
@@ -42,6 +42,22 @@ local Clock = Class(function(self, inst)
     self:StartDay()
     
 end)
+
+local function GetDayColour()
+    if GetSeasonManager() and GetSeasonManager():IsSpring() then
+        return Point(255/255, 244/255, 213/255)
+    else
+        return Point(255/255, 230/255, 158/255)
+    end
+end
+
+local function GetDuskColour()
+    if GetSeasonManager() and GetSeasonManager():IsSpring() then
+        return Point(171/255, 146/255, 147/255)
+    else
+        return Point(100/255, 100/255, 100/255)
+    end
+end
 
 function Clock:GetTimeLeftInEra()
 	return self.timeLeftInEra
@@ -320,9 +336,9 @@ function Clock:LongUpdate(dt)
 	self.lerptimeleft = 0
     
 	if self:IsDay() then
-		self.currentColour = self:IsNightVision() and self.dayNightVisionColour or self.dayColour
+		self.currentColour = self:IsNightVision() and self.dayNightVisionColour or GetDayColour()
 	elseif self:IsDusk() then
-        self.currentColour = self:IsNightVision() and self.duskNightVisionColour or self.duskColour
+        self.currentColour = self:IsNightVision() and self.duskNightVisionColour or GetDuskColour()
 	else
         if self:GetMoonPhase() == "full" then
             self.currentColour = self:IsNightVision() and self.fullMoonNightVisionColour or self.fullMoonColour
@@ -393,20 +409,30 @@ function Clock:OnUpdate(dt)
                     col = self:IsNightVision() and self.nightNightVisionColour or self.nightColour
                 end
             elseif self:IsDusk() then
-                col = self:IsNightVision() and self.duskNightVisionColour or self.duskColour
+                col = self:IsNightVision() and self.duskNightVisionColour or GetDuskColour()
             else
-                col = self:IsNightVision() and self.dayNightVisionColour or self.dayColour
+                col = self:IsNightVision() and self.dayNightVisionColour or GetDayColour()
             end
-            self:LerpAmbientColour(col*.5, col, 1.5)
             self.lightning = false
+            self.last_lightning_time = GetTime()
         end
 
     else
         -- if GetWorld():IsCave() then            
         --     return
         -- end
-        local p = GetSeasonManager() and GetSeasonManager():GetWeatherLightPercent() or 1
-        TheSim:SetAmbientColour( p*self.currentColour.x, p*self.currentColour.y, p*self.currentColour.z )
+
+        -- If night just started, lerp instead of instant color change
+        if self:IsNight() and (self.totalEraTime - self.timeLeftInEra) <= 8 and self.last_lightning_time and (GetTime() - self.last_lightning_time) <= dt then
+            if self:GetMoonPhase() ~= "full" and not GetWorld():IsCave() then
+                if not self:IsNightVision() then 
+                    self:LerpAmbientColour(GetDuskColour(), self.nightColour, 4) 
+                end
+            end
+        else
+            local p = GetSeasonManager() and GetSeasonManager():GetWeatherLightPercent() or 1
+            TheSim:SetAmbientColour( p*self.currentColour.x, p*self.currentColour.y, p*self.currentColour.z )
+        end
     end
 
 
@@ -502,7 +528,7 @@ function Clock:StartDay(instant, fromnightvision)
     if self.phase ~= self.previous_phase or fromnightvision then
         self.previous_phase = self.phase
         if not self:IsNightVision() then 
-            self:LerpAmbientColour(self.currentColour, self.dayColour, instant and 0 or 4) 
+            self:LerpAmbientColour(self.currentColour, GetDayColour(), instant and 0 or 4) 
         else
             self:LerpAmbientColour(self.currentColour, self.dayNightVisionColour, instant and 0 or 4) 
         end
@@ -524,7 +550,7 @@ function Clock:StartDusk(instant, fromnightvision)
     if self.phase ~= self.previous_phase or fromnightvision then
         self.previous_phase = self.phase
     	if not self:IsNightVision() then 
-            self:LerpAmbientColour(self.currentColour, self.duskColour, instant and 0 or 6) 
+            self:LerpAmbientColour(self.currentColour, GetDuskColour(), instant and 0 or 6) 
         else
             self:LerpAmbientColour(self.currentColour, self.duskNightVisionColour, instant and 0 or 6) 
         end

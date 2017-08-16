@@ -8,6 +8,26 @@ function ModInfoname(name)
 	end
 end
 
+-- This isn't for modders to use: see mods.lua, CreateEnvironment function (line 94 specifically)
+function GetModConfigData(modname, optionname)
+	local config = KnownModIndex:GetModConfigurationOptions(modname)
+	for i,v in pairs(config) do
+		if v.name == optionname then
+			return v.saved or v.default
+		end
+	end
+	return nil
+end
+
+function GetModConfigDataFn(modname)
+
+	local function PublicGetModData( optionname )
+		return GetModConfigData(modname, optionname)
+	end
+
+	return PublicGetModData
+end
+
 
 local function AddModCharacter(name)
 	table.insert(MODCHARACTERLIST, name)
@@ -170,6 +190,23 @@ local function InsertPostInitFunctions(env)
 		table.insert(env.postinitfns.ComponentPostInit[component], fn)
 	end
 
+	-- You can use this as a post init for any prefab. If you add a global prefab post init function, it will get called on every prefab that spawns.
+	-- This is powerful but also be sure to check that you're dealing with the appropriate type of prefab before doing anything intensive, or else
+	-- you might hit some performance issues. The next function down, player post init, is both itself useful and a good example of how you might
+	-- want to write your global prefab post init functions.
+	env.postinitfns.PrefabPostInitAny = {}
+	env.AddPrefabPostInitAny = function(fn)
+		initprint("AddPrefabPostInitAny")
+		table.insert(env.postinitfns.PrefabPostInitAny, fn)
+	end
+
+	-- An illustrative example of how to use a global prefab post init, in this case, we're making a player prefab post init.
+	env.AddPlayerPostInit = function(fn)
+		env.AddPrefabPostInitAny( function(inst)
+			if inst and inst:HasTag("player") then fn(inst) end
+		end)
+	end
+
 	env.postinitfns.PrefabPostInit = {}
 	env.AddPrefabPostInit = function(prefab, fn)
 		initprint("AddPrefabPostInit", prefab)
@@ -218,10 +255,17 @@ local function InsertPostInitFunctions(env)
 		AddIngredientValues(names, tags, cancook, candry)
 	end
 
+	env.cookerrecipes = {}
 	env.AddCookerRecipe = function(cooker, recipe)
 		require("cooking")
 		initprint("AddCookerRecipe", cooker, recipe.name)
 		AddCookerRecipe(cooker, recipe)
+		if env.cookerrecipes[cooker] == nil then
+	        env.cookerrecipes[cooker] = {}
+	    end
+	    if recipe.name then
+	        table.insert(env.cookerrecipes[cooker], recipe.name)
+	    end
 	end
 
 	env.AddModCharacter = function(name)

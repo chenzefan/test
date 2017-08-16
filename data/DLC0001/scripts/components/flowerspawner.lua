@@ -81,11 +81,15 @@ function FlowerSpawner:OnUpdate( dt )
         self.spawntimer = self.spawntimer - dt
 
         if self.spawntimer <= 0 then
-        	local pt = self:GetSpawnPoint(player)
+            -- Make sure we're not crowded on flowers before we actually spawn one
+            local x,y,z = player.Transform:GetWorldPosition()
+            if #TheSim:FindEntities(x, y ,z , 50, {"flower"}) < TUNING.MAX_FLOWERS_PER_AREA then
+            	local pt = self:GetSpawnPoint(player)
 
-        	if pt then
-        		self:SpawnFlower(pt)
-        	end
+            	if pt then
+            		self:SpawnFlower(pt)
+            	end
+            end
 
         	self.spawntimer = self:GetSpawnTime()
         end

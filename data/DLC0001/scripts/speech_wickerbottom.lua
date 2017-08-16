@@ -12,7 +12,11 @@ return
     DESCRIBE=
     {
         GLOMMER = "A bizarre specimen of the insecta class.",
-        GLOMMERFLOWER = "It's dripping with goo.",
+        GLOMMERFLOWER = 
+        {
+            GENERIC = "It's dripping with goo.",
+            DEAD = "It's gone grey, but it's still dripping.",
+        },
         GLOMMERWINGS = "The fins of that strange specimen.",
         GLOMMERFUEL = "It appears to be quite volatile.",
         BELL = "Quiet! This is a library!",
@@ -24,6 +28,7 @@ return
         WEBBERSKULL = "That is a most unusual skull.",
         MOLE =
         {
+            HELD = "I don't think my pocket is its natural habitat.",
             UNDERGROUND = "Something is tunneling down there.",
             ABOVEGROUND = "Ah, it's Talpidae!",
         },
@@ -69,6 +74,7 @@ return
             EMPTY = "Looks used up.",
         },
         CATCOONHAT = "Not quite like Crockett's, but it'll do.",
+        COONTAIL = "A flexible torso appendage.",
         COOKPOT =
         {
             COOKING_LONG = "It's got a bit to go before it's ready.",

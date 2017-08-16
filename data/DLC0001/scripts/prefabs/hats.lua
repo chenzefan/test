@@ -609,6 +609,9 @@ function MakeHat(name)
         inst:AddComponent("waterproofer")
         inst.components.waterproofer:SetEffectiveness(TUNING.WATERPROOFNESS_SMALL)
 
+        inst:AddComponent("characterspecific")
+        inst.components.characterspecific:SetOwner("wathgrithr")
+
         return inst
     end
 
@@ -626,6 +629,9 @@ function MakeHat(name)
         inst:AddComponent("insulator")
         inst.components.insulator:SetInsulation(TUNING.INSULATION_LARGE)
         inst.components.insulator:SetSummer()
+
+        inst:AddComponent("waterproofer")
+        inst.components.waterproofer.effectiveness = 0 
 
         inst:AddComponent("perishable")
         inst.components.perishable:SetPerishTime(TUNING.PERISH_FASTISH)

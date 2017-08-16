@@ -1,3 +1,6 @@
+require "brains/slurtlesnailbrain"
+require "stategraphs/SGslurtle"
+
 local assets =
 {
 	Asset("ANIM", "anim/slurtle.zip"),

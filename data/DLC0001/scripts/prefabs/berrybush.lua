@@ -176,7 +176,8 @@ local function createbush(bushname)
 		    inst.components.pickable.ontransplantfn = ontransplantfn
 		    inst.components.pickable.max_cycles = TUNING.BERRYBUSH_CYCLES + math.random(2)
 		    inst.components.pickable.cycles_left = inst.components.pickable.max_cycles
-		    inst.makewitherabletask = inst:DoTaskInTime(TUNING.WITHER_BUFFER_TIME, function(inst) inst.components.pickable:MakeWitherable() end)
+			local variance = math.random() * 4 - 2
+			inst.makewitherabletask = inst:DoTaskInTime(TUNING.WITHER_BUFFER_TIME + variance, function(inst) inst.components.pickable:MakeWitherable() end)
 		    
 		    
 		    MakeLargeBurnable(inst)

@@ -147,8 +147,8 @@ function DeciduousTreeUpdater:OnUpdate(dt)
 		-- We want to spawn drakes at some interval
     	if self.time_to_passive_drake <= 0 then
     		if self.num_passive_drakes == 0 then
-    			self.num_passive_drakes = 1
-    			if math.random() < .33 then self.num_passive_drakes = 2 end
+    			self.num_passive_drakes = TUNING.PASSIVE_DRAKE_SPAWN_NUM_NORMAL
+    			if math.random() < .33 then self.num_passive_drakes = TUNING.PASSIVE_DRAKE_SPAWN_NUM_LARGE end
     			self.passive_drakes_spawned = 0
     		elseif self.passive_drakes_spawned < self.num_passive_drakes then
         		local passdrake = SpawnPrefab("birchnutdrake")

@@ -11,6 +11,7 @@ local prefabs =
     "staffcastfx",
 	"stafflight",
     "staff_tornado",
+    "cutgrass",
 }
 
 ---------RED STAFF---------
@@ -21,7 +22,13 @@ local function onattack_red(inst, attacker, target)
         if target.components.freezable and target.components.freezable:IsFrozen() then           
             target.components.freezable:Unfreeze()            
         else            
-            target.components.burnable:Ignite(true)
+            if target.components.fueled and target:HasTag("campfire") and target:HasTag("structure") then
+                -- Rather than worrying about adding fuel cmp here, just spawn some fuel and immediately feed it to the fire
+                local fuel = SpawnPrefab("cutgrass")
+                if fuel then target.components.fueled:TakeFuelItem(fuel) end
+            else
+                target.components.burnable:Ignite(true)
+            end
         end   
     end
 

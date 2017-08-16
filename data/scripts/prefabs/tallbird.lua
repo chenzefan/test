@@ -1,4 +1,5 @@
 local brain = require "brains/tallbirdbrain"
+require "stategraphs/SGtallbird"
 
 local assets=
 {

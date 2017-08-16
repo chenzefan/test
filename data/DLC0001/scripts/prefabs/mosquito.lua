@@ -1,3 +1,6 @@
+require("brains/mosquitobrain")
+require "stategraphs/SGmosquito"
+
 local assets=
 {
 	Asset("ANIM", "anim/mosquito.zip"),

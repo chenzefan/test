@@ -1,3 +1,5 @@
+require("periodicthreats")
+
 local cave_prefabs =
 {
 	"world",

@@ -109,24 +109,6 @@ local function onchildgoinghome(inst, data)
 	end
 end
 
-local function onsleep(inst)
-	if not inst:HasTag("burnt") then
-	    if inst.components.harvestable then
-	        inst.components.harvestable:SetGrowTime(TUNING.BEEBOX_HONEY_TIME)
-	        inst.components.harvestable:StartGrowing()
-	    end
-	end
-end
-
-local function stopsleep(inst)
-	if not inst:HasTag("burnt") then
-	    if inst.components.harvestable then
-	        inst.components.harvestable:SetGrowTime(nil)
-	        inst.components.harvestable:StopGrowing()
-	    end
-	end
-end
-
 local function OnSave(inst, data)
 	if inst:HasTag("burnt") or inst:HasTag("fire") then
         data.burnt = true
@@ -151,11 +133,17 @@ end
 local function OnEntityWake(inst)
 	if not inst:HasTag("burnt") then
     	inst.SoundEmitter:PlaySound("dontstarve/bee/bee_box_LP", "loop")
-    end
+        if inst.components.harvestable and inst.sleep_time and ((GetTime() - inst.sleep_time) >= TUNING.BEEBOX_HONEY_TIME) then
+        	inst.components.harvestable:Grow()
+	    end
+	end
 end
 
 local function OnEntitySleep(inst)
 	inst.SoundEmitter:KillSound("loop")
+	if not inst:HasTag("burnt") and inst.components.harvestable then
+		inst.sleep_time = GetTime()
+	end
 end
 
 local function fn(Sim)
@@ -218,9 +206,6 @@ local function fn(Sim)
     inst.components.workable:SetWorkLeft(4)
 	inst.components.workable:SetOnFinishCallback(onhammered)
 	inst.components.workable:SetOnWorkCallback(onhit)
-	
-	inst:ListenForEvent("entitysleep", onsleep)
-	inst:ListenForEvent("entitywake", stopsleep)
 	
     updatelevel(inst)
     

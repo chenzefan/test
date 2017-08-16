@@ -113,6 +113,10 @@ function Transformer:SetTransformEvent(event, target)
 	end)
 end
 
+function Transformer:SetOnLoadCheck(check)
+	self.onLoadCheck = check
+end
+
 function Transformer:Transform()
 	self.inst:DoTaskInTime(math.random(), function() 
 		local transformedPrefab = SpawnPrefab(self.transformPrefab)
@@ -124,6 +128,10 @@ function Transformer:Transform()
 
 		if self.revertEvent then
 			transformedPrefab.components.transformer:SetRevertEvent(self.revertEvent, self.revertEventTarget)
+		end
+
+		if self.onLoadCheck then
+			transformedPrefab.components.transformer:SetOnLoadCheck(self.onLoadCheck)
 		end
 
 		transformedPrefab.components.transformer:SetObjectData(self.objectData)
@@ -203,6 +211,8 @@ function Transformer:OnSave()
 
 	data.transformEvent = self.transformEvent
 	data.revertEvent = self.revertEvent
+
+	data.onLoadCheck = self.onLoadCheck
 	
 	if self.transformEventTarget then
 		data.transformEventTarget = self.transformEventTarget.GUID
@@ -224,6 +234,7 @@ function Transformer:OnLoad(data)
 		self.transformed = data.transformed
 		self.transformEvent = data.transformEvent
 		self.revertEvent = data.revertEvent
+		self.onLoadCheck = data.onLoadCheck
 
 		if data.queuedRevert then
 			self:RevertOnSleep()
@@ -236,6 +247,17 @@ function Transformer:OnLoad(data)
 end
 
 function Transformer:LoadPostPass(ents, data)
+	self.inst:DoTaskInTime(0, function(inst)
+		if inst.components.transformer.onLoadCheck ~= nil then
+			if inst.components.transformer.onLoadCheck() and not inst.components.transformer.transformed then
+				inst.components.transformer:GetObjectData()
+				inst.components.transformer:Transform()
+			elseif not inst.components.transformer.onLoadCheck() and inst.components.transformer.transformed then
+				inst.components.transformer:Revert()
+			end
+		end
+	end)
+
 	if self.transformEvent then
 		if data.transformEventTarget then
 			local tar = ents[data.transformEventTarget]

@@ -1,3 +1,9 @@
+require "brains/pigbrain"
+require "brains/pigguardbrain"
+require "brains/werepigbrain"
+require "stategraphs/SGpig"
+require "stategraphs/SGwerepig"
+
 local assets =
 {
 	Asset("ANIM", "anim/ds_pig_basic.zip"),
@@ -457,9 +463,11 @@ local function common()
 	inst.components.werebeast:SetTriggerLimit(4)
 
     inst:ListenForEvent("exitlimbo", function(inst)
-        if GetClock() and GetClock():GetMoonPhase() == "full" and GetClock():IsNight() and inst.entity:IsVisible() and not inst.components.werebeast:IsInWereState() then
-            inst.components.werebeast:SetWere()
-        end
+        inst:DoTaskInTime(.2, function(inst)
+            if GetClock() and GetClock():GetMoonPhase() == "full" and GetClock():IsNight() and inst.entity:IsVisible() and not inst.components.werebeast:IsInWereState() then
+                inst.components.werebeast:SetWere()
+            end
+        end)
     end)
 	
     ------------------------------------------

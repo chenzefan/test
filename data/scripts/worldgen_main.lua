@@ -7,7 +7,6 @@ if SEED == nil then
 end
 MODS_ENABLED = PLATFORM ~= "PS4" and PLATFORM ~= "NACL"
 
-
 math.randomseed(SEED)
 
 --print ("worldgen_main.lua MAIN = 1")
@@ -54,7 +53,9 @@ require("json")
 require("vector3")
 require("tuning")
 require("languages/language")
+require("dlcsupport_worldgen")
 require("strings")
+require("dlcsupport_strings")
 require("constants")
 require("class")
 require("debugtools")
@@ -63,7 +64,6 @@ require("prefabs")
 require("profiler")
 require("dumper")
 
-require("dlcsupport_worldgen")
 require("mods")
 require("modindex")
 

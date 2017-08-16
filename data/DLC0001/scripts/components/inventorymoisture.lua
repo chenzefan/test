@@ -10,6 +10,7 @@ end)
 
 function InventoryMoisture:GetLastUpdate(item)
 	if not item then return nil end
+	if not item.components.moisturelistener then return nil end
 	return item.components.moisturelistener.lastUpdate
 end
 
@@ -24,8 +25,14 @@ function InventoryMoisture:GetDebugString()
 end
 
 function InventoryMoisture:TrackItem(item)
-	table.insert(self.itemList, item)
-	item.components.moisturelistener:UpdateMoisture(GetTime())
+	-- Make sure item can actually get wet
+	if not (item and item.components.waterproofer) then
+		table.insert(self.itemList, item)
+		item.components.moisturelistener:UpdateMoisture(GetTime())
+	elseif item and item.components.moisturelistener and item.components.waterproofer then
+		-- Somehow we ended up with an item that has moisturelistener AND waterproofer: remove moisturelistener (waterproof items can't get wet)
+		item:RemoveComponent("moisturelistener")
+	end
 end
 
 function InventoryMoisture:ForgetItem(item)
@@ -46,7 +53,7 @@ end
 function InventoryMoisture:GetOldestUpdate()
 	local oldestUpdate = math.huge
 	for k,v in pairs(self.itemList) do
-		if v.components.moisturelistener.lastUpdate < oldestUpdate then
+		if v.components.moisturelistener and v.components.moisturelistener.lastUpdate < oldestUpdate then
 			oldestUpdate = v.components.moisturelistener.lastUpdate
 		end
 	end
@@ -64,7 +71,9 @@ function InventoryMoisture:OnUpdate(dt)
 	endNum = (endNum > #self.itemList) and #self.itemList or endNum
 	for i = self.itemIndex, endNum do
 		local item = self.itemList[i]
-		item.components.moisturelistener:UpdateMoisture(GetTime() - item.components.moisturelistener.lastUpdate)
+		if item and item.components.moisturelistener then
+			item.components.moisturelistener:UpdateMoisture(GetTime() - item.components.moisturelistener.lastUpdate)
+		end
 	end
 	self.itemIndex = endNum + 1
 	if self.itemIndex >= #self.itemList then

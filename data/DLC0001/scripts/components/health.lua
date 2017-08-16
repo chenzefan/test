@@ -104,8 +104,16 @@ function Health:DoRegen()
     end
 end
 
-function Health:StartRegen(amount, period)
+function Health:StartRegen(amount, period, interruptcurrentregen)
     --print("Health:StopRegen", amount, period)
+
+    -- We don't always do this just for backwards compatibility sake. While unlikely, it's possible some modder was previously relying on
+    -- the fact that StartRegen didn't stop the existing task. If they want to continue using that behavior, they now just need to add
+    -- a "false" flag as the last parameter of their StartRegen call. Generally, we want to restart the task, though.
+    if interruptcurrentregen == nil or interruptcurrentregen == true then
+        self:StopRegen()
+    end
+
     if not self.regen then
         self.regen = {}
     end
@@ -128,6 +136,7 @@ function Health:StopRegen()
         if self.regen.task then
             --print("   stopping task")
             self.regen.task:Cancel()
+            self.regen.task = nil
         end
         self.regen = nil
     end

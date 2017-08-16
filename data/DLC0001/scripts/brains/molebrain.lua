@@ -25,6 +25,16 @@ local function GoHomeAction(inst)
     end
 end
 
+local function ShouldMakeHome(inst)
+    local make_home = false
+    if not (inst.components.homeseeker and inst.components.homeseeker.home and inst.components.homeseeker.home:IsValid()) then
+        make_home = true
+    end
+    make_home = make_home and (inst.needs_home_time and (GetTime() - inst.needs_home_time > inst.make_home_delay))
+
+    return make_home
+end
+
 local function MakeNewHomeAction(inst)
     local angle = math.random(0,360)
     local offset = FindWalkableOffset(inst:GetPosition(), angle*DEGREES, math.random(5,15), 120, false, false)
@@ -32,7 +42,8 @@ local function MakeNewHomeAction(inst)
 end
 
 local function TakeBaitAction(inst)
-    if inst:GetTimeAlive() < 3 or inst.needs_home then
+    -- Don't look for bait if just spawned, busy making a new home, or has full inventory
+    if inst:GetTimeAlive() < 3 or inst.needs_home_time or (inst.components.inventory and inst.components.inventory:IsFull()) then
         return
     end
 
@@ -57,7 +68,7 @@ function MoleBrain:OnStart()
     local root = PriorityNode(
     {
         WhileNode( function() return self.inst.components.health.takingfiredamage end, "OnFire", Panic(self.inst)),
-        WhileNode( function() return self.inst.needs_home == true end, "HomeDugUp", 
+        WhileNode( function() return ShouldMakeHome(self.inst) end, "HomeDugUp", 
             DoAction(self.inst, MakeNewHomeAction, "make home", false)),
         WhileNode(function() return self.inst.flee == true end, "Flee",
             RunAway(self.inst, "scarytoprey", AVOID_PLAYER_DIST, AVOID_PLAYER_STOP)),

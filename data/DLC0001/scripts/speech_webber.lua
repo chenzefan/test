@@ -58,7 +58,7 @@ return {
 	ANNOUNCE_PECKED = "Bad bird!",
 	ANNOUNCE_QUAKE = "I don't think that was our tummy.",
 	ANNOUNCE_RESEARCH = "It's almost like being back in school.",
-	ANNOUNCE_SHELTER = "Protect me, tree!",
+	ANNOUNCE_SHELTER = "Protect us, tree!",
 	ANNOUNCE_THORNS = "Yowch!",
 	ANNOUNCE_BURNT = "Jeepers, that was hot!",
 	ANNOUNCE_TORCH_OUT = "Waah, our light went out!",
@@ -96,7 +96,11 @@ return {
 	DESCRIBE =
 	{
         GLOMMER = "Nice eyes.",
-        GLOMMERFLOWER = "It doesn't smell very nice.",
+        GLOMMERFLOWER = 
+        {
+        	GENERIC = "It doesn't smell very nice.",
+        	DEAD = "I spoke too soon. It smells worse now.",
+        },
         GLOMMERWINGS = "I wish I'd at least ended up with wings. Sigh.",
         GLOMMERFUEL = "Yucky muck!",
         BELL = "Exactly the right amount of bell.",
@@ -116,6 +120,7 @@ return {
 		},
 		MOLE =
 		{
+			HELD = "Hello little guy.",
 			UNDERGROUND = "Come out and play!",
 			ABOVEGROUND = "Hello little guy!",
 		},
@@ -426,6 +431,7 @@ return {
 			EMPTY = "The nine lives thing is true!",
 		},
 		CATCOONHAT = "Hat of a cat.",
+		COONTAIL = "I always liked pulling Whiskers' tail.",
 		CARROT = "I sort of miss being forced to eat these.",
 		CARROT_COOKED = "Easier for us both.",
 		CARROT_PLANTED = "Bury your head, carrot.",
@@ -596,7 +602,7 @@ return {
 		FISHTACOS = "Taco Tuesday!",
 		FISH_COOKED = "Flaky and moist. Delicious.",
 		FLINT = "Oh, to feel a sharp edge against my skin.",
-		FLOWER = "We agree on this: flowers are nice.",
+		FLOWER = "We agree that flowers are nice.",
 		FLOWERHAT = "Colourful crown.",
 		FLOWER_EVIL = "This flower is decidedly not nice!",
 		FOLIAGE = "Soft and leafy.",
@@ -688,7 +694,7 @@ return {
 		},
 		LIGHTNINGGOAT = 
 		{
-			GENERIC = "Our father kept goats.",
+			GENERIC = "My father kept goats.",
 			CHARGED = "It's all glowy.",
 		},
 		LIGHTNINGGOATHORN = "This might make a good weapon.",

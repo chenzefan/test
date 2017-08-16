@@ -20,7 +20,7 @@ local function dig_up(inst, chopper)
 	if inst.components.pickable and inst.components.pickable:CanBePicked() then
 		inst.components.lootdropper:SpawnLootPrefab("twigs")
 	end
-	if not inst.components.pickable.withered then
+	if inst.components.pickable and not inst.components.pickable.withered then
 		local bush = inst.components.lootdropper:SpawnLootPrefab("dug_sapling")
 	else
 		inst.components.lootdropper:SpawnLootPrefab("twigs")
@@ -74,8 +74,7 @@ local function fn(Sim)
     anim:PlayAnimation("sway",true)
     anim:SetTime(math.random()*2)
 
-	minimap:SetIcon( "sapling.png" )
-    
+	minimap:SetIcon( "sapling.png" ) 
 
     inst:AddComponent("pickable")
     inst.components.pickable.picksound = "dontstarve/wilson/harvest_sticks"
@@ -86,7 +85,8 @@ local function fn(Sim)
     inst.components.pickable.makeemptyfn = makeemptyfn
 	inst.components.pickable.ontransplantfn = ontransplantfn
 	inst.components.pickable.makebarrenfn = makebarrenfn
-	inst.makewitherabletask = inst:DoTaskInTime(TUNING.WITHER_BUFFER_TIME, function(inst) inst.components.pickable:MakeWitherable() end)
+	local variance = math.random() * 4 - 2
+	inst.makewitherabletask = inst:DoTaskInTime(TUNING.WITHER_BUFFER_TIME + variance, function(inst) inst.components.pickable:MakeWitherable() end)
 
     inst:AddComponent("inspectable")
     

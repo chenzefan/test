@@ -5,11 +5,22 @@ local FrogRain = Class(function(self, inst)
 	self.frog_count = 0
     self.frogcap = TUNING.FROG_RAIN_MAX
     self.spawntime = TUNING.FROG_RAIN_DELAY
-	self.local_rain_max = TUNING.FROG_RAIN_LOCAL_MAX
+	self.local_rain_max = TUNING.FROG_RAIN_LOCAL_MAX_ADVENTURE
 	self.shouldspawn = false
 	self.rolled = false
 
-	inst:ListenForEvent("rainstart", function() self.local_rain_max = math.random(10, TUNING.FROG_RAIN_LOCAL_MAX) end)
+	inst:ListenForEvent("rainstart", function() 
+		if SaveGameIndex:GetCurrentMode() ~= "adventure" then
+			local day = GetClock():GetNumCycles()
+		    local min = Lerp(TUNING.FROG_RAIN_LOCAL_MIN_EARLY, TUNING.FROG_RAIN_LOCAL_MIN_LATE, day/100)
+		    local max = Lerp(TUNING.FROG_RAIN_LOCAL_MAX_EARLY, TUNING.FROG_RAIN_LOCAL_MAX_LATE, day/100)
+		    min = math.clamp(min, TUNING.FROG_RAIN_LOCAL_MIN_EARLY, TUNING.FROG_RAIN_LOCAL_MIN_LATE)
+		    max = math.clamp(max, TUNING.FROG_RAIN_LOCAL_MAX_EARLY, TUNING.FROG_RAIN_LOCAL_MAX_LATE)
+			self.local_rain_max = math.random(min, max) 
+		else
+			self.local_rain_max = math.random(TUNING.FROG_RAIN_LOCAL_MIN_ADVENTURE, TUNING.FROG_RAIN_LOCAL_MAX_ADVENTURE)
+		end
+	end)
     self.inst:StartUpdatingComponent(self)
 end)
 
@@ -130,9 +141,7 @@ function FrogRain:OnUpdate( dt )
 
 		if self.timetospawn > 0 then
 			self.timetospawn = self.timetospawn - dt
-		end
-
-		
+		end		
 
 		--if self.timetospawn <= 0 and GetTableSize(self.frogs) < self.frogcap then
 		if self.timetospawn <= 0 and self.frog_count < self.frogcap then

@@ -1,3 +1,6 @@
+require "brains/rockybrain"
+require "stategraphs/SGrocky"
+
 local assets =
 {
 	Asset("ANIM", "anim/rocky.zip"),

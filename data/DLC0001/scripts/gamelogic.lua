@@ -5,7 +5,7 @@ require "saveindex"
 require "map/extents"
 
 
-local LOAD_UPFRONT_MODE = PLATFORM == "PS4"
+local LOAD_UPFRONT_MODE = false
 
 local MainScreen = nil
 if PLATFORM == "PS4" then
@@ -20,6 +20,14 @@ if PLATFORM == "WIN32_STEAM" or PLATFORM == "WIN32" then
 	global_broadcastnig_widget = BroadcastingWidget()
 	global_broadcastnig_widget:SetHAnchor(ANCHOR_LEFT)
 	global_broadcastnig_widget:SetVAnchor(ANCHOR_TOP)
+end
+
+global_loading_widget = nil
+if PLATFORM == "PS4" then
+	LoadingWidget = require "widgets/loadingwidget"
+	global_loading_widget = LoadingWidget()
+	global_loading_widget:SetHAnchor(ANCHOR_LEFT)
+	global_loading_widget:SetVAnchor(ANCHOR_BOTTOM)
 end
 
 local DeathScreen = require "screens/deathscreen"
@@ -62,6 +70,14 @@ local function DoAgeWorld()
 	end
 end
 
+local function KeepAlive()
+	if global_loading_widget then 
+		global_loading_widget:ShowNextFrame()
+		TheSim:RenderOneFrame()
+		global_loading_widget:ShowNextFrame()
+	end
+end
+
 local function LoadAssets(asset_set)
 	
 	if LOAD_UPFRONT_MODE then return end
@@ -76,10 +92,11 @@ local function LoadAssets(asset_set)
 			table.insert(RECIPE_PREFABS, v.placer)
 		end
 	end
-	
 	local load_frontend = Settings.reset_action == nil
 	local in_backend = Settings.last_reset_action ~= nil
 	local in_frontend = not in_backend
+	
+	KeepAlive()
 
 	if Settings.current_asset_set == "FRONTEND" then
 		if Settings.last_asset_set == "FRONTEND" then
@@ -93,6 +110,8 @@ local function LoadAssets(asset_set)
 			TheSim:UnloadPrefabs(RECIPE_PREFABS)
 			TheSim:UnloadPrefabs(BACKEND_PREFABS)
 			print("\tUnload BE done")
+			KeepAlive()
+			TheSystemService:SetStalling(true)
 			TheSim:UnregisterAllPrefabs()
 
 			RegisterAllDLC()
@@ -100,9 +119,14 @@ local function LoadAssets(asset_set)
 				LoadPrefabFile("prefabs/"..file)
 			end
 			ModManager:RegisterPrefabs()
+			TheSystemService:SetStalling(false)
+			KeepAlive()
 			print("\tLoad FE")
+			TheSystemService:SetStalling(true)
 			TheSim:LoadPrefabs(FRONTEND_PREFABS)
+			TheSystemService:SetStalling(false)
 			print("\tLoad FE: done")	
+			KeepAlive()
 		end
 	else
 		if Settings.last_asset_set == "BACKEND" then
@@ -116,7 +140,9 @@ local function LoadAssets(asset_set)
 			print("\tUnload FE")
 			TheSim:UnloadPrefabs(FRONTEND_PREFABS)
 			print("\tUnload FE done")
-
+			KeepAlive()
+			
+			TheSystemService:SetStalling(true)
 			TheSim:UnregisterAllPrefabs()
 			RegisterAllDLC()
 			for i,file in ipairs(PREFABFILES) do -- required from prefablist.lua
@@ -124,11 +150,19 @@ local function LoadAssets(asset_set)
 			end
 			InitAllDLC()
 			ModManager:RegisterPrefabs()
+			TheSystemService:SetStalling(false)
+			KeepAlive()
 
 			print ("\tLOAD BE")
+			TheSystemService:SetStalling(true)
 			TheSim:LoadPrefabs(BACKEND_PREFABS)
+			TheSystemService:SetStalling(false)
+			KeepAlive()
+			TheSystemService:SetStalling(true)
 			TheSim:LoadPrefabs(RECIPE_PREFABS)
-			print ("\tLOAD BE: done")
+			TheSystemService:SetStalling(false)
+			print ("\tLOAD BE : done")
+			KeepAlive()
 		end
 	end
 
@@ -370,23 +404,23 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
         --print("travel_direction:", travel_direction, "cave#:",cave_num)
         local spawn_ent = nil
         if travel_direction == "ascend" then
-		if savedata.ents["cave_entrance"] then
-			if cave_num == nil then
-				spawn_ent = savedata.ents["cave_entrance"][1]
-			else
-				for k,v in ipairs(savedata.ents["cave_entrance"]) do
-					if v.data and v.data.cavenum == cave_num then
-						spawn_ent = v
-						break
+			if savedata.ents["cave_entrance"] then
+				if cave_num == nil then
+					spawn_ent = savedata.ents["cave_entrance"][1]
+				else
+					for k,v in ipairs(savedata.ents["cave_entrance"]) do
+						if v.data and v.data.cavenum == cave_num then
+							spawn_ent = v
+							break
+						end
 					end
 				end
 			end
+		elseif travel_direction == "descend" then
+			if savedata.ents["cave_exit"] then
+				spawn_ent = savedata.ents["cave_exit"][1]
+			end
 		end
-	elseif travel_direction == "descend" then
-		if savedata.ents["cave_exit"] then
-			spawn_ent = savedata.ents["cave_exit"][1]
-		end
-	end
         	
         if spawn_ent and spawn_ent.x and spawn_ent.z then
 	        spawnpoint = Vector3(spawn_ent.x or 0, spawn_ent.y or 0, spawn_ent.z or 0)
@@ -825,6 +859,10 @@ function DoInitGame(playercharacter, savedata, profile, next_world_playerdata, f
 		TheFrontEnd:PushScreen(hud)
 		hud:SetMainCharacter(wilson)
 		
+		if wilson.HUDPostInit then
+			wilson.HUDPostInit(hud)
+		end
+
 	    --clear the player stats, so that it doesn't count items "acquired" from the save file
 	    GetProfileStats(true)
 

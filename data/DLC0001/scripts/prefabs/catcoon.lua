@@ -1,3 +1,6 @@
+require("brains/catcoonbrain")
+require "stategraphs/SGcatcoon"
+
 local assets = 
 {
 	Asset("ANIM", "anim/catcoon_build.zip"),
@@ -235,8 +238,11 @@ local function WakeTest(inst)
 end
 
 local function PickRandomGift(inst, tier)
-	return (inst.components.follower and inst.components.follower.leader) and 
-		GetRandomItem(friendGiftPrefabs[tier]) or GetRandomItem(neutralGiftPrefabs[tier])
+	local table = (inst.components.follower and inst.components.follower.leader) and 
+		friendGiftPrefabs or neutralGiftPrefabs
+	-- Neutral and friend tables aren't the same size. Make sure we're in valid range in case loyalty gets added/expired while retching.
+	if tier > #table then tier = #table end
+	return GetRandomItem(table[tier])
 end
 
 local function ShouldAcceptItem(inst, item)

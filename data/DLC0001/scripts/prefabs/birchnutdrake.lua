@@ -1,3 +1,6 @@
+require("brains/birchnutdrakebrain")
+require "stategraphs/SGbirchnutdrake"
+
 local assets = 
 {
 	Asset("ANIM", "anim/treedrake.zip"),

@@ -123,13 +123,7 @@ AddGameDebugKey(KEY_F2, function()
 end)
 
 AddGameDebugKey(KEY_F3, function()
-    c_countprefabs("mushtree_tall")
-    c_countprefabs("mushtree_medium")    
-    c_countprefabs("mushtree_small")
 
-    c_countprefabs("blue_mushroom")
-    c_countprefabs("red_mushroom")    
-    c_countprefabs("green_mushroom")
 end)
 
 AddGameDebugKey(KEY_R, function()

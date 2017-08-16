@@ -4,6 +4,7 @@ local Growable = Class(function(self, inst)
     self.stage = 1
     self.loopstages = false
     self.growonly = false
+    self.ongrowthfn = nil
 end)
 
 --[[local waiting_for_growth = {}
@@ -24,7 +25,9 @@ local function GrowableLongUpdate(dt)
 end
 --]]
 
-
+function Growable:SetOnGrowthFn(fn)
+    self.ongrowthfn = fn
+end
 
 function Growable:OnRemoveEntity()
 	self:StopGrowing()
@@ -95,6 +98,10 @@ function Growable:DoGrowth()
     
     if self.stages[stage] and self.stages[stage].growfn then
         self.stages[stage].growfn(self.inst)
+    end
+
+    if self.ongrowthfn then
+        self.ongrowthfn(self.inst)
     end
     
     if stage < #self.stages or self.loopstages then 

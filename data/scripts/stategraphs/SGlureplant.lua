@@ -10,8 +10,8 @@ local events=
         end
     end),
 
-    EventHandler("attacked", function(inst) 
-        if not inst.components.health:IsDead() then           
+    EventHandler("attacked", function(inst, data) 
+        if not inst.components.health:IsDead() then  
             if inst.sg:HasStateTag("hiding") then
                 if inst.sg:HasStateTag("vine") then
                     inst.sg:GoToState("hitin")

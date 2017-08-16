@@ -81,7 +81,11 @@ return {
 	DESCRIBE =
 	{
 		GLOMMER = "Keep flapping, little guy!",
-        GLOMMERFLOWER = "Even the flower is slimy.",
+        GLOMMERFLOWER = 
+        {
+        	GENERIC = "Even the flower is slimy.",
+        	DEAD = "Dead and still slimy.",
+        },
         GLOMMERWINGS = "Unsurprisingly, the wings are slimy.",
         GLOMMERFUEL = "Yep, his slime is slimy too.",
         BELL = "I'm amazed it makes such a crisp sound.",
@@ -93,6 +97,7 @@ return {
 		WEBBERSKULL = "The skull gives me the willies, too.",
 		MOLE =
 		{
+			HELD = "Want some rocks?",
 			UNDERGROUND = "Dig, dig, dig.",
 			ABOVEGROUND = "It feels about rocks the way I feel about trees.",
 		},
@@ -138,6 +143,7 @@ return {
 			EMPTY = "Good riddance.",
 		},
 		CATCOONHAT = "Traditional garb of a woodsman.",
+		COONTAIL = "The end of that cat's tale.",
 		COOKPOT =
 		{
 			COOKING_LONG = "It'll be a bit longer, eh?",

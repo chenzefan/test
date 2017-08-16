@@ -1,3 +1,6 @@
+require "brains/rookbrain"
+require "stategraphs/SGrook"
+
 local assets=
 {
 	Asset("ANIM", "anim/rook.zip"),

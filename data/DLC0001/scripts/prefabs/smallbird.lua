@@ -1,4 +1,5 @@
 local brain = require "brains/smallbirdbrain"
+require "stategraphs/SGsmallbird"
 
 local WAKE_TO_FOLLOW_DISTANCE = 10
 local SLEEP_NEAR_LEADER_DISTANCE = 7

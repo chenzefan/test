@@ -94,6 +94,11 @@ local assets =
     Asset("IMAGE", "images/saveslot_portraits.tex"),
 }
 
+if PLATFORM == "PS4" then
+    table.insert(assets, Asset("ATLAS", "images/ps4_controllers.xml"))
+    table.insert(assets, Asset("IMAGE", "images/ps4_controllers.tex"))
+end
+
 
 require "fonts"
 for i, font in ipairs( FONTS ) do

@@ -1,3 +1,5 @@
+require "brains/houndbrain"
+require "stategraphs/SGhound"
 
 local trace = function() end
 

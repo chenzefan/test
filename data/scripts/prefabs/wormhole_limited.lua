@@ -1,3 +1,5 @@
+require "stategraphs/SGwormhole_limited"
+
 local assets =
 {
 	Asset("ANIM", "anim/teleporter_worm.zip"),

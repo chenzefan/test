@@ -132,6 +132,10 @@ function SpawnPrefabFromSim(name)
 			for k,mod in pairs(prefab.modfns) do
 				mod(inst)
 			end
+
+            for k,globalprefabpostinit in pairs(ModManager:GetPostInitFns("GlobalPrefabPostInit")) do
+                globalprefabpostinit(inst)
+            end
             
             return inst.entity:GetGUID()
         else
@@ -217,7 +221,15 @@ function OnRemoveEntity(entityguid)
 		end
 		
         BrainManager:OnRemoveEntity(ent)
-        SGManager:OnRemoveEntity(ent)
+        if PLATFORM ~= "PS4" then
+            SGManager:OnRemoveEntity(ent)
+        else
+		    if ent.sg then
+			    -- don't set ent.sg to nil, might still be referenced till end of frame
+			    SGManager:RemoveInstance(ent.sg)
+		    end
+        end
+
         ent:KillTasks()
         NumEnts = NumEnts - 1
         Ents[entityguid] = nil
@@ -662,6 +674,9 @@ exiting_game = false
 function GlobalInit()
 	TheSim:LoadPrefabs({"global"})
 	LoadFonts()
+	if PLATFORM == "PS4" then
+		PreloadSounds()
+	end
 	TheSim:SendHardwareStats()
 end
 

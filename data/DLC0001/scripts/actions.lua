@@ -305,6 +305,16 @@ ACTIONS.DEPLOY.strfn = function(act)
     end
 end
 
+ACTIONS.TOGGLE_DEPLOY_MODE.strfn = function(act)
+    if act.invobject and act.invobject:HasTag("groundtile") then
+        return "GROUNDTILE"
+    elseif act.invobject and act.invobject:HasTag("wallbuilder") then
+        return "WALL"
+    elseif act.invobject and act.invobject:HasTag("eyeturret") then
+        return "TURRET"
+    end
+end
+
 ACTIONS.CHECKTRAP.fn = function(act)
     if act.target.components.trap then
 	    act.target.components.trap:Harvest(act.doer)
@@ -938,7 +948,7 @@ ACTIONS.COMBINESTACK.fn = function(act)
     local target = act.target
     local invobj = act.invobject
     if invobj and target and invobj.prefab == target.prefab and target.components.stackable and not target.components.stackable:IsFull()
-    and target.components.inventoryitem.canbepickedup then
+    and target.components.inventoryitem and target.components.inventoryitem.canbepickedup then
         target.components.stackable:Put(invobj)
         return true
     end 
@@ -1027,7 +1037,7 @@ ACTIONS.MAKEMOLEHILL.fn = function(act)
         local pt = act.doer:GetPosition()
         molehill.Transform:SetPosition(pt.x, pt.y, pt.z)
         molehill:PushEvent("confignewhome", {mole=act.doer})
-        act.doer.needs_home = false
+        act.doer.needs_home_time = nil
         return true
     end
 end

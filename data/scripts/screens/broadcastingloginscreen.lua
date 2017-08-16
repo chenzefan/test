@@ -129,6 +129,7 @@ function BroadcastingLoginScreen:DoInit()
 	self.edit_username:SetFocusedImage( self.edit_username_bg, UI_ATLAS, "textbox_long_over.tex", "textbox_long.tex" )
 	self.edit_username:SetTextLengthLimit( STRING_MAX_LENGTH )
 	self.edit_username:SetCharacterFilter( USERNAME_VALID_CHARS )
+	self.edit_username:SetAllowClipboardPaste( true )
 	
 	self.edit_password = self.root:AddChild( TextEdit( BODYTEXTFONT, fontsize, "" ) )
 	self.edit_password:SetPosition( (edit_width * .5) - label_offset + space_between, password_height_offset, 0 )
@@ -138,6 +139,7 @@ function BroadcastingLoginScreen:DoInit()
 	self.edit_password:SetTextLengthLimit( STRING_MAX_LENGTH )
 	self.edit_password:SetCharacterFilter( PASSWORD_VALID_CHARS )
 	self.edit_password:SetPassword( true )
+	self.edit_password:SetAllowClipboardPaste( true )
 	
 	local menu_items = {
 		{ text = STRINGS.UI.BROADCASTING.LOGIN,  cb = function() self:Login() end },

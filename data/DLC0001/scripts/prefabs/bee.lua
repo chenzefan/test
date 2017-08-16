@@ -1,5 +1,3 @@
-local beecommon = require "brains/beecommon"
-
 --[[
 Bees.lua
 
@@ -10,6 +8,10 @@ killerbee
 Aggressive version of the bee. Doesn't pollinate anythihng, but attacks anything within range. If it has a home to go to and no target,
 it should head back there. Killer bees come out to defend beehives when they, the hive or worker bees are attacked
 ]]--
+
+local beecommon = require "brains/beecommon"
+require "stategraphs/SGbee"
+
 local assets=
 {
 	Asset("ANIM", "anim/bee.zip"),

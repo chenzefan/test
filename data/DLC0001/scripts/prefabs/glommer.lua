@@ -1,3 +1,6 @@
+require("brains/glommerbrain")
+require "stategraphs/SGglommer"
+
 local assets=
 {
 	Asset("ANIM", "anim/glommer.zip"),

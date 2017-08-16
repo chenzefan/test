@@ -3,7 +3,7 @@ local ScriptErrorScreen = require "screens/scripterrorscreen"
 require "modutil"
 require "prefabs"
 
-MOD_API_VERSION = 5
+MOD_API_VERSION = 6
 
 local function modprint(...)
 	--print(unpack({...}))
@@ -90,10 +90,12 @@ function CreateEnvironment(modname, isworldgen)
 		Prefab = Prefab,
 		Asset = Asset,
 		Ingredient = Ingredient,
+		GetModConfigData = GetModConfigDataFn(modname) -- Call is GetModConfigData(optionname) to fetch saved value of the specified option (name must match name field in config options table)
 	}
 
 	if isworldgen == false then
 		env.CHARACTERLIST = GetActiveCharacterList()
+		env.MODCONFIG = KnownModIndex:GetModConfigurationOptions(modname) or {} -- Direct access to the mod config table (WARNING: modifying it directly while the game is running could result in weird behavior)
 	end
 
 	env.env = env
@@ -117,7 +119,6 @@ function CreateEnvironment(modname, isworldgen)
 	return env
 end
 
-
 function ModWrangler:LoadMods(worldgen)
 	if not MODS_ENABLED then
 		return
@@ -131,17 +132,20 @@ function ModWrangler:LoadMods(worldgen)
 	local moddirs = KnownModIndex:GetModsToLoad(self.worldgen)
 	
 	for i,modname in ipairs(moddirs) do
-		table.insert(self.modnames, modname)
+		if self.worldgen == false or (self.worldgen == true and KnownModIndex:IsModCompatibleWithMode(modname)) then
+			table.insert(self.modnames, modname)
 
-		local initenv = KnownModIndex:GetModInfo(modname)
-		local env = CreateEnvironment(modname,  self.worldgen)
-		env.modinfo = initenv
-		table.insert( self.mods, env )
-		local loadmsg = "Loading mod: "..ModInfoname(modname)
-		if initenv.modinfo_message and initenv.modinfo_message ~= "" then
-			loadmsg = loadmsg .. " ("..initenv.modinfo_message..")"
+			local initenv = KnownModIndex:GetModInfo(modname)
+			local env = CreateEnvironment(modname,  self.worldgen)
+			env.modinfo = initenv
+
+			table.insert( self.mods, env )
+			local loadmsg = "Loading mod: "..ModInfoname(modname)
+			if initenv.modinfo_message and initenv.modinfo_message ~= "" then
+				loadmsg = loadmsg .. " ("..initenv.modinfo_message..")"
+			end
+			print(loadmsg)
 		end
-		print(loadmsg)
 	end
 
 	-- Sort the mods by priority, so that "library" mods can load first
@@ -165,6 +169,8 @@ function ModWrangler:LoadMods(worldgen)
 end
 
 function ModWrangler:InitializeModMain(modname, env, mainfile)
+	if not KnownModIndex:IsModCompatibleWithMode(modname) then return end
+
 	print("Mod: "..ModInfoname(modname), "Loading "..mainfile)
 
 	local fn = kleiloadlua("../mods/"..modname.."/"..mainfile)
@@ -352,7 +358,6 @@ function ModWrangler:SetPostEnv()
 	end
 
 	--print("\n\n---END MOD INFO SCREEN---\n\n")
-
 	if oldmodnames ~= "" then
 		moddetail = moddetail.. STRINGS.UI.MAINSCREEN.OLDMODS.." "..oldmodnames.."\n"
 	end
@@ -460,7 +465,6 @@ function ModWrangler:GetPostInitData(type, id)
 	end
 	return moddata
 end
-
 
 ModManager = ModWrangler()
 

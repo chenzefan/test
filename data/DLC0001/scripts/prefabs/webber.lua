@@ -21,8 +21,6 @@ local start_inv =
 }
 
 local function custom_init(inst)
-	STRINGS.CHARACTERS.WEBBER = require "speech_webber"
-
 	inst.soundsname = "webber"
 	inst.talker_path_override = "dontstarve_DLC001/characters/"
 

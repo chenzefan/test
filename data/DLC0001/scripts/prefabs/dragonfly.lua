@@ -1,3 +1,6 @@
+require("brains/dragonflybrain")
+require "stategraphs/SGdragonfly"
+
 local assets =
 {
 	Asset("ANIM", "anim/dragonfly_build.zip"),

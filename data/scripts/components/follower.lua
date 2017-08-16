@@ -51,12 +51,10 @@ function Follower:StartLeashing()
     	local init_pos = self.inst:GetPosition()
     	local leader_pos = self.leader:GetPosition()
     	local angle = self.leader:GetAngleToPoint(init_pos)
-
     	local offset = FindWalkableOffset(leader_pos, angle*DEGREES, 30, 10) or Vector3(0,0,0)
-		
-		local pos = leader_pos + offset
 
-    	if pos and distsq(leader_pos, init_pos) > 1600 then
+    	if distsq(leader_pos, init_pos) > 1600 then
+			local pos = leader_pos + offset
     		--There's a crash if you teleport without the delay
     		if self.inst.components.combat then
     			self.inst.components.combat:SetTarget(nil)
@@ -64,8 +62,6 @@ function Follower:StartLeashing()
     		self.inst:DoTaskInTime(.1, function() 
 	    		self.inst.Transform:SetPosition(pos:Get())
     		end)
-    	elseif not pos then
-    		self.inst:DoTaskInTime(3, self.inst.portnearleader)
     	end
 	end
 

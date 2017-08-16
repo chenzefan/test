@@ -55,7 +55,8 @@ end
 
 local function TurnOn(inst, instant)
 	inst.on = true
-	inst.components.firedetector:Activate()
+	local randomizedStartTime = POPULATING
+	inst.components.firedetector:Activate(randomizedStartTime)
 	inst.components.fueled:StartConsuming()
 	if instant then
 		inst.sg:GoToState("idle_on")
@@ -243,7 +244,6 @@ local function onload(inst, data)
         inst.components.burnable.onburnt(inst)
     end
     inst.on = data.on and data.on or false
-    if inst.on then TurnOn(inst, true) else TurnOff(inst, true) end
 end
 
 local function OnLoadPostPass(inst, data)

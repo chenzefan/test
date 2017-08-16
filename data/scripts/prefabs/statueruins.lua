@@ -49,6 +49,9 @@ end
 
 
 local function DoFx(inst)
+    if ExecutingLongUpdate then
+        return
+    end
     inst.SoundEmitter:PlaySound("dontstarve/common/ghost_spawn")
     
     local fx = SpawnPrefab("statue_transition_2")

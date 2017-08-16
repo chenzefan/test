@@ -306,7 +306,7 @@ local foods=
 		perishtime = TUNING.PERISH_FAST,
 		sanity = 0,
 		cooktime = .25,
-		wet_prefix = STRINGS.WET_PREFIX.GOOP,
+		wet_prefix = STRINGS.WET_PREFIX.WETGOOP,
 	},
 
 	flowersalad =

@@ -23,6 +23,7 @@ local Moisture = Class(function(self, inst)
     self.sheltered = false
     self.new_sheltered = false
     self.prev_sheltered = false
+    self.shelter_waterproofness = TUNING.WATERPROOFNESS_SMALLMED
 
 	self.inst:StartUpdatingComponent(self)
 
@@ -141,11 +142,11 @@ function Moisture:GetMoistureRate()
 	if self.inst.components.inventory:IsWaterproof() then
 		rate = 0
 	else
-		rate = rate * (1 - self.inst.components.inventory:GetWaterproofness())
-	end
-
-	if self.sheltered then
-		rate = rate * TUNING.SHELTERED_BONUS
+		if self.sheltered then
+			rate = rate * (1 - (self.inst.components.inventory:GetWaterproofness() + self.shelter_waterproofness))
+		else
+			rate = rate * (1 - self.inst.components.inventory:GetWaterproofness())
+		end
 	end
 
 	return rate
@@ -159,9 +160,15 @@ function Moisture:GetEquippedMoistureRate()
 		rate, max = self.inst.components.inventory:GetEquippedMoistureRate()
 	end
 
-	if rate > 0 and self.moisture >= max then
-		rate = rate * 0.01
+	-- If rate and max are nonzero (i.e. wearing a moisturizing equipment) and the drying rate is less than
+	-- the moisture rate of the equipment AND we're at max moisture for the equipment, set the two rates equal.
+	-- This will prevent the arrow flickering as well as hold the moisture steady at max level
+	if rate ~= 0 and max ~= 0 and self.moisture >= max and self:GetDryingRate() <= rate then
+		rate = self:GetDryingRate()
 	end
+
+	if math.abs(rate) <= 0.01 then rate = 0 end
+
 	return rate
 end
 
@@ -209,7 +216,8 @@ function Moisture:GetDryingRate()
 	rate = math.clamp(rate, 0, self.maxDryingRate + self.maxPlayerTempDrying)
 
 
-	if self:GetMoistureRate() + self:GetEquippedMoistureRate() > 0 then
+	-- Don't dry if it's raining
+	if self:GetMoistureRate() > 0 then
 		rate = 0
 	end
 
@@ -221,10 +229,10 @@ function Moisture:GetDelta()
 end
 
 function Moisture:OnUpdate(dt)
-	local moisture_rate = self:GetMoistureRate() + self:GetEquippedMoistureRate()
 	local drying_rate = -self:GetDryingRate()
+	local moisture_rate = self:GetMoistureRate() + self:GetEquippedMoistureRate()
 	self.delta = (moisture_rate + drying_rate)
-	if math.abs(self.delta) <= 0.01 then self.delta = 0 end
+	
 	self:DoDelta(self.delta * dt)
 end
 

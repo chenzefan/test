@@ -1,3 +1,6 @@
+require "brains/minotaurbrain"
+require "stategraphs/SGminotaur"
+
 local assets=
 {
 	Asset("ANIM", "anim/rook.zip"),

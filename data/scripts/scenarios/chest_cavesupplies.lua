@@ -21,17 +21,17 @@ local function OnCreate(inst, scenariorunner)
 		{
 			item = "armorsnurtleshell",
 			chance = 0.05,
-			initfn = function(item) item.components.armor:SetCondition(math.random(item.components.armor.maxcondition * 0.33, item.components.armor.maxcondition * 0.8))end
+			initfn = function(item) if item.components.armor then item.components.armor:SetCondition(math.random(item.components.armor.maxcondition * 0.33, item.components.armor.maxcondition * 0.8)) end end
 		},
 		{
 			item = "slurtlehat",
 			chance = 0.05,
-			initfn = function(item) item.components.armor:SetCondition(math.random(item.components.armor.maxcondition * 0.33, item.components.armor.maxcondition * 0.8))end
+			initfn = function(item) if item.components.armor then item.components.armor:SetCondition(math.random(item.components.armor.maxcondition * 0.33, item.components.armor.maxcondition * 0.8)) end end
 		},
 		{
 			item = "batbat",
 			chance = 0.05,
-			initfn = function(item) item.components.finiteuses:SetUses(math.random(item.components.finiteuses.total * 0.33, item.components.finiteuses.total * 0.8)) end
+			initfn = function(item) if item.components.finiteuses then item.components.finiteuses:SetUses(math.random(item.components.finiteuses.total * 0.33, item.components.finiteuses.total * 0.8)) end end
 		},
 		{
 			item = "log",

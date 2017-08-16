@@ -1,3 +1,6 @@
+require "brains/walrusbrain"
+require "stategraphs/SGwalrus"
+
 local assets=
 {
     Asset("ANIM", "anim/walrus_actions.zip"),

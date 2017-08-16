@@ -543,12 +543,12 @@ function Overseer:OnUpdate(dt)
         if type(ent) == "table" then
             local targ = ent.components and ent.components.combat and ent.components.combat.target
             --dprint("ent= ",ent,"::",targ)
-            if targ and ent and ( targ == player or (targ.components.follower and targ.components.follower.leader == player) or CheckAura(ent) or (ent.components.teamattacker and CheckTeam(ent)) )  and
+            if targ and ent and (ent.IsValid and ent:IsValid()) and
+              ( targ == player or (targ.components.follower and targ.components.follower.leader == player) or CheckAura(ent) or (ent.components.teamattacker and CheckTeam(ent)) )  and
               (ent.components.health and ent.components.health.currenthealth and ent.components.health.currenthealth > 0 ) and
               not ent:IsInLimbo() and
               not ent:HasTag("hidden") and
-              not (ent.sg and ent.sg:HasStateTag("hiding") and player:GetDistanceSqToInst(ent) > (25*25)) and
-              ( ent.IsValid and ent:IsValid() ) then
+              not (ent.sg and ent.sg:HasStateTag("hiding") and player:GetDistanceSqToInst(ent) > (25*25)) then
                 targeted = true
             end
         end

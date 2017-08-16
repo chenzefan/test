@@ -1,3 +1,6 @@
+require "brains/krampusbrain"
+require "stategraphs/SGkrampus"
+
 local assets=
 {
 	Asset("ANIM", "anim/krampus_basic.zip"),

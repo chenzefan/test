@@ -1,3 +1,6 @@
+require "brains/nightmarecreaturebrain"
+require "stategraphs/SGshadowcreature"
+
 local prefabs =
 {
     "nightmarefuel",

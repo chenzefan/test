@@ -147,10 +147,7 @@ end
 
 local function dorainsparks(inst, dt)
 
-	local mitigates_rain = inst.components.inventory:IsWaterproof()
-	
-    if (GetSeasonManager() and GetSeasonManager():IsRaining() and not mitigates_rain) or
-    	(inst.components.moisture and inst.components.moisture:GetMoisture() > 0) then
+    if (inst.components.moisture and inst.components.moisture:GetMoisture() > 0) then
     	inst.spark_time = inst.spark_time - dt
 
     	if inst.spark_time <= 0 then
@@ -159,19 +156,27 @@ local function dorainsparks(inst, dt)
     		inst.spark_time = 3+math.random()*2
 
     		local pos = Vector3(inst.Transform:GetWorldPosition())
-    		if GetSeasonManager():IsRaining() then
-	    		local waterproofmult = inst.components.inventory and (1 - inst.components.inventory:GetWaterproofness()) or 1
-	    		local damage = math.min(-.25, -.5 * waterproofmult)
+    		local damage = nil
+
+    		-- Raining, no moisture-giving equipment on head, and moisture is increasing. Pro-rate damage based on waterproofness.
+    		if GetSeasonManager():IsRaining() and inst.components.inventory:GetEquippedMoistureRate(EQUIPSLOTS.HEAD) <= 0 and inst.components.moisture:GetDelta() > 0 then
+	    		local waterproofmult = (inst.components.moisture and inst.components.moisture.sheltered and inst.components.inventory) and (1 - (inst.components.inventory:GetWaterproofness() + inst.components.moisture.shelter_waterproofness)) or (inst.components.inventory and (1 - inst.components.inventory:GetWaterproofness()) or 1)
+	    		damage = waterproofmult > 0 and math.min(TUNING.WX78_MIN_MOISTURE_DAMAGE, TUNING.WX78_MAX_MOISTURE_DAMAGE * waterproofmult) or 0
 	    		inst.components.health:DoDelta(damage, false, "rain")
 				pos.y = pos.y + 1 + math.random()*1.5
-	    	else
-	    		inst.components.health:DoDelta(-.5, false, "water")
+	    	else -- We have moisture-giving equipment on our head or it is not raining and we are just passively wet (but drying off). Do full damage.
+	    		if inst.components.moisture:GetDelta() >= 0 then -- Moisture increasing (wearing something moisturizing)
+	    			inst.components.health:DoDelta(TUNING.WX78_MAX_MOISTURE_DAMAGE, false, "water")
+	    		else -- Drying damage
+	    			inst.components.health:DoDelta(TUNING.WX78_MOISTURE_DRYING_DAMAGE, false, "water")
+	    		end
 				pos.y = pos.y + .25 + math.random()*2
 	    	end
 			
-			local spark = SpawnPrefab("sparks")
-			spark.Transform:SetPosition(pos:Get())
-			
+			if not damage or (damage and damage < 0) then
+				local spark = SpawnPrefab("sparks")
+				spark.Transform:SetPosition(pos:Get())
+			end
     	end
     end
 

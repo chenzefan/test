@@ -64,7 +64,7 @@ local function oncharged(inst)
 end
 
 local function ondeath(inst, deadthing)
-    if inst.components.inventoryitem.owner == nil and not deadthing:HasTag("wall") and inst:GetDistanceSqToInst(deadthing) < 16*16 then
+    if inst and deadthing and inst.components.inventoryitem and inst:IsValid() and deadthing:IsValid() and inst.components.inventoryitem.owner == nil and not deadthing:HasTag("wall") and inst:GetDistanceSqToInst(deadthing) < 16*16 then
         if inst.components.cooldown:IsCharged() then
             GetPlayer().components.sanity:DoDelta(-TUNING.SANITY_HUGE)
             local abigail = SpawnPrefab("abigail")

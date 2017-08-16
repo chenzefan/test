@@ -102,7 +102,7 @@ end
 
 function Stackable:CollectUseActions(doer, target, actions)
     if target and target.components.inventoryitem and not target.components.inventoryitem:IsHeld() and target.components.stackable
-    and not target.components.stackable:IsFull() and target.prefab == self.inst.prefab then
+    and not target.components.stackable:IsFull() and target.prefab == self.inst.prefab and target.components.inventoryitem.canbepickedup then
         table.insert(actions, ACTIONS.COMBINESTACK)
     end
 end

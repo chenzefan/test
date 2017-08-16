@@ -343,22 +343,22 @@ function EntityScript:GetDisplayName()
     local smoldering = self.components.burnable and self.components.burnable:IsSmoldering()
 
     if smoldering then
-        return STRINGS.SMOLDERINGITEM.." "..name
+        return ConstructAdjectivedName(self, name, STRINGS.SMOLDERINGITEM)
     elseif withered then
-        return STRINGS.WITHEREDITEM.." "..name
+        return ConstructAdjectivedName(self, name, STRINGS.WITHEREDITEM)
     elseif (wet or self.always_wet) and not self.no_wet_prefix then
         if self.wet_prefix then
-            return self.wet_prefix.." "..name
+            return ConstructAdjectivedName(self, name, self.wet_prefix)
         elseif self.components.edible and GetPlayer() and GetPlayer().components.eater and GetPlayer().components.eater:CanEat(self) then
-            return STRINGS.WET_PREFIX.FOOD.." "..name
+            return ConstructAdjectivedName(self, name, STRINGS.WET_PREFIX.FOOD)
         elseif self.components.equippable and (self.components.equippable.equipslot == EQUIPSLOTS.HEAD or self.components.equippable.equipslot == EQUIPSLOTS.BODY) then
-            return STRINGS.WET_PREFIX.CLOTHING.." "..name
+            return ConstructAdjectivedName(self, name, STRINGS.WET_PREFIX.CLOTHING)
         elseif self.components.equippable and self.components.equippable.equipslot == EQUIPSLOTS.HANDS then
-            return STRINGS.WET_PREFIX.TOOL.." "..name
+            return ConstructAdjectivedName(self, name, STRINGS.WET_PREFIX.TOOL)
         elseif self.components.fuel then
-            return STRINGS.WET_PREFIX.FUEL.." "..name
+            return ConstructAdjectivedName(self, name, STRINGS.WET_PREFIX.FUEL)
         else
-            return STRINGS.WET_PREFIX.GENERIC.." "..name
+            return ConstructAdjectivedName(self, name, STRINGS.WET_PREFIX.GENERIC)
         end
     else
         return name

@@ -82,7 +82,7 @@ function Tune(overrides)
 	    BATBAT_USES = 75,
 	    MULTITOOL_AXE_PICKAXE_USES = 400,
 	    RUINS_BAT_USES = 150,
-
+		
 	    REDAMULET_USES = 20,
 	    REDAMULET_CONVERSION = 5,
 
@@ -132,7 +132,7 @@ function Tune(overrides)
 	    BEAVER_DAMAGE = wilson_attack*1.5,
 	    MULTITOOL_DAMAGE = wilson_attack*.9,
 	    RUINS_BAT_DAMAGE = wilson_attack * 1.75,
-
+	    
 		CANE_SPEED_MULT = 1.25,
 		PIGGYBACK_SPEED_MULT = 0.8,
 

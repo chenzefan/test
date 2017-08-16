@@ -11,6 +11,9 @@ local Stewer = Class(function(self, inst)
     self.default_recipe = nil
     self.spoiledproduct = "spoiledfood"
 
+    self.min_num_for_cook = 4
+    self.max_num_for_cook = 4
+
     self.inst:AddTag("stewer")
 end)
 
@@ -51,7 +54,7 @@ function Stewer:CanCook()
 	for k,v in pairs (self.inst.components.container.slots) do
 		num = num + 1 
 	end
-	return num == 4
+	return num >= self.min_num_for_cook and num <= self.max_num_for_cook
 end
 
 
@@ -244,18 +247,8 @@ function Stewer:Harvest( harvester )
 					loot = SpawnPrefab("spoiled_food")
 				end
 				
-				if loot then
-					local targetMoisture = 0
-
-                    if self.inst.components.moisturelistener then
-                        targetMoisture = self.inst.components.moisturelistener:GetMoisture()
-                    elseif self.inst.components.moisture then
-                        targetMoisture = self.inst.components.moisture:GetMoisture()
-                    else
-                        targetMoisture = GetWorld().components.moisturemanager:GetWorldMoisture()
-                    end
-                    
-                    loot.targetMoisture = targetMoisture
+				if loot then                    
+                    loot.targetMoisture = 0
 					loot:DoTaskInTime(2*FRAMES, function()
 						if loot.components.moisturelistener then 
 							loot.components.moisturelistener.moisture = loot.targetMoisture

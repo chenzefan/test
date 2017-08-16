@@ -1,3 +1,6 @@
+require "brains/butterflybrain"
+require "stategraphs/SGbutterfly"
+
 local assets=
 {
 	Asset("ANIM", "anim/butterfly_basic.zip"),

@@ -1,3 +1,5 @@
+require "stategraphs/SGrabbit"
+
 local assets=
 {
 	Asset("ANIM", "anim/ds_rabbit_basic.zip"),

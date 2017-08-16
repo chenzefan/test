@@ -1,3 +1,6 @@
+require("brains/moosebrain")
+require "stategraphs/SGmoose"
+
 local assets =
 {
 	Asset("ANIM", "anim/goosemoose_build.zip"),

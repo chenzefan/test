@@ -10,6 +10,9 @@ local Stewer = Class(function(self, inst)
     self.product_spoilage = nil
     self.recipes = nil
     self.default_recipe = nil
+
+    self.min_num_for_cook = 4
+    self.max_num_for_cook = 4
 end)
 
 local function dostew(inst)
@@ -36,7 +39,7 @@ function Stewer:CanCook()
 	for k,v in pairs (self.inst.components.container.slots) do
 		num = num + 1 
 	end
-	return num == 4
+	return num >= self.min_num_for_cook and num <= self.max_num_for_cook
 end
 
 

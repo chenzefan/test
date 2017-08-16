@@ -67,7 +67,7 @@ local function SetNormalMode(inst, force)
 	    end
 	    inst.normaltask = nil
 	    inst.spring = false
-	   	inst.wet_prefix = STRINGS.WET_PREFIX.NONE
+	   	inst.wet_prefix = STRINGS.WET_PREFIX.GENERIC
 	   	inst.always_wet = false
 	end
 end

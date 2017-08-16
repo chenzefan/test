@@ -95,7 +95,11 @@ return {
 	DESCRIBE =
 	{		
 		GLOMMER = "A majestic goober.",
-        GLOMMERFLOWER = "A wonder of the woods.",
+        GLOMMERFLOWER = 
+        {
+        	GENERIC = "A wonder of the woods.",
+        	DEAD = "It was once a wonder of the woods.",
+        },
         GLOMMERWINGS = "Ohh, look what goober left for me.",
         GLOMMERFUEL = "This slop could be useful.",
         BELL = "I prefer the ring of blades clashing.",
@@ -115,6 +119,7 @@ return {
 		},
 		MOLE =
 		{
+			HELD = "A friend for my pocket.",
 			UNDERGROUND = "Who's under there?",
 			ABOVEGROUND = "He digs without abandon.",
 		},
@@ -426,6 +431,7 @@ return {
 			EMPTY = "She fought bravely. Alas, she is gone.",
 		},
 		CATCOONHAT = "Furry cap! Bless cute meat.",
+		COONTAIL = "It is the tail of cute meat.",
 		CARROT = "Where's the protein?",
 		CARROT_COOKED = "Sad cooked carrots.",
 		CARROT_PLANTED = "A wee root vegetable.",

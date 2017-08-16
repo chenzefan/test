@@ -1,3 +1,6 @@
+require "brains/spiderqueenbrain"
+require "stategraphs/SGspiderqueen"
+
 local assets =
 {
 	Asset("ANIM", "anim/spider_queen_build.zip"),

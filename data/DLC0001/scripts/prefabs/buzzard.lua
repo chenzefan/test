@@ -1,3 +1,6 @@
+require("brains/buzzardbrain")
+require "stategraphs/SGbuzzard"
+
 local assets =
 {
     Asset("ANIM", "anim/buzzard_build.zip"),

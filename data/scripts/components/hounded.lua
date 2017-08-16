@@ -87,8 +87,9 @@ end
 
 function Hounded:OnLoad(data)
 	self.warning = data.warning or false
-	self.timetoattack = data.timetoattack or 0
-	self.warnduration = data.warnduration or 0
+	self.timetoattack = data.timetoattack or 200
+	self.warnduration = data.warnduration or 30
+	if self.warnduration <= 0 or self.timetoattack <= 0 then self.warning = false end
 	self.houndstorelease = data.houndstorelease or 0
 	self.timetonexthound = data.timetonexthound or 0
 end
@@ -115,9 +116,9 @@ function Hounded:OnUpdate(dt)
 	self.timetoattack = self.timetoattack - dt
 	if self.timetoattack <= 0 then
 		self.timetonexthound = self.timetonexthound - dt		
+		self.warning = false
 		
 		if self.timetonexthound < 0 then
-			self.warning = false
 			self:ReleaseHound()
 			
 			local day = GetClock().numcycles

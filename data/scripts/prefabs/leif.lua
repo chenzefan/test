@@ -1,4 +1,5 @@
 local brain = require "brains/leifbrain"
+require "stategraphs/SGLeif"
 
 local assets =
 {

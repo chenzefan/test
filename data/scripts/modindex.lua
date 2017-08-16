@@ -5,6 +5,8 @@ local function modprint(...)
 	--print(type(...) == "table" and unpack(...) or ...)
 end
 
+local mod_config_path = "mod_config_data/"
+
 
 ModIndex = Class(function(self)
 	self.startingup = false
@@ -33,6 +35,22 @@ known_mods = {
 
 function ModIndex:GetModIndexName()
 	local name = "modindex" 
+	if BRANCH ~= "release" then
+		name = name .. "_"..BRANCH
+	end
+	return name
+end
+
+function ModIndex:GetModConfigurationPath(modname)
+	if modname then
+		return mod_config_path..self:GetModConfigurationName(modname)
+	else
+		return mod_config_path
+	end
+end
+
+function ModIndex:GetModConfigurationName(modname)
+	local name = "modconfiguration_"..modname
 	if BRANCH ~= "release" then
 		name = name .. "_"..BRANCH
 	end
@@ -92,6 +110,7 @@ function ModIndex:Save(callback)
 		newdata.known_mods[name].enabled = data.enabled
 		newdata.known_mods[name].disabled_bad = data.disabled_bad
 		newdata.known_mods[name].disabled_old = data.disabled_old
+		newdata.known_mods[name].disabled_incompatible_with_mode = data.disabled_incompatible_with_mode
 		newdata.known_mods[name].seen_api_version = MOD_API_VERSION
 		newdata.known_mods[name].modinfo = data.modinfo
 	end
@@ -111,14 +130,14 @@ function ModIndex:GetModsToLoad(usecached)
 	if not cached then
 		local moddirs = TheSim:GetModDirectoryNames()
 		for i,moddir in ipairs(moddirs) do
-			if self:IsModEnabled(moddir) or self:IsModForceEnabled(moddir) then
+			if (self:IsModEnabled(moddir) or self:IsModForceEnabled(moddir)) then
 				table.insert(ret, moddir)
 			end
 		end
 	else
 		if self.savedata and self.savedata.known_mods then
 			for modname, moddata in pairs(self.savedata.known_mods) do
-				if self:IsModEnabled(modname) or self:IsModForceEnabled(modname) then
+				if (self:IsModEnabled(modname) or self:IsModForceEnabled(modname)) then
 					table.insert(ret, modname)
 				end
 			end
@@ -175,6 +194,9 @@ function ModIndex:LoadModInfo(modname)
 	end
 
 	self.savedata.known_mods[modname].modinfo = info
+	for i,v in pairs(self.savedata.known_mods[modname].modinfo) do
+		-- print(i,v)
+	end
 
 	return info
 end
@@ -207,17 +229,30 @@ function ModIndex:InitializeModInfo(modname)
 			--table.insert( self.failedmods, {name=modname,error=old} )
 			env.failed = true
 		else
-			local checkinfo = { "name", "description", "author", "version", "forumthread", "api_version" }
+			local checkinfo = { "name", "description", "author", "version", "forumthread", "api_version", "dont_starve_compatible", "reign_of_giants_compatible", "configuration_options" }
 			local missing = {}
+
 			for i,v in ipairs(checkinfo) do
 				if env[v] == nil then
-					table.insert(missing, v)
+					if v == "dont_starve_compatible" then
+						-- Print a warning but let the mod load
+						print("WARNING loading modinfo.lua: "..modname.." does not specify if it is compatible with the base game. It may not work properly.")
+					elseif v == "reign_of_giants_compatible" then
+						-- Print a warning but let the mod load
+						print("WARNING loading modinfo.lua: "..modname.." does not specify if it is compatible with Reign of Giants. It may not work properly.")
+					elseif v == "configuration_options" then
+						-- Do nothing. It's perfectly fine not to have config options!
+					else
+						table.insert(missing, v)
+					end
 				end
 			end
+
 			if #missing > 0 then
 				local e = "Error loading modinfo.lua. These fields are required: " .. table.concat(missing, ", ")
 				print (e)
 				--table.insert( self.failedmods, {name=modname,error=e} )
+
 				env.failed = true
 			else
 				-- everything loaded okay!
@@ -226,6 +261,16 @@ function ModIndex:InitializeModInfo(modname)
 	end
 
 	env.modinfo_message = modinfo_message
+
+	-- If modinfo hasn't been updated to specify compatibility yet, set it to true for both modes and set a flag
+	if env.dont_starve_compatible == nil then
+		env.dont_starve_compatible = true
+		env.dont_starve_compatibility_specified = false
+	end
+	if env.reign_of_giants_compatible == nil then
+		env.reign_of_giants_compatible = true
+		env.reign_of_giants_compatibility_specified = false
+	end
 
 	return env
 end
@@ -267,6 +312,79 @@ function ModIndex:Load(callback)
 
 			callback()
         end)
+end
+
+function ModIndex:IsModCompatibleWithMode(modname)
+	local known_mod = self.savedata.known_mods[modname]
+	if known_mod then
+		if IsDLCEnabled(REIGN_OF_GIANTS) then
+			return known_mod.modinfo.reign_of_giants_compatible
+		else
+			return known_mod.modinfo.dont_starve_compatible
+		end
+	end
+	return false
+end
+
+function ModIndex:HasModConfigurationOptions(modname)
+	local modinfo = self:GetModInfo(modname)
+	if modinfo and modinfo.configuration_options and type(modinfo.configuration_options) == "table" and #modinfo.configuration_options > 0 then
+		return true
+	end
+	return false
+end
+
+function ModIndex:UpdateConfigurationOptions(config_options, savedata)
+	for i,v in pairs(savedata) do
+		for j,k in pairs(config_options) do
+			if v.name == k.name and v.saved then
+				k.saved = v.saved
+			end
+		end
+	end
+end
+
+function ModIndex:GetModConfigurationOptions(modname)
+	local known_mod = self.savedata.known_mods[modname]
+	-- Try to find saved config settings first
+	local filename = self:GetModConfigurationPath(modname)
+	TheSim:GetPersistentString(filename,
+        function(load_success, str)
+        	if load_success == true then
+				local success, savedata = RunInSandbox(str)
+				if success and string.len(str) > 0 then
+					-- Carry over saved data from old versions when possible
+					if self:HasModConfigurationOptions(modname) then
+						self:UpdateConfigurationOptions(known_mod.modinfo.configuration_options, savedata)
+					else
+						known_mod.modinfo.configuration_options = savedata
+					end
+					print ("loaded "..filename)
+				else
+					print ("Could not load "..filename)
+				end
+			else
+				print ("Could not load "..filename)
+			end
+
+			-- callback()
+        end)
+
+	if known_mod and known_mod.modinfo and known_mod.modinfo.configuration_options then
+		return known_mod.modinfo.configuration_options
+	end
+	return nil
+end
+
+function ModIndex:SaveConfigurationOptions(callback, modname, configdata)
+	if PLATFORM == "PS4" or not configdata then
+        return
+    end
+
+    local name = self:GetModConfigurationPath(modname)
+	local data = DataDumper(configdata, nil, false)
+
+    local insz, outsz = SavePersistentString(name, data, ENCODE_SAVES, callback)
 end
 
 function ModIndex:IsModEnabled(modname)
@@ -322,6 +440,14 @@ function ModIndex:DisableBecauseOld(modname)
 	self.savedata.known_mods[modname].enabled = false
 end
 
+function ModIndex:DisableBecauseIncompatibleWithMode(modname)
+	if not self.savedata.known_mods[modname] then
+		self.savedata.known_mods[modname] = {}
+	end
+	self.savedata.known_mods[modname].disabled_incompatible_with_mode = true
+	self.savedata.known_mods[modname].enabled = false
+end
+
 function ModIndex:Enable(modname)
 	if not self.savedata.known_mods[modname] then
 		self.savedata.known_mods[modname] = {}
@@ -329,6 +455,7 @@ function ModIndex:Enable(modname)
 	self.savedata.known_mods[modname].enabled = true
 	self.savedata.known_mods[modname].disabled_bad = false
 	self.savedata.known_mods[modname].disabled_old = false
+	self.savedata.known_mods[modname].disabled_incompatible_with_mode = false
 end
 
 function ModIndex:IsModNewlyBad(modname)

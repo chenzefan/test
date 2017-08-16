@@ -1,3 +1,6 @@
+require "brains/bunnymanbrain"
+require "stategraphs/SGbunnyman"
+
 local assets =
 {
 	Asset("ANIM", "anim/manrabbit_basic.zip"),

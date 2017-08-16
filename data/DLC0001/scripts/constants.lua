@@ -243,7 +243,7 @@ GESTURE_MAX = 904
 
 MAIN_CHARACTERLIST = 
 {
-	'wilson', 'willow', 'wolfgang', 'wendy', 'wx78', 'wickerbottom', 'woodie', 'wes', 'waxwell',	
+	'wilson', 'willow', 'wolfgang', 'wendy', 'wx78', 'wickerbottom', 'woodie', 'wes', 'waxwell'	
 }
 
 ROG_CHARACTERLIST =

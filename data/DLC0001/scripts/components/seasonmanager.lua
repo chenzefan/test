@@ -61,7 +61,6 @@ local SeasonManager = Class(function(self, inst)
 	
 	self.precipmode = "dynamic"
 	
-	self.currentdsp = nil
 	local winterfreq = 5000
 	self.winterdsp =
 	{
@@ -123,23 +122,14 @@ function SeasonManager:SetCaves()
 			self:StopCavesRain()
 		end
 	else
-		self:StopCavesRain()
-		self.incaves = false
-		self:SetAppropriateDSP()
-		-- self.inst:PushEvent( "seasonChange", {season = self.current_season} )
+		self:SetOverworld()
 	end
 end
 
 function SeasonManager:SetOverworld()
 	if IsCaves() then
-		self.incaves = true
-		if self.current_season == SEASONS.SPRING then
-			self:StartCavesRain()
-		else
-			self:StopCavesRain()
-		end
+		self:SetCaves()
 	else
-		self:StopCavesRain()
 		self.incaves = false
 		self:SetAppropriateDSP()
 		--self.inst:PushEvent( "seasonChange", {season = self.current_season} )
@@ -185,6 +175,7 @@ end
 function SeasonManager:AlwaysAutumn()
 	self.seasonmode = "alwaysautumn"
 	self.percent_season = .5
+	self:StartAutumn()
 	self:UpdateSegs()
 end
 
@@ -555,7 +546,6 @@ function SeasonManager:SetSummerLength(len)
 	local per = self:GetPercentSeason()
 	self:SetPercentSeason(per)
 	self:UpdateSegs()
-	print(self.summerenabled, self.summerlength)
 end
 
 function SeasonManager:GetSeasonIsEnabled(season)
@@ -598,29 +588,41 @@ function SeasonManager:SetAppropriateDSP()
 end
 
 function SeasonManager:ApplyWinterDSP(time_to_take)
+	self:ClearDSP(time_to_take, "high")
+
 	for k,v in pairs(self.winterdsp) do
 		TheMixer:SetLowPassFilter(k, v, time_to_take)
 	end
-	self.currentdsp = "winter"
 end
 
 function SeasonManager:ApplySummerDSP(time_to_take, level)
+	self:ClearDSP(time_to_take, "low")
+	
 	local lvl = level or 1
 	for i,j in pairs(self.summerdsp) do
 		self.summerdsp[i] = self.summerfreq[lvl]
 	end
+
 	for k,v in pairs(self.summerdsp) do
 		TheMixer:SetHighPassFilter(k, v, time_to_take)
 	end
-	self.currentdsp = "summer"
 end
 
-function SeasonManager:ClearDSP(time_to_take)
-	if self.currentdsp == "winter" then
+function SeasonManager:ClearDSP(time_to_take, dsp)
+	if dsp then
+		if dsp == "low" then
+			for k,v in pairs(self.winterdsp) do
+				TheMixer:ClearLowPassFilter(k, time_to_take)
+			end
+		elseif dsp == "high" then
+			for k,v in pairs(self.summerdsp) do
+				TheMixer:ClearHighPassFilter(k, time_to_take)
+			end
+		end
+	else
 		for k,v in pairs(self.winterdsp) do
 			TheMixer:ClearLowPassFilter(k, time_to_take)
 		end
-	elseif self.currentdsp == "summer" then
 		for k,v in pairs(self.summerdsp) do
 			TheMixer:ClearHighPassFilter(k, time_to_take)
 		end
@@ -779,9 +781,8 @@ function SeasonManager:OnLoad(data)
 		self:ClearDSP(0)
 		self.inst:PushEvent( "seasonChange", {season = self.current_season} )
 	end
-	
+
 	if self.precip and self.preciptype == "rain" then
-		self.inst.SoundEmitter:PlaySound("dontstarve/rain/rainAMB", "rain")
 		self.inst:PushEvent("rainstart")
 	end
 	
@@ -842,26 +843,6 @@ function SeasonManager:GetWeatherLightPercent()
 
 		return percent*dyn_range + (1-dyn_range)
 	end
-end
-
-function SeasonManager:StartCavesRain()
-	if self.precipmode == "never" then return end
-	
-	self.precip = true
-	
-	self.precip_rate = 0.1
-	self.peak_precip_intensity = 0.1
-	if self.rain then
-		self.rain:Remove()
-		self.rain = nil
-	end
-	self.rain = SpawnPrefab( "rain" )
-	self.rain.entity:SetParent( GetPlayer().entity )
-	self.rain.Transform:SetPosition(0,0,0)
-	self.rain.particles_per_tick = (5 + self.peak_precip_intensity * 25) * self.precip_rate
-	self.rain.splashes_per_tick = 1 + 2*self.peak_precip_intensity * self.precip_rate
-	self.preciptype = "rain"
-	self.inst:PushEvent("rainstart")
 end
 
 function SeasonManager:UpdateDynamicPrecip(dt)
@@ -982,6 +963,26 @@ function SeasonManager:StartPrecip()
 	end
 end
 
+function SeasonManager:StartCavesRain()
+	if self.precipmode == "never" then return end
+	
+	self.precip = true
+	
+	self.precip_rate = 0.1
+	self.peak_precip_intensity = 0.1
+	if self.rain then
+		self.rain:Remove()
+		self.rain = nil
+	end
+	self.rain = SpawnPrefab( "rain" )
+	self.rain.entity:SetParent( GetPlayer().entity )
+	self.rain.Transform:SetPosition(0,0,0)
+	self.rain.particles_per_tick = (5 + self.peak_precip_intensity * 25) * self.precip_rate
+	self.rain.splashes_per_tick = 1 + 2*self.peak_precip_intensity * self.precip_rate
+	self.preciptype = "rain"
+	self.inst:PushEvent("rainstart")
+end
+
 function SeasonManager:StopCavesRain()
 	if self.precip then--and self.incaves then
 
@@ -995,8 +996,6 @@ function SeasonManager:StopCavesRain()
 		if self.preciptype == "rain" then
 			self.inst:PushEvent("rainstop")
 		end
-		
-		--self.moisture_limit = self.atmo_moisture + math.random()*500 + 60
 		
 		if self:IsWinter() then
 			self.moisture_limit = TUNING.TOTAL_DAY_TIME +  math.random()*TUNING.TOTAL_DAY_TIME*3
@@ -1026,8 +1025,6 @@ function SeasonManager:StopPrecip()
 			self.inst:PushEvent("snowstop")
 		end
 		
-		--self.moisture_limit = self.atmo_moisture + math.random()*500 + 60
-		
 		if self:IsWinter() then
 			self.moisture_limit = TUNING.TOTAL_DAY_TIME +  math.random()*TUNING.TOTAL_DAY_TIME*3
 		elseif self:IsSpring() then
@@ -1039,7 +1036,6 @@ function SeasonManager:StopPrecip()
 		end
 
 		self.moisture_limit = math.max(self.moisture_limit, (self.atmo_moisture * 1.2))
-
 	end
 end
 
@@ -1151,7 +1147,7 @@ function SeasonManager:OnUpdate( dt )
 
 		if self.current_season == SEASONS.SPRING and self.incaves then
 			self:StartCavesRain()
-		else
+		elseif self.incaves then
 			self:StopCavesRain()
 		end
 		self.target_season = nil
@@ -1280,7 +1276,6 @@ function SeasonManager:OnUpdate( dt )
 			self.rain.splashes_per_tick = 0
 		end
 		
-		--srosen Re-enable pollen so artists can iterate on it
 		if self.current_season == SEASONS.SUMMER then
 			if not self.pollen then
 		 		self.pollen = SpawnPrefab( "pollen" )

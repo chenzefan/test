@@ -1,4 +1,5 @@
 local brain = require "brains/koalefantbrain"
+require "stategraphs/SGkoalefant"
 
 local assets=
 {

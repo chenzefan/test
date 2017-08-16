@@ -1,3 +1,6 @@
+require "brains/slurtlebrain"
+require "stategraphs/SGslurper"
+
 local assets = 
 {
 	Asset("ANIM", "anim/slurper_basic.zip"),

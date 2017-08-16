@@ -35,9 +35,9 @@ local summer_temperature_thresholds = { 35, 50, 58, 75 }
 
 local function GetCurrentTemperatureThresholds(inst)
 	local seasonmgr = GetSeasonManager()
-	if seasonmgr and seasonmgr:IsSummer() then
+	if seasonmgr and (seasonmgr:IsSummer() or (seasonmgr:IsSpring() and seasonmgr:GetPercentSeason() > .8) or (seasonmgr:IsAutumn() and seasonmgr:GetPercentSeason() < .2)) then
 		return summer_temperature_thresholds, 0
-	elseif seasonmgr and seasonmgr:IsWinter() then
+	elseif seasonmgr and (seasonmgr:IsWinter() or (seasonmgr:IsSpring() and seasonmgr:GetPercentSeason() < .2) or (seasonmgr:IsAutumn() and seasonmgr:GetPercentSeason() > .8)) then
 		return winter_temperature_thresholds, TUNING.MIN_ENTITY_TEMP
 	else
 		return base_temperature_thresholds, TUNING.MIN_ENTITY_TEMP

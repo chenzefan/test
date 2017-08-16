@@ -109,15 +109,15 @@ function Update( dt )
             --TheSim:ProfilerPop()
         end
         
-		for k,v in pairs(NewUpdatingEnts) do
-			UpdatingEnts[k] = v
-	    end
-	    NewUpdatingEnts = {}
-
         for k,v in pairs(StopUpdatingEnts) do
 			UpdatingEnts[k] = nil            
         end
         StopUpdatingEnts = {}
+
+		for k,v in pairs(NewUpdatingEnts) do
+			UpdatingEnts[k] = v
+	    end
+	    NewUpdatingEnts = {}
         
         TheSim:ProfilerPop()
         
@@ -206,6 +206,8 @@ function LongUpdate(dt, ignore_player)
 
 	end
 
+	ExecutingLongUpdate = true
 	doupdate(dt)
+	ExecutingLongUpdate = false
 
 end

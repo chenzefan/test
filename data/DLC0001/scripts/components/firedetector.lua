@@ -1,3 +1,4 @@
+-- TODO, only when awake check for fire
 local FireDetector = Class(function(self, inst)
 	self.inst = inst
 
@@ -26,8 +27,14 @@ function FireDetector:AddDetectedItem(item)
 	self.inst:DoTaskInTime(2, function(inst) self.detectedItems[item] = nil end)
 end
 
-function FireDetector:Activate()
-	self.detectTask = self.inst:DoPeriodicTask(self.detectPeriod, function() self:LookForFiresAndFirestarters() end)
+function FireDetector:Activate( randomizedStartTime )
+	randomizedStartTime = randomizedStartTime or false
+	local startdelay = randomizedStartTime and (math.random() + self.detectPeriod) or 0
+	self.detectTask = self.inst:DoTaskInTime(startdelay, 
+		function()
+			self.detectTask = self.inst:DoPeriodicTask(self.detectPeriod, function() self:LookForFiresAndFirestarters() end)
+		end
+	)
 end
 
 function FireDetector:Deactivate()

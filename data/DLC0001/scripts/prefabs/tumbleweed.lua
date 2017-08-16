@@ -277,6 +277,47 @@ local function onburnt(inst)
     end)
 end
 
+local function CancelRunningTasks(inst)
+    if inst.bouncepretask then
+       inst.bouncepretask:Cancel()
+        inst.bouncepretask = nil
+    end
+    if inst.bouncetask then
+        inst.bouncetask:Cancel()
+        inst.bouncetask = nil
+    end
+    if inst.restartmovementtask then
+        inst.restartmovementtask:Cancel()
+        inst.restartmovementtask = nil
+    end
+    if inst.bouncepst1 then
+       inst.bouncepst1:Cancel()
+        inst.bouncepst1 = nil
+    end
+    if inst.bouncepst2 then
+        inst.bouncepst2:Cancel()
+        inst.bouncepst2 = nil
+    end
+end
+
+
+local function OnEntitySleep(inst)
+	CancelRunningTasks(inst)
+end
+
+local function OnEntityWake(inst)
+    inst.AnimState:PlayAnimation("move_loop", true)
+    inst.bouncepretask = inst:DoTaskInTime(10*FRAMES, function(inst)
+        inst.SoundEmitter:PlaySound("dontstarve_DLC001/common/tumbleweed_bounce")
+        inst.bouncetask = inst:DoPeriodicTask(24*FRAMES, function(inst)
+            inst.SoundEmitter:PlaySound("dontstarve_DLC001/common/tumbleweed_bounce")
+            CheckGround(inst)
+        end)
+    end)
+end
+
+
+
 local function fn(Sim)
 	local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
@@ -291,13 +332,6 @@ local function fn(Sim)
     anim:SetBank("tumbleweed")
     anim:PlayAnimation("move_loop", true)
     
-    inst.bouncepretask = inst:DoTaskInTime(10*FRAMES, function(inst)
-        inst.SoundEmitter:PlaySound("dontstarve_DLC001/common/tumbleweed_bounce")
-        inst.bouncetask = inst:DoPeriodicTask(24*FRAMES, function(inst)
-            inst.SoundEmitter:PlaySound("dontstarve_DLC001/common/tumbleweed_bounce")
-            CheckGround(inst)
-        end)
-    end)
 
     MakeCharacterPhysics(inst, .5, 1)
     inst:AddComponent("locomotor")
@@ -339,26 +373,7 @@ local function fn(Sim)
         inst.components.blowinwind:Stop()
         inst:RemoveEventCallback("animover", startmoving, inst)
 
-        if inst.bouncepretask then
-            inst.bouncepretask:Cancel()
-            inst.bouncepretask = nil
-        end
-        if inst.bouncetask then
-            inst.bouncetask:Cancel()
-            inst.bouncetask = nil
-        end
-        if inst.restartmovementtask then
-            inst.restartmovementtask:Cancel()
-            inst.restartmovementtask = nil
-        end
-        if inst.bouncepst1 then
-            inst.bouncepst1:Cancel()
-            inst.bouncepst1 = nil
-        end
-        if inst.bouncepst2 then
-            inst.bouncepst2:Cancel()
-            inst.bouncepst2 = nil
-        end
+		CancelRunningTasks(inst)
 
         inst.AnimState:PlayAnimation("move_pst")
         inst.bouncepst1 = inst:DoTaskInTime(4*FRAMES, function(inst)
@@ -393,6 +408,9 @@ local function fn(Sim)
     MakeSmallPropagator(inst)
     inst.components.propagator.flashpoint = 5 + math.random()*3
     inst.components.propagator.propagaterange = 5
+
+   	inst.OnEntityWake = OnEntityWake
+   	inst.OnEntitySleep = OnEntitySleep  
 
     return inst
 end

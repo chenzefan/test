@@ -24,7 +24,7 @@ function Pollinator:CanPollinate(flower)
 end
 
 function Pollinator:HasCollectedEnough()
-    return #self.flowers > self.collectcount
+    return #self.flowers >= self.collectcount
 end
 
 function Pollinator:CreateFlower()

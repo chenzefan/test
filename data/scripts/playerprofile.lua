@@ -26,6 +26,9 @@ PlayerProfile = Class(function(self)
         self.persistdata.HUDSize = 5
         self.persistdata.vibration = true
         self.persistdata.autosave = true
+        self.persistdata.wathgrithrfont = true
+        self.persistdata.screenshake = true
+        self.persistdata.warneddifficultyrog = false
 	end
 
     self.dirty = true
@@ -50,6 +53,9 @@ function PlayerProfile:Reset()
         self.persistdata.HUDSize = 5
         self.persistdata.vibration = true
         self.persistdata.autosave = true
+        self.persistdata.wathgrithrfont = true
+        self.persistdata.screenshake = true
+        self.persistdata.warneddifficultyrog = false
 	end
 	
     --self.persistdata.starts = 0 -- save starts?
@@ -73,6 +79,9 @@ function PlayerProfile:SoftReset()
         self.persistdata.HUDSize = 5
         self.persistdata.vibration = true
         self.persistdata.autosave = true
+        self.persistdata.wathgrithrfont = true
+        self.persistdata.screenshake = true
+        self.persistdata.warneddifficultyrog = false
 	end
     -- and apply these values
     local str = json.encode(self.persistdata)
@@ -453,6 +462,9 @@ function PlayerProfile:Set(str, callback)
                 self.persistdata.volume_music = 7
                 self.persistdata.HUDSize = 5
                 self.persistdata.vibration = true
+                self.persistdata.warneddifficultyrog = false
+                self.persistdata.wathgrithrfont = true
+                self.persistdata.screenshake = true
 		    end		    
 		end
 
@@ -480,6 +492,9 @@ function PlayerProfile:Set(str, callback)
 					self.persistdata.bloom = nil
 					self.persistdata.distortion = nil
 					self.persistdata.HUDSize = nil
+					self.persistdata.warneddifficultyrog = nil
+	                self.persistdata.wathgrithrfont = nil
+	                self.persistdata.screenshake = nil
 					self.dirty = true
 				else
 					bloom_enabled = self:GetBloomEnabled()

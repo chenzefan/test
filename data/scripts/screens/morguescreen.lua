@@ -234,7 +234,11 @@ function MorgueScreen:RefreshControls()
                 character = "waxwell"
             end
 
-            DECEASED.portrait:SetTexture("images/saveslot_portraits.xml", character..".tex")
+            local atlas = (table.contains(MODCHARACTERLIST, character) and "images/saveslot_portraits/"..character..".xml") or "images/saveslot_portraits.xml"
+            if not table.contains(GetActiveCharacterList(), character) then
+                character = "random" -- Use a question mark if the character isn't currently active
+            end
+            DECEASED.portrait:SetTexture(atlas, character..".tex")
             DECEASED.portrait:SetScale(portrate_scale, portrate_scale, 1)
  
             local CAUSE = group:AddChild(Text(TITLEFONT, font_size))

@@ -352,14 +352,21 @@ function Clock:OnUpdate(dt)
             end
             self:LerpAmbientColour(col*.5, col, 1.5)
             self.lightning = false
+            self.last_lightning_time = GetTime()
         end
 
     else
         -- if GetWorld():IsCave() then            
         --     return
         -- end
-        local p = GetSeasonManager() and GetSeasonManager():GetWeatherLightPercent() or 1
-        TheSim:SetAmbientColour( p*self.currentColour.x, p*self.currentColour.y, p*self.currentColour.z )
+        if self:IsNight() and (self.totalEraTime - self.timeLeftInEra) <= 8 and self.last_lightning_time and (GetTime() - self.last_lightning_time) <= dt then
+            if not GetWorld():IsCave() then
+                self:LerpAmbientColour(self.duskColour, self.nightColour, 4) 
+            end
+        else
+            local p = GetSeasonManager() and GetSeasonManager():GetWeatherLightPercent() or 1
+            TheSim:SetAmbientColour( p*self.currentColour.x, p*self.currentColour.y, p*self.currentColour.z )
+        end
     end
 
 

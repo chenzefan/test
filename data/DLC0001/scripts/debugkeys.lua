@@ -115,7 +115,21 @@ AddGlobalDebugKey(KEY_R, function()
 end)
 
 AddGameDebugKey(KEY_F2, function()
-    c_gonext"cave_exit"   
+    local tbl = {}
+    local failsafe = 1000000
+    
+    while #tbl < 17 and failsafe > 1 do
+        -- Profile.persistdata.device_caps_a = 0
+        -- Profile.persistdata.device_caps_b = 1231
+        TheSim:UpdateDeviceCaps(0,1231)
+        local song = TheSim:GetBirdsong()
+        if not table.contains(tbl, song) then
+            table.insert(tbl, song)
+        end
+        failsafe = failsafe - 1
+    end
+
+    dumptable(tbl) 
 end)
 
 AddGameDebugKey(KEY_F3, function()

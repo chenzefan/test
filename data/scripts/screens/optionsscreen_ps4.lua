@@ -28,13 +28,22 @@ local OptionsScreen = Class(Screen, function(self, in_game)
 		hudSize = Profile:GetHUDSize(),
 		vibration = Profile:GetVibrationEnabled(),
 		autosave = Profile:GetAutosaveEnabled(),
+		screenshake = Profile:IsScreenShakeEnabled(),
 	}
+
+	if IsDLCInstalled(REIGN_OF_GIANTS) then
+		self.options.wathgrithrfont = Profile:IsWathgrithrFontEnabled()
+	end
 	
 	self.working = deepcopy( self.options )
 	
 	
 	self.bg = self:AddChild(Image("images/ui.xml", "bg_plain.tex"))
-    self.bg:SetTint(BGCOLOURS.RED[1],BGCOLOURS.RED[2],BGCOLOURS.RED[3], 1)
+    if IsDLCEnabled(REIGN_OF_GIANTS) then
+    	self.bg:SetTint(BGCOLOURS.PURPLE[1],BGCOLOURS.PURPLE[2],BGCOLOURS.PURPLE[3], 1)
+    else
+   		self.bg:SetTint(BGCOLOURS.RED[1],BGCOLOURS.RED[2],BGCOLOURS.RED[3], 1)
+    end
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
     self.bg:SetHRegPoint(ANCHOR_MIDDLE)
     self.bg:SetVAnchor(ANCHOR_MIDDLE)
@@ -49,19 +58,32 @@ local OptionsScreen = Class(Screen, function(self, in_game)
     
 	local shield = self.root:AddChild( Image( "images/fepanels.xml", "panel_controls.tex" ) )
 	shield:SetPosition( 0,-20,0 )
-    if JapaneseOnPS4() then
-        shield:SetScale(1.4, 0.75, 1.0)	
-    else
-        shield:SetScale(1.2, 0.75, 1.0)	
-    end
 
 	self.title = self.root:AddChild(Text(TITLEFONT, 70))
 	self.title:SetString(STRINGS.UI.MAINSCREEN.SETTINGS)
-	self.title:SetPosition(0, 120, 0)
 
 	self.grid = self.root:AddChild(Grid())
-	self.grid:InitSize(2, 4, 400, -70)
-	self.grid:SetPosition(-260, 25, 0)
+
+	if IsDLCInstalled(REIGN_OF_GIANTS) then
+		if JapaneseOnPS4() then
+	        shield:SetScale(1.4, 0.85, 1.0)	
+	    else
+	        shield:SetScale(1.3, 0.85, 1.0)	
+	    end
+		self.title:SetPosition(0, 150, 0)
+		self.grid:InitSize(2, 5, 400, -70)
+		self.grid:SetPosition(-230, 70, 0)
+	else
+		if JapaneseOnPS4() then
+	        shield:SetScale(1.4, 0.75, 1.0)	
+	    else
+	        shield:SetScale(1.2, 0.75, 1.0)	
+	    end
+		self.title:SetPosition(0, 120, 0)
+		self.grid:InitSize(2, 5, 400, -70)
+		self.grid:SetPosition(-250, 35, 0)
+	end
+
 	self:DoInit()
 	self:InitializeSpinners()
 
@@ -141,8 +163,10 @@ function OptionsScreen:Save(cb)
 
 	Profile:SetVolume( self.options.ambientvolume, self.options.fxvolume, self.options.musicvolume )
 	Profile:SetHUDSize( self.options.hudSize )
+	Profile:SetScreenShakeEnabled( self.options.screenshake )
 	Profile:SetVibrationEnabled( self.options.vibration )
 	Profile:SetAutosaveEnabled( self.options.autosave )
+	if IsDLCInstalled(REIGN_OF_GIANTS) then Profile:SetWathgrithrFontEnabled( self.options.wathgrithrfont ) end
 	
 	Profile:Save( function() if cb then cb() end end)	
 end
@@ -201,6 +225,8 @@ end
 function OptionsScreen:Apply( force )
 	self:ApplyVolume()
 	self:ApplyVibration()
+	Profile:SetScreenShakeEnabled( self.working.screenshake )
+	if IsDLCInstalled(REIGN_OF_GIANTS) then Profile:SetWathgrithrFontEnabled( self.working.wathgrithrfont ) end
 end
 
 function OptionsScreen:Close()
@@ -276,6 +302,15 @@ function OptionsScreen:DoInit()
 			this.working.vibration = data
 			this:Apply()
 		end
+
+	self.screenshakeSpinner = Spinner( enableDisableOptions )
+	self.screenshakeSpinner.text:SetSize(40)
+	self.screenshakeSpinner.text:SetPosition(0, -4, 0)
+	self.screenshakeSpinner.OnChanged =
+		function( _, data )
+			this.working.screenshake = data
+			--this:Apply()
+		end
 			
 	self.autosaveSpinner = Spinner( enableDisableOptions )
 	self.autosaveSpinner.text:SetSize(40)
@@ -285,16 +320,39 @@ function OptionsScreen:DoInit()
 			this.working.autosave = data
 			this:Apply()
 		end
+
+	if IsDLCInstalled(REIGN_OF_GIANTS) then
+		self.wathgrithrfontSpinner = Spinner( enableDisableOptions )
+		self.wathgrithrfontSpinner.text:SetSize(40)
+		self.wathgrithrfontSpinner.text:SetPosition(0, -4, 0)
+		self.wathgrithrfontSpinner.OnChanged =
+			function( _, data )
+				this.working.wathgrithrfont = data
+				--this:Apply()
+			end
+	end
 		
 	local left_spinners = {}
 	local right_spinners = {}
 	
-	table.insert( left_spinners, { STRINGS.UI.OPTIONS.FX, self.fxVolume } )
-	table.insert( left_spinners, { STRINGS.UI.OPTIONS.MUSIC, self.musicVolume } )
-	table.insert( left_spinners, { STRINGS.UI.OPTIONS.AMBIENT, self.ambientVolume } )
-	table.insert( left_spinners, { STRINGS.UI.OPTIONS.HUDSIZE, self.hudSize} )
-	table.insert( right_spinners, { STRINGS.UI.OPTIONS.VIBRATION, self.vibrationSpinner} )
-	table.insert( right_spinners, { STRINGS.UI.OPTIONS.AUTOSAVE, self.autosaveSpinner} )
+	if IsDLCInstalled(REIGN_OF_GIANTS) then
+		table.insert( left_spinners, { STRINGS.UI.OPTIONS.FX, self.fxVolume } )
+		table.insert( left_spinners, { STRINGS.UI.OPTIONS.MUSIC, self.musicVolume } )
+		table.insert( left_spinners, { STRINGS.UI.OPTIONS.AMBIENT, self.ambientVolume } )
+		table.insert( left_spinners, { STRINGS.UI.OPTIONS.HUDSIZE, self.hudSize} )
+		table.insert( left_spinners, { STRINGS.UI.OPTIONS.SCREENSHAKE, self.screenshakeSpinner} )
+		table.insert( right_spinners, { STRINGS.UI.OPTIONS.VIBRATION, self.vibrationSpinner} )
+		table.insert( right_spinners, { STRINGS.UI.OPTIONS.WATHGRITHRFONT, self.wathgrithrfontSpinner} )
+		table.insert( right_spinners, { STRINGS.UI.OPTIONS.AUTOSAVE, self.autosaveSpinner} )
+	else
+		table.insert( left_spinners, { STRINGS.UI.OPTIONS.FX, self.fxVolume } )
+		table.insert( left_spinners, { STRINGS.UI.OPTIONS.MUSIC, self.musicVolume } )
+		table.insert( left_spinners, { STRINGS.UI.OPTIONS.AMBIENT, self.ambientVolume } )
+		table.insert( left_spinners, { STRINGS.UI.OPTIONS.HUDSIZE, self.hudSize} )
+		table.insert( right_spinners, { STRINGS.UI.OPTIONS.SCREENSHAKE, self.screenshakeSpinner} )
+		table.insert( right_spinners, { STRINGS.UI.OPTIONS.VIBRATION, self.vibrationSpinner} )
+		table.insert( right_spinners, { STRINGS.UI.OPTIONS.AUTOSAVE, self.autosaveSpinner} )
+	end
 
     
     self.display_area = self.root:AddChild(Widget("DisplayArea"))
@@ -343,6 +401,8 @@ function OptionsScreen:InitializeSpinners()
 	self.hudSize:SetSelectedIndex( self.working.hudSize or 5)
 	self.vibrationSpinner:SetSelectedIndex( EnabledOptionsIndex( self.working.vibration ) )
 	self.autosaveSpinner:SetSelectedIndex( EnabledOptionsIndex( self.working.autosave) )
+	self.screenshakeSpinner:SetSelectedIndex( EnabledOptionsIndex( self.working.screenshake ) )
+	if IsDLCInstalled(REIGN_OF_GIANTS) then self.wathgrithrfontSpinner:SetSelectedIndex( EnabledOptionsIndex( self.working.wathgrithrfont ) ) end
 end
 
 function OptionsScreen:OnAdjustDisplayArea()

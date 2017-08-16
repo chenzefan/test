@@ -57,8 +57,6 @@ function GetSpecialCharacterString(character)
 		return sayings[math.random(#sayings)]
     elseif character == "wes" then
 		return ""
-    --else
-		--print (character)
     end
 end
 
@@ -92,27 +90,36 @@ function GetDescription(character, item, modifier)
 
     local ret = GetSpecialCharacterString(character)
 
-    if not ret and STRINGS.CHARACTERS[character] then
-        ret = getcharacterstring(STRINGS.CHARACTERS[character].DESCRIBE, itemname, modifier)
-
-        if item and item.components.repairable and item.components.repairable:NeedsRepairs() then
-            ret = ret..getcharacterstring(STRINGS.CHARACTERS[character], "ANNOUNCE_CANFIX", modifier)
-        end
-
-    end
-
     if not ret then
-        ret = getcharacterstring(STRINGS.CHARACTERS.GENERIC.DESCRIBE, itemname, modifier)
+        if STRINGS.CHARACTERS[character] then
+            ret = getcharacterstring(STRINGS.CHARACTERS[character].DESCRIBE, itemname, modifier)
+        end
 
-        if item and item.components.repairable and item.components.repairable:NeedsRepairs() then
-            ret = ret..getcharacterstring(STRINGS.CHARACTERS.GENERIC, "ANNOUNCE_CANFIX", modifier)
+        if not ret and STRINGS.CHARACTERS.GENERIC then
+            ret = getcharacterstring(STRINGS.CHARACTERS.GENERIC.DESCRIBE, itemname, modifier)
+        end
+
+        if not ret then
+            ret = STRINGS.CHARACTERS.GENERIC.DESCRIBE_GENERIC
         end
     end
 
-    if ret then
-       return ret
-    end
-    return STRINGS.CHARACTERS.GENERIC.DESCRIBE_GENERIC
+    if ret and item and item.components.repairable and item.components.repairable:NeedsRepairs() and item.components.repairable.announcecanfix then
+        local repair = nil
+        if STRINGS.CHARACTERS[character] and STRINGS.CHARACTERS[character].DESCRIBE then
+            repair = getcharacterstring(STRINGS.CHARACTERS[character], "ANNOUNCE_CANFIX", modifier)
+        end
+    
+        if not repair and STRINGS.CHARACTERS.GENERIC then
+            repair = getcharacterstring(STRINGS.CHARACTERS.GENERIC, "ANNOUNCE_CANFIX", modifier)
+        end
+
+        if repair then 
+            ret = ret..repair
+        end
+    end  
+
+    return ret 
 end
 
 function GetActionFailString(character, action, reason)

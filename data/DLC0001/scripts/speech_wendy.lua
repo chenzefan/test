@@ -73,7 +73,11 @@ return {
 	DESCRIBE =
 	{
 		GLOMMER = "Well aren't you a happy little fuzzball. Die.",
-        GLOMMERFLOWER = "Flower of the night.",
+        GLOMMERFLOWER = 
+        {
+        	GENERIC = "Flower of the night.",
+        	DEAD = "Even flowers of the night die.",
+        },
         GLOMMERWINGS = "Even his wings are small and cheery.",
         GLOMMERFUEL = "Fuzzball excrement.",
         BELL = "Ring in the dead.",
@@ -85,6 +89,7 @@ return {
 		WEBBERSKULL = "He's better this way.",
 		MOLE =
 		{
+			HELD = "How do you like being torn away from your family?",
 			UNDERGROUND = "Stay down there, away from this horrible place.",
 			ABOVEGROUND = "You should go back to where it's dark.",
 		},
@@ -130,6 +135,7 @@ return {
 			EMPTY = "All cats must die.",
 		},
 		CATCOONHAT = "Nothing like the stench of death on my head.",
+		COONTAIL = "It's matted, patchy and putrid.",
 		COOKPOT =
 		{
 			COOKING_LONG = "Whatever is in there isn't dead yet.",

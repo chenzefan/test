@@ -114,7 +114,6 @@ local common_prefabs =
 
     "armordragonfly",
     "beargervest",
-    "eyebrella",
     "featherfan",
 }
 

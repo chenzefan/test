@@ -136,6 +136,7 @@ function Mixer:PushMix(mixname)
 end
 
 local top_val = 25000
+local bottom_val = 0
 
 function Mixer:UpdateFilters(dt)
 	for k,v in pairs(self.lowpassfilters) do
@@ -182,13 +183,13 @@ end
 function Mixer:SetHighPassFilter(category, cutoff, timetotake)
     timetotake = timetotake or 3
     
-    local startfreq = top_val
-    if self.lowpassfilters[category] then
-        startfreq = self.lowpassfilters[category].freq
+    local startfreq = bottom_val
+    if self.highpassfilters[category] then
+        startfreq = self.highpassfilters[category].freq
     end
     
     local freq_entry = {startfreq = startfreq, endfreq = cutoff, freq= startfreq, totaltime = timetotake, currenttime = 0}
-    self.lowpassfilters[category] = freq_entry
+    self.highpassfilters[category] = freq_entry
     
     if timetotake <= 0 then
         freq_entry.freq = cutoff
@@ -201,7 +202,7 @@ function Mixer:ClearLowPassFilter(category, timetotake)
 end
 
 function Mixer:ClearHighPassFilter(category, timetotake)
-    self:SetHighPassFilter(category, top_val, timetotake)    
+    self:SetHighPassFilter(category, bottom_val, timetotake)    
 end
 
 return { Mix = Mix, Mixer = Mixer}

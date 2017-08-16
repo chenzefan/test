@@ -221,9 +221,15 @@ function SaveIndex:GetSaveFollowers(doer)
 
 	if doer.components.leader then
 		for follower,v in pairs(doer.components.leader.followers) do
-			local ent_data = follower:GetPersistData()
-			table.insert(followers, {prefab = follower.prefab, data = follower:GetPersistData()})
-			follower:Remove()
+			-- Make sure the follower is alive
+			if follower and (not follower.components.health or (follower.components.health and not follower.components.health:IsDead())) then
+				local ent_data = follower:GetPersistData()
+				table.insert(followers, {prefab = follower.prefab, data = follower:GetPersistData()})
+				follower:Remove()
+			elseif follower then -- Otherwise remove it from the list and world
+				doer.components.leader:RemoveFollower(follower)
+				follower:Remove()
+			end
 		end
 	end
 
@@ -232,9 +238,14 @@ function SaveIndex:GetSaveFollowers(doer)
 		for k,item in pairs(doer.components.inventory.itemslots) do
 			if item.components.leader then
 				for follower,v in pairs(item.components.leader.followers) do
-					local ent_data = follower:GetPersistData()
-					table.insert(followers, {prefab = follower.prefab, data = follower:GetPersistData()})
-					follower:Remove()
+					if follower and (not follower.components.health or (follower.components.health and not follower.components.health:IsDead())) then
+						local ent_data = follower:GetPersistData()
+						table.insert(followers, {prefab = follower.prefab, data = follower:GetPersistData()})
+						follower:Remove()
+					elseif follower then
+						item.components.leader:RemoveFollower(follower)
+						follower:Remove()
+					end
 				end
 			end
 		end
@@ -246,9 +257,14 @@ function SaveIndex:GetSaveFollowers(doer)
 				for j,item in pairs(container.slots) do
 					if item.components.leader then
 						for follower,v in pairs(item.components.leader.followers) do
-							local ent_data = follower:GetPersistData()
-							table.insert(followers, {prefab = follower.prefab, data = follower:GetPersistData()})
-							follower:Remove()
+							if follower and (not follower.components.health or (follower.components.health and not follower.components.health:IsDead())) then
+								local ent_data = follower:GetPersistData()
+								table.insert(followers, {prefab = follower.prefab, data = follower:GetPersistData()})
+								follower:Remove()
+							elseif follower then
+								item.components.leader:RemoveFollower(follower)
+								follower:Remove()
+							end
 						end
 					end
 				end
@@ -280,8 +296,6 @@ function SaveIndex:LoadSavedFollowers(doer)
 		 		ent.components.follower:SetLeader(doer)
 			end
 		end
-		self.data.slots[self.current_slot].followers = nil
-		self:Save(function () print("LoadSavedFollowers CB") end)
 	end
 end
 
@@ -310,11 +324,14 @@ function SaveIndex:ClearCurrentResurrectors()
 	end
 
 	for k,v in pairs(self.data.slots[self.current_slot].resurrectors) do
-		if string.find(k, self:GetSaveGameName(self.data.slots[self.current_slot].current_mode, self.current_slot))~= nil then
+		if string.find(k, self:GetSaveGameName(self.data.slots[self.current_slot].current_mode, self.current_slot), 1, true) ~= nil then
 			self.data.slots[self.current_slot].resurrectors[k] = nil
 		end
 	end
-	self:Save(function () print("ClearCurrentResurrectors CB") end)
+
+	if PLATFORM ~= "PS4" then 
+	    self:Save(function () print("ClearCurrentResurrectors CB") end)
+    end	   
 end
 
 function SaveIndex:RegisterResurrector(res, penalty)
@@ -477,9 +494,8 @@ function SaveIndex:DeleteSlot(slot, cb, save_options)
 			self.data.slots[slot].current_mode = "survival"
 			self.data.slots[slot].modes["survival"] = {options = options}
 		end
-		self:Save(nil)		
-	end
-	if cb then
+		self:Save(cb)		
+	elseif cb then
 		cb()
 	end
 end
@@ -587,6 +603,9 @@ function SaveIndex:SaveCurrent(onsavedcb, direction, cave_num)
 	self.data.slots[self.current_slot].direction = direction
 	self.data.slots[self.current_slot].cave_num = cave_num
 	self.data.slots[self.current_slot].dlc = dlc
+	if not direction then
+		self.data.slots[self.current_slot].followers = nil
+	end
 
 	data.day = day_number
 	data.playerdata = nil
@@ -695,12 +714,9 @@ function SaveIndex:StartSurvivalMode(saveslot, character, customoptions, onsaved
 		},
 	}
  	
- 	self:Save(onsavedcb)
-
     local starts = Profile:GetValue("starts") or 0
     Profile:SetValue("starts", starts+1)
-    Profile:Save()
-
+	Profile:Save(function() self:Save(onsavedcb) end )
 end
 
 function SaveIndex:GenerateSaveID(slot)
@@ -893,6 +909,9 @@ function SaveIndex:CompleteLevel(cb)
    	end
 
 	self.data.slots[self.current_slot].continue_pending = true
+	self.data.slots[self.current_slot].direction = nil
+	self.data.slots[self.current_slot].cave_num = nil
+	self.data.slots[self.current_slot].followers = nil
 
 	local current_mode = self.data.slots[self.current_slot].current_mode
 	local data = self:GetModeData(self.current_slot, current_mode)

@@ -1,3 +1,6 @@
+require "brains/spiderbrain"
+require "stategraphs/SGspider"
+
 local hiderassets =
 {
 	Asset("ANIM", "anim/ds_spider_basic.zip"),

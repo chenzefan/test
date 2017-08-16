@@ -1,4 +1,3 @@
-
 MAIN_GAME = 0
 REIGN_OF_GIANTS = 1
 
@@ -114,5 +113,4 @@ function DisableAllDLC()
         DisableDLC(v)
     end 
 end
-
 

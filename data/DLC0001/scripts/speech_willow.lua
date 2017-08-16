@@ -83,7 +83,11 @@ return {
 	DESCRIBE =
 	{
 		GLOMMER = "It's fuzzy! And slimy...",
-        GLOMMERFLOWER = "Why does everything have to be a flower?!",
+        GLOMMERFLOWER = 
+        {
+        	GENERIC = "Why does everything have to be a flower?!",
+        	DEAD = "I wonder if it burns...",
+        },
         GLOMMERWINGS = "They're so small!",
         GLOMMERFUEL = "It's goopy and weird.",
         BELL = "Is it New Year's Eve? Are there FIREWORKS?!",
@@ -95,6 +99,7 @@ return {
 		WEBBERSKULL = "It's not myyy way, but a burial will have to do.",
 		MOLE =
 		{
+			HELD = "Out of the ground, into the fire.",
 			UNDERGROUND = "Hiding from the light, huh?",
 			ABOVEGROUND = "Coming up for a peek!",
 		},
@@ -140,6 +145,7 @@ return {
 			EMPTY = "It's all dried up and ready for burning.",
 		},
 		CATCOONHAT = "Cuddly hat.",
+		COONTAIL = "I've kept stranger things than this.",
 		COOKPOT =
 		{
 			COOKING_LONG = "The fire still has quite a bit of work to do.",

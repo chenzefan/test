@@ -152,4 +152,8 @@ function TextEdit:SetPassword(to)
 	self.inst.TextEditWidget:SetPassword(to)
 end
 
+function TextEdit:SetAllowClipboardPaste(to)
+	self.inst.TextEditWidget:SetAllowClipboardPaste(to)
+end
+
 return TextEdit

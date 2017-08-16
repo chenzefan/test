@@ -16,6 +16,9 @@ local function giveupstring(combat, target)
     return str
 end
 
+local function onattackother(inst, data)
+end
+
 local function MakePlayerCharacter(name, customprefabs, customassets, customfn, starting_inventory)
 
     local font = TALKINGFONT
@@ -159,9 +162,7 @@ local function MakePlayerCharacter(name, customprefabs, customassets, customfn, 
         
         inst:AddComponent("sanitymonsterspawner")
 
-        if PLATFORM ~= "PS4" then
-            inst:AddComponent("autosaver")
-        end            
+        inst:AddComponent("autosaver")
         ------
         
         inst:AddComponent("health")
@@ -296,6 +297,10 @@ local function MakePlayerCharacter(name, customprefabs, customassets, customfn, 
         inst:ListenForEvent("actionfailed", function(it, data)
             inst.components.talker:Say(GetActionFailString(inst.prefab, data.action.action.id, data.reason))
         end)
+
+        if BRANCH ~= "RELEASE" or (PLATFORM == "WIN32_STEAM" or PLATFORM == "LINUX_STEAM" or PLATFORM == "OSX_STEAM") then
+            inst:ListenForEvent("onattackother", onattackother)
+        end
 
         inst.CanExamine = function() return not inst.beaver end
 

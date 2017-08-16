@@ -1,3 +1,6 @@
+require "brains/ghostbrain"
+require "stategraphs/SGghost"
+
 local assets =
 {
 	Asset("ANIM", "anim/ghost.zip"),

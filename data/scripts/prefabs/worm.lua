@@ -12,6 +12,9 @@
     Spawn a dirt mound that must be dug up to get loot?
 ]]
 
+require "brains/wormbrain"
+require "stategraphs/SGworm"
+
 local assets=
 {
 	Asset("ANIM", "anim/worm.zip"),

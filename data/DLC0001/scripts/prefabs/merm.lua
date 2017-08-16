@@ -1,3 +1,6 @@
+require "brains/mermbrain"
+require "stategraphs/SGmerm"
+
 local assets=
 {
 	Asset("ANIM", "anim/merm_build.zip"),

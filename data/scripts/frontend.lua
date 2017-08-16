@@ -82,6 +82,7 @@ FrontEnd = Class(function(self, name)
 	self.overlayroot:AddChild(self.topblackoverlay)
 	self.screenroot:AddChild(self.blackoverlay)
 	
+    self.alpha = 0.0
     
     self.title = Text(TITLEFONT, 100)
     self.title:SetPosition(0, -30, 0)
@@ -347,6 +348,7 @@ end
 
 function FrontEnd:SetFadeLevel(alpha)
 	--print ("SET FADE LEVEL", alpha)
+	self.alpha = alpha
 	if alpha <= 0 then
 		if self.blackoverlay then
 			self.blackoverlay:Hide()
@@ -362,6 +364,10 @@ function FrontEnd:SetFadeLevel(alpha)
 		end
 		self.topblackoverlay:SetTint(0,0,0,alpha)
 	end
+end
+
+function FrontEnd:GetFadeLevel(alpha)
+	return self.alpha
 end
 
 function FrontEnd:DoFadingUpdate(dt)

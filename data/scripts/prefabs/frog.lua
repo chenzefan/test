@@ -1,3 +1,6 @@
+require "brains/frogbrain"
+require "stategraphs/SGfrog"
+
 local assets=
 {
 	Asset("ANIM", "anim/frog.zip"),

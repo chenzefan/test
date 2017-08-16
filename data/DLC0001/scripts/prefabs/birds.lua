@@ -7,6 +7,8 @@ To make a new bird add it at the bottom of the file as a 'makebird(name)' call
 This assumes the bird already has a build, inventory icon, sounds and a feather_name prefab exists
 
 ]]--
+require "brains/birdbrain"
+require "stategraphs/SGbird"
 
 local function TrackInSpawner(inst)
     local ground = GetWorld()

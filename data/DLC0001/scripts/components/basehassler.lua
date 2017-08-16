@@ -169,6 +169,7 @@ function BaseHassler:AdvanceHasslerState(name)
 	if self:IsHasslerState(name, "DORMANT") or
 	self:IsHasslerState(name, "WARNING") then
 		h.timer = self:GetWaitingTime(name)	
+		if h.timer < 0 then h.timer = 0 end
 		self:SetHasslerState(name, "WAITING")
 	elseif self:IsHasslerState(name, "WAITING") then
 		h.timer = self:GetWarningTime(name)

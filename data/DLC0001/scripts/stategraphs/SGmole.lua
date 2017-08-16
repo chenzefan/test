@@ -125,11 +125,7 @@ local states=
                         end
                     end
                 end)
-                inst:DoTaskInTime(77*FRAMES, function(inst)
-                    if inst.State == "above" then
-                        inst.SoundEmitter:KillSound("sniff")
-                    end
-                end)
+                inst:DoTaskInTime(77*FRAMES, function(inst) inst.SoundEmitter:KillSound("sniff") end)
             else
                 inst:DoTaskInTime(1*FRAMES, function(inst)
                     if inst.State == "above" then
@@ -138,11 +134,7 @@ local states=
                         end
                     end
                 end)
-                inst:DoTaskInTime(52*FRAMES, function(inst)
-                    if inst.State == "above" then
-                        inst.SoundEmitter:KillSound("sniff")
-                    end
-                end)
+                inst:DoTaskInTime(52*FRAMES, function(inst) inst.SoundEmitter:KillSound("sniff") end)
             end
             inst:SetState("above")
             inst.AnimState:PushAnimation("idle", false)
@@ -177,11 +169,7 @@ local states=
                     end
                 end
             end),
-            TimeEvent(78*FRAMES, function(inst)
-                if inst.State == "above" then
-                    inst.SoundEmitter:KillSound("sniff")
-                end
-            end),
+            TimeEvent(78*FRAMES, function(inst) inst.SoundEmitter:KillSound("sniff") end),
         },
 
         events = 
@@ -284,11 +272,7 @@ local states=
                     end
                 end
             end),
-            TimeEvent(52*FRAMES, function(inst)
-                if inst.State == "above" then
-                    inst.SoundEmitter:KillSound("sniff")
-                end
-            end),
+            TimeEvent(52*FRAMES, function(inst) inst.SoundEmitter:KillSound("sniff") end),
         }
     },
 
@@ -452,6 +436,7 @@ local states=
         
         onenter = function(inst, skippre) 
             inst:ClearBufferedAction()
+            inst.SoundEmitter:KillSound("move")
             inst.SoundEmitter:KillSound("sniff")
             inst.components.inventory:DropEverything(false, true) 
             inst.Physics:Stop()

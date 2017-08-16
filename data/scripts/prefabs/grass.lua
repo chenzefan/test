@@ -13,7 +13,9 @@ local prefabs =
 }    
 
 local function ontransplantfn(inst)
-	inst.components.pickable:MakeBarren()
+	if inst.components.pickable then
+		inst.components.pickable:MakeBarren()
+	end
 end
 
 local function dig_up(inst, chopper)
@@ -43,7 +45,7 @@ local function onpickedfn(inst)
 	inst.SoundEmitter:PlaySound("dontstarve/wilson/pickup_reeds") 
 	inst.AnimState:PlayAnimation("picking") 
 	
-	if inst.components.pickable:IsBarren() then
+	if inst.components.pickable and inst.components.pickable:IsBarren() then
 		inst.AnimState:PushAnimation("idle_dead")
 	else
 		inst.AnimState:PushAnimation("picked")

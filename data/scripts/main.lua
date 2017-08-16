@@ -9,10 +9,11 @@ SOUNDDEBUG_ENABLED = false
 MODS_ENABLED = PLATFORM ~= "PS4" and PLATFORM ~= "NACL"
 ACCOMPLISHMENTS_ENABLED = PLATFORM == "PS4"
 --DEBUG_MENU_ENABLED = false --BRANCH == "dev" or PLATFORM == "PS4"
-DEBUG_MENU_ENABLED = BRANCH == "dev" or PLATFORM == "PS4"
+DEBUG_MENU_ENABLED = BRANCH == "dev" or (PLATFORM == "PS4" and CONFIGURATION ~= "PRODUCTION")
 METRICS_ENABLED = PLATFORM ~= "PS4"
-
 --debug.setmetatable(nil, {__index = function() return nil end})  -- Makes  foo.bar.blat.um  return nil if table item not present   See Dave F or Brook for details
+
+ExecutingLongUpdate = false
 
 local servers =
 {
@@ -91,6 +92,7 @@ AddPrintLogger(function(...) TheSim:LuaPrint(...) end)
 require("config")
 
 require("mainfunctions")
+require("preloadsounds")
 
 require("mods")
 require("json")
@@ -99,6 +101,7 @@ require("tuning")
 require("languages/language")
 require("strings")
 require("stringutil")
+require("dlcsupport_strings")
 require("constants")
 require("class")
 require("actions")
@@ -134,8 +137,8 @@ require("physics")
 require("modindex")
 require("mathutil")
 require("components/lootdropper")
-
 require("saveindex") -- Added by Altgames for Android focus lost handling
+require("worldtiledefs")
 
 function JapaneseOnPS4()
 	if PLATFORM=="PS4" and APP_REGION == "SCEJ" then

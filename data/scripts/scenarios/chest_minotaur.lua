@@ -10,25 +10,25 @@ local function OnCreate(inst, scenariorunner)
 			--Body Items
 			item = "armorruins",
 			chance = 0.33,
-			initfn = function(item) item.components.armor:SetCondition(math.random(item.components.armor.maxcondition * 0.33, item.components.armor.maxcondition * 0.8))end
+			initfn = function(item) if item.components.armor then item.components.armor:SetCondition(math.random(item.components.armor.maxcondition * 0.33, item.components.armor.maxcondition * 0.8)) end end
 		},
 		{
 			--Body Items
 			item = "ruinshat",
 			chance = 0.33,
-			initfn = function(item) item.components.armor:SetCondition(math.random(item.components.armor.maxcondition * 0.33, item.components.armor.maxcondition * 0.8))end
+			initfn = function(item) if item.components.armor then item.components.armor:SetCondition(math.random(item.components.armor.maxcondition * 0.33, item.components.armor.maxcondition * 0.8)) end end
 		},
 		{
 			--Weapon Items
 			item = {"ruins_bat", "orangestaff", "yellowstaff"},
 			chance = 0.25,
-			initfn = function(item) item.components.finiteuses:SetUses(math.random(item.components.finiteuses.total * 0.33, item.components.finiteuses.total * 0.8)) end
+			initfn = function(item) if item.components.finiteuses then item.components.finiteuses:SetUses(math.random(item.components.finiteuses.total * 0.33, item.components.finiteuses.total * 0.8)) end end
 		},
 		{
 			--Weapon Items
 			item = {"firestaff", "icestaff", "telestaff", "multitool_axe_pickaxe"},
 			chance = 0.5,
-			initfn = function(item) item.components.finiteuses:SetUses(math.random(item.components.finiteuses.total * 0.33, item.components.finiteuses.total * 0.8)) end
+			initfn = function(item) if item.components.finiteuses then item.components.finiteuses:SetUses(math.random(item.components.finiteuses.total * 0.33, item.components.finiteuses.total * 0.8)) end end
 		},
 		{
 			item = "thulecite",

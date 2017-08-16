@@ -188,7 +188,9 @@ local states=
         events =
         {
             EventHandler("animover", function(inst) 
-                local MAX_RETCHES = (inst.components.follower and inst.components.follower.leader) and #inst.friendGiftPrefabs or #inst.neutralGiftPrefabs
+                local neutralmax = inst.neutralGiftPrefabs and #inst.neutralGiftPrefabs or 7
+                local friendmax = inst.friendGiftPrefabs and #inst.friendGiftPrefabs or 7
+                local MAX_RETCHES = (inst.components.follower and inst.components.follower.leader) and friendmax or neutralmax
                 local rand = math.random()
                 print(inst.numretches, .8/inst.numretches, rand)
                 if inst.numretches >= MAX_RETCHES or rand < (.8/inst.numretches) then
@@ -226,12 +228,14 @@ local states=
                 if inst.vomit and inst.vomit.components.inventoryitem and inst.vomit.components.inventoryitem.ondropfn then
                     inst.vomit.components.inventoryitem.ondropfn(inst.vomit)
                 end
-                local downvec = TheCamera:GetDownVec()
-                local face = math.atan2(downvec.z, downvec.x) * (180/math.pi)
-                local pos = inst:GetPosition()
-                local offset = downvec:Normalize()
-                inst.vomit.Transform:SetPosition(pos.x + offset.x, pos.y + offset.y, pos.z + offset.z)
-                inst.Transform:SetRotation(-face)
+                if inst.vomit then
+                    local downvec = TheCamera:GetDownVec()
+                    local face = math.atan2(downvec.z, downvec.x) * (180/math.pi)
+                    local pos = inst:GetPosition()
+                    local offset = downvec:Normalize()
+                    inst.vomit.Transform:SetPosition(pos.x + offset.x, pos.y + offset.y, pos.z + offset.z)
+                    inst.Transform:SetRotation(-face)
+                end
                 inst.last_hairball_time = GetTime()
                 inst:PerformBufferedAction()
             end),

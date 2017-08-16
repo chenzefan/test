@@ -1,3 +1,5 @@
+require "stategraphs/SGtentacle"
+
 local assets=
 {
 	Asset("ANIM", "anim/tentacle.zip"),

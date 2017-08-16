@@ -1,3 +1,5 @@
+local activelisteners = 0
+
 local Pickable = Class(function(self, inst)
     self.inst = inst
     self.canbepicked = nil
@@ -28,7 +30,7 @@ local Pickable = Class(function(self, inst)
     self.wither_temp = math.random(TUNING.MIN_PLANT_WITHER_TEMP, TUNING.MAX_PLANT_WITHER_TEMP)
     self.rejuvenate_temp = math.random(TUNING.MIN_PLANT_REJUVENATE_TEMP, TUNING.MAX_PLANT_REJUVENATE_TEMP)
 
-    self.inst:ListenForEvent("witherplants", function(it, data) 
+	self.witherHandler = function(it, data) 
     	if self.witherable and not self.withered and not self.protected and data.temp > self.wither_temp and 
     	   (self.protected_cycles == nil or self.protected_cycles < 1) then
     		self.withered = true
@@ -36,28 +38,56 @@ local Pickable = Class(function(self, inst)
     		self.wither_time = GetTime()
     		self:MakeBarren()
     	end
-    end, GetWorld())
-    self.inst:ListenForEvent("rejuvenateplants", function(it, data)
-    	local time_since_wither = GetTime()
-    	if self.wither_time then 
-    		time_since_wither = time_since_wither - self.wither_time
-    	else
-    		time_since_wither = TUNING.TOTAL_DAY_TIME
-    	end
-    	if self.withered and data.temp < self.rejuvenate_temp and time_since_wither >= TUNING.TOTAL_DAY_TIME then
-    		self:MakeEmpty()
-    		self.withered = false
-    		self.inst:RemoveTag("withered")
-    		self.shouldwither = false
-    		self.witherable = true
-    		self.inst:AddTag("witherable")
-    	elseif self.shouldwither and data.temp < self.rejuvenate_temp and time_since_wither >= TUNING.TOTAL_DAY_TIME then
-    		self.shouldwither = false
-    		self.witherable = true
-    		self.inst:AddTag("witherable")
-    	end
-    end, GetWorld())
+    end
+	self.rejuvenateHandler = function(it, data)
+		if data.temp < self.rejuvenate_temp then
+	    	local time_since_wither = GetTime()
+	    	if self.wither_time then 
+	    		time_since_wither = time_since_wither - self.wither_time
+	    	else
+	    		time_since_wither = TUNING.TOTAL_DAY_TIME
+	    	end
+	    	if self.withered and time_since_wither >= TUNING.TOTAL_DAY_TIME then
+	    		self:MakeEmpty()
+	    		self.withered = false
+	    		self.inst:RemoveTag("withered")
+	    		self.shouldwither = false
+	    		self.witherable = true
+	    		self.inst:AddTag("witherable")
+	    	elseif self.shouldwither and time_since_wither >= TUNING.TOTAL_DAY_TIME then
+	    		self.shouldwither = false
+	    		self.witherable = true
+	    		self.inst:AddTag("witherable")
+	    	end
+	    end
+	end
 end)
+
+function Pickable:CheckPlantState()
+	local data = { temp = GetSeasonManager():GetCurrentTemperature() }
+	self:witherHandler(data)
+	self:rejuvenateHandler(data)
+end
+
+function Pickable:StartListeningToEvents()
+    self.inst:ListenForEvent("witherplants", self.witherHandler, GetWorld())
+    self.inst:ListenForEvent("rejuvenateplants", self.rejuvenateHandler, GetWorld())
+end
+
+function Pickable:StopListeningToEvents()
+    self.inst:RemoveEventCallback("witherplants", self.witherHandler, GetWorld())
+    self.inst:RemoveEventCallback("rejuvenateplants", self.rejuvenateHandler, GetWorld())
+end
+
+function Pickable:OnEntitySleep()
+	self:StopListeningToEvents()
+end
+
+function Pickable:OnEntityWake()
+	self:CheckPlantState()
+	self:StartListeningToEvents()
+end
+
 
 function Pickable:LongUpdate(dt)
 

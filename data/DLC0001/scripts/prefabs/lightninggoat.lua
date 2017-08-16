@@ -1,3 +1,6 @@
+require("brains/lightninggoatbrain")
+require "stategraphs/SGlightninggoat"
+
 local assets =
 {
     Asset("ANIM", "anim/lightning_goat_build.zip"),
@@ -33,23 +36,41 @@ SetSharedLootTable( 'chargedlightninggoat',
 
 local function RetargetFn(inst)
     if inst.charged then
-        return FindEntity(inst, TUNING.LIGHTNING_GOAT_TARGET_DIST, function(guy)
+        -- Look for non-wall targets first
+        local targ = FindEntity(inst, TUNING.LIGHTNING_GOAT_TARGET_DIST, function(guy)
             return not guy:HasTag("lightninggoat") and 
                     inst.components.combat:CanTarget(guy) and 
                     not guy:HasTag("wall")
         end)
+        -- If none, look for walls
+        if not targ then
+            targ = FindEntity(inst, TUNING.LIGHTNING_GOAT_TARGET_DIST, function(guy)
+                return not guy:HasTag("lightninggoat") and 
+                        inst.components.combat:CanTarget(guy)
+            end)
+        end
+        return targ
     end
 end
 
 local function KeepTargetFn(inst, target)
-    if inst.components.herdmember
-    and inst.components.herdmember:GetHerd() then
-        local herd = inst.components.herdmember and inst.components.herdmember:GetHerd()
-        if herd then
-            return distsq(Vector3(herd.Transform:GetWorldPosition() ), Vector3(inst.Transform:GetWorldPosition() ) ) < TUNING.LIGHTNING_GOAT_CHASE_DIST*TUNING.LIGHTNING_GOAT_CHASE_DIST
+    if target:HasTag("wall") then 
+        local newtarg = FindEntity(inst, TUNING.LIGHTNING_GOAT_TARGET_DIST, function(guy)
+            return not guy:HasTag("lightninggoat") and 
+                    inst.components.combat:CanTarget(guy) and 
+                    not guy:HasTag("wall")
+        end)
+        return newtarg == nil
+    else
+        if inst.components.herdmember
+        and inst.components.herdmember:GetHerd() then
+            local herd = inst.components.herdmember and inst.components.herdmember:GetHerd()
+            if herd then
+                return distsq(Vector3(herd.Transform:GetWorldPosition() ), Vector3(inst.Transform:GetWorldPosition() ) ) < TUNING.LIGHTNING_GOAT_CHASE_DIST*TUNING.LIGHTNING_GOAT_CHASE_DIST
+            end
         end
+        return true
     end
-    return true
 end
 
 local function discharge(inst)

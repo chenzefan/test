@@ -51,7 +51,7 @@ end
 
 function DefaultExtinguishFn(inst)
     if not inst:HasTag("tree") and not inst:HasTag("structure") then
-        inst.persists = nil
+        inst.persists = true
     end
 end
 

@@ -1,3 +1,6 @@
+require("brains/mosslingbrain")
+require "stategraphs/SGmossling"
+
 local assets =
 {
 	Asset("ANIM", "anim/mossling_build.zip"),

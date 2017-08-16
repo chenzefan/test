@@ -1,3 +1,6 @@
+require("brains/wargbrain")
+require "stategraphs/SGwarg"
+
 local assets =
 {
 	Asset("ANIM", "anim/warg_actions.zip"),
