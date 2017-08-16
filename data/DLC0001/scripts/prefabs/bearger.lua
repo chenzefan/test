@@ -104,6 +104,8 @@ local function OnEntitySleep(inst)
                 inst.Transform:SetPosition(pos:Get())
             end)
         end
+    elseif inst.shouldGoAway then
+        LeaveWorld(inst)
     end
 end
 
@@ -113,6 +115,7 @@ local function OnSave(inst, data)
     data.num_food_cherrypicked = inst.num_food_cherrypicked
     data.num_good_food_eaten = inst.num_good_food_eaten
     data.KilledPlayer = inst.KilledPlayer
+    data.shouldGoAway = inst.shouldGoAway
 end
 
 local function OnLoad(inst, data)
@@ -122,11 +125,15 @@ local function OnLoad(inst, data)
         inst.num_food_cherrypicked = data.num_food_cherrypicked or 0
         inst.num_good_food_eaten = data.num_good_food_eaten or 0
         inst.KilledPlayer = data.KilledPlayer or false
+        inst.shouldGoAway = data.shouldGoAway or false
     end
 end
 
 local function OnSeasonChange(inst, data)
-    --If it's winter time then wander off & despawn.
+    inst.shouldGoAway = (GetSeasonManager():GetSeason() ~= SEASONS.AUTUMN or GetSeasonManager().incaves)
+    if inst:IsAsleep() then
+        OnEntitySleep(inst)
+    end
 end
 
 local function OnAttacked(inst, data)
@@ -337,6 +344,7 @@ local function fn(Sim)
 
     ------------------------------------------
  
+    inst.shouldGoAway = false
     inst:AddComponent("sleeper")
     inst.components.sleeper:SetResistance(4)
     inst.components.sleeper:SetSleepTest(ShouldSleep)

@@ -139,24 +139,37 @@ local top_val = 25000
 local bottom_val = 0
 
 function Mixer:UpdateFilters(dt)
-	for k,v in pairs(self.lowpassfilters) do
-		if v.totaltime > 0 and v.currenttime < v.totaltime then
-			v.currenttime = v.currenttime + dt
-			v.freq = easing.linear(v.currenttime, v.startfreq, v.endfreq - v.startfreq, v.totaltime)
-			TheSim:SetLowPassFilter(k, v.freq)
-		elseif v.freq >= top_val then
-			TheSim:ClearDSP(k)
-			self.lowpassfilters[k] = nil
-		end
-	end
-	for k,v in pairs(self.highpassfilters) do
+    -- First update the filters
+    for k,v in pairs(self.lowpassfilters) do
+        if v.totaltime > 0 and v.currenttime < v.totaltime then
+            v.currenttime = v.currenttime + dt
+            v.freq = easing.linear(v.currenttime, v.startfreq, v.endfreq - v.startfreq, v.totaltime)
+            TheSim:SetLowPassFilter(k, v.freq)
+        end
+    end
+    for k,v in pairs(self.highpassfilters) do
         if v.totaltime > 0 and v.currenttime < v.totaltime then
             v.currenttime = v.currenttime + dt
             v.freq = easing.linear(v.currenttime, v.startfreq, v.endfreq - v.startfreq, v.totaltime)
             TheSim:SetHighPassFilter(k, v.freq)
-        elseif v.freq >= top_val then
-            TheSim:ClearDSP(k)
+        end
+    end
+
+    -- Then check if any need to be cleared
+    for k,v in pairs(self.lowpassfilters) do
+        if v.freq and v.freq >= top_val then
+            self.lowpassfilters[k] = nil
+            if not self.highpassfilters[k] then
+                TheSim:ClearDSP(k)
+            end
+        end
+    end
+    for k,v in pairs(self.highpassfilters) do
+        if v.freq and v.freq <= bottom_val then
             self.highpassfilters[k] = nil
+            if not self.lowpassfilters[k] then
+                TheSim:ClearDSP(k)
+            end
         end
     end
 end

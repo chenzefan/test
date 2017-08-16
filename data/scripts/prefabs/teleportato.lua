@@ -14,6 +14,26 @@ local prefabs = {
 
 
 local function TransitionToNextLevel(inst, wilson)
+
+	-- local all_resurrectors = SaveGameIndex:GetAllResurrectors()
+	-- if all_resurrectors then
+
+
+
+	-- end
+
+	-- local resurrectors_overworld = {}
+	-- local resurrectors_caves = {}
+	-- local res = wilson.components.resurrectable:FindClosestResurrector()
+	-- if not res then -- If there are no resurrectors in this world
+	-- 	res = SaveGameIndex:GetResurrector() -- Check the caves
+	-- 	while res do -- While we have more resurrectors in the caves, do this business
+	-- 		if res then
+	-- 			SaveGameIndex:DeregisterResurrector(res)
+	-- 		end
+	-- 		res = SaveGameIndex:GetResurrector()
+	-- 	end
+	-- end
 	
 	wilson.sg:GoToState("teleportato_teleport")
 	local days_survived, start_xp, reward_xp, new_xp, capped = CalculatePlayerRewards(wilson)
@@ -36,6 +56,9 @@ local function TransitionToNextLevel(inst, wilson)
 				end
 				SaveGameIndex:SaveCurrent(onsaved)
 			else
+				if SaveGameIndex:GetCurrentMode() ~= "adventure" then
+					SaveGameIndex:ClearCavesResurrectors()
+				end
 				SaveGameIndex:CompleteLevel(function() TheFrontEnd:PushScreen(DeathScreen(days_survived, start_xp, true, capped)) end )
 			end
 		end)

@@ -10,6 +10,11 @@ local Menu = require "widgets/menu"
 
 
 
+local function ShowLoading()
+	if global_loading_widget then 
+		global_loading_widget:SetEnabled(true)
+	end
+end
 
 local DeathScreen = Class(Screen, function(self, days_survived, start_xp, escaped, capped)
 
@@ -227,6 +232,7 @@ function DeathScreen:OnMenu(escaped)
         if escaped then
             StartNextInstance()
         else
+            ShowLoading()
             EnableAllDLC()
             SaveGameIndex:DeleteSlot(SaveGameIndex:GetCurrentSaveSlot(), function() 
                 StartNextInstance()

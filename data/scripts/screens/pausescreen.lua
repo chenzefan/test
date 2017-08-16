@@ -17,7 +17,16 @@ else
     OptionsScreen = require "screens/optionsscreen"
 end
 
+local function ShowLoading()
+	if global_loading_widget then 
+		global_loading_widget:SetEnabled(true)
+	end
+end
+
 local function dorestart()
+
+    ShowLoading()
+    
 	EnableAllDLC()
 	local player = GetPlayer()
 	local purchased = IsGamePurchased()

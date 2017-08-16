@@ -29,6 +29,29 @@ local FX =
 	    anim = {"sparks_1", "sparks_2", "sparks_3"},
     },
     {
+	    name = "firework_fx", 
+	    bank = "firework", 
+	    build = "accomplishment_fireworks", 
+	    anim = "single_firework",
+	    sound = "dontstarve/common/shrine/sadwork_fire",
+	    sound2 = "dontstarve/common/shrine/sadwork_explo",
+	    sounddelay2 = 26/30,
+	    fn = function() GetClock():DoLightningLighting(.25) end,
+	    fntime = 26/30
+    },    
+    {
+	    name = "multifirework_fx", 
+	    bank = "firework", 
+	    build = "accomplishment_fireworks", 
+	    anim = "multi_firework",
+	    sound = "dontstarve/common/shrine/sadwork_fire",
+	    sound2 = "dontstarve/common/shrine/firework_explo",
+	    sounddelay2 = 26/30,
+	    fn = function() GetClock():DoLightningLighting(1) end,
+	    fntime = 26/30
+    },    
+
+    {
 	    name = "explode_small", 
 	    bank = "explode", 
 	    build = "explode", 

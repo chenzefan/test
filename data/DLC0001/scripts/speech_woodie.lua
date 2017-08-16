@@ -33,7 +33,7 @@ return {
 	ANNOUNCE_BURNT = "Ouch, that's hot!",
 	ANNOUNCE_TOOL_SLIP = "The stuff of nightmares!",
 	ANNOUNCE_DAMP = "It's a curse of water.",
-	ANNOUNCE_WET = "Plaid: warm, even when wet.",
+	ANNOUNCE_WET = "Plaid's warm, even when wet.",
 	ANNOUNCE_WETTER = "I'm getting quite wet, eh?",
 	ANNOUNCE_SOAKED = "Better hold on tight to Lucy.",
 	ANNOUNCE_EAT =

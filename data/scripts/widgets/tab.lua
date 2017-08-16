@@ -1,7 +1,7 @@
 local Widget = require "widgets/widget"
 local Image = require "widgets/image"
 
-local Tab = Class(Widget, function(self, tabgroup, name, atlas, icon_atlas, icon, imnorm, imselected, imhighlight, imoverlay, selectfn, deselectfn)
+local Tab = Class(Widget, function(self, tabgroup, name, atlas, icon_atlas, icon, imnorm, imselected, imhighlight, imalthighlight, imoverlay, selectfn, deselectfn)
     Widget._ctor(self, "Tab")
     self.group = tabgroup
     self.atlas = atlas
@@ -11,6 +11,7 @@ local Tab = Class(Widget, function(self, tabgroup, name, atlas, icon_atlas, icon
     self.imnormal = imnorm
     self.imselected = imselected
     self.imhighlight = imhighlight
+    self.imalthighlight = imalthighlight
 	self.basescale = .5
     self.selected = false
     self.highlighted = false
@@ -107,23 +108,58 @@ function Tab:Highlight(num)
             applychange()
         end
         
-    end
+    end  
+end
+
+function Tab:AlternateHighlight(num, doscaling)
     
+    local change_scale = not self.alternatehighlightnum or self.alternatehighlightnum < num
+    local change_texture = not self.selected and change_scale
     
+    self.alternatehighlighted = true
+    self.alternatehighlightnum = num
+    
+    if change_texture or change_scale then
+
+        local delay = nil
+        
+        if self.group.onalthighlight then
+            delay = self.group.onalthighlight()
+        end
+        
+        local applychange = function()
+            if change_texture then
+                self.bg:SetTexture(self.atlas, self.imalthighlight)
+            end
+                
+            if change_scale and doscaling then
+                self:ScaleTo(2*self.basescale,(self.selected and 1.25 or 1)*self.basescale,.25)
+            end
+        end
+        
+        if delay then 
+            scheduler:ExecuteInTime(delay, applychange)
+        else
+            applychange()
+        end
+        
+    end  
 end
 
 
-function Tab:UnHighlight()
+function Tab:UnHighlight(noscaling)
     if not self.selected then
         self.bg:SetTexture(self.atlas, self.imnormal)
     end
     
-    if self.highlighted then
+    if not noscaling and (self.highlighted or self.alternatehighlighted) then
         self:ScaleTo(.75*self.basescale, (self.selected and 1.25 or 1)*self.basescale, .33)
     end
     
     self.highlighted = false
+    self.alternatehighlighted = false
     self.highlightnum = nil
+    self.alternatehighlightnum = nil
 end
 
 
@@ -134,7 +170,13 @@ function Tab:Deselect()
         if self.deselectfn then
             self.deselectfn(self)
         end
-        self.bg:SetTexture(self.atlas, self.highlighted and self.imhighlight or self.imnormal)
+        if self.highlighted then
+            self.bg:SetTexture(self.atlas, self.imhighlight)
+        elseif self.alternatehighlighted then
+            self.bg:SetTexture(self.atlas, self.imalthighlight)
+        else
+            self.bg:SetTexture(self.atlas, self.imnormal)
+        end
         self.selected = false
     end
     

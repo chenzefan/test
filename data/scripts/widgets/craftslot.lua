@@ -133,6 +133,11 @@ function CraftSlot:Refresh(recipename)
 
         if self.fgimage then
             if knows or recipe.nounlock then
+                if buffered then
+                    self.bgimage:SetTexture(self.atlas, "craft_slot_place.tex")
+                else
+                    self.bgimage:SetTexture(self.atlas, "craft_slot.tex")
+                end
                 self.fgimage:Hide()
             else
                 local right_level = CanPrototypeRecipe(self.recipe.level, self.owner.components.builder.accessible_tech_trees)-- self.owner.components.builder.current_tech_level >= self.recipe.level

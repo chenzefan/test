@@ -86,7 +86,6 @@ local function onhungerchange(inst, data)
 			inst.strength = "mighty"
 			inst.AnimState:SetBuild("wolfgang_mighty")
 			if not silent then
-				print ("mighty!", GetTime(), debugstack())
 				inst.components.talker:Say(GetString("wolfgang", "ANNOUNCE_NORMALTOMIGHTY"))
 				inst.sg:PushEvent("powerup")
 				inst.SoundEmitter:PlaySound("dontstarve/characters/wolfgang/grow_medtolrg")

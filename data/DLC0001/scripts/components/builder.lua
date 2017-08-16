@@ -283,6 +283,8 @@ end
 
 function Builder:DoBuild(recname, pt)
     local recipe = GetRecipe(recname)
+    local buffered = self:IsBuildBuffered(recname)
+
     if recipe and self:IsBuildBuffered(recname) or self:CanBuild(recname) then
     	
     	local wetLevel = 0
@@ -363,6 +365,8 @@ function Builder:DoBuild(recname, pt)
 				end
 				
 				prod:OnBuilt(self.inst)
+
+				if buffered then GetPlayer().HUD.controls.crafttabs:UpdateRecipes() end
 			                    
                 return true
             end

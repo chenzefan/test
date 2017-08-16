@@ -5,11 +5,22 @@ local LoadingWidget = Class(Widget, function(self)
 	Widget._ctor(self, "LoadingWidget")
 	self.initialized = false
 	self.forceShowNextFrame = false
+	self.is_enabled = false
+    self:Hide()
 	self:StartUpdating()
 end)
 
 function LoadingWidget:ShowNextFrame()
 	self.forceShowNextFrame = true
+end
+
+function LoadingWidget:SetEnabled(enabled)
+    self.is_enabled = enabled
+	if enabled then
+    	self:Show()
+	else
+		self:Hide()
+	end
 end
 
 function LoadingWidget:KeepAlive( auto_increment )
@@ -34,29 +45,37 @@ function LoadingWidget:KeepAlive( auto_increment )
 	end
 	
 	if self.initialized then
-		if TheFrontEnd and auto_increment == false then
-			self.cached_fade_level = TheFrontEnd:GetFadeLevel()
-		else
-			self.cached_fade_level = 1.0
-		end
-		self.loading_widget:SetColour(1,1,1,self.cached_fade_level*self.cached_fade_level)
-		
-		local time = GetTime()
-		local time_delta = time - self.step_time 
-		local NEXT_STATE = 1.0
-		if time_delta > NEXT_STATE or (auto_increment and not just_initialized) then
-			if self.elipse_state == 0 then 
-				self.loading_widget:SetString("Loading..")   
-				self.elipse_state = self.elipse_state + 1 
-			elseif self.elipse_state == 1 then 
-				self.loading_widget:SetString("Loading...")  
-				self.elipse_state = self.elipse_state + 1 
-			else                               
-				self.loading_widget:SetString("Loading.")    
-				self.elipse_state = 0 
-			end
-			self.step_time = time
-		end
+	    if self.is_enabled then
+		    if TheFrontEnd and auto_increment == false then
+			    self.cached_fade_level = TheFrontEnd:GetFadeLevel()
+		    else
+			    self.cached_fade_level = 1.0
+		    end
+		    
+		    self.loading_widget:SetColour(1,1,1,self.cached_fade_level*self.cached_fade_level)
+		    
+		    local time = GetTime()
+		    local time_delta = time - self.step_time 
+		    local NEXT_STATE = 1.0
+		    if time_delta > NEXT_STATE or (auto_increment and not just_initialized) then
+			    if self.elipse_state == 0 then 
+				    self.loading_widget:SetString("Loading..")   
+				    self.elipse_state = self.elipse_state + 1 
+			    elseif self.elipse_state == 1 then 
+				    self.loading_widget:SetString("Loading...")  
+				    self.elipse_state = self.elipse_state + 1 
+			    else                               
+				    self.loading_widget:SetString("Loading.")    
+				    self.elipse_state = 0 
+			    end
+			    self.step_time = time
+		    end		
+		    
+		    if 0.01 > self.cached_fade_level then
+		        self.is_enabled = false
+		        self:Hide()
+		    end		    
+		end	
 	end
 end
 

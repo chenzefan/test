@@ -373,7 +373,6 @@ function SeasonManager:ModifySegs(segs)
 				segs[importance[i]] = segs[importance[i]] + 1
 			end
 		end
-		print(total)
 	end
 	return segs
 end
@@ -453,9 +452,6 @@ function SeasonManager:GetDayNightSegs(currSeason, prevSeason, nextSeason, pct, 
 			local nightsegsdelta = seasonsegs[nextSeason].night - seasonsegs[currSeason].night
 			daysegs =   math.floor(.5 + (((pct-.5) *   daysegsdelta) + seasonsegs[currSeason].day))
 			nightsegs = math.floor(.5 + (((pct-.5) * nightsegsdelta) + seasonsegs[currSeason].night))
-
-			print(daysegsdelta, nightsegsdelta)
-
 		end
 	end
 	return daysegs, nightsegs
@@ -769,6 +765,11 @@ function SeasonManager:OnLoad(data)
 	self.summerenabled = data.summerenabled or self.summerenabled
 	self.segmod = data.segmod or self.segmod
 	self.initialevent = data.event or true
+
+	-- Fixup for infinite summer rain bug, so use summer values
+	if self.peak_precip_intensity <= 0 then
+		self.peak_precip_intensity = math.random(1, 33)/100
+	end
 	
 	self.inst:PushEvent("snowcoverchange", {snow = self.ground_snow_level})
 	if self:IsWinter() then
@@ -907,7 +908,7 @@ end
 
 function SeasonManager:GetPeakIntensity()
 
-	local min, max = 0, 100
+	local min, max = 1, 100
 	if self:IsWinter() then
 		min = 10
 		max = 80
@@ -921,7 +922,7 @@ function SeasonManager:GetPeakIntensity()
 		end
 
 	elseif self:IsSummer() then
-		min = 0
+		min = 1
 		max = 33
 	else
 		min = 10
@@ -1470,7 +1471,7 @@ function SeasonManager:OnUpdate( dt )
 end
 
 function SeasonManager:CheckValidWildfireStarter(obj)
-	if obj.components.burnable and not obj:HasTag("fireimmune") then
+	if obj and obj:IsValid() and obj.components.burnable and not obj:HasTag("fireimmune") then
 		if obj.components.inventoryitem and obj.components.inventoryitem.owner then
 			return false --Item in player's inventory
 		end

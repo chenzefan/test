@@ -836,4 +836,9 @@ function Combat:LoadPostPass(newents, data)
     end
 end
 
+function Combat:OnRemoveFromEntity()
+    self.inst:RemoveTag("hascombatcomponent")    
+    self.inst:RemoveTag("combat")
+end
+
 return Combat

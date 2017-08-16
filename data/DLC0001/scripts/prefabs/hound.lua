@@ -291,6 +291,8 @@ local function fnfiredrop(Sim)
     MakeLargeBurnable(inst, 6+ math.random()*6)
     MakeLargePropagator(inst)
     inst.components.burnable:Ignite()
+    inst.persists = false
+    inst.components.burnable:SetOnExtinguishFn(function(inst) inst:Remove() end)
     return inst
 end
 

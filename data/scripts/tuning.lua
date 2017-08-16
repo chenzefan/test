@@ -132,8 +132,8 @@ function Tune(overrides)
 	    BEAVER_DAMAGE = wilson_attack*1.5,
 	    MULTITOOL_DAMAGE = wilson_attack*.9,
 	    RUINS_BAT_DAMAGE = wilson_attack * 1.75,
-	    
-		CANE_SPEED_MULT = 1.25,
+
+	    CANE_SPEED_MULT = 1.25,
 		PIGGYBACK_SPEED_MULT = 0.8,
 
 

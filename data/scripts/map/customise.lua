@@ -13,6 +13,13 @@ else
 		{ text = STRINGS.UI.SANDBOXMENU.SLIDERARE, data = "rare" },
 		{ text = STRINGS.UI.SANDBOXMENU.SLIDEDEFAULT, data = "default" }
 	}
+	freqency_descriptions_ps4_exceptions = {
+		{ text = STRINGS.UI.SANDBOXMENU.SLIDENEVER, data = "never" },
+		{ text = STRINGS.UI.SANDBOXMENU.SLIDERARE, data = "rare" },
+		{ text = STRINGS.UI.SANDBOXMENU.SLIDEDEFAULT, data = "default" },
+		{ text = STRINGS.UI.SANDBOXMENU.SLIDEOFTEN, data = "often" },
+		{ text = STRINGS.UI.SANDBOXMENU.SLIDEALWAYS, data = "always" },
+	}
 end
 
 local speed_descriptions = {
@@ -197,6 +204,25 @@ local GROUP = {
 						}
 					},
 }
+
+-- Fixup for frequency spinners that are _actually_ frequency (not density)
+if PLATFORM == "PS4" then
+	-- GROUP["monsters"].items["lureplants"] = {value = "default", enable = false, spinner = nil, image = "lureplant.tex", desc = freqency_descriptions_ps4_exceptions, order = 6} 
+	-- GROUP["monsters"].items["hounds"] = {value = "default", enable = false, spinner = nil, image = "hounds.tex", desc = freqency_descriptions_ps4_exceptions, order = 2}
+	GROUP["monsters"].items["liefs"] = {value = "default", enable = false, spinner = nil, image = "liefs.tex", desc = freqency_descriptions_ps4_exceptions, order = 8}
+	GROUP["monsters"].items["krampus"] = {value = "default", enable = false, spinner = nil, image = "krampus.tex", desc = freqency_descriptions_ps4_exceptions, order = 9}
+	GROUP["monsters"].items["deerclops"] = {value = "default", enable = false, spinner = nil, image = "deerclops.tex", desc = freqency_descriptions_ps4_exceptions, order = 10}
+	
+	-- GROUP["animals"].items["beefaloheat"] = {value = "default", enable = false, spinner = nil, image = "beefaloheat.tex", desc = freqency_descriptions_ps4_exceptions, order = 8}
+	GROUP["animals"].items["hunt"] = {value = "default", enable = false, spinner = nil, image = "tracks.tex", desc = freqency_descriptions_ps4_exceptions, order = 9}
+	-- GROUP["animals"].items["birds"] = {value = "default", enable = false, spinner = nil, image = "birds.tex", desc = freqency_descriptions_ps4_exceptions, order = 4}
+	-- GROUP["animals"].items["perd"] = {value = "default", enable = false, spinner = nil, image = "perd.tex", desc = freqency_descriptions_ps4_exceptions, order = 5}
+	-- GROUP["animals"].items["butterfly"] = {value = "default", enable = false, spinner = nil, image = "butterfly.tex", desc = freqency_descriptions_ps4_exceptions, order = 3}
+	-- GROUP["animals"].items["penguins"] = {value = "default", enable = false, spinner = nil, image = "pengull.tex", desc = freqency_descriptions_ps4_exceptions, order = 10}
+
+	GROUP["misc"].items["weather"] = {value = "default", enable = false, spinner = nil, image = "rain.tex", desc = freqency_descriptions_ps4_exceptions, order = 7}
+	GROUP["misc"].items["lightning"] = {value = "default", enable = false, spinner = nil, image = "lightning.tex", desc = freqency_descriptions_ps4_exceptions, order = 8}
+end
 
 local function GetGroupForItem(target)
 	for area,items in pairs(GROUP) do

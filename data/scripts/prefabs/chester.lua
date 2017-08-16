@@ -329,6 +329,13 @@ local function create_chester()
     inst.OnSave = OnSave
     inst.OnPreLoad = OnPreLoad
 
+    inst:DoTaskInTime(1.5, function(inst)
+        -- We somehow got a chester without an eyebone. Kill it! Kill it with fire!
+        if not TheSim:FindFirstEntityWithTag("chester_eyebone") then
+            inst:Remove()
+        end
+    end)
+
     --print("chester - create_chester END")
     return inst
 end

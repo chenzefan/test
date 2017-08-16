@@ -133,8 +133,8 @@ function SpawnPrefabFromSim(name)
 				mod(inst)
 			end
 
-            for k,globalprefabpostinit in pairs(ModManager:GetPostInitFns("GlobalPrefabPostInit")) do
-                globalprefabpostinit(inst)
+            for k,prefabpostinitany in pairs(ModManager:GetPostInitFns("PrefabPostInitAny")) do
+                prefabpostinitany(inst)
             end
             
             return inst.entity:GetGUID()

@@ -173,6 +173,7 @@ function RecipePopup:Refresh()
         if TheInput:ControllerAttached() then
 			self.button:Hide()
 			self.teaser:Show()
+
 			if can_build then
                 self.teaser:SetScale(TEASER_SCALE_BTN)
 				self.teaser:SetString(TheInput:GetLocalizedControl(controller_id, CONTROL_ACCEPT) .. " " .. (buffered and STRINGS.UI.CRAFTING.PLACE or STRINGS.UI.CRAFTING.BUILD))
@@ -201,6 +202,8 @@ function RecipePopup:Refresh()
 			self.button:Hide()
 			self.teaser:Show()
 			
+            self.teaser:SetColour(1,1,1,1) 
+
 			if can_build then
                 self.teaser:SetScale(TEASER_SCALE_BTN)
 				self.teaser:SetString(TheInput:GetLocalizedControl(controller_id, CONTROL_ACCEPT) .. " " .. STRINGS.UI.CRAFTING.PROTOTYPE)
@@ -209,6 +212,9 @@ function RecipePopup:Refresh()
 				self.teaser:SetString(STRINGS.UI.CRAFTING.NEEDSTUFF)
 			end
 		else
+            self.button.image_normal = "button.tex"
+            self.button.image:SetTexture(UI_ATLAS, self.button.image_normal)
+
 			self.button:Show()
 			self.button:SetPosition(320, -105, 0)
 			self.button:SetScale(1,1,1)

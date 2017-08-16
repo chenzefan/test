@@ -113,6 +113,8 @@ local function OnEntitySleep(inst)
                 inst.Transform:SetPosition(pos:Get())
             end)
         end
+    elseif inst.shouldGoAway then
+        LeaveWorld(inst)
     end
 end
 
@@ -120,6 +122,7 @@ local function OnSave(inst, data)
     data.SeenBase = inst.SeenBase
     data.vomits = inst.num_targets_vomited
     data.KilledPlayer = inst.KilledPlayer
+    data.shouldGoAway = inst.shouldGoAway
 end
         
 local function OnLoad(inst, data)
@@ -127,11 +130,15 @@ local function OnLoad(inst, data)
         inst.SeenBase = data.SeenBase
         inst.num_targets_vomited = data.vomits
         inst.KilledPlayer = data.KilledPlayer or false
+        inst.shouldGoAway = data.shouldGoAway or false
     end
 end
 
 local function OnSeasonChange(inst, data)
-    --If it's autumn time then wander off & despawn.
+    inst.shouldGoAway = (GetSeasonManager():GetSeason() ~= SEASONS.SUMMER or GetSeasonManager().incaves)
+    if inst:IsAsleep() then
+        OnEntitySleep(inst)
+    end
 end
 
 local function SetFlameOn(inst, flameon, newtarget, freeze)
@@ -328,6 +335,7 @@ local function fn(Sim)
     inst.components.sleeper:SetSleepTest(ShouldSleep)
     inst.components.sleeper:SetWakeTest(ShouldWake)
     inst.playsleepsound = false
+    inst.shouldGoAway = false
 
     inst:AddComponent("lootdropper")
     inst.components.lootdropper:SetChanceLootTable("dragonfly")

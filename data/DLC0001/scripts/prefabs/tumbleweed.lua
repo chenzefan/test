@@ -164,7 +164,6 @@ local function MakeLoot(inst)
         {chance = 0.1,  item = "bee", aggro = true},
         {chance = 0.1,  item = "mosquito", aggro = true},
         {chance = 1,    item = "butterflywings"},
-        {chance = 1,    item = "fireflies"},
         {chance = .02,  item = "beardhair"},
         {chance = 1,    item = "berries"},
         {chance = 1,    item = "blueprint"},
@@ -335,6 +334,7 @@ local function fn(Sim)
 
     MakeCharacterPhysics(inst, .5, 1)
     inst:AddComponent("locomotor")
+    inst.components.locomotor:SetTriggersCreep(false)
 
     inst:AddComponent("blowinwind")
     inst.components.blowinwind.soundPath = "dontstarve_DLC001/common/tumbleweed_roll"

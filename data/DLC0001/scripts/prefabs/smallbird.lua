@@ -31,6 +31,36 @@ local function StartSpringSmallBird(inst, leader)
     inst.sg:GoToState("hatch")
 end
 
+local function onsave(inst, data)
+    if inst:HasTag("springbird") then
+		local ents
+		if inst.leader then
+			data.leader = inst.leader.GUID
+			ents = {data.leader}
+		end
+        data.springbird = true
+		return ents
+    end
+end
+
+local function onload(inst, data)
+    if data then
+        if data.springbird then
+            inst:RemoveTag("companion")
+            inst:AddTag("springbird")
+        end
+    end
+end
+
+local function loadpostpass(inst,ents, data)
+    if data then
+		if data.leader then  
+			local leader = ents[data.leader]
+			inst.leader = leader.entity
+	    end
+	end
+end
+
 local function SpringMod(amt)
     if GetSeasonManager() and GetSeasonManager():IsSpring() then
         return amt * TUNING.SPRING_COMBAT_MOD
@@ -326,6 +356,10 @@ local function create_common(inst)
     inst.components.trader.onrefuse = OnRefuseItem
 
     inst:AddComponent("lootdropper")
+
+    inst.OnSave = onsave
+    inst.OnLoad = onload
+    inst.LoadPostPass = loadpostpass
 
     --print("smallbird - create_common END")
     return inst

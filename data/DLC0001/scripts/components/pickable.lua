@@ -48,7 +48,11 @@ local Pickable = Class(function(self, inst)
 	    		time_since_wither = TUNING.TOTAL_DAY_TIME
 	    	end
 	    	if self.withered and time_since_wither >= TUNING.TOTAL_DAY_TIME then
-	    		self:MakeEmpty()
+	    		if self.cycles_left and self.cycles_left <= 0 then
+	    			self:MakeBarren()
+	    		else
+	    			self:MakeEmpty()
+	    		end
 	    		self.withered = false
 	    		self.inst:RemoveTag("withered")
 	    		self.shouldwither = false
@@ -466,25 +470,6 @@ function Pickable:Pick(picker)
 		if self.shouldwither then
 			if self.protected_cycles ~= nil then
 				self.protected_cycles = self.protected_cycles - 1
-			end
-			if self.protected_cycles < 1 then
-				-- self.inst:AddTag("witherable")
-				-- self.inst:DoTaskInTime(TUNING.WITHER_BUFFER_TIME, function(inst)
-				-- 	inst.components.pickable.witherable = true
-				-- 	inst.components.pickable.shouldwither = false
-				-- end)
-				-- self.inst:DoTaskInTime(5, function(inst)
-				-- 	if GetSeasonManager() and GetSeasonManager():GetTemperature() > inst.components.pickable.wither_temp then
-				-- 		inst:DoTaskInTime(0, function(inst) -- Delay this by a frame so that the plant doesn't get two playanim calls in one tick
-				-- 			if inst and inst.components.pickable thend
-				-- 				inst.components.pickable.withered = true
-				-- 				inst:AddTag("withered")
-				--     			inst.components.pickable.wither_time = GetTime()
-				--     			inst.components.pickable:MakeBarren()
-				--     		end
-				--     	end)
-		  --   		end
-		  --   	end)
 			end
 		end
 		

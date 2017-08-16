@@ -18,6 +18,7 @@ local DLCSounds =
 	"vargr.fsb",
 	"wathgrithr.fsb",
 	"webber.fsb",
+	--"wyro.fsb",
 }
 
 local MainSounds = 
@@ -74,6 +75,7 @@ local MainSounds =
 	"woodrow.fsb",
 	"worm.fsb",
 	"wx78.fsb",
+	"wyro.fsb",
 }
 
 function PreloadSoundList(list)

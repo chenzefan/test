@@ -139,7 +139,7 @@ function Tune(overrides)
 	    RUINS_BAT_DAMAGE = wilson_attack * 1.75,
 	    NIGHTSTICK_DAMAGE = wilson_attack*.85, -- Due to the damage being electric, it will get multiplied by 1.5 against any mob
 
-		CANE_SPEED_MULT = 1.25,
+	    CANE_SPEED_MULT = 1.25,
 		PIGGYBACK_SPEED_MULT = 0.9,
 
 

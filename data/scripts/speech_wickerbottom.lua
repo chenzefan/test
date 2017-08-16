@@ -591,7 +591,7 @@ return
             HIGH = "That fire is burning at an alarming rate.",
         },
 		HEATROCK = {
-			COLD = "It's temperature is below freezing.",
+			COLD = "Its temperature is below freezing.",
 			GENERIC = "It matches the ambient temperature.",
 			WARM = "It is retaining thermal energy.",
 			HOT = "It is warm enough to radiate heat and light!",

@@ -89,8 +89,17 @@ local function KeepTargetFn(inst, target)
 
 end
 
+local function OnEntitySleep(inst)
+    if inst.shouldGoAway then
+        LeaveWorld(inst)
+    end
+end
+
 local function OnSeasonChange(inst, data)
-    --If it's winter time then wander off & despawn.
+    inst.shouldGoAway = (GetSeasonManager():GetSeason() ~= SEASONS.SPRING or GetSeasonManager().incaves)
+    if inst:IsAsleep() then
+        OnEntitySleep(inst)
+    end
 end
 
 local function OnAttacked(inst, data)
@@ -104,6 +113,7 @@ end
 local function OnSave(inst, data)
     data.WantsToLayEgg = inst.WantsToLayEgg
     data.CanDisarm = inst.CanDisarm
+    data.shouldGoAway = inst.shouldGoAway
 end
 
 local function OnLoad(inst, data)
@@ -113,6 +123,7 @@ local function OnLoad(inst, data)
     if data.CanDisarm then 
         inst.CanDisarm = data.CanDisarm
     end
+    inst.shouldGoAway = data.shouldGoAway or false
 end
 
 local function ontimerdone(inst, data)
@@ -181,6 +192,7 @@ local function fn(Sim)
     ------------------------------------------
  
     inst:AddComponent("sleeper")
+    inst.shouldGoAway = false
     
     ------------------------------------------
 

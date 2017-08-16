@@ -28,7 +28,7 @@ local options = {}
 local ModConfigurationScreen = Class(Screen, function(self, modname)
 	Screen._ctor(self, "ModConfigurationScreen")
 	self.modname = modname
-	self.config = KnownModIndex:GetModConfigurationOptions(modname)
+	self.config = KnownModIndex:LoadModConfigurationOptions(modname)
 
 	self.left_spinners = {}
 	self.right_spinners = {}
@@ -38,10 +38,12 @@ local ModConfigurationScreen = Class(Screen, function(self, modname)
 		for i,v in ipairs(self.config) do
 			-- Only show the option if it matches our format exactly
 			if v.name and v.options and (v.saved or v.default) then 
-				table.insert(options, {name = v.name, options = v.options, default = v.saved or v.default})
+				table.insert(options, {name = v.name, label = v.label, options = v.options, default = v.default, value = v.saved})
 			end
 		end
 	end
+
+	self.started_default = self:IsDefaultSettings()
 	
 	self.bg = self:AddChild(Image("images/ui.xml", "bg_plain.tex"))
 
@@ -82,12 +84,16 @@ local ModConfigurationScreen = Class(Screen, function(self, modname)
     self.optionspanel:SetPosition(0,-20)
 
 	self.menu = self.root:AddChild(Menu(nil, 0, false))
-	self.applybutton = self.menu:AddItem(STRINGS.UI.MODSSCREEN.APPLY, function() self:Apply() end, Vector3(-95, -295, 0))
-	self.cancelbutton = self.menu:AddItem(STRINGS.UI.MODSSCREEN.CANCEL, function() self:Cancel() end,  Vector3(95, -295, 0))
+	self.applybutton = self.menu:AddItem(STRINGS.UI.MODSSCREEN.APPLY, function() self:Apply() end, Vector3(-260, -290, 0))
+	self.cancelbutton = self.menu:AddItem(STRINGS.UI.MODSSCREEN.CANCEL, function() self:Cancel() end,  Vector3(-110, -290, 0))
+	self.resetbutton = self.menu:AddItem(STRINGS.UI.MODSSCREEN.RESETDEFAULT, function() self:ResetToDefaultValues() end,  Vector3(205, -290, 0))
 	self.applybutton:SetScale(.9)
 	self.cancelbutton:SetScale(.9)
+	self.resetbutton:SetScale(.9)
 	self.applybutton:SetFocusChangeDir(MOVE_RIGHT, self.cancelbutton)
 	self.cancelbutton:SetFocusChangeDir(MOVE_LEFT, self.applybutton)
+	self.cancelbutton:SetFocusChangeDir(MOVE_RIGHT, self.resetbutton)
+	self.resetbutton:SetFocusChangeDir(MOVE_LEFT, self.cancelbutton)
 
 	self.default_focus = self.applybutton
 	self.dirty = false
@@ -114,33 +120,46 @@ end)
 function ModConfigurationScreen:CollectSettings()
 	local settings = nil
 	for i,v in pairs(options) do
-		local curr_setting = options[i].value
 		if not settings then settings = {} end
-		table.insert(settings, {name=v.name, options=v.options, default=v.default, saved=curr_setting})
+		table.insert(settings, {name=v.name, label = v.label, options=v.options, default=v.default, saved=v.value})
 	end
 	return settings
+end
+
+function ModConfigurationScreen:ResetToDefaultValues()
+	local function reset()
+		for i,v in pairs(options) do
+			options[i].value = options[i].default
+		end
+		self:RefreshOptions()
+	end
+
+	if not self:IsDefaultSettings() then
+		self:ConfirmRevert(function() 
+			TheFrontEnd:PopScreen()
+			self:MakeDirty()
+			reset()
+		end)
+	end
 end
 
 function ModConfigurationScreen:Apply()
 	if self:IsDirty() then
 		local settings = self:CollectSettings()
-		KnownModIndex:SaveConfigurationOptions(function() TheFrontEnd:PopScreen() end, self.modname, settings)
+		KnownModIndex:SaveConfigurationOptions(function() self:MakeDirty(false) TheFrontEnd:PopScreen() end, self.modname, settings)
 	else
+		self:MakeDirty(false)
 		TheFrontEnd:PopScreen()
 	end
 end
 
-function ModConfigurationScreen:ConfirmRevert()
+function ModConfigurationScreen:ConfirmRevert(callback)
 	TheFrontEnd:PushScreen(
 		PopupDialogScreen( STRINGS.UI.MODSSCREEN.BACKTITLE, STRINGS.UI.MODSSCREEN.BACKBODY,
 		  { 
 		  	{ 
 		  		text = STRINGS.UI.MODSSCREEN.YES, 
-		  		cb = function()
-					TheFrontEnd:PopScreen()
-					self:MakeDirty(false)
-					self:Cancel()
-				end
+		  		cb = callback or function() TheFrontEnd:PopScreen() end
 			},
 			{ 
 				text = STRINGS.UI.MODSSCREEN.NO, 
@@ -154,9 +173,14 @@ function ModConfigurationScreen:ConfirmRevert()
 end
 
 function ModConfigurationScreen:Cancel()
-	if self:IsDirty() then
-		self:ConfirmRevert()
+	if self:IsDirty() and not (self.started_default and self:IsDefaultSettings()) then
+		self:ConfirmRevert(function()
+			TheFrontEnd:PopScreen()
+			self:MakeDirty(false)
+			self:Cancel()
+		end)
 	else
+		self:MakeDirty(false)
 		TheFrontEnd:PopScreen()
 	end
 end
@@ -167,6 +191,17 @@ function ModConfigurationScreen:MakeDirty(dirty)
 	else
 		self.dirty = true
 	end
+end
+
+function ModConfigurationScreen:IsDefaultSettings()
+	local alldefault = true
+	for i,v in pairs(options) do
+		if options[i].value ~= options[i].default then
+			alldefault = false
+			break
+		end
+	end
+	return alldefault
 end
 
 function ModConfigurationScreen:IsDirty()
@@ -266,7 +301,7 @@ function ModConfigurationScreen:RefreshOptions()
 			local spacing = 55
 			local label_width = 180
 			
-			local label = spinner:AddChild( Text( BUTTONFONT, 30, options[idx].name or STRINGS.UI.MODSSCREEN.UNKNOWN_MOD_CONFIG_SETTING ) )
+			local label = spinner:AddChild( Text( BUTTONFONT, 30, (options[idx].label or options[idx].name) or STRINGS.UI.MODSSCREEN.UNKNOWN_MOD_CONFIG_SETTING ) )
 			label:SetPosition( -label_width/2 - 105, 0, 0 )
 			label:SetRegionSize( label_width, 50 )
 			label:SetHAlign( ANCHOR_MIDDLE )
@@ -343,7 +378,7 @@ function ModConfigurationScreen:HookupFocusMoves()
 		if belowspinner	then
 			self.right_spinners[k]:SetFocusChangeDir(MOVE_DOWN,belowspinner)
 		else
-			self.right_spinners[k]:SetFocusChangeDir(MOVE_DOWN, self.cancelbutton)
+			self.right_spinners[k]:SetFocusChangeDir(MOVE_DOWN, self.resetbutton)
 		end
 
 		if self.left_spinners[k] then
@@ -352,7 +387,8 @@ function ModConfigurationScreen:HookupFocusMoves()
 	end
 
 	self.applybutton:SetFocusChangeDir(MOVE_UP, self.left_spinners[#self.left_spinners])
-	self.cancelbutton:SetFocusChangeDir(MOVE_UP, self.right_spinners[#self.right_spinners])
+	self.cancelbutton:SetFocusChangeDir(MOVE_UP, self.left_spinners[#self.left_spinners])
+	self.resetbutton:SetFocusChangeDir(MOVE_UP, self.right_spinners[#self.right_spinners])
 end
 
 function ModConfigurationScreen:GetHelpText()
@@ -360,11 +396,12 @@ function ModConfigurationScreen:GetHelpText()
 	local controller_id = TheInput:GetControllerID()
 
 	if self:IsDirty() then
-		table.insert(t, TheInput:GetLocalizedControl(controller_id, CONTROL_ACCEPT) .. " " .. STRINGS.UI.HELP.APPLY)
-		table.insert(t, TheInput:GetLocalizedControl(controller_id, CONTROL_CANCEL) .. " " .. STRINGS.UI.HELP.BACK)
-	else
-		table.insert(t, TheInput:GetLocalizedControl(controller_id, CONTROL_CANCEL) .. " " .. STRINGS.UI.HELP.BACK)
+		local focus = self:GetDeepestFocus()
+		if focus ~= self.applybutton and focus ~= self.cancelbutton and focus ~= self.resetbutton then
+			table.insert(t, TheInput:GetLocalizedControl(controller_id, CONTROL_ACCEPT) .. " " .. STRINGS.UI.HELP.APPLY)
+		end
 	end
+	table.insert(t, TheInput:GetLocalizedControl(controller_id, CONTROL_CANCEL) .. " " .. STRINGS.UI.HELP.BACK)
 
 	if self.leftbutton.shown then 
     	table.insert(t,  TheInput:GetLocalizedControl(controller_id, CONTROL_PAGELEFT) .. " " .. STRINGS.UI.HELP.SCROLLBACK)

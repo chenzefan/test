@@ -446,7 +446,12 @@ local function chop_tree(inst, chopper, chops)
 
     SpawnLeafFX(inst, nil, true)
 
+    -- Force update anims if monster
+    if inst.monster then 
+        inst.anims = monster_anims
+    end
     inst.AnimState:PlayAnimation(inst.anims.chop)
+
     if inst.monster then
         inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/decidous/hurt_chop")
         inst.sg:GoToState("chop_pst")
@@ -457,7 +462,7 @@ end
 
 local function dig_up_stump(inst, chopper)
     inst:Remove()
-    if inst.monster and math.random() < .33 then
+    if inst.monster then
         inst.components.lootdropper:SpawnLootPrefab("livinglog")
     else
         inst.components.lootdropper:SpawnLootPrefab("log")
@@ -592,6 +597,9 @@ local function onburntchanges(inst)
     while inst:HasTag("shelter") do inst:RemoveTag("shelter") end
     while inst:HasTag("cattoyairborne") do inst:RemoveTag("cattoyairborne") end
     inst:RemoveTag("dragonflybait")
+    inst:RemoveTag("fire")
+    inst:RemoveTag("monster")
+    inst.monster = false
 
     if inst.monster_start_task then
         inst.monster_start_task:Cancel()
@@ -829,10 +837,17 @@ local function StopMonster(inst)
 end
 
 local function OnEntitySleep(inst)
+    local fire = false
+    if inst:HasTag("fire") then
+        fire = true
+    end
     inst:RemoveComponent("burnable")
     inst:RemoveComponent("propagator")
     inst:RemoveComponent("inspectable")
     inst:RemoveComponent("deciduoustreeupdater")
+    if fire then
+        inst:AddTag("fire")
+    end
 end
 
 local function OnEntityWake(inst)
@@ -880,6 +895,18 @@ local function OnEntityWake(inst)
             end
             if inst.components.combat then inst:RemoveComponent("combat") end
         end
+    end
+
+    if not inst:HasTag("burnt") and inst:HasTag("fire") then
+        inst.sg:GoToState("empty")
+        inst.AnimState:ClearOverrideSymbol("eye")
+        inst.AnimState:ClearOverrideSymbol("mouth")
+        if not inst:HasTag("stump") then 
+            inst.AnimState:ClearOverrideSymbol("legs")
+            inst.AnimState:ClearOverrideSymbol("legs_mouseover") 
+        end
+        inst.AnimState:SetBank("tree_leaf")
+        OnBurnt(inst, true)
     end
 
     if not inst.components.inspectable then
@@ -932,17 +959,15 @@ local function onload(inst, data)
                 inst.monster = data.monster
                 inst.components.growable.stage = 3
                 inst:AddTag("stump")
-            else
+            elseif not data.burnt then
                 inst.monster = false
-                if not data.burnt then
-                    if GetSeasonManager() then
-                        if GetSeasonManager():IsAutumn() then
-                            inst.target_leaf_state = "colorful"
-                        elseif GetSeasonManager():IsWinter() then
-                            inst.target_leaf_state = "barren"
-                        else
-                            inst.target_leaf_state = "normal"
-                        end
+                if GetSeasonManager() then
+                    if GetSeasonManager():IsAutumn() then
+                        inst.target_leaf_state = "colorful"
+                    elseif GetSeasonManager():IsWinter() then
+                        inst.target_leaf_state = "barren"
+                    else
+                        inst.target_leaf_state = "normal"
                     end
                 end
                 inst.components.growable:DoGrowth()
@@ -975,7 +1000,7 @@ local function onload(inst, data)
         end
 
         if data.burnt then
-            OnBurnt(inst, true)
+            inst:AddTag("fire") -- Add the fire tag here: OnEntityWake will handle it actually doing burnt logic
         elseif data.stump then
             while inst:HasTag("shelter") do inst:RemoveTag("shelter") end
             while inst:HasTag("cattoyairborne") do inst:RemoveTag("cattoyairborne") end
@@ -1109,7 +1134,8 @@ local function makefn(build, stage, data)
         inst:ListenForEvent("deciduousleaffx", function(it)
             if inst.entity:IsAwake() then
                 if inst.leaf_state == "colorful" and GetTime() - inst.lastleaffxtime > inst.leaffxinterval then
-                    SpawnLeafFX(inst)
+					local variance = math.random() * 2
+                    SpawnLeafFX(inst, variance)
                     inst.leaffxinterval = math.random(TUNING.MIN_SWAY_FX_FREQUENCY, TUNING.MAX_SWAY_FX_FREQUENCY)
                     inst.lastleaffxtime = GetTime()
                 end

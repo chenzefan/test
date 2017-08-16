@@ -54,7 +54,7 @@ function ImageButton:Enable()
     self.image:SetTexture(self.atlas, self.focus and self.image_focus or self.image_normal)
 
     if self.image_focus == self.image_normal then
-        if self. focus then 
+        if self.focus then 
             self.image:SetScale(1.2,1.2,1.2)
         else
             self.image:SetScale(1,1,1)

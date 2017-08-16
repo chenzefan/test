@@ -497,6 +497,8 @@ STRINGS=
         WICKERBOTTOM = "Wickerbottom",
         WX78 = "Wx78",
         WES = "Wes",
+        WATHGRITHR = "Wigfrid",
+        WEBBER = "Webber",
         
         PIGKING = "Pig King",
         STRAWHAT = "Straw Hat",
@@ -760,6 +762,7 @@ STRINGS=
         SLURTLE_SHELLPIECES = "Broken Shell",
         ARMORSNURTLESHELL = "Snurtle Shell Armour",
         MAGIC_BLUEPRINT = "Blank Blueprint",
+        BLUEPRINT = "Blueprint",
         BAT = "Batilisk",
         TEAMLEADER = "Team Leader",
         BATWING = "Batilisk Wing",
@@ -919,6 +922,7 @@ STRINGS=
         TORNADO = "Tornado",
         EYEBRELLAHAT = "Eyebrella",
         FEATHERFAN = "Luxury Fan",
+
     },
 
     DIRECTIONS=
@@ -1566,6 +1570,7 @@ STRINGS.UI =
         TOGGLE = "Toggle",   
         RANDOM = "Random",
         CONFIGUREMOD = "Configure Mod",
+        SAVEPRESET = "Save Preset",
     },
     CHARACTERSELECT=
     {
@@ -1998,6 +2003,7 @@ STRINGS.UI =
     MODSSCREEN = {
         APPLY = "Apply",
         CANCEL = "Cancel",
+        RESETDEFAULT = "Reset",
         MOREMODS = "More Mods",
         VERSION = "version %s",
         AUTHORBY = "by %s",
@@ -2022,7 +2028,7 @@ STRINGS.UI =
         WILL_DISABLE = "Mod will be disabled.",
         DISABLED_MANUAL = "This mod has been disabled.",
         DISABLED_ERROR = "Crashed on last start, automatically disabled.",
-        DISABLED_OLD = "Mod is out-of-date, automatically disabled.",
+        DISABLED_OLD = "Mod out-of-date, might have issues. Disabled.",
         STATUS = {
             WORKING_NORMALLY = "Enabled",
             WILL_ENABLE = "To Be Enabled",
@@ -2052,6 +2058,7 @@ STRINGS.UI =
     CUSTOMIZATIONSCREEN =
     {
         APPLY = "Apply",
+        SAVEPRESET = "Save As Preset",
         CANCEL = "Cancel",
         PRESETTITLE = "Preset",
         DEFAULT_PRESET_DESC = "Lots of pigs and spiders and a tallbird nest.",
@@ -2090,7 +2097,14 @@ STRINGS.UI =
             "The standard Don't Starve Experience 8",
             "The standard Don't Starve Experience 9",
             "The standard Don't Starve Experience 10",
-        }
+        },
+
+        CUSTOM_PRESET = "Custom Preset",
+        CUSTOM_PRESET_DESC = "Custom preset",
+        MAX_PRESETS_EXCEEDED_TITLE = "Preset Limit Reached",
+        MAX_PRESETS_EXCEEDED_BODY = "Only 5 custom presets allowed. Choose one to overwrite:",
+        MAX_PRESETS_EXCEEDED_BODYSPACING = "\n\n\n\n ",
+        OVERWRITE = "Overwrite",
                 
     },
     
@@ -2118,6 +2132,10 @@ STRINGS.UI =
         RESTART = "Restart",
         DELETE = "Delete",
         CHANGECHARACTER = "Change Character",
+        MODSDISABLEDWARNINGTITLE = "WARNING - Mods Disabled",
+        MODSDISABLEDWARNINGBODY_EXPLANATION = "Some mods used on this save are disabled. Loading with disabled mods could cause issues. Disabled mods:",
+        MODSDISABLEDWARNINGBODY_QUESTION = "Continue without enabling the above mods first?",
+        MODSDISABLEDWARNINGBODY_TRUNCATEDLIST = "... (list truncated)",
     },
 
     LOADGAMESCREEN=
@@ -2752,7 +2770,7 @@ STRINGS.CHARACTERS =
     WICKERBOTTOM = require "speech_wickerbottom",
 }
 
-if IsDLCEnabled(REIGN_OF_GIANTS) then
+if IsDLCEnabled and IsDLCEnabled(REIGN_OF_GIANTS) then
     STRINGS.CHARACTERS.WATHGRITHR = require "speech_wathgrithr"
     STRINGS.CHARACTERS.WEBBER = require "speech_webber"
 end

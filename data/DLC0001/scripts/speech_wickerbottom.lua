@@ -839,9 +839,9 @@ return
             HIGH = "That fire is burning at an alarming rate.",
         },
 		HEATROCK = {
-            FROZEN = "It's temperature is below freezing.",
+            FROZEN = "Its temperature is below freezing.",
 			COLD = "It's a bit chilly.",
-			GENERIC = "It's temperature is totally unremarkable.",
+			GENERIC = "Its temperature is totally unremarkable.",
             WARM = "It is retaining thermal energy. But only a bit.",
             HOT = "It is warm enough to radiate heat and light!",
 		},
@@ -1129,4 +1129,6 @@ return
     ANNOUNCE_NODAYSLEEP = "I can hardly get to sleep at night, nevermind during the day.", 
     ANNOUNCE_INSUFFICIENTFERTILIZER = "Just a touch more nutrients, I'd say.",
     ANNOUNCE_LIGHTNING_DAMAGE_AVOIDED = "Thank goodness for this non-conductive clothing!",
+    ANNOUNCE_TOOMANYBIRDS = "It doesn't work as well with this many birds around.",
+    ANNOUNCE_WAYTOOMANYBIRDS = "The sky is out of birds for now.",
 }

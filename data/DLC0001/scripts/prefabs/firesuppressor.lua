@@ -199,7 +199,11 @@ local function HitPlants(inst, dist, noextinguish)
 			elseif v.components.pickable and v.components.pickable.witherable then
 				v.components.pickable.protected = true
 				if v.components.pickable.withered or v.components.pickable.shouldwither then
-					v.components.pickable:MakeEmpty()
+					if v.components.pickable.cycles_left and v.components.pickable.cycles_left <= 0 then
+		    			v.components.pickable:MakeBarren()
+		    		else
+		    			v.components.pickable:MakeEmpty()
+		    		end
 		    		v.components.pickable.withered = false
 		    		v.components.pickable.shouldwither = false
 		    		v:RemoveTag("withered")

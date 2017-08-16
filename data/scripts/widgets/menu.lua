@@ -13,7 +13,7 @@ local Menu = Class(Widget, function(self, menuitems, offset, horizontal)
     if menuitems then
     	for k,v in ipairs(menuitems) do
     		if v.widget then
-    			self:AddCustomItem(v.widget)
+    			self:AddCustomItem(v.widget, v.offset)
     		else
     			self:AddItem(v.text, v.cb, v.offset)
     		end
@@ -112,13 +112,16 @@ function Menu:SetHRegPoint(halign)
 	end
 end
 
-function Menu:AddCustomItem(widget)
+function Menu:AddCustomItem(widget, offset)
 	local pos = Vector3(0,0,0)
 	if self.horizontal then
 		pos.x = pos.x + self.offset * #self.items
 	else
 		pos.y = pos.y + self.offset * #self.items
 	end
+	if offset then
+		pos = pos + offset	
+	end	
 	self:AddChild(widget)
 	widget:SetPosition(pos)
 	table.insert(self.items, widget)

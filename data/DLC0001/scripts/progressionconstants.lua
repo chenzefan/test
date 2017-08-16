@@ -11,6 +11,7 @@ local XP_levels =
     XP_PER_DAY*64,
     XP_PER_DAY*80,
     XP_PER_DAY*96,
+    -- XP_PER_DAY*112,
     --50000, --
     --100000, --
 }

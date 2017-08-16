@@ -4,12 +4,12 @@ package.path = "scripts\\?.lua;scriptlibs\\?.lua"
 --defines
 MAIN = 1
 ENCODE_SAVES = BRANCH ~= "dev"
-CHEATS_ENABLED = BRANCH == "dev"
+CHEATS_ENABLED = false--BRANCH == "dev" or (PLATFORM == "PS4" and CONFIGURATION ~= "PRODUCTION")
 SOUNDDEBUG_ENABLED = false
 MODS_ENABLED = PLATFORM ~= "PS4" and PLATFORM ~= "NACL"
 ACCOMPLISHMENTS_ENABLED = PLATFORM == "PS4"
---DEBUG_MENU_ENABLED = false --BRANCH == "dev" or PLATFORM == "PS4"
-DEBUG_MENU_ENABLED = BRANCH == "dev" or (PLATFORM == "PS4" and CONFIGURATION ~= "PRODUCTION")
+--DEBUG_MENU_ENABLED = true
+DEBUG_MENU_ENABLED = false--BRANCH == "dev" or (PLATFORM == "PS4" and CONFIGURATION ~= "PRODUCTION")
 METRICS_ENABLED = PLATFORM ~= "PS4"
 --debug.setmetatable(nil, {__index = function() return nil end})  -- Makes  foo.bar.blat.um  return nil if table item not present   See Dave F or Brook for details
 

@@ -90,12 +90,12 @@ function CreateEnvironment(modname, isworldgen)
 		Prefab = Prefab,
 		Asset = Asset,
 		Ingredient = Ingredient,
+		MODCONFIG = KnownModIndex:GetModConfigurationOptions(modname) or {}, -- Direct access to the mod config table (WARNING: modifying it directly while the game is running could result in weird behavior)
 		GetModConfigData = GetModConfigDataFn(modname) -- Call is GetModConfigData(optionname) to fetch saved value of the specified option (name must match name field in config options table)
 	}
 
 	if isworldgen == false then
 		env.CHARACTERLIST = GetActiveCharacterList()
-		env.MODCONFIG = KnownModIndex:GetModConfigurationOptions(modname) or {} -- Direct access to the mod config table (WARNING: modifying it directly while the game is running could result in weird behavior)
 	end
 
 	env.env = env
@@ -134,6 +134,11 @@ function ModWrangler:LoadMods(worldgen)
 	for i,modname in ipairs(moddirs) do
 		if self.worldgen == false or (self.worldgen == true and KnownModIndex:IsModCompatibleWithMode(modname)) then
 			table.insert(self.modnames, modname)
+
+			if self.worldgen == false then
+				-- Make sure we load the config data before the mod (but not during worldgen)
+				KnownModIndex:LoadModConfigurationOptions(modname)
+			end
 
 			local initenv = KnownModIndex:GetModInfo(modname)
 			local env = CreateEnvironment(modname,  self.worldgen)

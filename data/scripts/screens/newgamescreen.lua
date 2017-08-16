@@ -117,6 +117,26 @@ function NewGameScreen:Customize( )
 		package.loaded["map/customise"] = nil
 	end
 	self.prevworldcustom = self.RoG
+
+	-- Clean up the preset setting since we're going back to customization screen, not to worldgen
+	if self.customoptions and self.customoptions.actualpreset then
+		self.customoptions.preset = self.customoptions.actualpreset
+		self.customoptions.actualpreset = nil
+	end
+	-- Clean up the tweak table since we're going back to customization screen, not to worldgen
+	if self.customoptions and self.customoptions.faketweak and self.customoptions.tweak and #self.customoptions.faketweak > 0 then
+		for i,v in pairs(self.customoptions.faketweak) do
+			for m,n in pairs(self.customoptions.tweak) do
+				for j,k in pairs(n) do
+					if v == j then -- Found the fake tweak setting, now remove it from the table
+						self.customoptions.tweak[m][j] = nil
+						break
+					end
+				end
+			end
+		end
+	end
+
 	TheFrontEnd:PushScreen(CustomizationScreen(Profile, onSet, self.customoptions, self.RoG))--self.customization)
 end
 

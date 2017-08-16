@@ -55,6 +55,7 @@ function GetGenderStrings(charactername)
     end
 end
 
+
 function GetSpecialCharacterString(character)
     character = string.lower(character)
     if character == "wilton" then

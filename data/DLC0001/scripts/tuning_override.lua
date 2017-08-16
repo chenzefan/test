@@ -160,7 +160,7 @@ local TUNING_OVERRIDES =
 						OverrideTuningVariables(tuning_vars[difficulty])
 					end,
 				},
-	["hunt"] = 	{
+	["warg"] = 	{
 					doit = 	function(difficulty)
 						local tuning_vars = {
 								["never"] =  {HUNT_ALTERNATE_BEAST_CHANCE_MIN = -1, HUNT_ALTERNATE_BEAST_CHANCE_MAX = 0},
@@ -171,7 +171,7 @@ local TUNING_OVERRIDES =
 						OverrideTuningVariables(tuning_vars[difficulty])
 					end,
 				},				
-	["warg"] = 	{
+	["hunt"] = 	{
 					doit = 	function(difficulty)
 						local tuning_vars = {
 								["never"] =  {HUNT_COOLDOWN = -1, HUNT_COOLDOWNDEVIATION = 0, HUNT_RESET_TIME = 0, HUNT_SPRING_RESET_TIME = -1},

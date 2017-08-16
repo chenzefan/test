@@ -78,9 +78,17 @@ local function KeepAlive()
 	end
 end
 
+local function ShowLoading()
+	if global_loading_widget then 
+		global_loading_widget:SetEnabled(true)
+	end
+end
+
 local function LoadAssets(asset_set)
 	
 	if LOAD_UPFRONT_MODE then return end
+	
+	ShowLoading()
 	
 	assert(asset_set)
 	Settings.current_asset_set = asset_set
@@ -1067,6 +1075,7 @@ local function LoadSlot(slot)
 			end
 
 			local function onSet(character)
+				TheFrontEnd:PopScreen()
 				SaveGameIndex:SetSlotCharacter(slot, character, onsave)
 			end
 

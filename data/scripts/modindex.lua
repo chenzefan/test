@@ -275,6 +275,15 @@ function ModIndex:InitializeModInfo(modname)
 	return env
 end
 
+function ModIndex:GetModActualName(fancyname)
+	for i,v in pairs(self.savedata.known_mods) do
+		if v and v.modinfo and v.modinfo.name then
+			if v.modinfo.name == fancyname then
+				return i
+			end
+		end
+	end
+end
 
 function ModIndex:GetModFancyName(modname)
 	local knownmod = self.savedata.known_mods[modname]
@@ -314,10 +323,11 @@ function ModIndex:Load(callback)
         end)
 end
 
-function ModIndex:IsModCompatibleWithMode(modname)
+function ModIndex:IsModCompatibleWithMode(modname, dlcmode)
 	local known_mod = self.savedata.known_mods[modname]
+	local reignofgiants = dlcmode or IsDLCEnabled(REIGN_OF_GIANTS)
 	if known_mod then
-		if IsDLCEnabled(REIGN_OF_GIANTS) then
+		if reignofgiants then
 			return known_mod.modinfo.reign_of_giants_compatible
 		else
 			return known_mod.modinfo.dont_starve_compatible
@@ -344,7 +354,16 @@ function ModIndex:UpdateConfigurationOptions(config_options, savedata)
 	end
 end
 
+-- Just returns the table itself
 function ModIndex:GetModConfigurationOptions(modname)
+	local known_mod = self.savedata.known_mods[modname]
+	if known_mod then
+		return known_mod.modinfo.configuration_options
+	end
+end
+
+-- Loads the actual file from disk
+function ModIndex:LoadModConfigurationOptions(modname)
 	local known_mod = self.savedata.known_mods[modname]
 	-- Try to find saved config settings first
 	local filename = self:GetModConfigurationPath(modname)
@@ -381,10 +400,17 @@ function ModIndex:SaveConfigurationOptions(callback, modname, configdata)
         return
     end
 
+    -- Save it to disk
     local name = self:GetModConfigurationPath(modname)
 	local data = DataDumper(configdata, nil, false)
 
-    local insz, outsz = SavePersistentString(name, data, ENCODE_SAVES, callback)
+	local cb = function()
+		callback()
+		-- And reload it to make sure there's parity after it's been saved
+		self:LoadModConfigurationOptions(modname)
+	end
+
+    local insz, outsz = SavePersistentString(name, data, ENCODE_SAVES, cb)
 end
 
 function ModIndex:IsModEnabled(modname)

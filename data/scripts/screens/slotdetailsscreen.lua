@@ -8,7 +8,14 @@ local UIAnim = require "widgets/uianim"
 local Widget = require "widgets/widget"
 
 local PopupDialogScreen = require "screens/popupdialog"
+local BigPopupDialogScreen = require "screens/bigpopupdialog"
 require "os"
+
+local function ShowLoading()
+	if global_loading_widget then 
+		global_loading_widget:SetEnabled(true)
+	end
+end
 
 local SlotDetailsScreen = Class(Screen, function(self, slotnum)
 	Screen._ctor(self, "LoadGameScreen")
@@ -160,11 +167,85 @@ function SlotDetailsScreen:PushCantContinueDialog(index)
 	end
 end
 
-function SlotDetailsScreen:Continue()
-	self.root:Disable()
-	TheFrontEnd:Fade(false, 1, function() 
-		StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = self.saveslot})
-	 end)
+function SlotDetailsScreen:CheckForDisabledMods()
+
+	local function isModEnabled(mod, enabledmods)
+		for i,v in pairs(enabledmods) do
+			if mod == v then
+				return true
+			end
+		end
+		return false
+	end
+
+	local disabled = {}
+
+	local savedmods = SaveGameIndex:GetSlotMods(self.saveslot)
+	local currentlyenabledmods = ModManager:GetEnabledModNames()
+
+	for i,v in pairs(savedmods) do
+		if not isModEnabled(v, currentlyenabledmods) and KnownModIndex:IsModCompatibleWithMode(v, self.RoG) then
+			table.insert(disabled, v)
+		end
+	end
+
+	return disabled
+end
+
+function SlotDetailsScreen:ShowModalModsDisabledWarning(disabledmods)	
+	local maxlistlength = 185
+	local maxnamelength = 25
+	local message_body = STRINGS.UI.SLOTDETAILSSCREEN.MODSDISABLEDWARNINGBODY_EXPLANATION.."\n"
+
+	local truncated = false
+	for i,v in ipairs(disabledmods) do
+		local name = KnownModIndex:GetModFancyName(v) or v
+		if string.len(name) > maxnamelength then
+			name = string.sub(name, 0, maxnamelength)
+		end
+		if i == 1 then -- No comma for first mod in the list
+			message_body = message_body..name
+		elseif string.len(message_body..", "..name) <= maxlistlength then -- Subsequent mods get a comma and added, but only if they don't break max size
+			message_body = message_body..", "..name
+		else
+			truncated = true
+			break
+		end
+	end
+
+	if truncated then
+		message_body = message_body..STRINGS.UI.SLOTDETAILSSCREEN.MODSDISABLEDWARNINGBODY_TRUNCATEDLIST
+	end
+
+	message_body = message_body.."\n\n"..STRINGS.UI.SLOTDETAILSSCREEN.MODSDISABLEDWARNINGBODY_QUESTION
+
+	TheFrontEnd:PushScreen(BigPopupDialogScreen(STRINGS.UI.SLOTDETAILSSCREEN.MODSDISABLEDWARNINGTITLE, message_body, 
+			{{text=STRINGS.UI.SLOTDETAILSSCREEN.CONTINUE, 
+				cb = function() 
+					TheFrontEnd:PopScreen()
+					self:Continue(true)
+				end},
+			{text=STRINGS.UI.SLOTDETAILSSCREEN.CANCEL, 
+				cb = function() 
+					TheFrontEnd:PopScreen() 
+				end}  
+			})
+		)
+end
+
+function SlotDetailsScreen:Continue(force)
+	local disabledmods = self:CheckForDisabledMods()
+	if #disabledmods == 0 or force then
+		self.root:Disable()
+		
+	    ShowLoading()
+		
+		TheFrontEnd:Fade(false, 1, function() 
+			StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = self.saveslot})
+		 end)
+	else
+		self:ShowModalModsDisabledWarning(disabledmods)
+	end
 end
 
 function SlotDetailsScreen:GetHelpText()

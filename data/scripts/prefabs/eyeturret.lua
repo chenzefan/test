@@ -116,8 +116,6 @@ local function itemfn(Sim)
 
     inst:AddComponent("deployable")
     inst.components.deployable.ondeploy = ondeploy
-    inst.components.deployable.test = function() return true end
-    inst.components.deployable.min_spacing = 0
     inst.components.deployable.placer = "eyeturret_placer"
     
     return inst

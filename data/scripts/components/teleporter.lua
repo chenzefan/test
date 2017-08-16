@@ -32,10 +32,15 @@ function Teleporter:Activate(doer)
 		end
 	end
 
+	local eyebone = nil
+
 	--special case for the chester_eyebone: look for inventory items with followers
 	if doer.components.inventory then
 		for k,item in pairs(doer.components.inventory.itemslots) do
 			if item.components.leader then
+				if item:HasTag("chester_eyebone") then
+					eyebone = item
+				end
 				for follower,v in pairs(item.components.leader.followers) do
 					self:Teleport(follower)
 				end
@@ -47,8 +52,27 @@ function Teleporter:Activate(doer)
 				local container = equipped.components.container
 				for j,item in pairs(container.slots) do
 					if item.components.leader then
+						if item:HasTag("chester_eyebone") then
+							eyebone = item
+						end
 						for follower,v in pairs(item.components.leader.followers) do
 							self:Teleport(follower)
+						end
+					end
+				end
+			end
+		end
+		-- special special special case: if we have an eyebone, then we have a container follower not actually in the inventory. Look for inventory items with followers there.
+		if eyebone and eyebone.components.leader then
+			for follower,v in pairs(eyebone.components.leader.followers) do
+				if follower and (not follower.components.health or (follower.components.health and not follower.components.health:IsDead())) and follower.components.container then
+					for j,item in pairs(follower.components.container.slots) do
+						if item.components.leader then
+							for follower,v in pairs(item.components.leader.followers) do
+								if follower and (not follower.components.health or (follower.components.health and not follower.components.health:IsDead())) then
+									self:Teleport(follower)
+								end
+							end
 						end
 					end
 				end

@@ -10,7 +10,7 @@ local function onload(inst, data)
 		if data.recipetouse then
 			inst.recipetouse = data.recipetouse
 			inst.components.teacher:SetRecipe(inst.recipetouse)
-	    	inst.components.named:SetName(STRINGS.NAMES[string.upper(inst.recipetouse)].." Blueprint")
+	    	inst.components.named:SetName(STRINGS.NAMES[string.upper(inst.recipetouse)].." "..STRINGS.NAMES.BLUEPRINT)
 	    end
 	end
 end

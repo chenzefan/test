@@ -17,6 +17,7 @@ local function giveupstring(combat, target)
 end
 
 local function onattackother(inst, data)
+
 end
 
 local function MakePlayerCharacter(name, customprefabs, customassets, customfn, starting_inventory)

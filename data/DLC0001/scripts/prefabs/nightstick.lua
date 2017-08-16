@@ -57,7 +57,9 @@ local function fn(Sim)
     inst:AddComponent("weapon")
     inst.components.weapon:SetDamage(TUNING.NIGHTSTICK_DAMAGE)
     inst.components.weapon:SetOnAttack(function(inst)
-        inst.fire:OnAttack()
+        if inst and inst:IsValid() and inst.fire and inst.fire:IsValid() then
+            inst.fire:OnAttack()
+        end
     end)
     inst.components.weapon:SetElectric()
     

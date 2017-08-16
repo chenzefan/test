@@ -30,6 +30,10 @@ function FollowText:SetScreenOffset(x,y)
     self:OnUpdate()
 end
 
+function FollowText:GetScreenOffset()
+    return self.screen_offset.x, self.screen_offset.y
+end
+
 function FollowText:OnUpdate(dt)
     if self.target and self.target:IsValid() then
         local scale = TheFrontEnd:GetHUDScale()

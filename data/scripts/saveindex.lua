@@ -23,6 +23,7 @@ function SaveIndex:Init()
 			modes = {survival= {file = filename}},
 			resurrectors = {},
 			dlc = {},
+			mods = {},
 		}
 	end
 	self.current_slot = 1
@@ -43,6 +44,7 @@ function SaveIndex:GuaranteeMinNumSlots(numslots)
 					modes = {survival= {file = filename}},
 					resurrectors = {},
 					dlc = {},
+					mods = {},
 				}
 			end
 		end
@@ -233,15 +235,25 @@ function SaveIndex:GetSaveFollowers(doer)
 		end
 	end
 
+	local eyebone = nil
+	local queued_remove = {}
+
 	--special case for the chester_eyebone: look for inventory items with followers
 	if doer.components.inventory then
 		for k,item in pairs(doer.components.inventory.itemslots) do
 			if item.components.leader then
+				if item:HasTag("chester_eyebone") then
+					eyebone = item
+				end
 				for follower,v in pairs(item.components.leader.followers) do
 					if follower and (not follower.components.health or (follower.components.health and not follower.components.health:IsDead())) then
 						local ent_data = follower:GetPersistData()
 						table.insert(followers, {prefab = follower.prefab, data = follower:GetPersistData()})
-						follower:Remove()
+						if follower.components.container then
+							table.insert(queued_remove, follower)
+						else
+							follower:Remove()
+						end
 					elseif follower then
 						item.components.leader:RemoveFollower(follower)
 						follower:Remove()
@@ -256,11 +268,18 @@ function SaveIndex:GetSaveFollowers(doer)
 				local container = equipped.components.container
 				for j,item in pairs(container.slots) do
 					if item.components.leader then
+						if item:HasTag("chester_eyebone") then
+							eyebone = item
+						end
 						for follower,v in pairs(item.components.leader.followers) do
 							if follower and (not follower.components.health or (follower.components.health and not follower.components.health:IsDead())) then
 								local ent_data = follower:GetPersistData()
 								table.insert(followers, {prefab = follower.prefab, data = follower:GetPersistData()})
-								follower:Remove()
+								if follower.components.container then
+									table.insert(queued_remove, follower)
+								else
+									follower:Remove()
+								end
 							elseif follower then
 								item.components.leader:RemoveFollower(follower)
 								follower:Remove()
@@ -270,6 +289,32 @@ function SaveIndex:GetSaveFollowers(doer)
 				end
 			end
 		end
+
+		-- special special special case: if we have an eyebone, then we have a container follower not actually in the inventory. Look for inventory items with followers there.
+		if eyebone and eyebone.components.leader then
+			for follower,v in pairs(eyebone.components.leader.followers) do
+				if follower and (not follower.components.health or (follower.components.health and not follower.components.health:IsDead())) and follower.components.container then
+					for j,item in pairs(follower.components.container.slots) do
+						if item.components.leader then
+							for follower,v in pairs(item.components.leader.followers) do
+								if follower and (not follower.components.health or (follower.components.health and not follower.components.health:IsDead())) then
+									local ent_data = follower:GetPersistData()
+									table.insert(followers, {prefab = follower.prefab, data = follower:GetPersistData()})
+									follower:Remove()
+								elseif follower then
+									item.components.leader:RemoveFollower(follower)
+									follower:Remove()
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+
+	for i,v in pairs(queued_remove) do
+		v:Remove()
 	end
 
 	if self.data~= nil and self.data.slots ~= nil and self.data.slots[self.current_slot] ~= nil then
@@ -315,6 +360,23 @@ function SaveIndex:GetResurrectorPenalty()
 	end
 
 	return penalty
+end
+
+function SaveIndex:ClearCavesResurrectors()
+	if self.data.slots[self.current_slot].resurrectors == nil then
+		self.data.slots[self.current_slot].resurrectors = {}
+		return
+	end
+
+	for k,v in pairs(self.data.slots[self.current_slot].resurrectors) do
+		if string.find(k, self:GetSaveGameName("cave", self.current_slot), 1, true) ~= nil then
+			self.data.slots[self.current_slot].resurrectors[k] = nil
+		end
+	end
+
+	if PLATFORM ~= "PS4" then 
+	    self:Save(function () print("ClearCavesResurrectors CB") end)
+    end	   
 end
 
 function SaveIndex:ClearCurrentResurrectors()
@@ -459,6 +521,7 @@ end
 function SaveIndex:DeleteSlot(slot, cb, save_options)
 	local character = self.data.slots[slot].character
 	local dlc = self.data.slots[slot].dlc
+	local mods = self.data.slots[slot].mods
 	local options = nil
 	if  self.data.slots[slot] and  self.data.slots[slot].modes and self.data.slots[slot].modes.survival then
 		options = self.data.slots[slot].modes.survival.options
@@ -491,6 +554,7 @@ function SaveIndex:DeleteSlot(slot, cb, save_options)
 		if save_options == true then
 			self.data.slots[slot].character = character
 			self.data.slots[slot].dlc = dlc
+			self.data.slots[slot].mods = mods
 			self.data.slots[slot].current_mode = "survival"
 			self.data.slots[slot].modes["survival"] = {options = options}
 		end
@@ -598,11 +662,13 @@ function SaveIndex:SaveCurrent(onsavedcb, direction, cave_num)
 	local current_mode = self.data.slots[self.current_slot].current_mode
 	local data = self:GetModeData(self.current_slot, current_mode)
 	local dlc = self.data.slots[self.current_slot].dlc
+	local mods = ModManager:GetEnabledModNames() or self.data.slots[self.current_slot].mods
 
 	self.data.slots[self.current_slot].character = GetPlayer().prefab
 	self.data.slots[self.current_slot].direction = direction
 	self.data.slots[self.current_slot].cave_num = cave_num
 	self.data.slots[self.current_slot].dlc = dlc
+	self.data.slots[self.current_slot].mods = mods
 	if not direction then
 		self.data.slots[self.current_slot].followers = nil
 	end
@@ -702,6 +768,7 @@ function SaveIndex:StartSurvivalMode(saveslot, character, customoptions, onsaved
 	slot.current_mode = "survival"
 	slot.save_id = self:GenerateSaveID(self.current_slot)
 	slot.dlc = dlc and dlc or NO_DLC_TABLE
+	slot.mods = ModManager:GetEnabledModNames() or {}
 	print("SaveIndex:StartSurvivalMode!:", slot.dlc.REIGN_OF_GIANTS)
 
 	slot.modes = 
@@ -978,6 +1045,15 @@ function SaveIndex:GetSlotGenOptions(slot, mode)
 	local current_mode = self.data.slots[slot].current_mode
 	local data = self:GetModeData(slot, current_mode)
 	return data.options
+end
+
+function SaveIndex:GetSlotMods(slot)
+	slot = slot or self.current_slot
+	if slot and self.data.slots[slot] and self.data.slots[slot].mods then
+		return self.data.slots[slot].mods
+	else
+		return {}
+	end
 end
 
 function SaveIndex:IsContinuePending(slot)

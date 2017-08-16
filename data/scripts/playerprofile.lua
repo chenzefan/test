@@ -15,6 +15,7 @@ PlayerProfile = Class(function(self)
         saw_display_adjustment_popup = false,
         device_caps_a = 0,
         device_caps_b = 20,
+        customizationpresets = {},
     }
 
   	--we should migrate the non-gameplay stuff to a separate file, so that we can save them whenever we want
@@ -45,6 +46,7 @@ function PlayerProfile:Reset()
     self.persistdata.saw_display_adjustment_popup = false
     self.persistdata.device_caps_a = 0
     self.persistdata.device_caps_b = 20
+    self.persistdata.customizationpresets = {}
 	
  	if not USE_SETTINGS_FILE then
         self.persistdata.volume_ambient = 7
@@ -71,6 +73,7 @@ function PlayerProfile:SoftReset()
     self.persistdata.saw_display_adjustment_popup = false
     self.persistdata.device_caps_a = 0
     self.persistdata.device_caps_b = 20
+    self.persistdata.customizationpresets = {}
 	
  	if not USE_SETTINGS_FILE then
         self.persistdata.volume_ambient = 7
@@ -270,6 +273,46 @@ function PlayerProfile:GetAutosaveEnabled()
 	end
 end
 
+function PlayerProfile:GetWorldCustomizationPresets()
+	local presets_string = self:GetValue("customizationpresets")
+
+	if presets_string ~= nil and type(presets_string) == "string" then
+		local success, presets = RunInSandbox(presets_string)
+		if success then
+			return presets
+		else
+			return {}
+		end
+	else
+		return {}
+	end
+end
+
+function PlayerProfile:AddWorldCustomizationPreset(preset, index)
+	local presets_string = self:GetValue("customizationpresets")
+	
+	local success = nil
+	local presets = nil
+	if presets_string ~= nil and type(presets_string) == "string" then
+		success, presets = RunInSandbox(presets_string)
+		if not success then
+			presets = {}
+		end
+	else
+		presets = {}
+	end
+
+	if index then
+		presets[index] = preset
+	else
+		table.insert(presets, preset)
+	end
+	local data = DataDumper(presets, nil, false)
+
+	self:SetValue("customizationpresets", data)
+	self.dirty = true
+end
+
 function PlayerProfile:GetVolume()
  	if USE_SETTINGS_FILE then
 		local amb = TheSim:GetSetting("audio", "volume_ambient")
@@ -462,9 +505,6 @@ function PlayerProfile:Set(str, callback)
                 self.persistdata.volume_music = 7
                 self.persistdata.HUDSize = 5
                 self.persistdata.vibration = true
-                self.persistdata.warneddifficultyrog = false
-                self.persistdata.wathgrithrfont = true
-                self.persistdata.screenshake = true
 		    end		    
 		end
 
@@ -492,9 +532,6 @@ function PlayerProfile:Set(str, callback)
 					self.persistdata.bloom = nil
 					self.persistdata.distortion = nil
 					self.persistdata.HUDSize = nil
-					self.persistdata.warneddifficultyrog = nil
-	                self.persistdata.wathgrithrfont = nil
-	                self.persistdata.screenshake = nil
 					self.dirty = true
 				else
 					bloom_enabled = self:GetBloomEnabled()

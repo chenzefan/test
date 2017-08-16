@@ -32,7 +32,7 @@ end)
 
 function Moisture:CheckForShelter()
 	local x,y,z = self.inst.Transform:GetWorldPosition()
-	local ents = TheSim:FindEntities(x,y,z, 3, {"shelter"}, {"FX", "NOCLICK", "DECOR", "INLIMBO"})
+	local ents = TheSim:FindEntities(x,y,z, 3, {"shelter"}, {"FX", "NOCLICK", "DECOR", "INLIMBO", "stump", "burnt"})
 	if #ents > 0 then
 		-- Check if have been sheltered before we set sheltered/prev_sheltered to true so that we are only doing the announce after having been under shelter for a couple updates
 		if self.new_sheltered and self.prev_sheltered then

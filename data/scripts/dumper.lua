@@ -95,7 +95,22 @@ function DataDumper(value, varname, fastmode, ident)
     ['function'] = function(value) 
       return string_format("loadstring(%q)", string_dump(value)) 
     end,
-    userdata = function() error("Cannot dump userdata") end,
+    userdata = function(value) 
+		-- find the variable name
+		local var
+		local i = 1
+		while true do
+			local n, v = debug.getlocal(3, i)
+			if not n then break end
+			if n=="subpath" then
+				var = v
+			end
+			--print(n,v)
+	        i = i + 1
+		  end		
+		
+		error("Cannot dump userdata ("..tostring(value).." - "..(var or "unknown")..")") 
+	end,
     thread = function() error("Cannot dump threads") end,
   }
   local function test_defined(value, path)

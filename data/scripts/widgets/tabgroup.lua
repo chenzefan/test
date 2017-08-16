@@ -85,9 +85,9 @@ function TabGroup:OpenTab(idx)
 end
 
 
-function TabGroup:AddTab(name, atlas, icon_atlas, icon, imnorm, imselected, imhighlight, imoverlay, highlightpos, onselect, ondeselect)
+function TabGroup:AddTab(name, atlas, icon_atlas, icon, imnorm, imselected, imhighlight, imalthighlight, imoverlay, highlightpos, onselect, ondeselect)
 
-    local tab = self:AddChild(Tab(self, name, atlas, icon_atlas, icon, imnorm, imselected, imhighlight, imoverlay, highlightpos, onselect, ondeselect))
+    local tab = self:AddChild(Tab(self, name, atlas, icon_atlas, icon, imnorm, imselected, imhighlight, imalthighlight, imoverlay, highlightpos, onselect, ondeselect))
     table.insert(self.tabs, tab)
     
     local numtabs = #self.tabs

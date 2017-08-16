@@ -20,6 +20,7 @@ local tab_bg =
     normal = "tab_normal.tex",
     selected = "tab_selected.tex",
     highlight = "tab_highlight.tex",
+    bufferedhighlight = "tab_place.tex",
     overlay = "tab_researchable.tex",
 }
 
@@ -60,6 +61,7 @@ local CraftTabs = Class(Widget, function(self, owner, top_root)
     self.tabs.onchange = function() self.owner.SoundEmitter:PlaySound("dontstarve/HUD/craft_open") end
     self.tabs.onclose = function() self.owner.SoundEmitter:PlaySound("dontstarve/HUD/craft_close") end
     self.tabs.onhighlight = function() self.owner.SoundEmitter:PlaySound("dontstarve/HUD/recipe_ready") return .2 end
+    self.tabs.onalthighlight = function() end
     self.tabs.onoverlay = function() self.owner.SoundEmitter:PlaySound("dontstarve/HUD/research_available") return .2 end
     
     local tabnames = {}
@@ -79,7 +81,7 @@ local CraftTabs = Class(Widget, function(self, owner, top_root)
     
     self.tabbyfilter = {}
     for k,v in ipairs(tabnames) do
-        local tab = self.tabs:AddTab(STRINGS.TABS[v.str], resolvefilepath("images/hud.xml"), v.icon_atlas or resolvefilepath("images/hud.xml"), v.icon, tab_bg.normal, tab_bg.selected, tab_bg.highlight, tab_bg.overlay,
+        local tab = self.tabs:AddTab(STRINGS.TABS[v.str], resolvefilepath("images/hud.xml"), v.icon_atlas or resolvefilepath("images/hud.xml"), v.icon, tab_bg.normal, tab_bg.selected, tab_bg.highlight, tab_bg.bufferedhighlight, tab_bg.overlay,
             
             function() --select fn
                 if not self.controllercraftingopen then
@@ -217,11 +219,13 @@ function CraftTabs:DoUpdateRecipes()
 
 		self.needtoupdate = false	
 		local tabs_to_highlight = {}
+		local tabs_to_alt_highlight = {}
 		local tabs_to_overlay = {}
 		local valid_tabs = {}
 	    
 		for k,v in pairs(self.tabbyfilter) do
 			tabs_to_highlight[v] = 0
+			tabs_to_alt_highlight[v] = 0
 			tabs_to_overlay[v] = 0
 			valid_tabs[v] = false
 		end
@@ -238,14 +242,22 @@ function CraftTabs:DoUpdateRecipes()
 				
 				local can_see = has_researched or CanPrototypeRecipe(rec.level, current_research_level)
 				local can_build = self.owner.components.builder:CanBuild(rec.name)
+				local buffered_build = self.owner.components.builder:IsBuildBuffered(rec.name)
 				local can_research = false
 				
 				can_research = not has_researched and can_build and CanPrototypeRecipe(rec.level, current_research_level)
 	            
 	            valid_tabs[tab] = valid_tabs[tab] or can_see
+
+	            if buffered_build then
+					if tab then
+						tabs_to_alt_highlight[tab] = 1 + (tabs_to_alt_highlight[tab] or 0)
+					end
+	            end
 	            
 				if can_build and has_researched then
 					if tab then
+						tabs_to_alt_highlight[tab] = 0 -- Highlight takes precedence
 						tabs_to_highlight[tab] = 1 + (tabs_to_highlight[tab] or 0)
 					end
 				end
@@ -275,10 +287,24 @@ function CraftTabs:DoUpdateRecipes()
 		for k,v in pairs(tabs_to_highlight) do    
 			if v > 0 then
 				k:Highlight(v)
-			else
-				k:UnHighlight()
+			end 
+		end
+
+		for k,v in pairs(tabs_to_alt_highlight) do    
+			if v > 0 then
+				k:UnHighlight(true)
+				k:AlternateHighlight(v)
+			end 
+		end
+
+		for k,v in pairs(tabs_to_highlight) do
+			for m,n in pairs(tabs_to_alt_highlight) do
+				if k == m then
+					if v <= 0 and n <= 0 then
+						k:UnHighlight()
+					end
+				end
 			end
-	        
 		end
 	    
 		for k,v in pairs(tabs_to_overlay) do    

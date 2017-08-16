@@ -254,6 +254,12 @@ function MorgueScreen:RefreshControls()
                 end
             elseif killed_by == "unknown" then
                 killed_by = "shenanigans"
+            elseif killed_by == "moose" then
+                if math.random() < .5 then
+                    killed_by = "moose1"
+                else
+                    killed_by = "moose2"
+                end
             end
             killed_by = STRINGS.NAMES[string.upper(killed_by)] or STRINGS.NAMES.SHENANIGANS
             CAUSE:SetString(killed_by:gsub("(%a)([%w_']*)", tchelper))

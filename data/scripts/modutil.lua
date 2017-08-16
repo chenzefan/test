@@ -9,11 +9,14 @@ function ModInfoname(name)
 end
 
 -- This isn't for modders to use: see mods.lua, CreateEnvironment function (line 94 specifically)
-function GetModConfigData(modname, optionname)
+function GetModConfigData(optionname, modname)
+	assert(modname, "modname must be supplied manually if calling GetModConfigData from outside of modmain or modworldgenmain. Use ModIndex:GetModActualName(fancyname) function [fancyname is name string from modinfo].")
 	local config = KnownModIndex:GetModConfigurationOptions(modname)
-	for i,v in pairs(config) do
-		if v.name == optionname then
-			return v.saved or v.default
+	if config and type(config) == "table" then
+		for i,v in pairs(config) do
+			if v.name == optionname then
+				return v.saved or v.default
+			end
 		end
 	end
 	return nil
@@ -22,7 +25,7 @@ end
 function GetModConfigDataFn(modname)
 
 	local function PublicGetModData( optionname )
-		return GetModConfigData(modname, optionname)
+		return GetModConfigData(optionname, modname)
 	end
 
 	return PublicGetModData

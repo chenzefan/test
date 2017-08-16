@@ -18,9 +18,13 @@ function HomeSeeker:SetHome(home)
     if self.home then
         self.inst:RemoveEventCallback("onremove", self.onhomeremoved, self.home)
     end
-    self.home = home
-    if home then
-        self.inst:ListenForEvent("onremove", self.onhomeremoved, home)
+	if home and home:IsValid() then
+	    self.home = home
+	else
+		self.home = nil
+	end
+    if self.home then
+        self.inst:ListenForEvent("onremove", self.onhomeremoved, self.home)
     end
 end
 

@@ -494,7 +494,7 @@ function ModsScreen:RefreshOptions()
 			opt.status:SetColour(0.9,0.3,0.3,1)
 			opt.status:SetString(STRINGS.UI.MODSSCREEN.STATUS.DISABLED_ERROR)
 		elseif modStatus == "DISABLED_OLD" then
-			opt.status:SetColour(0.9,0.3,0.3,1)
+			opt.status:SetColour(0.8,0.8,0.3,1)
 			opt.status:SetString(STRINGS.UI.MODSSCREEN.STATUS.DISABLED_OLD)
 		elseif modStatus == "DISABLED_MANUAL" then
 			opt.status:SetColour(.7,.7,.7,1)
@@ -763,7 +763,7 @@ function ModsScreen:ShowModDetails(idx)
 		self.detailwarning:SetString(STRINGS.UI.MODSSCREEN.DISABLED_ERROR)
 	elseif modStatus == "DISABLED_OLD" then
 		--self.enablespinner:SetSelected(DISABLE)
-		self.detailwarning:SetColour(0.9,0.3,0.3,1)
+		self.detailwarning:SetColour(0.8,0.8,0.3,1)
 		self.detailwarning:SetString(STRINGS.UI.MODSSCREEN.DISABLED_OLD)
 	elseif modStatus == "DISABLED_MANUAL" then
 		--self.enablespinner:SetSelected(DISABLE)
@@ -796,6 +796,7 @@ end
 function ModsScreen:EnableCurrent(data)
 	local modname = self.modnames[self.currentmod]
 	local modinfo = KnownModIndex:GetModInfo(modname)
+
 	if modinfo.restart_required then
 		print("RESTART REQUIRED")
 		TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.MODSSCREEN.RESTART_TITLE, STRINGS.UI.MODSSCREEN.RESTART_REQUIRED, 

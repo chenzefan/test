@@ -1,10 +1,3 @@
-local dragonprioritytag =
-{
-    "dragonflybait_lowprio",
-    "dragonflybait_medprio",
-    "dragonflybait_highprio",
-}
-
 local function OnKilled(inst)
     if inst.components.burnable and inst.components.burnable:IsBurning() then
         inst.AnimState:SetMultColour(.2,.2,.2,1)
@@ -14,6 +7,12 @@ end
 local function DoneBurning(inst)
     local burnable = inst.components.burnable
     if burnable then
+        inst:RemoveTag("wildfirestarter")
+        inst:RemoveTag("burnable")
+        if burnable.dragonflypriority then
+            inst:RemoveTag(burnable.dragonprioritytag[burnable.dragonflypriority])
+        end
+
         if burnable.onburnt then
             burnable.onburnt(inst)
         end
@@ -58,6 +57,13 @@ local Burnable = Class(function(self, inst)
             end
         end)
     end, GetWorld())
+
+    self.dragonprioritytag =
+    {
+        "dragonflybait_lowprio",
+        "dragonflybait_medprio",
+        "dragonflybait_highprio",
+    }
     
 end)
 
@@ -164,10 +170,10 @@ end
 
 function Burnable:MakeDragonflyBait(priority)
     if self.dragonflypriority then
-        self.inst:RemoveTag(dragonprioritytag[self.dragonflypriority])
+        self.inst:RemoveTag(self.dragonprioritytag[self.dragonflypriority])
     end
     self.dragonflypriority = priority or 1
-    self.inst:AddTag(dragonprioritytag[self.dragonflypriority])
+    self.inst:AddTag(self.dragonprioritytag[self.dragonflypriority])
 end
 
 function Burnable:Ignite(immediate)
@@ -185,7 +191,7 @@ function Burnable:Ignite(immediate)
         self.burning = true
         self.inst:RemoveTag("wildfirestarter")
         if self.dragonflypriority then
-            self.inst:RemoveTag(dragonprioritytag[self.dragonflypriority])
+            self.inst:RemoveTag(self.dragonprioritytag[self.dragonflypriority])
         end
 
         self.inst:ListenForEvent("death", OnKilled)
@@ -304,7 +310,7 @@ function Burnable:Extinguish(resetpropagator, pct, smotherer)
         self.inst:AddTag("wildfirestarter")
     end
     if self.dragonflypriority then
-        self.inst:AddTag(dragonprioritytag[self.dragonflypriority])
+        self.inst:AddTag(self.dragonprioritytag[self.dragonflypriority])
     end
     if self.burning then
     
@@ -381,6 +387,10 @@ function Burnable:OnRemoveFromEntity()
     self:StopSmoldering()
     self:Extinguish()
     self.inst:RemoveTag("wildfirestarter")
+    self.inst:RemoveTag("burnable")
+    if self.dragonflypriority then
+        self.inst:RemoveTag(self.dragonprioritytag[self.dragonflypriority])
+    end
     if self.task then
         self.task:Cancel()
         self.task = nil

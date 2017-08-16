@@ -11,6 +11,7 @@ local HoverText = require "widgets/hoverer"
 local NumericSpinner = require "widgets/numericspinner"
 
 local PopupDialogScreen = require "screens/popupdialog"
+local BigPopupDialogScreen = require "screens/bigpopupdialog"
 
 local levels = require "map/levels"
 local customise = nil
@@ -104,6 +105,14 @@ local CustomizationScreen = Class(Screen, function(self, profile, cb, defaults, 
 	    self.applybutton:SetOnClick( function() self:Apply() end )
 	    self.applybutton:SetFont(BUTTONFONT)
 	    self.applybutton:SetTextSize(40)    
+
+	    self.savepresetbutton = self.root:AddChild(ImageButton())
+	    self.savepresetbutton:SetPosition(left_col, 220, 0)
+	    self.savepresetbutton:SetText(STRINGS.UI.CUSTOMIZATIONSCREEN.SAVEPRESET)
+	    self.savepresetbutton.text:SetColour(0,0,0,1)
+	    self.savepresetbutton:SetOnClick( function() self:SavePreset() end )
+	    self.savepresetbutton:SetFont(BUTTONFONT)
+	    self.savepresetbutton:SetTextSize(40) 
 	    
 		self.cancelbutton = self.root:AddChild(ImageButton())
 	    self.cancelbutton:SetPosition(left_col, -260, 0)
@@ -122,14 +131,24 @@ local CustomizationScreen = Class(Screen, function(self, profile, cb, defaults, 
 
 	--set up the preset spinner
 
+	self.max_num_presets = 5
+
 	self.presets = {}
+
 	for i, level in pairs(levels.sandbox_levels) do
 		table.insert(self.presets, {text=level.name, data=level.id, desc = level.desc, overrides = level.overrides})
+	end
+
+	local profilepresets = Profile:GetWorldCustomizationPresets()
+	if profilepresets then
+		for i, level in pairs(profilepresets) do
+			table.insert(self.presets, {text=level.text, data=level.data, desc = level.desc, overrides = level.overrides, basepreset=level.basepreset})
+		end
 	end
     
     self.presetpanel = self.root:AddChild(Widget("presetpanel"))
     self.presetpanel:SetScale(.9)
-    self.presetpanel:SetPosition(left_col,50,0)
+    self.presetpanel:SetPosition(left_col,15,0)
     self.presetpanelbg = self.presetpanel:AddChild(Image("images/globalpanels.xml", "presetbox.tex"))
     self.presetpanelbg:SetScale(1,.9, 1)
 
@@ -188,8 +207,24 @@ local CustomizationScreen = Class(Screen, function(self, profile, cb, defaults, 
 	local preset = (self.defaults and self.defaults.preset) or self.presets[1].data
 
 	self:LoadPreset(preset)
+
 	if self.defaults and next(self.defaults.tweak) then
 		self:MakePresetDirty()
+	end
+
+	if self.options and self.options.tweak then
+		local clean = true
+		for i,v in pairs(self.options.tweak) do
+			for m,n in pairs(v) do
+				if #self.options.tweak[i][m] > 0 then
+					clean = false
+					break
+				end
+			end
+		end
+		if clean then
+			self:MakePresetClean()
+		end
 	end
 
 	self.hover = self:AddChild(HoverText(self))
@@ -599,6 +634,8 @@ function CustomizationScreen:OnControl(control, down)
     		if self:PendingChanges() then
     			self:Apply()
     		end
+    	elseif control == CONTROL_INSPECT then
+    		self:SavePreset()
     	elseif control == CONTROL_PAGELEFT then
     		if self.leftbutton.shown then
     			TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/click_move")
@@ -630,15 +667,160 @@ function CustomizationScreen:VerifyValidSeasonSettings()
 	return true
 end
 
+function CustomizationScreen:SavePreset()
+
+	local function AddPreset(index, presetdata)
+		local presetid = "CUSTOM_PRESET_"..index
+		local presetname = STRINGS.UI.CUSTOMIZATIONSCREEN.CUSTOM_PRESET.." "..index
+		local presetdesc = STRINGS.UI.CUSTOMIZATIONSCREEN.CUSTOM_PRESET_DESC.." "..index..". "..STRINGS.UI.CUSTOMIZATIONSCREEN.CUSTOMDESC
+
+		-- Add the preset to the preset spinner and make the preset the selected one
+		local base = self.presetspinner:GetSelectedIndex() <= #levels.sandbox_levels and self.presetspinner:GetSelected().data or self.presetspinner:GetSelected().basepreset
+		local preset = {text=presetname, data=presetid, desc=presetdesc, overrides=presetdata, basepreset=base}
+		self.presets[index + #levels.sandbox_levels] = preset
+		self.presetspinner:SetOptions(self.presets)
+		self.presetspinner:SetSelectedIndex(index + #levels.sandbox_levels)
+
+		-- And save it to the profile
+		Profile:AddWorldCustomizationPreset(preset, index)
+		Profile:Save()
+
+		-- We just created a new preset, so it can't be dirty
+		self.options.tweak = {}	
+		self:MakePresetClean()
+	end
+
+	-- Grab the data (values from current preset + tweaks)
+	local presetoverrides = {}
+	local overrides = {}
+	for k,v in pairs(self.presets) do
+		if self.preset.data == v.data then
+			for m,n in pairs(v.overrides) do
+				overrides[n[1]] = n[2]
+				table.insert(presetoverrides, n)
+			end
+		end
+	end
+	for i,v in ipairs(options) do
+		local value = overrides[options[i].name] or options[i].default
+		value = (self.options.tweak[options[i].group] and self.options.tweak[options[i].group][options[i].name]) and self.options.tweak[options[i].group][options[i].name] or value
+		if value ~= options[i].default then
+			local pos = nil
+			for m,n in ipairs(presetoverrides) do
+				if n[1] == options[i].name then
+					pos = m
+					break
+				end
+			end
+			if not pos then
+				table.insert(presetoverrides, {options[i].name, value})
+			else
+				presetoverrides[pos] = {options[i].name, value}
+			end
+		end
+	end
+
+	if #presetoverrides <= 0 then return end
+
+	-- Figure out what the id, name and description should be
+	local presetnum = (Profile:GetWorldCustomizationPresets() and #Profile:GetWorldCustomizationPresets() or 0) + 1
+
+	-- If we're at max num of presets, show a modal dialog asking which one to replace
+	if presetnum > self.max_num_presets then
+		local spinner_options = {}
+		for i=1,self.max_num_presets do
+			table.insert(spinner_options, {text=tostring(i), data=i})
+		end
+		local overwrite_spinner = Spinner(spinner_options, 150)
+		overwrite_spinner:SetTextColour(0,0,0,1)
+		overwrite_spinner:SetSelected("1")
+		local size = JapaneseOnPS4() and 28 or 30
+		local label = overwrite_spinner:AddChild( Text( BODYTEXTFONT, size, STRINGS.UI.CUSTOMIZATIONSCREEN.CUSTOM_PRESET ))
+		label:SetPosition( -180/2 - 55, 0, 0 )
+		label:SetRegionSize( 180, 50 )
+		label:SetHAlign( ANCHOR_MIDDLE )
+		local menuitems = 
+	    {
+			{widget=overwrite_spinner, offset=Vector3(280,120,0)},
+			{text=STRINGS.UI.CUSTOMIZATIONSCREEN.OVERWRITE, 
+				cb = function() 
+					TheFrontEnd:PopScreen()
+					AddPreset(overwrite_spinner:GetSelectedIndex(), presetoverrides)
+				end, offset=Vector3(-90,0,0)},
+			{text=STRINGS.UI.CUSTOMIZATIONSCREEN.CANCEL, 
+				cb = function() 
+					TheFrontEnd:PopScreen() 
+				end, offset=Vector3(-90,0,0)}  
+	    }
+	    local modal = BigPopupDialogScreen(STRINGS.UI.CUSTOMIZATIONSCREEN.MAX_PRESETS_EXCEEDED_TITLE, STRINGS.UI.CUSTOMIZATIONSCREEN.MAX_PRESETS_EXCEEDED_BODY..STRINGS.UI.CUSTOMIZATIONSCREEN.MAX_PRESETS_EXCEEDED_BODYSPACING, menuitems)
+	    modal.menu.items[1]:SetFocusChangeDir(MOVE_DOWN, modal.menu.items[2])
+	    modal.menu.items[1]:SetFocusChangeDir(MOVE_RIGHT, nil)
+	    modal.menu.items[2]:SetFocusChangeDir(MOVE_LEFT, nil)
+	    modal.menu.items[2]:SetFocusChangeDir(MOVE_RIGHT, modal.menu.items[3])
+	    modal.menu.items[2]:SetFocusChangeDir(MOVE_UP, modal.menu.items[1])
+	    modal.menu.items[3]:SetFocusChangeDir(MOVE_LEFT, modal.menu.items[2])
+	    modal.menu.items[3]:SetFocusChangeDir(MOVE_UP, modal.menu.items[1])
+		TheFrontEnd:PushScreen(modal)
+	else -- Otherwise, just save it
+		AddPreset(presetnum, presetoverrides)
+	end
+end
+
 function CustomizationScreen:Apply()
+
+	local function collectCustomPresetOptions()
+		-- Dump custom preset info into the tweak table because it's easier than rewriting the presets world gen code
+		if self.presetspinner:GetSelectedIndex() > #levels.sandbox_levels then
+			self.options.faketweak = {}
+			local tweaked = false
+			for i,v in pairs(self.presetspinner:GetSelected().overrides) do
+				for k,j in pairs(self.options.tweak) do
+					for m,n in pairs(j) do
+						if v[1] == m then
+							tweaked = true
+							break
+						end
+					end
+				end
+				if not tweaked then
+					local group = nil
+					local name = nil
+					for b,c in ipairs(options) do
+						for d,f in pairs(c) do
+							if c.name == v[1] then
+								group = c.group
+								name = c.name
+								break
+							end
+						end
+					end
+
+					if group and name then
+						if not self.options.tweak[group] then
+							self.options.tweak[group] = {}
+						end
+						self.options.tweak[group][name] = v[2]
+						table.insert(self.options.faketweak, v[1])
+					end					
+				end
+				tweaked = false
+			end
+
+			self.options.actualpreset = self.presetspinner:GetSelected().data
+			self.options.preset = self.presetspinner:GetSelected().basepreset
+		end
+	end
+
 	if IsDLCEnabled(REIGN_OF_GIANTS) then
 		if self:VerifyValidSeasonSettings() then
+			collectCustomPresetOptions()
 			self.cb(self.options)
 		else
 			TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.CUSTOMIZATIONSCREEN.INVALIDSEASONCOMBO_TITLE, STRINGS.UI.CUSTOMIZATIONSCREEN.INVALIDSEASONCOMBO_BODY, 
 						{{text=STRINGS.UI.CUSTOMIZATIONSCREEN.OKAY, cb = function() TheFrontEnd:PopScreen() end}}))
 		end
 	else
+		collectCustomPresetOptions()
 		self.cb(self.options)
 	end
 end
@@ -657,6 +839,10 @@ function CustomizationScreen:GetHelpText()
 
 	if self:PendingChanges() then
 		table.insert(t,  TheInput:GetLocalizedControl(controller_id, CONTROL_ACCEPT) .. " " .. STRINGS.UI.HELP.ACCEPT)
+	end
+
+	if self.presetdirty then
+		table.insert(t, TheInput:GetLocalizedControl(controller_id, CONTROL_INSPECT) .. " " .. STRINGS.UI.HELP.SAVEPRESET)
 	end
 
 	table.insert(t,  TheInput:GetLocalizedControl(controller_id, CONTROL_CANCEL) .. " " .. STRINGS.UI.HELP.BACK)

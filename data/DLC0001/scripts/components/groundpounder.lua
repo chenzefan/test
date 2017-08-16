@@ -55,7 +55,8 @@ function GroundPounder:DestroyPoints(points, breakobjects, dodamage)
 		end
 		if ents and breakobjects then
 		    for k2,v2 in pairs(ents) do
-		        if v2 and self.destroyer and v2.components.workable and v2.components.workable.workleft > 0 then
+		    	-- Don't net any insects when we do work
+		        if v2 and self.destroyer and v2.components.workable and v2.components.workable.workleft > 0 and v2.components.workable.action ~= ACTIONS.NET then
 		            v2.components.workable:Destroy(self.inst)
 		        end
 		        if v2 and self.burner and v2.components.burnable and not v2:HasTag("fire") and not v2:HasTag("burnt") then

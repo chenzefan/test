@@ -56,7 +56,7 @@ local function destroystuff(inst)
         end
 
         if v and v.components.health and not v.components.health:IsDead() 
-        and v ~= inst.WINDSTAFF_CASTER then
+        and v ~= inst.WINDSTAFF_CASTER and v.components.combat then
         	v.components.combat:GetAttacked(inst, TUNING.TORNADO_DAMAGE)
         	v.components.combat:SuggestTarget(inst.WINDSTAFF_CASTER)
     	end

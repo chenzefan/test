@@ -115,6 +115,7 @@ local function OnBurnt(inst, imm)
 		inst:RemoveComponent("growable")
         inst:RemoveTag("shelter")
         inst:RemoveTag("dragonflybait_lowprio")
+        inst:RemoveTag("fire")
 
 		inst.components.lootdropper:SetLoot({})
 		if GetBuild(inst).drop_pinecones then
@@ -341,7 +342,8 @@ local function chop_down_tree(inst, chopper)
 					target.noleif = true
 					target.leifscale = growth_stages[target.components.growable.stage].leifscale or 1
 					target:DoTaskInTime(1 + math.random()*3, function() 
-                        if target and not target:HasTag("stump") and not target:HasTag("burnt") then
+                        if target and not target:HasTag("stump") and not target:HasTag("burnt") and
+                            target.components.growable and target.components.growable.stage <= 3 then
     						local target = target
     						local leif = SpawnPrefab(builds[target.build].leif)
     						local scale = target.leifscale
@@ -417,7 +419,7 @@ local function onload(inst, data)
 		end
 
         if data.burnt then
-            OnBurnt(inst, true)
+            inst:AddTag("fire") -- Add the fire tag here: OnEntityWake will handle it actually doing burnt logic
         elseif data.stump then
             inst:RemoveComponent("burnable")
             MakeSmallBurnable(inst)
@@ -439,9 +441,16 @@ local function onload(inst, data)
 end        
 
 local function OnEntitySleep(inst)
+    local fire = false
+    if inst:HasTag("fire") then
+        fire = true
+    end
     inst:RemoveComponent("burnable")
     inst:RemoveComponent("propagator")
     inst:RemoveComponent("inspectable")
+    if fire then
+        inst:AddTag("fire")
+    end
 end
 
 local function OnEntityWake(inst)
@@ -464,6 +473,8 @@ local function OnEntityWake(inst)
                 MakeLargePropagator(inst)
             end
         end
+    elseif not inst:HasTag("burnt") and inst:HasTag("fire") then
+        OnBurnt(inst, true)
     end
 
     if not inst.components.inspectable then
