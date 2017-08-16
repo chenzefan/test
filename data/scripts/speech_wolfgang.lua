@@ -60,6 +60,8 @@ return {
 	{
 
 		SLURPER = "No! No! Stay off head!",
+		SLURPER_PELT = "It's still moving!",
+		ARMORSLURPER = "It moves with my many muscles!",
 		ORANGEAMULET = "I can wear it around my neck.",
 		YELLOWSTAFF = "Pretty gem sits in stick.",
 		YELLOWGEM = "Pretty rock.",
@@ -77,7 +79,17 @@ return {
 		STAFFLIGHT = "It hurts to touch.",
 		RESEARCHLAB4 = "Hat not just for head.",
 
-        ANCIENT_ALTAR = "Is nasty, creepy, god place.",
+        ANCIENT_ALTAR =
+        {
+        	WORKING = "Is nasty, creepy, altar.",
+        	BROKEN = "Is broken altar.",
+        },     
+
+        ANCIENT_STATUE = "Ugly, ugly, ugly.",
+
+        LICHEN = "I'm lichen this!",
+		CUTLICHEN = "Tastes terrible.",
+
         CAVE_BANANA = "Is tasty!",
         CAVE_BANANA_COOKED = "Is warm and tasty!",
         CAVE_BANANA_TREE = "Hello, upside-down tree.",
@@ -495,6 +507,12 @@ return {
 			GENERIC = "Is watery grass.",
 			PICKED = "I have beaten the reeds!",
 		},
+        RELIC = 
+        {
+            GENERIC = "House stuff.",
+            BROKEN = "Smashed all the way!",
+        },
+        RUBBLE = "Broken house stuff.",
 		RESEARCHLAB = "I am not sure how I feel about... science.",
 		RESEARCHLAB2 = "I am not sure how I feel about... science.",
 		RESEARCHLAB3 = "What has Wolfgang done?",
@@ -626,8 +644,8 @@ return {
 		WALL_HAY_ITEM = "Scratchy straws!",
 		WALL_STONE = "Wall is strong like me!",
 		WALL_STONE_ITEM = "Piles of rocks!",
-		WALL_RUINS = "Wall is strong like me!",
-		WALL_RUINS_ITEM = "Piles of rocks!",
+		WALL_RUINS = "Old Wall is strong!",
+		WALL_RUINS_ITEM = "Stack of old rocks!",
 		WALL_WOOD = "Hello, pointy sticks!",
 		WALL_WOOD_ITEM = "Pokey sticks!",
 		WALRUS = "Sea cow man!",
@@ -646,6 +664,33 @@ return {
 			GENERIC = "Like soft pillow, growing on ground.",
 			OPEN = "It can not harm this man!",
 		},
+ 
+        ARMORRUINS = "Protect me? I don't need it!",
+        BISHOP_NIGHTMARE = "Is angry man. Should relax.",
+        GREENAMULET = "What is this thing?", 
+        GREENGEM = "Is pretty and not be crushed. Like me!",
+        KNIGHT_NIGHTMARE = "Funny metal man.",
+        MINOTAUR = "Strong! Like me! I like him!",    
+        MULTITOOL_AXE_PICKAXE = "Chop and dig! I can do that all day.",
+        NIGHTMARELIGHT = "Is light, but not good light.",
+        NIGHTMARE_TIMEPIECE =
+        {
+            WARN = "The bad light comes soon.",  
+            WAXING = "The bad light is here and getting stronger.", 
+            STEADY = "I think bad light not get stronger.", 
+            WANING = "Bad light time is ending.", 
+            DAWN = "Good time is soon.", 
+            CALM = "No bad light.", 
+            NOMAGIC = "Is safe from bad light.", 
+        },
+        ORANGESTAFF = "Better to walk I think.",  
+        ROOK_NIGHTMARE = "Is no match for my mighty chest!",
+        RELIC = "Is junk?",
+        RUINS_RUBBLE = "I will make better with crushing.",  
+        RUINS_BAT = "Is creepy.",
+        SPIDER_DROPPER = "Scary spider from above.", 
+        THULECITE = "Is pretty rock.",
+        YELLOWAMULET = "Is glowing yellow.",    
 	},
 	DESCRIBE_GENERIC = "What is this thing?",
 	DESCRIBE_TOODARK = "Help me! It is dark!",

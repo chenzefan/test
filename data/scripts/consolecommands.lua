@@ -12,6 +12,9 @@ end
 ---------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------
 
+
+
+
 -- Spawn At Cursor and select the new ent
 -- Has a gimpy short name so it's easier to type from the console
 function c_spawn(prefab, count)
@@ -261,4 +264,101 @@ end
 
 function c_printtextureinfo( filename )
 	TheSim:PrintTextureInfo( filename )
+end
+
+function c_simphase(phase)
+	GetWorld():PushEvent("phasechange", {newphase = phase})
+end
+
+function c_anim(animname, loop)
+	if GetDebugEntity() then
+		GetDebugEntity().AnimState:PlayAnimation(animname, loop or false)
+	else
+		print("No DebugEntity selected")
+	end
+end
+
+function c_light(c1, c2, c3)
+	TheSim:SetAmbientColour(c1, c2 or c1, c3 or c1)
+end
+
+function c_spawn_ds(prefab, scenario)
+	local inst = c_spawn(prefab)
+	if not inst then
+		print("Need to select an entity to apply the scenario to.")
+		return
+	end
+
+	if inst.components.scenariorunner then
+		inst.components.scenariorunner:ClearScenario()
+	end
+
+	-- force reload the script -- this is for testing after all!
+	package.loaded["scenarios/"..scenario] = nil
+
+	inst:AddComponent("scenariorunner")
+	inst.components.scenariorunner:SetScript(scenario)
+	inst.components.scenariorunner:Run()
+end
+
+
+function c_countprefabs(prefab, noprint)
+	local count = 0
+	for k,v in pairs(Ents) do
+		if v.prefab == prefab then
+			count = count + 1
+		end
+	end
+	if not noprint then
+		print("There are ", count, prefab.."s in the world.")
+	end
+	return count
+end
+
+function c_countallprefabs()
+	local counted = {}
+	for k,v in pairs(Ents) do
+		if v.prefab and not table.findfield(counted, v.prefab) then 
+			local num = c_countprefabs(v.prefab, true)
+			counted[v.prefab] = num
+		end
+	end
+
+    local function pairsByKeys (t, f)
+      local a = {}
+      for n in pairs(t) do table.insert(a, n) end
+      table.sort(a, f)
+      local i = 0      -- iterator variable
+      local iter = function ()   -- iterator function
+        i = i + 1
+        if a[i] == nil then return nil
+        else return a[i], t[a[i]]
+        end
+      end
+      return iter
+    end
+
+    for k,v in pairsByKeys(counted) do
+    	print(k, v)
+    end
+
+	print("There are ", GetTableSize(counted), " different prefabs in the world.")
+end
+function c_testruins()
+	GetPlayer().components.builder:UnlockRecipesForTech({SCIENCE = 2, MAGIC = 2})
+	c_give("log", 20)
+	c_give("flint", 20)
+	c_give("twigs", 20)
+	c_give("cutgrass", 20)
+	c_give("lightbulb", 5)
+	c_give("healingsalve", 5)
+	c_give("batbat")
+	c_give("icestaff")
+	c_give("firestaff")
+	c_give("tentaclespike")
+	c_give("slurtlehat")
+	c_give("armorwood")
+	c_give("minerhat")
+	c_give("lantern")
+	c_give("backpack")
 end

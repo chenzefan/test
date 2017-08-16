@@ -9,6 +9,7 @@ local cave_prefabs =
 	"cavelight",
 	"flower_cave",
     "ancient_altar",
+    "ancient_altar_broken",
 	"stalagmite",
 	"stalagmite_tall",
 	"bat",
@@ -26,6 +27,22 @@ local cave_prefabs =
     "monkey",
     "monkeybarrel",
     "rock_light",
+    "ruins_plate",
+    "ruins_bowl",
+    "ruins_chair",
+    "ruins_chipbowl",
+    "ruins_vase",
+    "ruins_table",
+    "ruins_rubble_table",
+    "ruins_rubble_chair",
+    "ruins_rubble_vase",
+    "lichen",
+    "cutlichen",
+    "rook_nightmare",
+    "ruins_statue_head",
+    "ruins_statue_head_nogem",
+    "ruins_statue_mage",
+    "ruins_statue_mage_nogem",
 }
 
 local assets =
@@ -33,6 +50,10 @@ local assets =
     Asset("SOUND", "sound/cave_AMB.fsb"),
     Asset("SOUND", "sound/cave_mem.fsb"),
     Asset("IMAGE", "images/colour_cubes/caves_default.tex"),
+
+    Asset("IMAGE", "images/colour_cubes/ruins_light_cc.tex"),
+    Asset("IMAGE", "images/colour_cubes/ruins_dim_cc.tex"),
+    Asset("IMAGE", "images/colour_cubes/ruins_dark_cc.tex"),
 
 	Asset("IMAGE", "images/colour_cubes/fungus_cc.tex"),
 	Asset("IMAGE", "images/colour_cubes/sinkhole_cc.tex"),
@@ -48,7 +69,7 @@ local function fn(Sim)
 	inst:AddComponent("seasonmanager")
 	inst.components.seasonmanager:SetCaves()
 	inst:AddComponent("colourcubemanager")
-
+	
 	--add waves
 	--local waves = inst.entity:AddWaveComponent()
 	--[[waves:SetRegionSize( 32, 16 )

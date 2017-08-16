@@ -488,6 +488,8 @@ function Story:AddBGNodes(random_count)
 
 					local new_room = deepcopy(background_template)
 					new_room.id = nodeid..":BG_"..bg_idx
+					new_room.task = task.id
+
 
 					-- this has to be inside the inner loop so that things like teleportato tags
 					-- only get processed for a single node.
@@ -568,7 +570,11 @@ function Story:GetExtrasForRoom(next_room)
 				if self.GlobalTags[extra] == nil then
 					self.GlobalTags[extra] = {}
 				end
-				table.insert(self.GlobalTags[extra], next_room.id)
+				if self.GlobalTags[extra][next_room.task] == nil then
+					self.GlobalTags[extra][next_room.task] = {}
+				end
+				--print("Adding GLOBALTAG", extra, next_room.task, next_room.id)
+				table.insert(self.GlobalTags[extra][next_room.task], next_room.id)
 			end
 		end
 	end
@@ -649,7 +655,7 @@ function Story:GenerateNodesFromTask(task, crossLinkFactor)
 	end
 
 
-	local task_node = Graph(task.id, {parent=self.rootNode, default_bg=task.room_bg, colour = task.colour, background=task.background_room, set_pieces=task.set_pieces})
+	local task_node = Graph(task.id, {parent=self.rootNode, default_bg=task.room_bg, colour = task.colour, background=task.background_room, set_pieces=task.set_pieces, maze_tiles=task.maze_tiles})
 	task_node.substitutes = task.substitutes
 	--print ("Adding Voronoi Child", self.rootNode.id, task.id, task.room_bg, task.room_bg, task.colour.r, task.colour.g, task.colour.b, task.colour.a )
 
@@ -663,6 +669,7 @@ function Story:GenerateNodesFromTask(task, crossLinkFactor)
 	while room_choices:getn() > 0 do
 		local next_room = room_choices:pop()
 		next_room.id = task.id..":"..roomID..":"..next_room.type	-- TODO: add room names for special rooms
+		next_room.task = task.id
 
 		self:RunTaskSubstitution(task, next_room.contents.distributeprefabs)
 		
@@ -703,7 +710,7 @@ function Story:GenerateNodesFromTask(task, crossLinkFactor)
 		-- do some extra linking.
 		task_node:CrosslinkRandom(crossLinkFactor)
 	end
-	--print("Story:GenerateNodesFromTask done")
+	--print("Story:GenerateNodesFromTask done", task_node.id)
 	return task_node
 end
 ------------------------------------------------------------------------------------------

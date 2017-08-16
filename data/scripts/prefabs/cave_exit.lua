@@ -27,13 +27,13 @@ local function OnActivate(inst)
 	--decrement the depth counter
 	--save and do restart
 	SetHUDPause(true)
+	local level = GetWorld().topology.level_number or 1
 	local function startadventure()
 		local function onsaved()
 		    StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = SaveGameIndex:GetCurrentSaveSlot()}, true)
 		end
 
 		SetHUDPause(false)
-		local level = GetWorld().topology.level_number or 1
 		if level == 1 then
 			SaveGameIndex:SaveCurrent(function() SaveGameIndex:LeaveCave(onsaved) end)
 		else
@@ -44,9 +44,15 @@ local function OnActivate(inst)
 		end
 	end
 
-	TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.EXITCAVE.TITLE, STRINGS.UI.EXITCAVE.BODY, 
+	local title = STRINGS.UI.EXITCAVE.TITLE
+	local body = STRINGS.UI.EXITCAVE.BODY
+	if level > 1 then
+		title = STRINGS.UI.EXITCAVE.TITLE_LEVEL
+		body = STRINGS.UI.EXITCAVE.BODY_LEVEL
+	end
+	TheFrontEnd:PushScreen(PopupDialogScreen(title, body, 
 			{{text=STRINGS.UI.EXITCAVE.YES, cb = startadventure},
-			 {text=STRINGS.UI.EXITCAVE.NO, cb = function() SetHUDPause(false) inst.components.activatable.inactive = true end}  }))
+			 {text=STRINGS.UI.EXITCAVE.NO, cb = function() SetHUDPause(false) inst.components.activatable.inactive = true TheFrontEnd:PopScreen() end}  }))
 end
 
 
@@ -58,7 +64,7 @@ local function fn(Sim)
     --MakeObstaclePhysics(inst, 1)
     
     local minimap = inst.entity:AddMiniMapEntity()
-    minimap:SetIcon( "cave_open.png" )
+    minimap:SetIcon( "cave_open2.png" )
     
     anim:SetBank("exitrope")
     anim:SetBuild("cave_exit_rope")

@@ -116,7 +116,7 @@ local function FindTargetOfInterest(inst)
 	if not inst.components.follower.leader and not inst.components.combat.target then
 		local m_pt = inst:GetPosition()
 	    local target = GetPlayer()
-		if target.components.inventory and distsq(m_pt, target:GetPosition()) < 25*25 then			
+		if target and target.components.inventory and distsq(m_pt, target:GetPosition()) < 25*25 then			
 			local interest_chance = 0.15
 			local item = target.components.inventory:FindItem(function(item) return item.prefab == "cave_banana" or item.prefab == "cave_banana_cooked" end )
 
@@ -124,7 +124,7 @@ local function FindTargetOfInterest(inst)
 				-- He has bananas! Maybe we should start following...
 				interest_chance = 0.6 
 			end
-			if math.random() < interest_chance then
+			if math.random() < interest_chance and target.components.leader and target.components.leader.numfollowers < 3 then
 				inst.components.follower:SetLeader(target)
 				inst.components.follower:AddLoyaltyTime(120)
 			end			

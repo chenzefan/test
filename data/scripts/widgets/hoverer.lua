@@ -1,8 +1,11 @@
+local Text = require "widgets/text"
+local Widget = require "widgets/widget"
 
 local YOFFSETUP = 40
-local YOFFSETDOWN = 60
+local YOFFSETDOWN = 30
+local XOFFSET = 10
 
-HoverText = Class(Widget, function(self, owner)
+local HoverText = Class(Widget, function(self, owner)
     Widget._ctor(self, "HoverText")
 	self.owner = owner
     self.isFE = false
@@ -48,7 +51,7 @@ function HoverText:Update()
 					if lmb.target.components.stackable and lmb.target.components.stackable.stacksize > 1 then
 	                    str = str .. " x" .. tostring(lmb.target.components.stackable.stacksize)
 					end
-                    if lmb.target.components.inspectable.recordview and lmb.target.prefab then
+                    if lmb.target.components.inspectable and lmb.target.components.inspectable.recordview and lmb.target.prefab then
                         ProfileStatsSet(lmb.target.prefab .. "_seen", true)
                     end
 				end
@@ -106,8 +109,8 @@ function HoverText:UpdatePosition(x,y)
 	w = w*scale.x
 	h = h*scale.y
 	
-    x = math.max(x, w/2)
-    x = math.min(x, scr_w - w/2)
+    x = math.max(x, w/2 + XOFFSET)
+    x = math.min(x, scr_w - w/2 - XOFFSET)
 
     y = math.max(y, h/2 + YOFFSETDOWN*scale.y)
     y = math.min(y, scr_h - h/2 - YOFFSETUP*scale.x)
@@ -122,3 +125,5 @@ function HoverText:FollowMouseConstrained()
         self:UpdatePosition(pos.x, pos.y)
     end
 end
+
+return HoverText

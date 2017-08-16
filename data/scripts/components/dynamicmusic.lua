@@ -30,13 +30,15 @@ local DynamicMusic = Class(function(self, inst)
     end )  
     self.inst:ListenForEvent( "doattack", function(inst, dat)
 		if self.enabled
+            and dat
             and dat.target
 		    and not dat.target:HasTag("prey")
 			and not dat.target:HasTag("bird")
 			and not dat.target:HasTag("wall")
 			and not dat.target:HasTag("butterfly")
 			and not dat.target:HasTag("shadow")
-			and not dat.target:HasTag("veggie") then
+			and not dat.target:HasTag("veggie")
+            and not dat.target:HasTag("smashable") then
 			self:OnStartDanger()
 		end
 	end )  

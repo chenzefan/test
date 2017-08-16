@@ -4,8 +4,8 @@ require("util")
 
 
 --tweakable parameters
-local maxRecentSounds = 10  --max number of recent sounds to list in the debug output
-local maxDistance = 100     --max distance to show 
+local maxRecentSounds = 30  --max number of recent sounds to list in the debug output
+local maxDistance = 30     --max distance to show 
 
 local playsound = SoundEmitter.PlaySound
 local killsound = SoundEmitter.KillSound

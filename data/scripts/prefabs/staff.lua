@@ -197,6 +197,139 @@ local function teleport_func(inst, target)
     inst.task = inst:StartThread(function() teleport_thread(inst, caster, tar) end)
 end
 
+---------ORANGE STAFF-----------
+
+local function onblink(staff, pos, caster)
+
+    if caster.components.sanity then
+        caster.components.sanity:DoDelta(-TUNING.SANITY_MED)
+    end
+
+    staff.components.finiteuses:Use(1) 
+
+end
+
+-------GREEN STAFF-----------
+
+local function candestroy(staff, caster, target)
+	if not target then return false end
+
+    local recipe = GetRecipe(target.prefab)
+
+    return recipe ~= nil
+end
+
+local function SpawnLootPrefab(inst, lootprefab)
+    if lootprefab then
+        local loot = SpawnPrefab(lootprefab)
+        if loot then
+            
+            local pt = Point(inst.Transform:GetWorldPosition())           
+            
+            loot.Transform:SetPosition(pt.x,pt.y,pt.z)
+            
+            if loot.Physics then
+            
+                local angle = math.random()*2*PI
+                loot.Physics:SetVel(2*math.cos(angle), 10, 2*math.sin(angle))
+
+                if loot.Physics and inst.Physics then
+                    pt = pt + Vector3(math.cos(angle), 0, math.sin(angle))*(loot.Physics:GetRadius() + inst.Physics:GetRadius())
+                    loot.Transform:SetPosition(pt.x,pt.y,pt.z)
+                end
+                
+                loot:DoTaskInTime(1, 
+                    function() 
+                        if not (loot.components.inventoryitem and loot.components.inventoryitem:IsHeld()) then
+                            if not loot:IsOnValidGround() then
+                                local fx = SpawnPrefab("splash_ocean")
+                                local pos = loot:GetPosition()
+                                fx.Transform:SetPosition(pos.x, pos.y, pos.z)
+                                --PlayFX(loot:GetPosition(), "splash", "splash_ocean", "idle")
+                                if loot:HasTag("irreplaceable") then
+                                    loot.Transform:SetPosition(GetPlayer().Transform:GetWorldPosition())
+                                else
+                                    loot:Remove()
+                                end
+                            end
+                        end
+                    end)
+            end
+            
+            return loot
+        end
+    end
+end
+
+local function destroystructure(staff, target)
+
+    local ingredient_percent = 1
+
+    if target.components.finiteuses then
+        ingredient_percent = target.components.finiteuses:GetPercent()
+    elseif target.components.fueled and target.components.inventoryitem then
+        ingredient_percent = target.components.fueled:GetPercent()
+    end
+
+    local recipe = GetRecipe(target.prefab)
+
+    local caster = staff.components.inventoryitem.owner
+
+    local loot = {}
+
+    if recipe then       
+        for k,v in ipairs(recipe.ingredients) do
+            if not string.find(v.type, "gem") then
+                local amt = math.ceil(v.amount * ingredient_percent)
+                for n = 1, amt do
+                    table.insert(loot, v.type)
+                end
+            end
+        end
+    end
+
+    if #loot <= 0 then
+        return
+    end
+
+    for k,v in pairs(loot) do
+        SpawnLootPrefab(target, v)
+        --local i = SpawnPrefab(v)
+        --caster.components.inventory:GiveItem(i)
+    end
+
+    if caster.components.sanity then
+        caster.components.sanity:DoDelta(-TUNING.SANITY_MEDLARGE)
+    end
+
+    staff.SoundEmitter:PlaySound("dontstarve/common/staff_star_dissassemble")
+
+    staff.components.finiteuses:Use(1)
+
+    if target.components.inventory then
+        target.components.inventory:DropEverything()
+    end
+
+    if target.components.container then
+        target.components.container:DropEverything()
+    end
+
+    if target.components.stackable then
+        --if it's stackable we only want to destroy one of them.
+        target = target.components.stackable:Get()
+    end
+
+    target:Remove()
+    
+    if target.components.resurrector and not target.components.resurrector.used then
+        local player = GetPlayer()
+        if player then
+            player.components.health:RecalculatePenalty()
+        end
+    end
+
+
+end
 
 ---------YELLOW STAFF-------------
 
@@ -353,7 +486,41 @@ local function yellow()
     return inst
 end
 
+local function orange()
+    local inst = commonfn("orange")
+    inst.fxcolour = {1, 145/255, 0}
+    inst.castsound = "dontstarve/common/staffteleport"
+    inst:AddComponent("blinkstaff")
+    inst.components.blinkstaff.onblinkfn = onblink
+
+    inst.components.equippable.walkspeedmult = TUNING.CANE_SPEED_MULT
+
+    inst.components.finiteuses:SetMaxUses(TUNING.ORANGESTAFF_USES)
+    inst.components.finiteuses:SetUses(TUNING.ORANGESTAFF_USES)
+    inst:AddTag("nopunch")
+
+    return inst
+end
+
+local function green()
+    local inst = commonfn("green")
+    inst:AddTag("nopunch")
+    inst.fxcolour = {51/255,153/255,51/255}
+    inst:AddComponent("spellcaster")
+    inst.components.spellcaster.canuseontargets = true
+    inst.components.spellcaster.canusefrominventory = false
+    inst.components.spellcaster:SetSpellTestFn(candestroy)
+    inst.components.spellcaster:SetSpellFn(destroystructure)
+
+    inst.components.finiteuses:SetMaxUses(TUNING.GREENSTAFF_USES)
+    inst.components.finiteuses:SetUses(TUNING.GREENSTAFF_USES)
+
+    return inst
+end
+
 return Prefab( "common/inventory/icestaff", blue, assets, prefabs),
 Prefab("common/inventory/firestaff", red, assets, prefabs),
 Prefab("common/inventory/telestaff", purple, assets, prefabs),
+Prefab("common/inventory/orangestaff", orange, assets, prefabs),
+Prefab("common/inventory/greenstaff", green, assets, prefabs),
 Prefab("common/inventory/yellowstaff", yellow, assets, prefabs)

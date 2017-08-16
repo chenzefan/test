@@ -28,6 +28,33 @@ function DebugSpawn(prefab)
 	end
 end
 
+function SpawnAt(prefab, loc, scale, offset)
+
+    offset = ToVector3(offset) or Vector3(0,0,0)
+
+    if not loc or not prefab then return end
+
+    prefab = (prefab.GUID and prefab.prefab) or prefab
+
+    local spawn = SpawnPrefab(prefab)
+    local pos = nil
+
+    if loc.prefab then
+        pos = loc:GetPosition()
+    else
+        pos = loc
+    end
+
+    if spawn and pos then
+        pos = pos + offset
+        spawn.Transform:SetPosition(pos:Get())
+        if scale then
+            scale = ToVector3(scale)
+            spawn.Transform:SetScale(scale:Get())
+        end
+        return spawn
+    end
+end
 
 function string:split(sep)
         local sep, fields = sep or ":", {}
@@ -71,8 +98,14 @@ function GetTableSize(table)
 end
 
 function GetRandomItem(choices)
- 	local choice = math.random(GetTableSize(choices)) -1
- 	
+    local numChoices = GetTableSize(choices)
+
+    if numChoices < 1 then
+        return
+    end
+
+ 	local choice = math.random(numChoices) -1
+
  	local picked = nil
  	for k,v in pairs(choices) do
  		picked = v
@@ -83,6 +116,24 @@ function GetRandomItem(choices)
  	end
  	assert(picked~=nil)
 	return picked
+end
+
+function GetRandomItemWithIndex(choices)
+    local choice = math.random(GetTableSize(choices)) -1
+    
+    local idx = nil
+    local item = nil
+
+    for k,v in pairs(choices) do
+        idx = k
+        item = v
+        if choice<= 0 then
+            break
+        end
+        choice = choice -1
+    end
+    assert(idx~=nil and item~=nil)
+    return idx, item
 end
 
 -- Made to work with (And return) array-style tables
@@ -334,17 +385,22 @@ end
 
 
 -- make environment
-local env = {} -- add functions you know are safe here
+local env = {  -- add functions you know are safe here
+    loadstring=loadstring -- functions can get serialized to text, this is required to turn them back into functions
+ }
 
 -- run code under environment [Lua 5.1]
 function RunInSandbox(untrusted_code)
-  if untrusted_code:byte(1) == 27 then return nil, "binary bytecode prohibited" end
-  local untrusted_function, message = loadstring(untrusted_code)
-  if not untrusted_function then return nil, message end
-  setfenv(untrusted_function, env)
-  return pcall(untrusted_function)
+	if untrusted_code:byte(1) == 27 then return nil, "binary bytecode prohibited" end
+	local untrusted_function, message = loadstring(untrusted_code)
+	if not untrusted_function then return nil, message end
+	return RunInEnvironment(untrusted_function, env)
 end
 
+function RunInEnvironment(fn, fnenv)
+	setfenv(fn, fnenv)
+	return xpcall(fn, debug.traceback)
+end
 
 function GetTickForTime(target_time) 
 	return math.floor( target_time/GetTickTime() )

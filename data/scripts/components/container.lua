@@ -225,7 +225,7 @@ function Container:OnOpen()
 		self.opener.components.inventory.opencontainers[self.inst] = true
 	end
     
-    self.inst:PushEvent("onopen")    
+    self.inst:PushEvent("onopen", {doer = self.opener})    
     if self.onopenfn then
         self.onopenfn(self.inst)
     end
@@ -265,6 +265,18 @@ function Container:FindItem(fn)
             return v
         end
     end
+end
+
+function Container:FindItems(fn)
+    local items = {}
+    
+    for k,v in pairs(self.slots) do
+        if fn(v) then
+            table.insert(items, v)
+        end
+    end
+
+    return items
 end
 
 function Container:Has(item, amount)

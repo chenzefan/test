@@ -36,7 +36,7 @@ local function triggertrap(inst, scenariorunner)
             
         end
             local fx = SpawnPrefab("sanity_raise")
-            fx.Transform:SetPosition(rock:GetPosition())
+            fx.Transform:SetPosition(rock:GetPosition():Get())
     end
 
     -- Walk the circle trying to find a valid spawn point

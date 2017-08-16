@@ -1,9 +1,14 @@
 require "class"
-require "widgets/inventoryslot"
-require "widgets/common"
+local InvSlot = require "widgets/invslot"
+local Widget = require "widgets/widget"
+local Text = require "widgets/text"
+local UIAnim = require "widgets/uianim"
+local ImageButton = require "widgets/imagebutton"
+local ItemTile = require "widgets/itemtile"
+
 local DOUBLECLICKTIME = .33
 
-ContainerWidget = Class(Widget, function(self, owner)
+local ContainerWidget = Class(Widget, function(self, owner)
     Widget._ctor(self, "Container")
     local scale = .6
     self:SetScale(scale,scale,scale)
@@ -39,7 +44,7 @@ function ContainerWidget:Open(container, doer)
 	end
 	
 	if container.components.container.widgetbuttoninfo then
-		self.button = self:AddChild(AnimButton("button_small"))
+		self.button = self:AddChild(ImageButton("images/ui.xml", "button_small.tex", "button_small_over.tex", "button_small_disabled.tex"))
 	    self.button:SetPosition(container.components.container.widgetbuttoninfo.position)
 	    self.button:SetText(container.components.container.widgetbuttoninfo.text)
 	    self.button:SetOnClick( function() container.components.container.widgetbuttoninfo.fn(container, doer) end )
@@ -83,8 +88,6 @@ function ContainerWidget:Open(container, doer)
 
 		slot:SetPosition(v)
 		
-		slot:SetLeftMouseDown(function() self:ClickInvSlot(slot) end)
-		slot:SetRightMouseDown(function() self:RightClickInvSlot(slot) end)
 		
 		local obj = container.components.container:GetItemInSlot(n)
 		if obj then
@@ -99,37 +102,6 @@ function ContainerWidget:Open(container, doer)
     
 end    
 
-
-function ContainerWidget:RightClickInvSlot(slot)
-	
-	if self.owner and self.owner.components.inventory then
-		
-		local item = self.container.components.container:GetItemInSlot(slot.num)
-		if item then
-		
-			if self.owner.components.inventory:GetActiveItem() then
-				local actions = self.owner.components.playeractionpicker:GetUseItemActions(item, self.owner.components.inventory:GetActiveItem(), true)
-				if actions then
-					self.owner.components.locomotor:PushAction(actions[1], true)
-				end
-			else
-				if item.components.equippable then
-					self.owner.components.inventory:Equip(item)
-				else
-					local actions = self.owner.components.playeractionpicker:GetInventoryActions(item, true)
-					if actions then
-						self.owner.components.locomotor:PushAction(actions[1], true)
-					end
-				end
-			end
-	    end
-	end
-end
-
-function ContainerWidget:ClickInvSlot(slot)
-	HandleContainerUIClick(self.owner, self.owner.components.inventory, self.container.components.container, slot.num)
-end
-
 function ContainerWidget:OnItemGet(data)
     if data.slot and self.inv[data.slot] then
 		local tile = ItemTile(data.item, self)
@@ -140,10 +112,10 @@ function ContainerWidget:OnItemGet(data)
 			local dest_pos = self.inv[data.slot]:GetWorldPosition()
 			local inventoryitem = data.item.components.inventoryitem
 			local im = Image(inventoryitem:GetAtlas(), inventoryitem:GetImage())
-			im:MoveTo(data.src_pos, dest_pos, .3, function() tile:Show() tile:ScaleTo(2, 1, .25) im:Kill() end)
+			im:MoveTo(data.src_pos, dest_pos, .3, function() tile:Show() im:Kill() end)
         else
 			tile:Show() 
-			tile:ScaleTo(2, 1, .25)
+			--tile:ScaleTo(2, 1, .25)
         end
 	end
 	
@@ -230,3 +202,5 @@ function ContainerWidget:Close()
     --self:Hide()
 
 end
+
+return ContainerWidget

@@ -1,4 +1,5 @@
 require "events"
+local Text = require "widgets/text"
 
 Input = Class(function(self)
     self.onkey = EventProcessor()     -- all keys, down and up, with key param
@@ -13,9 +14,8 @@ Input = Class(function(self)
     self.ongesture = EventProcessor()
     
     self.hoverinst = nil
-    self.mouseoversenabled = true
-    
     self.enabledebugtoggle = true
+
 end)
 
 function Input:AddTextInputHandler( fn )
@@ -67,29 +67,22 @@ function Input:UpdatePosition(x,y)
     self.position:HandleEvent("move", x, y)
 end
 
-function Input:OnControl(control, value)
-    --print("Input:OnControl", control, value)
-    self.oncontrol:HandleEvent(control, value)
-    self.oncontrol:HandleEvent("oncontrol", control, value)
+function Input:OnControl(control, digitalvalue, analogvalue)
+    if not TheFrontEnd:OnControl(control, digitalvalue) then
+        self.oncontrol:HandleEvent(control, digitalvalue, analogvalue)
+        self.oncontrol:HandleEvent("oncontrol", control, digitalvalue, analogvalue)
+    end
+end
+
+function Input:OnMouseMove(x,y)
+	TheFrontEnd:OnMouseMove(x,y)
 end
 
 function Input:OnMouseButton(button, down, x,y)
-    if down then
-        self.onmousedown:HandleEvent(button, x, y)
-    else
-        self.onmouseup:HandleEvent(button, x, y)
-    end
-    
-    if self.hoverinst then
-        if button == MOUSEBUTTON_LEFT then
-            self.hoverinst:PushEvent(down and "leftmousedown" or "leftmouseup", {x = x, y = y})
-        elseif button == MOUSEBUTTON_RIGHT then
-            self.hoverinst:PushEvent(down and "rightmousedown" or "rightmouseup", {x = x, y = y})
-        end
-    end
+	TheFrontEnd:OnMouseButton(button, down, x,y)
 end
 
-function Input:OnKey(key, down)
+function Input:OnRawKey(key, down)
 	self.onkey:HandleEvent("onkey", key, down)
 
 	if down then
@@ -139,18 +132,6 @@ function Input:GetWorldEntityUnderMouse()
     end
 end
 
-function Input:DisableMouseovers()
-    self.mouseoversenabled = false
-
-    if self.hoverinst then
-        self.hoverinst:PushEvent("mouseout")
-        self.hoverinst = nil
-    end
-end
-
-function Input:EnableMouseovers()
-    self.mouseoversenabled = true
-end
 
 function Input:EnableDebugToggle(enable)
     self.enabledebugtoggle = enable
@@ -175,31 +156,28 @@ function Input:IsKeyDown(key)
 end
 
 function Input:IsControlPressed(control)
-    local value = TheSim:GetControl(control)
-    if 0 == value then
-        return false
-    else
-        return true
-    end
+    return TheSim:GetDigitalControl(control)
+end
+
+function Input:GetAnalogControlValue(control)
+    return TheSim:GetAnalogControl(control)
 end
 
 function Input:OnUpdate()
-    if self.mouseoversenabled then
-
-        self.entitiesundermouse = TheSim:GetEntitiesAtScreenPoint(TheSim:GetPosition())
+    self.entitiesundermouse = TheSim:GetEntitiesAtScreenPoint(TheSim:GetPosition())
+    
+    local inst = self.entitiesundermouse[1]
+    if inst ~= self.hoverinst then
         
-        local inst = self.entitiesundermouse[1]
-        if inst ~= self.hoverinst then
-            if inst then
-                inst:PushEvent("mouseover")
-            end
-
-            if self.hoverinst then
-                self.hoverinst:PushEvent("mouseout")
-            end
-            
-            self.hoverinst = inst
+        if inst and inst.Transform then
+            inst:PushEvent("mouseover")
         end
+
+        if self.hoverinst and self.hoverinst.Transform then
+            self.hoverinst:PushEvent("mouseout")
+        end
+        
+        self.hoverinst = inst
     end
 end
 
@@ -211,16 +189,20 @@ function OnPosition(x, y)
     TheInput:UpdatePosition(x,y)
 end
 
-function OnControl(control, value)
-    TheInput:OnControl(control, value)
+function OnControl(control, digitalvalue, analogvalue)
+    TheInput:OnControl(control, digitalvalue, analogvalue)
 end
 
 function OnMouseButton(button, is_up, x, y)
     TheInput:OnMouseButton(button, is_up, x,y)
 end
 
+function OnMouseMove(x, y)
+    TheInput:OnMouseMove(x, y)
+end
+
 function OnInputKey(key, is_up)
-    TheInput:OnKey(key, is_up)
+    TheInput:OnRawKey(key, is_up)
 end
 
 function OnInputText(text)

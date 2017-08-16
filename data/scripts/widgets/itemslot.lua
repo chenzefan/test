@@ -1,0 +1,36 @@
+local Widget = require "widgets/widget"
+
+local ItemSlot = Class(Widget, function(self, atlas, bgim, owner)
+    Widget._ctor(self, "ItemSlot")
+    self.owner = owner
+    self.bgimage = self:AddChild(Image(atlas, bgim))
+    self.tile = nil    
+end)
+
+
+function ItemSlot:OnGainFocus()
+
+    self:ScaleTo(1, 1.3, .125)
+    self.big = true
+
+end
+
+function ItemSlot:OnLoseFocus()
+    if self.big then    
+        self:ScaleTo(1.3, 1, .25)
+        self.big = false
+    end
+end
+
+function ItemSlot:SetTile(tile)
+    if self.tile and tile ~= self.tile then
+        self.tile = self.tile:Kill()
+    end
+
+    if tile then
+        self.tile = self:AddChild(tile)
+    end
+end
+
+return ItemSlot
+

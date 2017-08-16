@@ -1,8 +1,12 @@
-require "screen"
-require "button"
-require "animbutton"
-require "image"
-require "uianim"
+local Screen = require "widgets/screen"
+local Button = require "widgets/button"
+local AnimButton = require "widgets/animbutton"
+local ImageButton = require "widgets/imagebutton"
+local Menu = require "widgets/menu"
+local Text = require "widgets/text"
+local Image = require "widgets/image"
+local UIAnim = require "widgets/uianim"
+local Widget = require "widgets/widget"
 require "os"
 require "screens/slotdetailsscreen"
 require "screens/newgamescreen"
@@ -29,12 +33,8 @@ LoadGameScreen = Class(Screen, function(self, profile)
     self.root:SetScaleMode(SCALEMODE_PROPORTIONAL)
 	
     self.bg = self.root:AddChild(Image("images/fepanels.xml", "panel_saveslots.tex"))
-    
-    --self.bg:SetPosition(150, daysuntil_offset + 128, 0)
-    --SetDebugEntity(self.daysuntilanim.inst)
 	
-	self.button = self.root:AddChild(AnimButton("button"))
-	--self.button:SetScale(.8,.8,.8)
+	self.button = self.root:AddChild(ImageButton())
     self.button:SetText(STRINGS.UI.LOADGAMESCREEN.CANCEL)
     self.button:SetOnClick( function() TheFrontEnd:PopScreen(self) end )
     self.button:SetFont(BUTTONFONT)
@@ -48,28 +48,45 @@ LoadGameScreen = Class(Screen, function(self, profile)
     self.title:SetRegionSize(250,70)
     self.title:SetString(STRINGS.UI.LOADGAMESCREEN.TITLE)
     self.title:SetVAlign(ANCHOR_MIDDLE)
-	self:RefreshFiles()  
+	
+    self.menu = self.root:AddChild(Menu(nil, -98, false))
+    self.menu:SetPosition( 0, 135, 0)
+	
+	self.default_focus = self.menu
+	--self:RefreshFiles()  
 end)
 
-
-function LoadGameScreen:OnGainFocus()
-	self._base.OnGainFocus(self)
+function LoadGameScreen:OnBecomeActive()
 	self:RefreshFiles()
+	LoadGameScreen._base.OnBecomeActive(self)
+	print ("load become active")
 end
 
 
-function LoadGameScreen:RefreshFiles()
-	if self.menu then
-		self.menu:Kill()
-	end
+function LoadGameScreen:OnControl(control, down)
+    if Screen.OnControl(self, control, down) then return true end
+    if not down and control == CONTROL_CANCEL then
+        TheFrontEnd:PopScreen(self)
+        return true
+    end
+end
 
-	self.menu = self.root:AddChild(Widget("menu"))
+function LoadGameScreen:RefreshFiles()
+	self.menu:Clear()
+
 	for k = 1, 4 do
 		local tile = self:MakeSaveTile(k)
-		self.menu:AddChild(tile)
-		tile:SetPosition(0, 235 - k * 100, 0)
+		self.menu:AddCustomItem(tile)
 	end
 	
+
+	self.menu.items[1]:SetFocusChangeDir(MOVE_UP, self.button)
+	self.button:SetFocusChangeDir(MOVE_DOWN, self.menu.items[1])
+
+	self.button:SetFocusChangeDir(MOVE_UP, self.menu.items[#self.menu.items])
+	self.menu.items[#self.menu.items]:SetFocusChangeDir(MOVE_DOWN, self.button)
+	
+
 end
 
 function LoadGameScreen:MakeSaveTile(slotnum)
@@ -87,20 +104,12 @@ function LoadGameScreen:MakeSaveTile(slotnum)
     widget.bg:GetAnimState():SetBank("savetile")
     widget.bg:GetAnimState():PlayAnimation("anim")
 	
-	--[[widget.portrait_bg = widget.playerimage:AddChild(Image("images/hud.xml", "portrait_bg.tex"))
-	widget.portrait_bg:SetClickable(false)		
-	widget.portrait_bg:SetScale(.6,.6,1)
-	widget.portrait_bg:SetVRegPoint(ANCHOR_MIDDLE)
-   	widget.portrait_bg:SetHRegPoint(ANCHOR_MIDDLE)--]]
-	
 	widget.portraitbg = widget.base:AddChild(Image("images/saveslot_portraits.xml", "background.tex"))
 	widget.portraitbg:SetScale(.65,.65,1)
 	widget.portraitbg:SetPosition(-120 + 40, 2, 0)	
 	widget.portraitbg:SetClickable(false)	
 	
 	widget.portrait = widget.base:AddChild(Image())
-	--widget.portrait:SetVRegPoint(ANCHOR_MIDDLE)
-   	--widget.portrait:SetHRegPoint(ANCHOR_MIDDLE)
 	widget.portrait:SetClickable(false)	
 	if character and mode then	
 		local atlas = (table.contains(MODCHARACTERLIST, character) and "images/saveslot_portraits/"..character..".xml") or "images/saveslot_portraits.xml"
@@ -131,30 +140,34 @@ function LoadGameScreen:MakeSaveTile(slotnum)
     widget.text:SetVAlign(ANCHOR_MIDDLE)
     --widget.text:EnableWordWrap(true)
     
-	widget:SetMouseOver(
-        function()
-        	TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/click_mouseover")
-			widget:SetScale(1.1,1.1,1)
-			widget.bg:GetAnimState():PlayAnimation("over")
-        end)
-
-    widget:SetMouseOut(
-        function()
-        	widget.base:SetPosition(0,0,0)
-			widget:SetScale(1,1,1)
-			widget.bg:GetAnimState():PlayAnimation("anim")
-        end)
-        
-	widget:SetLeftMouseDown( function() widget.base:SetPosition(0,-5,0)end )
-	widget:SetLeftMouseUp( function() widget.base:SetPosition(0,0,0) self:OnClickTile(slotnum) end )
-        
-	return widget
-end
-
-function LoadGameScreen:OnKeyUp( key )
-	if key == KEY_ESCAPE then
-		TheFrontEnd:PopScreen(self)
+	widget.OnGainFocus = function(self)
+		Widget.OnGainFocus(self)
+    	TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/click_mouseover")
+		widget:SetScale(1.1,1.1,1)
+		widget.bg:GetAnimState():PlayAnimation("over")
 	end
+
+    widget.OnLoseFocus = function(self)
+    	Widget.OnLoseFocus(self)
+    	widget.base:SetPosition(0,0,0)
+		widget:SetScale(1,1,1)
+		widget.bg:GetAnimState():PlayAnimation("anim")
+    end
+        
+    local screen = self
+    widget.OnControl = function(self, control, down)
+		if control == CONTROL_ACCEPT then
+			if down then 
+				widget.base:SetPosition(0,-5,0)
+			else
+				widget.base:SetPosition(0,0,0) 
+				screen:OnClickTile(slotnum)
+			end
+			return true
+		end
+	end
+
+	return widget
 end
 
 function LoadGameScreen:OnClickTile(slotnum)

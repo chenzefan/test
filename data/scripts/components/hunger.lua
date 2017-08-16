@@ -7,7 +7,8 @@ local Hunger = Class(function(self, inst)
     self.hurtrate = 1
     
     self.burning = true
-    
+    --100% burn rate. Currently used only by belt of hunger, will have to change unequip if use in something else
+    self.burnrate = 1 
     self.period = 1
     
     self.task = self.inst:DoPeriodicTask(self.period, function() self:DoDec(self.period) end)
@@ -60,7 +61,7 @@ function Hunger:IsStarving()
 end
 
 function Hunger:DoDelta(delta, overtime, ignore_invincible)
-
+    
     if self.redirect then
         self.redirect(self.inst, delta, overtime)
         return
@@ -119,7 +120,8 @@ function Hunger:DoDec(dt, ignore_damage)
 				self.inst.components.health:DoDelta(-self.hurtrate*dt, true, "hunger") --  ich haber hunger
 			end
         else
-            self:DoDelta(-self.hungerrate*dt, true)
+            self:DoDelta(self.burnrate*(-self.hungerrate*dt), true)
+
         end
     end
     

@@ -11,13 +11,13 @@ local WereBeast = Class(function(self, inst)
     
     self.inst:ListenForEvent("nighttime", function(global, data)
 	    if GetClock():GetMoonPhase() == "full" and self.inst.entity:IsVisible() and not self:IsInWereState() then
-	        self.inst:DoTaskInTime(GetRandomWithVariance(1, 2), self:SetWere())
+	        self.inst:DoTaskInTime(GetRandomWithVariance(1, 2), function() self:SetWere() end)
 	    end
 	end, GetWorld())
 	
     self.inst:ListenForEvent("daytime", function(global, data)
         if self:IsInWereState() and self.inst.entity:IsVisible() then
-	        self.inst:DoTaskInTime(GetRandomWithVariance(1, 2), self:SetNormal())
+	        self.inst:DoTaskInTime(GetRandomWithVariance(1, 2), function() self:SetNormal() end)
 	    end
     end, GetWorld())
 end)

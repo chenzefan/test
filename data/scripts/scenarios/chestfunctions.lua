@@ -18,31 +18,39 @@ local function AddChestItems(chest, loot, num)
 	end
 
 	for k, itemtype in ipairs(loot) do
+
+		local itemToSpawn = itemtype.item or itemtype
+		if type(itemToSpawn) == "table" then
+			itemToSpawn = itemToSpawn[math.random(#itemToSpawn)]
+		end
+
+		local spawn = math.random() <= (itemtype.chance or 1)
+
 		local count = itemtype.count or 1
-		for i = 1, count do
-			local chance = itemtype.chance
-			local spawn = true
-			if chance then
-				spawn = math.random() < chance
-			end
-			if spawn then
-				local item = SpawnPrefab(itemtype.item or itemtype)
+
+		if spawn then
+			for i = 1, count do
+				local item = SpawnPrefab(itemToSpawn)
 				if item ~= nil then
 					if itemtype.initfn then
 						itemtype.initfn(item)
 					end
 					chest.components.container:GiveItem( item )
 				else
-					print("Cant spawn", itemtype.item or itemtype)
+					print("Cant spawn", itemToSpawn)
 				end
 			end
 		end
 	end
+
+	if chest.components.container:IsEmpty() then
+		AddChestItems(chest, loot, num)
+	end
 end
 
 local function InitializeChestTrap(inst, scenariorunner, openfn)
-	inst.scene_triggerfn = function()  
-		chestfunctions.OnOpenChestTrap(inst,  openfn)
+	inst.scene_triggerfn = function(inst, data)  
+		chestfunctions.OnOpenChestTrap(inst,  openfn, data)
 		scenariorunner:ClearScenario()
 	end
 	inst:ListenForEvent("onopen", inst.scene_triggerfn)
@@ -50,23 +58,30 @@ local function InitializeChestTrap(inst, scenariorunner, openfn)
 
 end
 
-local function OnOpenChestTrap(inst, openfn) 
-	local chancetotrigger = math.random()
-	if math.random() > chancetotrigger then
+local function OnOpenChestTrap(inst, openfn, data) 
+	if math.random() < .66 then
 		local talkabouttrap = function(inst, txt)
 			inst.components.talker:Say(txt)
 		end
 		local player = GetPlayer()
-		--random chance
-		local r = math.random()
-		--if r < 0.5 then
-		if true then
-			openfn(inst)
+
+    	inst.SoundEmitter:PlaySound("dontstarve/common/chest_trap")
+
+	    local fx = SpawnPrefab("statue_transition_2")
+	    if fx then
+	        fx.Transform:SetPosition(inst.Transform:GetWorldPosition())
+	        fx.AnimState:SetScale(1,2,1)
+	    end
+	    fx = SpawnPrefab("statue_transition")
+	    if fx then
+	        fx.Transform:SetPosition(inst.Transform:GetWorldPosition())
+	        fx.AnimState:SetScale(1,1.5,1)
+	    end
+
+		openfn(inst, data)
 			--get the player, and get him to say oops
-			player:DoTaskInTime(1, talkabouttrap, GetString(player.prefab, "ANNOUNCE_TRAP_WENT_OFF"))
-		else
-			player:DoTaskInTime(1, talkabouttrap, GetString(player.prefab, "ANNOUNCE_NO_TRAP"))
-		end	
+		player:DoTaskInTime(1, talkabouttrap, GetString(player.prefab, "ANNOUNCE_TRAP_WENT_OFF"))
+
 	end
 end
 

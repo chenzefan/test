@@ -47,7 +47,36 @@ return {
 	DESCRIBE =
 	{
 
+		THULECITE = "I don't think it would burn.",
+		ARMORRUINS = "Not sure I want to wear this.",
+		RUINS_BAT = "This will keep the nasties at bay.",
+		NIGHTMARE_TIMEPIECE = --Keeps track of the nightmare cycle
+		{
+		CALM = "Looks normal to me.",	--Calm phase
+		WARN = "It's warning me.",	--Before nightmare
+		WAXING = "The fuel is coming to life!", --Nightmare Phase first 33%
+		STEADY = "It's almost humming.", --Nightmare 33% - 66%
+		WANING = "I think it's turning off.", --Nightmare 66% +
+		DAWN = "I guess it's nearly over.", --After nightmare
+		NOMAGIC = "I don't think it's working.", --Place with no nightmare cycle.
+		},
+		BISHOP_NIGHTMARE = "Ahhh!",
+		ROOK_NIGHTMARE = "It has a nasty smile.",
+		KNIGHT_NIGHTMARE = "It looks pretty worn down.",
+		MINOTAUR = "Poor thing. Trapped in this maze.",	--Monster in labyrinth
+		SPIDER_DROPPER = "They come from above.",	--White spider that comes from the roof
+		NIGHTMARELIGHT = "Light without fire is unnatural.",	--Lights that activate during nightmare.
+		GREENGEM = "This one feels really light.",
+		RELIC = "I guess someone lived here before.",	--Fixed relic
+		RUINS_RUBBLE = "I could probably fix that up.",	--Broken relic
+		MULTITOOL_AXE_PICKAXE = "It's so useful!",	--Works as axe and pickaxe
+		ORANGESTAFF = "It gives me a headache.",	--Teleports player.
+		YELLOWAMULET = "It seems to absorb the darkness around it.",	--Emits light, player walks faster.
+		GREENAMULET = "I feel my mind open when I wear it.",	--Reduce cost of crafting
+
 		SLURPER = "Do they have little fires in their bellies?",
+		SLURPER_PELT = "Eeewwwww, it's still alive!",
+		ARMORSLURPER = "Oh, ick! Ick! Ick! Ick! Eeeeeewwwwww!",
 		ORANGEAMULET = "It picks up my burning materials for me!",
 		YELLOWSTAFF = "It's magical.",
 		YELLOWGEM = "It sparkles.",
@@ -67,7 +96,17 @@ return {
 
         LIGHTER = "It's my lucky lighter!",
 
-        ANCIENT_ALTAR = "Oooo! An afterlife intercom.",
+
+        ANCIENT_ALTAR =
+        {
+        	WORKING = "Oooo! An afterlife intercom.",
+        	BROKEN = "The dead can't get through here.",
+        },     
+
+        ANCIENT_STATUE = "Drat, won't burn.",
+
+        LICHEN = "A crusty plant",
+		CUTLICHEN = "Blah, tastes like sawdust.",
 
         CAVE_BANANA = "Bananas!",
         CAVE_BANANA_COOKED = "Yum!",
@@ -477,6 +516,12 @@ return {
 			GENERIC = "It's a burnable clump of reeds",
 			PICKED = "I can't do anything with reed stubble.",
 		},
+        RELIC = 
+        {
+            GENERIC = "Old furniture.",
+            BROKEN = "Bits and pieces, pieces and bits.",
+        },
+        RUBBLE = "Broken furniture.",
 		RESEARCHLAB = "Even I don't know everything, yet.",
 		RESEARCHLAB2 = "Even I don't know everything, yet.",
 		RESEARCHLAB3 = "A dark and powerful energy radiates from it.",
@@ -590,8 +635,8 @@ return {
 		WALL_HAY_ITEM = "Hmmm. I wonder if these will burn.",
 		WALL_STONE = "Eh. I guess that's OK.",
 		WALL_STONE_ITEM = "These are surprisingly heavy.",
-		WALL_RUINS = "Eh. I guess that's OK.",
-		WALL_RUINS_ITEM = "These are surprisingly heavy.",
+		WALL_RUINS = "And they'll huff and they'll puff!",
+		WALL_RUINS_ITEM = "Will they fit in my pockets?",
 		WALL_WOOD = "That could totally catch on fire.",
 		WALL_WOOD_ITEM = "I hate hiding.",
 		WALRUS = "Stop following me!",

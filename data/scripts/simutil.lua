@@ -1,27 +1,10 @@
 function GetPlayer() return TheSim:FindFirstEntityWithTag("player") end
 function GetWorld() return TheSim:FindFirstEntityWithTag("ground") end
 function GetCeiling() return TheSim:FindFirstEntityWithTag("ceiling") end
-function GetMap() return GetWorld().Map end
-function GetClock() return GetWorld().components.clock end
-function GetNightmareClock() return GetWorld().components.nighmareclock end
-function GetSeasonManager() return GetWorld().components.seasonmanager end
-
-if TheSim then
-    function print(...)
-        local str = ''
-        local arg = {n=select('#',...),...}
-     
-        for i = 1, arg.n do
-            if str ~= '' then str = str .. '\t' end
-            str = str .. tostring( arg[i] )
-        end
-     
-        --str = str .. '\n'
-     
-        TheSim:LuaPrint( str )
-    end
-end
-
+function GetMap() if GetWorld() then return GetWorld().Map end end
+function GetClock() if GetWorld() and GetWorld().components then return GetWorld().components.clock end end
+function GetNightmareClock() if GetWorld() and GetWorld().components then return GetWorld().components.nightmareclock end end
+function GetSeasonManager() if GetWorld() and GetWorld().components then return GetWorld().components.seasonmanager end  end
 
 function FindEntity(inst, radius, fn, tags)
     if inst and inst:IsValid() then

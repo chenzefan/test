@@ -1,29 +1,18 @@
 require "util"
-require "screen"
-require "button"
-require "animbutton"
-require "image"
-require "uianim"
-require "spinner"
-require "numericspinner"
+local Screen = require "widgets/screen"
+local Button = require "widgets/button"
+local AnimButton = require "widgets/animbutton"
+local ImageButton = require "widgets/imagebutton"
+local Menu = require "widgets/menu"
+local Grid = require "widgets/grid"
+local Text = require "widgets/text"
+local Image = require "widgets/image"
+local UIAnim = require "widgets/uianim"
+local Spinner = require "widgets/spinner"
+local NumericSpinner = require "widgets/numericspinner"
+local Widget = require "widgets/widget"
 
 require "screens/popupdialog"
-
-local spinner_atlas = "images/ui.xml"
-
-local spinner_images = {
-	arrow_normal = "spin_arrow.tex",
-	arrow_over = "spin_arrow_over.tex",
-	arrow_disabled = "spin_arrow_disabled.tex",
-	bgtexture = "spinner.tex",
-}
-
-local short_spinner_images = {
-	arrow_normal = "spin_arrow.tex",
-	arrow_over = "spin_arrow_over.tex",
-	arrow_disabled = "spin_arrow_disabled.tex",
-	bgtexture = "spinner_short.tex",
-}
 
 
 local show_graphics = PLATFORM ~= "NACL"
@@ -31,7 +20,6 @@ local text_font = UIFONT--NUMBERFONT
 
 local enableDisableOptions = { { text = STRINGS.UI.OPTIONS.DISABLED, data = false }, { text = STRINGS.UI.OPTIONS.ENABLED, data = true } }
 local spinnerFont = { font = BUTTONFONT, size = 30 }
-local spinnerHeight = 64
 
 local function GetResolutionString( w, h )
 	--return string.format( "%dx%d @ %dHz", w, h, hz )
@@ -122,9 +110,6 @@ local function GetDisplayModeInfo( display_id, mode_idx )
 	return w, h, hz
 end
 
-
-
-
 OptionsScreen = Class(Screen, function(self, in_game)
 	Screen._ctor(self, "OptionsScreen")
 	self.in_game = in_game
@@ -178,17 +163,34 @@ OptionsScreen = Class(Screen, function(self, in_game)
 	shield:SetSize( 1000, 700 )		
 	
 	
+
+	self.menu = self.root:AddChild(Menu(nil, -60, false))
+	self.menu:SetPosition(240 , -220 ,0)
+
+	self.grid = self.root:AddChild(Grid())
+	self.grid:InitSize(2, 7, 400, -70)
+	self.grid:SetPosition(-250, 175, 0)
 	self:DoInit()
 	self:InitializeSpinners()
+
+	self.default_focus = self.menu
+
 end)
 
-function OptionsScreen:OnKeyUp( key )
-	if key == KEY_ENTER then
-		self:Accept()
-	elseif key == KEY_ESCAPE then
-		self:Close()
-	end
+
+function OptionsScreen:OnControl(control, down)
+    if OptionsScreen._base.OnControl(self, control, down) then return true end
+    
+    if not down and control == CONTROL_CANCEL then
+		if self:IsDirty() then
+			self:RevertChanges() 
+		else
+			self:Accept()
+		end
+		return true
+    end
 end
+
 
 function OptionsScreen:Accept()
 	self:Save(function() self:Close() end )
@@ -244,13 +246,15 @@ function OptionsScreen:ApplyAndConfirm( force )
 						function()
 							self:Apply()
 							self:Save()
-							self:UpdateMenu()							
+							self:UpdateMenu()
+							TheFrontEnd:PopScreen()							
 						end
 					},
 					{ text = STRINGS.UI.OPTIONS.CANCEL, cb =
 						function()
 							self:Restore()
-							self:UpdateMenu()							
+							self:UpdateMenu()		
+							TheFrontEnd:PopScreen()					
 						end
 					}
 				  },
@@ -291,13 +295,11 @@ function OptionsScreen:Close()
 end	
 
 
-
-
 local function MakeMenu(offset, menuitems)
 	local menu = Widget("OptionsMenu")	
 	local pos = Vector3(0,0,0)
 	for k,v in ipairs(menuitems) do
-		local button = menu:AddChild(AnimButton("button"))
+		local button = menu:AddChild(ImageButton())
 	    button:SetPosition(pos)
 	    button:SetText(v.text)
 	    button.text:SetColour(0,0,0,1)
@@ -309,61 +311,38 @@ local function MakeMenu(offset, menuitems)
 	return menu
 end
 
-function OptionsScreen:AddSpinners( data, user_offset )
-	local master_group = self.root:AddChild( Widget( "SpinnerGroup" ) )
-
-	local offset = { 0, 0, 0 }
-
-	master_group:SetPosition( user_offset.x, user_offset.y, user_offset.z )
+function OptionsScreen:CreateSpinnerGroup( text, spinner )
 	local label_width = 200
-	for idx, entry in ipairs( data ) do
-		local text = entry[1]
-		local spinner = entry[2]
-		spinner:SetTextColour(0,0,0,1)
-
-		local group = master_group:AddChild( Widget( "SpinnerGroup" ) )
-		group:SetPosition( 0, ( idx - 1 ) * -75 + 25, 0 )
-
-		local label = group:AddChild( Text( BODYTEXTFONT, 30, text ) )
-		label:SetPosition( 0.5 * label_width, 0, 0 )
-		label:SetRegionSize( label_width, 50 )
-		label:SetHAlign( ANCHOR_RIGHT )
-		
-		group:AddChild( spinner )
-		spinner:SetPosition( label_width + 32, 0, 0 )
-	end
+	spinner:SetTextColour(0,0,0,1)
+	local group = Widget( "SpinnerGroup" )
+	local label = group:AddChild( Text( BODYTEXTFONT, 30, text ) )
+	label:SetPosition( -label_width/2, 0, 0 )
+	label:SetRegionSize( label_width, 50 )
+	label:SetHAlign( ANCHOR_RIGHT )
 	
-	return master_group
+	group:AddChild( spinner )
+	spinner:SetPosition( 125, 0, 0 )
+	
+	--pass focus down to the spinner
+	group.focus_forward = spinner
+	return group
 end
 
 
 function OptionsScreen:UpdateMenu()
-
-
-	if self.menu then
-		self.menu:Kill()
-		self.menu = nil
-	end
-	
-	local menu_items = {}
-
-	
+	self.menu:Clear()
 	if self:IsDirty() then
-		table.insert(menu_items, { text = STRINGS.UI.OPTIONS.APPLY, cb = function() self:ApplyAndConfirm() end })
-		table.insert(menu_items, { text = STRINGS.UI.OPTIONS.REVERT, cb = function() self:RevertChanges() end })
+		self.menu:AddItem(STRINGS.UI.OPTIONS.APPLY, function() self:ApplyAndConfirm() end)
+		self.menu:AddItem(STRINGS.UI.OPTIONS.REVERT, function() self:RevertChanges() end)
 	else
-		table.insert(menu_items, { text = STRINGS.UI.OPTIONS.CLOSE, cb = function() self:Accept() end })
+		self.menu:AddItem(STRINGS.UI.OPTIONS.CLOSE, function() self:Accept() end)
 	end
-	
-
-	local menu_spacing = 60
-	local bottom_offset = 60
-	self.menu = self.root:AddChild( MakeMenu( Vector3(0, menu_spacing, 0), menu_items) )
-	self.menu:SetPosition(220 , -250 ,0)
 end
+
 
 function OptionsScreen:DoInit()
 
+	
 	self:UpdateMenu()
 	--self.menu:SetScale(.8,.8,.8)
 
@@ -372,7 +351,7 @@ function OptionsScreen:DoInit()
 	if show_graphics then
 		local gOpts = TheFrontEnd:GetGraphicsOptions()
 	
-		self.fullscreenSpinner = self.root:AddChild(Spinner( enableDisableOptions, 150, spinnerHeight, spinnerFont, spinner_atlas, spinner_images ))
+		self.fullscreenSpinner = Spinner( enableDisableOptions )
 		
 		self.fullscreenSpinner.OnChanged =
 			function( _, data )
@@ -388,7 +367,7 @@ function OptionsScreen:DoInit()
 		end
 
 		local valid_displays = GetDisplays()
-		self.displaySpinner = self.root:AddChild(Spinner( valid_displays, 150, spinnerHeight, spinnerFont, spinner_atlas, spinner_images ))
+		self.displaySpinner = Spinner( valid_displays )
 		self.displaySpinner.OnChanged =
 			function( _, data )
 				this.working.display = data
@@ -398,7 +377,7 @@ function OptionsScreen:DoInit()
 			end
 		
 		local refresh_rates = GetRefreshRates( self.working.display, self.working.mode_idx )
-		self.refreshRateSpinner = self.root:AddChild(Spinner( refresh_rates, 150, spinnerHeight, spinnerFont, spinner_atlas, spinner_images ))
+		self.refreshRateSpinner = Spinner( refresh_rates) 
 		self.refreshRateSpinner.OnChanged =
 			function( _, data )
 				this.working.refreshrate = data
@@ -406,7 +385,7 @@ function OptionsScreen:DoInit()
 			end
 
 		local modes = GetDisplayModes( self.working.display )
-		self.resolutionSpinner = self.root:AddChild(Spinner( modes, 150, spinnerHeight, spinnerFont, spinner_atlas, spinner_images ))
+		self.resolutionSpinner = Spinner( modes )
 		self.resolutionSpinner.OnChanged =
 			function( _, data )
 				this.working.mode_idx = data.idx
@@ -414,7 +393,7 @@ function OptionsScreen:DoInit()
 				self:UpdateMenu()
 			end			
 			
-		self.netbookModeSpinner = self.root:AddChild(Spinner( enableDisableOptions, 150, spinnerHeight, spinnerFont, spinner_atlas, spinner_images ))
+		self.netbookModeSpinner = Spinner( enableDisableOptions )
 		self.netbookModeSpinner.OnChanged =
 			function( _, data )
 				this.working.netbookmode = data
@@ -422,7 +401,7 @@ function OptionsScreen:DoInit()
 				self:UpdateMenu()
 			end
 			
-		self.smallTexturesSpinner = self.root:AddChild(Spinner( enableDisableOptions, 150, spinnerHeight, spinnerFont, spinner_atlas, spinner_images ))
+		self.smallTexturesSpinner = Spinner( enableDisableOptions )
 		self.smallTexturesSpinner.OnChanged =
 			function( _, data )
 				this.working.smalltextures = data
@@ -433,7 +412,7 @@ function OptionsScreen:DoInit()
 	end
 	
 
-	self.bloomSpinner = self.root:AddChild(Spinner( enableDisableOptions, 150, spinnerHeight, spinnerFont, spinner_atlas, spinner_images ))
+	self.bloomSpinner = Spinner( enableDisableOptions )
 	self.bloomSpinner.OnChanged =
 		function( _, data )
 			this.working.bloom = data
@@ -442,7 +421,7 @@ function OptionsScreen:DoInit()
 		end
 
 		
-	self.distortionSpinner = self.root:AddChild(Spinner( enableDisableOptions, 150, spinnerHeight, spinnerFont, spinner_atlas, spinner_images ))
+	self.distortionSpinner = Spinner( enableDisableOptions )
 	self.distortionSpinner.OnChanged =
 		function( _, data )
 			this.working.distortion = data
@@ -450,7 +429,7 @@ function OptionsScreen:DoInit()
 			self:UpdateMenu()
 		end
 
-	self.fxVolume = self.root:AddChild(NumericSpinner( 0, 10, 50, spinnerHeight, spinnerFont, spinner_atlas, short_spinner_images ))
+	self.fxVolume = NumericSpinner( 0, 10 )
 	self.fxVolume.OnChanged =
 		function( _, data )
 			this.working.fxvolume = data
@@ -458,7 +437,7 @@ function OptionsScreen:DoInit()
 			self:UpdateMenu()
 		end
 
-	self.musicVolume = self.root:AddChild(NumericSpinner( 0, 10, 50, spinnerHeight, spinnerFont, spinner_atlas, short_spinner_images ))
+	self.musicVolume = NumericSpinner( 0, 10 )
 	self.musicVolume.OnChanged =
 		function( _, data )
 			this.working.musicvolume = data
@@ -466,7 +445,7 @@ function OptionsScreen:DoInit()
 			self:UpdateMenu()
 		end
 
-	self.ambientVolume = self.root:AddChild(NumericSpinner( 0, 10, 50, spinnerHeight, spinnerFont, spinner_atlas, short_spinner_images ))
+	self.ambientVolume = NumericSpinner( 0, 10 )
 	self.ambientVolume.OnChanged =
 		function( _, data )
 			this.working.ambientvolume = data
@@ -474,7 +453,7 @@ function OptionsScreen:DoInit()
 			self:UpdateMenu()
 		end
 		
-	self.hudSize = self.root:AddChild(NumericSpinner( 0, 10, 50, spinnerHeight, spinnerFont, spinner_atlas, short_spinner_images ))
+	self.hudSize = NumericSpinner( 0, 10 )
 	self.hudSize.OnChanged =
 		function( _, data )
 			this.working.hudSize = data
@@ -494,27 +473,45 @@ function OptionsScreen:DoInit()
 		table.insert( left_spinners, { STRINGS.UI.OPTIONS.REFRESHRATE, self.refreshRateSpinner } )
 		table.insert( left_spinners, { STRINGS.UI.OPTIONS.SMALLTEXTURES, self.smallTexturesSpinner } )
 		
-		table.insert( right_spinners, { "FX:", self.fxVolume } )
-		table.insert( right_spinners, { "Music:", self.musicVolume } )
-		table.insert( right_spinners, { "Ambient:", self.ambientVolume } )
-		table.insert( right_spinners, { "HUD size:", self.hudSize} )
+		table.insert( right_spinners, { STRINGS.UI.OPTIONS.FX, self.fxVolume } )
+		table.insert( right_spinners, { STRINGS.UI.OPTIONS.MUSIC, self.musicVolume } )
+		table.insert( right_spinners, { STRINGS.UI.OPTIONS.AMBIENT, self.ambientVolume } )
+		table.insert( right_spinners, { STRINGS.UI.OPTIONS.HUDSIZE, self.hudSize} )
 		table.insert( right_spinners, { STRINGS.UI.OPTIONS.NETBOOKMODE, self.netbookModeSpinner} )
 
 	else
-		table.insert( left_spinners, { "Bloom:", self.bloomSpinner } )
-		table.insert( left_spinners, { "Distortion:", self.distortionSpinner } )
-		table.insert( left_spinners, { "FX:", self.fxVolume } )
-		table.insert( left_spinners, { "Music:", self.musicVolume } )
-		table.insert( left_spinners, { "Ambient:", self.ambientVolume } )
-		table.insert( left_spinners, { "HUD size:", self.hudSize} )
+		table.insert( left_spinners, { STRINGS.UI.OPTIONS.BLOOM, self.bloomSpinner } )
+		table.insert( left_spinners, { STRINGS.UI.OPTIONS.DISTORTION, self.distortionSpinner } )
+
+		table.insert( right_spinners, { STRINGS.UI.OPTIONS.FX, self.fxVolume } )
+		table.insert( right_spinners, { STRINGS.UI.OPTIONS.MUSIC, self.musicVolume } )
+		table.insert( right_spinners, { STRINGS.UI.OPTIONS.AMBIENT, self.ambientVolume } )
+		table.insert( right_spinners, { STRINGS.UI.OPTIONS.HUDSIZE, self.hudSize} )
 	end
 
-	local sc = .9
-	local gfx_group = self:AddSpinners( left_spinners, Vector3(-450,150,0) )
-	gfx_group:SetScale(sc,sc,sc)
-	
-	local sound_group = self:AddSpinners( right_spinners, Vector3(-50,150,0) )
-	sound_group:SetScale(sc,sc,sc)
+
+	self.grid:InitSize(2, 7, 400, -70)
+
+	for k,v in ipairs(left_spinners) do
+		self.grid:AddItem(self:CreateSpinnerGroup(v[1], v[2]), 1, k)	
+	end
+
+	for k,v in ipairs(right_spinners) do
+		self.grid:AddItem(self:CreateSpinnerGroup(v[1], v[2]), 2, k)	
+	end
+
+	if show_graphics then
+		self.grid:GetItemInSlot(1, 7):SetFocusChangeDir(MOVE_RIGHT, self.menu)
+		self.grid:GetItemInSlot(1, 6):SetFocusChangeDir(MOVE_RIGHT, self.menu)
+		self.grid:GetItemInSlot(2, 5):SetFocusChangeDir(MOVE_DOWN, self.menu)
+		self.menu:SetFocusChangeDir(MOVE_UP, self.grid, 2, 5)
+		self.menu:SetFocusChangeDir(MOVE_LEFT, self.grid, 1, 7)
+	else
+		self.grid:GetItemInSlot(2, 4):SetFocusChangeDir(MOVE_DOWN, self.menu)
+		self.menu:SetFocusChangeDir(MOVE_UP, self.grid, 2, 4)
+	end
+
+
 end
 
 local function EnabledOptionsIndex( enabled )

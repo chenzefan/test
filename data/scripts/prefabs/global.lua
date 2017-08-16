@@ -8,10 +8,6 @@ local assets =
     Asset("ATLAS", "images/global.xml"),
     Asset("IMAGE", "images/global.tex"),
 	
-    Asset("ANIM", "anim/button.zip"),
-    Asset("ANIM", "anim/button_small.zip"),
-    Asset("ANIM", "anim/button_long.zip"),
-
 	Asset("SHADER", "shaders/anim_bloom.ksh"),
 	Asset("SHADER", "shaders/wall_bloom.ksh"),
 	Asset("SHADER", "shaders/road.ksh"),
@@ -64,6 +60,8 @@ local assets =
 	Asset("SHADER", "shaders/postprocessbloom.ksh"),
 	Asset("SHADER", "shaders/postprocessdistort.ksh"),
 	Asset("SHADER", "shaders/postprocessbloomdistort.ksh"),
+
+	Asset("SHADER", "shaders/waves.ksh"),
 
     --common UI elements that we will always need
     Asset("ATLAS", "images/ui.xml"),

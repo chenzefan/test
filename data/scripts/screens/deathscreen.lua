@@ -1,7 +1,11 @@
-require "screen"
-require "animbutton"
+local Screen = require "widgets/screen"
+local AnimButton = require "widgets/animbutton"
+local ImageButton = require "widgets/imagebutton"
 local Progression = require "progressionconstants"
-
+local Text = require "widgets/text"
+local Image = require "widgets/image"
+local Widget = require "widgets/widget"
+local UIAnim = require "widgets/uianim"
 
 DeathScreen = Class(Screen, function(self, days_survived, start_xp, escaped)
 
@@ -91,7 +95,7 @@ DeathScreen = Class(Screen, function(self, days_survived, start_xp, escaped)
 
 
     for k,v in ipairs(menu_items) do
-        local button = self.menu:AddChild(AnimButton("button"))
+        local button = self.menu:AddChild(ImageButton())
         button:SetPosition(-total_width/2 + (but_w+spacing)*(k-1), 0, 0)
         button:SetText(v.name)
         button:SetOnClick(v.fn)

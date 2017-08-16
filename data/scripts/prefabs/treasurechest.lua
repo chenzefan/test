@@ -8,6 +8,7 @@ local assets=
 
 	Asset("ANIM", "anim/pandoras_chest.zip"),
 	Asset("ANIM", "anim/skull_chest.zip"),
+	Asset("ANIM", "anim/pandoras_chest_large.zip"),
 }
 
 local chests = {
@@ -22,6 +23,10 @@ local chests = {
 	pandoras_chest = {
 		bank="pandoras_chest",
 		build="pandoras_chest",
+	},
+	minotaur_chest = {
+		bank = "pandoras_chest_large",
+		build = "pandoras_chest_large",
 	},
 }
 
@@ -71,8 +76,10 @@ local function chest(style)
 		inst.entity:AddAnimState()
 		inst.entity:AddSoundEmitter()
 		local minimap = inst.entity:AddMiniMapEntity()
-		minimap:SetIcon( "treasurechest.png" )
 		
+		minimap:SetIcon( style..".png" )
+
+
 		inst:AddTag("structure")
 		inst.AnimState:SetBank(chests[style].bank)
 		inst.AnimState:SetBuild(chests[style].build)
@@ -104,8 +111,11 @@ local function chest(style)
 	return fn
 end
 
+
+
 return Prefab( "common/treasurechest", chest("treasure_chest"), assets),
 		MakePlacer("common/treasurechest_placer", "chest", "treasure_chest", "closed"),
 		Prefab( "common/pandoraschest", chest("pandoras_chest"), assets),
-		Prefab( "common/skullchest", chest("skull_chest"), assets) 
+		Prefab( "common/skullchest", chest("skull_chest"), assets),
+		Prefab("common/minotaurchest", chest("minotaur_chest"), assets)
 

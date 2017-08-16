@@ -101,7 +101,6 @@ AddRoom("SinkholeRoom", {
 										rabbithouse=0.01,
 										cave_fern=0.2,										
 										cave_banana_tree = 0.002,
-										monkeybarrel = 0.1, 
 					                },
 									prefabdata = {
 										spiderden = function() if math.random() < 0.1 then
@@ -133,7 +132,6 @@ AddRoom("RockLobsterPlains", {
 										stalagmite_tall=0.12,
 										cave_fern=0.2,										
 										cave_banana_tree = 0.05,
-										monkeybarrel = 0.01,
 					                }
 					            }
 					})
@@ -163,7 +161,6 @@ AddRoom("MistyCavern", {
 					                    blue_mushroom = .005,
 					                    green_mushroom = .003,
 										cave_banana_tree = 0.2,
-										monkeybarrel = 0.15,
 					                    red_mushroom = .004,
 					                	cave_fern=0.2,
 
@@ -216,7 +213,6 @@ AddRoom("NoisyFungus", {
 										mushtree_small = 0.5,
 					                	cave_fern=0.02,
 										cave_banana_tree = 0.02,
-										monkeybarrel = 0.05,
 					                    slurtlehole = 0.001,
 					                    goldnugget=.05,
 					                }
@@ -234,7 +230,6 @@ AddRoom("NoisyCave", {
 					                	--stalagmite_gold = 0.05,
 					                    spiderhole= .125,
 					                    slurtlehole = 0.01,
-					                    slurper = 0.08,
 					                }
 					            }
 					})
@@ -334,7 +329,12 @@ AddRoom("Stairs", { -- This room is used to tag for the next level of caves - it
 					                }
 					            }
 					})
-
+AddRoom("EmptyCave", {
+					colour={r=0.3,g=0.2,b=0.1,a=0.3},
+					value = GROUND.CAVE, 
+					contents =  {
+					            }
+					})
 		---------------------------------------------
 		--These are temporary rooms to allow for points of interest within caves.
 		---------------------------------------------
@@ -357,7 +357,6 @@ AddRoom("CaveBase", {
 					                    green_mushroom = .003,
 					                    red_mushroom = .004,
 					                    slurtlehole = 0.001,
-					                    monkeybarrel = 0.01,
 					                },
 
 					            }
@@ -383,7 +382,6 @@ AddRoom("SinkBase", {
 					                    blue_mushroom = .005,
 					                    green_mushroom = .003,
 					                    red_mushroom = .004,
-					                    monkeybarrel = 0.02,
 					                },
 					            }
 					})
@@ -410,8 +408,6 @@ AddRoom("MushBase", {
 										tentacle=0.001,
 										rabbithouse=0.01,
 					                    blue_mushroom = .01,
-					                    monkeybarrel = 0.02,
-
 					                },
 					            }
 					})

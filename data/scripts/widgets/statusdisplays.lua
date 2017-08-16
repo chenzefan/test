@@ -1,7 +1,10 @@
-require "uianim"
+local UIAnim = require "widgets/uianim"
 local easing = require "easing"
 local Badge = require "widgets/badge"
-
+local ImageButton = require "widgets/imagebutton"
+local Text = require "widgets/text"
+local Image = require "widgets/image"
+local Widget = require "widgets/widget"
 
 local HealthBadge = Class(Badge, function(self, owner)
 	Badge._ctor(self, "health", owner)
@@ -230,21 +233,10 @@ UIClock = Class(Widget, function(self)
     				self:SetTime(data.normalizedtime, data.phase) 
     			end, GetWorld())
 
-	self.anim:SetMouseOver( function()
-		local clock_str = STRINGS.UI.HUD.WORLD.." ".. tostring(self.world_num or 1)
-		self.text:SetString(clock_str)
-	end)
 
-    local function updatedaysstring()
-        local clock_str = STRINGS.UI.HUD.CLOCKDAY.." "..tostring(GetClock().numcycles+1)
-        self.text:SetString(clock_str)
-    end
-    
-    self.anim:SetMouseOut(updatedaysstring )
+	self:UpdateDayString()
 
-	updatedaysstring()
-
-    self.inst:ListenForEvent( "daycomplete", updatedaysstring, GetWorld())
+    self.inst:ListenForEvent( "daycomplete", function() self:UpdateDayString() end, GetWorld())
 
 	self.inst:ListenForEvent( "daytime", function(inst, data) 
         self.text:SetString(STRINGS.UI.HUD.CLOCKDAY.." "..tostring(data.day)+1) 
@@ -278,8 +270,25 @@ UIClock = Class(Widget, function(self)
     if GetClock():IsNight() then
 		self:ShowMoon()
     end
-    
 end)
+
+function UIClock:UpdateDayString()
+    local clock_str = STRINGS.UI.HUD.CLOCKDAY.." "..tostring(GetClock().numcycles+1)
+    self.text:SetString(clock_str)
+end
+
+function UIClock:OnGainFocus()
+	UIClock._base.OnGainFocus(self)
+	local clock_str = STRINGS.UI.HUD.WORLD.." ".. tostring(self.world_num or 1)
+	self.text:SetString(clock_str)
+	return true
+end
+
+function UIClock:OnLoseFocus()
+	UIClock._base.OnLoseFocus(self)
+	self:UpdateDayString()
+	return true
+end
 
 
 function UIClock:ShowMoon()
@@ -576,12 +585,7 @@ DemoTimer = Class(Widget, function(self, owner)
     Widget._ctor(self, "DemoTimer")
     
     local font = UIFONT
-    self.purchasebutton = self:AddChild(Button())
-    
-    local ui_atlas = resolvefilepath( "images/ui.xml" )
-    self.purchasebutton:SetImage(ui_atlas, "button.tex")
-    self.purchasebutton:SetMouseOverImage(ui_atlas, "button_over.tex")
-    self.purchasebutton:SetDisabledImage(ui_atlas, "button_disabled.tex")
+    self.purchasebutton = self:AddChild(ImageButton(UI_ATLAS, "button.tex", "button_over.tex", "button_disabled.tex"))
     self.purchasebutton:SetPosition(-60, 0, 0)
     self.purchasebutton:SetText(STRINGS.UI.HUD.BUYNOW)
     self.purchasebutton:SetOnClick( function() self:Purchase() end)

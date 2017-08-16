@@ -225,11 +225,16 @@ end
 
 function MinionSpawner:GetSpawnLocation(num)
 	-- local pt = Vector3(self.inst.Transform:GetWorldPosition())
+	if not self.minionpositions then
+		return
+	end
+	
 	local offset = self.minionpositions[num]
 	-- return (pt.x + (offset.x * self.minionradius)), pt.y, (pt.z + (offset.z * self.minionradius))
 	if offset and self:CheckTileCompatibility(GetWorld().Map:GetTileAtPoint(offset.x, offset.y, offset.z)) then
 		return Vector3(offset.x, offset.y, offset.z)
 	end
+
 end
 
 function MinionSpawner:GetNextSpawnTime()

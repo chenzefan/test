@@ -257,7 +257,7 @@ function ChildSpawner:LoadPostPass(newents, savedata)
     end
 end
 
-function ChildSpawner:SpawnChild(target, prefab)
+function ChildSpawner:SpawnChild(target, prefab, radius)
     if not self:CanSpawn() then
         return
     end
@@ -266,7 +266,7 @@ function ChildSpawner:SpawnChild(target, prefab)
 
 	local pos = Vector3(self.inst.Transform:GetWorldPosition())
 	local start_angle = math.random()*PI*2
-	local rad = 0.5
+	local rad = radius or 0.5
 	if self.inst.Physics then
 		rad = rad + self.inst.Physics:GetRadius()
 	end

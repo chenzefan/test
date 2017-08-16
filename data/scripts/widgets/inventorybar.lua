@@ -1,12 +1,16 @@
 require "class"
-require "widgets/inventoryslot"
-require "tilebg"
-require "widgets/common"
+local InvSlot = require "widgets/invslot"
+local TileBG = require "widgets/tilebg"
+local Image = require "widgets/image"
+local Widget = require "widgets/widget"
+local EquipSlot = require "widgets/equipslot"
+local ItemTile = require "widgets/itemtile"
 
 local DOUBLECLICKTIME = .33
 local HUD_ATLAS = "images/hud.xml"
 
-Inv = Class(Widget, function(self, owner)
+
+local Inv = Class(Widget, function(self, owner)
     Widget._ctor(self, "Inventory")
     self.owner = owner
 
@@ -44,8 +48,6 @@ Inv = Class(Widget, function(self, owner)
         --local x = -total_w/2 + (num_slots + k - 1)*(W+SEP) + INTERSEP*num_intersep + W/2 + fudge
         local x = -total_w/2 + (num_slots)*(W)+num_intersep*(INTERSEP - SEP) + (num_slots-1)*SEP + INTERSEP + W*(k-1) + SEP*(k-1)
         slot:SetPosition(x,y,0)
-        slot:SetLeftMouseDown(function() self:ClickEquipSlot(slot) end)
-        slot:SetRightMouseDown(function() self:RightEquipSlot(slot) end)
     end    
 
     for k = 1,num_slots do
@@ -56,9 +58,6 @@ Inv = Class(Widget, function(self, owner)
         --local x = -total_w/2 + (k-1-interceps)*(W+SEP)+SEP + W/2 + interceps*INTERSEP + fudge
         local x = -total_w/2 + W/2 + interseps*(INTERSEP - SEP) + (k-1)*W + (k-1)*SEP
         slot:SetPosition(x,y,0)
-        
-        slot:SetLeftMouseDown(function() self:ClickInvSlot(slot) end)
-        slot:SetRightMouseDown(function() self:RightClickInvSlot(slot) end)
     end
 
 
@@ -70,8 +69,6 @@ Inv = Class(Widget, function(self, owner)
     self.inst:ListenForEvent("unequip", function(inst, data) self:OnItemUnequip(data.item, data.eslot) end, self.owner)
     self.inst:ListenForEvent("newactiveitem", function(inst, data) self:OnNewActiveItem(data.item) end, self.owner)
     self.inst:ListenForEvent("itemlose", function(inst, data) self:OnItemLose(data.slot) end, self.owner)
-    self.inst:ListenForEvent("rightmousedown", function(inst, data) self:Cancel() end, self.owner)
-    self.inst:ListenForEvent("keydown", function(inst, data) self:OnKeyPress(data.key) end, self.owner)
 
 	self:Refresh()
 
@@ -141,67 +138,6 @@ function Inv:OnNewActiveItem(item)
 
 end
 
-function Inv:RightClickInvSlot(slot)
-    self:UseSlot(slot.num)
-end
-
-function Inv:UseSlot(slot)
-    local item = self.owner.components.inventory:GetItemInSlot(slot)
-    if item then
-    
-		if self.owner.components.inventory:GetActiveItem() then
-			local actions = self.owner.components.playeractionpicker:GetUseItemActions(item, self.owner.components.inventory:GetActiveItem(), true)
-			if actions then
-				self.owner.components.locomotor:PushAction(actions[1], true)
-			end
-		else
-    
-			if item.components.equippable then
-				self.owner.components.inventory:Equip(item)
-				--self.owner.components.inventory:ReturnActiveItem(slot.num)
-			else
-				local actions = self.owner.components.playeractionpicker:GetInventoryActions(item)
-				if actions then
-					self.owner.components.locomotor:PushAction(actions[1], true)
-					--self.owner.components.inventory:ReturnActiveItem(slot.num)
-				end
-			end
-		end
-    end
-end
-
-
-function Inv:ClickInvSlot(slot)
-	HandleContainerUIClick(self.owner, self.owner.components.inventory, self.owner.components.inventory, slot.num)
-end
-
-
-function Inv:RightEquipSlot(slot)
-    if slot.tile and slot.tile.item then
-        if self.owner.components.inventory:GetActiveItem() then
-            local actions = self.owner.components.playeractionpicker:GetUseItemActions(slot.tile.item, self.owner.components.inventory:GetActiveItem(), true)
-            if actions then
-                self.owner.components.locomotor:PushAction(actions[1], true)
-            end
-        else
-            local actions = self.owner.components.playeractionpicker:GetInventoryActions(slot.tile.item)
-        	if actions then
-        		self.owner.components.locomotor:PushAction(actions[1], true)
-        	end
-        end
-	end
-end
-
-function Inv:ClickEquipSlot(slot)
-    local active_item = self.owner.components.inventory:GetActiveItem()
-    if active_item and active_item.components.equippable and active_item.components.equippable.equipslot == slot.equipslot then
-        self.owner.components.inventory:Equip(active_item, true)
-    elseif slot.tile and not active_item then
-        self.owner.components.inventory:SelectActiveItemFromEquipSlot(slot.equipslot)
-    end
-end
-
-
 function Inv:OnItemGet(item, slot, source_pos)
     if slot and self.inv[slot] then
 		local tile = ItemTile(item, self)
@@ -214,7 +150,7 @@ function Inv:OnItemGet(item, slot, source_pos)
 			im:MoveTo(source_pos, dest_pos, .3, function() tile:Show() tile:ScaleTo(2, 1, .25) im:Kill() end)
         else
 			tile:Show() 
-			tile:ScaleTo(2, 1, .25)
+			--tile:ScaleTo(2, 1, .25)
         end
         
 	end
@@ -229,3 +165,5 @@ function Inv:OnItemUnequip(item, slot)
 		self.equip[slot]:SetTile(nil)
 	end
 end
+
+return Inv

@@ -307,7 +307,7 @@ function PenguinSpawner:TryToSpawnFlock()
     -- dprint("---------PS WINTERTEST:", SaveGameIndex:GetCurrentMode(), GetWorld().meta.level_id )
     -- dprint("---------:", GetSeasonManager():GetSeason(), GetSeasonManager():GetDaysLeftInSeason())
     local mode = SaveGameIndex:GetCurrentMode() 
-    local level = GetWorld().meta.level_id 
+    local level = GetWorld().meta and GetWorld().meta.level_id 
 
     if (not (GetSeasonManager():IsWinter() and GetSeasonManager():GetDaysLeftInSeason() > 3)) or
        ( mode == "adventure" and level == "ENDING" ) or

@@ -1,6 +1,6 @@
 Task = Class(function(self, id, data)
-	--print("Task ",id)
-	--dumptable(room_choices)
+	-- print("Task ",id)
+	-- dumptable(data,1)
 	self.id = id
 	
 	-- what locks this task
@@ -21,6 +21,7 @@ Task = Class(function(self, id, data)
 	self.room_bg = data.room_bg
 	self.background_room = data.background_room
 	self.colour = data.colour
+	self.maze_tiles = data.maze_tiles
 end)
 
 

@@ -22,8 +22,16 @@ function Cooldown:StartCharging(time)
     time = time or self.cooldown_duration
     self.charged = false
     self.cooldown_deadline = GetTime() + time
-    self.inst:DoTaskInTime(self.cooldown_duration, donecharging)
-    
+
+    if self.cooldown_deadline <= 0 then
+        donecharging(self.inst)
+        if self.startchargingfn then
+            self.startchargingfn(self.inst)
+        end
+        return
+    end
+
+    self.inst:DoTaskInTime(self.cooldown_duration, donecharging)    
     if self.startchargingfn then
         self.startchargingfn(self.inst)
     end

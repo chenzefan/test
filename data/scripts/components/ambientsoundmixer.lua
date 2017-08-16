@@ -33,10 +33,17 @@ local AmbientSoundMixer = Class(function(self, inst)
 		[GROUND.FUNGUS] = {sound = "dontstarve/cave/fungusforestAMB"},
 		[GROUND.SINKHOLE] = {sound = "dontstarve/cave/litcaveAMB"},
 		[GROUND.UNDERROCK] = {sound = "dontstarve/cave/caveAMB"},
-		[GROUND.MUD] = {sound = "dontstarve/cave/caveAMB"},
+		[GROUND.MUD] = {sound = "dontstarve/cave/fungusforestAMB"},
 		[GROUND.UNDERGROUND] = {sound = "dontstarve/cave/caveAMB"},
+		[GROUND.BRICK] = {sound = "dontstarve/cave/ruinsAMB"},
+		[GROUND.BRICK_GLOW] = {sound = "dontstarve/cave/ruinsAMB"},
+		[GROUND.TILES] = {sound = "dontstarve/cave/civruinsAMB"},
+		[GROUND.TILES_GLOW] = {sound = "dontstarve/cave/civruinsAMB"},
+		[GROUND.TRIM] = {sound = "dontstarve/cave/ruinsAMB"},
+		[GROUND.TRIM_GLOW] = {sound = "dontstarve/cave/ruinsAMB"},
 		["ABYSS"] = {sound = "dontstarve/cave/pitAMB"},
 		["VOID"] = {sound = "dontstarve/chess/void", wintersound = "dontstarve/chess/void", rainsound="dontstarve/chess/void"},
+		["CIVRUINS"] = {sound = "dontstarve/cave/civruinsAMB"},
 	}
 
 	for k,v in pairs(self.ambient_sounds) do
@@ -64,6 +71,24 @@ local AmbientSoundMixer = Class(function(self, inst)
     self.inst:ListenForEvent( "nighttime", function(it, data) 
 			self:SetSoundParam(2.0)
         end, GetWorld())      
+
+
+    self.inst:ListenForEvent( "warnstart", function(it, data) 
+			self:SetSoundParam(1.5)
+        end, GetWorld())      
+
+    self.inst:ListenForEvent( "calmstart", function(it, data) 
+			self:SetSoundParam(1.0)
+        end, GetWorld())      
+
+    self.inst:ListenForEvent( "nightmarestart", function(it, data) 
+			self:SetSoundParam(2.0)
+        end, GetWorld())  
+
+    self.inst:ListenForEvent( "dawnstart", function(it, data) 
+		self:SetSoundParam(1.5)
+    end, GetWorld())        
+
 
 	self.inst:StartUpdatingComponent(self)
 	

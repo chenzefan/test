@@ -1,6 +1,8 @@
-require "widget"
+local Widget = require "widgets/widget"
+local Text = require "widgets/text"
+local Image = require "widgets/image"
 
-Toggle = Class(Widget, function(self, data)
+local Toggle = Class(Widget, function(self, data)
     Widget._ctor(self, "TOGGLE")
     self.image = self:AddChild(Image())
     self.text = self:AddChild(Text(DEFAULTFONT, 30))
@@ -74,6 +76,15 @@ Toggle = Class(Widget, function(self, data)
 			end
         end)   
 end)
+
+
+function Toggle:OnGainFocus()
+
+end
+
+function Toggle:OnLoseFocus()
+
+end
 
 function Toggle:Enable()
 	self._base.Enable(self)
@@ -151,3 +162,5 @@ function Toggle:OnMouseOver()
 	end
 	Widget.OnMouseOver( self )
 end
+
+return Toggle

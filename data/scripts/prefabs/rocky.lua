@@ -98,7 +98,7 @@ local function onsave(inst,data)
 end
 
 local function onload(inst,data)
-    if data.colour and data.colour > 0 and data.colour <= #colours then
+    if data and data.colour and data.colour > 0 and data.colour <= #colours then
         inst.colour_idx = data.colour
         inst.AnimState:SetMultColour(colours[inst.colour_idx][1],colours[inst.colour_idx][2],colours[inst.colour_idx][3],1)
     end

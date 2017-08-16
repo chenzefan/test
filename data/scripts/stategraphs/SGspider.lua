@@ -212,9 +212,7 @@ local states=
         
         ontimeout = function(inst)
             inst.sg:GoToState("idle", "eat_pst")
-        end,
-        
-        
+        end,       
     },  
 
     State{
@@ -396,11 +394,6 @@ local states=
         onexit = function(inst)
             inst.components.health:SetAbsorbAmount(0)
         end,
-
-        timeline = 
-        {
-            --TimeEvent(1*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/slurtle/hide") end ),
-        },
     },
 
     State{
@@ -411,16 +404,30 @@ local states=
             inst.AnimState:PlayAnimation("unhide")            
         end,
 
-        timeline = 
-        {
-            --TimeEvent(1*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/slurtle/emerge") end ),
-        },
-
         events=
         {
             EventHandler("animqueueover", function(inst) inst.sg:GoToState("idle") end ),
         },
     }, 
+
+    State{
+        name = "dropper_enter",
+        tags = {"busy"},
+
+        onenter = function(inst)
+            inst.Physics:Stop()
+            inst.AnimState:PlayAnimation("enter")
+            inst.SoundEmitter:PlaySound("dontstarve/creatures/spider/descend")            
+        end,
+
+        events=
+        {
+            EventHandler("animqueueover", function(inst) inst.sg:GoToState("taunt") end ),
+        },
+
+
+
+    },
     
 }
 

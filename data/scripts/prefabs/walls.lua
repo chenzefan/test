@@ -22,13 +22,10 @@ function MakeWallType(data)
 		    if ground then
 		    	ground.Pathfinder:AddWall(pt.x, pt.y, pt.z)
 		    end
-		end 
-		
+		end 		
 	end
 
-
 	local function onhammered(inst, worker)
-
 		if data.maxloots and data.loot then
 			local num_loots = math.max(1, math.floor(data.maxloots*inst.components.health:GetPercent()))
 			for k = 1, num_loots do
@@ -63,23 +60,20 @@ function MakeWallType(data)
 			--print("    at: ", pt)
 	    	ground.Pathfinder:AddWall(pt.x, pt.y, pt.z)
 	    end
-		
-		
 	end
 
 	local function clearobstacle(inst)
-	    inst.Physics:ClearCollisionMask()
-		inst.Physics:CollidesWith(COLLISION.WORLD)
-		inst.Physics:CollidesWith(COLLISION.ITEMS)
+		-- Alia: 
+		-- Since we are removing the wall anytway we may as well not bother setting the physics    
+	    -- We had better wait for the callback to complete before trying to remove ourselves
+	    inst:DoTaskInTime(2*FRAMES, function() inst.Physics:SetActive(false) end)
+
 	    local ground = GetWorld()
 	    if ground then
 	    	local pt = Point(inst.Transform:GetWorldPosition())
-	    	--print("    at: ", pt)
 	    	ground.Pathfinder:RemoveWall(pt.x, pt.y, pt.z)
 	    end
-		
 	end
-
 
 	local function onhealthchange(inst, old_percent, new_percent)
 		
@@ -170,7 +164,6 @@ function MakeWallType(data)
 	end
 
 	local function onremoveentity(inst)
-		--print("walls - onremoveentity")
 		clearobstacle(inst)
 	end
 
@@ -249,7 +242,7 @@ function MakeWallType(data)
 	return Prefab( "common/wall_"..data.name, fn, assets),
 		   Prefab( "common/wall_"..data.name.."_item", itemfn, assets, {"wall_"..data.name, "wall_"..data.name.."_placer"}),
 		   MakePlacer("common/wall_"..data.name.."_placer", "wall", "wall_"..data.name, "1_2", false, false, true) 
-end
+	end
 
 
 
@@ -261,7 +254,7 @@ local walldata = {
 			{name = "stone", tags={"stone"}, loot = "rocks", maxloots = 2, maxhealth=TUNING.STONEWALL_HEALTH, buildsound="dontstarve/common/place_structure_stone", destroysound="dontstarve/common/destroy_stone"},
 			{name = "wood", tags={"wood"}, loot = "log", maxloots = 2, maxhealth=TUNING.WOODWALL_HEALTH, flammable = true, buildsound="dontstarve/common/place_structure_wood", destroysound="dontstarve/common/destroy_wood"},
 			{name = "hay", tags={"grass"}, loot = "cutgrass", maxloots = 2, maxhealth=TUNING.HAYWALL_HEALTH, flammable = true, buildsound="dontstarve/common/place_structure_straw", destroysound="dontstarve/common/destroy_straw"},
-			{name = "ruins", tags={"stone"}, loot = "rocks", maxloots = 2, maxhealth=TUNING.STONEWALL_HEALTH, buildsound="dontstarve/common/place_structure_stone", destroysound="dontstarve/common/destroy_stone"},
+			{name = "ruins", tags={"stone", "ruins"}, loot = nil, maxloots = 2, maxhealth=TUNING.STONEWALL_HEALTH, buildsound="dontstarve/common/place_structure_stone", destroysound="dontstarve/common/destroy_stone"},
         }
 
 

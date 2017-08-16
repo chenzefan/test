@@ -256,7 +256,10 @@ local states =
         timeline = 
         {
             TimeEvent(12*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/slurper/die") end),
-            TimeEvent(60*FRAMES,function(inst) inst.components.lootdropper:DropLoot(Vector3(inst.Transform:GetWorldPosition())) end),
+            TimeEvent(60*FRAMES,function(inst) 
+                inst.SoundEmitter:PlaySound("dontstarve/creatures/slurper/pop")
+                inst.components.lootdropper:DropLoot(Vector3(inst.Transform:GetWorldPosition())) 
+            end),
         },
 
     },

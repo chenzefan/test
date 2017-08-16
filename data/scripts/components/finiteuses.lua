@@ -8,10 +8,6 @@ end)
 function FiniteUses:SetConsumption(action, uses)
     self.consumption[action] = uses
 end
-function FiniteUses:SetUses(num)
-    self.total = num
-    self.current = num
-end
 
 function FiniteUses:GetDebugString()
 	return string.format("%d/%d", self.current, self.total)
@@ -33,6 +29,7 @@ end
 function FiniteUses:SetMaxUses(val)
     self.total = val
 end
+
 function FiniteUses:SetUses(val)
     local was_positive = self.current > 0
     self.current = val
@@ -63,6 +60,11 @@ end
 
 function FiniteUses:GetPercent()
     return self.current / self.total
+end
+
+function FiniteUses:SetPercent(amount)
+    local target = (self.total * amount)
+    self:SetUses((target - self.current) + self.current)
 end
 
 function FiniteUses:SetOnFinished(fn)

@@ -8,9 +8,11 @@ local Weapon = Class(function(self, inst)
     self.onprojectilelaunch = nil
     self.canattack = nil
     self.projectile = nil
+
+    --Monkey uses these
     self.modes = 
     {
-    MODE1 = {damage = 0, ranged = false, attackrange = 0, hitrange = 0},
+        MODE1 = {damage = 0, ranged = false, attackrange = 0, hitrange = 0},
     --etc.
     }
     self.variedmodefn = nil
@@ -43,9 +45,6 @@ end
 
 function Weapon:CanRangedAttack()
     if self.variedmodefn then
-        --This is a pretty gross hack to let weapons work as melee or ranged, clean up later. 
-        --The "variedrangefn" must return a table 
-        --with the range and what mode of attack to use, either "R" or "M".
         local mode = self.variedmodefn(self.inst)
         if not mode.ranged then
             --determined to use melee mode, return false.

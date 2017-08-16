@@ -7,7 +7,7 @@ local assets =
 
 local prefabs =
 {
-    "campfirefire",
+    "character_fire",
 }    
 
 local MAXWORK = 6
@@ -15,20 +15,33 @@ local MEDIUM  = 4
 local LOW     = 2
 
 local function SetWorkLevel( inst, workleft )
-    dprint("SetWORKLEVEL:",workleft)
+    dprint(string.format("SetWORKLEVEL: left=%d, state=%d",workleft,inst.state))
     if inst.exploding then
         return
     end
-    if workleft == MEDIUM then
+    if workleft == MAXWORK and inst.state == MEDIUM then
+        inst.state = MAXWORK
+        dprint("MED -> MAX")
+        inst.AnimState:PlayAnimation("med_grow")
+        inst.components.fueled:MakeEmpty()
+    elseif workleft <= MEDIUM and inst.state == MAXWORK then
+        inst.state = MEDIUM
+        dprint("MAX -> MED")
 	    inst.AnimState:PlayAnimation("med")
         inst.components.fueled:ChangeSection(1)
         inst.components.fueled:StartConsuming()
-    elseif workleft == LOW then
+    elseif workleft <= MEDIUM and inst.state == LOW then
+        inst.state = MEDIUM
+        dprint("LOW -> MED")
+        inst.AnimState:PlayAnimation("low_grow")
+    elseif workleft <= LOW and inst.state == MEDIUM then
+        dprint("MED -> LOW")
+        inst.state = LOW
 	    inst.AnimState:PlayAnimation("low")
         inst.components.fueled:ChangeSection(1)
     end
-    if inst.components.burnable and inst.components.fueled then
-        --inst.components.burnable:SetFXLevel(inst.components.fueled:GetCurrentSection(), inst.components.fueled:GetSectionPercent())
+    if workleft < 0 then
+        inst.components.workable.workleft = 0
     end
 end
 
@@ -47,7 +60,7 @@ end
 
 local function onextinguish(inst)
     if inst.components.fueled then
-        inst.components.fueled:InitializeFuelLevel(0)
+        inst.components.fueled:MakeEmpty()
     end
 end
 
@@ -68,24 +81,10 @@ end
 local function DoShake(inst)
  --           :Shake(shakeType, duration, speed, scale)
     TheCamera:Shake("FULL", 3.0, 0.05, .2)
-    --[[
-    local world = GetWorld()
-    local quaker = world.components.quaker
-
-    if quaker and math.random() > 0.3 then
-        quaker:ForceQuake("rock_lightQuake")
-    else
-        -- TheCamera:Shake(shakeType, duration, speed, scale)
-        TheCamera:Shake("FULL", 5.0, 0.05, .2)
-    end
-    --]]
 end
 
 local function SealUp(rock)
     dprint("SealUp:",rock)
-    --rock.components.burnable:AddBurnFX("character_fire", Vector3(0,1,0) )
-    --rock.components.burnable:SetFXLevel(0,0) 
-    rock.AnimState:PlayAnimation("med_grow")
     rock.exploding = false
     rock.components.workable:SetWorkLeft(MAXWORK)
 end
@@ -98,13 +97,14 @@ function ExplodeRock(rock)
         return
     end
     local x,y,z = rock.Transform:GetWorldPosition()
+
+    rock.exploding = true
     y = y + 2
     rock.lavaLight = SpawnPrefab("lavalight").Transform:SetPosition(x,y,z)
     SpawnPrefab("explode_small").Transform:SetPosition(x,y,z)
     rock.AnimState:PlayAnimation("low")
     DoShake(rock)
     rock:DoTaskInTime(5,SealUp)
-    rock.exploding = true
 end
 
 local function fn(Sim)
@@ -126,7 +126,7 @@ local function fn(Sim)
     inst:AddTag("stone")
   
     MakeObstaclePhysics(inst, 1)    
-    inst.Transform:SetScale(1.2,1.2,1.2)
+    inst.Transform:SetScale(1.0,1.0,1.0)
 
     -----------------------
 
@@ -143,7 +143,7 @@ local function fn(Sim)
     
     -------------------------
     inst:AddComponent("workable")
-    inst.components.workable:SetWorkAction(ACTIONS.HAMMER)
+    inst.components.workable:SetWorkAction(ACTIONS.MINE)
     inst.components.workable:SetWorkLeft(MAXWORK)
     inst.components.workable:SetMaxWork(MAXWORK)
 	inst.components.workable:SetOnFinishCallback(onhammered)
@@ -159,41 +159,35 @@ local function fn(Sim)
     -- inst.components.fueled.ontakefuelfn = function() inst.SoundEmitter:PlaySound("dontstarve/common/fireAddFuel") end
     
     inst.components.fueled:SetUpdateFn( function()
-        --[[
-        if GetSeasonManager() and GetSeasonManager():IsRaining() then
-            inst.components.fueled.rate = 1 + TUNING.FIREPIT_RAIN_RATE*GetSeasonManager():GetPrecipitationRate()
-        else
-            inst.components.fueled.rate = 1
-        end
-        --]]
-        
         if inst.components.burnable and inst.components.fueled then
+            dprint("fuel Update:", inst.components.fueled:GetCurrentSection()," %=", inst.components.fueled:GetSectionPercent())
             inst.components.burnable:SetFXLevel(inst.components.fueled:GetCurrentSection(), inst.components.fueled:GetSectionPercent())
         end
     end)
         
     inst.components.fueled:SetSectionCallback( function(section,oldsection)
-        dprint(section,"SectionCallback:", oldsection, inst.components.fueled:GetSectionPercent())
+        dprint(string.format("SectionCallback: old=%d, new=%d, perc=%f",oldsection, section, inst.components.fueled:GetSectionPercent()))
         if section == 0 then
             inst.components.burnable:Extinguish() 
             inst:DoTaskInTime(2, function(inst)
-	                                 inst.AnimState:PlayAnimation("med_grow")
-                                     --inst.components.burnable:SetFXLevel(0) 
+                                     inst.components.workable:SetWorkLeft(MAXWORK)
+                                     SetWorkLevel( inst, MAXWORK )
+	                                 --inst.AnimState:PlayAnimation("med_grow")
+                                     inst.components.burnable:SetFXLevel(0,0) 
                                  end)  
-            inst.components.workable:SetWorkLeft(MAXWORK)
         else
             inst.components.burnable:SetFXLevel(section, inst.components.fueled:GetSectionPercent())
-
-            if not inst.components.burnable:IsBurning() then
-                inst.components.burnable:Ignite()
-            end
+            --if not inst.components.burnable:IsBurning() then
+            --    inst.components.burnable:Ignite()
+            --end
             if section == 1 then
+                SetWorkLevel( inst, MEDIUM )
                 if oldsection == 2 then 
                     inst.components.workable:SetWorkLeft(MEDIUM)
-	                inst.AnimState:PlayAnimation("low_grow")
                 end
             elseif section == 2 then
                 inst.components.workable:SetWorkLeft(LOW)
+                SetWorkLevel( inst, LOW )
             end
         end
         inst.prev = section
@@ -215,6 +209,7 @@ local function fn(Sim)
     -----------------------------
 
     inst.blastTask = inst:DoTaskInTime(GetRandomWithVariance(120,60), ExplodeRock)
+    inst.state = MAXWORK
 
     -----------------------------
 

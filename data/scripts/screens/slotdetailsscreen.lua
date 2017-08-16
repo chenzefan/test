@@ -1,8 +1,11 @@
-require "screen"
-require "button"
-require "animbutton"
-require "image"
-require "uianim"
+local Screen = require "widgets/screen"
+local Button = require "widgets/button"
+local AnimButton = require "widgets/animbutton"
+local Menu = require "widgets/menu"
+local Text = require "widgets/text"
+local Image = require "widgets/image"
+local UIAnim = require "widgets/uianim"
+local Widget = require "widgets/widget"
 require "os"
 
 SlotDetailsScreen = Class(Screen, function(self, slotnum)
@@ -24,22 +27,6 @@ SlotDetailsScreen = Class(Screen, function(self, slotnum)
     self.root:SetScaleMode(SCALEMODE_PROPORTIONAL)
 	
     self.bg = self.root:AddChild(Image("images/fepanels.xml", "panel_saveslots.tex"))
-    
-	--[[self.cancelbutton = self.root:AddChild(AnimButton("button"))
-	self.cancelbutton:SetScale(.8,.8,.8)
-    self.cancelbutton:SetText(STRINGS.UI.SLOTDETAILSSCREEN.CANCEL)
-    self.cancelbutton:SetOnClick( function() TheFrontEnd:PopScreen(self) end )
-    self.cancelbutton:SetFont(BUTTONFONT)
-    self.cancelbutton:SetTextSize(35)
-    self.cancelbutton.text:SetVAlign(ANCHOR_MIDDLE)
-    self.cancelbutton.text:SetColour(0,0,0,1)
-    self.cancelbutton:SetPosition( 0, -235, 0)--]]
-    
-    --[[self.title = self.root:AddChild(Text(TITLEFONT, 60))
-    self.title:SetPosition( 0, 230, 0)
-    self.title:SetRegionSize(250,70)
-    self.title:SetString(STRINGS.UI.SLOTDETAILSSCREEN.TITLE .. " " .. tostring(slotnum))
-    self.title:SetVAlign(ANCHOR_MIDDLE)--]]
 
     self.text = self.root:AddChild(Text(TITLEFONT, 60))
     self.text:SetPosition( 75, 135, 0)
@@ -56,11 +43,17 @@ SlotDetailsScreen = Class(Screen, function(self, slotnum)
 	local atlas = (table.contains(MODCHARACTERLIST, character) and "images/saveslot_portraits/"..character..".xml") or "images/saveslot_portraits.xml"
 	self.portrait:SetTexture(atlas, character..".tex")
 	self.portrait:SetPosition(-120, 135, 0)
-    
-
-    self:BuildMenu()
-   
+      
+    self.menu = self.root:AddChild(Menu(nil, -70))
+	self.menu:SetPosition(0, 0, 0)
+	
+	self.default_focus = self.menu
 end)
+
+function SlotDetailsScreen:OnBecomeActive()
+	self:BuildMenu()
+	SlotDetailsScreen._base.OnBecomeActive(self)
+end
 
 function SlotDetailsScreen:BuildMenu()
 
@@ -70,19 +63,11 @@ function SlotDetailsScreen:BuildMenu()
 	local world = SaveGameIndex:GetSlotWorld(self.saveslot)
 	local character = SaveGameIndex:GetSlotCharacter(self.saveslot) or "wilson"
 
-
-	if self.menu then
-		self.menu:Kill()
-	end
-
-	self.menu = self.root:AddChild(Widget("menu"))
-
     local menuitems = 
     {
 		{name = STRINGS.UI.SLOTDETAILSSCREEN.CONTINUE, fn = function() self:Continue() end},
 		{name = STRINGS.UI.SLOTDETAILSSCREEN.DELETE, fn = function() self:Delete() end},
 		{name = STRINGS.UI.SLOTDETAILSSCREEN.CANCEL, fn = function() TheFrontEnd:PopScreen(self) end},
-		
 	}
 
 	if mode == "adventure" then
@@ -96,23 +81,19 @@ function SlotDetailsScreen:BuildMenu()
 		self.text:SetString(string.format("%s",STRINGS.UI.LOADGAMESCREEN.NEWGAME))
 	end 
     
-    for k,v in pairs(menuitems) do
-    	local button = self.menu:AddChild(AnimButton("button"))
-		--button:SetScale(.8,.8,.8)
-		button:SetText(v.name)
-		button:SetOnClick( v.fn )
-		button:SetFont(BUTTONFONT)
-		button:SetTextSize(40)
-		button.text:SetVAlign(ANCHOR_MIDDLE)
-		button.text:SetColour(0,0,0,1)
-		button:SetPosition( 0, 50 - k*65, 0)
-    end
+	self.menu:Clear()
 
+    for k,v in pairs(menuitems) do
+    	self.menu:AddItem(v.name, v.fn)
+    end
 end
 
-function SlotDetailsScreen:OnKeyUp( key )
-	if key == KEY_ESCAPE then
+function SlotDetailsScreen:OnControl( control, down )
+	if SlotDetailsScreen._base.OnControl(self, control, down) then return true end
+	
+	if control == CONTROL_CANCEL and not down then
 		TheFrontEnd:PopScreen(self)
+		return true
 	end
 end
 
@@ -125,11 +106,11 @@ function SlotDetailsScreen:Delete()
 		{
 			text=STRINGS.UI.MAINSCREEN.DELETE, 
 			cb = function()
-				SaveGameIndex:DeleteSlot(self.saveslot, function() TheFrontEnd:PopScreen(self) end)
+				SaveGameIndex:DeleteSlot(self.saveslot, function() TheFrontEnd:PopScreen() TheFrontEnd:PopScreen() end)
 			end
 		},
 		-- ESC
-		{text=STRINGS.UI.MAINSCREEN.CANCEL, cb = function() end},
+		{text=STRINGS.UI.MAINSCREEN.CANCEL, cb = function() TheFrontEnd:PopScreen() end},
 	}
 
 	TheFrontEnd:PushScreen(
@@ -138,7 +119,6 @@ function SlotDetailsScreen:Delete()
 end
 
 function SlotDetailsScreen:Continue()
-
 	self.root:Disable()
 	TheFrontEnd:Fade(false, 1, function() 
 		StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = self.saveslot})

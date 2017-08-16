@@ -7,7 +7,7 @@ ENCODE_SAVES = BRANCH ~= "dev"
 CHEATS_ENABLED = BRANCH == "dev"
 SOUNDDEBUG_ENABLED = false
 
-debug.setmetatable(nil, {__index = function() return nil end})  -- Makes  foo.bar.blat.um  return nil if table item not present   See Dave F or Brook for details
+--debug.setmetatable(nil, {__index = function() return nil end})  -- Makes  foo.bar.blat.um  return nil if table item not present   See Dave F or Brook for details
 
 local servers = 
 {
@@ -79,6 +79,7 @@ elseif PLATFORM == "WIN32" then
 end
 
 require("strict")
+require("debugprint")
 require("config")
 
 require("mainfunctions")
@@ -114,11 +115,6 @@ require("overseer")
 require("fileutil")
 require("screens/scripterrorscreen")
 require("prefablist")
-
-require("widget")
-require("image")
-require("text")
-require("textedit")
 require("standardcomponents")
 require("cameras\\followcamera")
 require("update")
@@ -128,6 +124,13 @@ require("modindex")
 require("mathutil")
 
 require("saveindex") -- Added by Altgames for Android focus lost handling
+
+
+--debug key init
+if CHEATS_ENABLED then
+	require "debugkeys"
+end
+
 
 print ("running main.lua\n")
 
@@ -149,20 +152,8 @@ TheMixer = Mixer.Mixer()
 require("mixes")
 TheMixer:PushMix("start")
 
-KnownModIndex:Load(function() end)
 
----PREFABS AND ENTITY INSTANTIATION
 Prefabs = {}
-
-ModManager:LoadMods()
-
--- Register every standard prefab with the engine
-for i,file in ipairs(PREFABFILES) do -- required from prefablist.lua
-	LoadPrefabFile("prefabs/"..file)
-end
-
-ModManager:RegisterPrefabs()
-
 Ents = {}
 AwakeEnts = {}
 UpdatingEnts = {}
@@ -170,29 +161,82 @@ NewUpdatingEnts = {}
 num_updating_ents = 0
 NumEnts = 0
 
+TheGlobalInstance = nil
 
---- GLOBAL ENTITY ---
-TheGlobalInstance = CreateEntity()
-TheGlobalInstance.entity:SetCanSleep( false )
-TheGlobalInstance.entity:AddTransform()
+global("SplatManager")
+SplatManager = nil
+global("ShadowManager")
+ShadowManager = nil
+global("RoadManager")
+RoadManager = nil
+global("EnvelopeManager")
+EnvelopeManager = nil
+global("PostProcessor")
+PostProcessor = nil
 
-TheSim:LoadPrefabs({"global"})
-
-SplatManager = TheGlobalInstance.entity:AddSplatManager()
-ShadowManager = TheGlobalInstance.entity:AddShadowManager()
-ShadowManager:SetTexture( "images/shadow.tex" )
-RoadManager = TheGlobalInstance.entity:AddRoadManager()
-EnvelopeManager = TheGlobalInstance.entity:AddEnvelopeManager()
-
-PostProcessor = TheGlobalInstance.entity:AddPostProcessor()
-local IDENTITY_COLOURCUBE = "images/colour_cubes/identity_colourcube.tex"
-PostProcessor:SetColourCubeData( 0, IDENTITY_COLOURCUBE, IDENTITY_COLOURCUBE )
-PostProcessor:SetColourCubeData( 1, IDENTITY_COLOURCUBE, IDENTITY_COLOURCUBE )
-
-FontManager = TheGlobalInstance.entity:AddFontManager()
-MapLayerManager = TheGlobalInstance.entity:AddMapLayerManager()
+global("FontManager")
+FontManager = nil
+global("MapLayerManager")
+MapLayerManager = nil
+global("Roads")
 Roads = nil
+global("TheFrontEnd")
 TheFrontEnd = nil
-LoadFonts()
 
 inGamePlay = false
+
+local function ModSafeStartup()
+
+	-- If we failed to boot last time, disable all mods
+	-- Otherwise, set a flag file to test for boot success.
+
+	---PREFABS AND ENTITY INSTANTIATION
+
+	ModManager:LoadMods()
+
+	-- Register every standard prefab with the engine
+	for i,file in ipairs(PREFABFILES) do -- required from prefablist.lua
+		LoadPrefabFile("prefabs/"..file)
+	end
+
+	ModManager:RegisterPrefabs()
+
+	-- Apply translations
+	TranslateStringTable( STRINGS )
+
+	--- GLOBAL ENTITY ---
+	TheGlobalInstance = CreateEntity()
+	TheGlobalInstance.entity:SetCanSleep( false )
+	TheGlobalInstance.entity:AddTransform()
+
+	if RUN_GLOBAL_INIT then
+		GlobalInit()
+	end
+
+	SplatManager = TheGlobalInstance.entity:AddSplatManager()
+	ShadowManager = TheGlobalInstance.entity:AddShadowManager()
+	ShadowManager:SetTexture( "images/shadow.tex" )
+	RoadManager = TheGlobalInstance.entity:AddRoadManager()
+	EnvelopeManager = TheGlobalInstance.entity:AddEnvelopeManager()
+
+	PostProcessor = TheGlobalInstance.entity:AddPostProcessor()
+	local IDENTITY_COLOURCUBE = "images/colour_cubes/identity_colourcube.tex"
+	PostProcessor:SetColourCubeData( 0, IDENTITY_COLOURCUBE, IDENTITY_COLOURCUBE )
+	PostProcessor:SetColourCubeData( 1, IDENTITY_COLOURCUBE, IDENTITY_COLOURCUBE )
+
+	FontManager = TheGlobalInstance.entity:AddFontManager()
+	MapLayerManager = TheGlobalInstance.entity:AddMapLayerManager()
+
+end
+if PLATFORM == "NACL" then
+	-- No mods in nacl, and the below functions are async in nacl
+	-- so they break because Main returns before ModSafeStartup has run.
+	ModSafeStartup()
+else
+	KnownModIndex:Load(function() 
+		KnownModIndex:BeginStartupSequence(function()
+			ModSafeStartup()
+		end)
+	end)
+end
+

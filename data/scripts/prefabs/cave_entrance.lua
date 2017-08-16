@@ -35,13 +35,13 @@ local function OnActivate(inst)
 
 	local function doresetcave()
 
-		SaveGameIndex:ResetCave(inst.cavenum, function() SetHUDPause(false) inst.components.activatable.inactive = true  end)
+		SaveGameIndex:ResetCave(inst.cavenum, function() SetHUDPause(false) inst.components.activatable.inactive = true TheFrontEnd:PopScreen() end)
 	end
 
 	local function resetcaveconfirm()
 		TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.RESETCAVE.TITLE, STRINGS.UI.RESETCAVE.BODY, 
 			{{text=STRINGS.UI.RESETCAVE.YES, cb = doresetcave },
-			 {text=STRINGS.UI.RESETCAVE.NO, cb = function() SetHUDPause(false) inst.components.activatable.inactive = true end}  }))
+			 {text=STRINGS.UI.RESETCAVE.NO, cb = function() SetHUDPause(false) inst.components.activatable.inactive = true TheFrontEnd:PopScreen() end}  }))
 	end
 	
 	local function startadventure()
@@ -68,17 +68,20 @@ local function OnActivate(inst)
 		end
 	end
 
+	if GetWorld().prefab == "cave" then
+		startadventure()
+	else
+		local options = {
+			{text=STRINGS.UI.ENTERCAVE.YES, cb = startadventure},
+			{text=STRINGS.UI.ENTERCAVE.NO, cb = function() SetHUDPause(false) inst.components.activatable.inactive = true TheFrontEnd:PopScreen() end}  
+		}
 
-	local options = {
-		{text=STRINGS.UI.ENTERCAVE.YES, cb = startadventure},
-		{text=STRINGS.UI.ENTERCAVE.NO, cb = function() SetHUDPause(false) inst.components.activatable.inactive = true end}  
-	}
+		if inst.cavenum then
+			table.insert(options, {text=STRINGS.UI.ENTERCAVE.RESET, cb = resetcaveconfirm})
+		end
 
-	if inst.cavenum then
-		table.insert(options, {text=STRINGS.UI.ENTERCAVE.RESET, cb = resetcaveconfirm})
+		TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.ENTERCAVE.TITLE, STRINGS.UI.ENTERCAVE.BODY, options))
 	end
-
-	TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.ENTERCAVE.TITLE, STRINGS.UI.ENTERCAVE.BODY, options))
 end
 
 local Open = nil
@@ -125,6 +128,9 @@ Open = function(inst)
     inst.open = true
 
     inst.name = STRINGS.NAMES.CAVE_ENTRANCE_OPEN
+	if SaveGameIndex:GetCurrentMode() == "cave" then
+        inst.name = STRINGS.NAMES.CAVE_ENTRANCE_OPEN_CAVE
+    end
 	inst:RemoveComponent("lootdropper")
 
 	inst.MiniMapEntity:SetIcon("cave_open.png")
@@ -149,6 +155,10 @@ local function Close(inst)
 	inst.components.lootdropper:SetLoot({"rocks", "rocks", "flint", "flint", "flint"})
 
     inst.name = STRINGS.NAMES.CAVE_ENTRANCE_CLOSED
+	if SaveGameIndex:GetCurrentMode() == "cave" then
+        inst.name = STRINGS.NAMES.CAVE_ENTRANCE_CLOSED_CAVE
+    end
+
     inst.open = false
 end      
 
@@ -166,11 +176,6 @@ local function onload(inst, data)
 	end
 end     
 
-local function GetStatus(inst)
-	if inst.open then return "OPEN" end
-end
-
-
 local function fn(Sim)
 	local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
@@ -183,7 +188,6 @@ local function fn(Sim)
     anim:SetBuild("cave_entrance")
 
     inst:AddComponent("inspectable")
-	inst.components.inspectable.getstatus = GetStatus
 	inst.components.inspectable:RecordViews()
 
 	inst:AddComponent( "childspawner" )

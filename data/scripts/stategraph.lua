@@ -226,7 +226,6 @@ StateGraph = Class( function(self, name, states, events, defaultstate, actionhan
     local info = debug.getinfo(3, "Sl")
     self.defline = string.format("%s:%d", info.short_src, info.currentline)
     self.name = name
-    self.states = states
     self.defaultstate = defaultstate
     
     --reindex the tables

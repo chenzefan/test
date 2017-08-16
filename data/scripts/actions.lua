@@ -19,6 +19,7 @@ ACTIONS=
     DROP = Action(-1),
     CHOP = Action(),
     ATTACK = Action(2, true),
+    FORCEATTACK = Action(2, true),
     EAT = Action(),
     PICK = Action(),
     PICKUP = Action(1),
@@ -419,10 +420,16 @@ ACTIONS.PICK.fn = function(act)
     end
 end
 
+ACTIONS.FORCEATTACK.fn = function(act)
+    act.doer.components.combat:SetTarget(act.target)
+    act.doer.components.combat:ForceAttack()
+    return true
+end
+
 ACTIONS.ATTACK.fn = function(act)
-	if act.target.components.combat then
-	    act.doer.components.combat:SetTarget(act.target)
-	    return true
+    if act.target.components.combat then
+        act.doer.components.combat:SetTarget(act.target)
+        return true
     end
 end
 
@@ -480,6 +487,18 @@ ACTIONS.GIVE.fn = function(act)
     if act.target.components.trader then
 		act.target.components.trader:AcceptGift(act.doer, act.invobject)
 	    return true
+    end
+end
+
+ACTIONS.GIVE.strfn = function(act)
+    local targ = act.target or act.invobject
+    
+    if targ and targ:HasTag("altar") then
+        if targ.enabled then
+            return "READY"
+        else
+            return "NOTREADY"
+        end
     end
 end
 

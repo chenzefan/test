@@ -1,21 +1,14 @@
 
 AddRoom("LabyrinthGuarden", {
 					colour={r=0.3,g=0.2,b=0.1,a=0.3},
-					value = GROUND.TRIM, 
+					value = GROUND.BRICK, 
 					tags = {"LabyrinthEntrance"},
 					contents =  {
-					                distributepercent = .6,
-					                distributeprefabs=
-					                {
-					                	mushtree_tall =0.02,
-					                    blue_mushroom = .02,
-					                    green_mushroom = .02,
-					                    red_mushroom = .02,
-					                },
-					               	countprefabs= 
-					                {
-					                	rook = 1,
-					                },					            }
+									countstaticlayouts = 
+									{
+										["WalledGarden"] = 1,
+									},          
+					        	},
 					})
 
 AddRoom("BGLabyrinth", {
@@ -23,30 +16,30 @@ AddRoom("BGLabyrinth", {
 					value = GROUND.CAVE_NOISE, 
 					tags = {"Labyrinth"},
 					contents =  {
-					                distributepercent = .1,
+					                distributepercent = .04,
 					                distributeprefabs=
 					                {
-					                	stalagmite = 0.5,
-										stalagmite_tall=0.5,
-					                	--stalagmite_gold = 0.05,
-					                    spiderhole= 0.1,
-					                    slurtlehole = 0.01,
+
+					                	nightmarelight = .45,
+					                    dropperweb = 1,
 					                }
 					            }
 					})
 AddRoom("BGMaze", {
 					colour={r=0.3,g=0.2,b=0.1,a=0.3},
-					value = GROUND.CAVE, 
+					value = GROUND.MUD, 
 					tags = {"Maze"},
 					contents =  {
-					                distributepercent = .1,
-					                distributeprefabs=
+									distributepercent = 0.15,
+					                distributeprefabs= 
 					                {
-					                	stalagmite = 0.5,
-										stalagmite_tall=0.5,
-					                	--stalagmite_gold = 0.05,
-					                    spiderhole= 0.1,
-					                    slurtlehole = 0.01,
+					                	lichen = .001,
+					                	cave_fern = .0015,
+					                	--pond_cave = .002,
+					                    pillar_algae = .0001,
+					                    slurper = .0002,
 					                }
 					            }
 					})
+
+

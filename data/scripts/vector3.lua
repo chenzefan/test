@@ -57,3 +57,22 @@ end
 function Vector3:Get()
     return self.x, self.y, self.z
 end
+
+function Vector3:IsVector3()
+    return true
+end
+
+function ToVector3(obj,y,z)
+    if not obj then
+        return
+    end
+    if obj.IsVector3 then  -- note: specifically not a function call! 
+        return obj
+    end
+    if type(obj) == "table" then
+        return Vector3(tonumber(obj[1]),tonumber(obj[2]),tonumber(obj[3]))
+    else
+        return Vector3(tonumber(obj),tonumber(y),tonumber(z))
+    end
+end
+

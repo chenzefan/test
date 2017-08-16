@@ -9,6 +9,7 @@
 --
 
 require "class"
+require "util"
 
 Translator = Class(function(self) 
 	self.languages = {}
@@ -27,7 +28,8 @@ function Translator:LoadPOFile(fname,lang)
 if self.dbfile then self.dbfile:write("Translator: Loading PO file: "..fname.."\n") end
 
 	local strings = {}
-	local file = io.open(fname)
+	print("Translator:LoadPOFile - loading file: "..resolvefilepath(fname))
+	local file = io.open(resolvefilepath(fname))
 	if not file then print("Translator:LoadPOFile - Specified language file "..fname.." not found.") return end
 
 	local newformat_flag = false
@@ -39,21 +41,21 @@ if self.dbfile then self.dbfile:write("Translator: Loading PO file: "..fname.."\
 
 		--Skip lines until find an id using new format
 		if newformat_flag and not current_id then
-			local sidx, eidx, c1, c2 = string.find(line, "msgctxt(%s*)\"(%S*)\"")
+			local sidx, eidx, c1, c2 = string.find(line, "^msgctxt(%s*)\"(%S*)\"")
 			if c2 then
 				current_id = c2
 if self.dbfile then self.dbfile:write("Found new format id: "..tostring(c2).."\n") end
 			end
 		--Skip lines until find an id using old format (reference field)
 		elseif not newformat_flag and not current_id then
-			local sidx, eidx, c1, c2 = string.find(line, "%#%:(%s*)(%S*)")
+			local sidx, eidx, c1, c2 = string.find(line, "^%#%:(%s*)(%S*)")
 			if c2 then
 				current_id = c2
 if self.dbfile then self.dbfile:write("Found old format id: "..tostring(c2).."\n") end
 			 end
 		--Gather up parts of translated text (since POedit breaks it up into 80 char strings)
 		elseif msgstr_flag then
-			local sidx, eidx, c1, c2 = string.find(line, "(%s*)\"(.*)\"")
+			local sidx, eidx, c1, c2 = string.find(line, "^(%s*)\"(.*)\"")
 			--Found blank line or next entry (assumes blank line after each entry or at least a #. line)
 			if not c2 then
 				--Store translated text if provided
@@ -70,7 +72,7 @@ if self.dbfile then self.dbfile:write("Found id: "..current_id.."\tFound str: ".
 			end
 		--Have id, so look for translated text
 		elseif current_id then
-			local sidx, eidx, c1, c2 = string.find(line, "msgstr(%s*)\"(.*)\"")
+			local sidx, eidx, c1, c2 = string.find(line, "^msgstr(%s*)\"(.*)\"")
 			--Found multi-line entry so flag to gather it up
 			if c2 and c2 == "" then
 				msgstr_flag = true

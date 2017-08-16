@@ -25,6 +25,7 @@ end)
 function SaveIndex:GetSaveGameName(type, slot)
 
 	local savename = nil
+	type = type or "unknown"
 
 	if type == "cave" then
 		local cavenum = self:GetCurrentCaveNum(slot)

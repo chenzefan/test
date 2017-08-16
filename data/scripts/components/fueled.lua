@@ -132,6 +132,10 @@ function Fueled:GetPercent()
     end
 end
 
+function Fueled:SetPercent(amount)
+    local target = (self.maxfuel * amount)
+    self:DoDelta(target - self.currentfuel)
+end
 
 function Fueled:StartConsuming()
     self.consuming = true

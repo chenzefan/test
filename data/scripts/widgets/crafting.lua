@@ -1,74 +1,27 @@
 require "class"
-require "tilebg"
-require "tabs"
-require "widgets/inventoryslot"
+
+local TileBG = require "widgets/tilebg"
+local InventorySlot = require "widgets/invslot"
+local Image = require "widgets/image"
+local ImageButton = require "widgets/imagebutton"
+local Widget = require "widgets/widget"
+local TabGroup = require "widgets/tabgroup"
+local UIAnim = require "widgets/uianim"
+local Text = require "widgets/text"
+local CraftSlots = require "widgets/craftslots"
+
+require "widgets/widgetutil"
+
 
 CRAFTING_CONSTANTS = 
 {
     CRAFT_POS = 145,
 	TABBAR_HEIGHT = 750,
+	NUM_SLOTS = 7,
 }
 
-local HUD_ATLAS = "images/hud.xml"
 
-local num_slots = 7
-local tab_bg = 
-{
-    normal = "tab_normal.tex",
-    selected = "tab_selected.tex",
-    highlight = "tab_highlight.tex",
-    overlay = "tab_researchable.tex",
-}
-
-local CraftSlots = Class(Widget, function(self, num, owner)
-    Widget._ctor(self, "Crafting")
-    
-    self.slots = {}
-    for k = 1, num do
-        local slot = CraftSlot(HUD_ATLAS, "craft_slot.tex", owner)
-        self.slots[k] = slot
-        self:AddChild(slot)
-    end
-
-end)
-
-function CraftSlots:Clear()
-    for k,v in ipairs(self.slots) do
-        v:Clear()
-    end
-end
-
-function CraftSlots:CloseAll()
-    for k,v in ipairs(self.slots) do
-        v:Close()
-    end
-end
-
-
-function ShouldHint(recipetree, buildertree)
-    for k,v in pairs(recipetree) do
-        if buildertree[tostring(k)] and recipetree[tostring(k)] and
-        recipetree[tostring(k)] > buildertree[tostring(k)] + 1 then
-            return false
-        end
-    end
-    return true
-end
-
-function CanPrototype(recipetree, buildertree)
-    for k,v in pairs(recipetree) do
-        if buildertree[tostring(k)] and recipetree[tostring(k)] and
-        recipetree[tostring(k)] > buildertree[tostring(k)] then
-                return false
-        end
-    end
-    return true
-end
-
-
---------------------------------------------------------------------------------------------
-
-Crafting = Class(Widget, function(self, crafttabs, owner)
+local Crafting = Class(Widget, function(self, crafttabs, owner)
     Widget._ctor(self, "Crafting")
     self.craft_pos = CRAFTING_CONSTANTS.CRAFT_POS
     self.crafttabs = crafttabs
@@ -76,14 +29,14 @@ Crafting = Class(Widget, function(self, crafttabs, owner)
 
 
     self.bg = self:AddChild(TileBG(HUD_ATLAS, "craft_slotbg.tex", "craft_sep.tex", nil, false))
-    self.bg:SetNumTiles(num_slots)
+    self.bg:SetNumTiles(CRAFTING_CONSTANTS.NUM_SLOTS)
 	local slot_w, slot_h = self.bg:GetSlotSize()
     local w, h = self.bg:GetSize()
     self:SetPosition(w/2 + 30, 0, 0)
     
 
     --slots
-    self.craftslots = CraftSlots(num_slots, self.owner)
+    self.craftslots = CraftSlots(CRAFTING_CONSTANTS.NUM_SLOTS, self.owner)
     self:AddChild(self.craftslots)
     for k = 1, #self.craftslots.slots do
 		local slotpos = self.bg:GetSlotPos(k)
@@ -91,28 +44,15 @@ Crafting = Class(Widget, function(self, crafttabs, owner)
     end
 
     --buttons
-    self.downbutton = self:AddChild(Button())
-    self.downbutton:SetImage(HUD_ATLAS, "craft_end_normal.tex")
+    self.downbutton = self:AddChild(ImageButton(HUD_ATLAS, "craft_end_normal.tex", "craft_end_normal_mouseover.tex", "craft_end_normal_disabled.tex"))
     local but_w, but_h = self.downbutton:GetSize()
-
-    self.downbutton:SetMouseOverImage(HUD_ATLAS, "craft_end_normal_mouseover.tex")
     self.downbutton:SetPosition(0, - self.bg.length/2 - but_h/2 + slot_h/2,0)
     self.downbutton:SetOnClick(function() self:ScrollUp() end)
-
-
-    
-    self.upbutton = self:AddChild(Button())
-    self.upbutton:SetImage(HUD_ATLAS, "craft_end_normal.tex")
-    self.upbutton:SetMouseOverImage(HUD_ATLAS, "craft_end_normal_mouseover.tex")
+    self.upbutton = self:AddChild(ImageButton(HUD_ATLAS, "craft_end_normal.tex", "craft_end_normal_mouseover.tex", "craft_end_normal_disabled.tex"))
     self.upbutton:SetScale(Vector3(1, -1, 1))
     self.upbutton:SetPosition(0, self.bg.length/2 + but_h/2 - slot_h/2,0)
     self.upbutton:SetOnClick(function() self:ScrollDown() end)
-    self.upbutton:SetDisabledImage(HUD_ATLAS, "craft_end_normal_disabled.tex")
-    self.downbutton:SetDisabledImage(HUD_ATLAS, "craft_end_normal_disabled.tex")
     
-    --self.inst:ListenForEvent("mousescrollup", function(inst, data) self:ScrollUp() end, self.owner)
-    --self.inst:ListenForEvent("mousescrolldown", function(inst, data) self:ScrollDown() end, self.owner)
-
 	-- start slightly scrolled down
     self.idx = -1
     self.scrolldir = true
@@ -121,8 +61,12 @@ Crafting = Class(Widget, function(self, crafttabs, owner)
 end)
 
 function Crafting:SetFilter(filter)
+    local new_filter = filter ~= self.filter
     self.filter = filter
-    self:UpdateRecipes()
+    
+    if new_filter then 
+        self:UpdateRecipes()
+    end
 end
 
 function Crafting:Close()
@@ -141,7 +85,7 @@ end
 
 function Crafting:UpdateRecipes()
     self.craftslots:Clear()
-    if self.owner.components.builder then
+    if self.owner and self.owner.components.builder then
         
         local recipes = GetAllRecipes()
         --local recipes = self.owner.components.builder.recipes
@@ -150,7 +94,7 @@ function Crafting:UpdateRecipes()
         
         for k,v in pairs(recipes) do
             local knows = self.owner.components.builder:KnowsRecipe(v.name)
-            local show = ((not self.filter) or self.filter(v.name)) and (knows or ShouldHint(v.level, self.owner.components.builder.accessible_tech_trees))
+            local show = ((not self.filter) or self.filter(v.name)) and (knows or ShouldHintRecipe(v.level, self.owner.components.builder.accessible_tech_trees))
             if show then
                 table.insert(self.valid_recipes, v)
             end
@@ -159,10 +103,10 @@ function Crafting:UpdateRecipes()
         
         local shown_num = 0
 
-        local num = math.min(num_slots, #self.valid_recipes)
+        local num = math.min(CRAFTING_CONSTANTS.NUM_SLOTS, #self.valid_recipes)
 
-        if self.idx > #self.valid_recipes+2-num_slots then
-            self.idx = #self.valid_recipes+2-num_slots -- the +2 is because of the blank at either end, effectively "two more recipes"
+        if self.idx > #self.valid_recipes+2-CRAFTING_CONSTANTS.NUM_SLOTS then
+            self.idx = #self.valid_recipes+2-CRAFTING_CONSTANTS.NUM_SLOTS -- the +2 is because of the blank at either end, effectively "two more recipes"
         end
         if self.idx < 0 then
             self.idx = 0
@@ -177,7 +121,7 @@ function Crafting:UpdateRecipes()
                 
                 local show = (not self.filter) or self.filter(recipe.name) 
                 if show then
-                    local slot = self.craftslots.slots[num_slots - k]
+                    local slot = self.craftslots.slots[CRAFTING_CONSTANTS.NUM_SLOTS - k]
                     if slot then
                         slot:SetRecipe( recipe.name )
                         shown_num = shown_num + 1
@@ -200,9 +144,9 @@ function Crafting:UpdateRecipes()
             self.upbutton:Disable()
         end
 
-        --print (num_slots, self.idx, #self.valid_recipes)
+        --print (CRAFTING_CONSTANTS.NUM_SLOTS, self.idx, #self.valid_recipes)
         
-        if (num_slots-2)+self.idx < #self.valid_recipes then
+        if (CRAFTING_CONSTANTS.NUM_SLOTS-2)+self.idx < #self.valid_recipes then
             self.downbutton:Enable()
         else
             self.downbutton:Disable()
@@ -213,7 +157,7 @@ end
 
 function Crafting:ScrollUp()
 	if not IsHUDPaused() then
-		self.idx = self.idx + 1
+        self.idx = self.idx + 1
 		self:UpdateRecipes()
 		
 		self.owner.SoundEmitter:PlaySound("dontstarve/HUD/craft_up")
@@ -228,606 +172,4 @@ function Crafting:ScrollDown()
 	end
 end
 
---------------------------------------------------------------------------------------------
-
-
-IngredientUI = Class(Widget, function(self, atlas, image, quantity, on_hand, has_enough, name, owner)
-    Widget._ctor(self, "IngredientUI")
-    
-    --self:SetClickable(false)
-    
-    local hud_atlas = resolvefilepath( "images/hud.xml" )
-    
-    if has_enough then
-        self.bg = self:AddChild(Image(hud_atlas, "inv_slot.tex"))
-    else
-        self.bg = self:AddChild(Image(hud_atlas, "resource_needed.tex"))
-    end
-    
-    self:SetTooltip(name)
-    
-    self.ing = self:AddChild(Image(atlas, image))
-    if quantity then
-
-        if owner and owner.components.builder then
-            quantity = RoundUp(quantity * owner.components.builder.ingredientmod)
-        end
-
-        self.quant = self:AddChild(Text(SMALLNUMBERFONT, 24))
-        self.quant:SetPosition(7,-32, 0)
-        self.quant:SetString(string.format("%d/%d", on_hand,quantity))
-        if not has_enough then
-			self.quant:SetColour(255/255,155/255,155/255,1)
-		end
-    end
-end)
-
---------------------------------------------------------------------------------------------
-
-local function DoRecipeClick(owner, recipe)
-	if recipe and owner and owner.components.builder then
-        local knows = owner.components.builder:KnowsRecipe(recipe.name)
-        local can_build = owner.components.builder:CanBuild(recipe.name)
-        
-        if not can_build then
-            owner:PushEvent("cantbuild", {owner = owner, recipe = recipe})
-            --You might have the materials now. Check again.
-            can_build = owner.components.builder:CanBuild(recipe.name)
-        end
-
-        local buffered = owner.components.builder:IsBuildBuffered(recipe.name)
-        
-        if knows then
-			if buffered then
-				TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/click_move")
-				--owner.HUD.controls.crafttabs.tabs:DeselectAll()
-				if recipe.placer then
-					owner.components.playercontroller:StartBuildPlacementMode(recipe, function(pt) return owner.components.builder:CanBuildAtPoint(pt, recipe) end)
-				else
-					owner.components.builder:MakeRecipe(recipe)
-				end
-			elseif can_build then
-				TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/click_move")			
-				if recipe.placer then
-					--owner.HUD.controls.crafttabs.tabs:DeselectAll()
-					owner.components.builder:BufferBuild(recipe.name)
-					owner.components.playercontroller:StartBuildPlacementMode(recipe, function(pt) return owner.components.builder:CanBuildAtPoint(pt, recipe) end)
-				else
-					owner.components.builder:MakeRecipe(recipe)
-					return true
-				end
-			else
-				return true
-			end
-        else
-			local tech_level = owner.components.builder.accessible_tech_trees
-			
-			if can_build and CanPrototype(recipe.level, tech_level) then
-				owner.SoundEmitter:PlaySound("dontstarve/HUD/research_unlock")
-				
-				
-				local onsuccess = function()
-					owner.components.builder:ActivateCurrentResearchMachine()
-					owner.components.builder:UnlockRecipe(recipe.name)
-				end					
-				
-				if recipe.placer then
-					onsuccess()
-					owner.components.builder:BufferBuild(recipe.name)
-					owner.components.playercontroller:StartBuildPlacementMode(recipe, function(pt) return owner.components.builder:CanBuildAtPoint(pt, recipe) end)
-				else
-					owner.components.builder:MakeRecipe(recipe, nil, onsuccess)
-				end
-			else
-				return true
-			end
-        end
-        
-	end
-end
-
---------------------------------------------------------------------------------------------
-
-RecipePopup = Class(Widget, function(self, parentslot)
-    Widget._ctor(self, "Recipe Popup")
-    
-    self.parentslot = parentslot
-    self.bg = self:AddChild(UIAnim())
-    self.bg:GetAnimState():SetBank("crafting_submenu")
-    self.bg:GetAnimState():SetBuild("crafting_submenu")
-    self.bg:GetAnimState():PlayAnimation("off")
-    
-    self.bg:SetPosition(32,16,0)
-    
-	self.contents = self:AddChild(Widget(""))
-	self.contents:SetPosition(-75,0,0)
-	
-    self.name = self.contents:AddChild(Text(UIFONT, 45))
-    self.name:SetPosition(327, 142, 0)
-
-    self.desc = self.contents:AddChild(Text(BODYTEXTFONT, 30))
-    self.desc:SetPosition(325, -5, 0)
-    self.desc:SetRegionSize(64*3+20,70)
-    self.desc:EnableWordWrap(true)
-    
-    self.ing = {}
-    
-    self.button = self.contents:AddChild(Button())
-    self.button:SetImage("images/ui.xml", "button.tex")
-    self.button:SetMouseOverImage("images/ui.xml", "button_over.tex")
-    self.button:SetDisabledImage("images/ui.xml", "button_disabled.tex")
-    self.button:SetScale(.7,.7,.7)
-    self.button:SetFont(BUTTONFONT)
-    self.button:SetTextSize(45)
-	self.button.text:SetColour(0,0,0,1)
-    self.button:SetOnClick(function() if not DoRecipeClick(self.owner, self.recipe) then self.owner.HUD.controls.crafttabs:Close() end end)
-    
-    
-    self.recipecost = self.contents:AddChild(Text(NUMBERFONT, 40))
-    self.recipecost:SetHAlign(ANCHOR_LEFT)
-    self.recipecost:SetRegionSize(80,50)
-    self.recipecost:SetPosition(420,-115,0)--(375, -115, 0)
-    self.recipecost:SetColour(255/255, 234/255,0/255, 1)
-    
-    
-    
-    self.teaser = self.contents:AddChild(Text(BODYTEXTFONT, 30))
-    self.teaser:SetPosition(325, -100, 0)
-    self.teaser:SetRegionSize(64*3+20,70)
-    self.teaser:EnableWordWrap(true)
-    self.teaser:Hide()
-end)
-
-
-function GetHintTextForRecipe(recipe)
-    local validmachines = {}
-    for k,v in pairs(TUNING.PROTOTYPER_TREES) do
-        local canbuild = CanPrototype(recipe.level, v)
-        if canbuild then
-            table.insert(validmachines, {TREE = tostring(k), SCORE = 0})
-            --return tostring(k)
-        end
-    end
-
-    if #validmachines > 0 then
-        if #validmachines == 1 then
-            --There's only once machine is valid. Return that one.
-            return validmachines[1].TREE
-        end
-
-        --There's more than one machine that gives the valid tech level! We have to find the "lowest" one.
-        for k,v in pairs(validmachines) do
-            for rk,rv in pairs(recipe.level) do
-                if TUNING.PROTOTYPER_TREES[v.TREE][rk] == rv then
-                    v.SCORE = v.SCORE + 1
-                end
-            end
-        end
-
-        -- local bestmachine = nil    
-        -- for each req in recipe.level do
-        --     for m in validmachines do
-        --         if req > 0 and m[req] >= req and m[req] < bestmachine[req] then
-        --             bestmachine = m
-        --         end
-        --     end
-        -- end
-
-
-        table.sort(validmachines, function(a,b) return (a.SCORE) > (b.SCORE) end)
-
-        return validmachines[1].TREE
-    end
-
-    return "CANTRESEARCH"
-end
-
-function RecipePopup:SetRecipe(recipe, owner)
-    --if recipe ~= self.recipe then
-        self.recipe = recipe
-        self.owner = owner
-        
-        local knows = owner.components.builder:KnowsRecipe(recipe.name)
-        local buffered = owner.components.builder:IsBuildBuffered(recipe.name)
-        local can_build = owner.components.builder:CanBuild(recipe.name) or buffered
-        local tech_level = owner.components.builder.accessible_tech_trees
-        local should_hint = not knows and ShouldHint(recipe.level, tech_level) and not CanPrototype(recipe.level, tech_level)
-        
-        self.bg:GetAnimState():PlayAnimation("off")
-        
-        if should_hint then
-			self.recipecost:Hide()
-			self.button:Hide()
-			
-			local hint_text = 
-			{
-				["SCIENCEMACHINE"] = STRINGS.UI.CRAFTING.NEEDSCIENCEMACHINE,
-				["ALCHEMYMACHINE"] = STRINGS.UI.CRAFTING.NEEDALCHEMYENGINE,
-                ["SHADOWMANIPULATOR"] = STRINGS.UI.CRAFTING.NEEDSHADOWMANIPULATOR,
-                ["PRESTIHATITATOR"] = STRINGS.UI.CRAFTING.NEEDPRESTIHATITATOR,
-				["CANTRESEARCH"] = STRINGS.UI.CRAFTING.CANTRESEARCH,
-			}
-			local str = hint_text[GetHintTextForRecipe(recipe)] or "Text not found."
-			self.teaser:SetString(str)
-			self.teaser:Show()
-        elseif knows then
-			self.teaser:Hide()
-			self.recipecost:Hide()
-			self.button:Show()
-			self.button:SetPosition(320, -105, 0)
-			self.button:SetScale(1,1,1)
-			
-			self.button:SetText(buffered and STRINGS.UI.CRAFTING.PLACE or STRINGS.UI.CRAFTING.BUILD)
-			if can_build then
-				self.button:Enable()
-			else
-				self.button:Disable()
-			end
-		else
-		
-			self.teaser:Hide()
-			self.recipecost:Hide()
-			self.button:Show()
-			self.button:SetPosition(320, -115, 0)
-			self.button:SetScale(1,1,1)
-			
-			self.button:SetText(STRINGS.UI.CRAFTING.PROTOTYPE)
-			if can_build then
-				self.button:Enable()
-			else
-				self.button:Disable()
-			end
-			
-		end	
-        
-        self.name:SetString(self.recipe.descname)
-        self.desc:SetString(self.recipe.description)
-        
-        for k,v in pairs(self.ing) do
-            v:Kill()
-        end
-        self.ing = {}
-
-        local center = 330
-        local num = 0
-        for k,v in pairs(recipe.ingredients) do num = num + 1 end
-        local w = 64
-        local div = 10
-        
-        local offset = center
-        if num > 1 then 
-            offset = offset - (w/2 + div)*(num-1)
-        end
-        
-        for k,v in pairs(recipe.ingredients) do
-        
-            local has, num_found = owner.components.inventory:Has(v.type, RoundUp(v.amount * owner.components.builder.ingredientmod))
-            
-            local ing = self.contents:AddChild(IngredientUI(v.atlas, v.type..".tex", v.amount, num_found, has, STRINGS.NAMES[string.upper(v.type)], owner))
-            ing:SetPosition(Vector3(offset, 80, 0))
-            offset = offset + (w+ div)
-            self.ing[k] = ing
-        end
-
-    --end
-end
-
---------------------------------------------------------------------------------------------
-
-
-CraftSlot = Class(Widget, function(self, atlas, bgim, owner)
-    Widget._ctor(self, "Craftslot")
-    self.owner = owner
-	
-	self.atlas = atlas
-    self.bgimage = self:AddChild(Image(atlas, bgim))
-    
-    self:SetMouseOver(function()
-		self:Open()
-    end)
-
-    self:SetMouseOut(function()
-        self:Close()
-    end)
-    
-    self:SetLeftMouseUp( function()
-		if not DoRecipeClick(self.owner, self.recipe) then
-			owner.HUD.controls.crafttabs:Close()
-		end
-    end)
-    
-	self.tile = self:AddChild(RecipeTile(nil))
-	self.fgimage = self:AddChild(Image("images/hud.xml", "craft_slot_locked.tex"))
-    self.fgimage:Hide()
-    
-	self.recipepopup = self:AddChild(RecipePopup(self))
-	self.recipepopup:SetPosition(0,-20,0)
-	self.recipepopup:Hide()
-	
-	local s = 1.25
-	self.recipepopup:SetScale(s,s,s)
-end)
-
-
-function CraftSlot:Clear()
-    self.recipename = nil
-    self.recipe = nil
-    self.canbuild = false
-    
-    if self.tile then
-        self.tile:Hide()
-    end
-	
-	self.fgimage:Hide()
-	--self:HideRecipe()
-end
-
-
-function CraftSlot:Open()
-	self.open = true
-    self:ShowRecipe()
-    self.owner.SoundEmitter:PlaySound("dontstarve/HUD/click_mouseover")
-end
-
-function CraftSlot:Close()
-    self.open = false
-    self:HideRecipe()
-end
-
-function CraftSlot:ShowRecipe()
-    if self.recipe then
-		self.recipepopup:Show()
-        self.recipepopup:SetRecipe(self.recipe, self.owner)
-    end
-end
-
-function CraftSlot:HideRecipe()
-	self.recipepopup:Hide()
-end
-
-
-function CraftSlot:SetRecipe(recipename)
-	self:Show()
-    local recipe = GetRecipe(recipename)
-	local canbuild = self.owner.components.builder:CanBuild(recipename)
-	local knows = self.owner.components.builder:KnowsRecipe(recipename)
-	local buffered = self.owner.components.builder:IsBuildBuffered(recipename)
-
-	--self:HideRecipe()
-	
-    local do_pulse = self.recipename == recipename and not self.canbuild and canbuild
-    self.recipename = recipename
-    self.recipe = GetRecipe(recipename)
-    if self.recipe then
-        self.canbuild = canbuild
-		self.tile:SetRecipe(self.recipe)
-        self.tile:Show()
-
-		if self.fgimage then
-			if knows or recipe.nounlock then
-				self.fgimage:Hide()
-			else
-				local right_level = CanPrototype(self.recipe.level, self.owner.components.builder.accessible_tech_trees)-- self.owner.components.builder.current_tech_level >= self.recipe.level
-				--print("Right_Level for: ", recipename, " ", right_level)
-				local show_highlight = false
-				
-				show_highlight = canbuild and right_level
-				
-				local hud_atlas = resolvefilepath( "images/hud.xml" )
-				
-				if not right_level then
-					self.fgimage:SetTexture(hud_atlas, "craft_slot_locked_nextlevel.tex")
-				elseif show_highlight then
-					self.fgimage:SetTexture(hud_atlas, "craft_slot_locked_highlight.tex")
-				else
-					self.fgimage:SetTexture(hud_atlas, "craft_slot_locked.tex")
-				end
-				
-				self.fgimage:Show()
-			end
-		end
-
-        self.tile:SetCanBuild((buffered or canbuild )and (knows or recipe.nounlock))
-        if self.recipepopup then
-            self.recipepopup:SetRecipe(self.recipe, self.owner)
-        end
-        
-        --self:HideRecipe()
-    end
-end
-
---------------------------------------------------------------------------------------------
-
-RecipeTile = Class(Widget, function(self, recipe)
-    Widget._ctor(self, "RecipeTile")
-	self.img = self:AddChild(Image())
-	self:SetClickable(false)
-	if recipe then
-		self.recipe = recipe
-		self.img:SetTexture(recipe.atlas, recipe.image)
-		--self:MakeNonClickable()
-	end
-end)
-
-function RecipeTile:SetRecipe(recipe)
-    self.recipe = recipe
-    self.img:SetTexture(recipe.atlas, recipe.image)
-end
-
-function RecipeTile:SetCanBuild(canbuild)
-    if canbuild then
-        self.img:SetTint(1,1,1,1)
-    else
-        self.img:SetTint(0,0,0,1)
-    end
-end
-
-
---------------------------------------------------------------------------------------------
-
-
-CraftTabs = Class(Widget, function(self, owner)
-    
-    Widget._ctor(self, "CraftTabs")
-    self.owner = GetPlayer()    
-	self.owner = owner
-
-    self:SetPosition(0,0,0)
-    
-    self.crafting = self:AddChild(Crafting(self, self.owner))
-    self.crafting:Hide()
-    self.bg = self:AddChild(Image("images/hud.xml", "craft_bg.tex"))
-    
-    self.tabs = self:AddChild(TabGroup())
-    self.tabs:SetPosition(-16,0,0)
-
-    self.tabs.onopen = function() self.owner.SoundEmitter:PlaySound("dontstarve/HUD/craft_open") end
-    self.tabs.onchange = function() self.owner.SoundEmitter:PlaySound("dontstarve/HUD/craft_open") end
-    self.tabs.onclose = function() self.owner.SoundEmitter:PlaySound("dontstarve/HUD/craft_close") end
-    self.tabs.onhighlight = function() self.owner.SoundEmitter:PlaySound("dontstarve/HUD/recipe_ready") return .2 end
-    self.tabs.onoverlay = function() self.owner.SoundEmitter:PlaySound("dontstarve/HUD/research_available") return .2 end
-    
-    local tabnames = {}
-    for k,v in pairs(RECIPETABS) do
-        table.insert(tabnames, v)
-    end
-
-    for k,v in pairs(owner.components.builder.custom_tabs) do
-        table.insert(tabnames, v)
-    end
-
-    table.sort(tabnames, function(a,b) return a.sort < b.sort end)
-    
-    self.tabs.spacing = CRAFTING_CONSTANTS.TABBAR_HEIGHT/#tabnames
-    
-    self.tabbyfilter = {}
-    for k,v in ipairs(tabnames) do
-        local tab = self.tabs:AddTab(v.str, resolvefilepath("images/hud.xml"), v.icon_atlas or resolvefilepath("images/hud.xml"), v.icon, tab_bg.normal, tab_bg.selected, tab_bg.highlight, tab_bg.overlay,
-            function() --select fn
-                self.crafting:SetFilter( 
-                    function(recipe)
-                        local rec = GetRecipe(recipe)
-                        
-                        return rec and rec.tab == v
-                    end)
-                self.crafting:Open() 
-                
-            end, 
-            function() --deselect fn
-                self.crafting:Close()
-            end)
-        self.tabbyfilter[v] = tab
-        
-    end
-    
-    self.inst:ListenForEvent("techtreechange", function(inst, data) self:UpdateRecipes() end, self.owner)
-    self.inst:ListenForEvent("itemget", function(inst, data) self:UpdateRecipes() end, self.owner)
-    self.inst:ListenForEvent("itemlose", function(inst, data) self:UpdateRecipes() end, self.owner)
-    self.inst:ListenForEvent("stacksizechange", function(inst, data) self:UpdateRecipes() end, self.owner)
-    self.inst:ListenForEvent("unlockrecipe", function(inst, data) self:UpdateRecipes() end, self.owner)
-end)
-
-function CraftTabs:Close()
-	self.tabs:DeselectAll()
-end
-
-function CraftTabs:Update()
-
-
-	local x = TheInput:GetScreenPosition().x
-	local w,h = TheSim:GetScreenSize()
-	if x > w*.33 then
-		self:Close()
-	end
-
-	if self.needtoupdate then
-		self:DoUpdateRecipes()
-	end
-	
-end
-
-function CraftTabs:UpdateRecipes()
-	self.needtoupdate = true
-end
-
-function CraftTabs:DoUpdateRecipes()
-	if self.needtoupdate then
-		self.needtoupdate = false	
-		local tabs_to_highlight = {}
-		local tabs_to_overlay = {}
-		local valid_tabs = {}
-	    
-		for k,v in pairs(self.tabbyfilter) do
-			tabs_to_highlight[v] = 0
-			tabs_to_overlay[v] = 0
-			valid_tabs[v] = false
-		end
-	    
-		if self.owner.components.builder then
-			local current_research_level = self.owner.components.builder.accessible_tech_trees or NO_TECH
-			
-			
-			local recipes = GetAllRecipes()
-			for k,rec in pairs(recipes) do
-
-				local tab = self.tabbyfilter[rec.tab]
-				local has_researched = self.owner.components.builder:KnowsRecipe(rec.name)
-				
-				local can_see = has_researched or CanPrototype(rec.level, current_research_level)
-				local can_build = self.owner.components.builder:CanBuild(rec.name)
-				local can_research = false
-				
-				can_research = not has_researched and can_build and CanPrototype(rec.level, current_research_level)
-	            
-	            valid_tabs[tab] = valid_tabs[tab] or can_see
-	            
-				if can_build and has_researched then
-					if tab then
-						tabs_to_highlight[tab] = 1 + (tabs_to_highlight[tab] or 0)
-					end
-				end
-	            
-				if can_research then
-					if tab then
-						tabs_to_overlay[tab] = 1 + (tabs_to_overlay[tab] or 0)
-					end
-				end
-				
-			end
-		end
-
-		local to_select = nil
-		local current_open = nil
-
-		
-		for k,v in pairs(valid_tabs) do
-			if v then
-				self.tabs:ShowTab(k)
-			else
-				self.tabs:HideTab(k)
-			end
-		end
-		
-
-		for k,v in pairs(tabs_to_highlight) do    
-			if v > 0 then
-				k:Highlight(v)
-			else
-				k:UnHighlight()
-			end
-	        
-		end
-	    
-		for k,v in pairs(tabs_to_overlay) do    
-			if v > 0 then
-				k:Overlay()
-			else
-				k:HideOverlay()
-			end
-		end    
-	    
-		if self.crafting and self.crafting.shown then
-			self.crafting:UpdateRecipes()
-		end
-	end
-end
+return Crafting

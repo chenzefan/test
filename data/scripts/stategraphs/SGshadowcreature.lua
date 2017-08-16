@@ -2,6 +2,7 @@ require("stategraphs/commonstates")
 
 local actionhandlers =
 {
+    ActionHandler(ACTIONS.GOHOME, "action"),
 }
 
 local events=
@@ -156,7 +157,21 @@ local states=
 				inst:Remove()
 			end ),
         },        
-    },    
+    },   
+
+    State{
+        
+        name = "action",
+        onenter = function(inst, playanim)
+            inst.Physics:Stop()
+            inst:PerformBufferedAction()
+        end,
+        
+        events = 
+        {
+            EventHandler("animover", function(inst) inst.sg:GoToState("idle") end)
+        },
+    },  
 }
 CommonStates.AddWalkStates(states)
 CommonStates.AddIdle(states)

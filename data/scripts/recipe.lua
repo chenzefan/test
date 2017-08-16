@@ -1,10 +1,11 @@
 require "class"
 require "util"
 
-Ingredient = Class(function(self, type, amount)
+Ingredient = Class(function(self, type, amount, atlas)
     self.type = type
     self.amount = amount
-   	self.atlas = resolvefilepath("images/inventoryimages.xml")
+	self.atlas = (atlas and resolvefilepath(atlas))
+					or resolvefilepath("images/inventoryimages.xml")
 end)
 
 local num = 0

@@ -6,7 +6,10 @@ local assets =
 local prefabs =
 {
     "rocks",
-    "marble",
+    "thulecite",
+    "cutstone",
+    "trinket_6",
+    "gears",
     "nightmarefuel",
     "greengem",
     "orangegem",
@@ -17,7 +20,8 @@ local function workcallback(inst, worker, workleft)
 	local pt = Point(inst.Transform:GetWorldPosition())
 	if workleft <= 0 then
 		inst.SoundEmitter:PlaySound("dontstarve/wilson/rock_break")
-		inst.components.lootdropper:DropLoot(pt)
+        inst.components.lootdropper:DropLoot()
+	    SpawnPrefab("collapse_small").Transform:SetPosition(inst.Transform:GetWorldPosition())
 		inst:Remove()
 	else				
 		if workleft < TUNING.ROCKS_MINE*(1/3) then
@@ -45,13 +49,29 @@ local function common_fn()
 	--minimap:SetIcon( "rock.png" )
 
 	inst:AddComponent("lootdropper") 
+    inst.components.lootdropper:SetLoot({"rocks"})
+    inst.components.lootdropper.numrandomloot = 1
+    inst.components.lootdropper:AddRandomLoot("rocks"         , 0.99)
+    inst.components.lootdropper:AddRandomLoot("cutstone"      , 0.10)
+	inst.components.lootdropper:AddRandomLoot("trinket_6"     , 0.10) -- frayed wires
+	inst.components.lootdropper:AddRandomLoot("gears"         , 0.01)
+	inst.components.lootdropper:AddRandomLoot("greengem"      , 0.01)
+	inst.components.lootdropper:AddRandomLoot("yellowgem"     , 0.01)
+	inst.components.lootdropper:AddRandomLoot("orangegem"     , 0.01)
+	inst.components.lootdropper:AddRandomLoot("nightmarefuel" , 0.01)
+    if GetWorld() and GetWorld():IsCave() and GetWorld().topology.level_number == 2 then  -- ruins
+        inst.components.lootdropper:AddRandomLoot("thulecite" , 0.01)
+    end
 	
 	inst:AddComponent("workable")
 	inst.components.workable:SetWorkAction(ACTIONS.MINE)
 
 	inst.components.workable:SetOnWorkCallback(workcallback)         
 
+    inst:AddComponent("named")
+    inst.components.named:SetName(STRINGS.NAMES["RUBBLE"])
 	inst:AddComponent("inspectable")
+    inst.components.inspectable.nameoverride = "rubble"
 	MakeSnowCovered(inst, .01)    
 
 	return inst

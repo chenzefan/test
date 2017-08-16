@@ -99,6 +99,11 @@ local function ConvertStaticLayoutToLayout(layoutsrc, additionalProps)
 				end
 
 				table.insert(layout.layout[obj.type], {x=x, y=y, properties=properties, width=width, height=height})				
+			
+			end
+
+			if layout.initfn then
+				layout.initfn(layout.layout)
 			end
 		end
 	end

@@ -1,5 +1,7 @@
-require "uianim"
+local UIAnim = require "widgets/uianim"
+local Text = require "widgets/text"
 local easing = require "easing"
+local Widget = require "widgets/widget"
 
 local Badge = Class(Widget, function(self, anim, owner)
     
@@ -33,15 +35,17 @@ local Badge = Class(Widget, function(self, anim, owner)
     self.num:SetPosition(5, 0, 0)
     self.num:Hide()
     
-    self.anim:SetMouseOver( function()
-        self.num:Show()
-    end)
-
-    self.anim:SetMouseOut( function()
-        self.num:Hide()
-    end)
-    
 end)
+
+function Badge:OnGainFocus()
+    Badge._base.OnGainFocus(self)
+    self.num:Show()
+end
+
+function Badge:OnLoseFocus()
+    Badge._base.OnLoseFocus(self)
+    self.num:Hide()
+end
 
 function Badge:SetPercent(val, max)
     val = val or self.percent

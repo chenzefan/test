@@ -1,11 +1,14 @@
-require "screen"
-require "button"
-require "animbutton"
-require "image"
-require "uianim"
+local Screen = require "widgets/screen"
+local Button = require "widgets/button"
+local AnimButton = require "widgets/animbutton"
+local Menu = require "widgets/menu"
+local Text = require "widgets/text"
+local Image = require "widgets/image"
+local UIAnim = require "widgets/uianim"
+local Widget = require "widgets/widget"
 
 
-PopupDialogScreen = Class(Screen, function(self, title, text, buttons, timeout)
+PopupDialogScreen = Class(Screen, function(self, title, text, buttons)
 	Screen._ctor(self, "PopupDialogScreen")
 
 	--darken everything behind the dialog
@@ -45,64 +48,28 @@ PopupDialogScreen = Class(Screen, function(self, title, text, buttons, timeout)
     self.text:SetString(text)
     self.text:EnableWordWrap(true)
     self.text:SetRegionSize(480, 70)
-    
-	
-	--create the menu itself
-	local button_w = 200
-	local space_between = 20
-	local spacing = button_w + space_between
-	
-	self.menu = self.proot:AddChild(Widget("menu"))
-	local total_w = #buttons*button_w
-	if #buttons > 1 then
-		total_w = total_w + space_between*(#buttons-1) 
-	end
-	
-	self.menu:SetPosition(-(total_w / 2) + button_w/2, -65,0) 
-	
-	local pos = Vector3(0,0,0)
-	for k,v in ipairs(buttons) do
-		local button = self.menu:AddChild(AnimButton("button"))
-	    button:SetPosition(pos)
-	    button:SetText(v.text)
-	    button:SetOnClick( function() TheFrontEnd:PopScreen(self) v.cb() end )
-		button.text:SetColour(0,0,0,1)
-	    button:SetFont(BUTTONFONT)
-	    button:SetTextSize(40)    
-	    pos = pos + Vector3(spacing, 0, 0)  
-	end
+  
+    local spacing = 200
 
-	if timeout then
-		self.timeout = timeout
-	end
-	
+	self.menu = self.proot:AddChild(Menu(buttons, spacing, true))
+	self.menu:SetPosition(-(spacing*(#buttons-1))/2, -65, 0) 
 	self.buttons = buttons
+	self.default_focus = self.menu
 end)
 
 
 
-function PopupDialogScreen:OnUpdate( dt )
-	if self.timeout then
-		self.timeout.timeout = self.timeout.timeout - dt
-		if self.timeout.timeout <= 0 then
-			self.timeout.cb()
-		end
-	end
-	return true
+function PopupDialogScreen:OnControl(control, down)
+    if PopupDialogScreen._base.OnControl(self,control, down) then return true end
+    
+    if control == CONTROL_CANCEL and not down then    
+        if #self.buttons > 1 and self.buttons[#self.buttons] then
+            self.buttons[#self.buttons].cb()
+            return true
+        end
+    end
 end
 
-
-function PopupDialogScreen:OnKeyUp( key )
-	if key == KEY_ENTER then
-		if self.buttons[1] then
-			TheFrontEnd:PopScreen(self) self.buttons[1].cb()
-		end
-	elseif key == KEY_ESCAPE then -- Last button
-		if #self.buttons > 1 and self.buttons[#self.buttons] then
-			TheFrontEnd:PopScreen(self) self.buttons[#self.buttons].cb()
-		end
-	end
-end
 
 function PopupDialogScreen:Close()
 	TheFrontEnd:PopScreen(self)

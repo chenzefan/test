@@ -82,6 +82,8 @@ local common_prefabs =
     "chessjunk1",
     "chessjunk2",
     "chessjunk3",
+    "statue_transition_2",
+    "statue_transition",
 }
 
 local assets =
@@ -112,7 +114,7 @@ end
 
 local function fn(Sim)
 	local inst = CreateEntity()
-
+	
 	inst:AddTag( "ground" )
 	inst:AddTag( "NOCLICK" )
     inst.entity:SetCanSleep(false)
@@ -173,5 +175,5 @@ local function fn(Sim)
     return inst
 end
 
-return Prefab( "world", fn, assets, common_prefabs) 
+return Prefab( "world", fn, assets, common_prefabs, true) 
 

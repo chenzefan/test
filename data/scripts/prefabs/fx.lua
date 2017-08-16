@@ -28,8 +28,8 @@ local function MakeFx(name, bank, build, anim, sound, sounddelay, tint, tintalph
         inst.AnimState:SetBuild(build)
         inst.AnimState:PlayAnimation(anim)
 
-        if tint then
-            inst.AnimState:SetMultColour(tint.x,tint.y,tint.z,tintalpha or 1)
+        if tint or tintalpha then
+            inst.AnimState:SetMultColour((tint and tint.x) or 1,(tint and tint.y)  or 1,(tint and tint.z)  or 1,tintalpha or 1)
         end
 
         inst:AddTag("FX")

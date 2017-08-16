@@ -1,8 +1,11 @@
-require "screen"
-require "button"
-require "animbutton"
-require "image"
-require "uianim"
+local Screen = require "widgets/screen"
+local Button = require "widgets/button"
+local AnimButton = require "widgets/animbutton"
+local Menu = require "widgets/menu"
+local Text = require "widgets/text"
+local Image = require "widgets/image"
+local UIAnim = require "widgets/uianim"
+local Widget = require "widgets/widget"
 
 
 ScriptErrorScreen = Class(Screen, function(self, title, text, buttons, texthalign, additionaltext, textsize, timeout)
@@ -55,50 +58,34 @@ ScriptErrorScreen = Class(Screen, function(self, title, text, buttons, texthalig
     if additionaltext then
 	    self.additionaltext = self.root:AddChild(Text(BODYTEXTFONT, 24))
 		self.additionaltext:SetVAlign(ANCHOR_TOP)
-	    self.additionaltext:SetPosition(0, -210, 0)
+	    self.additionaltext:SetPosition(0, -150, 0)
 	    self.additionaltext:SetString(additionaltext)
 	    self.additionaltext:EnableWordWrap(true)
 	    self.additionaltext:SetRegionSize(480*2, 100)
     end
+
+	self.version = self:AddChild(Text(BODYTEXTFONT, 20))
+	--self.version:SetHRegPoint(ANCHOR_LEFT)
+	--self.version:SetVRegPoint(ANCHOR_BOTTOM)
+	self.version:SetHAnchor(ANCHOR_LEFT)
+	self.version:SetVAnchor(ANCHOR_BOTTOM)
+	self.version:SetHAlign(ANCHOR_LEFT)
+	self.version:SetVAlign(ANCHOR_BOTTOM)
+	self.version:SetRegionSize(200, 40)
+	self.version:SetPosition(110, 30, 0)
+	self.version:SetString("Rev. "..APP_VERSION.." "..PLATFORM)
 	
 	--create the menu itself
 	local button_w = 200
 	local space_between = 20
 	local spacing = button_w + space_between
 	
-	self.menu = self.root:AddChild(Widget("menu"))
-	local total_w = #buttons*button_w
-	if #buttons > 1 then
-		total_w = total_w + space_between*(#buttons-1) 
-	end
-	
-	
-	self.menu:SetPosition(-(total_w / 2) + button_w/2, -120,0) 
-	
-	local pos = Vector3(0,0,0)
-	for k,v in ipairs(buttons) do
-		local button = self.menu:AddChild(AnimButton("button"))
-	    button:SetPosition(pos)
-	    button:SetText(v.text)
-	    if v.nopop == true then
-	    	button:SetOnClick( function() v.cb() end )
-	    else
-	    	button:SetOnClick( function() TheFrontEnd:PopScreen(self) v.cb() end )
-	    end
-		button.text:SetColour(0,0,0,1)
-	    button:SetFont(BUTTONFONT)
-	    button:SetTextSize(40)    
-	    pos = pos + Vector3(spacing, 0, 0)  
-	end
+	self.menu = self.root:AddChild(Menu(buttons, 200, true))
+	self.menu:SetHRegPoint(ANCHOR_MIDDLE)
+	self.menu:SetPosition(0, -250, 0)
 
-	if timeout then
-		self.timeout = timeout
-	end
-	
-	self.buttons = buttons
+	self.default_focus = self.menu
 end)
-
-
 
 function ScriptErrorScreen:OnUpdate( dt )
 	if self.timeout then
@@ -108,17 +95,4 @@ function ScriptErrorScreen:OnUpdate( dt )
 		end
 	end
 	return true
-end
-
-
-function ScriptErrorScreen:OnKeyUp( key )
-	if key == KEY_ENTER then
-		if self.buttons[1] then
-			TheFrontEnd:PopScreen(self) self.buttons[1].cb()
-		end
-	elseif key == KEY_ESCAPE then -- Last button
-		if #self.buttons > 1 and self.buttons[#self.buttons] then
-			TheFrontEnd:PopScreen(self) self.buttons[#self.buttons].cb()
-		end
-	end
 end

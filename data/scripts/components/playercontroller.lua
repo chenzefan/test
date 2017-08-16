@@ -4,7 +4,7 @@ local easing = require "easing"
 
 local trace = function() end
 
-local CLICK_WALK_TIME = .5
+local START_DRAG_TIME = (1/30)*8
 
 local CameraRight = TheCamera:GetRightVec()
 local CameraDown = TheCamera:GetDownVec()
@@ -18,44 +18,46 @@ local PlayerController = Class(function(self, inst)
     self.inst = inst
     self.enabled = true
     
-    
-    self.inputhandlers = {}
-    
-    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_PRIMARY, function(isPressed) if isPressed then self:OnLeftClick() else self:OnLeftUp() end end))
-    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_SECONDARY, function(isPressed) if isPressed then self:OnRightClick() end end))    
-    --table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_INSPECT, function(isPressed) if isPressed then self:OnLeftClick() end end))    
-    --table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_ATTACK, function(isPressed) if isPressed then self:OnPressAction() end end))            
-    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_ACTION, function(isPressed) if isPressed then self:OnPressAction() end end))            
-    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_ROTATE_LEFT, function(isPressed) if isPressed then self:RotLeft() end end))
-    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_ROTATE_RIGHT, function(isPressed) if isPressed then self:RotRight() end end))
-    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_ZOOM_IN, function(isPressed) if isPressed and not IsHUDPaused() and TheCamera:CanControl() then TheCamera:ZoomIn() end end))
-    table.insert(self.inputhandlers, TheInput:AddControlHandler(CONTROL_ZOOM_OUT, function(isPressed) if isPressed and not IsHUDPaused() and TheCamera:CanControl() then TheCamera:ZoomOut() end end))
-
-    table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_P, function() if TheInput:IsKeyDown(KEY_CTRL) then TheCamera:SetPaused(not TheCamera.paused) end end))
-    table.insert(self.inputhandlers, TheInput:AddKeyDownHandler(KEY_H, function() 
-		if TheInput:IsKeyDown(KEY_CTRL) then
-			if self.inst.HUD.shown then 
-				self.inst.HUD:Hide() 
-			else 
-				self.inst.HUD:Show() 
-			end 
-		end
-	end))
-
-	table.insert(self.inputhandlers, TheInput:AddGestureHandler(GESTURE_ZOOM_IN, function() if not IsHUDPaused() and TheCamera:CanControl() then TheCamera:ZoomIn() end end))
-    table.insert(self.inputhandlers, TheInput:AddGestureHandler(GESTURE_ZOOM_OUT, function() if not IsHUDPaused() and TheCamera:CanControl() then TheCamera:ZoomOut() end end))
-    table.insert(self.inputhandlers, TheInput:AddGestureHandler(GESTURE_ROTATE_LEFT, function() if not IsHUDPaused() and TheCamera:CanControl() then  TheCamera:SetHeadingTarget(TheCamera:GetHeadingTarget() + 30) UpdateCameraHeadings() end end))
-    table.insert(self.inputhandlers, TheInput:AddGestureHandler(GESTURE_ROTATE_RIGHT, function() if not IsHUDPaused() and TheCamera:CanControl() then  TheCamera:SetHeadingTarget(TheCamera:GetHeadingTarget() - 30) UpdateCameraHeadings() end end))
-
-	self.inst:ListenForEvent( "death", function() TheInput:EnableMouseovers() end)
+    self.handler = TheInput:AddGeneralControlHandler(function(control, value) self:OnControl(control, value) end)
     self.inst:StartUpdatingComponent(self)
     self.draggingonground = false
     self.startdragtestpos = nil
     self.startdragtime = nil
 end)
 
+function PlayerController:OnControl(control, down)
+
+	if not self.enabled then return end
+	if not IsHUDPaused() then
+
+		if control == CONTROL_PRIMARY then
+			self:OnLeftClick(down)
+			return 
+		elseif control == CONTROL_SECONDARY then
+			self:OnRightClick(down)
+			return 
+		end
+		
+		if down then
+			if control == CONTROL_INSPECT then
+				self:DoInspectButton()
+			elseif control == CONTROL_ACTION then
+				if TheInput:IsControlPressed(CONTROL_FORCE_ATTACK) then
+					self:DoAttackButton()	
+				else
+					self:DoActionButton()
+				end
+			elseif control == CONTROL_ATTACK then
+				self:DoAttackButton()
+			end
+		end
+	end
+
+end
+
+
 function PlayerController:RotLeft()
-	local rotamount = GetWorld():IsCave() and 22.5 or 45
+	local rotamount = 90-- GetWorld():IsCave() and 22.5 or 45
 	if TheCamera:CanControl() then  
 		
 		if IsHUDPaused() then
@@ -71,7 +73,7 @@ function PlayerController:RotLeft()
 end
 
 function PlayerController:RotRight()
-	local rotamount = GetWorld():IsCave() and 22.5 or 45
+	local rotamount = 90--GetWorld():IsCave() and 22.5 or 45
 	if TheCamera:CanControl() then  
 		
 		if IsHUDPaused() then
@@ -87,11 +89,8 @@ function PlayerController:RotRight()
 end
 
 function PlayerController:OnRemoveEntity()
-    for k,v in pairs(self.inputhandlers) do
-        v:Remove()
-    end
+    self.handler:Remove()
 end
-
 
 function PlayerController:GetHoverTextOverride()
 	if self.placer_recipe then
@@ -128,20 +127,25 @@ end
 function PlayerController:GetAttackTarget(force_attack)
 
 	local x,y,z = self.inst.Transform:GetWorldPosition()
-	local rad = force_attack and 8 or 6 
-	local nearby_ents = TheSim:FindEntities(x,y,z, rad)
+	
+	local rad = self.inst.components.combat:GetAttackRange()
+	--To deal with entity collision boxes we need to pad the radius.
+	local nearby_ents = TheSim:FindEntities(x,y,z, rad + 5)
 	local tool = self.inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
 	local has_weapon = tool and tool.components.weapon 
 	
+	local playerRad = self.inst.Physics:GetRadius()
+	
 	for k,guy in ipairs(nearby_ents) do
-		
 		if guy ~= self.inst and
 		   guy:IsValid() and 
 		   not guy:IsInLimbo() and
 		   not (guy.sg and guy.sg:HasStateTag("invisible")) and
 		   guy.components.health and not guy.components.health:IsDead() and 
 		   guy.components.combat and guy.components.combat:CanBeAttacked(self.inst) and
-		   not (guy.components.follower and guy.components.follower.leader == self.inst) then
+		   not (guy.components.follower and guy.components.follower.leader == self.inst) and
+		   --Now we ensure the target is in range.
+		   distsq(guy:GetPosition(), self.inst:GetPosition()) <= math.pow(rad + playerRad + guy.Physics:GetRadius() + 0.1 , 2) then
 				if (guy:HasTag("monster") and has_weapon) or
 					guy.components.combat.target == self.inst or
 					force_attack then
@@ -153,14 +157,20 @@ function PlayerController:GetAttackTarget(force_attack)
 
 end
 
-
 --
 
-function PlayerController:OnPressAction()
+function PlayerController:DoAttackButton()
+	
+	local attack_target = self:GetAttackTarget(true) 			
+	local action = BufferedAction(self.inst, attack_target, ACTIONS.FORCEATTACK)
+	self.inst.components.locomotor:PushAction(action, true)
 
+end
+
+
+function PlayerController:GetActionButtonAction()
 	if self.actionbuttonoverride then
-		self.actionbuttonoverride(self.inst)
-		return
+		return self.actionbuttonoverride(self.inst)
 	end
 
 	if self.enabled and not (self.inst.sg:HasStateTag("working") or self.inst.sg:HasStateTag("doing")) then
@@ -168,8 +178,7 @@ function PlayerController:OnPressAction()
 		local tool = self.inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
 
 		--bug catching (has to go before combat)
-		local force_attack = TheInput:IsControlPressed(CONTROL_ATTACK)
-		if tool and tool.components.tool and tool.components.tool:CanDoAction(ACTIONS.NET) and not force_attack then
+		if tool and tool.components.tool and tool.components.tool:CanDoAction(ACTIONS.NET) then
 			local target = FindEntity(self.inst, 5, 
 				function(guy) 
 					return  guy.components.health and not guy.components.health:IsDead() and 
@@ -177,21 +186,11 @@ function PlayerController:OnPressAction()
 							guy.components.workable.action == ACTIONS.NET
 				end)
 			if target then
-			    local action = BufferedAction(self.inst, target, ACTIONS.NET, tool)
-				self.inst.components.locomotor:PushAction(action, true)
-				return
+			    return BufferedAction(self.inst, target, ACTIONS.NET, tool)
 			end
 		end
 			
-		local attack_target = self:GetAttackTarget(force_attack) 			
-		if attack_target then
-			if self.inst.components.combat.target ~= attack_target or self.inst.sg:HasStateTag("idle") then
-				local action = BufferedAction(self.inst, attack_target, ACTIONS.ATTACK)
-				self.inst.components.locomotor:PushAction(action, true)
-			end
-			return
-		end
-		 
+		
 		--catching
 		local rad = 8
 		local projectile = FindEntity(self.inst, rad, function(guy)
@@ -201,11 +200,10 @@ function PlayerController:OnPressAction()
 		           and self.inst.components.catcher:CanCatch()
 		end)
 		if projectile then
-			self.inst.components.locomotor:PushAction(BufferedAction(self.inst, projectile, ACTIONS.CATCH), true)
-			return
+			return BufferedAction(self.inst, projectile, ACTIONS.CATCH)
 		end
 		
-		rad = 6
+		rad = self.directwalking and 3 or 10
 		--pickup
 		local pickup = FindEntity(self.inst, rad, function(guy) return (guy.components.inventoryitem and guy.components.inventoryitem.canbepickedup) or
 																		(tool and tool.components.tool and guy.components.workable and tool.components.tool:CanDoAction(guy.components.workable.action)) or
@@ -236,20 +234,44 @@ function PlayerController:OnPressAction()
 			end
 			
 			if action then
-			    self.inst.components.locomotor:PushAction(BufferedAction(self.inst, pickup, action, tool), true)
+			    local ba = BufferedAction(self.inst, pickup, action, tool)
+			    ba.distance = self.directwalking and rad or 1
+			    return ba
 			end
-			return
 		end
+	end	
+end
+
+
+function PlayerController:DoActionButton()
+
+	local ba = self:GetActionButtonAction()
+	if ba then
+		self.inst.components.locomotor:PushAction(ba, true)
 	end
+	return true
+end
+
+function PlayerController:DoInspectButton()
+	local rad = 8
+	local ent = FindEntity(self.inst, rad, function(guy)
+	    return guy.components.inspectable and
+			   guy ~= self.inst
+	end)
+	if ent then
+		self.inst.components.locomotor:PushAction( BufferedAction(self.inst, ent, ACTIONS.LOOKAT))
+	end
+	return true
 end
 
 
 
 function PlayerController:OnUpdate(dt)
     if not self.enabled then 
-		TheInput:EnableMouseovers()
 		return 
     end  
+
+	self:DoCameraControl()    
 
 	local active_item = self.inst.components.inventory:GetActiveItem()
 	
@@ -307,139 +329,130 @@ function PlayerController:OnUpdate(dt)
 			self.deployplacer = nil
 		end
 	end
-	    
-    --if self.placer_recipe then return end
 
-    -- if self.startdragtestpos and not self.draggingonground then
-    --     local pt = TheInput:GetWorldPosition()
-    --     if distsq(pt, self.startdragtestpos) > 1.5*1.5 then
-    --         self.draggingonground = true
-    --     end
-    -- end
     
     if self.startdragtime and not self.draggingonground then
         local now = GetTime()
-        if now - self.startdragtime > CLICK_WALK_TIME then
+        if now - self.startdragtime > START_DRAG_TIME then
             self.draggingonground = true
         end
     end
 
+	if self.draggingonground and TheFrontEnd:GetFocusWidget() ~= self.inst.HUD then
+		self.draggingonground = false
+		self.inst.components.locomotor:Stop()
+	end
+
 	if not self.inst.sg:HasStateTag("busy") then
-		if self.startdragtime then
+		
+		if self.draggingonground and not self:WalkButtonDown() then
 			local pt = TheInput:GetWorldPosition()
 			local dst = distsq(pt, Vector3(self.inst.Transform:GetWorldPosition()))
+
 			if dst > 1 then
 				local angle = self.inst:GetAngleToPoint(pt)
-				--self.inst.components.locomotor:GoToPoint(pt, nil, true)
-				self.inst.components.locomotor:RunInDirection(angle)
 				self.inst:ClearBufferedAction()
-				TheInput:DisableMouseovers()            
+				self.inst.components.locomotor:RunInDirection(angle)
 			end
 			self.directwalking = false
 		else
-		    if TheInput:IsControlPressed(CONTROL_ACTION) then
-		        self:OnPressAction()
-		    end
-	        
-			--WASD walking!
-			local xwalk = 0
-			local ywalk = 0
-			
-			if TheInput:IsControlPressed(CONTROL_MOVE_UP) then
-				ywalk = ywalk + 1
-			end
-
-			if TheInput:IsControlPressed(CONTROL_MOVE_DOWN) then
-				ywalk = ywalk - 1
-			end
-
-			if TheInput:IsControlPressed(CONTROL_MOVE_LEFT) then
-				xwalk = xwalk - 1
-			end
-	        
-			if TheInput:IsControlPressed(CONTROL_MOVE_RIGHT) then
-				xwalk = xwalk + 1
-			end
-
-			if xwalk == 0 and ywalk == 0 then --We only want to update headings if no keys are pressed.					
-			    CameraRight = TheCamera:GetRightVec()
-				CameraDown = TheCamera:GetDownVec()
-			end
-	        
-			if xwalk ~= 0 or ywalk ~= 0 then
-				--self.inst.components.inventory:DropActiveItem()
-
-				local dir = CameraRight * xwalk - CameraDown * ywalk
-				dir = dir:GetNormalized()
-				--local pt = Vector3(self.inst.Transform:GetWorldPosition()) + dir
-				--self.inst.components.locomotor:GoToPoint(pt, nil, true)
-				local ang = -math.atan2(dir.z, dir.x)/DEGREES
-				self.inst.components.locomotor:WalkInDirection(ang, true)
-				self.directwalking = true
-				self.inst.components.locomotor:SetBufferedAction(nil)
-				self.inst:ClearBufferedAction()
-				
-				if not self.inst.sg:HasStateTag("attack") then
-					self.inst.components.combat:SetTarget(nil)
-				end
-			else
-				if self.directwalking then
-					self.inst.components.locomotor:Stop()
-					self.directwalking = false
-				end
-			end
+	        self:DoDirectWalking()
 		end
     end
     
+	if self.inst.sg:HasStateTag("idle") and TheInput:IsControlPressed(CONTROL_ACTION) then
+	    self:OnControl(CONTROL_ACTION, true)
+	end
+    
+end
+
+function PlayerController:DoDirectWalking()
+	local xwalk = TheInput:GetAnalogControlValue(CONTROL_MOVE_RIGHT) - TheInput:GetAnalogControlValue(CONTROL_MOVE_LEFT)
+	local ywalk = TheInput:GetAnalogControlValue(CONTROL_MOVE_UP) - TheInput:GetAnalogControlValue(CONTROL_MOVE_DOWN)
+	local deadzone = .3
+	local maxthrottle = .9
+	if math.abs(xwalk) < deadzone and math.abs(ywalk) < deadzone then xwalk = 0 ywalk = 0 end
+
+    CameraRight = TheCamera:GetRightVec()
+	CameraDown = TheCamera:GetDownVec()
+    
+	if xwalk ~= 0 or ywalk ~= 0 then
+		
+		--self.inst.components.inventory:DropActiveItem()
+
+		local dir = CameraRight * xwalk - CameraDown * ywalk
+		dir = dir:GetNormalized()
+		--local pt = Vector3(self.inst.Transform:GetWorldPosition()) + dir
+		--self.inst.components.locomotor:GoToPoint(pt, nil, true)
+		local ang = -math.atan2(dir.z, dir.x)/DEGREES
+		
+		self.inst:ClearBufferedAction()
+		self.inst.components.locomotor:SetBufferedAction(nil)
+		self.inst.components.locomotor:RunInDirection(ang)
+		self.directwalking = true
+		
+		if not self.inst.sg:HasStateTag("attack") then
+			self.inst.components.combat:SetTarget(nil)
+		end
+	else
+		if self.directwalking then
+			self.inst.components.locomotor:Stop()
+			self.directwalking = false
+		end
+	end
+end
+
+function PlayerController:WalkButtonDown()
+	return  TheInput:IsControlPressed(CONTROL_MOVE_UP) or TheInput:IsControlPressed(CONTROL_MOVE_DOWN) or TheInput:IsControlPressed(CONTROL_MOVE_LEFT) or TheInput:IsControlPressed(CONTROL_MOVE_RIGHT)
+end
+
+
+function PlayerController:DoCameraControl()
+	--camera controls
+	local time = GetTime()
+
+	local ROT_REPEAT = .25
+	local ZOOM_REPEAT = .1
+
+	if TheCamera:CanControl() then
+		
+		if not self.lastrottime or time - self.lastrottime > ROT_REPEAT then
+			
+			if TheInput:IsControlPressed(CONTROL_ROTATE_LEFT) then
+				self:RotLeft()
+				self.lastrottime = time
+			elseif TheInput:IsControlPressed(CONTROL_ROTATE_RIGHT) then
+				self:RotRight()
+				self.lastrottime = time
+			end
+		end
+
+		if not self.lastzoomtime or time - self.lastzoomtime > ZOOM_REPEAT then
+			if TheInput:IsControlPressed(CONTROL_ZOOM_IN) then
+				TheCamera:ZoomIn()
+				self.lastzoomtime = time
+			elseif TheInput:IsControlPressed(CONTROL_ZOOM_OUT) then
+				TheCamera:ZoomOut()
+				self.lastzoomtime = time
+			end
+		end
+	end
+
 end
 
 
 function PlayerController:OnLeftUp()
     
-	Print(VERBOSITY.DEBUG, "OnLeftUp")
-
-	local walk_key_down = TheInput:IsControlPressed(CONTROL_MOVE_UP) or TheInput:IsControlPressed(CONTROL_MOVE_DOWN) or TheInput:IsControlPressed(CONTROL_MOVE_LEFT) or TheInput:IsControlPressed(CONTROL_MOVE_RIGHT)
-
     if not self.enabled then return end    
-    
-    if not self.ignore_left_up and not TheInput:GetHUDEntityUnderMouse() then 
-        if self.inst.components.inventory:GetActiveItem() then
-            self:DoAction()
-        else
-			self.directwalking = false
-   			if self.draggingonground then
-				Print(VERBOSITY.DEBUG, "    stopping")
-				if not walk_key_down then
-					self.inst.components.locomotor:Stop()
-				end
-			elseif self.startdragtime then
-   				Print(VERBOSITY.DEBUG, "    not dragging")
-				local pt = TheInput:GetWorldPosition()
-				local dst = distsq(pt, Vector3(self.inst.Transform:GetWorldPosition()))
-				if dst > 1 then
-					Print(VERBOSITY.DEBUG, "    ending with pathfind")
-					--local angle = self.inst:GetAngleToPoint(pt)
-					self.inst.components.locomotor:GoToPoint(pt, nil, true)
-					--self.inst.components.locomotor:RunInDirection(angle)
-					self.inst:ClearBufferedAction()
-					--TheInput:DisableMouseovers()
-				else
-					Print(VERBOSITY.DEBUG, "    stopping")
-					self.inst.components.locomotor:Stop()
-				end
-			 --    local action = BufferedAction(self.inst, target, ACTIONS.WALKTO)
-				-- self.inst:ClearBufferedAction()
-				-- self.inst.components.locomotor:PushAction(action, true)
 
-			end
-        end
-    end
-
-    self.ignore_left_up = false
-    self.draggingonground = false
-    self.startdragtestpos = nil
-    self.startdragtime = nil
-    TheInput:EnableMouseovers()
+	if self.draggingonground then
+		
+		if not self:WalkButtonDown() then
+			self.inst.components.locomotor:Stop()
+		end
+		self.draggingonground = false
+	end
+	self.startdragtime = nil
 end
 
 
@@ -479,8 +492,10 @@ function PlayerController:DoAction(buffaction)
 end
 
 
-function PlayerController:OnLeftClick()
+function PlayerController:OnLeftClick(down)
     
+	if not down then return self:OnLeftUp() end
+
     self.startdragtime = nil
 
     if not self.enabled then return end
@@ -499,9 +514,6 @@ function PlayerController:OnLeftClick()
 		return
 	end
     
-    if self.inst.components.inventory:GetActiveItem() then
-        self.ignore_left_up = true
-    end
     
     self.inst.components.combat.target = nil
     
@@ -514,6 +526,8 @@ function PlayerController:OnLeftClick()
     if action then
 	    self:DoAction( action )
 	else
+
+		self:DoAction( BufferedAction(self.inst, nil, ACTIONS.WALKTO, nil, TheInput:GetWorldPosition()) ) 		
 	    local clicked = TheInput:GetWorldEntityUnderMouse()
 	    if not clicked then
 	        self.startdragtime = GetTime()
@@ -523,7 +537,9 @@ function PlayerController:OnLeftClick()
 end
 
 
-function PlayerController:OnRightClick()
+function PlayerController:OnRightClick(down)
+
+	if not down then return end
 
     self.startdragtime = nil
 

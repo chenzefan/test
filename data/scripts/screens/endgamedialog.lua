@@ -1,28 +1,11 @@
-require "screen"
-require "button"
-require "animbutton"
-require "image"
-require "uianim"
-
-local function GetGenderStrings()
-	local charactername = GetPlayer().profile:GetValue("characterinthrone") or "wilson"
-	if charactername == "wilson" or
-	charactername == "woodie" or
-	charactername == "waxwell" or
-	charactername == "wolfgang" or
-	charactername == "wes" then
-		return "MALE"
-	elseif charactername == "willow" or
-	charactername == "wendy" or
-	charactername == "wickerbottom" then
-		return "FEMALE"
-	elseif charactername == "wx78" then
-		return "ROBOT"
-	else
-		return "MALE"
-	end
-end
-
+local Screen = require "widgets/screen"
+local Button = require "widgets/button"
+local AnimButton = require "widgets/animbutton"
+local ImageButton = require "widgets/imagebutton"
+local Text = require "widgets/text"
+local Image = require "widgets/image"
+local UIAnim = require "widgets/uianim"
+local Widget = require "widgets/widget"
 
 
 EndGameDialog = Class(Screen, function(self, buttons)
@@ -58,10 +41,12 @@ EndGameDialog = Class(Screen, function(self, buttons)
     self.text = self.proot:AddChild(Text(BODYTEXTFONT, 30))
     self.text:SetVAlign(ANCHOR_TOP)
 
+	local character = GetPlayer().profile:GetValue("characterinthrone") or "wilson"
+
     self.text:SetPosition(0, -60, 0)
     self.text:SetString(STRINGS.UI.ENDGAME.BODY1..
-    	STRINGS.CHARACTER_NAMES[GetPlayer().profile:GetValue("characterinthrone") or "wilson"]..
-    	string.format(STRINGS.UI.ENDGAME.BODY2,STRINGS.UI.GENDERSTRINGS[GetGenderStrings()].ONE , STRINGS.UI.GENDERSTRINGS[GetGenderStrings()].TWO))
+    	STRINGS.CHARACTER_NAMES[character]..
+    	string.format(STRINGS.UI.ENDGAME.BODY2,STRINGS.UI.GENDERSTRINGS[GetGenderStrings(character)].ONE , STRINGS.UI.GENDERSTRINGS[GetGenderStrings(character)].TWO))
     self.text:EnableWordWrap(true)
     self.text:SetRegionSize(700, 350)
     
@@ -81,7 +66,7 @@ EndGameDialog = Class(Screen, function(self, buttons)
 	
 	local pos = Vector3(0,0,0)
 	for k,v in ipairs(buttons) do
-		local button = self.menu:AddChild(AnimButton("button"))
+		local button = self.menu:AddChild(ImageButton())
 	    button:SetPosition(pos)
 	    button:SetText(v.text)
 	    button:SetOnClick( function() TheFrontEnd:PopScreen(self) v.cb() end )
@@ -94,14 +79,3 @@ EndGameDialog = Class(Screen, function(self, buttons)
 	self.buttons = buttons
 end)
 
-function EndGameDialog:OnKeyUp( key )
-	if key == KEY_ENTER then
-		if self.buttons[1] then
-			TheFrontEnd:PopScreen(self) self.buttons[1].cb()
-		end
-	elseif key == KEY_ESCAPE then -- Last button
-		if #self.buttons > 1 and self.buttons[#self.buttons] then
-			TheFrontEnd:PopScreen(self) self.buttons[#self.buttons].cb()
-		end
-	end
-end

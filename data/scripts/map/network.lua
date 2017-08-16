@@ -36,14 +36,14 @@ Graph = Class(function(self, id, args)
     
     self.data = {position={x=0,y=0},old_pos={x=0,y=0}, width=0, height=0, size=0, value= args.default_bg, background=args.background}--value=0.43
 
-	--print("####New node!! ",self.id, self.data)
-	--dumptable(self.data,1)
 
     self.colour = args.colour or {r=1,g=0,b=0,a=1}
 
 	-- a list of layouts to be distributed amongst children
 	self.set_pieces = args.set_pieces
-
+	self.maze_tiles = args.maze_tiles
+	-- print("####New node!! ",self.id, self.maze_tiles)
+	-- dumptable(self.maze_tiles,1)
 	self.MIN_WORMHOLE_ID = 2300000
 end)
 
@@ -465,6 +465,11 @@ end
 function Graph:GetNodeById(id)
 	--print(self.id,"Looking for ", id)
 	assert(id)
+
+	if self.id == id then
+		return self
+	end
+	
 	if self.nodes[id] ~= nil then
 		--print("Found",id)
 		return self.nodes[id]

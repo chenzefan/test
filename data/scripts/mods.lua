@@ -3,7 +3,7 @@ require "screens/scripterrorscreen"
 require "modutil"
 require "prefabs"
 
-MOD_API_VERSION = 2
+MOD_API_VERSION = 3
 
 local function modprint(...)
 	--print(unpack(arg))
@@ -14,7 +14,7 @@ local runmodfn = function(fn,mod,modtype)
 		if fn then
 			local status, r = xpcall( function() return fn(unpack(arg)) end, debug.traceback)
 			if not status then
-				print("error calling "..modtype.." in mod "..mod.modname..": \n"..r)
+				print("error calling "..modtype.." in mod "..ModInfoname(mod.modname)..": \n"..r)
 				ModManager:RemoveBadMod(mod.modname,r)
 				ModManager:DisplayBadMods()
 			else
@@ -29,14 +29,9 @@ ModWrangler = Class(function(self)
 	self.mods = {}
 	self.records = {}
 	self.failedmods = {}
-	self.oldmods = {}
 	self.enabledmods = {}
 	self.loadedprefabs = {}
 end)
-
-function ModWrangler:GetModNames()
-	return self.modnames
-end
 
 function ModWrangler:GetEnabledModNames()
 	return self.enabledmods
@@ -48,10 +43,6 @@ function ModWrangler:GetMod(modname)
 			return mod
 		end
 	end
-end
-
-function ModWrangler:GetModInfo(modname)
-	return self:GetMod(modname).modinfo
 end
 
 function ModWrangler:SetModRecords(records)
@@ -79,6 +70,7 @@ end
 function CreateEnvironment(modname)
 
 	local modutil = require("modutil")
+	require("recipe") -- for Ingredient
 
 	local env = 
 	{
@@ -98,9 +90,7 @@ function CreateEnvironment(modname)
 		MODROOT = "../mods/"..modname.."/",
 		Prefab = Prefab,
 		Asset = Asset,
-
-		-- modutil
-		AddModCharacter = modutil.AddModCharacter
+		Ingredient = Ingredient,
 	}
 
 	env.env = env
@@ -110,7 +100,7 @@ function CreateEnvironment(modname)
 		print("modimport: "..env.MODROOT..modulename)
         local result = kleiloadlua(env.MODROOT..modulename)
 		if type(result) == "string" then
-			error("Error in modimport: "..modname.."!\n"..result)
+			error("Error in modimport: "..ModInfoname(modname).."!\n"..result)
 		else
         	setfenv(result, env.env)
             result()
@@ -122,45 +112,24 @@ function CreateEnvironment(modname)
 	return env
 end
 
-function ModWrangler:LoadMods(modlist, worldgen)
+
+function ModWrangler:LoadMods(worldgen)
 
 	self.worldgen = worldgen or false
 
-	local moddirs = modlist
-	if not moddirs then
-		moddirs = TheSim:GetModDirectoryNames()
+	if not worldgen then
+		KnownModIndex:UpdateModInfo()
 	end
-
-	local modinfoassets = {}
-
+	local moddirs = KnownModIndex:GetModsToLoad(self.worldgen)
+	
 	for i,modname in ipairs(moddirs) do
-		modprint("Found mod "..modname)
+		modprint("Loading mod "..modname)
 		table.insert(self.modnames, modname)
 
-		local initenv = {}
-		local didInit = self:InitializeModInfo(modname, initenv)
+		local initenv = KnownModIndex:GetModInfo(modname)
 		local env = CreateEnvironment(modname)
 		env.modinfo = initenv
 		table.insert( self.mods, env )
-
-		if not didInit then
-			if initenv.old and KnownModIndex:IsModNewlyOld(modname) then
-				modprint("  It's using an old api_version.")
-				KnownModIndex:DisableBecauseOld(modname)
-			elseif initenv.failed then
-				modprint("  But there was an error loading it.")
-				KnownModIndex:DisableBecauseBad(modname)
-			else
-				-- we've already "dealt" with this in the past; if the user
-				-- chooses to enable it, then try loading it!
-			end
-		end
-
-		if env.modinfo.icon and env.modinfo.icon_atlas then
-			table.insert(modinfoassets, Asset("ATLAS", "../mods/"..env.modname.."/"..env.modinfo.icon_atlas))
-			table.insert(modinfoassets, Asset("IMAGE", "../mods/"..env.modname.."/"..env.modinfo.icon))
-		end
-
 	end
 
 	-- Sort the mods by priority, so that "library" mods can load first
@@ -172,100 +141,33 @@ function ModWrangler:LoadMods(modlist, worldgen)
 	table.sort(self.mods, modPrioritySort)
 
 	for i,mod in ipairs(self.mods) do
-		if KnownModIndex:IsModEnabled(mod.modname) then
-			table.insert(self.enabledmods, mod.modname)
-			package.path = "..\\mods\\"..mod.modname.."\\scripts\\?.lua;"..package.path
-			self:InitializeModMain(mod.modname, mod, "modworldgenmain.lua")
-			if not self.worldgen then 
-				-- worldgen has to always run (for customization screen) but modmain can be
-				-- skipped for worldgen. This reduces a lot of issues with missing globals.
-				self:InitializeModMain(mod.modname, mod, "modmain.lua")
-			end
-		else
-			modprint("  ... and it's disabled.")
-		end
-	end
-
-	if not self.worldgen then
-		RegisterPrefabs( Prefab("modbaseprefabs/MODSCREEN", nil, modinfoassets, nil) )
-	end
-end
-
-local RunUntrusted = function(fn,env)
-	setfenv(fn, env)
-	return pcall(fn)
-end
-
-function ModWrangler:InitializeModInfo(modname, env)
-	local fn = kleiloadlua("../mods/"..modname.."/modinfo.lua")
-	if type(fn) == "string" then
-		print("Error loading mod: "..modname.."!\n"..fn)
-		table.insert( self.failedmods, {name=modname,error=fn} )
-		env.failed = true
-		return false
-	elseif not fn then
-		print("Warning loading mod: "..modname.."! Could not find modinfo.lua")
-		table.insert( self.oldmods, {name=modname,error="Cannot find modinfo.lua for mod "..modname} )
-		env.old = true
-		return false
-	else
-		local status, r = RunUntrusted(fn,env)
-
-		if status == false then
-			print("Error loading mod: "..modname.."!\n"..r)
-			table.insert( self.failedmods, {name=modname,error=r} )
-			env.failed = true
-			return false
-		elseif env.api_version == nil or env.api_version < MOD_API_VERSION then
-			local old = "Mod "..modname.." was built for an older version of the game and requires updating. (api_version is version "..tostring(env.api_version)..", game is version "..MOD_API_VERSION..".)"
-			print("Warning loading mod: "..modname.."!\n"..old)
-			table.insert( self.oldmods, {name=modname,error=old} )
-			env.old = true
-			return false
-		elseif env.api_version > MOD_API_VERSION then
-			local old = "api_version for "..modname.." is in the future, please set to the current version. (api_version is version "..env.api_version..", game is version "..MOD_API_VERSION..".)"
-			print("Error loading mod: "..modname.."!\n"..old)
-			table.insert( self.failedmods, {name=modname,error=old} )
-			env.failed = true
-			return false
-		else
-			local checkinfo = { "name", "description", "author", "version", "forumthread", "api_version" }
-			local missing = {}
-			for i,v in ipairs(checkinfo) do
-				if env[v] == nil then
-					table.insert(missing, v)
-				end
-			end
-			if #missing > 0 then
-				local e = "Error loading modinfo.lua. These fields are required: " .. table.concat(missing, ", ")
-				print (e)
-				table.insert( self.failedmods, {name=modname,error=e} )
-				env.failed = true
-				return false
-			else
-				-- the env is an "out reference" so we're done here.
-				return true
-			end
+		table.insert(self.enabledmods, mod.modname)
+		package.path = "..\\mods\\"..mod.modname.."\\scripts\\?.lua;"..package.path
+		self:InitializeModMain(mod.modname, mod, "modworldgenmain.lua")
+		if not self.worldgen then 
+			-- worldgen has to always run (for customization screen) but modmain can be
+			-- skipped for worldgen. This reduces a lot of issues with missing globals.
+			self:InitializeModMain(mod.modname, mod, "modmain.lua")
 		end
 	end
 end
 
 function ModWrangler:InitializeModMain(modname, env, mainfile)
-	print("Loading "..mainfile.." for "..modname)
+	print("Mod: "..ModInfoname(modname), "Loading "..mainfile)
 
 	local fn = kleiloadlua("../mods/"..modname.."/"..mainfile)
 	if type(fn) == "string" then
-		print("Error loading mod: "..modname.."!\n"..fn)
+		print("Mod: "..ModInfoname(modname), "  Error loading mod!\n"..fn.."\n")
 		table.insert( self.failedmods, {name=modname,error=fn} )
 		return false
 	elseif not fn then
-		print("Mod "..modname.." had no "..mainfile..". Skipping.")
+		print("Mod: "..ModInfoname(modname), "  Mod had no "..mainfile..". Skipping.")
 		return true
 	else
-		local status, r = RunUntrusted(fn,env)
+		local status, r = RunInEnvironment(fn,env)
 
 		if status == false then
-			print("Error loading mod: "..modname.."!\n"..r)
+			print("Mod: "..ModInfoname(modname), "  Error loading mod!\n"..r.."\n")
 			table.insert( self.failedmods, {name=modname,error=r} )
 			return false
 		else
@@ -298,21 +200,27 @@ function ModWrangler:DisplayBadMods()
 		for i,failedmod in ipairs(self.failedmods) do
 			KnownModIndex:DisableBecauseBad(failedmod.name)
 			self:GetMod(failedmod.name).modinfo.failed = true
-			print("Disabling",failedmod.name, "because it had an error.")
+			print("Disabling "..ModInfoname(failedmod.name).." because it had an error.")
 		end
-
-		KnownModIndex:Save()
 	end
+	-- There are several flows which may have disabled mods; now is a safe place to save those changes.
+	KnownModIndex:Save()
 
 	if TheFrontEnd then
 		for k,badmod in ipairs(self.failedmods) do
-			TheFrontEnd:PushScreen(
+			TheFrontEnd:DisplayError(
 				ScriptErrorScreen(
 					STRINGS.UI.MAINSCREEN.MODFAILTITLE, 
-					STRINGS.UI.MAINSCREEN.MODFAILDETAIL.." "..badmod.name.."\n"..badmod.error.."\n",
+					STRINGS.UI.MAINSCREEN.MODFAILDETAIL.." "..KnownModIndex:GetModFancyName(badmod.name).."\n"..badmod.error.."\n",
 					{
 						{text=STRINGS.UI.MAINSCREEN.SCRIPTERRORQUIT, cb = function() TheSim:ForceAbort() end},
-						{text=STRINGS.UI.MAINSCREEN.MODFORUMS, nopop=true, cb = function() VisitURL("http://forums.kleientertainment.com/forumdisplay.php?63-Don-t-Starve-Mods-and-tools") end }
+						{text=STRINGS.UI.MAINSCREEN.MODQUIT, cb = function()
+																	KnownModIndex:DisableAllMods()
+																	KnownModIndex:Save(function()
+																		SimReset()
+																	end)
+																end},
+						{text=STRINGS.UI.MAINSCREEN.MODFORUMS, nopop=true, cb = function() VisitURL("http://forums.kleientertainment.com/index.php?/forum/26-dont-starve-mods-and-tools/") end }
 					},
 					ANCHOR_LEFT,
 					STRINGS.UI.MAINSCREEN.MODFAILDETAIL2,
@@ -331,13 +239,13 @@ function ModWrangler:RegisterPrefabs()
 		mod.RegisterPrefabs = RegisterPrefabs
 		mod.Prefabs = {}
 
-		print("Registering prefabs for "..mod.modname)
+		print("Mod: "..ModInfoname(mod.modname), "Registering prefabs")
 
 		-- We initialize the prefabs in the sandbox and collect all the created prefabs back
 		-- into the main world.
 		if mod.PrefabFiles then
 			for i,prefab_path in ipairs(mod.PrefabFiles) do
-				print("  Registering "..mod.modname.." prefab: "..prefab_path)
+				print("Mod: "..ModInfoname(mod.modname), "  Registering prefab: "..prefab_path)
 				local ret = runmodfn( mod.LoadPrefabFile, mod, "LoadPrefabFile" )("prefabs/"..prefab_path)
 				if ret then
 					for i,prefab in ipairs(ret) do
@@ -353,7 +261,7 @@ function ModWrangler:RegisterPrefabs()
 			Prefabs[name] = prefab -- copy the prefabs back into the main environment
 		end
 
-		print("  Registering default mod prefab for "..mod.modname)
+		print("Mod: "..ModInfoname(mod.modname), "  Registering default mod prefab")
 
 		RegisterPrefabs( Prefab("modbaseprefabs/MOD_"..mod.modname, nil, mod.Assets, prefabnames) )
 
@@ -363,9 +271,10 @@ function ModWrangler:RegisterPrefabs()
 	end
 end
 
-function ModWrangler:UnloadPrefabs()
+function ModWrangler:ForceUnloadPrefabs()
 	for i, modname in ipairs( self.loadedprefabs ) do
-		TheSim:UnloadPrefabs({modname})
+		print("unloading prefabs for mod "..ModInfoname(modname))
+		TheSim:ForceUnloadPrefabs({modname})
 	end
 end
 
@@ -379,6 +288,7 @@ function ModWrangler:SetPostEnv()
 	local newmodnames = ""
 	local oldmodnames = ""
 	local failedmodnames = ""
+	local forcemodnames = ""
 
 	if #self.mods > 0 then
 		for i,mod in ipairs(self.mods) do
@@ -386,25 +296,38 @@ function ModWrangler:SetPostEnv()
 			--dumptable(mod.modinfo)
 			if KnownModIndex:IsModNewlyBad(mod.modname) then
 				modprint("@NEWLYBAD")
-				failedmodnames = failedmodnames.."\""..mod.modname.."\" "
+				failedmodnames = failedmodnames.."\""..KnownModIndex:GetModFancyName(mod.modname).."\" "
 			elseif KnownModIndex:IsModNewlyOld(mod.modname) and KnownModIndex:WasModEnabled(mod.modname) then
 					modprint("@NEWLYOLD")
-					oldmodnames = oldmodnames.."\""..mod.modname.."\" "
+					oldmodnames = oldmodnames.."\""..KnownModIndex:GetModFancyName(mod.modname).."\" "
 				--elseif KnownModIndex:IsModNew(mod.modname) then
 					--print("@NEW")
-					--newmodnames = newmodnames.."\""..mod.modname.."\" "
+					--newmodnames = newmodnames.."\""..KnownModIndex:GetModFancyName(mod.modname).."\" "
 				--end
-			elseif KnownModIndex:IsModEnabled(mod.modname) then
-				modprint("@ENABLED")
+			elseif KnownModIndex:IsModForceEnabled(mod.modname) then
+				modprint("@FORCEENABLED")
 				mod.TheFrontEnd = TheFrontEnd
-				mod.Text = Text
 				mod.TheSim = TheSim
 				mod.Point = Point
 				mod.TheGlobalInstance = TheGlobalInstance
 
-				runmodfn( mod.gamepostinit, mod, "gamepostinit" )()
+				for i,modfn in ipairs(mod.postinitfns.GamePostInit) do
+					runmodfn( modfn, mod, "gamepostinit" )()
+				end
 	
-				modnames = modnames.."\""..mod.modname.."\" "
+				forcemodnames = forcemodnames.."\""..KnownModIndex:GetModFancyName(mod.modname).."\" "
+			elseif KnownModIndex:IsModEnabled(mod.modname) then
+				modprint("@ENABLED")
+				mod.TheFrontEnd = TheFrontEnd
+				mod.TheSim = TheSim
+				mod.Point = Point
+				mod.TheGlobalInstance = TheGlobalInstance
+
+				for i,modfn in ipairs(mod.postinitfns.GamePostInit) do
+					runmodfn( modfn, mod, "gamepostinit" )()
+				end
+
+				modnames = modnames.."\""..KnownModIndex:GetModFancyName(mod.modname).."\" "
 			else
 				modprint("@DISABLED")
 			end
@@ -433,56 +356,71 @@ function ModWrangler:SetPostEnv()
 	if newmodnames ~= "" or modnames ~= "" then
 		moddetail = moddetail.. STRINGS.UI.MAINSCREEN.MODDETAIL2.."\n\n"
 	end
+	if forcemodnames ~= "" then
+		moddetail = moddetail.. STRINGS.UI.MAINSCREEN.FORCEMODDETAIL.." "..forcemodnames.."\n\n"
+	end
 
-	if (modnames ~= "" or newmodnames ~= "" or oldmodnames ~= "" or failedmodnames ~= "")  and TheSim:ShouldWarnModsLoaded() then
+	if (modnames ~= "" or newmodnames ~= "" or oldmodnames ~= "" or failedmodnames ~= "" or forcemodnames ~= "")  and TheSim:ShouldWarnModsLoaded() then
 	--if (#self.enabledmods > 0)  and TheSim:ShouldWarnModsLoaded() then
 		TheFrontEnd:PushScreen(
 			ScriptErrorScreen(
 				STRINGS.UI.MAINSCREEN.MODTITLE, 
 				moddetail,
 				{
-					{text=STRINGS.UI.MAINSCREEN.TESTINGYES, cb = function() end},
+					{text=STRINGS.UI.MAINSCREEN.TESTINGYES, cb = function() TheFrontEnd:PopScreen() end},
 					{text=STRINGS.UI.MAINSCREEN.MODQUIT, cb = function()
 																	KnownModIndex:DisableAllMods()
 																	KnownModIndex:Save(function()
-																		TheSim:Reset()
+																		SimReset()
 																	end)
 																end},
-					{text=STRINGS.UI.MAINSCREEN.MODFORUMS, nopop=true, cb = function() VisitURL("http://forums.kleientertainment.com/forumdisplay.php?54-Don-t-Starve-Beta-Mods-amp-Tools") end }
+					{text=STRINGS.UI.MAINSCREEN.MODFORUMS, nopop=true, cb = function() VisitURL("http://forums.kleientertainment.com/index.php?/forum/26-dont-starve-mods-and-tools/") end }
+				}))
+	elseif KnownModIndex:WasLoadBad() then
+		TheFrontEnd:PushScreen(
+			ScriptErrorScreen(
+				STRINGS.UI.MAINSCREEN.MODSBADTITLE, 
+				STRINGS.UI.MAINSCREEN.MODSBADLOAD,
+				{
+					{text=STRINGS.UI.MAINSCREEN.TESTINGYES, cb = function() TheFrontEnd:PopScreen() end},
+					{text=STRINGS.UI.MAINSCREEN.MODFORUMS, nopop=true, cb = function() VisitURL("http://forums.kleientertainment.com/index.php?/forum/26-dont-starve-mods-and-tools/") end }
 				}))
 	end
 
 	self:DisplayBadMods()
-
 end
 
 function ModWrangler:SimPostInit(wilson)
 	for i,modname in ipairs(self.enabledmods) do
 		local mod = self:GetMod(modname)
-		runmodfn( mod.simpostinit, mod, "simpostinit" )(wilson)
+		for i,modfn in ipairs(mod.postinitfns.SimPostInit) do
+			runmodfn( modfn, mod, "simpostinit" )(wilson)
+		end
 	end
 
 	self:DisplayBadMods()
 end
 
 function ModWrangler:GetPostInitFns(type, id)
-	local modfns = {}
+	local retfns = {}
 	for i,modname in ipairs(self.enabledmods) do
 		local mod = self:GetMod(modname)
 		if mod.postinitfns[type] then
-			local modfn = nil
+			local modfns = nil
 			if id then
-				modfn = mod.postinitfns[type][id]
+				modfns = mod.postinitfns[type][id]
 			else
-				modfn = mod.postinitfns[type]
+				modfns = mod.postinitfns[type]
 			end
-			if modfn ~= nil then
-				--print(modname.." added modfn "..type.." for "..tostring(id))
-				table.insert(modfns, runmodfn(modfn, mod, id and type..": "..id or type))
+			if modfns ~= nil then
+				for i,modfn in ipairs(modfns) do
+					--print(modname, "added modfn "..type.." for "..tostring(id))
+					table.insert(retfns, runmodfn(modfn, mod, id and type..": "..id or type))
+				end
 			end
 		end
 	end
-	return modfns
+	return retfns
 end
 
 function ModWrangler:GetPostInitData(type, id)
@@ -498,7 +436,7 @@ function ModWrangler:GetPostInitData(type, id)
 			end
 
 			if data ~= nil then
-				--print(modname.." added moddata "..type.." for "..tostring(id))
+				--print(modname, "added moddata "..type.." for "..tostring(id))
 				table.insert(moddata, data)
 			end
 		end
@@ -506,11 +444,8 @@ function ModWrangler:GetPostInitData(type, id)
 	return moddata
 end
 
+
 ModManager = ModWrangler()
 
 ---------------------------------------------
 
---local filename = "mods/modsettings.lua"
---local fn = kleiloadlua( filename )
---assert(fn, "could not load modsettings: "..filename)
---fn()

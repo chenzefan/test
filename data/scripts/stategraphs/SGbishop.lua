@@ -33,7 +33,7 @@ local states=
         
         timeline = 
         {
-		    TimeEvent(1*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/bishop/idle") end ),
+            TimeEvent(1*FRAMES, function(inst) inst.SoundEmitter:PlaySound(inst.soundpath .. "idle") end ),
         },
         
         events=
@@ -53,7 +53,7 @@ local states=
         
         timeline = 
         {
-		    TimeEvent(19*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/bishop/voice") end ),
+            TimeEvent(19*FRAMES, function(inst) inst.SoundEmitter:PlaySound(inst.soundpath .. "voice") end ),
         },
         
         events=
@@ -72,11 +72,12 @@ CommonStates.AddWalkStates(states,
 	walktimeline = {
 		    TimeEvent(0*FRAMES, function(inst) inst.Physics:Stop() end ),
             TimeEvent(7*FRAMES, function(inst) 
-                inst.SoundEmitter:PlaySound("dontstarve/creatures/bishop/bounce")
+                inst.SoundEmitter:PlaySound(inst.soundpath .. "bounce")
                 inst.components.locomotor:WalkForward()
             end ),
             TimeEvent(20*FRAMES, function(inst)
-                inst.SoundEmitter:PlaySound("dontstarve/creatures/bishop/land")
+                inst.SoundEmitter:PlaySound(inst.soundpath .. "land")
+		        inst.SoundEmitter:PlaySound(inst.effortsound)
                 inst.Physics:Stop()
             end ),
 	},
@@ -86,11 +87,11 @@ CommonStates.AddSleepStates(states,
 {
     starttimeline = 
     {
-		TimeEvent(11*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/bishop/liedown") end ),
+		TimeEvent(11*FRAMES, function(inst) inst.SoundEmitter:PlaySound(inst.soundpath .. "liedown") end ),
     },
     
 	sleeptimeline = {
-        TimeEvent(18*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/bishop/sleep") end),
+        TimeEvent(18*FRAMES, function(inst) inst.SoundEmitter:PlaySound(inst.soundpath .. "sleep") end),
 	},
 })
 
@@ -98,17 +99,17 @@ CommonStates.AddCombatStates(states,
 {
     attacktimeline = 
     {
-        TimeEvent(0*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/bishop/charge") end),
-        TimeEvent(15*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/bishop/shoot") end),
+		TimeEvent(0*FRAMES, function(inst) inst.SoundEmitter:PlaySound(inst.soundpath .. "charge") end ),
+		TimeEvent(15*FRAMES, function(inst) inst.SoundEmitter:PlaySound(inst.soundpath .. "shoot") end ),
         TimeEvent(24*FRAMES, function(inst) inst.components.combat:DoAttack() end),
     },
     hittimeline = 
     {
-        TimeEvent(0*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/bishop/hurt") end),
+        TimeEvent(0*FRAMES, function(inst) inst.SoundEmitter:PlaySound(inst.soundpath .. "hurt") end),
     },
     deathtimeline = 
     {
-        TimeEvent(0*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/bishop/death") end),
+        TimeEvent(0*FRAMES, function(inst) inst.SoundEmitter:PlaySound(inst.soundpath .. "death") end),
     },
 })
 

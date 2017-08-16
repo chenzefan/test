@@ -69,6 +69,7 @@ local function CheckNextLevelSure(inst, doer)
 										end},
 				{text=STRINGS.UI.TELEPORTNO, cb = function() 
 														print("Think I'll stay here")
+														TheFrontEnd:PopScreen()
 														TheSim:SetTimeScale(1) 
 														TheMixer:PopMix("pause") 
 														inst.components.activatable.inactive = true

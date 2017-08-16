@@ -340,6 +340,9 @@ function Clock:OnUpdate(dt)
         end
 
     else
+        if GetWorld():IsCave() then
+            return
+        end
         local p = GetSeasonManager() and GetSeasonManager():GetWeatherLightPercent() or 1
         TheSim:SetAmbientColour( p*self.currentColour.x, p*self.currentColour.y, p*self.currentColour.z )
     end

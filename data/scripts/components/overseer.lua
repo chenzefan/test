@@ -129,13 +129,13 @@ function Overseer:GaveUp(attacker)
 end
 
 function Overseer:EndFight()
-    dprint("OS: EndFight:")
+    --dprint("OS: EndFight:")
     self.data.foeList = {}
     self.engaged = false
 end
 
 function Overseer:InitFight()
-        dprint("OS InitFight: ****************** Start updating overseer")
+        --dprint("OS InitFight: ****************** Start updating overseer")
         local player = GetPlayer()
         local inv = player.components.inventory
 
@@ -157,9 +157,9 @@ function Overseer:InitFight()
         self.data.health_abs    = math.floor(player.components.health.currenthealth)
         self.data.armor_absorbed = 0
         self.data.trod          = (GetMap() and GetMap():GetNumVisitedTiles()) or 0
-        self.data.wield         = inv.equipslots.hands.name
-        self.data.wear          = inv.equipslots.body.name
-        self.data.head          = inv.equipslots.head.name
+        self.data.wield         = inv.equipslots.hands and inv.equipslots.hands.name or nil
+        self.data.wear          = inv.equipslots.body and inv.equipslots.body.name or nil
+        self.data.head          = inv.equipslots.head and inv.equipslots.head.name or nil
         self.data.startAFK      = IsAwayFromKeyBoard()
         self.data.heal          = 0
         self.data.damage_taken  = 0
@@ -204,7 +204,7 @@ function Overseer:Targeted(attacker)
     end
 
     if prefab ~= "penguin" then  -- fix until I figure out why penguins repeately target and giveup
-        dprint("\nOS Targeted:",prefab)
+        --dprint("\nOS Targeted:",prefab)
         data.targeted_by           = data.targeted_by or {}
         data.targeted_by[prefab]   = (data.targeted_by[prefab] or 0) + 1
     end
@@ -332,7 +332,7 @@ function Overseer:AttackedBy(attacker,damage,absorbed)
 
     local player = GetPlayer()
     local data   = self.data
-    local prefab = attacker.prefab or attacker.inst.prefab or "NIL"
+    local prefab = attacker and (attacker.prefab or attacker.inst.prefab) or "NIL"
     local newHp  = math.floor(player.components.health.currenthealth - damage)
     local ts     = self:TimeStamp()
 
@@ -373,7 +373,7 @@ function Overseer:TrapSprung(trap,target,damage)
 
     data.traps_sprung                        = (data.traps_sprung or 0) + 1
 
-    if target == player or target.components.follower.leader == player then
+    if target == player or (target.components.follower ~= nil and target.components.follower.leader == player) then
         data.trap_hit_minion = (data.trap_hit_minion or 0) + damage
     else
         data.trap_damage     = (data.traps_damage or 0) + damage
@@ -444,7 +444,7 @@ function Overseer:AddKill(targ,damage,weapon)
     local prefab = targ.prefab or targ.inst.prefab
     local ts     = self:TimeStamp()
 
-    dprint("OS: KILL:",prefab)
+    --dprint("OS: KILL:",prefab)
 
     data.kills                         = data.kills or {}
     data.kills[prefab]                 = (data.kills[prefab] or 0) + 1
@@ -486,13 +486,13 @@ function Overseer:Process()
          data.minion_hits  == 0 and 
          data.minion_kills == 0 and
          data.damage_taken == 0 ) then
-         dprint ("|||||||||| VALIDTESTS:", data.trod == 0, duration < 3, data.damage_given == 0, data.minion_kills == 0, data.damage_taken == 0 ) 
+         --dprint ("|||||||||| VALIDTESTS:", data.trod == 0, duration < 3, data.damage_given == 0, data.minion_kills == 0, data.damage_taken == 0 ) 
         return false
     end
 
 
 	if GetTableSize(data.foeList) == 0 then
-        dprint("||||||||||| #foeList=0")
+        --dprint("||||||||||| #foeList=0")
         return false
     end
 
@@ -527,19 +527,21 @@ function Overseer:OnUpdate(dt)
             end
 
     local function CheckTeam(inst)  -- is this thing in a team that is still targeting the player?
+            if inst.components.teamattacker then
                 local threat = inst.components.teamattacker.teamleader.threat
                 -- See if the team (not just the particular enemy) is targeting the player or a follower
                 if threat == player or threat.components.follower.leader == player then
                     return true
                 end
-                return false
             end
+            return false
+        end
 
     for ent,v in pairs(data.foeList) do
         if type(ent) == "table" then
-            local targ = ent.components.combat.target
+            local targ = ent.components and ent.components.combat and ent.components.combat.target
             --dprint("ent= ",ent,"::",targ)
-            if( targ == player or targ.components.follower.leader == player or CheckAura(ent) or CheckTeam(ent) )  and
+            if targ and ( targ == player or (targ.components.follower and targ.components.follower.leader == player) or CheckAura(ent) or (ent.components.teamattacker and CheckTeam(ent)) )  and
               ( ent.components.health.currenthealth and ent.components.health.currenthealth > 0 ) and
               not ent:IsInLimbo() and
               not ent:HasTag("hidden") and
@@ -561,7 +563,7 @@ function Overseer:OnUpdate(dt)
 
     if not targeted and self.engaged then
         self.inst:StopUpdatingComponent(self)
-        dprint("****************** Stop updating overseer")
+        -- dprint("****************** Stop updating overseer")
         if self:Process() then
             RecordOverseerStats(data)
         end

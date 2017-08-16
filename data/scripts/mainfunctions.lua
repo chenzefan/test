@@ -21,8 +21,8 @@ function RegisterPrefabs(...)
 		end
         prefab.modfns = ModManager:GetPostInitFns("PrefabPostInit", prefab.name)
         Prefabs[prefab.name] = prefab
-
-		TheSim:RegisterPrefab(prefab.name, prefab.assets, prefab.deps)
+        
+		TheSim:RegisterPrefab(prefab.name, prefab.assets, prefab.deps, prefab.loadimmediate)
     end
 end
 
@@ -547,9 +547,6 @@ function UnloadFonts()
 end
 
 function Start()
-	if CHEATS_ENABLED then
-		require "debugkeys"
-	end
 	if SOUNDDEBUG_ENABLED then
 		require "debugsounds"
 	end
@@ -560,6 +557,14 @@ function Start()
 
     --after starting everything up, give the mods additional environment variables
     ModManager:SetPostEnv(GetPlayer())
+
+	--By this point the game should have either a) disabled bad mods, or b) be interactive
+	KnownModIndex:EndStartupSequence(nil) -- no callback, this doesn't need to block and we don't need the results
+
+	--If we collected a non-fatal error during startup, display it now!
+	for i,err in ipairs(PendingErrors) do
+		DisplayError(err)
+	end
 end
 
 
@@ -568,18 +573,33 @@ end
 
 exiting_game = false
 
+-- Gets called ONCE when the sim first gets created. Does not get called on subsequent sim recreations!
+function GlobalInit()
+	TheSim:ForceLoadPrefabs({"global"})
+	LoadFonts()
+end
+
 function StartNextInstance(in_params, send_stats)
 	local params = in_params or {}
 	params.last_reset_action = Settings.reset_action
-	local params = json.encode( params )
-	TheSim:SetInstanceParameters(params)
-	
+
 	if send_stats then
 		SendAccumulatedProfileStats()
 	end
 	
-	ModManager:UnloadPrefabs()
-	
+	SimReset(params)
+end
+
+function SimReset(instanceparameters)
+
+	ModManager:ForceUnloadPrefabs()
+
+	if not instanceparameters then
+		instanceparameters = {}
+	end
+	instanceparameters.last_asset_set = Settings.current_asset_set
+	local params = json.encode(instanceparameters)
+	TheSim:SetInstanceParameters(params)
 	TheSim:Reset()
 end
 
@@ -618,25 +638,40 @@ function Shutdown()
 		LoadPrefabFile("prefabs/"..file)
 	end	
 	
-	TheSim:UnloadPrefabs({"global"})
-	ModManager:UnloadPrefabs()
+	TheSim:ForceUnloadPrefabs({"global"})
+	TheSim:ForceUnloadPrefabs(FRONTEND_PREFABS)
+	TheSim:ForceUnloadPrefabs(BACKEND_PREFABS)
+	TheSim:ForceUnloadPrefabs(RECIPE_PREFABS)
+	if LOADED_CHARACTER ~= nil then
+		TheSim:ForceUnloadPrefabs(LOADED_CHARACTER)
+	end
+	ModManager:ForceUnloadPrefabs()
 		
 	TheSim:Quit()
 end
 
+PendingErrors = {}
+
 function DisplayError(error)
+	if not TheFrontEnd then
+		print("Error error! We tried displaying an error but TheFrontEnd isn't ready yet...")
+		table.insert(PendingErrors, error)
+		return
+	end
 
     SetHUDPause(true,"DisplayError")
     if TheFrontEnd:IsDisplayingError() then
         return nil
     end
 
+	KnownModIndex:HadACrash()
+
     local modnames = ModManager:GetEnabledModNames()
 
     if #modnames > 0 then
         local modnamesstr = ""
         for k,modname in ipairs(modnames) do
-            modnamesstr = modnamesstr.."\""..modname.."\" "
+            modnamesstr = modnamesstr.."\""..KnownModIndex:GetModFancyName(modname).."\" "
         end
 
         TheFrontEnd:DisplayError(
@@ -645,7 +680,13 @@ function DisplayError(error)
                 error,
                 {
                     {text=STRINGS.UI.MAINSCREEN.SCRIPTERRORQUIT, cb = function() TheSim:ForceAbort() end},
-                    {text=STRINGS.UI.MAINSCREEN.MODFORUMS, nopop=true, cb = function() VisitURL("http://forums.kleientertainment.com/forumdisplay.php?63") end }
+					{text=STRINGS.UI.MAINSCREEN.MODQUIT, cb = function()
+																	KnownModIndex:DisableAllMods()
+																	KnownModIndex:Save(function()
+																		SimReset()
+																	end)
+																end},
+                    {text=STRINGS.UI.MAINSCREEN.MODFORUMS, nopop=true, cb = function() VisitURL("http://forums.kleientertainment.com/index.php?/forum/26-dont-starve-mods-and-tools/") end }
                 },
                 ANCHOR_LEFT,
                 STRINGS.UI.MAINSCREEN.SCRIPTERRORMODWARNING..modnamesstr,
@@ -658,19 +699,11 @@ function DisplayError(error)
                 error,
                 {
                     {text=STRINGS.UI.MAINSCREEN.SCRIPTERRORQUIT, cb = function() TheSim:ForceAbort() end},
-                    {text=STRINGS.UI.MAINSCREEN.FORUM, nopop=true, cb = function() VisitURL("http://forums.kleientertainment.com/forumdisplay.php?20") end }
+                    {text=STRINGS.UI.MAINSCREEN.FORUM, nopop=true, cb = function() VisitURL("http://forums.kleientertainment.com/index.php?/forum/26-dont-starve-mods-and-tools/") end }
                 },
                 ANCHOR_LEFT,
                 nil,
                 20
                 ))
     end
-end
-
-function Wade()
-	print ("Hi Wade!")
-	if not CHEATS_ENABLED then
-		CHEATS_ENABLED = true
-		require "debugkeys"
-	end
 end

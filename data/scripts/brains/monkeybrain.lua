@@ -3,6 +3,7 @@ require "behaviours/runaway"
 require "behaviours/doaction"
 require "behaviours/panic"
 require "behaviours/chaseandattack"
+require "behaviours/leash"
 
 local MIN_FOLLOW_DIST = 5
 local TARGET_FOLLOW_DIST = 7

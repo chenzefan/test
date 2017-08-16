@@ -12,6 +12,14 @@ local spitterassets =
 	Asset("SOUND", "sound/spider.fsb"),
 }
 
+local dropperassets = 
+{
+    Asset("ANIM", "anim/ds_spider_basic.zip"),
+    Asset("ANIM", "anim/ds_spider_warrior.zip"),
+    Asset("ANIM", "anim/spider_white.zip"),
+    Asset("SOUND", "sound/spider.fsb"),
+}
+
 local prefabs =
 {
 	"spidergland",
@@ -264,5 +272,28 @@ local function create_spitter()
     return inst
 end
 
+local function create_dropper()
+    local inst = create_common()
+
+    inst.AnimState:SetBuild("spider_white")
+
+    inst:AddTag("spider_warrior")
+
+    inst.components.health:SetMaxHealth(TUNING.SPIDER_WARRIOR_HEALTH)
+
+    inst.components.combat:SetDefaultDamage(TUNING.SPIDER_WARRIOR_DAMAGE)
+    inst.components.combat:SetAttackPeriod(TUNING.SPIDER_WARRIOR_ATTACK_PERIOD + math.random()*2)
+    inst.components.combat:SetRange(TUNING.SPIDER_WARRIOR_ATTACK_RANGE, TUNING.SPIDER_WARRIOR_HIT_RANGE)
+    inst.components.combat:SetRetargetFunction(2, Retarget)
+    
+    inst.components.locomotor.walkspeed = TUNING.SPIDER_WARRIOR_WALK_SPEED
+    inst.components.locomotor.runspeed = TUNING.SPIDER_WARRIOR_RUN_SPEED
+
+    inst.components.sanityaura.aura = -TUNING.SANITYAURA_MED
+
+    return inst
+end
+
 return Prefab("cave/monsters/spider_hider", create_hider, hiderassets, prefabs),
-Prefab("cave/monsters/spider_spitter", create_spitter, spitterassets, prefabs) 
+Prefab("cave/monsters/spider_spitter", create_spitter, spitterassets, prefabs),
+Prefab("cave/monsters/spider_dropper", create_dropper, dropperassets, prefabs)

@@ -71,7 +71,7 @@ local states=
             EventHandler("animover", function(inst) 
 
                 local fx = SpawnPrefab("die_fx")
-                fx.Transform:SetPosition(inst:GetPosition())
+                fx.Transform:SetPosition(inst:GetPosition():Get())
 
                 inst:Remove()
 

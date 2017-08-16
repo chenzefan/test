@@ -1,8 +1,12 @@
-require "screen"
-require "button"
-require "animbutton"
-require "image"
-require "uianim"
+local Screen = require "widgets/screen"
+local Button = require "widgets/button"
+local AnimButton = require "widgets/animbutton"
+local ImageButton = require "widgets/imagebutton"
+local Menu = require "widgets/menu"
+local Text = require "widgets/text"
+local Image = require "widgets/image"
+local UIAnim = require "widgets/uianim"
+local Widget = require "widgets/widget"
 require "os"
 
 require "screens/worldgenscreen"
@@ -14,6 +18,11 @@ require "screens/loadgamescreen"
 require "screens/creditsscreen"
 require "screens/modsscreen"
 require "screens/controlsscreen"
+require "screens/morguescreen"
+
+
+local menu_spacing = 70
+local bottom_offset = 60
 
 
 MainScreen = Class(Screen, function(self, profile)
@@ -22,6 +31,7 @@ MainScreen = Class(Screen, function(self, profile)
 	self.log = true
 	self:AddEventHandler("onsetplayerid", function(...) self:OnSetPlayerID(...) end)
 	self:DoInit() 
+	self.default_focus = self.menu
 end)
 
 function MainScreen:OnSetPlayerID(playerid)
@@ -30,18 +40,23 @@ function MainScreen:OnSetPlayerID(playerid)
 	end
 end
 
-function MainScreen:OnGainFocus()
-	self._base.OnGainFocus(self)
-	--TheFrontEnd:DoFadeIn(2)
+function MainScreen:OnControl(control, down)
+	if MainScreen._base.OnControl(self, control, down) then return true end
+	
+	if not down and control == CONTROL_CANCEL then
+		if not self.mainmenu then
+			self:MainMenu()
+			return true
+		end
+	end
 end
 
-function MainScreen:OnLoseFocus()
-end
+function MainScreen:OnRawKey( key, down )
 
+	if not self.focus then return end
 
-function MainScreen:OnKeyUp( key )
-	if CHEATS_ENABLED then
-		if key == KEY_ENTER then
+	if not down and CHEATS_ENABLED then
+		if key == KEY_RSHIFT then
 			if TheInput:IsKeyDown(KEY_CTRL) then
 				SaveGameIndex:DeleteSlot(1)
 			elseif not SaveGameIndex:GetCurrentMode(1) then
@@ -52,51 +67,35 @@ function MainScreen:OnKeyUp( key )
 			else
     			StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = 1})
     		end
+    		return true
 		elseif key >= KEY_1 and key <= KEY_7 then
 			local level_num = key - KEY_1 + 1
 			
 			local function onstart()
 				StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = 1})
 			end
-			SaveGameIndex:FakeAdventure(onstart, 1, level_num)    		
+			SaveGameIndex:FakeAdventure(onstart, 1, level_num)
+			return true    		
 		elseif key == KEY_0 then
 			local function onstart()
 				StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = 1})
 			end
 			SaveGameIndex:DeleteSlot(1, function() SaveGameIndex:EnterCave(onstart, 1, 1) end)
+			return true
 		elseif key == KEY_9 then
 			local function onstart()
 				StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = 1})
 			end
 			SaveGameIndex:DeleteSlot(1, function() SaveGameIndex:EnterCave(onstart, 1, 1, 2) end)
+			return true
 		elseif key == KEY_MINUS then
 			StartNextInstance({reset_action="test", save_slot = 1})
+			return true
 		elseif key == KEY_M then
 			self:OnModsButton()
-	    elseif key == KEY_TILDE and PLATFORM ~= "NACL" and TheSim:GetSetting("MISC", "ENABLECONSOLE") == "true" then
-	    	TheFrontEnd:PushScreen(ConsoleScreen())
+			return true
 		end
-	    	
-	elseif key == KEY_ESCAPE then
-		self:MainMenu()
 	end
-end
-
-
-local function MakeMenu(offset, menuitems)
-	local menu = Widget("MainMenu")	
-	local pos = Vector3(0,0,0)
-	for k,v in ipairs(menuitems) do
-		local button = menu:AddChild(AnimButton("button"))
-	    button:SetPosition(pos)
-	    button:SetText(v.text)
-	    button.text:SetColour(0,0,0,1)
-	    button:SetOnClick( v.cb )
-	    button:SetFont(BUTTONFONT)
-	    button:SetTextSize(40)    
-	    pos = pos + offset  
-	end
-	return menu
 end
 
 function MainScreen:Buy()
@@ -145,7 +144,7 @@ function MainScreen:EmailSignup()
 end
 
 function MainScreen:Forums()
-	VisitURL("http://forums.kleientertainment.com/forumdisplay.php?20")
+	VisitURL("http://forums.kleientertainment.com/index.php?/forum/5-dont-starve/")
 end
 
 function MainScreen:Rate()
@@ -157,7 +156,7 @@ function MainScreen:Logout()
 end
 
 function MainScreen:Quit()
-	TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.MAINSCREEN.ASKQUIT, STRINGS.UI.MAINSCREEN.ASKQUITDESC, {{text=STRINGS.UI.MAINSCREEN.YES, cb = function() RequestShutdown() end },{text=STRINGS.UI.MAINSCREEN.NO, cb = function() end}  }))
+	TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.MAINSCREEN.ASKQUIT, STRINGS.UI.MAINSCREEN.ASKQUITDESC, {{text=STRINGS.UI.MAINSCREEN.YES, cb = function() RequestShutdown() end },{text=STRINGS.UI.MAINSCREEN.NO, cb = function() TheFrontEnd:PopScreen() end}  }))
 end
 
 local function get_timezone()
@@ -178,7 +177,10 @@ local function GetDaysToUpdate()
 			os.time{year=2013, day=11, month=6, hour=13} - klei_tz,
 			os.time{year=2013, day=2, month=7, hour=13} - klei_tz,
 			os.time{year=2013, day=26, month=7, hour=13} - klei_tz, -- modified for late release
-			os.time{year=2013, day=13, month=8, hour=13} - klei_tz,
+			os.time{year=2013, day=20, month=8, hour=13} - klei_tz,
+			os.time{year=2013, day=10, month=9, hour=13} - klei_tz,
+			os.time{year=2013, day=1, month=10, hour=13} - klei_tz,
+			os.time{year=2013, day=22, month=10, hour=13} - klei_tz,
 		}
     table.sort(update_times)
     
@@ -234,13 +236,6 @@ function MainScreen:UpdateDaysUntil()
 		
 		self.daysuntiltext:SetString( self.days_until_string)
 	    
-		self.daysuntilanim:SetMouseOver(function() 
-				self.daysuntiltext:SetString( self.days_since_string)
-			end)
-
-		self.daysuntilanim:SetMouseOut(function() 
-				self.daysuntiltext:SetString( self.days_until_string)
-			end)
 	else
 		self.daysuntilanim:Hide()
 		self.daysuntiltext:Hide()
@@ -257,8 +252,8 @@ function MainScreen:DoInit( )
 
 	if PLATFORM == "NACL" then	
 		TheSim:RequestPlayerID()
-	end	
-	
+	end
+
 	self.bg = self:AddChild(Image("images/ui.xml", "bg_plain.tex"))
     self.bg:SetTint(BGCOLOURS.RED[1],BGCOLOURS.RED[2],BGCOLOURS.RED[3], 1)
 
@@ -274,25 +269,10 @@ function MainScreen:DoInit( )
     self.fixed_root:SetScaleMode(SCALEMODE_PROPORTIONAL)
 
     local left_buffer = 175
-    
---[[self.hand2 = self:AddChild(UIAnim())
-    self.hand2:GetAnimState():SetBuild("creepy_hands")
-    self.hand2:GetAnimState():SetBank("creepy_hands")
-    self.hand2:GetAnimState():PlayAnimation("idle", true)
-    self.hand2:GetAnimState():SetTime(0)
-    self.hand2:SetVAnchor(ANCHOR_TOP)
-    self.hand2:SetHAnchor(ANCHOR_RIGHT)
-    self.hand2:SetPosition(-200, 0, 0)
-    self.hand2:SetRotation(30)
-    
-    local hand_scale = 2
-    local w,h = TheSim:GetScreenSize()
-    if h < RESOLUTION_Y then
-		hand_scale = 2*(h/RESOLUTION_Y)
-    end
-    self.hand2:SetScale(hand_scale,-hand_scale,hand_scale)
---]]
-    
+	self.menu = self.fixed_root:AddChild(Menu(nil, -menu_spacing))
+	
+
+   
     self.shield = self.fixed_root:AddChild(Image("images/fepanels.xml", "panel_shield.tex"))
     self.shield:SetVRegPoint(ANCHOR_MIDDLE)
     self.shield:SetHRegPoint(ANCHOR_MIDDLE)
@@ -316,13 +296,18 @@ function MainScreen:DoInit( )
 	self.bottom_left_stuff = self.fixed_root:AddChild(Widget("bl"))
 	self.bottom_left_stuff:SetPosition(-RESOLUTION_X/2 + left_buffer, -RESOLUTION_Y/2 + 200, 0)
 	
-	self.signup_button = self.bottom_left_stuff:AddChild(AnimButton("button"))
+	self.signup_button = self.bottom_left_stuff:AddChild(ImageButton())
     self.signup_button:SetPosition(0, -150, 0)
     self.signup_button:SetText(STRINGS.UI.MAINSCREEN.NOTIFY)
-    self.signup_button.text:SetColour(0,0,0,1)
-    self.signup_button:SetFont(BUTTONFONT)
-    self.signup_button:SetTextSize(40)    
     self.signup_button:SetOnClick( function() self:EmailSignup() end )
+
+	--[[
+	self.forum_button = self.bottom_left_stuff:AddChild(ImageButton())
+    self.forum_button:SetPosition(200, -150, 0)
+    self.forum_button:SetText(STRINGS.UI.MAINSCREEN.FORUM)
+    self.forum_button:SetOnClick( function() self:Forums() end )
+--]]
+
 
     self.daysuntilanim = self.bottom_left_stuff:AddChild(UIAnim())
     self.daysuntilanim:GetAnimState():SetBuild("build_status")
@@ -355,54 +340,23 @@ function MainScreen:DoInit( )
 	self.motd.motdtext:SetRegionSize( 250, 160)
 	self.motd.motdtext:SetString(STRINGS.UI.MAINSCREEN.MOTD)
 	
-	self.motd.button = self.motd:AddChild(AnimButton("button"))
+	self.motd.button = self.motd:AddChild(ImageButton())
     self.motd.button:SetPosition(0, -100, 0)
     self.motd.button:SetText(STRINGS.UI.MAINSCREEN.MOTDBUTTON)
-    self.motd.button.text:SetColour(0,0,0,1) 
     self.motd.button:SetOnClick( function() VisitURL("http://bit.ly/ds-soundtrack") end )
-    self.motd.button:SetFont(BUTTONFONT)
-    self.motd.button:SetTextSize(40)    
 	self.motd.motdtext:EnableWordWrap(true)   
-	
     
 	self.playerid = self.fixed_root:AddChild(Text(NUMBERFONT, 35))
 	self.playerid:SetPosition(RESOLUTION_X/2 -400, RESOLUTION_Y/2 -60, 0)    
 	self.playerid:SetRegionSize( 600, 50)
 	self.playerid:SetHAlign(ANCHOR_RIGHT)
-	self:MainMenu()
-end
 
 
-local menu_spacing = 60
-local bottom_offset = 60
-
-
-function MainScreen:Refresh()
-	self:MainMenu()
-	TheFrontEnd:GetSound():PlaySound("dontstarve/music/music_FE","FEMusic")
-end
-
-function MainScreen:ShowMenu(menu_items)
-	if self.menu then
-		self.menu:Kill()
-	end	
-
-	self.menu = self.fixed_root:AddChild(MakeMenu( Vector3(0, -menu_spacing, 0), menu_items))
-	
-	self.menu:SetPosition(RESOLUTION_X/2 -200 ,-RESOLUTION_Y/2 + bottom_offset + menu_spacing * (#menu_items-1),0)
-	
 	if PLATFORM == "NACL" then
-		if self.purchasebutton then
-			self.purchasebutton:Kill()
-			self.purchasebutton = nil
-		end
-		
-		self.purchasebutton = self.fixed_root:AddChild(Button())
-		self.purchasebutton:SetImage("images/ui.xml", "special_button.tex")
-		self.purchasebutton:SetMouseOverImage("images/ui.xml", "special_button_over.tex")
+
+		self.purchasebutton = self.fixed_root:AddChild(ImageButton("images/ui.xml", "special_button.tex", "special_button_over.tex"))
 		self.purchasebutton:SetScale(.5,.5,.5)
-		self.purchasebutton:SetPosition(RESOLUTION_X/2 -200 ,-RESOLUTION_Y/2 + bottom_offset + menu_spacing * (#menu_items) + 40,0)
-		self.purchasebutton.text:SetColour(0,0,0,1)
+		self.purchasebutton:SetPosition(450,200,0)
 		self.purchasebutton:SetFont(BUTTONFONT)
 		self.purchasebutton:SetTextSize(80)
 
@@ -414,13 +368,88 @@ function MainScreen:ShowMenu(menu_items)
 			self.purchasebutton:SetText( STRINGS.UI.MAINSCREEN.GIFT )
 		end	
 	end
+
+	--focus moving
+	self.motd.button:SetFocusChangeDir(MOVE_DOWN, self.signup_button)
+	self.motd.button:SetFocusChangeDir(MOVE_RIGHT, self.menu)
+
+	self.signup_button:SetFocusChangeDir(MOVE_UP, self.motd.button)
+	self.signup_button:SetFocusChangeDir(MOVE_RIGHT, self.menu, -1)
+
+	--[[
+	self.forum_button:SetFocusChangeDir(MOVE_UP, self.motd.button)
+	self.forum_button:SetFocusChangeDir(MOVE_RIGHT, self.menu, -1)
+	self.forum_button:SetFocusChangeDir(MOVE_LEFT, self.signup_button)
+	--]]
+	
+	local function left_from_menu()
+		local focus = self:GetDeepestFocus();
+		
+		local up_diff = math.abs(focus:GetPosition().y - self.motd.button:GetPosition().y)
+		local down_diff = math.abs(focus:GetPosition().y - self.signup_button:GetPosition().y)
+		
+		return up_diff < down_diff and self.motd.button or self.signup_button
+	end
+
+	self.menu:SetFocusChangeDir(MOVE_LEFT, left_from_menu)
+	self:MainMenu()
+	self.menu:SetFocus()
+	
+	if PLATFORM == "PS4" then
+	    self.bottom_left_stuff:Hide()
+	    self.motd:Hide()
+	end
+end
+
+
+
+
+function MainScreen:Refresh()
+	self:MainMenu()
+	TheFrontEnd:GetSound():PlaySound("dontstarve/music/music_FE","FEMusic")
+end
+
+function MainScreen:ShowMenu(menu_items)
+	self.mainmenu = false
+	self.menu:Clear()
+	
+	for k,v in ipairs(menu_items) do
+		self.menu:AddItem(v.text, v.cb, v.offset)
+	end
+
+	--self.menu:SetPosition(500, 0, 0)
+
+	self.menu:SetPosition(RESOLUTION_X/2 -200 ,-RESOLUTION_Y/2 + bottom_offset + menu_spacing * (#menu_items-1),0)
+	self.menu:SetFocus()
 end
 
 
 function MainScreen:DoOptionsMenu()
 	local menu_items = {}
+
+
+
+	if PLATFORM == "NACL" then
+		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.ACCOUNTINFO, cb= function() self:ProductKeys() end})
+		if IsGamePurchased() then
+			table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.ENTERKEY, cb= function() self:EnterKey() end})
+		end
+	end
+	
+	
 	table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.SETTINGS, cb= function() self:Settings() end})
-	table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.ENTERKEY, cb= function() self:EnterKey() end})
+	table.insert(menu_items, {text=STRINGS.UI.MAINSCREEN.CONTROLS, cb= function() self:OnControlsButton() end})
+	
+	table.insert(menu_items, {text=STRINGS.UI.MAINSCREEN.CREDITS, cb= function() self:OnCreditsButton() end})
+	
+	if PLATFORM == "WIN32_STEAM" then
+		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.MOREGAMES, cb= function() VisitURL("http://store.steampowered.com/search/?developer=Klei%20Entertainment") end})
+	end
+	
+	if BRANCH ~= "release" then
+		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.CHEATS, cb= function() self:CheatMenu() end})
+	end
+	
 	table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.CANCEL, cb= function() self:MainMenu() end})
 	self:ShowMenu(menu_items)
 end
@@ -428,7 +457,7 @@ end
 function MainScreen:OnModsButton()
 	TheFrontEnd:PushScreen(ModsScreen(function(needs_reset)
 		if needs_reset then
-			TheSim:Reset()
+			SimReset()
 		end
 
 		TheFrontEnd:PopScreen()
@@ -448,11 +477,16 @@ function MainScreen:OnCreditsButton()
 	TheFrontEnd:PushScreen( CreditsScreen() )
 end
 	
+function MainScreen:MorgueMenu()
+	TheFrontEnd:GetSound():KillSound("FEMusic")
+	TheFrontEnd:PushScreen( MorgueScreen() )
+end
+
 function MainScreen:CheatMenu()
 	local menu_items = {}
 	table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.UNLOCKEVERYTHING, cb= function() self:UnlockEverything() end})
 	table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.RESETPROFILE, cb= function() self:ResetProfile() end})
-	table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.CANCEL, cb= function() self:MainMenu() end})
+	table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.CANCEL, cb= function() self:DoOptionsMenu() end})
 	self:ShowMenu(menu_items)
 end
 
@@ -462,56 +496,34 @@ function MainScreen:DoGenerateDEMOWorld()
 end
 
 function MainScreen:MainMenu()
+	
 	local menu_items = {}
 	local purchased = IsGamePurchased()
 	if purchased then
-		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.PLAY, cb= function() 
-			
-			TheFrontEnd:PushScreen(LoadGameScreen())
-		end})
-		
-		if PLATFORM == "NACL" then
-			table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.RATE, cb=function() self:Rate() end})		
-		end
+		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.PLAY, cb= function() TheFrontEnd:PushScreen(LoadGameScreen())end, offset = Vector3(0,20,0)})
 	else
 		table.insert(menu_items, {text=STRINGS.UI.MAINSCREEN.PLAYDEMO, cb= function() self:DoGenerateDEMOWorld() end})
 		table.insert(menu_items, {text=STRINGS.UI.MAINSCREEN.ENTERPRODUCTKEY, cb= function() self:EnterKey() end})
 	end
 
-	
-	if PLATFORM == "NACL" and purchased then
-		table.insert(menu_items, {text=STRINGS.UI.MAINSCREEN.OPTIONS, cb= function() self:DoOptionsMenu() end})
-	else
-		table.insert(menu_items, {text=STRINGS.UI.MAINSCREEN.SETTINGS, cb= function() self:Settings() end})
-	end
-	
-	table.insert(menu_items, {text=STRINGS.UI.MAINSCREEN.CONTROLS, cb= function() self:OnControlsButton() end})
-	
-	if PLATFORM == "NACL" then
-		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.ACCOUNTINFO, cb= function() self:ProductKeys() end})
-	end
-	
-	if PLATFORM == "WIN32_STEAM" then
-		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.MOREGAMES, cb= function() VisitURL("http://store.steampowered.com/search/?developer=Klei%20Entertainment") end})
-	end
-		
-	table.insert(menu_items, {text=STRINGS.UI.MAINSCREEN.CREDITS, cb= function() self:OnCreditsButton() end})
-	table.insert(menu_items, {text=STRINGS.UI.MAINSCREEN.FORUM, cb= function() self:Forums() end})
-	
-	if PLATFORM == "NACL" then
-		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.LOGOUT, cb= function() self:OnExitButton() end})
-	else
-		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.EXIT, cb= function() self:OnExitButton() end})
-	end
+	table.insert( menu_items, {text=STRINGS.UI.MORGUESCREEN.MORGUE, cb= function() self:MorgueMenu() end})
 
-	if PLATFORM ~= "NACL" then
+	if PLATFORM ~= "NACL" and PLATFORM ~= "PS4" then
 		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.MODS, cb= function() self:OnModsButton() end})
 	end
 
-
-	if BRANCH ~= "release" then
-		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.CHEATS, cb= function() self:CheatMenu() end})
+	table.insert(menu_items, {text=STRINGS.UI.MAINSCREEN.OPTIONS, cb= function() self:DoOptionsMenu() end})
+	
+	if PLATFORM ~= "PS4" then
+	    table.insert(menu_items, {text=STRINGS.UI.MAINSCREEN.FORUM, cb= function() self:Forums() end})
 	end
 	
+	
+	if PLATFORM == "NACL" then
+		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.LOGOUT, cb= function() self:OnExitButton() end})
+	elseif PLATFORM ~= "PS4" then
+		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.EXIT, cb= function() self:OnExitButton() end})
+	end
 	self:ShowMenu(menu_items)
+	self.mainmenu = true
 end

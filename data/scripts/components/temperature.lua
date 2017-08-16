@@ -48,7 +48,7 @@ function Temperature:OnLoad(data)
 	
 end
 
-function Temperature:SetTempature(value)
+function Temperature:SetTemperature(value)
 	self.current = value
 end
 

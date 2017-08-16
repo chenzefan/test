@@ -81,6 +81,7 @@ function Tune(overrides)
 	    HAMBAT_USES = 100,
 	    BATBAT_USES = 75,
 	    MULTITOOL_AXE_PICKAXE_USES = 230,
+	    RUINS_BAT_USES = 150,
 
 	    REDAMULET_USES = 20,
 	    REDAMULET_CONVERSION = 5,
@@ -130,6 +131,7 @@ function Tune(overrides)
 	    CANE_DAMAGE = wilson_attack*.5,
 	    BEAVER_DAMAGE = wilson_attack*1.5,
 	    MULTITOOL_DAMAGE = wilson_attack*.9,
+	    RUINS_BAT_DAMAGE = wilson_attack * 1.75,
 
 		CANE_SPEED_MULT = 1.25,
 		PIGGYBACK_SPEED_MULT = 0.8,
@@ -231,6 +233,13 @@ function Tune(overrides)
 	    ROOK_WALK_SPEED = 5,
 	    ROOK_RUN_SPEED = 16,
 	    ROOK_TARGET_DIST = 12,
+	    
+	    MINOTAUR_DAMAGE = 100,
+	    MINOTAUR_HEALTH = 2500,
+	    MINOTAUR_ATTACK_PERIOD = 2,
+	    MINOTAUR_WALK_SPEED = 5,
+	    MINOTAUR_RUN_SPEED = 17,
+	    MINOTAUR_TARGET_DIST = 25,
 	    
 	    SLURTLE_DAMAGE = 25,
 	    SLURTLE_HEALTH = 600,
@@ -538,11 +547,18 @@ function Tune(overrides)
 				ANCIENT = 0,				
 			},
 
-			ANCIENTALTAR =
+			ANCIENTALTAR_LOW =
 			{
 				SCIENCE = 0,
 				MAGIC = 0,
 				ANCIENT = 2,
+			},
+
+			ANCIENTALTAR_HIGH =
+			{
+				SCIENCE = 0,
+				MAGIC = 0,
+				ANCIENT = 4,
 			},
 		},
 
@@ -672,6 +688,7 @@ function Tune(overrides)
 		
 		TRUNKVEST_PERISHTIME = total_day_time*15,
 		SWEATERVEST_PERISHTIME = total_day_time*10,
+		HUNGERBELT_PERISHTIME = total_day_time*8,
 
 		WALRUSHAT_PERISHTIME = total_day_time*25,
 		FEATHERHAT_PERISHTIME = total_day_time*8,
@@ -681,6 +698,7 @@ function Tune(overrides)
 	    SAPLING_REGROW_TIME = total_day_time*4,
 	    MARSHBUSH_REGROW_TIME = total_day_time*4,
 	    FLOWER_CAVE_REGROW_TIME = total_day_time*3,
+	    LICHEN_REGROW_TIME = total_day_time*5,
 	    
 	    BERRY_REGROW_TIME = total_day_time*3,
 	    BERRY_REGROW_INCREASE = total_day_time*.5,
@@ -702,6 +720,11 @@ function Tune(overrides)
 		ARMORMARBLE = wilson_health*7,
 		ARMORMARBLE_ABSORPTION = .95,
 		ARMORMARBLE_SLOW = 0.7,
+		ARMORRUINS_ABSORPTION = 0.9,
+		ARMORRUINS = wilson_health * 12,
+		ARMORSLURPER_ABSORPTION = 0.6,
+		ARMORSLURPER_SLOW_HUNGER = 0.6,
+		ARMORSLURPER = wilson_health * 4,
 	    ARMOR_FOOTBALLHAT = wilson_health*3,
 		ARMOR_FOOTBALLHAT_ABSORPTION = .8,
 		ARMOR_SLURTLEHAT = wilson_health*5,
@@ -711,6 +734,7 @@ function Tune(overrides)
 		ARMOR_SANITY = wilson_health * 5,
 		ARMOR_SANITY_ABSORPTION = .95,
 		ARMOR_SANITY_DMG_AS_SANITY = 0.10,
+
 	    
 	    PANFLUTE_SLEEPTIME = 20,
 	    PANFLUTE_SLEEPRANGE = 15,
@@ -768,6 +792,8 @@ function Tune(overrides)
 	    SANITY_LARGE = 33,
 	    SANITY_HUGE = 50,
 	    
+		PERISH_ONE_DAY = 1*total_day_time*perish_warp,
+		PERISH_TWO_DAY = 2*total_day_time*perish_warp,
 		PERISH_SUPERFAST = 3*total_day_time*perish_warp,
 		PERISH_FAST = 6*total_day_time*perish_warp,
 		PERISH_MED = 10*total_day_time*perish_warp,
@@ -810,6 +836,7 @@ function Tune(overrides)
 		REPAIR_ROCKS = 50/3,
 		REPAIR_GEMS = 1,
 		REPAIR_GEARS = 1,
+		REPAIR_THULECITE = 1.5,
 	
 		REPAIR_BOARDS = 50,
 		REPAIR_LOGS = 50/4,
@@ -974,6 +1001,14 @@ function Tune(overrides)
 	    
 	    WICKERBOTTOM_STALE_FOOD_HEALTH = .25,
 	    WICKERBOTTOM_SPOILED_FOOD_HEALTH = 0,
+
+	    TRANSITIONTIME =
+	    {
+	    	CALM = 2,
+	    	WARN = 2,
+	    	NIGHTMARE = 2,
+	    	DAWN = 2,
+		},
 
 	}
 end

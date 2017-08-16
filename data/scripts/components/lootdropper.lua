@@ -2,6 +2,7 @@ local LootDropper = Class(function(self, inst)
     self.inst = inst
     self.numrandomloot = nil
     self.randomloot = nil
+    self.chancerandomloot = nil
     self.totalrandomweight = nil
     self.chanceloot = nil
     self.ifnotchanceloot = nil
@@ -56,7 +57,7 @@ end
 function LootDropper:GenerateLoot()
     local loots = {}
     
-    if self.numrandomloot then
+    if self.numrandomloot and math.random() <= (self.chancerandomloot or 1) then
 		for k = 1, self.numrandomloot do
 		    local loot = self:PickRandomLoot()
 		    if loot then
@@ -128,8 +129,8 @@ function LootDropper:SpawnLootPrefab(lootprefab, pt)
 				local angle = math.random()*2*PI
 				loot.Physics:SetVel(2*math.cos(angle), 10, 2*math.sin(angle))
 
-				if loot.Physics and self.inst.Physics then
-					pt = pt + Vector3(math.cos(angle), 0, math.sin(angle))*(loot.Physics:GetRadius() + self.inst.Physics:GetRadius())
+				if loot and loot.Physics and self.inst and self.inst.Physics then
+					pt = pt + Vector3(math.cos(angle), 0, math.sin(angle))*((loot.Physics:GetRadius() or 1) + (self.inst.Physics:GetRadius() or 1))
 					loot.Transform:SetPosition(pt.x,pt.y,pt.z)
 				end
 				

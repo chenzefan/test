@@ -4,10 +4,7 @@ local Sanity = Class(function(self, inst)
     self.inst = inst
     self.max = 100
     self.current = self.max
-	--local dt = 1
-	--self.task = self.inst:DoPeriodicTask(dt, function() self:Recalc(dt) end)
-	self.inst:StartUpdatingComponent(self)
-	self:Recalc(0)
+	
 	self.rate = 0
 	self.sane = true
 	self.fxtime = 0
@@ -15,6 +12,9 @@ local Sanity = Class(function(self, inst)
 	self.inducedinsanity = nil --Set to nil if not true. 
 	self.night_drain_mult = 1
 	self.neg_aura_mult = 1
+
+	self.inst:StartUpdatingComponent(self)
+	self:Recalc(0)
 end)
 
 

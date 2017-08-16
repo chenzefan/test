@@ -12,8 +12,14 @@ Print (VERBOSITY.DEBUG, "[Loading frontend assets]")
 
 local start_game_time = nil
 
+LOADED_CHARACTER = nil
+
 TheSim:SetRenderPassDefaultEffect( RENDERPASS.BLOOM, "shaders/anim_bloom.ksh" )
 TheSim:SetErosionTexture( "images/erosion.tex" )
+
+BACKEND_PREFABS = {"hud", "forest", "cave", "ceiling", "maxwell", "fire", "character_fire", "shatter"}
+FRONTEND_PREFABS = {"frontend"}
+RECIPE_PREFABS = {}
 
 --this is suuuuuper placeholdery. We need to think about how to handle all of the different types of updates for this
 local function DoAgeWorld()
@@ -34,46 +40,59 @@ local function DoAgeWorld()
 			if v.components.homeseeker.home.components.spawner then
 				v.components.homeseeker.home.components.spawner:GoHome(v)
 			end
-			
 		end
 		
 		if v.components.fueled then
 			v.components.fueled:MakeEmpty()
 		end
-		
 	end
 end
 
-local function LoadAssets()
+local function LoadAssets(asset_set)
+	assert(asset_set)
+	Settings.current_asset_set = asset_set
 
-	local be_prefabs = {"hud", "forest", "cave", "ceiling", "maxwell", "fire", "character_fire", "shatter"}
-	local fe_prefabs = {"frontend", "MODSCREEN"}
-
-	local recipe_prefabs = {}
+	RECIPE_PREFABS = {}
 	for k,v in pairs(Recipes) do
-		table.insert(recipe_prefabs, v.name)
+		table.insert(RECIPE_PREFABS, v.name)
 		if v.placer then
-			table.insert(recipe_prefabs, v.placer)
+			table.insert(RECIPE_PREFABS, v.placer)
 		end
 	end
 	
 	local load_frontend = Settings.reset_action == nil
 	local in_backend = Settings.last_reset_action ~= nil
 	local in_frontend = not in_backend
-	
-	if load_frontend then
-		print ("LOAD FE")
-		TheSim:LoadPrefabs(fe_prefabs)
-		TheSim:UnloadPrefabs(be_prefabs)
-		TheSim:UnloadPrefabs(recipe_prefabs)
-		print ("LOAD FE: done")
+
+	if Settings.current_asset_set == "FRONTEND" then
+		if Settings.last_asset_set == "FRONTEND" then
+			print( "\tFE assets already loaded" )			
+		else
+			print("\tUnload BE")
+			TheSim:ForceUnloadPrefabs(RECIPE_PREFABS)
+			TheSim:UnloadPrefabs(BACKEND_PREFABS)
+			print("\tUnload BE done")
+
+			print("\tLoad FE")
+			TheSim:ForceLoadPrefabs(FRONTEND_PREFABS)
+			print("\tLoad FE: done")
+		end
 	else
-		print ("LOAD BE")
-		TheSim:UnloadPrefabs(fe_prefabs)
-		TheSim:LoadPrefabs(be_prefabs)
-		TheSim:LoadPrefabs(recipe_prefabs)
-		print ("LOAD BE: done")
+		if Settings.last_asset_set == "BACKEND" then
+			print( "\tBE assets already loaded" )			
+		else
+			print("\tUnload FE")
+			TheSim:ForceUnloadPrefabs(FRONTEND_PREFABS)
+			print("\tUnload FE done")
+	
+			print ("\tLOAD BE")
+			TheSim:LoadPrefabs(BACKEND_PREFABS)
+			TheSim:ForceLoadPrefabs(RECIPE_PREFABS)
+			print ("\tLOAD BE: done")
+		end
 	end
+
+	Settings.last_asset_set = Settings.current_asset_set
 end
 
 function GetTimePlaying()
@@ -215,7 +234,10 @@ function SetUpPlayerCharacterCallbacks(wilson)
             ProfileStatsSet("time_played", playtime)
             SendTrackingStats()
             SendAccumulatedProfileStats()
-            
+
+			TheSim:ForceUnloadPrefabs(LOADED_CHARACTER)
+			
+			LOADED_CHARACTER = nil
 			
 			StartNextInstance()
         end)        
@@ -254,7 +276,7 @@ local deprecated = { turf_webbing = true }
 local replace = { 
 				farmplot = "slow_farmplot", farmplot2 = "fast_farmplot", 
 				farmplot3 = "fast_farmplot", sinkhole= "cave_entrance",
-				--cave_stairs= "cave_entrance"
+				cave_stairs= "cave_entrance"
 			}
 
 function PopulateWorld(savedata, profile, playercharacter, playersavedataoverride)
@@ -292,14 +314,15 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
 		local ceiling = nil
 		if savedata.map.prefab == "cave" then
 			world = SpawnPrefab("cave")
-			ceiling = SpawnPrefab("ceiling")
+			-- ceiling = SpawnPrefab("ceiling")
 		else
 			world = SpawnPrefab("forest")
 		end
 		
 		
         --spawn the player character and set him up
-        TheSim:LoadPrefabs{playercharacter}
+        LOADED_CHARACTER = {playercharacter}
+        TheSim:ForceLoadPrefabs(LOADED_CHARACTER)
         wilson = SpawnPrefab(playercharacter)
         assert(wilson, "could not spawn player character")
         wilson:SetProfile(Profile)
@@ -310,23 +333,29 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
         if ground then
             if GetCeiling() then
 	        	GetCeiling().MapCeiling:SetSize(savedata.map.width, savedata.map.height)
+	        	GetCeiling().MapCeiling:SetHeight(4.0)
 	        	GetCeiling().MapCeiling:SetFromString(savedata.map.tiles)
-	        	GetCeiling().MapCeiling:Finalize(TheSim:GetSetting("graphics", "static_walls") == "true")
+	        	GetCeiling().MapCeiling:Finalize(TheSim:GetSetting("graphics", "static_walls") == "true", 1)
+
+	        	GetCeiling().MapCeiling:ShouldRender(0)
 	        end
 
             ground.Map:SetSize(savedata.map.width, savedata.map.height)
-	        if savedata.map.prefab == "cave" then
+          	ground.Map:SetFromString(savedata.map.tiles)
+ 	        if savedata.map.prefab == "cave" then
 	        	ground.Map:SetPhysicsWallDistance(0.75)--0) -- TEMP for STREAM
-				TheFrontEnd:GetGraphicsOptions():EnableStencil()
-				TheFrontEnd:GetGraphicsOptions():EnableLightMapComponent()
+				TheFrontEnd:GetGraphicsOptions():DisableStencil()
+				TheFrontEnd:GetGraphicsOptions():DisableLightMapComponent()
+				-- TheFrontEnd:GetGraphicsOptions():EnableStencil()
+				-- TheFrontEnd:GetGraphicsOptions():EnableLightMapComponent()
+	            ground.Map:Finalize(1)
 	        else
 	        	ground.Map:SetPhysicsWallDistance(0)--0.75)
 				TheFrontEnd:GetGraphicsOptions():DisableStencil()
 				TheFrontEnd:GetGraphicsOptions():DisableLightMapComponent()
+    	        ground.Map:Finalize(0)
 	        end
 
-            ground.Map:SetFromString(savedata.map.tiles)
-            ground.Map:Finalize()
 	        
             if savedata.map.nav then
              	print("Loading Nav Grid")
@@ -361,6 +390,11 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
 				end
 			end
 			
+			if ground.topology.level_number == 2 then
+			    ground:AddComponent("nightmareclock")
+			    ground:AddComponent("nightmareambientsoundmixer")
+			end
+
 			wilson:AddComponent("area_aware")
 			--wilson:AddComponent("area_unlock")
 			
@@ -502,6 +536,12 @@ function PopulateWorld(savedata, profile, playercharacter, playersavedataoverrid
 				
 			end
         end
+
+        --Everything has been loaded! Now fix the colour cubes...
+        --Gross place to put this, should be using a post init.
+        if ground.components.colourcubemanager then
+        	ground.components.colourcubemanager:StartBlend(0)
+        end
     
     else
         Print(VERBOSITY.ERROR, "[MALFORMED SAVE DATA] PopulateWorld complete" )
@@ -551,8 +591,7 @@ end
 --OK, we have our savedata and a profile. Instatiate everything and start the game!
 function DoInitGame(playercharacter, savedata, profile, next_world_playerdata, fast)	
 	--print("DoInitGame",playercharacter, savedata, profile, next_world_playerdata, fast)
-	TheFrontEnd:ClearScreens()	
-	LoadAssets()
+	TheFrontEnd:ClearScreens()
 	
 	assert(savedata.map, "Map missing from savedata on load")
 	assert(savedata.map.prefab, "Map prefab missing from savedata on load")
@@ -725,8 +764,9 @@ function DoInitGame(playercharacter, savedata, profile, next_world_playerdata, f
 				GetPlayer().sg:GoToState("caveenter")
 				GetPlayer().HUD:Show()
 			elseif Settings.playeranim == "wakeup" or playercharacter == "waxwell" or savedata.map.nomaxwell then
-				
-				GetPlayer().sg:GoToState("wakeup")
+				if (GetClock().numcycles == 0 and GetClock():GetNormTime() == 0) then
+					GetPlayer().sg:GoToState("wakeup")
+				end
 				GetPlayer().HUD:Show()
 				--announce your freedom if you are starting as waxwell
 				if playercharacter == "waxwell" and SaveGameIndex:GetCurrentMode() == "survival" and (GetClock().numcycles == 0 and GetClock():GetNormTime() == 0) then
@@ -860,9 +900,13 @@ end
 local function LoadSlot(slot)
 	TheFrontEnd:ClearScreens()
 	if SaveGameIndex:HasWorld(slot, SaveGameIndex:GetCurrentMode(slot)) then
+		--print("Load Slot: Has World")
+		LoadAssets("BACKEND")
    		DoLoadWorld(slot, SaveGameIndex:GetModeData(slot, SaveGameIndex:GetCurrentMode(slot)).playerdata)
 	else
+		--print("Load Slot: Has no World")
 		if SaveGameIndex:GetCurrentMode(slot) == "survival" and SaveGameIndex:IsContinuePending(slot) then
+			--print("Load Slot: ... but continue pending")
 			
 			local function onsave()
 				DoGenerateWorld(slot)
@@ -871,8 +915,12 @@ local function LoadSlot(slot)
 			local function onSet(character)
 				SaveGameIndex:SetSlotCharacter(slot, character, onsave)
 			end
+
+			LoadAssets("FRONTEND")
 			TheFrontEnd:PushScreen(CharacterSelectScreen(Profile, onSet, true, SaveGameIndex:GetSlotCharacter(slot)))
 		else			
+			--print("Load Slot: ... generating new world")
+			LoadAssets("BACKEND")
 			DoGenerateWorld(slot)
 		end
 	end
@@ -882,48 +930,60 @@ end
 
 ----------------LOAD THE PROFILE AND THE SAVE INDEX, AND START THE FRONTEND
 
-local function OnFilesLoaded()
-	UpdateGamePurchasedState( function()
-		--print( "[Settings]",Settings.character, Settings.savefile)
-		if Settings.reset_action then
-			if Settings.reset_action == RESET_ACTION.DO_DEMO then
-				SaveGameIndex:DeleteSlot(1, function()
-					SaveGameIndex:StartSurvivalMode(1, "wilson", {}, function() 
-						LoadAssets()
-						DoGenerateWorld(1)
-					end)
+local function DoResetAction()
+	if Settings.reset_action then
+		if Settings.reset_action == RESET_ACTION.DO_DEMO then
+			SaveGameIndex:DeleteSlot(1, function()
+				SaveGameIndex:StartSurvivalMode(1, "wilson", {}, function() 
+					--print("Reset Action: DO_DEMO")
+					LoadAssets("BACKEND")
+					DoGenerateWorld(1)
 				end)
-			elseif Settings.reset_action == RESET_ACTION.LOAD_SLOT then
-				if not SaveGameIndex:GetCurrentMode(Settings.save_slot) then
-					LoadAssets()
-					TheFrontEnd:ShowScreen(MainScreen(Profile))
-				else
-					LoadSlot(Settings.save_slot)
-				end
-			elseif Settings.reset_action == "printtextureinfo" then
-				LoadAssets()
-				DoGenerateWorld(1)
-			else
-				LoadAssets()
+			end)
+		elseif Settings.reset_action == RESET_ACTION.LOAD_SLOT then
+			if not SaveGameIndex:GetCurrentMode(Settings.save_slot) then
+				--print("Reset Action: LOAD_SLOT -- not current save")
+				LoadAssets("FRONTEND")
 				TheFrontEnd:ShowScreen(MainScreen(Profile))
+			else
+				--print("Reset Action: LOAD_SLOT -- current save")
+				LoadSlot(Settings.save_slot)
 			end
+		elseif Settings.reset_action == "printtextureinfo" then
+			--print("Reset Action: printtextureinfo")
+			LoadAssets("BACKEND")
+			DoGenerateWorld(1)
 		else
-			if PRINT_TEXTURE_INFO then
-				SaveGameIndex:DeleteSlot(1,
-					function()
-						local function onsaved()
-							local params = json.encode{reset_action="printtextureinfo", save_slot = 1}
-							TheSim:SetInstanceParameters(params)
-							TheSim:Reset()
-						end
-						SaveGameIndex:StartSurvivalMode(1, "wilson", {}, onsaved)
-					end)
-			else
-				LoadAssets()
-				TheFrontEnd:ShowScreen(MainScreen(Profile))
-			end
+			--print("Reset Action: none")
+			LoadAssets("FRONTEND")
+			TheFrontEnd:ShowScreen(MainScreen(Profile))
 		end
-	end)
+	else
+		if PRINT_TEXTURE_INFO then
+			SaveGameIndex:DeleteSlot(1,
+				function()
+					local function onsaved()
+						SimReset({reset_action="printtextureinfo",save_slot=1})
+					end
+					SaveGameIndex:StartSurvivalMode(1, "wilson", {}, onsaved)
+				end)
+		else
+			LoadAssets("FRONTEND")
+			TheFrontEnd:ShowScreen(MainScreen(Profile))
+		end
+	end
+end
+
+
+local function OnUpdatePurchaseStateComplete()
+	print("OnUpdatePurchaseStateComplete")
+	--print( "[Settings]",Settings.character, Settings.savefile)
+	DoResetAction()
+end
+
+local function OnFilesLoaded()
+	print("OnFilesLoaded()")
+	UpdateGamePurchasedState(OnUpdatePurchaseStateComplete)
 end
 
 

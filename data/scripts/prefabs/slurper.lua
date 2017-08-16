@@ -262,7 +262,7 @@ local function fn()
 
     inst:AddComponent("lootdropper")
     inst.components.lootdropper:SetLoot({"lightbulb", "lightbulb"})
-    inst.components.lootdropper:AddChanceLoot("beardhair", 0.1)
+    inst.components.lootdropper:AddChanceLoot("slurper_pelt", 0.5)
 	-- inst:AddComponent("eater")
 	-- inst.components.eater:SetVegetarian()
 	-- inst.components.eater:SetOnEatFn(oneat)

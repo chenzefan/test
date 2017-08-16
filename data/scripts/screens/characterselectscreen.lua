@@ -1,8 +1,11 @@
-require "screen"
-require "button"
-require "animbutton"
-require "image"
-require "uianim"
+local Screen = require "widgets/screen"
+local Button = require "widgets/button"
+local AnimButton = require "widgets/animbutton"
+local ImageButton = require "widgets/imagebutton"
+local Text = require "widgets/text"
+local Image = require "widgets/image"
+local UIAnim = require "widgets/uianim"
+local Widget = require "widgets/widget"
 
 CharacterSelectScreen = Class(Screen, function(self, profile, cb, no_backbutton, default_character)
 	Screen._ctor(self, "CharacterSelect")
@@ -60,7 +63,7 @@ CharacterSelectScreen = Class(Screen, function(self, profile, cb, no_backbutton,
 	self.characterdetails:SetString( "" )
 
     
-	self.startbutton = self.fixed_root:AddChild(AnimButton("button"))
+	self.startbutton = self.fixed_root:AddChild(ImageButton())
 	--button:SetScale(.8,.8,.8)
 	self.startbutton:SetText(STRINGS.UI.CHARACTERSELECT.APPLY)
 	self.startbutton:SetOnClick(
@@ -82,7 +85,7 @@ CharacterSelectScreen = Class(Screen, function(self, profile, cb, no_backbutton,
 	
 		self.startbutton:SetPosition( 820 + 100+ adjust, 80, 0)
 
-		self.backbutton = self.fixed_root:AddChild(AnimButton("button"))
+		self.backbutton = self.fixed_root:AddChild(ImageButton())
 		--button:SetScale(.8,.8,.8)
 		self.backbutton:SetText(STRINGS.UI.CHARACTERSELECT.CANCEL)
 		self.backbutton:SetOnClick( function() if self.cb then self.cb(nil) end end)
@@ -106,31 +109,31 @@ CharacterSelectScreen = Class(Screen, function(self, profile, cb, no_backbutton,
 		local width = 190
 		local xpos = xbase + (k-1) * width
 
-		local portrait_bg = self.fixed_root:AddChild(UIAnim())
+		local character_portrait = self.fixed_root:AddChild(Widget("character_portrait"))
+		character_portrait:SetPosition(xpos, ypos, 0)
+
+		local portrait_bg = character_portrait:AddChild(UIAnim())
 		portrait_bg:GetAnimState():SetBuild("portrait_frame")
 		portrait_bg:GetAnimState():SetBank("portrait_frame")
 		portrait_bg:GetAnimState():PlayAnimation("idle")
 		
-		portrait_bg:SetPosition(xpos, ypos, 0)
+		
 		
 		--portrait:SetVRegPoint(ANCHOR_BOTTOM)
 		table.insert(self.portrait_bgs, portrait_bg)
 
-		ypos = ypos + 80
-
-		local portrait = self.fixed_root:AddChild(Image())
-		portrait:SetPosition(xpos, ypos, 0)
+		local portrait = character_portrait:AddChild(Image())
+		portrait:SetPosition(0, 80, 0)
 
 		table.insert(self.portraits, portrait)
 
-		local portrait_frame = self.fixed_root:AddChild(Image("images/selectscreen_portraits.xml", "frame.tex"))
+		local portrait_frame = character_portrait:AddChild(Image("images/selectscreen_portraits.xml", "frame.tex"))
 		portrait_frame:SetMouseOverTexture("images/selectscreen_portraits.xml", "frame_mouse_over.tex")
-		portrait_frame:SetPosition(xpos, ypos, 0)
+		portrait_frame:SetPosition(0, 80, 0)
 
-		portrait_frame:SetLeftMouseDown(function() self:OnClickPortait(k) end)
-		
-		portrait_frame:SetMouseOver(function() if self.portrait_idx ~= k then portrait_bg:GetAnimState():PlayAnimation("mouseover") end end)
-		portrait_frame:SetMouseOut(function() if self.portrait_idx ~= k then portrait_bg:GetAnimState():PlayAnimation("idle") end end)
+		character_portrait.OnControl = function(_, control, down) if control == CONTROL_ACCEPT then if not down then self:OnClickPortait(k) return true end end end
+		character_portrait.OnGainFocus = function() if self.portrait_idx ~= k then portrait_bg:GetAnimState():PlayAnimation("mouseover") end end
+		character_portrait.OnLoseFocus = function() if self.portrait_idx ~= k then portrait_bg:GetAnimState():PlayAnimation("idle") end end
 		table.insert(self.portrait_frames, portrait_frame)
     end
 
@@ -150,16 +153,6 @@ CharacterSelectScreen = Class(Screen, function(self, profile, cb, no_backbutton,
     --TheFrontEnd:DoFadeIn(2)
     self:SelectCharacter(default_character)
 end)
-
-function CharacterSelectScreen:OnKeyUp( key )
-	if key == KEY_ESCAPE and not self.no_cancel then
-		if self.cb then self.cb(nil) end
-	elseif key == KEY_ENTER then
-		if self.currentcharacter then
-			self.cb(self.currentcharacter)
-		end
-	end
-end
 
 function CharacterSelectScreen:OnGainFocus()
     self._base.OnGainFocus(self)

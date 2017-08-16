@@ -96,7 +96,6 @@ function Highlight:UnHighlight()
     self.mouseover = nil
 	self.highlight_add_colour = Vector3(0,0,0)	
 	self:ApplyColour()    
-    
 end
 
 return Highlight

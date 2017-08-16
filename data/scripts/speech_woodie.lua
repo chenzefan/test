@@ -61,7 +61,36 @@ return {
 	DESCRIBE =
 	{
 
+		THULECITE = "It's the wood of the caves!",
+		ARMORRUINS = "That'll stop the hurt.",
+		RUINS_BAT = "Metal on a stick.",
+		NIGHTMARE_TIMEPIECE = --Keeps track of the nightmare cycle
+		{
+		CALM = "I think it's off.",	--calm phase
+		WARN = "This thing just turned on!",	--Before nightmare
+		WAXING = "It's vibrating!", --Nightmare Phase first 33%
+		STEADY = "It's going crazy!", --Nightmare 33% - 66%
+		WANING = "It's settling down.", --Nightmare 66% +
+		DAWN = "It's nearly still.", --After nightmare
+		NOMAGIC = "I think it's off.", --Place with no nightmare cycle.
+		},
+		BISHOP_NIGHTMARE = "I can see the internal workings!",
+		ROOK_NIGHTMARE = "The gears are spilling out.",
+		KNIGHT_NIGHTMARE = "Doesn't look to be in the best of shape.",
+		MINOTAUR = "Another poor soul with a curse.",	--Monster in labyrinth
+		SPIDER_DROPPER = "They're smart to live away from the corruption.",	--White spider that comes from the roof
+		NIGHTMARELIGHT = "They should have used wood.",	--Lights that activate during nightmare.
+		RELIC = "Piece of furniture.",	--Fixed relic
+		RUINS_RUBBLE = "All busted up.",	--Broken relic
+		MULTITOOL_AXE_PICKAXE = "It's... it's beautiful.",	--Works as axe and pickaxe
+		GREENGEM = "How flashy.",
+		ORANGESTAFF = "This will help me get around quickly.",	--Teleports player.
+		YELLOWAMULET = "I could cut wood at night with this.",	--Emits light, player walks faster.
+		GREENAMULET = "I've always been better at cuttin' anyways.",	--Reduce cost of crafting
+
 		SLURPER = "I think it's living hair.",
+		SLURPER_PELT = "Looks like a dead beaver.",
+		ARMORSLURPER = "It tickles, I think it's still alive.",
 		ORANGEAMULET = "This'll make the chores go by quicker!",
 		YELLOWSTAFF = "Useful in a pinch!",
 		YELLOWGEM = "I can see the stars in it.",
@@ -81,7 +110,18 @@ return {
 
 	
 		LUCY = "I love Lucy!",
-        ANCIENT_ALTAR = "There's axe marks on these altar stones.",
+
+        ANCIENT_ALTAR =
+        {
+        	WORKING = "There's axe marks on these altar stones.",
+        	BROKEN = "Looks a little worn out.",
+        },     
+        
+        ANCIENT_STATUE = "Another hoser.",
+
+        LICHEN = "Looks barely edible.",
+		CUTLICHEN = "Yum! Tastes woody!",
+
 		CAVE_BANANA = "It tastes tropical.",
 		CAVE_BANANA_COOKED = "I cooked it.",
 		CAVE_BANANA_TREE = "They don't have those back home.",
@@ -622,6 +662,7 @@ return {
 			GENERIC = "Reeds.",
 			PICKED = "They'll be back.",
 		},
+        RUBBLE = "Broken furniture.",
 		RESEARCHLAB = "I don't trust all this science stuff.",
 		RESEARCHLAB2 = "This is getting strange.",
 		RESEARCHLAB3 = "OK, I kind of get it now.",
@@ -790,8 +831,8 @@ return {
 		WALL_HAY_ITEM = "I could sneeze it over.",
 		WALL_STONE = "Safe and secure, eh?",
 		WALL_STONE_ITEM = "Safe and secure, eh?",
-		WALL_RUINS = "Safe and secure, eh?",
-		WALL_RUINS_ITEM = "Safe and secure, eh?",
+		WALL_RUINS = "Crumbling but still secure, eh?",
+		WALL_RUINS_ITEM = "Heh, stoned again eh?",
 		WALL_WOOD = "I like the look of that!",
 		WALL_WOOD_ITEM = "I like the look of that!",
 		WALRUS = "Oh no. Walruses again!",

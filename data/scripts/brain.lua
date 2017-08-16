@@ -193,6 +193,13 @@ function Brain:Start()
 	if self.OnInitializationComplete then
 		self:OnInitializationComplete()
 	end
+
+	-- apply mods
+	if self.modpostinitfns then
+		for i,modfn in ipairs(self.modpostinitfns) do
+			modfn(self)
+		end
+	end
 end
 
 function Brain:OnUpdate()

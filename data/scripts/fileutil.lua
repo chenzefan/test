@@ -33,7 +33,13 @@ function EraseFiles(cb, files)
 	
 	for i,v in pairs(files) do
 		print ("Erasing", v)
-		TheSim:ErasePersistentString(v, function(success) onerased(success, v) end)
+		TheSim:CheckPersistentStringExists(v, function (exists)
+				if exists == true then
+					TheSim:ErasePersistentString(v, function(success) onerased(success, v) end)
+				else
+					onerased(true, v)
+				end
+			end)
 	end
 end
 

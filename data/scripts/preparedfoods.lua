@@ -277,7 +277,11 @@ local foods=
 		cooktime = .25,
 	},
 }
-for k,v in pairs(foods) do v.name = k v.weight = v.weight or 1 v.priority = v.priority or 0 end
+for k,v in pairs(foods) do
+	v.name = k
+	v.weight = v.weight or 1
+	v.priority = v.priority or 0
+end
 
 
 return foods

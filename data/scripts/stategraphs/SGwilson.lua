@@ -228,7 +228,21 @@ local events=
 			end
 		end
 	end),
+
     EventHandler("doattack", function(inst)
+        if not inst.components.health:IsDead() and not inst.sg:HasStateTag("attack") then
+            local weapon = inst.components.combat and inst.components.combat:GetWeapon()
+            if weapon and weapon:HasTag("blowdart") then
+                inst.sg:GoToState("blowdart")
+            elseif weapon and weapon:HasTag("thrown") then
+                inst.sg:GoToState("throw")
+            else
+                inst.sg:GoToState("attack")
+            end
+        end
+    end),
+
+    EventHandler("dowhiff", function(inst)
         if not inst.components.health:IsDead() then
             local weapon = inst.components.combat and inst.components.combat:GetWeapon()
             if weapon and weapon:HasTag("blowdart") then
@@ -1357,13 +1371,21 @@ local states=
 
     State{
         name = "doshortaction",
-        tags = {"doing"},
+        tags = {"doing", "busy"},
         
         onenter = function(inst)
             inst.components.locomotor:Stop()
             inst.AnimState:PlayAnimation("pickup")
             inst.sg:SetTimeout(6*FRAMES)
         end,
+        
+        
+        timeline=
+        {
+            TimeEvent(4*FRAMES, function( inst )
+                inst.sg:RemoveStateTag("busy")
+            end),
+        },
         
         ontimeout = function(inst)
             inst:PerformBufferedAction()
@@ -1378,7 +1400,14 @@ local states=
     
     State{
         name = "dolongaction",
-        tags = {"doing"},
+        tags = {"doing", "busy"},
+        
+        timeline=
+        {
+            TimeEvent(4*FRAMES, function( inst )
+                inst.sg:RemoveStateTag("busy")
+            end),
+        },
         
         onenter = function(inst, timeout)
             
@@ -1867,6 +1896,10 @@ local states=
             inst.sg.mem.foosteps = 0
         end,
 
+        onupdate = function(inst)
+            inst.components.locomotor:RunForward()
+        end,
+
         events=
         {   
             EventHandler("animover", function(inst) inst.sg:GoToState("run") end ),        
@@ -1894,6 +1927,10 @@ local states=
             
         end,
         
+        onupdate = function(inst)
+            inst.components.locomotor:RunForward()
+        end,
+
         timeline=
         {
             TimeEvent(7*FRAMES, function(inst)
@@ -1943,6 +1980,11 @@ local states=
             inst.AnimState:PlayAnimation("walk_pre")
         end,
 
+        onupdate = function(inst)
+            inst.components.locomotor:WalkForward()
+        end,
+
+
         events=
         {   
             EventHandler("animover", function(inst) inst.sg:GoToState("walk") end ),        
@@ -1953,6 +1995,10 @@ local states=
         
         name = "walk",
         tags = {"moving", "canrotate"},
+        
+        onupdate = function(inst)
+            inst.components.locomotor:WalkForward()
+        end,
         
         onenter = function(inst) 
             inst.components.locomotor:WalkForward()

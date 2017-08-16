@@ -1,8 +1,11 @@
-require "screen"
-require "button"
-require "animbutton"
-require "image"
-require "uianim"
+local Screen = require "widgets/screen"
+local Button = require "widgets/button"
+local AnimButton = require "widgets/animbutton"
+local ImageButton = require "widgets/imagebutton"
+local Text = require "widgets/text"
+local Image = require "widgets/image"
+local UIAnim = require "widgets/uianim"
+local Widget = require "widgets/widget"
 
 CreditsScreen = Class(Screen, function(self)
 	Screen._ctor(self, "CreditsScreen")
@@ -111,69 +114,75 @@ CreditsScreen = Class(Screen, function(self)
     self.pagemax = 11
     self:ChangeFlavourText()
     
-    TheFrontEnd:GetSound():PlaySound("dontstarve/music/gramaphone_ragtime", "creditsscreenmusic")    
 
 
-    local left_pos_x = -1280/2+100
-    local right_pos_x = 1280/2-100
+    local right_pos_x = -150
+    local left_pos_x = 150
 
-    self.OK_button = self:AddChild(AnimButton("button"))
+    self.OK_button = self:AddChild(ImageButton())
     self.OK_button:SetScale(.8,.8,.8)
     self.OK_button:SetText(STRINGS.UI.MAINSCREEN.EXIT)
-    self.OK_button:SetOnClick( function() self:OnLoseFocus() TheFrontEnd:PopScreen(self) end )
-    self.OK_button:SetFont(BUTTONFONT)
-    self.OK_button:SetTextSize(35)
-    self.OK_button.text:SetVAlign(ANCHOR_MIDDLE)
-    self.OK_button:SetHAnchor(ANCHOR_MIDDLE)
+    self.OK_button:SetOnClick( function() TheFrontEnd:PopScreen(self) end )
+    self.OK_button:SetHAnchor(ANCHOR_RIGHT)
     self.OK_button:SetVAnchor(ANCHOR_BOTTOM)
-    self.OK_button.text:SetColour(0,0,0,1)
     self.OK_button:SetPosition( right_pos_x, 55, 0)
 
-    self.FB_button = self:AddChild(AnimButton("button"))
+    self.FB_button = self:AddChild(ImageButton())
     self.FB_button:SetScale(.8,.8,.8)
     self.FB_button:SetText(STRINGS.UI.CREDITS.FACEBOOK)
     self.FB_button:SetOnClick( function() VisitURL("http://facebook.com/kleientertainment") end )
-    self.FB_button:SetFont(BUTTONFONT)
-    self.FB_button:SetTextSize(35)
-    self.FB_button.text:SetVAlign(ANCHOR_MIDDLE)
-    self.FB_button:SetHAnchor(ANCHOR_MIDDLE)
+    self.FB_button:SetHAnchor(ANCHOR_LEFT)
     self.FB_button:SetVAnchor(ANCHOR_BOTTOM)
-    self.FB_button.text:SetColour(0,0,0,1)
     self.FB_button:SetPosition( left_pos_x, 55*2, 0)
 
-    self.TWIT_button = self:AddChild(AnimButton("button"))
+    self.TWIT_button = self:AddChild(ImageButton())
     self.TWIT_button:SetScale(.8,.8,.8)
     self.TWIT_button:SetText(STRINGS.UI.CREDITS.TWITTER)
     self.TWIT_button:SetOnClick( function() VisitURL("http://twitter.com/klei", true) end )
-    self.TWIT_button:SetFont(BUTTONFONT)
-    self.TWIT_button:SetTextSize(35)
-    self.TWIT_button.text:SetVAlign(ANCHOR_MIDDLE)
-    self.TWIT_button:SetHAnchor(ANCHOR_MIDDLE)
+    self.TWIT_button:SetHAnchor(ANCHOR_LEFT)
     self.TWIT_button:SetVAnchor(ANCHOR_BOTTOM)
-    self.TWIT_button.text:SetColour(0,0,0,1)
     self.TWIT_button:SetPosition( left_pos_x, 55, 0)
 
-    self.THANKS_button = self:AddChild(AnimButton("button"))
+    self.THANKS_button = self:AddChild(ImageButton())
     self.THANKS_button:SetScale(.8,.8,.8)
     self.THANKS_button:SetText(STRINGS.UI.CREDITS.THANKYOU)
     self.THANKS_button:SetOnClick( function() VisitURL("http://www.dontstarvegame.com/Thank-You") end )
-    self.THANKS_button:SetFont(BUTTONFONT)
-    self.THANKS_button:SetTextSize(35)
-    self.THANKS_button.text:SetVAlign(ANCHOR_MIDDLE)
-    self.THANKS_button:SetHAnchor(ANCHOR_MIDDLE)
+    self.THANKS_button:SetHAnchor(ANCHOR_LEFT)
     self.THANKS_button:SetVAnchor(ANCHOR_BOTTOM)
-    self.THANKS_button.text:SetColour(0,0,0,1)
     self.THANKS_button:SetPosition( left_pos_x, 55*3, 0)
+
+
+    --focus crap
+    self.OK_button:SetFocusChangeDir(MOVE_LEFT, self.TWIT_button)
+    self.TWIT_button:SetFocusChangeDir(MOVE_RIGHT, self.OK_button)
+    self.TWIT_button:SetFocusChangeDir(MOVE_UP, self.FB_button)
+    self.FB_button:SetFocusChangeDir(MOVE_DOWN, self.TWIT_button)
+    self.FB_button:SetFocusChangeDir(MOVE_UP, self.THANKS_button)
+    self.THANKS_button:SetFocusChangeDir(MOVE_DOWN, self.FB_button)
+    self.default_focus = self.OK_button
 end)
 
-function CreditsScreen:OnLoseFocus()
-	Screen.OnLoseFocus(self)
-	TheFrontEnd:GetSound():KillSound("creditsscreenmusic")    
+
+function CreditsScreen:OnBecomeActive()
+    CreditsScreen._base.OnBecomeActive(self)
+    TheFrontEnd:GetSound():PlaySound("dontstarve/music/gramaphone_ragtime", "creditsscreenmusic")    
+end
+
+function CreditsScreen:OnBecomeInactive()
+    CreditsScreen._base.OnBecomeInactive(self)
+
+    TheFrontEnd:GetSound():KillSound("creditsscreenmusic")    
     TheFrontEnd:GetSound():PlaySound("dontstarve/music/music_FE","FEMusic")
 end
 
-function CreditsScreen:OnUpdate(dt)
+function CreditsScreen:OnControl(control, down)
+    if Screen.OnControl(self, control, down) then return true end
+    if not down and control == CONTROL_CANCEL then
+        TheFrontEnd:PopScreen(self)
+        return true
+    end
 end
+
 
 function CreditsScreen:ChangeFlavourText()
     TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/creditpage_flip", "flippage")   

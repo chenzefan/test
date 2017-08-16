@@ -363,32 +363,9 @@ local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choi
     current_gen_params, runtime_overrides = TranslateWorldGenChoices(current_gen_params)
 
     print("Checking Tags")
-
-   	if topology_save.GlobalTags["Labyrinth"] ~= nil and #topology_save.GlobalTags["Labyrinth"] >0 then
-   		local val = math.floor(math.random()*10.0-2.5)
-   		local mazetype = MAZE_TYPE.MAZE_GROWINGTREE_4WAY
-   		-- if math.random()> 0.9 then
-   			-- mazetype = MAZE_TYPE.MAZE_GROWINGTREE_4WAY_INV
-   		-- end
-
-   		WorldSim:RunMaze(mazetype, val, topology_save.GlobalTags["Labyrinth"])
-
-   		for i,node in ipairs(topology_save.GlobalTags["LabyrinthEntrance"]) do 
-	   		local entrance_node = topology_save.root:GetNodeById(node)
-
-	   		for id, edge in pairs(entrance_node.edges) do
-	   			--print("Drawing line for ", edge.node1.id, edge.node2.id, GROUND.BRICK)
-				WorldSim:DrawCellLine( edge.node1.id, edge.node2.id, NODE_INTERNAL_CONNECTION_TYPE.EdgeSite, GROUND.BRICK)
-	   		end
-   		end
-   	end
-
-   	if topology_save.GlobalTags["Maze"] ~= nil and #topology_save.GlobalTags["Maze"] >0 then
-  		local xs, ys, types = WorldSim:GetPointsForMetaMaze(topology_save.GlobalTags["Maze"])
+	local obj_layout = require("map/object_layout")
 		
-		local obj_layout = require("map/object_layout")
-		
-		local add_fn = {fn=function(prefab, points_x, points_y, current_pos_idx, entitiesOut, width, height, prefab_list, prefab_data, rand_offset) 
+	local add_fn = {fn=function(prefab, points_x, points_y, current_pos_idx, entitiesOut, width, height, prefab_list, prefab_data, rand_offset) 
 				WorldSim:ReserveTile(points_x[current_pos_idx], points_y[current_pos_idx])
 		
 				local x = (points_x[current_pos_idx] - width/2.0)*TILE_SCALE
@@ -419,28 +396,82 @@ local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choi
 			end,
 			args={entitiesOut=entities, width=map_width, height=map_height, rand_offset = false, debug_prefab_list=nil}
 		}
-		
-		if xs ~= nil and #xs >0 then
-			local closest = Vector3(9999999999, 9999999999, 0)
-			local c_x, c_y = WorldSim:GetSiteCentroid(topology_save.GlobalTags["MazeEntrance"][1])
-			local centroid = Vector3(c_x, c_y, 0)
-			for idx = 1,#xs do
-				local current = Vector3(xs[idx], ys[idx], 0)
 
-				local diff = centroid - current
-				local best = centroid - closest
+   	if topology_save.GlobalTags["Labyrinth"] ~= nil and GetTableSize(topology_save.GlobalTags["Labyrinth"]) >0 then
+   		for task, nodes in pairs(topology_save.GlobalTags["Labyrinth"]) do
 
-				if diff:Length() < best:Length() then
-					closest = current
-				end 
+	   		local val = math.floor(math.random()*10.0-2.5)
+	   		local mazetype = MAZE_TYPE.MAZE_GROWINGTREE_4WAY
 
-				if types[idx] ~= 0 then			
-					obj_layout.Place({xs[idx], ys[idx]}, MAZE_CELL_EXITS_INV[types[idx]], add_fn)
-				else
-					print("ERROR Type:",types[idx], MAZE_CELL_EXITS_INV[types[idx]])
+	   		local xs, ys, types = WorldSim:RunMaze(mazetype, val, nodes)
+	   		-- TODO: place items of interest in these locations
+			if xs ~= nil and #xs >0 then
+				for idx = 1,#xs do
+			   		if types[idx] == 0 then	
+			   			--Spawning chests within the labyrinth.
+						local prefab = "pandoraschest"
+						local x = (xs[idx]+1.5 - map_width/2.0)*TILE_SCALE
+						local y = (ys[idx]+1.5 - map_height/2.0)*TILE_SCALE
+						WorldSim:ReserveTile(xs[idx], ys[idx])
+						--print(task.." Labryth Point of Interest:",xs[idx], ys[idx], x, y)
+
+						if entities[prefab] == nil then
+							entities[prefab] = {}
+						end
+						local save_data = {x=x, z=y, scenario = "chest_labyrinth"}
+						table.insert(entities[prefab], save_data)
+					end
 				end
 			end
-			obj_layout.Place({closest.x, closest.y}, "FOUR_WAY", add_fn)
+	   		for i,node in ipairs(topology_save.GlobalTags["LabyrinthEntrance"][task]) do 
+		   		local entrance_node = topology_save.root:GetNodeById(node)
+
+		   		for id, edge in pairs(entrance_node.edges) do
+					WorldSim:DrawCellLine( edge.node1.id, edge.node2.id, NODE_INTERNAL_CONNECTION_TYPE.EdgeSite, GROUND.BRICK)
+		   		end
+	   		end
+	   	end
+   	end
+
+   	if topology_save.GlobalTags["Maze"] ~= nil and GetTableSize(topology_save.GlobalTags["Maze"]) >0 then
+
+   		for task, nodes in pairs(topology_save.GlobalTags["Maze"]) do
+	 		local xs, ys, types = WorldSim:GetPointsForMetaMaze(nodes)
+			
+			if xs ~= nil and #xs >0 then
+				local closest = Vector3(9999999999, 9999999999, 0)
+				local task_node = topology_save.root:GetNodeById(task)
+				local choices = task_node.maze_tiles
+				local c_x, c_y = WorldSim:GetSiteCentroid(topology_save.GlobalTags["MazeEntrance"][task][1])
+				local centroid = Vector3(c_x, c_y, 0)
+				for idx = 1,#xs do
+					local current = Vector3(xs[idx], ys[idx], 0)
+
+					local diff = centroid - current
+					local best = centroid - closest
+
+					if diff:Length() < best:Length() then
+						closest = current
+					end 
+
+					if types[idx] > 0 then			
+						obj_layout.Place({xs[idx], ys[idx]}, MAZE_CELL_EXITS_INV[types[idx]], add_fn, choices.rooms)
+					elseif types[idx] < 0 then
+						--print(task.." Maze Room of Interest:",xs[idx], ys[idx])
+						obj_layout.Place({xs[idx], ys[idx]}, MAZE_CELL_EXITS_INV[-types[idx]], add_fn, choices.bosses)
+					else
+						print("ERROR Type:",types[idx], MAZE_CELL_EXITS_INV[types[idx]])
+					end
+				end
+				obj_layout.Place({closest.x, closest.y}, "FOUR_WAY", add_fn, choices.rooms)
+
+		   		for i,node in ipairs(topology_save.GlobalTags["MazeEntrance"][task]) do 
+			   		local entrance_node = topology_save.root:GetNodeById(node)
+			   		for id, edge in pairs(entrance_node.edges) do
+						WorldSim:DrawCellLine( edge.node1.id, edge.node2.id, NODE_INTERNAL_CONNECTION_TYPE.EdgeSite, GROUND.BRICK)
+			   		end
+		   		end
+			end
 		end
    	end
 
@@ -452,7 +483,7 @@ local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choi
 	-- Caves can be easily disconnected
  	if prefab == "cave" then
 	   	local replace_count = WorldSim:DetectDisconnect()
-	    if replace_count >200 then
+	    if replace_count >1000 then
 	    	print("PANIC: Too many disconnected tiles...",replace_count)
 	    	if SKIP_GEN_CHECKS == false then
 	    		return nil
@@ -591,5 +622,7 @@ local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choi
 end
 
 return {
-    Generate = GenerateVoro
+    Generate = GenerateVoro,
+	TRANSLATE_TO_PREFABS = TRANSLATE_TO_PREFABS,
+	MULTIPLY = MULTIPLY,
 }

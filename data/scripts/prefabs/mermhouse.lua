@@ -33,7 +33,6 @@ local function onhit(inst, worker)
 end
 
 local function StartSpawning(inst)
-	
 	if inst.components.childspawner and GetSeasonManager() and not GetSeasonManager():IsWinter() then
 		inst.components.childspawner:StartSpawning()
 	end
@@ -47,15 +46,15 @@ end
 
 local function OnSpawned(inst, child)
 	inst.SoundEmitter:PlaySound("dontstarve/common/pighouse_door")
-	if GetClock():IsDay() and inst.components.childspawner and inst.components.childspawner:CountChildrenOutside() > 1 and not child.components.combat.target then
-        inst.components.childspawner:GoHome(child)
+	if GetClock():IsDay() and inst.components.childspawner and inst.components.childspawner:CountChildrenOutside() >= 1 and not child.components.combat.target then
+        StopSpawning(inst)
     end
 end
 
 local function OnGoHome(inst, child) 
 	inst.SoundEmitter:PlaySound("dontstarve/common/pighouse_door")
 	if inst.components.childspawner and inst.components.childspawner:CountChildrenOutside() < 1 then
-        inst.components.childspawner:SpawnChild()
+        StartSpawning(inst)
     end
 end
 
@@ -90,13 +89,17 @@ local function fn()
 	inst.components.childspawner:SetRegenPeriod(TUNING.TOTAL_DAY_TIME*4)
 	inst.components.childspawner:SetSpawnPeriod(10)
 	inst.components.childspawner:SetMaxChildren(4)
-	StartSpawning(inst)
-	inst:ListenForEvent("dusktime", function()
+
+	inst:ListenForEvent("dusktime", function() 
 	    if GetSeasonManager() and not GetSeasonManager():IsWinter() then
 		    inst.components.childspawner:ReleaseAllChildren()
 		end
+		StartSpawning(inst)
 	end, GetWorld())
-	inst:ListenForEvent("daytime", function() StartSpawning(inst) end, GetWorld())
+	inst:ListenForEvent("daytime", function() StopSpawning(inst) end , GetWorld())
+	StartSpawning(inst)
+
+
     inst:AddComponent("inspectable")
 	
 	MakeSnowCovered(inst, .01)

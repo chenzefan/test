@@ -1,20 +1,26 @@
 PlayerProfile = Class(function(self)
     self.persistdata = 
     {
-		--we should migrate the non-gameplay stuff to a separate file, so that we can save them whenever we want
-        volume_ambient = 7,
-        volume_sfx = 7,
-        volume_music = 7,
-        HUDSize = 5,
         xp = 0,
         unlocked_worldgen = {},
         unlocked_characters = {},        
         render_quality = RENDER_QUALITY.DEFAULT,
         characterinthrone = "waxwell",
+        -- Controlls should be a seperate file
         controls = {},
         starts = 0,
     }
-    
+
+  	--we should migrate the non-gameplay stuff to a separate file, so that we can save them whenever we want
+  
+ 	if PLATFORM == "NACL" then
+        self.persistdata.volume_ambient = 7
+        self.persistdata.volume_sfx = 7
+        self.persistdata.volume_music = 7
+        self.persistdata.HUDSize = 5
+	end
+
+
     self.dirty = true
 
 end)
@@ -52,38 +58,91 @@ function PlayerProfile:GetValue(name)
 end
 
 function PlayerProfile:SetVolume(ambient, sfx, music)
-    self:SetValue("volume_ambient", ambient) 
-    self:SetValue("volume_sfx", sfx) 
-    self:SetValue("volume_music", music) 
-    self.dirty = true
+	if PLATFORM == "NACL" then
+	    self:SetValue("volume_ambient", ambient) 
+	    self:SetValue("volume_sfx", sfx) 
+	    self:SetValue("volume_music", music) 
+	    self.dirty = true
+	else
+		TheSim:SetSetting("audio", "volume_ambient", tostring(math.floor(ambient))) 
+		TheSim:SetSetting("audio", "volume_sfx", tostring(math.floor(sfx)))
+		TheSim:SetSetting("audio", "volume_music", tostring(math.floor(music))) 		
+	end
 end
 
 function PlayerProfile:SetBloomEnabled(enabled)
-	self:SetValue("bloom", enabled)
-	self.dirty = true
+	if PLATFORM == "NACL" then
+		self:SetValue("bloom", enabled)
+		self.dirty = true
+	else
+		TheSim:SetSetting("graphics", "bloom", tostring(enabled)) 
+	end
 end
 
 function PlayerProfile:GetBloomEnabled()
-	return self:GetValue("bloom")
+	if PLATFORM == "NACL" then
+		return self:GetValue("bloom")
+	else
+		return TheSim:GetSetting("graphics", "bloom") == "true"
+	end
 end
 
 function PlayerProfile:SetHUDSize(size)
-	self:SetValue("HUDSize", size)
-	self.dirty = true
+	if PLATFORM == "NACL" then
+		self:SetValue("HUDSize", size)
+		self.dirty = true
+	else
+		TheSim:SetSetting("graphics", "HUDSize", tostring(size)) 
+	end
+end
+
+function PlayerProfile:GetHUDSize()
+	if PLATFORM == "NACL" then
+		return self:GetValue("HUDSize") or 5
+	else
+		return TheSim:GetSetting("graphics", "HUDSize") or 5
+	end
 end
 
 function PlayerProfile:SetDistortionEnabled(enabled)
-	self:SetValue("distortion", enabled)
-	self.dirty = true
+	if PLATFORM == "NACL" then
+		self:SetValue("distortion", enabled)
+		self.dirty = true
+	else
+		TheSim:SetSetting("graphics", "distortion", tostring(enabled)) 
+	end
 end
 
 function PlayerProfile:GetDistortionEnabled()
-	return self:GetValue("distortion")
+	if PLATFORM == "NACL" then
+		return self:GetValue("distortion")
+	else
+		return TheSim:GetSetting("graphics", "distortion") == "true"
+	end
 end
 
 function PlayerProfile:GetVolume()
-    return self.persistdata.volume_ambient, self.persistdata.volume_sfx, self.persistdata.volume_music
+	if PLATFORM == "NACL" then
+    	return self.persistdata.volume_ambient, self.persistdata.volume_sfx, self.persistdata.volume_music
+	else
+
+		local amb = TheSim:GetSetting("audio", "volume_ambient")
+		if amb == nil then
+			amb = 10
+		end
+		local sfx = TheSim:GetSetting("audio", "volume_sfx")
+		if sfx == nil then
+			sfx = 10
+		end
+		local music = TheSim:GetSetting("audio", "volume_music") 
+		if music == nil then
+			music = 10
+		end
+
+		return amb, sfx, music
+	end
 end
+
 
 function PlayerProfile:SetRenderQuality(quality)
 	self:SetValue("render_quality", quality)
@@ -163,10 +222,6 @@ function PlayerProfile:GetSaveName()
     return BRANCH == "release" and "profile" or "profile_"..BRANCH
 end
 
-function PlayerProfile:GetHUDSize()
-	return self.persistdata.HUDSize or 5
-end
-
 function PlayerProfile:GetXP()
     return self.persistdata.xp
 end
@@ -203,15 +258,28 @@ local function GetValueOrDefault( value, default )
 end
 
 function PlayerProfile:Set(str, callback)
-	if string.len(str) == 0 then
+	if not str or string.len(str) == 0 then
 		print ("could not load ".. self:GetSaveName())
 		if callback then
 			callback(false)
 		end
 	else
 		print ("loaded ".. self:GetSaveName())
+		self.dirty = false
 
 		self.persistdata = TrackedAssert("TheSim:GetPersistentString profile",  json.decode, str)
+		if PLATFORM ~= "NACL" then
+			-- Copy over old settings
+			if self.persistdata.volume_ambient ~= nil and self.persistdata.volume_sfx ~= nil and self.persistdata.volume_music ~= nil then
+				print("Copying audio settings from profile to settings.ini")
+
+				self:SetVolume(self.persistdata.volume_ambient, self.persistdata.volume_sfx, self.persistdata.volume_music)
+				self.persistdata.volume_ambient = nil 
+				self.persistdata.volume_sfx = nil
+				self.persistdata.volume_music = nil
+				self.dirty = true
+			end
+		end
 
 		local amb, sfx, music = self:GetVolume()
 		Print(VERBOSITY.DEBUG, "volumes", amb, sfx, music )
@@ -223,7 +291,25 @@ function PlayerProfile:Set(str, callback)
 		if TheFrontEnd then
 			local bloom_enabled = GetValueOrDefault( self.persistdata.bloom, true )
 			local distortion_enabled = GetValueOrDefault( self.persistdata.distortion, true )
-			
+
+			if PLATFORM ~= "NACL" then
+				-- Copy over old settings
+				if self.persistdata.bloom ~= nil and self.persistdata.distortion ~= nil and self.persistdata.HUDSize ~= nil then
+					print("Copying render settings from profile to settings.ini")
+					
+					self:SetBloomEnabled(bloom_enabled)
+					self:SetDistortionEnabled(distortion_enabled)
+					self:SetHUDSize(self.persistdata.HUDSize)
+					self.persistdata.bloom = nil
+					self.persistdata.distortion = nil
+					self.persistdata.HUDSize = nil
+					self.dirty = true
+				else
+					bloom_enabled = self:GetBloomEnabled()
+					distortion_enabled = self:GetDistortionEnabled()
+				end
+			end
+			print("bloom_enabled",bloom_enabled)
 			TheFrontEnd:GetGraphicsOptions():SetBloomEnabled( bloom_enabled )
 			TheFrontEnd:GetGraphicsOptions():SetDistortionEnabled( distortion_enabled )
 		end
@@ -237,7 +323,6 @@ function PlayerProfile:Set(str, callback)
 	        TheInputProxy:LoadControls(entry.guid, entry.data)
 	    end
 
-		self.dirty = false
 		if callback then
 			callback(true)
 		end

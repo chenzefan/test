@@ -25,6 +25,14 @@ local SEASON_CCS = {
 						},
 }
 
+local NIGHTMARE_CCS = 
+{
+	CALM = "images/colour_cubes/ruins_dark_cc.tex",
+	WARN = "images/colour_cubes/ruins_dim_cc.tex",
+	NIGHTMARE = "images/colour_cubes/ruins_light_cc.tex",
+	DAWN = "images/colour_cubes/ruins_dim_cc.tex",
+}
+
 
 local ColourCubeManager = Class(function(self, inst)
 	self.inst = inst
@@ -45,6 +53,7 @@ local ColourCubeManager = Class(function(self, inst)
 	self.inst:ListenForEvent("dusktime", function() self:StartBlend(6) end, GetWorld())
 	self.inst:ListenForEvent("nighttime", function() self:StartBlend(8) end, GetWorld())
 	self.inst:ListenForEvent("seasonChange", function() self:StartBlend(10) end, GetWorld())
+	self.inst:ListenForEvent("phasechange", function(inst, data) self:StartBlend(TUNING.TRANSITIONTIME[string.upper(data.newphase)]) end, GetWorld()) --nightmare events
 
 	self.inst:StartUpdatingComponent(self)
 
@@ -55,7 +64,6 @@ function ColourCubeManager:StartBlend(time_to_take)
 	if self.override then
 		return
 	end
-
 	self.total_transition_time = time_to_take
 	self.transition_time_left = time_to_take
 	
@@ -64,12 +72,12 @@ function ColourCubeManager:StartBlend(time_to_take)
 	self.current_cc[0], self.current_cc[1] = self:GetDestColourCubes()
 
 	PostProcessor:SetColourCubeData( 0, old_cc, self.current_cc[0] )
+	PostProcessor:SetColourCubeLerp( 0, 0 )
 	PostProcessor:SetColourCubeData( 1, old_sanity_cc, self.current_cc[1] )
 	--print ("Channel 0:", old_cc, self.current_cc[0])
 	--print ("Channel 1:", old_sanity_cc, self.current_cc[1])
 	--print ("start lerp", time_to_take)
 end
-
 
 function ColourCubeManager:GetDestColourCubes()
 	
@@ -80,7 +88,7 @@ function ColourCubeManager:GetDestColourCubes()
 	end
 	
 	local time_idx = "DAY"
-	if GetWorld() and GetWorld().components.clock then
+	if GetWorld() and GetWorld().components.clock and not GetWorld().components.nightmareclock then
 		if GetWorld().components.clock:IsDusk() then
 			time_idx = "DUSK"
 		elseif GetWorld().components.clock:IsNight() then
@@ -88,7 +96,24 @@ function ColourCubeManager:GetDestColourCubes()
 		end
 	end
 
+	local nightmare_idx = "CALM"
+	if GetWorld() and GetWorld().components.nightmareclock then
+		if GetWorld().components.nightmareclock:IsWarn() then
+			nightmare_idx = "WARN"
+		elseif GetWorld().components.nightmareclock:IsNightmare() then
+			nightmare_idx = "NIGHTMARE"
+		elseif GetWorld().components.nightmareclock:IsDawn() then
+			nightmare_idx = "DAWN"
+		end
+	end
+
 	local cc = SEASON_CCS[ season_idx ][time_idx]
+	
+	if GetWorld() ~= nil and GetWorld():IsCave() and GetWorld().topology ~= nil and GetWorld().topology.level_number == 2 then
+		--We're in the ruins, use the nightmare colour cubes
+		cc = NIGHTMARE_CCS[nightmare_idx]
+	end
+
 	local insanity_cc = INSANITY_CCS[time_idx]
 
 	return cc, insanity_cc

@@ -95,6 +95,24 @@ local function onunequip_purple(inst, owner)
     induceinsanity(nil, owner)
 end
 
+---GREEN
+
+local function onequip_green(inst, owner) 
+    owner.AnimState:OverrideSymbol("swap_body", "torso_amulets", "greenamulet")
+    owner.components.builder.ingredientmod = TUNING.GREENAMULET_INGREDIENTMOD
+    inst.onitembuild = function()
+        inst.components.finiteuses:Use(1)
+    end
+    inst:ListenForEvent("consumeingredients", inst.onitembuild, owner)
+
+end
+
+local function onunequip_green(inst, owner) 
+    owner.AnimState:ClearOverrideSymbol("swap_body")
+    owner.components.builder.ingredientmod = 1
+    inst:RemoveEventCallback("consumeingredients", inst.onitembuild, owner)
+end
+
 ---ORANGE
 local function SpawnEffect(inst)
     local pt = inst:GetPosition()
@@ -149,6 +167,30 @@ end
 local function onunequip_orange(inst, owner) 
     owner.AnimState:ClearOverrideSymbol("swap_body")
     if inst.task then inst.task:Cancel() inst.task = nil end
+end
+
+---YELLOW
+local function onequip_yellow(inst, owner) 
+    owner.AnimState:OverrideSymbol("swap_body", "torso_amulets", "yellowamulet")
+
+    if inst.components.fueled then
+        inst.components.fueled:StartConsuming()        
+    end
+
+    inst.Light:Enable(true)
+
+    owner.AnimState:SetBloomEffectHandle( "shaders/anim.ksh" )
+
+end
+
+local function onunequip_yellow(inst, owner) 
+    owner.AnimState:ClearBloomEffectHandle()
+    owner.AnimState:ClearOverrideSymbol("swap_body")
+    if inst.components.fueled then
+        inst.components.fueled:StopConsuming()        
+    end
+
+    inst.Light:Enable(false)
 end
 
 ---COMMON FUNCTIONS
@@ -241,6 +283,20 @@ local function purple(inst)
     return inst
 end
 
+local function green(inst)
+    local inst = commonfn(inst)
+        inst.AnimState:PlayAnimation("greenamulet")
+        inst.components.equippable:SetOnEquip( onequip_green )
+        inst.components.equippable:SetOnUnequip( onunequip_green )
+
+        inst:AddComponent("finiteuses")
+        inst.components.finiteuses:SetOnFinished( onfinished )
+        inst.components.finiteuses:SetMaxUses(TUNING.GREENAMULET_USES)
+        inst.components.finiteuses:SetUses(TUNING.GREENAMULET_USES)
+
+    return inst
+end
+
 local function orange(inst)
     local inst = commonfn(inst)
         inst.AnimState:PlayAnimation("orangeamulet")
@@ -258,8 +314,32 @@ local function orange(inst)
     return inst
 end
 
+local function yellow(inst)
+    local inst = commonfn(inst)
+        inst.AnimState:PlayAnimation("yellowamulet")
+
+        inst.components.equippable:SetOnEquip( onequip_yellow )
+        inst.components.equippable:SetOnUnequip( onunequip_yellow )
+        inst.components.equippable.walkspeedmult = 1.2
+
+        inst.entity:AddLight()
+        inst.Light:Enable(false)
+        inst.Light:SetRadius(2)
+        inst.Light:SetFalloff(0.7)
+        inst.Light:SetIntensity(.65)
+        inst.Light:SetColour(223/255, 208/255, 69/255)
+
+        inst:AddComponent("fueled")
+        inst.components.fueled.fueltype = "MAGIC"
+        inst.components.fueled:InitializeFuelLevel(TUNING.YELLOWAMULET_FUEL)
+        inst.components.fueled:SetDepletedFn(onfinished)
+    return inst
+end
+
 
 return Prefab( "common/inventory/amulet", red, assets),
 Prefab("common/inventory/blueamulet", blue, assets),
 Prefab("common/inventory/purpleamulet", purple, assets),
-Prefab("common/inventory/orangeamulet", orange, assets)
+Prefab("common/inventory/orangeamulet", orange, assets),
+Prefab("common/inventory/greenamulet", green, assets),
+Prefab("common/inventory/yellowamulet", yellow, assets)

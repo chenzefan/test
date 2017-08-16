@@ -15,6 +15,9 @@ local LightTweener = Class(function(self, inst)
 	self.t_radius = nil
 	self.t_colour_r, self.t_colour_g, self.t_colour_b = nil
 
+	--function
+	self.callback = nil --call @ end of tween
+
 	self.time = nil
 	self.timepassed = 0
 end)
@@ -42,16 +45,23 @@ function LightTweener:EndTween()
 	if self.t_colour_r and self.t_colour_g and self.t_colour_b then
 		self.light:SetColour(self.t_colour_r, self.t_colour_g, self.t_colour_b)
 	end
+
+	if self.callback then
+		self.callback(self.inst, self.light)
+	end
+
 	self.inst:PushEvent("lighttweener_end")
 	self.inst:StopUpdatingComponent(self)
 end
 
 local function UnpackColour(colour)
+	if colour == nil or #colour <3 then
+		return nil,nil,nil
+	end
 	return colour[1], colour[2], colour[3]
 end
 
-function LightTweener:StartTween(light, rad, intensity, falloff, colour, time)
-	
+function LightTweener:StartTween(light, rad, intensity, falloff, colour, time, callback)
 	if light then
 		self.light = light
 	end
@@ -60,6 +70,8 @@ function LightTweener:StartTween(light, rad, intensity, falloff, colour, time)
 		print("No light set in LightTweener. Stopping from StartTween().")
 		return
 	end
+
+	self.callback = callback
 
 	self.i_radius = self.light:GetRadius() or rad
 	self.i_falloff = self.light:GetFalloff() or falloff

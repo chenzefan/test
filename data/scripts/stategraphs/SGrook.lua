@@ -74,7 +74,7 @@ local states=
         
         timeline = 
         {
-		    TimeEvent(21*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/idle") end ),
+		    TimeEvent(21*FRAMES, function(inst) inst.SoundEmitter:PlaySound(inst.soundpath .. "idle") end ),
         },
         
         events=
@@ -85,48 +85,45 @@ local states=
 
 
     State{  name = "run_start",
-            tags = {"moving", "running", "canrotate"},
+            tags = {"moving", "running", "busy", "atk_pre", "canrotate"},
             
             onenter = function(inst)
                 -- inst.components.locomotor:RunForward()
-                inst.AnimState:SetTime(math.random()*2)
-                inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/pawground")
+                inst.Physics:Stop()
+                inst.SoundEmitter:PlaySound(inst.soundpath .. "pawground")
                 inst.AnimState:PlayAnimation("atk_pre")
+                inst.AnimState:PlayAnimation("paw_loop", true)
+                inst.sg:SetTimeout(1)
             end,
-
-            events =
-            {   
-                EventHandler("animover", function(inst)
-                                            inst.sg:GoToState("run")
-                                            inst:PushEvent("attackstart" )
-                                         end ),        
-            },
+            
+            ontimeout= function(inst)
+                inst.sg:GoToState("run")
+                inst:PushEvent("attackstart" )
+            end,
             
             timeline=
             {
-		    TimeEvent(1*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/steam") end ),
-		    TimeEvent(10*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/steam") end ),
+		    TimeEvent(1*FRAMES,  function(inst) inst.SoundEmitter:PlaySound(inst.effortsound) end ),
 		    TimeEvent(12*FRAMES, function(inst)
-                                    inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/pawground")
+                                    inst.SoundEmitter:PlaySound(inst.soundpath .. "pawground")
                                     --SpawnPrefab("ground_chunks_breaking").Transform:SetPosition(inst.Transform:GetWorldPosition())
                                 end ),
-		    TimeEvent(20*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/steam") end ),
-		    TimeEvent(28*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/steam") end ),
+            TimeEvent(15*FRAMES,  function(inst) inst.sg:RemoveStateTag("canrotate") end ),
+		    TimeEvent(20*FRAMES,  function(inst) inst.SoundEmitter:PlaySound(inst.effortsound) end ),
 		    TimeEvent(30*FRAMES, function(inst)
-                                    inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/pawground")
+                                    inst.SoundEmitter:PlaySound(inst.soundpath .. "pawground")
                                     --SpawnPrefab("ground_chunks_breaking").Transform:SetPosition(inst.Transform:GetWorldPosition())
                                 end ),
-		    TimeEvent(31*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/steam") end ),
-		    TimeEvent(35*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/steam") end ),
+		    TimeEvent(35*FRAMES,  function(inst) inst.SoundEmitter:PlaySound(inst.effortsound) end ),
             },        
 
             onexit = function(inst)
-                inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/charge_LP","charge")
+                inst.SoundEmitter:PlaySound(inst.soundpath .. "charge_LP","charge")
             end,
         },
 
     State{  name = "run",
-            tags = {"moving", "running", "canrotate"},
+            tags = {"moving", "running"},
             
             onenter = function(inst) 
                 inst.components.locomotor:RunForward()
@@ -135,10 +132,8 @@ local states=
             
             timeline=
             {
-                --TimeEvent(1*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/steam") end ),
-                TimeEvent(5*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/steam") end ),
+		        TimeEvent(5*FRAMES,  function(inst) inst.SoundEmitter:PlaySound(inst.effortsound) end ),
                 TimeEvent(5*FRAMES, function(inst)
-                                        inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/steam")
                                         SpawnPrefab("ground_chunks_breaking").Transform:SetPosition(inst.Transform:GetWorldPosition())
                                     end ),
             },
@@ -156,6 +151,7 @@ local states=
                 inst.SoundEmitter:KillSound("charge")
                 inst.components.locomotor:Stop()
                 inst.AnimState:PlayAnimation("atk_pst")
+		        inst.SoundEmitter:PlaySound(inst.effortsound)
             end,
             
             events=
@@ -164,70 +160,6 @@ local states=
             },
         },    
 
-   --[[ 
-    State{  name = "walk_start",
-            tags = {"moving", "canrotate"},
-            
-            onenter = function(inst)
-                inst.SoundEmitter:KillSound("charge")
-                inst.components.locomotor:WalkForward()
-                -- inst.AnimState:SetTime(math.random()*2)
-                inst.AnimState:PlayAnimation("walk")
-            end,
-
-            events=
-            {   
-                EventHandler("animover", function(inst) inst.sg:GoToState("walk") end ),        
-            },
-
-            timeline = {
-                TimeEvent(20*FRAMES, function(inst)
-                                            inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/step")
-                                     end),
-            },
-        },      
-    
-    State{  name = "walk",
-            tags = {"moving", "canrotate"},
-            
-            onenter = function(inst) 
-                inst.components.locomotor:WalkForward()
-                inst.AnimState:PlayAnimation("walk", true)
-                inst.SoundEmitter:KillSound("charge")
-                inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/idle")
-            end,
-    
-            events=
-            {   
-                EventHandler("animover", function(inst) inst.sg:GoToState("walk") end ),        
-            },
-
-            timeline = {
-                TimeEvent(20*FRAMES, function(inst)
-                                            inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/step")
-                                         --           :Shake(shakeType, duration, speed, scale)
-                                            TheCamera:Shake("VERTICAL", 0.2, 0.15, .1)
-                                     end),
-            },
-        },
-
-    State{  name = "walk_stop",
-            tags = {"canrotate", "idle"},
-            
-            onenter = function(inst) 
-                inst.SoundEmitter:KillSound("charge")
-                inst.components.locomotor:Stop()
-                inst.AnimState:PlayAnimation("walk_pst", true)
-            end,
-
-            events=
-            {   
-                EventHandler("animover", function(inst) inst.sg:GoToState("idle") end ),        
-            },
-        },   
-        --]]
-    
-
    State{
         name = "taunt",
         tags = {"busy"},
@@ -235,13 +167,14 @@ local states=
         onenter = function(inst)
             inst.Physics:Stop()
             inst.AnimState:PlayAnimation("taunt")
-            inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/voice")
+            inst.SoundEmitter:PlaySound(inst.soundpath .. "voice")
         end,
         
         timeline = 
         {
-		    TimeEvent(10*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/voice") end ),
-		    TimeEvent(27*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/voice") end ),
+		    TimeEvent(10*FRAMES, function(inst) inst.SoundEmitter:PlaySound(inst.soundpath .. "voice") end ),
+		    TimeEvent(15*FRAMES,  function(inst) inst.SoundEmitter:PlaySound(inst.effortsound) end ),
+		    TimeEvent(27*FRAMES, function(inst) inst.SoundEmitter:PlaySound(inst.soundpath .. "voice") end ),
         },
         
         events=
@@ -255,9 +188,9 @@ local states=
             
             onenter = function(inst)
                 inst.SoundEmitter:KillSound("charge")
-                --inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/charge_LP")
                 inst.components.combat:StartAttack()
                 inst.components.locomotor:StopMoving()
+		        inst.SoundEmitter:PlaySound(inst.effortsound)
                 inst.AnimState:PlayAnimation("atk_pst")
             end,
             
@@ -275,7 +208,6 @@ local states=
         },
 }
 
--- [[
 CommonStates.AddWalkStates(states,
 {
     starttimeline = 
@@ -285,28 +217,28 @@ CommonStates.AddWalkStates(states,
 	walktimeline = {
 		    TimeEvent(0*FRAMES, function(inst) inst.Physics:Stop() end ),
             TimeEvent(7*FRAMES, function(inst) 
-                inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/bounce")
+                inst.SoundEmitter:PlaySound(inst.soundpath .. "bounce")
                 inst.components.locomotor:WalkForward()
             end ),
             TimeEvent(20*FRAMES, function(inst)
-                inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/land")
+		        inst.SoundEmitter:PlaySound(inst.effortsound)
+                inst.SoundEmitter:PlaySound(inst.soundpath .. "land")
                 --       :Shake(shakeType, duration, speed, scale)
                 TheCamera:Shake("VERTICAL", 0.5, 0.05, 0.1)
                 inst.Physics:Stop()
             end ),
 	},
 }, nil,true)
---]]
 
 CommonStates.AddSleepStates(states,
 {
     starttimeline = 
     {
-		TimeEvent(11*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/liedown") end ),
+		TimeEvent(11*FRAMES, function(inst) inst.SoundEmitter:PlaySound(inst.soundpath .. "liedown") end ),
     },
     
 	sleeptimeline = {
-        TimeEvent(18*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/sleep") end),
+        TimeEvent(18*FRAMES, function(inst) inst.SoundEmitter:PlaySound(inst.soundpath .. "sleep") end),
 	},
 })
 
@@ -314,18 +246,18 @@ CommonStates.AddCombatStates(states,
 {
     attacktimeline = 
     {
-        TimeEvent(15*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/explo") end),
+        TimeEvent(15*FRAMES, function(inst) inst.SoundEmitter:PlaySound(inst.soundpath .. "explo") end),
         TimeEvent(17*FRAMES, function(inst)
                                 inst.components.combat:DoAttack()
                              end),
     },
     hittimeline = 
     {
-        TimeEvent(0*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/hurt") end),
+        TimeEvent(0*FRAMES, function(inst) inst.SoundEmitter:PlaySound(inst.soundpath .. "hurt") end),
     },
     deathtimeline = 
     {
-        TimeEvent(0*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/rook/explo") end),
+        TimeEvent(0*FRAMES, function(inst) inst.SoundEmitter:PlaySound(inst.soundpath .. "explo") end),
     },
 })
 
@@ -333,4 +265,3 @@ CommonStates.AddFrozenStates(states)
 
     
 return StateGraph("rook", states, events, "idle", actionhandlers)
-

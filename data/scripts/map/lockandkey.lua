@@ -25,6 +25,10 @@ LOCKS_ARRAY =
 	"LIGHT",
 	"FUNGUS",
 	"CAVE",
+	"LABYRINTH",
+	"WILDS",
+	"RUINS",
+	"SACRED",
 	--"ADVANCED_COMBAT",
 }
 LOCKS = {}
@@ -73,6 +77,10 @@ KEYS_ARRAY =
 	"LIGHT",
 	"FUNGUS",
 	"CAVE",
+	"LABYRINTH",
+	"WILDS",
+	"RUINS",
+	"SACRED",
 }
 KEYS = {}
 for i,v in ipairs(KEYS_ARRAY) do
@@ -210,6 +218,22 @@ LOCKS_KEYS =
 	{
 		KEYS.FUNGUS,
 	},
+	[LOCKS.LABYRINTH] = 
+	{
+		KEYS.LABYRINTH,
+	},
+	[LOCKS.WILDS] =
+	{
+		KEYS.WILDS,
+	},
+	[LOCKS.RUINS] =
+	{
+		KEYS.RUINS
+	},
+	[LOCKS.SACRED] =
+	{
+		KEYS.SACRED
+	}
 }
 
 

@@ -25,9 +25,9 @@ local MINIMAP_GROUND_PROPERTIES =
 	{ GROUND.SINKHOLE, 	 { name = "map_edge",      noise_texture = "levels/textures/mini_sinkhole_noise.tex" } },
 	{ GROUND.UNDERROCK,  { name = "map_edge",      noise_texture = "levels/textures/mini_rock_noise.tex" } },
 	{ GROUND.MUD, 	 	 { name = "map_edge",      noise_texture = "levels/textures/mini_mud_noise.tex" } },
-	{ GROUND.BRICK, 	 { name = "map_edge",      noise_texture = "levels/textures/mini_carpet_noise.tex" } },
-	{ GROUND.TILES,  	 { name = "map_edge",      noise_texture = "levels/textures/mini_carpet_noise.tex" } },
-	{ GROUND.TRIM, 	 	 { name = "map_edge",      noise_texture = "levels/textures/mini_carpet_noise.tex" } },
+	{ GROUND.BRICK, 	 { name = "map_edge",      noise_texture = "levels/textures/mini_ruinsbrick_noise.tex" } },
+	{ GROUND.TILES,  	 { name = "map_edge",      noise_texture = "levels/textures/mini_ruinstile_noise.tex" } },
+	{ GROUND.TRIM, 	 	 { name = "map_edge",      noise_texture = "levels/textures/mini_ruinstrim_noise.tex" } },
 
 	-- { GROUND.WALL_CAVE,    { name = "map_edge",      noise_texture = "levels/textures/mini_cave_wall_noise.tex" } },
 	-- { GROUND.WALL_FUNGUS,  { name = "map_edge",      noise_texture = "levels/textures/mini_fungus_wall_noise.tex" } },

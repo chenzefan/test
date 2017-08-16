@@ -68,11 +68,16 @@ function BuildContextTable()
 
 	sendstats.branch = BRANCH
 
-	if ModManager:GetModNames() and #ModManager:GetModNames() > 0 then
-		sendstats.branch = sendstats.branch .. "_modded"
+	local modnames = KnownModIndex:GetModNames()
+	for i, name in ipairs(modnames) do
+		if KnownModIndex:IsModEnabled(name) then
+			sendstats.branch = sendstats.branch .. "_modded"
+			break
+		end
 	end
 
 	sendstats.build = APP_VERSION
+	sendstats.platform = PLATFORM
 
 	if GetSeasonManager() then
 		sendstats.season = GetSeasonManager():GetSeasonString()
@@ -85,11 +90,11 @@ function BuildContextTable()
 	if GetWorld() then
 		-- we don't want everything in meta, ony things which are stats-relevant
 		sendstats.map_meta = {}
-		sendstats.map_meta.level_id = GetWorld().meta.level_id
-		sendstats.map_meta.seed = GetWorld().meta.seed
-		sendstats.map_meta.build_version = GetWorld().meta.build_version
+		sendstats.map_meta.level_id =  GetWorld().meta and GetWorld().meta.level_id or "UNKNOWN"
+		sendstats.map_meta.seed = GetWorld().meta and GetWorld().meta.seed or "UNKNOWN"
+		sendstats.map_meta.build_version =  GetWorld().meta and GetWorld().meta.build_version or "UNKNOWN"
 
-		sendstats.mode = GetWorld().topology.level_type or "UNKNOWN"
+		sendstats.mode = GetWorld().topology and GetWorld().topology.level_type or "UNKNOWN"
         sendstats.map_trod = GetMap() and GetMap():GetNumVisitedTiles()
 	end
 
@@ -279,17 +284,19 @@ function RecordSessionStartStats()
 			},
 		}
 	}
-    sendstats.Session.map_trod = (GetMap() and GetMap():GetNumVisitedTiles()) or 0
-
-    GameStats = {}
-    GameStats.StatsLastTrodCount = (GetMap() and GetMap():GetNumVisitedTiles()) or 0
-    GameStats.super = OnLoadGameInfo.super
-    OnLoadGameInfo.super = nil
 
 	for i,name in ipairs(ModManager:GetEnabledModNames()) do
 		sendstats.Session.Loads.Mods.mod = true
 		table.insert(sendstats.Session.Loads.Mods.list, name)
 	end
+
+    sendstats.Session.map_trod = (GetMap() and GetMap():GetNumVisitedTiles()) or 0
+	sendstats.Session.character = GetPlayer().prefab
+
+    GameStats = {}
+    GameStats.StatsLastTrodCount = (GetMap() and GetMap():GetNumVisitedTiles()) or 0
+    GameStats.super = OnLoadGameInfo.super
+    OnLoadGameInfo.super = nil
 	
 	dprint("_________________++++++ Sending sessions start stats...\n")
 	ddump(sendstats)

@@ -34,6 +34,10 @@ function Armor:SetAbsorbtion(absorb_percent)
     self.absorb_percent = absorb_percent
 end
 
+function Armor:SetPercent(amount)
+    self:SetCondition(self.maxcondition * amount)
+end
+
 function Armor:SetCondition(amount)
     self.condition = amount
     self.inst:PushEvent("percentusedchange", {percent = self:GetPercent()})   

@@ -32,10 +32,16 @@ SCALEMODE_FIXEDPROPORTIONAL = 3
 PHYSICS_TYPE_ANIMATION_CONTROLLED = 0
 PHYSICS_TYPE_PHYSICS_CONTROLLED = 1
 
+
+MOVE_UP = 1
+MOVE_DOWN = 2
+MOVE_LEFT = 3
+MOVE_RIGHT = 4
+
+
 --push priorities
 STATIC_PRIORITY = 10000
-        
-        
+
 -- Controls: Must match the Control enum in DontStarveInputHandler.h
 -- player action controls
 CONTROL_PRIMARY = 0
@@ -43,16 +49,58 @@ CONTROL_SECONDARY = 1
 CONTROL_ATTACK = 2
 CONTROL_INSPECT = 3
 CONTROL_ACTION = 4
--- view controls
-CONTROL_ZOOM_IN = 5
-CONTROL_ZOOM_OUT = 6
-CONTROL_ROTATE_LEFT = 7
-CONTROL_ROTATE_RIGHT = 8
+
 -- player movement controls
-CONTROL_MOVE_UP = 9
-CONTROL_MOVE_DOWN = 10
-CONTROL_MOVE_LEFT = 11
-CONTROL_MOVE_RIGHT = 12
+CONTROL_MOVE_UP = 5
+CONTROL_MOVE_DOWN = 6
+CONTROL_MOVE_LEFT = 7
+CONTROL_MOVE_RIGHT = 8
+
+-- view controls
+CONTROL_ZOOM_IN = 9
+CONTROL_ZOOM_OUT = 10
+CONTROL_ROTATE_LEFT = 11
+CONTROL_ROTATE_RIGHT = 12
+
+
+-- player movement controls
+CONTROL_PAUSE = 13
+CONTROL_MAP = 14
+CONTROL_INV_1 = 15
+CONTROL_INV_2 = 16
+CONTROL_INV_3 = 17
+CONTROL_INV_4 = 18
+CONTROL_INV_5 = 19
+CONTROL_INV_6 = 20
+CONTROL_INV_7 = 21
+CONTROL_INV_8 = 22
+CONTROL_INV_9 = 23
+CONTROL_INV_10 = 24
+
+CONTROL_FOCUS_UP = 25
+CONTROL_FOCUS_DOWN = 26
+CONTROL_FOCUS_LEFT = 27
+CONTROL_FOCUS_RIGHT = 28
+
+CONTROL_ACCEPT = 29
+CONTROL_CANCEL = 30
+CONTROL_PAGELEFT = 31
+CONTROL_PAGERIGHT = 32
+CONTROL_SPLITSTACK = 33
+CONTROL_TRADEITEM = 34
+CONTROL_TRADESTACK = 35
+CONTROL_FORCE_INSPECT = 36
+CONTROL_FORCE_ATTACK = 37
+CONTROL_FORCE_TRADE = 38
+CONTROL_FORCE_STACK = 39
+
+CONTROL_OPEN_DEBUG_CONSOLE = 40
+CONTROL_TOGGLE_LOG = 41
+CONTROL_TOGGLE_DEBUGRENDER = 42
+
+CONTROL_CUSTOM_START = 100
+
+
 
 KEY_TAB = 9
 KEY_KP_PERIOD		= 266
@@ -173,6 +221,25 @@ MODCHARACTERLIST =
 	-- this gets populated by mods
 }
 
+CHARACTER_GENDERS = 
+{
+	FEMALE = {
+		"willow",
+		"wendy",
+		"wickerbottom",
+	},
+	MALE = {
+		"wilson",
+		"woodie",
+		"waxwell",
+		"wolfgang",
+		"wes",
+	},
+	ROBOT = {
+		"wx78",
+	},
+}
+
 EQUIPSLOTS=
 {
     HANDS = "hands",
@@ -268,6 +335,7 @@ TECH = {
 	MAGIC_THREE = {MAGIC = 3},
 	ANCIENT_TWO = {ANCIENT = 2},
 	ANCIENT_THREE = {ANCIENT = 3},
+	ANCIENT_FOUR = {ANCIENT = 4},
 }
 
 -- See cell_data.h
@@ -438,7 +506,7 @@ RECIPETABS=
     REFINE = {str = STRINGS.TABS.REFINE, sort=7, icon = "tab_refine.tex"},
     MAGIC = {str = STRINGS.TABS.MAGIC, sort=8, icon = "tab_arcane.tex"},
     DRESS = {str = STRINGS.TABS.DRESS, sort=9, icon = "tab_dress.tex"},
-    GEMOLOGY = {str = STRINGS.TABS.GEMOLOGY, sort = 10, icon = "tab_gemology.tex"},
+    ANCIENT = {str = STRINGS.TABS.ANCIENT, sort = 10, icon = "tab_crafting_table.tex"}
 }
 
 
@@ -519,3 +587,6 @@ RESET_ACTION =
 	LOAD_SLOT = 1,
 	DO_DEMO = 2,
 }
+
+HUD_ATLAS = "images/hud.xml"
+UI_ATLAS = "images/ui.xml"

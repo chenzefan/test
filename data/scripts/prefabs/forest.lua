@@ -93,7 +93,9 @@ local function fn(Sim)
 	waves:SetRegionSize( 32, 16 )
 	waves:SetRegionNumWaves( 6 )
 	waves:SetWaveTexture( "images/wave.tex" )
-	waves:SetWaveEffect( "shaders/texture.ksh" )
+
+	-- See source\game\components\WaveRegion.h
+	waves:SetWaveEffect( "shaders/waves.ksh" ) -- texture.ksh
 	waves:SetWaveSize( 2048, 512 )
 
 	inst:AddComponent("seasonmanager")

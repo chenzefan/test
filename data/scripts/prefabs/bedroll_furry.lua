@@ -38,8 +38,8 @@ local function onsleep(inst, sleeper)
 			sleeper.components.health:DoDelta(TUNING.HEALING_MEDLARGE, false, "bedroll", true)
 		end
 		
-		if sleeper.components.tempature then
-			sleeper.components.tempature:SetTemperature(sleeper.components.tempature.maxtemp)
+		if sleeper.components.temperature then
+			sleeper.components.temperature:SetTemperature(sleeper.components.temperature.maxtemp)
 		end
 
 		GetClock():MakeNextDay()

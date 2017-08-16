@@ -3,6 +3,7 @@
 if SEED == nil then
 	SEED = getrealtime()
 end
+MODS_ENABLED = PLATFORM ~= "PS4" and PLATFORM ~= "NACL"
 
 print ("SEED = ", SEED)
 math.randomseed(SEED)
@@ -61,7 +62,7 @@ require("modindex")
 
 local moddata = json.decode(GEN_MODDATA)
 KnownModIndex:RestoreCachedSaveData(moddata.index)
-ModManager:LoadMods(moddata.modnames, true)
+ModManager:LoadMods(true)
 
 
 print ("running worldgen_main.lua\n")

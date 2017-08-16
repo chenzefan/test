@@ -10,34 +10,16 @@ local prefabs =
     "diviningrodstart",
 }
 
-local function GetGenderStrings()
-    local charactername = GetPlayer().profile:GetValue("characterinthrone") or "wilson"
-    if charactername == "wilson" or
-    charactername == "woodie" or
-    charactername == "waxwell" or
-    charactername == "wolfgang" or
-    charactername == "wes" then
-        return "MALE"
-    elseif charactername == "willow" or
-    charactername == "wendy" or
-    charactername == "wickerbottom" then
-        return "FEMALE"
-    elseif charactername == "wx78" then
-        return "ROBOT"
-    else
-        return "MALE"
-    end
-end
-
 local function OnUnlock(inst, key, doer)
     inst.AnimState:PlayAnimation("idle_full")
     inst.throne = TheSim:FindFirstEntityWithTag("maxwellthrone")
     inst.throne.lock = inst
+	local character = GetPlayer().profile:GetValue("characterinthrone") or "wilson"
     GetPlayer().components.playercontroller:Enable(false)
     TheFrontEnd:PushScreen(PopupDialogScreen(
         STRINGS.UI.UNLOCKMAXWELL.TITLE, STRINGS.UI.UNLOCKMAXWELL.BODY1..
-        STRINGS.CHARACTER_NAMES[GetPlayer().profile:GetValue("characterinthrone") or "waxwell"]..
-        string.format(STRINGS.UI.UNLOCKMAXWELL.BODY2, STRINGS.UI.GENDERSTRINGS[GetGenderStrings()].TWO),
+        STRINGS.CHARACTER_NAMES[character]..
+        string.format(STRINGS.UI.UNLOCKMAXWELL.BODY2, STRINGS.UI.GENDERSTRINGS[GetGenderStrings(character)].TWO),
         {
             {text=STRINGS.UI.UNLOCKMAXWELL.YES, cb = function()
                 inst.SoundEmitter:PlaySound("dontstarve/common/teleportato/teleportato_add_divining")

@@ -40,6 +40,16 @@ function InventoryItem:SetOnPutInInventoryFn(fn)
     self.onputininventoryfn = fn
 end
 
+function InventoryItem:GetSlotNum()
+    if self.owner then
+        local ct = self.owner.components.container or self.owner.components.inventory
+
+        if ct then
+            return ct:GetItemSlot(self.inst)
+        end
+    end
+end
+
 function InventoryItem:OnPutInInventory(owner)
 --    print(string.format("InventoryItem:OnPutInInventory[%s]", self.inst.prefab))
 --    print("   transform=", Point(self.inst.Transform:GetWorldPosition()))

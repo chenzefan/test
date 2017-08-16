@@ -231,6 +231,8 @@ local ExampleLayout =
 --------------------------------------------------------------------------------
 		["DefaultStart"] = StaticLayout.Get("map/static_layouts/default_start"),
 		["CaveStart"] = StaticLayout.Get("map/static_layouts/cave_start"),
+		["RuinsStart"] = StaticLayout.Get("map/static_layouts/ruins_start"),
+		["RuinsStart2"] = StaticLayout.Get("map/static_layouts/ruins_start2"),
 		["CaveTestStart"] = StaticLayout.Get("map/static_layouts/cave_test_start"),
 		["DefaultPlusStart"] = StaticLayout.Get("map/static_layouts/default_plus_start"),
 		["NightmareStart"] = StaticLayout.Get("map/static_layouts/nightmare"),
@@ -552,6 +554,45 @@ local ExampleLayout =
 				layout_position = LAYOUT_POSITION.RANDOM,
 			}
 		),
-	}
+	
 
-	return {Layouts = ExampleLayout}
+--------------------------------------------------------------------------------
+-- RUINS
+--------------------------------------------------------------------------------
+
+
+	["WalledGarden"] = StaticLayout.Get("map/static_layouts/walledgarden",
+		{
+			areas = 
+			{
+				plants = function(area) return PickSomeWithDups(0.3 * area, {"cave_fern", "lichen", "flower_cave", "flower_cave_double", "flower_cave_triple"}) end,
+			},
+			start_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
+			fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
+			layout_position = LAYOUT_POSITION.CENTER
+		}),
+	["MilitaryEntrance"] = StaticLayout.Get("map/static_layouts/military_entrance", {			
+			start_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
+			fill_mask = PLACE_MASK.IGNORE_IMPASSABLE_BARREN_RESERVED,
+			layout_position = LAYOUT_POSITION.CENTER}),
+	
+	--SACRED GROUNDS
+
+	["AltarRoom"] = StaticLayout.Get("map/static_layouts/altar"),
+	["Barracks"] = StaticLayout.Get("map/static_layouts/barracks"),
+	["Barracks2"] = StaticLayout.Get("map/static_layouts/barracks_two"),
+	["Spiral"] = StaticLayout.Get("map/static_layouts/spiral"),
+	["BrokenAltar"] = StaticLayout.Get("map/static_layouts/brokenaltar"),
+
+	--
+
+	["CornerWall"] = StaticLayout.Get("map/static_layouts/walls_corner"),
+	["StraightWall"] = StaticLayout.Get("map/static_layouts/walls_straight"),
+
+	["CornerWall2"] = StaticLayout.Get("map/static_layouts/walls_corner2"),
+	["StraightWall2"] = StaticLayout.Get("map/static_layouts/walls_straight2"),
+
+	["RuinsCamp"] = StaticLayout.Get("map/static_layouts/ruins_camp"),
+}
+	
+return {Layouts = ExampleLayout}

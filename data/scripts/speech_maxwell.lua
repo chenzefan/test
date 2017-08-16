@@ -14,6 +14,7 @@ return {
 		},
 	},
 	ACTIONFAIL_GENERIC = "That didn't work.",
+    LICHEN = "A slow growing cave plant",
 	ANNOUNCE_ADVENTUREFAIL = "I of all people should be able to do this.",
 	ANNOUNCE_BEES = "Killing me won't bring back your honey!",
 	ANNOUNCE_BOOMERANG = "Ow! Clumsy!",
@@ -64,8 +65,36 @@ return {
 	DESCRIBE =
 	{
 
+		THULECITE = "An exceedingly rare but useful material.",
+		ARMORRUINS = "Thulecite meshes so well with nightmare fuel.",
+		RUINS_BAT = "The fuel runs deep in this.",
+		NIGHTMARE_TIMEPIECE = --Keeps track of the nightmare cycle
+		{
+			CALM = "The heart of the city is still.",	--calm phase
+			WARN = "It beats once again.",	--Before nightmare
+			WAXING = "The pulse is quickening.", --Nightmare Phase first 33%
+			STEADY = "The pulse is holding steady.", --Nightmare 33% - 66%
+			WANING = "The pulse is waning.", --Nightmare 66% +
+			DAWN = "It calms once more.", --After nightmare
+			NOMAGIC = "The pulse has no influence here.", --Place with no nightmare cycle.
+		},
+		BISHOP_NIGHTMARE = "They degrade without proper upkeep.",
+		ROOK_NIGHTMARE = "The builders have left it in a state of abandonment.",
+		KNIGHT_NIGHTMARE = "It looks beyond repair.",
+		MINOTAUR = "My my, the fuel has changed you.",	--Monster in labyrinth
+		SPIDER_DROPPER = "Creatures in this world evolve at a terrifying rate.",	--White spider that comes from the roof
+		NIGHTMARELIGHT = "The over-use of fuel was their downfall.",	--Lights that activate during nightmare.
+		RELIC = "They were all dead when I got here.",	--Fixed relic
+		RUINS_RUBBLE = "The earthquakes have taken their toll.",	--Broken relic
+		MULTITOOL_AXE_PICKAXE = "I don't know why I didn't think of this.",	--Works as axe and pickaxe
+		GREENGEM = "The nightmare fuel will unlock its true potential.",
+		ORANGESTAFF = "I must rely on focusing tools in this form.",	--Teleports player.
+		YELLOWAMULET = "This will make me stand out.",	--Emits light, player walks faster.
+		GREENAMULET = "I swear I don't normally need this.",	--Reduce cost of crafting
 
 		SLURPER = "Simple creatures. They exist only to sleep and feed.",
+		SLURPER_PELT = "In death, this creature will serve me!",
+		ARMORSLURPER = "Wet, soggy, and oddly filling.",
 		ORANGEAMULET = "Simple magic is often the best.",
 		YELLOWSTAFF = "With a bigger gem it would be so much more powerful.",
 		YELLOWGEM = "I can feel the magic in this.",
@@ -82,8 +111,13 @@ return {
 		},
 		STAFFLIGHT = "That should chase the shadows away.",
 		RESEARCHLAB4 = "Quite a dapper machine.",
+       	ANCIENT_ALTAR =
+        {
+        	WORKING = "Where are their gods now?",
+        	BROKEN = "This can be partially restored.",
+        },
 
-        ANCIENT_ALTAR = "Where are their gods now?",
+        ANCIENT_STATUE = "A once proud race.",
 		CAVE_BANANA = "Like ashes in my mouth.",
 		CAVE_BANANA_COOKED = "Even worse than raw.",
 		CAVE_BANANA_TREE = "It looks like a banana, but I'm not buying it.",
@@ -276,6 +310,7 @@ return {
 			GENERIC = "I don't know how they got here.",
 			HELD = "Shhhh... My pretty.",
 		},
+		CUTLICHEN = "Dry, crumbly, sustaining.",
 		CUTGRASS = "The mundane stuff of the earth.",
 		CUTREEDS = "I think I could build something useful from this.",
 		CUTSTONE = "The building blocks of civilization.",
@@ -597,6 +632,13 @@ return {
 			GENERIC = "There's wind in them there willows.",
 			PICKED = "No more tubes.",
 		},
+        RELIC = 
+        {
+            GENERIC = "Remnants of an extinct civilization.",
+            BROKEN = "Just bits and pieces of rock",
+        },
+        RUINS_RUBBLE = "A broken relic.",
+        RUBBLE = "Just bits and pieces of rock",
 		RESEARCHLAB = "I can't believe I forgot how to build those things.",
 		RESEARCHLAB2 = "It unlocks recipes of middling utility.",
 		RESEARCHLAB3 = "This is where I do my own personal research.",
@@ -763,7 +805,7 @@ return {
 		WALL_STONE_ITEM = "Pocket-sized wall pieces. Yup.",
 		WALL_WOOD = "Moderately tough, but flammable.",
 		WALL_WOOD_ITEM = "Pocket-sized wall pieces. Yup.",
-		WALL_RUINS = "This will keep the riff-raff out.",
+		WALL_RUINS = "An ancient wall.",
 		WALL_RUINS_ITEM = "Pocket-sized wall pieces. Yup.",
 		WALRUS = "Don't you recognise me?",
 		WALRUSHAT = "Made in Scotland.",

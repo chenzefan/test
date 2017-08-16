@@ -25,6 +25,18 @@ local function getcharacterstring(tab, item, modifier)
     end
 end
 
+function GetGenderStrings(charactername)
+    if table.contains(CHARACTER_GENDERS.MALE, charactername) then
+        return "MALE"
+    elseif table.contains(CHARACTER_GENDERS.FEMALE, charactername) then
+        return "FEMALE"
+    elseif table.contains(CHARACTER_GENDERS.ROBOT, charactername) then
+        return "ROBOT"
+    else
+        return "MALE"
+    end
+end
+
 
 function GetSpecialCharacterString(character)
     character = string.lower(character)

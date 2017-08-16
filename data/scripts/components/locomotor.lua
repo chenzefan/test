@@ -64,7 +64,8 @@ local LocoMotor = Class(function(self, inst)
     self.walkspeed = TUNING.WILSON_WALK_SPEED -- 4
     self.runspeed = TUNING.WILSON_RUN_SPEED -- 6
 	self.update_speed_multiplier_task = nil
-	
+	self.throttle = 1
+
 	self.slowmultiplier = 0.6
 	self.fastmultiplier = 1.3
 	
@@ -107,7 +108,7 @@ function LocoMotor:GetSpeedMultiplier()
 			end		
 		end
 	end
-	return inv_mult * self.groundspeedmultiplier
+	return inv_mult * self.groundspeedmultiplier*self.throttle
 end
 
 function LocoMotor:UpdateGroundSpeedMultiplier()
@@ -206,8 +207,8 @@ function LocoMotor:SetReachDestinationCallback(fn)
     self.atdestfn = fn
 end
 
-function LocoMotor:PushAction(bufferedaction, run)
-
+function LocoMotor:PushAction(bufferedaction, run, try_instant)
+    self.throttle = 1
     local success, reason = bufferedaction:TestForStart()
     if not success then
         self.inst:PushEvent("actionfailed", {action = bufferedaction, reason = reason})
@@ -238,6 +239,7 @@ end
 
 function LocoMotor:GoToEntity(inst, bufferedaction, run)
     self.dest = Dest(inst)
+    self.throttle = 1
     
     self:SetBufferedAction(bufferedaction)
     self.wantstomoveforward = true
@@ -274,6 +276,8 @@ end
 
 function LocoMotor:GoToPoint(pt, bufferedaction, run) 
     self.dest = Dest(nil, pt)
+    self.throttle = 1
+
     if bufferedaction and bufferedaction.distance then
 		self.arrive_dist = bufferedaction.distance
 	else
@@ -348,9 +352,12 @@ function LocoMotor:WalkInDirection(direction, should_run)
 end
 
 
-function LocoMotor:RunInDirection(direction)
+function LocoMotor:RunInDirection(direction, throttle)
     --Print(VERBOSITY.DEBUG, "LocoMotor:RunInDirection ", self.inst.prefab)
-	self:SetBufferedAction(nil)
+    
+    self.throttle = throttle or 1
+    
+    self:SetBufferedAction(nil)
     self.dest = nil
     self:ResetPath()
     self.lastdesttile = nil

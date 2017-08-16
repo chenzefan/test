@@ -303,6 +303,34 @@ function Inventory:FindItem(fn)
     end
 end
 
+function Inventory:FindItems(fn)
+    local items = {}
+    
+    for k,v in pairs(self.itemslots) do
+        if fn(v) then
+            table.insert(items, v)
+        end
+    end
+    
+    if self.activeitem and fn(self.activeitem) then
+        table.insert(items, self.activeitem)
+    end
+    
+    local overflow_items = {}
+
+    if self.overflow then
+        overflow_items = self.overflow.components.container:FindItems(fn)
+    end
+
+    if #overflow_items > 0 then
+        for k,v in pairs(overflow_items) do
+            table.insert(items, v)
+        end
+    end
+
+    return items
+end
+
 function Inventory:RemoveItemBySlot(slot)
     if slot and self.itemslots[slot] then
         local item = self.itemslots[slot]
@@ -455,8 +483,8 @@ function Inventory:GiveItem( inst, slot, screen_src_pos )
         slot = inst.prevslot
     end
 
-    if not slot and inst.prevslot and inst.prevcontainer then
-        if inst.prevcontainer.components.inventoryitem.owner == self.inst and inst.prevcontainer:IsOpen() and inst.prevcontainer:GetItemInSlot(inst.prevslot) == nil then
+    if not slot and inst.prevslot and inst.prevcontainer and inst.prevcontainer.components then
+        if inst.prevcontainer.components.inventoryitem and inst.prevcontainer.components.inventoryitem.owner == self.inst and inst.prevcontainer:IsOpen() and inst.prevcontainer:GetItemInSlot(inst.prevslot) == nil then
             inst.prevcontainer:GiveItem(inst, inst.prevslot)
             --self:RemoveItem(inst)
             return
@@ -559,7 +587,10 @@ function Inventory:Equip(item, old_to_active)
     -----
     item.prevslot = self:GetItemSlot(item) 
 
-    if item.prevslot == nil and item.components.inventoryitem.owner.components.container and item.components.inventoryitem.owner.components.inventoryitem then
+    if item.prevslot == nil 
+			and item.components.inventoryitem.owner
+			and item.components.inventoryitem.owner.components.container 
+			and item.components.inventoryitem.owner.components.inventoryitem then
         item.prevcontainer = item.components.inventoryitem.owner.components.container
         item.prevslot = item.components.inventoryitem.owner.components.container:GetItemSlot(item)
     end
@@ -831,6 +862,25 @@ function Inventory:GetDebugString()
 	s = count..": "..s
 
 	return s
+end
+
+function Inventory:UseItemFromInvTile(item)
+    --local item = self:GetItemInSlot(slot)
+    if item and self.inst.components.playeractionpicker then
+        if self:GetActiveItem() then
+            --use the active item on the inventory item
+            local actions = self.inst.components.playeractionpicker:GetUseItemActions(item, self:GetActiveItem(), true)
+            if actions then
+                self.inst.components.locomotor:PushAction(actions[1], true)
+            end
+        else
+            --just use the inventory item
+            local actions = self.inst.components.playeractionpicker:GetInventoryActions(item)
+            if actions then
+                self.inst.components.locomotor:PushAction(actions[1], true)
+            end
+        end
+    end
 end
 
 

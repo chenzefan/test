@@ -1,3 +1,4 @@
+
 require("map/placement")
 require("constants")
 
@@ -138,7 +139,7 @@ local function MinBoundingBox(items)
 	return extents
 end
 
-local function LayoutForDefinition(name)
+local function LayoutForDefinition(name, choices)
 	assert(name~=nil)
 
 	local objs = require("map/layouts")
@@ -165,10 +166,10 @@ local function LayoutForDefinition(name)
 		elseif boons.Layouts[name] ~= nil then
 			layout = deepcopy(boons.Layouts[name])
 		elseif maze_rooms.Layouts[name] ~= nil then
-			if math.random()>0.5 then
-				layout = deepcopy(maze_rooms.Layouts[name])
+			if choices ~= nil then
+				layout = deepcopy(maze_rooms.AllLayouts[GetRandomItem(choices)][name])
 			else
-				layout = deepcopy(maze_rooms.Alternate0[name])
+				layout = deepcopy(GetRandomItem(maze_rooms.AllLayouts)[name])
 			end
 		else 
 			layout = deepcopy(pois.Layouts[name])
@@ -328,8 +329,6 @@ local function ReserveAndPlaceLayout(node_id, layout, prefabs, add_entity, posit
 		switch_xy  = translations[layout.force_rotation][1]
 		flip_x = translations[layout.force_rotation][2]
 		flip_y = translations[layout.force_rotation][3]
-
-		--print(switch_xy, flip_x, flip_y)
 	end
 
 	local tiles = nil
@@ -356,7 +355,7 @@ local function ReserveAndPlaceLayout(node_id, layout, prefabs, add_entity, posit
 				if layout.ground[clmn][rw] ~= 0 then	
 					if position ~= nil then
 						--print(position[1] + clmn, position[2] + rw, layout.ground_types[layout.ground[clmn][rw]])
-						WorldSim:SetTile(position[1] + column, size+position[2] - row, layout.ground_types[layout.ground[rw][clmn]])
+						WorldSim:SetTile(position[1] + column, size+position[2] - row, layout.ground_types[layout.ground[rw][clmn]], 1)
 					else
 						table.insert(tiles, layout.ground_types[layout.ground[clmn][rw]])
 					end
@@ -429,9 +428,9 @@ local function Convert(node_id, item, addEntity)
 	ReserveAndPlaceLayout(node_id, layout, prefabs, addEntity)
 end
 
-local function Place(position, item, addEntity)
+local function Place(position, item, addEntity, choices)
 	assert(item and item ~= "", "Must provide a valid layout name, got nothing.")
-	local layout = LayoutForDefinition(item)
+	local layout = LayoutForDefinition(item, choices)
 	local prefabs = ConvertLayoutToEntitylist(layout)
 	ReserveAndPlaceLayout("POSITIONED", layout, prefabs, addEntity, position)
 end

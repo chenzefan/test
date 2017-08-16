@@ -32,8 +32,6 @@ function Pickable:LongUpdate(dt)
 	        local time_to_pickable = self.targettime - time - dt
 			self.task = self.inst:DoTaskInTime(time_to_pickable, function() self:Regen() end, "regen")
 			self.targettime = time + time_to_pickable
-	        
-	        self.task = self.inst:DoTaskInTime(self.regentime, function() self:Regen() end, "regen")
 	    else
 			--become pickable right away
 			self:Regen()

@@ -41,7 +41,36 @@ return {
 	DESCRIBE =
 	{
 
+		THULECITE = "Its presence marks the edge of the unknown.",
+		ARMORRUINS = "A reprieve from death.",
+		RUINS_BAT = "I hold the power of the ancients in my hands.",
+		NIGHTMARE_TIMEPIECE = --Keeps track of the nightmare cycle
+		{
+			CALM = "I know not what lurks in the shadow.",	--calm phase
+			WARN = "I can feel the prying eyes.",	--Before nightmare
+			WAXING = "They approach.", --Nightmare Phase first 33%
+			STEADY = "They're all around me!", --Nightmare 33% - 66%
+			WANING = "I think they're leaving.", --Nightmare 66% +
+			DAWN = "It's almost over.", --After nightmare
+			NOMAGIC = "I am alone.", --Place with no nightmare cycle.
+		},
+		BISHOP_NIGHTMARE = "Time has won this battle.",
+		ROOK_NIGHTMARE = "Time erodes everything.",
+		KNIGHT_NIGHTMARE = "Another battle lost to time.",
+		MINOTAUR = "He must be lonely. Trapped in such a small cage.",	--Monster in labyrinth
+		SPIDER_DROPPER = "The darkness has drained the colour from their fur.",	--White spider that comes from the roof
+		NIGHTMARELIGHT = "It pulls power from beneath.",	--Lights that activate during nightmare.
+		RELIC = "A vision of the past.",	--Fixed relic
+		RUINS_RUBBLE = "A vision of the past. Broken.",	--Broken relic
+		MULTITOOL_AXE_PICKAXE = "An item with multiple uses.",	--Works as axe and pickaxe
+		GREENGEM = "The flaws are its most beautiful features.",
+		ORANGESTAFF = "Each time I use it I die and am reborn.",	--Teleports player.
+		YELLOWAMULET = "A brief light in my dark life.",	--Emits light, player walks faster.
+		GREENAMULET = "A flash of brilliance!",	--Reduce cost of crafting
+
 		SLURPER = "Ah, to be so simple.",
+		SLURPER_PELT = "An empty bag of hunger.",
+		ARMORSLURPER = "A clinging, dreary, living suit.",
 		ORANGEAMULET = "Temporary release from drudgery.",
 		YELLOWSTAFF = "The stick is as twisted as my soul.",
 		YELLOWGEM = "It reminds me of my mother.",
@@ -71,7 +100,11 @@ return {
 		},
 
         ANCIENT_ALTAR = "It is full of the echos of the dead.",
+        ANCIENT_ALTAR_BROKEN = "I hear the painful echos of the dead.",
+        ANCIENT_STATUE = "Not very attractive.",
 
+        LICHEN = "How does it manage to grow like that?",
+		CUTLICHEN = "Fleeting, just like life.",
 		CAVE_BANANA = "The peels look dangerous.",
 		CAVE_BANANA_COOKED = "Warmed banana mush is so much better.",
 		CAVE_BANANA_TREE = "Poor plant, locked away from the sun.",
@@ -483,6 +516,12 @@ return {
 			GENERIC = "It's just a bunch of reeds.",
 			PICKED = "I have picked them.",
 		},
+        RELIC = 
+        {
+            GENERIC = "A leftover of an ancient world.",
+            BROKEN = "Broken bits of stone",
+        },
+        RUINS_RUBBLE = "A pile of broken dreams.",
 		RESEARCHLAB = "I will learn unspeakable things.",
 		RESEARCHLAB2 = "I will learn unspeakable things.",
 		RESEARCHLAB3 = "I have learnt unspeakable things.",
@@ -602,8 +641,8 @@ return {
 		WALL_HAY_ITEM = "Their defensive value is questionable.",
 		WALL_STONE = "What will protect me from what's inside?",
 		WALL_STONE_ITEM = "These won't protect from the demons within.",
-		WALL_RUINS = "What will protect me from what's inside?",
-		WALL_RUINS_ITEM = "These won't protect from the demons within.",
+		WALL_RUINS = "These didn't protect the ancients did they!",
+		WALL_RUINS_ITEM = "Are the very stones haunted?",
 		WALL_WOOD = "Now I can delay the inevitable.",
 		WALL_WOOD_ITEM = "Bundled logs.",
 		WALRUS = "An old man, of the sea.",

@@ -26,7 +26,7 @@ end
 function PlayerDeaths:Sort(field)
 	local sort_function = self.sort_function
 	if field ~= nil then
-		print(type(self.persistdata[1][field]))
+		-- print(type(self.persistdata[1][field]))
 		if type(self.persistdata[1][field]) == "string" then
 			sort_function =  function(a,b) return (a[field] or "") < (b[field] or "") end
 		else
@@ -39,13 +39,19 @@ end
 ----------------------------
 
 function PlayerDeaths:GetSaveName()
-    return BRANCH == "morgue" and "" or "morgue_"..BRANCH
+    return BRANCH == "release" and "morgue" or "morgue_"..BRANCH
 end
 
 
 function PlayerDeaths:Save(callback)
-	Print( VERBOSITY.DEBUG, "SAVING" )
     if self.dirty then
+    	self:Sort()
+    	if #self.persistdata > 40 then
+    		for idx = #self.persistdata, 40, -1 do
+    			table.remove(self.persistdata, idx)
+    		end
+    	end
+ 		print( "SAVING Morgue", #self.persistdata )
         local str = json.encode(self.persistdata)
         local insz, outsz = TheSim:SetPersistentString(self:GetSaveName(), str, ENCODE_SAVES, callback)
     else
@@ -63,13 +69,13 @@ function PlayerDeaths:Load(callback)
 end
 
 function PlayerDeaths:Set(str, callback)
-	if string.len(str) == 0 then
-		print ("could not load ".. self:GetSaveName())
+	if str == nil or string.len(str) == 0 then
+		print ("PlayerDeaths could not load ".. self:GetSaveName())
 		if callback then
 			callback(false)
 		end
 	else
-		print ("loaded ".. self:GetSaveName())
+		print ("PlayerDeaths loaded ".. self:GetSaveName(), #str)
 
 		self.persistdata = TrackedAssert("TheSim:GetPersistentString morgue",  json.decode, str)
 		self:Sort()

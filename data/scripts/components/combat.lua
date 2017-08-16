@@ -184,7 +184,7 @@ function Combat:SetTarget(target)
     local new = target ~= self.target
     local player = GetPlayer()
 
-    if new and (not target or self:IsValidTarget(target) ) and not (target.sg and target.sg:HasStateTag("hiding") and target:HasTag("player")) then
+    if new and (not target or self:IsValidTarget(target) ) and not (target and target.sg and target.sg:HasStateTag("hiding") and target:HasTag("player")) then
 
         if self.target == player and new ~= player then
             FightStat_GaveUp(self.inst)
@@ -193,7 +193,7 @@ function Combat:SetTarget(target)
         self.target = target
         self.inst:PushEvent("newcombattarget", {target=target})
 
-        if player == target or target and target.components.follower.leader == player then
+        if player == target or target and target.components.follower and target.components.follower.leader == player then
             FightStat_Targeted(self.inst)
         end
         
@@ -306,7 +306,7 @@ function Combat:GetAttacked(attacker, damage, weapon)
         end
 
         if GetPlayer() == self.inst then
-            local prefab = attacker.prefab or attacker.inst.prefab or "NIL"
+            local prefab = (attacker and (attacker.prefab or attacker.inst.prefab)) or "NIL"
             ProfileStatsAdd("hitsby_"..prefab,math.floor(damage))
             FightStat_AttackedBy(attacker,damage,init_damage-damage)
         end
@@ -322,7 +322,7 @@ function Combat:GetAttacked(attacker, damage, weapon)
                     ProfileStatsAdd("kill_"..self.inst.prefab)
                     FightStat_AddKill(self.inst,damage,weapon)
                 end
-                if attacker and attacker.components.follower.leader == GetPlayer() then
+                if attacker and attacker.components.follower and attacker.components.follower.leader == GetPlayer() then
                     ProfileStatsAdd("kill_by_minion"..self.inst.prefab)
                     FightStat_AddKillByFollower(self.inst,damage,weapon)
                 end
@@ -386,6 +386,10 @@ function Combat:GetImpactSound(target, weapon)
             hitsound = hitsound.."marble_"
         elseif target.components.inventory:ArmorHasTag("shell") then
             hitsound = hitsound.."shell_"                
+        elseif target.components.inventory:ArmorHasTag("fur") then
+            hitsound = hitsound.."fur_"
+        elseif target.components.inventory:ArmorHasTag("metal") then
+            hitsound = hitsound.."metal_"
         else
             hitsound = hitsound.."wood_"
         end
@@ -400,7 +404,14 @@ function Combat:GetImpactSound(target, weapon)
         else
             hitsound = hitsound.."wood_"
         end
-        specialtype = "wall"
+        specialtype = "wall"   
+    elseif target:HasTag("object") then
+        if target:HasTag("clay") then
+            hitsound = hitsound.."clay_"
+        elseif target:HasTag("stone") then
+            hitsound = hitsound.."stone_"
+        end
+        specialtype = "object"
     elseif target:HasTag("hive") then
         hitsound = hitsound.."hive_"
     elseif target:HasTag("ghost") then
@@ -424,7 +435,11 @@ function Combat:GetImpactSound(target, weapon)
     else
         hitsound = hitsound.."flesh_"
     end
-    
+ 
+
+
+
+
     if specialtype then
         hitsound = hitsound..specialtype.."_"
     elseif target:HasTag("smallcreature") or target:HasTag("small") then
@@ -460,6 +475,7 @@ function Combat:CanTarget(target)
         target.components.health and
         not target.components.health:IsDead()
         and self.inst.components.combat:IsValidTarget(target)
+        and target.components.combat:CanBeAttacked(self.inst)
 end
 
 function Combat:CanAttack(target)
@@ -514,6 +530,15 @@ function Combat:TryAttack(target)
     
     return false
 end
+
+function Combat:ForceAttack()
+    if self.target and self:TryAttack() then
+        return true
+    else
+       self.inst:PushEvent("doattack")
+    end
+end
+
 
 function Combat:GetWeapon()
     if self.inst.components.inventory then
@@ -649,7 +674,8 @@ function Combat:DoAttack(target_override, weapon, projectile)
                 ProfileStatsAdd("hitson_"..targ.prefab,math.floor(damage))
                 FightStat_Attack(targ,weapon,projectile,damage)
             end
-            if self.inst.components.follower.leader == GetPlayer() then
+            if self.inst.components.follower
+					and self.inst.components.follower.leader == GetPlayer() then
                 FightStat_AttackByFollower(targ,weapon,projectile,damage)
             end
             

@@ -1,22 +1,16 @@
-require "screen"
-require "animbutton"
-require "spinner"
-require "numericspinner"
+local Screen = require "widgets/screen"
+local AnimButton = require "widgets/animbutton"
+local ImageButton = require "widgets/imagebutton"
+local Spinner = require "widgets/spinner"
+local Text = require "widgets/text"
+local Image = require "widgets/image"
+local Widget = require "widgets/widget"
+local HoverText = require "widgets/hoverer"
+
+
+local NumericSpinner = require "widgets/numericspinner"
 require "screens/popupdialog"
-require "widgets/toggle"
-
-local spinner_atlas = "images/ui.xml"
-
-local spinner_images = {
-	arrow_normal = "spin_arrow.tex",
-	arrow_over = "spin_arrow_over.tex",
-	arrow_disabled = "spin_arrow_disabled.tex",
-	bgtexture = "spinner.tex",
-}
-
-local text_font = DEFAULTFONT--NUMBERFONT
-local spinnerFont = { font = text_font, size = 30 }
-local spinnerHeight = 64
+local Toggle = require "widgets/toggle"
 
 local levels = require "map/levels"
 local customise = require("map/customise")
@@ -66,7 +60,7 @@ CustomizationScreen = Class(Screen, function(self, profile, cb, defaults)
     
     --menu buttons
     
-	self.applybutton = self.root:AddChild(AnimButton("button"))
+	self.applybutton = self.root:AddChild(ImageButton())
     self.applybutton:SetPosition(left_col, -185, 0)
     self.applybutton:SetText(STRINGS.UI.CUSTOMIZATIONSCREEN.APPLY)
     self.applybutton.text:SetColour(0,0,0,1)
@@ -74,7 +68,7 @@ CustomizationScreen = Class(Screen, function(self, profile, cb, defaults)
     self.applybutton:SetFont(BUTTONFONT)
     self.applybutton:SetTextSize(40)    
     
-	self.cancelbutton = self.root:AddChild(AnimButton("button"))
+	self.cancelbutton = self.root:AddChild(ImageButton())
     self.cancelbutton:SetPosition(left_col, -260, 0)
     self.cancelbutton:SetText(STRINGS.UI.CUSTOMIZATIONSCREEN.CANCEL)
     self.cancelbutton.text:SetColour(0,0,0,1)
@@ -107,11 +101,9 @@ CustomizationScreen = Class(Screen, function(self, profile, cb, defaults)
     self.presetdesc:SetString(self.presets[1].desc)
     self.presetdesc:EnableWordWrap(true)
 
-	local presetspinnerFont = { font = BUTTONFONT, size = 30 }
-	
-	local w = 200
-	self.presetspinner = self.presetpanel:AddChild(Spinner( self.presets, w, 50, presetspinnerFont, spinner_atlas, spinner_images ))
-	self.presetspinner:SetPosition(-self.presetspinner:GetWidth()/2, 50, 0)
+	local w = 400
+	self.presetspinner = self.presetpanel:AddChild(Spinner( self.presets, w, 50))
+	self.presetspinner:SetPosition(0, 50, 0)
 	self.presetspinner:SetTextColour(0,0,0,1)
 	self.presetspinner.OnChanged =
 		function( _, data )
@@ -197,11 +189,11 @@ function CustomizationScreen:RefreshOptions()
 			image:SetScale(imscale,imscale,imscale)
 		    image:SetTooltip(options[idx].name)
 
-			local spinfont = { font = BUTTONFONT, size = 30 }
+			
 			
 			local spin_height = 50
-			local w = 120
-			local spinner = opt:AddChild(Spinner( spin_options, w, spin_height, spinfont, spinner_atlas, spinner_images ))
+			local w = 220
+			local spinner = opt:AddChild(Spinner( spin_options, w, spin_height))
 			spinner:SetTextColour(0,0,0,1)
 			local default_value = overrides[options[idx].name] or options[idx].default
 			
@@ -237,7 +229,7 @@ function CustomizationScreen:RefreshOptions()
 			end
 			
 			
-			spinner:SetPosition(-50,0,0 )
+			spinner:SetPosition(35,0,0 )
 			image:SetPosition(-105,0,0)
 			local spacing = 75
 			
@@ -305,12 +297,6 @@ function CustomizationScreen:LoadPreset(preset)
 	self.preset = preset
 	self.options.preset = preset
 	self:RefreshOptions()	
-end
-
-function CustomizationScreen:OnKeyUp( key )
-	if key == KEY_ESCAPE then
-		self.cb()
-	end
 end
 
 function CustomizationScreen:Cancel()

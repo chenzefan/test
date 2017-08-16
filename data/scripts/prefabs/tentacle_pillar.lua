@@ -49,13 +49,13 @@ local function OnLoad(inst, data)
 	        inst.AnimState:SetTime(math.random()*2)    
             inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_hiddenidle_LP","loop") 
             inst:RemoveTag("wet")
-            inst:AddTag("stone")
+            inst:AddTag("rocky")
         else
             inst.SoundEmitter:KillSound("loop")
             inst.AnimState:PlayAnimation("idle","loop")
 	        inst.AnimState:SetTime(math.random()*2)    
             inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_idle_LP","loop") 
-            inst:RemoveTag("stone")
+            inst:RemoveTag("rocky")
             inst:AddTag("wet")
         end
     end
@@ -215,7 +215,7 @@ local function PillarEmerges(inst,withArms)
         inst.AnimState:PushAnimation("idle", "loop")
         inst:ListenForEvent("animover", PillarChange)
         inst:AddTag("pillaremerging")
-        inst:RemoveTag("stone")
+        inst:RemoveTag("rocky")
         inst:AddTag("wet")
 
         --MakeObstaclePhysics(inst, 3, 24)
@@ -272,7 +272,7 @@ local function OnKilled(inst)
     inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_die_VO")
 
     inst:RemoveTag("wet")
-    inst:AddTag("stone")
+    inst:AddTag("rocky")
 
     KillArms(inst)
     DropLoot(inst) 
@@ -305,10 +305,10 @@ local function OnEntityWake(inst)
     if inst.retracted then
         inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_hiddenidle_LP","loop") 
         inst:RemoveTag("wet")
-        inst:AddTag("stone")
+        inst:AddTag("rocky")
     else
         inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_idle_LP","loop") 
-        inst:RemoveTag("stone")
+        inst:RemoveTag("rocky")
         inst:AddTag("wet")
     end
 end
@@ -530,13 +530,18 @@ local function Garden(Sim)   -- prefab with garden of arms
     inst.garden = true
     if math.random() < .2 then
         inst.retracted = true
-        inst.AnimState:PlayAnimation("idle_hole","loop")
 	    inst.AnimState:SetTime(math.random()*2)    
-        inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_hiddenidle_LP","loop") 
+        inst:DoTaskInTime(2*FRAMES, function()
+                            inst.AnimState:PlayAnimation("idle_hole","loop")
+                            inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_hiddenidle_LP","loop") 
+                            end)
     else
-        inst.AnimState:PlayAnimation("idle","loop")
 	    inst.AnimState:SetTime(math.random()*2)    
         inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_idle_LP","loop")
+        inst:DoTaskInTime(2*FRAMES, function()
+                            inst.AnimState:PlayAnimation("idle","loop")
+                            inst.SoundEmitter:PlaySound("dontstarve/tentacle/tentapiller_hiddenidle_LP","loop") 
+                            end)
     end
 
     return(inst)

@@ -26,7 +26,7 @@ end
 
 local function onpickedfn(inst)
 	inst.Light:Enable(false)
-	inst.SoundEmitter:PlaySound("dontstarve/wilson/pickup_reeds") 
+	inst.SoundEmitter:PlaySound("dontstarve/wilson/pickup_lightbulb") 
 	inst.AnimState:PlayAnimation("picking") 
 	
 	if inst.components.pickable:IsBarren() then

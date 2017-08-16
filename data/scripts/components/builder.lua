@@ -71,6 +71,27 @@ function Builder:GiveAllRecipes()
     else
     	self.freebuildmode = true
     end
+    self.inst:PushEvent("unlockrecipe")
+end
+
+function Builder:UnlockRecipesForTech(tech)
+
+	local propertech = function(recipetree, buildertree)
+	    for k,v in pairs(recipetree) do
+	        if buildertree[tostring(k)] and recipetree[tostring(k)] and
+	        recipetree[tostring(k)] > buildertree[tostring(k)] then
+	                return false
+	        end
+	    end
+	    return true
+	end
+
+	local recipes = GetAllRecipes()
+	for k,v in pairs(recipes) do
+		if propertech(v.level, tech) then
+			self:UnlockRecipe(v.name)
+		end
+	end
 end
 
 function Builder:CanBuildAtPoint(pt, recipe)
@@ -152,7 +173,7 @@ function Builder:EvaluateTechTrees()
 			end
 		end
 	end
-	
+
 	if old_prototyper and old_prototyper.components.prototyper and old_prototyper.entity:IsValid() and old_prototyper ~= self.current_prototyper then
 		old_prototyper.components.prototyper:TurnOff()
 	end
@@ -174,7 +195,7 @@ function Builder:UnlockRecipe(recname)
 	local recipe = GetRecipe(recname)
 
 	if not recipe.nounlock then
-	print("Unlocking: ", recname)
+	--print("Unlocking: ", recname)
 		if self.inst.components.sanity then
 			self.inst.components.sanity:DoDelta(TUNING.SANITY_MED)
 		end
@@ -186,6 +207,7 @@ end
 
 function Builder:RemoveIngredients(recname)
     local recipe = GetRecipe(recname)
+    self.inst:PushEvent("consumeingredients", {recipe = recipe})
     if recipe then
         for k, v in pairs(recipe.ingredients) do
         	local amt = math.max(1, RoundUp(v.amount * self.ingredientmod))

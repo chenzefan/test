@@ -28,9 +28,7 @@ local function BeaverActionButton(inst)
 	local attack_target = inst.components.playercontroller:GetAttackTarget() 			
 	if attack_target then
 		if inst.components.combat.target ~= attack_target or inst.sg:HasStateTag("idle") then
-			local action = BufferedAction(inst, attack_target, ACTIONS.ATTACK)
-			inst.components.locomotor:PushAction(action, true)
-			return
+			return BufferedAction(inst, attack_target, ACTIONS.ATTACK)
 		end
 	end
 
@@ -39,13 +37,11 @@ local function BeaverActionButton(inst)
 	
 	if not inst.sg:HasStateTag("busy") and action_target then
 		if (action_target.components.edible and inst.components.eater:CanEat(action_target)) then
-			inst.components.locomotor:PushAction(BufferedAction(inst, action_target, ACTIONS.EAT), true)
+			return BufferedAction(inst, action_target, ACTIONS.EAT)
 		else
-			inst.components.locomotor:PushAction(BufferedAction(inst, action_target, action_target.components.workable.action), true)
+			return BufferedAction(inst, action_target, action_target.components.workable.action)
 		end
-		return
 	end
-
 end
 
 local function LeftClickPicker(inst, target_ent, pos)
@@ -63,6 +59,7 @@ local function LeftClickPicker(inst, target_ent, pos)
 end
 
 local function RightClickPicker(inst, target_ent, pos)
+	return {}
 end
 
 

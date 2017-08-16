@@ -84,8 +84,8 @@ local function createmachine(level, name, soundprefix, sounddelay, techtree, mer
 					onact(inst)
 				end
 
-				inst.SoundEmitter:KillSound("sound")
-				inst.SoundEmitter:PlaySound("dontstarve/common/researchmachine_"..soundprefix.."_ding","sound")		
+				--inst.SoundEmitter:KillSound("sound")
+				inst.SoundEmitter:PlaySound("dontstarve/common/researchmachine_"..soundprefix.."_ding")		
 			end)
 		end
 		

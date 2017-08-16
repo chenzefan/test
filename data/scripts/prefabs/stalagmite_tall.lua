@@ -64,7 +64,6 @@ local function fullrock()
 	inst.components.lootdropper:SetLoot({"rocks", "rocks", "goldnugget", "flint"})
 	inst.components.lootdropper:AddChanceLoot("goldnugget", 0.25)
 	inst.components.lootdropper:AddChanceLoot("flint", 0.6)
-	inst.components.lootdropper:AddChanceLoot("yellowgem", 0.03)
 	inst.AnimState:PlayAnimation("full_"..inst.type)
 	return inst
 end

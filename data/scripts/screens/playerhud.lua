@@ -1,10 +1,16 @@
-require "screen"
-require "button"
-require "animbutton"
-require "image"
-require "uianim"
-
+local Screen = require "widgets/screen"
+local Button = require "widgets/button"
+local AnimButton = require "widgets/animbutton"
+local ImageButton = require "widgets/imagebutton"
+local Text = require "widgets/text"
+local Image = require "widgets/image"
+local UIAnim = require "widgets/uianim"
+local Inv = require "widgets/inventorybar"
+local Widget = require "widgets/widget"
+local CraftTabs = require "widgets/crafttabs"
+local HoverText = require "widgets/hoverer"
 local MAX_HUD_SCALE = 1.25
+
 
 require "screens/consolescreen"
 
@@ -13,30 +19,12 @@ require("widgets/inventorybar")
 require("widgets/hoverer")
 require("widgets/crafting")
 require("widgets/mapwidget")
-require("widgets/containerwidget")
+local ContainerWidget = require("widgets/containerwidget")
 
 local easing = require("easing")
 
 local Sim = TheSim
 local gettime = GetTime
-
-local debugstr = {}
-local MAX_CONSOLE_LINES = 15
-local consolelog = function(...)
-
-    local str = ""
-    for i,v in ipairs({...}) do
-        str = str..tostring(v)
-    end
-
-    table.insert(debugstr, str)
-
-    while #debugstr > MAX_CONSOLE_LINES do
-        table.remove(debugstr,1)
-    end
-end
-
-addprintlogger(consolelog)
 
 local Controls = Class(Widget, function(self, owner)
     Widget._ctor(self, "Controls")
@@ -71,18 +59,6 @@ local Controls = Class(Widget, function(self, owner)
     self.bottomright_root:SetVAnchor(ANCHOR_BOTTOM)
     self.bottomright_root:SetMaxPropUpscale(MAX_HUD_SCALE)
 	self.bottomright_root = self.bottomright_root:AddChild(Widget(""))
-
-
-
-	------ CONSOLE -----------	
-	
-	self.consoletext = self.bottom_root:AddChild(Text(BODYTEXTFONT, 20, "CONSOLE TEXT"))
-	self.consoletext:SetVAlign(ANCHOR_BOTTOM)
-	self.consoletext:SetHAlign(ANCHOR_LEFT)
-	self.consoletext:SetRegionSize(850, 700)
-	self.consoletext:SetPosition(0,500,0)
-	self.consoletext:Hide()
-    -----------------
 
 
     
@@ -121,21 +97,15 @@ local Controls = Class(Widget, function(self, owner)
 	
 	self.maproot = self.bottomright_root:AddChild(Widget("mapstuff"))
 	self.maproot:SetPosition(-60,70,0)
-	self.minimapBtn = self.maproot:AddChild(Button())
+	self.minimapBtn = self.maproot:AddChild(ImageButton(HUD_ATLAS, "map_button.tex"))
+    self.minimapBtn:SetScale(MAPSCALE,MAPSCALE,MAPSCALE)
+	self.minimapBtn:SetOnClick( function() self:ToggleMap() end )
+	self.minimapBtn:SetTooltip(STRINGS.UI.HUD.MAP)
 
-	local btn = self.minimapBtn
-    btn:SetScale(MAPSCALE,MAPSCALE,MAPSCALE)
-	btn:SetOnClick( function() self:ToggleMap() end )
-	btn:SetMouseOver( function()  btn:ScaleTo(MAPSCALE*1.1,MAPSCALE*1.1,MAPSCALE*1.1) end )
-	btn:SetMouseOut( function() btn:ScaleTo(MAPSCALE,MAPSCALE,MAPSCALE) end )
-	
-	btn:SetTooltip(STRINGS.UI.HUD.MAP)
-	
-	local hud_atlas = resolvefilepath("images/hud.xml")
-	btn:SetImage(hud_atlas, "map_button.tex")
-
-
-	self.pauseBtn = self.maproot:AddChild(Button())
+	self.pauseBtn = self.maproot:AddChild(ImageButton(HUD_ATLAS, "pause.tex"))
+	self.pauseBtn:SetTooltip(STRINGS.UI.HUD.PAUSE)
+	self.pauseBtn:SetScale(.33,.33,.33)
+	self.pauseBtn:SetPosition( Point( 0,-50,0 ) )
 	
     self.pauseBtn:SetOnClick(
 		function()
@@ -144,21 +114,6 @@ local Controls = Class(Widget, function(self, owner)
 			end
 		end )
 	
-	self.pauseBtn:SetMouseOver(
-		function()
-			self.pauseBtn:ScaleTo( .4, .4, .4 )
-		end )
-		
-	self.pauseBtn:SetMouseOut(
-		function()
-			self.pauseBtn:ScaleTo( .33, .33, .33 )
-		end )
-		
-	self.pauseBtn:SetTooltip(STRINGS.UI.HUD.PAUSE)
-		
-	self.pauseBtn:SetImage( hud_atlas, "pause.tex" )	
-	self.pauseBtn:SetScale(.33,.33,.33)
-	self.pauseBtn:SetPosition( Point( 0,-50,0 ) )
         
     if true or not IsGamePurchased() then
 		self.demotimer = self.top_root:AddChild(DemoTimer(self.owner))
@@ -176,28 +131,16 @@ local Controls = Class(Widget, function(self, owner)
 	end
 
 
-	self.rotleft = self.maproot:AddChild(Button())
-	self.rotleft:SetImage( hud_atlas, "turnarrow_icon.tex" )
-	--self.rotleft:SetMouseOverImage( "images/hud.xml", "turnarrow_icon_over.tex" )
-	
-	self.rotleft:SetMouseOver( function() self.rotleft:SetScale( -.8, .8, .8 ) end )
-	self.rotleft:SetMouseOut( function() self.rotleft:SetScale( -.7, .7, .7 ) end )	
-	
+	self.rotleft = self.maproot:AddChild(ImageButton(HUD_ATLAS, "turnarrow_icon.tex"))
     self.rotleft:SetPosition(-40,-40,0)
-    self.rotleft:SetOnClick(function() GetPlayer().components.playercontroller:RotLeft() end)
     self.rotleft:SetScale(-.7,.7,.7)
+    self.rotleft:SetOnClick(function() GetPlayer().components.playercontroller:RotLeft() end)
     self.rotleft:SetTooltip(STRINGS.UI.HUD.ROTLEFT)
 
-	self.rotright = self.maproot:AddChild(Button())
-	self.rotright:SetImage( hud_atlas, "turnarrow_icon.tex" )
-	--self.rotright:SetMouseOverImage( "images/hud.xml", turnarrow_icon_over.tex" )
-	
-	self.rotright:SetMouseOver( function() self.rotright:SetScale( .8, .8, .8 ) end )
-	self.rotright:SetMouseOut( function() self.rotright:SetScale( .7, .7, .7 ) end )	
-	
+	self.rotright = self.maproot:AddChild(ImageButton(HUD_ATLAS, "turnarrow_icon.tex"))
     self.rotright:SetPosition(40,-40,0)
-    self.rotright:SetOnClick(function() GetPlayer().components.playercontroller:RotRight() end)
     self.rotright:SetScale(.7,.7,.7)
+    self.rotright:SetOnClick(function() GetPlayer().components.playercontroller:RotRight() end)
 	self.rotright:SetTooltip(STRINGS.UI.HUD.ROTRIGHT)
 
 	self.containerroot = self:AddChild(Widget(""))
@@ -214,11 +157,11 @@ local Controls = Class(Widget, function(self, owner)
 	self.containerroot_side:SetMaxPropUpscale(MAX_HUD_SCALE)
 	self.containerroot_side = self.containerroot_side:AddChild(Widget(""))
 	
-    self.hover = self:AddChild(HoverText(self.owner))
-    
     self.mousefollow = self:AddChild(Widget("follower"))
     self.mousefollow:FollowMouse(true)
     self.mousefollow:SetScaleMode(SCALEMODE_PROPORTIONAL)
+
+    self.hover = self:AddChild(HoverText(self.owner))
     self.hover:SetScaleMode(SCALEMODE_PROPORTIONAL)
 
     self:SetHUDSize(Profile:GetHUDSize())
@@ -286,47 +229,8 @@ function Controls:SetHUDSize( size )
 	self.mousefollow:SetScale(scale,scale,scale)
 end
 
-function Controls:OnKeyUp( key )
-	if self.owner and self.owner.components.playercontroller and self.owner.components.playercontroller.enabled then
-		if key >= KEY_0 and key <= KEY_9 then
-			local num = 1
-			if key == KEY_0 then
-				num = 10
-			else
-				num = key - KEY_1 + 1
-			end
-			self.inv:UseSlot(num)
-		elseif key == KEY_MINUS then
-			self.inv:UseSlot(11)
-		elseif key == KEY_EQUALS then
-			self.inv:UseSlot(12)
-	    elseif key == KEY_TAB then
-		    if not GetPlayer():HasTag("beaver") then
-				print ("toggle map!")
-				self:ToggleMap()
-			end
-	    elseif key == KEY_TILDE and PLATFORM ~= "NACL" and TheSim:GetSetting("MISC", "ENABLECONSOLE") == "true" then
-	    	TheFrontEnd:PushScreen(ConsoleScreen())
-	    	self.consoletext:Show()
-	    elseif key == KEY_L and TheInput:IsKeyDown(KEY_CTRL) then
-	    	if self.consoletext.shown then
-		    	self.consoletext:Hide()
-		    else
-		    	self.consoletext:Show()
-		    end
-	    end
-	end
-end
 
 function Controls:Update(dt)
-    
-    local consolestr = ""
-    for i,v in ipairs(debugstr) do
-    	consolestr = consolestr..v.."\n"
-    end
-    consolestr = consolestr.."(Press CTRL+L to close this log)"
-
-   	self.consoletext:SetString(consolestr)
 
     self.status:Update(dt)
     self.hover:Update(dt)
@@ -453,6 +357,16 @@ function PlayerHud:OnDestroy()
 	Screen.OnDestroy(self)
 end
 
+	
+function PlayerHud:Toggle()
+	self.shown = not self.shown
+	if self.shown then
+		self.root:Show()
+	else
+		self.root:Hide()
+	end
+end
+
 function PlayerHud:Hide()
 	self.shown = false
 	self.root:Hide()
@@ -559,19 +473,33 @@ function PlayerHud:OnUpdate(dt)
 	end
 end
 
-function PlayerHud:OnKeyUp( key )
-	if key == KEY_ESCAPE then
-		if not IsHUDPaused() then
-			TheFrontEnd:PushScreen(PauseScreen())
+function PlayerHud:OnControl(control, down)
+	if PlayerHud._base.OnControl(self, control, down) then return true end
+
+	if not down and control == CONTROL_PAUSE then
+		TheFrontEnd:PushScreen(PauseScreen())
+		return true
+	end
+
+	if not down and control == CONTROL_MAP then
+		if not self.owner:HasTag("beaver") then
+			self.controls:ToggleMap()			
+			return true
 		end
 	end
+	
+	--inventory hotkeys
+	if down and control >= CONTROL_INV_1 and control <= CONTROL_INV_10 then
+		local num = (control - CONTROL_INV_1) + 1
+		local item = self.owner.components.inventory:GetItemInSlot(num)
+		self.owner.components.inventory:UseItemFromInvTile(item)
+		return true
+	end
+
 end
 
-function PlayerHud:OnKeyDown( key )
-	local focused = self:GetActiveFocusWidget()
-	if self.controls then
-		self.controls:OnKeyUp( key )
-	end
+function PlayerHud:OnRawKey( key, down )
+	if PlayerHud._base.OnRawKey(self, key, down) then return true end
 end
 
 return PlayerHud

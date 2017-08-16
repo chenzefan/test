@@ -2,6 +2,7 @@ local assets=
 {
 	Asset("ANIM", "anim/bishop.zip"),
 	--Asset("ANIM", "anim/bishop_build.zip"),
+	Asset("ANIM", "anim/bishop_nightmare.zip"),
 	Asset("SOUND", "sound/chess.fsb"),
 }
 
@@ -101,7 +102,7 @@ local function EquipWeapon(inst)
 end
 
  
-local function fn()
+local function MakeBishop(nightmare)
 	local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
@@ -113,7 +114,17 @@ local function fn()
     MakeCharacterPhysics(inst, 50, .5)
 
     anim:SetBank("bishop")
-    anim:SetBuild("bishop")
+    if nightmare then
+        inst.kind = "_nightmare"
+        inst.soundpath   = "dontstarve/creatures/bishop_nightmare/"
+        inst.effortsound = "dontstarve/creatures/bishop_nightmare/rattle"
+        anim:SetBuild("bishop_nightmare") -- name of flash file
+    else
+        inst.kind = ""
+        inst.soundpath   = "dontstarve/creatures/bishop/"
+        inst.effortsound = "dontstarve/creatures/bishop/idle"
+        anim:SetBuild("bishop")
+    end
     
     inst:AddComponent("locomotor")
     inst.components.locomotor.walkspeed = TUNING.BISHOP_WALK_SPEED
@@ -163,4 +174,5 @@ local function fn()
     return inst
 end
 
-return Prefab("chessboard/bishop", fn, assets, prefabs) 
+return Prefab("chessboard/bishop", function() return MakeBishop(false) end , assets, prefabs),
+       Prefab("cave/monsters/bishop_nightmare", function() return MakeBishop(true) end , assets, prefabs)

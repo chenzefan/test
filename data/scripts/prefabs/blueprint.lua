@@ -131,9 +131,9 @@ local prefabs = {}
 
 table.insert(prefabs, Prefab("common/inventory/blueprint", MakeAnyBlueprint, assets))
 for k,v in pairs(RECIPETABS) do
-	table.insert(prefabs, Prefab("common/inventory/"..string.lower(v.str).."_blueprint", MakeSpecificBlueprint(v), assets))
+	table.insert(prefabs, Prefab("common/inventory/"..string.lower(v.str or "NONAME").."_blueprint", MakeSpecificBlueprint(v), assets))
 end
 for k,v in pairs(GetAllRecipes()) do
-	table.insert(prefabs, Prefab("common/inventory/"..string.lower(k).."_blueprint", MakeAnySpecificBlueprint(k), assets))
+	table.insert(prefabs, Prefab("common/inventory/"..string.lower(k or "NONAME").."_blueprint", MakeAnySpecificBlueprint(k), assets))
 end
 return unpack(prefabs) 

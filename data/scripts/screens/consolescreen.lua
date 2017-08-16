@@ -1,11 +1,12 @@
 require "util"
-require "screen"
-require "button"
-require "animbutton"
-require "image"
-require "uianim"
-require "numericspinner"
-require "textedit"
+local Screen = require "widgets/screen"
+local Button = require "widgets/button"
+local AnimButton = require "widgets/animbutton"
+local Image = require "widgets/image"
+local UIAnim = require "widgets/uianim"
+local NumericSpinner = require "widgets/numericspinner"
+local TextEdit = require "widgets/textedit"
+local Widget = require "widgets/widget"
 
 require "screens/popupdialog"
 
@@ -15,21 +16,31 @@ local CONSOLE_HISTORY = {}
 ConsoleScreen = Class(Screen, function(self)
 	Screen._ctor(self, "ConsoleScreen")
 	self:DoInit()
-	self.first = true
 end)
 
-function ConsoleScreen:OnKeyUp( key )
-	if self.first then
-		self.first = false
-		return
+function ConsoleScreen:OnBecomeActive()
+	ConsoleScreen._base.OnBecomeActive(self)
+	TheFrontEnd:ShowConsoleLog()
+
+	self.console_edit:SetEditing(true)
+end
+
+function ConsoleScreen:OnControl(control, down)
+	if ConsoleScreen._base.OnControl(self, control, down) then return true end
+
+	if not down and (control == CONTROL_CANCEL or control == CONTROL_OPEN_DEBUG_CONSOLE) then 
+		self:Close()
+		return true
 	end
-	if key == KEY_ESCAPE or key == KEY_TILDE or (key == KEY_L and TheInput:IsKeyDown(KEY_CTRL) ) then
-		self:Close()
-	elseif key == KEY_TAB then
+end
+
+function ConsoleScreen:OnRawKey( key, down)
+	if ConsoleScreen._base.OnRawKey(self, key, down) then return true end
+	
+	if down then return end
+	
+	if key == KEY_TAB then
 		self:AutoComplete()
-	elseif key == KEY_ENTER then
-		self:Run()
-		self:Close()
 	elseif key == KEY_UP then
 		local len = #CONSOLE_HISTORY
 		if len > 0 then
@@ -57,8 +68,10 @@ function ConsoleScreen:OnKeyUp( key )
 		self.autocompleteObjName = ""
 		self.autocompleteObj = nil
 		self.autocompleteOffset = -1
-		Screen.OnKeyUp(self, key)
+		return false
 	end
+	
+	return true
 end
 
 function ConsoleScreen:Run()
@@ -72,7 +85,7 @@ function ConsoleScreen:Run()
 	
 	local status, r = pcall( loadstring( fnstr ) )
 	if not status then
-		print(r)
+		nolineprint(r)
 	end	
 end
 
@@ -162,6 +175,24 @@ function ConsoleScreen:Close()
 	TheFrontEnd:PopScreen()
 end
 
+function ConsoleScreen:OnTextEntered()
+	self:Run()
+	self:Close()
+    if TheFrontEnd.consoletext.closeonrun then
+        TheFrontEnd:HideConsoleLog()
+    end
+end
+
+function GetConsoleHistory()
+    return CONSOLE_HISTORY
+end
+
+function SetConsoleHistory(history)
+    if type(history) == "table" and type(history[1]) == "string" then
+        CONSOLE_HISTORY = history
+    end
+end
+
 function ConsoleScreen:DoInit()
 	SetHUDPause(true,"console")
 	TheInput:EnableDebugToggle(false)
@@ -201,12 +232,18 @@ function ConsoleScreen:DoInit()
 	self.console_edit:SetPosition( 0,0,0)
 	self.console_edit:SetRegionSize( edit_width, label_height )
 	self.console_edit:SetHAlign(ANCHOR_LEFT)
-	self.console_edit:SetLeftMouseDown( function() self:SetFocus( self.console_edit ) end )
-	self.console_edit:SetFocusedImage( self.edit_bg, "images/ui.xml", "textbox_long.tex" )
-	self.console_edit:SetCharacterFilter( VALID_CHARS )
 
-	self:PushFocusWidget(self.console_edit)
+	self.console_edit.OnTextEntered = function() self:OnTextEntered() end
+	--self.console_edit:SetLeftMouseDown( function() self:SetFocus( self.console_edit ) end )
+	self.console_edit:SetFocusedImage( self.edit_bg, "images/ui.xml", "textbox_long_over.tex", "textbox_long.tex" )
+	self.console_edit:SetCharacterFilter( VALID_CHARS )
 
 	self.console_edit:SetString("")
 	self.history_idx = nil
+	self.default_focus = self.console_edit
+
+	self.console_edit.validrawkeys[KEY_TAB] = true
+	self.console_edit.validrawkeys[KEY_UP] = true
+	self.console_edit.validrawkeys[KEY_DOWN] = true
+
 end

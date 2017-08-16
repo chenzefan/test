@@ -20,13 +20,13 @@ return {
 	ANNOUNCE_CHARLIE = "What was that?!",
 	ANNOUNCE_CHARLIE_ATTACK = "OW! Something bit me!",
 	ANNOUNCE_COLD = "So Cold!",
-	ANNOUNCE_CRAFTING_FAIL = "I don't have all of the ingredients",
+	ANNOUNCE_CRAFTING_FAIL = "I don't have all of the ingredients.",
 	ANNOUNCE_DEERCLOPS = "That sounded big!",
 	ANNOUNCE_DUSK = "It's getting late. I need to make a fire.",
 	ANNOUNCE_EAT =
 	{
 		GENERIC = "Yum!",
-		PAINFUL = "I don't feel so good",
+		PAINFUL = "I don't feel so good.",
 		SPOILED = "Yuck! That was terrible!",
 		STALE = "I think that was starting to turn.",
 	},
@@ -54,6 +54,7 @@ return {
 	ANNOUNCE_TRAP_WENT_OFF = "Oops.",
 	ANNOUNCE_UNIMPLEMENTED = "OW! I don't think it's ready yet.",
 	ANNOUNCE_WORMHOLE = "That was not a sane thing to do.",
+	ANNOUNCE_CANFIX = "\nI think I could fix this!",
 	BATTLECRY =
 	{
 		GENERIC = "Go for the eyes!",
@@ -73,7 +74,37 @@ return {
 	DESCRIBE =
 	{
 
+		THULECITE = "I wonder where this is from?",
+		ARMORRUINS = "It's oddly light.",
+		RUINS_BAT = "It has quite a heft to it.",
+		NIGHTMARE_TIMEPIECE =
+		{
+		CALM = "All is well.",
+		WARN = "Getting pretty magical around here.",
+		WAXING = "I think it's becoming more concentrated!",
+		STEADY = "It seems to be staying steady.",
+		WANING = "Feels like it's receding.",
+		DAWN = "The nightmare is almost gone!",
+		NOMAGIC = "There's no magic around here.",
+		},
+		BISHOP_NIGHTMARE = "It's falling apart!",
+		ROOK_NIGHTMARE = "Terrifying!",
+		KNIGHT_NIGHTMARE = "It's a knightmare!",
+		MINOTAUR = "That thing doesn't look happy.",
+		SPIDER_DROPPER = "Note to self: Don't look up.",
+		NIGHTMARELIGHT = "I wonder what function this served.",
+		GREENGEM = "It's green and gemmy.",
+		RELIC = "Ancient household goods.",
+		RUINS_RUBBLE = "This can be fixed.",
+		MULTITOOL_AXE_PICKAXE = "It's brilliant!",
+		ORANGESTAFF = "This beats walking.",
+		YELLOWAMULET = "Warm to the touch.",
+		GREENAMULET = "Just when I thought I couldn't get any better.",
+		SLURPERPELT = "Doesn't look much different dead.",	
+
 		SLURPER = "It's so hairy!",
+		SLURPER_PELT = "Doesn't look much different dead.",
+		ARMORSLURPER = "A soggy, sustaining, succulent suit.",
 		ORANGEAMULET = "Teleportation can be so useful.",
 		YELLOWSTAFF = "I put a gem on a stick.",
 		YELLOWGEM = "This gem is yellow.",
@@ -91,7 +122,15 @@ return {
 		STAFFLIGHT = "That seems really dangerous.",
 		RESEARCHLAB4 = "Who would name something that?",
 	
-        ANCIENT_ALTAR = "Which elder god dwelt here?",
+        ANCIENT_ALTAR = "An ancient and mysterious structure.",
+
+        ANCIENT_ALTAR_BROKEN = "This seems to be broken.",
+
+        ANCIENT_STATUE = "It seems to throb out of tune with the world.",
+
+        LICHEN = "Only a cyanobacteria could grow in this light.",
+		CUTLICHEN = "Nutritious, but it won't last long.",
+
 		CAVE_BANANA = "It's mushy.",
 		CAVE_BANANA_COOKED = "Yum!",
 		CAVE_BANANA_TREE = "It's dubiously photosynthetical.",
@@ -99,7 +138,7 @@ return {
 		
 		COMPASS =
 		{
-			GENERIC="I can't get a reading",
+			GENERIC="I can't get a reading.",
 			N = "North",
 			S = "South",
 			E = "East",
@@ -109,6 +148,18 @@ return {
 			NW = "Northwest",
 			SW = "Southwest",
 		},
+
+		NIGHTMARE_TIMEPIECE =
+		{
+			WAXING = "I think it's becoming more concentrated!",
+			STEADY = "It seems to be staying steady.",
+			WANING = "Feels like it's receding.",
+			DAWN = "The nightmare is almost gone!",
+			WARN = "Getting pretty magical around here.",
+			CALM = "All is well.",
+			NOMAGIC = "There's no magic around here.",
+		},
+
 		HOUNDSTOOTH="It's sharp!",
 		ARMORSNURTLESHELL="It sticks to my back.",
 		BAT="Ack! That's terrifying!",
@@ -236,10 +287,10 @@ return {
 		BLUE_MUSHROOM =
 		{
 			GENERIC = "It's a mushroom.",
-			INGROUND = "It's sleeping",
+			INGROUND = "It's sleeping.",
 			PICKED = "I wonder if it will come back?",
 		},
-		BOARDS = "Boards",
+		BOARDS = "Boards.",
 		BOAT = "Is that how I got here?",
 		BONESTEW = "I cooked it myself!",
 		BUGNET = "For catching bugs.",
@@ -268,9 +319,9 @@ return {
 		CARROT_SEEDS = "It's a seed.",
 		CAVE_FERN = "It's a fern.",
 		CHARCOAL = "It's small, dark and smells like burnt wood.",
-        CHESSJUNK1 = "A pile of broken chess pieces",
-        CHESSJUNK2 = "Another pile of broken chess pieces",
-        CHESSJUNK3 = "Even more broken chess pieces",
+        CHESSJUNK1 = "A pile of broken chess pieces.",
+        CHESSJUNK2 = "Another pile of broken chess pieces.",
+        CHESSJUNK3 = "Even more broken chess pieces.",
 		CHESTER = "Otto von Chesterfield, Esq.",
 		CHESTER_EYEBONE =
 		{
@@ -357,7 +408,7 @@ return {
 		EYEPLANT = "I think I'm being watched.",
 		FARMPLOT =
 		{
-			GENERIC = "I should try planting some crops",
+			GENERIC = "I should try planting some crops.",
 			GROWING = "Go plants go!",
 			NEEDSFERTILIZER = "I think it needs to be fertilized.",
 		},
@@ -379,7 +430,7 @@ return {
 			HIGH = "Good thing it's contained!",
 			LOW = "The fire's getting a bit low.",
 			NORMAL = "Nice and comfy.",
-			OUT = "At least I can start it up again",
+			OUT = "At least I can start it up again.",
 		},
 		FIRESTAFF = "I don't want to set the world on fire.",
 		FISH = "Now I shall eat for a day.",
@@ -422,7 +473,7 @@ return {
 		GREEN_MUSHROOM =
 		{
 			GENERIC = "It's a mushroom.",
-			INGROUND = "It's sleeping",
+			INGROUND = "It's sleeping.",
 			PICKED = "I wonder if it will come back?",
 		},
 		GUNPOWDER = "It looks like pepper.",
@@ -504,11 +555,11 @@ return {
 		MARSH_TREE =
 		{
 			BURNING = "Spikes and fire!",
-			BURNT = "Now it's burnt and spiky",
+			BURNT = "Now it's burnt and spiky.",
 			CHOPPED = "Not so spiky now!",
 			GENERIC = "Those spikes look sharp!",
 		},
-		MAXWELL = "I hate that guy",
+		MAXWELL = "I hate that guy.",
 		MAXWELLHEAD = "I can see into his pores.",
 		MAXWELLLIGHT = "I wonder how they work.",
 		MAXWELLLOCK = "Looks almost like a key hole.",
@@ -521,7 +572,7 @@ return {
 			DRYING = "Meat takes a while to dry.",
 			GENERIC = "I should dry some meats.",
 		},
-		MEAT_DRIED = "Just jerky enough",
+		MEAT_DRIED = "Just jerky enough.",
 		MERM = "Smells fishy!",
 		MERMHEAD = "The stinkiest thing I'll smell all day.",
 		MERMHOUSE = "Who would live here?",
@@ -530,7 +581,7 @@ return {
 		MONKEYBARREL = "Did that barrel just move?",
 		MONSTERLASAGNA = "I cooked it myself!",
 		MONSTERMEAT = "Ugh. I don't think I should eat that.",
-		MONSTERMEAT_DRIED = "Strange-smelling jerky",
+		MONSTERMEAT_DRIED = "Strange-smelling jerky.",
 		MOSQUITO =
 		{
 			GENERIC = "Disgusting little bloodsucker.",
@@ -580,7 +631,7 @@ return {
 		    GENERIC = "I can hear a tiny tree inside it, trying to get out.",
 		    PLANTED = "It'll be a tree soon!",
 		},
-		PITCHFORK = "Maxwell might be looking for this",
+		PITCHFORK = "Maxwell might be looking for this.",
 		PLANTMEAT = "That doesn't look very appealing.",
 		PLANTMEAT_COOKED = "At least it's warm now.",
 		PLANT_NORMAL =
@@ -616,7 +667,7 @@ return {
 		RED_MUSHROOM =
 		{
 			GENERIC = "It's a mushroom.",
-			INGROUND = "It's sleeping",
+			INGROUND = "It's sleeping.",
 			PICKED = "I wonder if it will come back?",
 		},
 		REEDS =
@@ -625,6 +676,13 @@ return {
 			GENERIC = "It's a clump of reeds.",
 			PICKED = "I picked all the useful reeds.",
 		},
+        RELIC = 
+        {
+            GENERIC = "Ancient household goods.",
+            BROKEN = "Nothing to work with here.",
+        },
+        RUINS_RUBBLE = "This can be fixed.",
+        RUBBLE = "Just bits and pieces of rock.",
 		RESEARCHLAB = "It breaks down objects into their scientific components.",
 		RESEARCHLAB2 = "It's even more science-y than the last one!",
 		RESEARCHLAB3 = "What have I created?",
@@ -645,7 +703,7 @@ return {
 		ROCK_LIGHT =
 		{
 			GENERIC = "A crusted over lava pit.",
-			OUT = "Looks fragile",
+			OUT = "Looks fragile.",
 			LOW = "The lava's crusting over.",
 			NORMAL = "Nice and comfy.",
 		},
@@ -666,7 +724,7 @@ return {
 			PICKED = "That'll teach him.",
 		},
 		SEEDS = "Each one is a tiny mystery.",
-		SEEDS_COOKED = "I cooked all the life out of 'em",
+		SEEDS_COOKED = "I cooked all the life out of 'em!",
 		SEWING_KIT = "Darn it! Darn it all to heck!",
 		SHOVEL = "There's a lot going on underground.",
 		SILK = "It comes from a spider's butt.",
@@ -680,7 +738,7 @@ return {
 		},
 		SMALLMEAT = "A tiny chunk of dead animal.",
 		SMALLMEAT_DRIED = "A little jerky.",
-		SPEAR = "That's one pointy stick",
+		SPEAR = "That's one pointy stick.",
 		SPIDER =
 		{
 			DEAD = "Ewwww!",
@@ -764,12 +822,12 @@ return {
 		TRAP_TEETH_MAXWELL = "I'll want to avoid stepping on that!",
 		TREASURECHEST = "It's my tickle trunk!",
 		TREASURECHEST_TRAP = "How convenient!",
-		TREECLUMP = "It's almost like someone is trying to prevent me from going somewhere",
+		TREECLUMP = "It's almost like someone is trying to prevent me from going somewhere.",
 		TRINKET_1 = "They are all melted together.",
-		TRINKET_10 = "I hope I get out of here before I need these",
+		TRINKET_10 = "I hope I get out of here before I need these.",
 		TRINKET_11 = "He whispers beautiful lies to me.",
 		TRINKET_12 = "I'm not sure what I should do with a dessicated tentacle.",
-		TRINKET_2 = "It's just a cheap replica",
+		TRINKET_2 = "It's just a cheap replica.",
 		TRINKET_3 = "The knot is stuck. Forever.",
 		TRINKET_4 = "It must be some kind of religious artifact.",
 		TRINKET_5 = "Sadly, it's too small for me to escape on.",
@@ -788,7 +846,7 @@ return {
 		TURF_FOREST = "A chunk of ground.",
 		TURF_GRASS = "A chunk of ground.",
 		TURF_MARSH = "A chunk of ground.",
-		TURF_ROAD = "Hastily Cobbled Stones",
+		TURF_ROAD = "Hastily cobbled stones.",
 		TURF_ROCKY = "A chunk of ground.",
 		TURF_SAVANNA = "A chunk of ground.",
 		TURF_WOODFLOOR = "These are floorboards.",
@@ -799,10 +857,10 @@ return {
 		WAFFLES = "I cooked it myself!",
 		WALL_HAY = "Hmmmm. I guess that'll have to do.",
 		WALL_HAY_ITEM = "This seems like a bad idea.",
-		WALL_STONE = "That's a nice wall",
+		WALL_STONE = "That's a nice wall.",
 		WALL_STONE_ITEM = "They make me feel so safe.",
-		WALL_RUINS = "That's a nice wall",
-		WALL_RUINS_ITEM = "They make me feel so safe.",
+		WALL_RUINS = "An ancient piece of wall.",
+		WALL_RUINS_ITEM = "A solid piece of history.",
 		WALL_WOOD = "Pointy!",
 		WALL_WOOD_ITEM = "Pickets!",
 		WALRUS = "Walruses are natural predators.",

@@ -227,7 +227,11 @@ function MakeObstaclePhysics(inst, rad, height)
 
     inst:AddTag("blocker")
     inst.entity:AddPhysics()
-    inst.Physics:SetMass(9999999) --this is lame. Bullet wants 0 mass for static objects, for for some reason it is slow when we do that
+    --this is lame. Bullet wants 0 mass for static objects, 
+    -- for for some reason it is slow when we do that
+    
+    -- Doesnt seem to slow anything down now.
+    inst.Physics:SetMass(0) 
     inst.Physics:SetCapsule(rad,height)
     inst.Physics:SetCollisionGroup(COLLISION.OBSTACLES)
     inst.Physics:SetFriction(10000)

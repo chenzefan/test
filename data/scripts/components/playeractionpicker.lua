@@ -118,11 +118,11 @@ function PlayerActionPicker:GetInventoryActions(useitem, right)
 end
 
 function PlayerActionPicker:ShouldForceInspect()
-    return TheInput:IsControlPressed(CONTROL_INSPECT)
+    return TheInput:IsControlPressed(CONTROL_FORCE_INSPECT)
 end
 
 function PlayerActionPicker:ShouldForceAttack()
-    return TheInput:IsControlPressed(CONTROL_ATTACK)
+    return TheInput:IsControlPressed(CONTROL_FORCE_ATTACK)
 end
 
 function PlayerActionPicker:GetClickActions( target_ent, position )
@@ -330,13 +330,12 @@ function PlayerActionPicker:DoGetMouseActions( )
             highlightdude.components.highlight:Highlight()
         end
         
-        if self.currenthighlight and self.currenthighlight:IsValid() and self.currenthighlight.components.highlight then
+        if self.currenthighlight and self.currenthighlight:IsValid() and self.currenthighlight.components.highlight and self.currenthighlight ~= self.action_highlight then
             self.currenthighlight.components.highlight:UnHighlight()
         end
     end
-    
-
     self.currenthighlight = highlightdude
+
     return action, second_action
     
 end
@@ -352,6 +351,28 @@ end
 
 function PlayerActionPicker:OnUpdate(dt)
     self.LMBaction, self.RMBaction = self:DoGetMouseActions()
+
+--[[
+    local old_action_target = self.action_highlight
+    local new_action_target = nil
+
+    local action = self.inst.components.playercontroller:GetActionButtonAction()
+
+    if action and action.target and action.target.components.highlight then
+        new_action_target = action.target
+    end
+
+    if new_action_target ~= old_action_target then
+        if new_action_target then
+            new_action_target.components.highlight:Highlight()
+        end
+
+        if old_action_target and old_action_target ~= self.highlightdude then
+            old_action_target.components.highlight:UnHighlight()
+        end
+    end
+    self.action_highlight = new_action_target
+--]]
 end
 
 

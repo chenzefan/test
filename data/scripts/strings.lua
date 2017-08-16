@@ -74,7 +74,12 @@ STRINGS=
         READ = "Read",
 	    MAKEBALLOON = "Inflate",
     	SEW = "Sew",
-        GIVE = "Give",
+        GIVE = 
+        {
+            GENERIC  = "Give",
+            NOTREADY = "Place",
+            READY    = "Sacrifice",
+        },
         DROP = 
         {
             GENERIC = "Drop",
@@ -177,6 +182,11 @@ STRINGS=
 	SELECT = "Select",
     DROPALL = "Drop All",
 
+    INSPECTMOD = "Inspect",
+    STACKMOD = "Stack",
+    TRADEMOD = "Move",
+    SWAP = "Swap",
+
     NAMES =
     {
 
@@ -190,7 +200,9 @@ STRINGS=
         BOOK_SLEEP = "Sleepytime Stories",
         BOOK_BRIMSTONE = "The End is Nigh!",
 
-        ANCIENT_ALTAR ="Ancient Altar",
+        ANCIENT_ALTAR ="Ancient Pseudoscience Station",
+        ANCIENT_ALTAR_BROKEN ="Broken Ancient Pseudoscience Station",
+        ANCIENT_STATUE ="Ancient statue",
         CHESSJUNK1 = "Broken clockworks",
         CHESSJUNK2 = "Broken clockworks",
         CHESSJUNK3 = "Broken clockworks",
@@ -260,8 +272,10 @@ STRINGS=
 		BERRIES_COOKED = "Roasted Berries",
         CAVE_ENTRANCE_CLOSED = "Plugged Sinkhole",
         CAVE_ENTRANCE_OPEN = "Sinkhole",
+        CAVE_ENTRANCE_OPEN_CAVE = "Deeper",  
+        CAVE_ENTRANCE_CLOSED_CAVE = "Plugged Hole",
         RABBITHOUSE = "Rabbit Hutch",
-        CAVE_EXIT = "Rope to Surface",
+        CAVE_EXIT = "Rope",
         UMBRELLA = "Umbrella",
 		KRAMPUS_SACK = "Krampus Sack",
 
@@ -331,7 +345,9 @@ STRINGS=
 		AMULET = "Life Giving Amulet",
         BLUEAMULET = "Chilled Amulet",
         PURPLEAMULET = "Nightmare Amulet",
+        YELLOWAMULET = "Magiluminescence",
         ORANGEAMULET = "The Lazy Forager", 
+        GREENAMULET = "Construction Amulet",
 		PICKAXE = "Pickaxe",
 		GOLDENPICKAXE = "Opulent Pickaxe",
 		SHOVEL = "Shovel",
@@ -370,6 +386,7 @@ STRINGS=
 		CROP = "Crop",
 		POND = "Pond",
         POND_MOS = "Pond",
+        POND_CAVE = "Pond",
 		RABBIT = "Rabbit",
 		RABBITHOLE = "Rabbit Hole",
 		ROCK1 = "Boulder",
@@ -429,6 +446,7 @@ STRINGS=
         TREASURECHEST = "Chest",
         SKULLCHEST = "Skullchest",
         PANDORASCHEST = "Ornate Chest",
+        MINOTAURCHEST = "Large Ornate Chest",
         CHESTER = "Chester",
         CHESTER_EYEBONE = "Eye Bone",
         BEDROLL_STRAW = "Straw Roll",
@@ -562,12 +580,12 @@ STRINGS=
 		
 		WALL_WOOD_ITEM = "Wood Wall",
 		WALL_STONE_ITEM = "Stone Wall",
-		WALL_RUINS_ITEM = "Stone Wall",
+		WALL_RUINS_ITEM = "Thulecite Wall",
 		WALL_HAY_ITEM = "Hay Wall",
 
 		WALL_WOOD = "Wood Wall",
 		WALL_STONE = "Stone Wall",
-		WALL_RUINS = "Stone Wall",
+		WALL_RUINS = "Thulecite Wall",
 		WALL_HAY = "Hay Wall",
         ANIMAL_TRACK = "Animal Track",
         DIRTPILE = "Suspicious Dirt Pile",
@@ -583,6 +601,8 @@ STRINGS=
         
         CRAWLINGHORROR = "Crawling Horror",
         TERRORBEAK = "Terrorbeak",
+        CRAWLINGNIGHTMARE = "Crawling Nightmare",
+        NIGHTMAREBEAK = "Nightmarebeak",
         NIGHTMAREFUEL = "Nightmare Fuel",
         NIGHTLIGHT = "Night Light",
         NIGHTSWORD = "Dark Sword",
@@ -595,6 +615,8 @@ STRINGS=
         TELESTAFF = "Telelocator Staff",
         TELEBASE = "Telelocator Focus",
         GEMSOCKET = "Gem Stand",
+        ORANGESTAFF = "The Lazy Explorer",
+        GREENSTAFF = "Deconstruction Staff",
         YELLOWSTAFF = "Star Caller's Staff",
 
         ICEHOUND = "Blue Hound",
@@ -618,7 +640,7 @@ STRINGS=
         MARBLE = "Marble",
         KNIGHT = "Clockwork Knight",
         BISHOP = "Clockwork Bishop",
-        ROOK = "Clockwork Castle",
+        ROOK = "Clockwork Rook",
         SUNKBOAT = "Sunken Boat",
         MAXWELLPHONOGRAPH = "Maxwell's Phonograph",
         MAXWELLTHRONE = "Nightmare Throne",
@@ -677,8 +699,26 @@ STRINGS=
         MONKEY = "Splumonkey",
         MONKEYBARREL = "Barrel",
         SLURPER = "Slurper",
-        RELIC = "Relic",
+        RUBBLE = "Broken bits and pieces of stone",
         STAFFLIGHT = "Dwarf Star",
+
+        RELIC = "Relic",
+        RUINS_RUBBLE = "Broken Relic",
+        MULTITOOL_AXE_PICKAXE = "Pick/Axe",
+        SLURPER_PELT = "Slurper Pelt",
+        THULECITE = "Thulecite",
+        ARMORRUINS = "Thulecite Suit",
+        ARMORSLURPER = "Belt of Hunger",
+        RUINS_BAT = "Thulecite Club",
+        LICHEN = "Cave Lichen",
+        CUTLICHEN = "Lichen",
+        NIGHTMARE_TIMEPIECE = "Thulecite Medallion",
+        BISHOP_NIGHTMARE = "Damaged Bishop",
+        ROOK_NIGHTMARE = "Damaged Rook",
+        KNIGHT_NIGHTMARE = "Damaged Knight",
+        MINOTAUR = "Ancient Guardian",
+        SPIDER_DROPPER = "Dangling Depth Dweller",
+        NIGHTMARELIGHT = "Nightmare Light",
 	},
 
     DIRECTIONS=
@@ -769,6 +809,8 @@ STRINGS=
         PURPLEAMULET = "Induce insanity.",
         BLUEAMULET = "What a cool amulet.",
         ORANGEAMULET = "For those who don't like to pick items up.",
+        GREENAMULET = "See all the inefficiencies in your crafting.",
+        YELLOWAMULET = "Pull power from the heavens.",
         SWEATERVEST = "Rugged, yet stylish.",
         TRUNKVEST_SUMMER = "Warm, but light enough for summer.",
 		TRUNKVEST_WINTER = "Warm enough for winter storms.",
@@ -807,8 +849,15 @@ STRINGS=
         LANTERN = "Refuelable, bright, portable!",
         BATBAT = "All this science is so... draining.",
         TELESTAFF = "Bend space! Time bending sold separately.",
+        ORANGESTAFF = "For those who don't like walking.",
+        GREENSTAFF = "Clean and efficient destruction.",
         YELLOWSTAFF = "Summon a tiny star.",
         TELEBASE = "Just add gems.",
+        MULTITOOL_AXE_PICKAXE = "Doubly useful.",
+        ARMORRUINS = "Flashy AND protective.",
+        RUINS_BAT = "Spikes make everything better.",
+        NIGHTMARE_TIMEPIECE = "Track the ebb and flow of ambient magic levels.",
+        ARMORSLURPER = "Keep that belly full.",
     },
 
     MAXWELL_TEST = {"Say pal, you don't look so good.", "You better find something to eat before night comes!"},
@@ -1021,7 +1070,10 @@ STRINGS=
         MAGIC = "Magic",
         BOOKS = "Books",
         GEMOLOGY = "Gemology",
+        ANCIENT = "Ancient",
     },
+
+    GREENAMULET_TOOLTIP = "Reduced Material Cost",
 }
 
 STRINGS.BUNNYMANNAMES =
@@ -1272,6 +1324,7 @@ STRINGS.UI =
 		NEEDALCHEMYENGINE = "Use an alchemy engine to build a prototype!",
         NEEDSHADOWMANIPULATOR = "Use a shadow manipulator to build a prototype!",
         NEEDPRESTIHATITATOR = "Use a Prestihatitator to build a prototype!",
+        NEEDSANCIENT_FOUR = "It seems that this altar is not fully functional!",
 		CANTRESEARCH = "Some things are unknowable",
 	},
 	
@@ -1418,14 +1471,17 @@ STRINGS.UI =
 		NEWMODDETAIL = "Newly installed mods: ",
 		NEWMODDETAIL2 = "Enable these mods from the main menu.",
         MODDETAIL2 = "Klei is not able to help you should issues arise while using mods. Use with caution!",
+		FORCEMODDETAIL = "You are force loading these mods from modsettings.lua. They will always be enabled:",
 		OLDMODS = "The following mods are out of date and have been disabled: ",
 		FAILEDMODS = "The following mods failed to run last time and have been disabled: ",
 		OLDORFAILEDMODS = "Check the forums for updated versions.",
         MODFAILTITLE = "WARNING!",
         MODFAILDETAIL = "The following mod(s) have caused a failure:",
         MODFAILDETAIL2 = "The mod will be disabled, re-enable it from the mods menu.",
-        MODQUIT = "No way!",
+        MODQUIT = "Disable Mods",
         MODFORUMS = "Mod Forums",
+		MODSBADTITLE = "All Mods Disabled",
+		MODSBADLOAD = "A mod prevented the game from starting up last time, so all mods have been disabled.\n\nYou can try re-enabling mods from the mod settings screen.",
 		MODS = "Mods",
         SCRIPTERRORQUIT = "Exit Game",
         SCRIPTERRORMODWARNING = "This error may have occurred due to a mod you have enabled!\nYou have the following mods enabled:\n",
@@ -1497,7 +1553,7 @@ STRINGS.UI =
 		EXIT = "Exit",
         LOGOUT = "Log Out",
         CREDITS = "Credits",
-        UPDATENAME = "Hungry For Your Hunger",
+        UPDATENAME = "The Stuff of Nightmares",
         CONTROLS = "Controls",
 	},
 	
@@ -1540,7 +1596,12 @@ STRINGS.UI =
 		NETBOOKMODE = "Netbook Mode:",
 		ENABLED = "Enabled",
 		DISABLED = "Disabled",
-	},
+        FX = "FX:",
+        MUSIC = "Music:",
+        AMBIENT = "Ambient:",
+        HUDSIZE = "HUD size:",
+        -- INPUTFREQENCY = "Input Frequency(hz):",
+    },
 	
 	PAUSEMENU =
 	{
@@ -1632,8 +1693,8 @@ STRINGS.UI =
     {
         TITLE = "New Game",
         CANCEL = "Cancel",
-        CHANGECHARACTER = "Change Character",
-        CUSTOMIZE = "Customize World",
+        CHANGECHARACTER = "Character",
+        CUSTOMIZE = "World",
         START = "Start",
     },
 
@@ -1647,43 +1708,93 @@ STRINGS.UI =
 		DELETE = "Delete",
         CHANGECHARACTER = "Change Character",
 	},
-	LOADGAMESCREEN=
-	{
-		CANCEL = "Cancel",
-		TITLE = "Choose A Slot",
-		NEWGAME = "New Game",
-		ADVENTURE = "Adventure",
-		SURVIVAL = "Survival",
+
+    LOADGAMESCREEN=
+    {
+        CANCEL = "Cancel",
+        TITLE = "Choose A Slot",
+        NEWGAME = "New Game",
+        ADVENTURE = "Adventure",
+        SURVIVAL = "Survival",
         CAVE = "Caves",
-		RESTART = "Restart",		
-        CAVE = "Cave level",
-	},
+        RESTART = "Restart",        
+        CAVE = "Cave Depth",
+    },
+
+    MORGUESCREEN=
+    {
+        MORGUE = "Morgue",
+        TITLE = "Obituaries",
+        OK = "OK",
+        DAYS_LIVED = "Days Lived",
+        DECEASED = "Deceased",
+        CAUSE = "Cause of Death",
+        MODE = "Mode",
+        LEVELTYPE = {
+            "Survival",
+            "Caves",
+            "Adventure",
+            "TEST",
+            "Unknown",
+         },    
+    },
+
 	CONTROLSSCREEN=
 	{
 	    CONTROLS = {
 	        "Primary",
 	        "Secondary",
-	        "Force Attack",
-	        "Force Inspect",
+	        "Do Attack",
+	        "Inv. Inspect",
 	        "Do Action",
-	        "Zoom In",
+	        "Move Up",
+            "Move Down",
+            "Move Left",
+            "Move Right",
+            "Zoom In",
 	        "Zoom Out",
 	        "Rotate Left",
 	        "Rotate Right",
-	        "Move Up",
-	        "Move Down",
-	        "Move Left",
-	        "Move Right",
+	        "Pause",
+            "Map",
+            "Inv 1",
+            "Inv 2",
+            "Inv 3",
+            "Inv 4",
+            "Inv 5",
+            "Inv 6",
+            "Inv 7",
+            "Inv 8",
+            "Inv 9",
+            "Inv 10",
+            "Menu Up",
+	        "Menu Down",
+	        "Menu Left",
+            "Menu Right",
+            "Menu Accept",
+            "Menu Cancel",
+            "Menu Page L",
+            "Menu Page R",
+            "Take Half",
+            "Change Container",
+            "Change Container (Half)",
+            "Force Inspect",
+            "Force Attack",
+            "Force Container",
+            "Force Stack",
+            "Debug Console",
+            "Debug Log",
+            "Debug Render",
 	    },
+
 	    DEVICE_TITLE = "Controls",
 	    APPLY = "Apply",
 	    RESET = "Reset", 
-	    CLOSE = "Close",	
-	    CANCEL = "Cancel",	     
+	    CANCEL = "Cancel",	
+	    CLOSE = "Close",    
 	    YES = "Yes",	    
-	    NO = "No",	      
+	    NO = "No",	    
 	    CONTROL_SELECT = " -- Select new input -- ",
-	    CONTROL_NOT_SELECTED = " -- None selected -- ",
 	    DEFAULT_CONTROL_TEXT = "Default: %s",
 	    LOSE_CHANGES_TITLE = "Lose Changes?",
 	    LOSE_CHANGES_BODY = "Do you want abandon your changes?",
@@ -1927,6 +2038,8 @@ STRINGS.UI =
     {
         TITLE="Leave the cave?",
         BODY="Do you want to return to the surface?",
+        TITLE_LEVEL="Climb the rope?",
+        BODY_LEVEL="Do you want to return to the level above?",
         YES="Yes",
         NO="No",
     },
@@ -1939,6 +2052,7 @@ STRINGS.UI =
         YES="Yes",
         NO="No",
     },
+
     RESETCAVE=
     {
         TITLE="Regen this cave?",
@@ -2208,7 +2322,3 @@ STRINGS.LUCY =
     }
 
 }
-
-if TranslateStringTable ~= nil then
-	TranslateStringTable( STRINGS )
-end

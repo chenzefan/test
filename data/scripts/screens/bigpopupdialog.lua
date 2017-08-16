@@ -1,8 +1,10 @@
-require "screen"
-require "button"
-require "animbutton"
-require "image"
-require "uianim"
+local Screen = require "widgets/screen"
+local Button = require "widgets/button"
+local AnimButton = require "widgets/animbutton"
+local ImageButton = require "widgets/imagebutton"
+local Text = require "widgets/text"
+local Image = require "widgets/image"
+local Widget = require "widgets/widget"
 
 
 BigPopupDialogScreen = Class(Screen, function(self, title, text, buttons, timeout)
@@ -62,7 +64,7 @@ BigPopupDialogScreen = Class(Screen, function(self, title, text, buttons, timeou
 	
 	local pos = Vector3(0,0,0)
 	for k,v in ipairs(buttons) do
-		local button = self.menu:AddChild(AnimButton("button"))
+		local button = self.menu:AddChild(ImageButton())
 	    button:SetPosition(pos)
 	    button:SetText(v.text)
 	    button:SetOnClick( function() TheFrontEnd:PopScreen(self) v.cb() end )
@@ -92,14 +94,3 @@ function BigPopupDialogScreen:OnUpdate( dt )
 end
 
 
-function BigPopupDialogScreen:OnKeyUp( key )
-	if key == KEY_ENTER then
-		if self.buttons[1] then
-			TheFrontEnd:PopScreen(self) self.buttons[1].cb()
-		end
-	elseif key == KEY_ESCAPE then -- Last button
-		if #self.buttons > 1 and self.buttons[#self.buttons] then
-			TheFrontEnd:PopScreen(self) self.buttons[#self.buttons].cb()
-		end
-	end
-end

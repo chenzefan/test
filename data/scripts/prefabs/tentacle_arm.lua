@@ -5,6 +5,8 @@
 local assets=
 {
 	Asset("ANIM", "anim/tentacle_arm.zip"),
+    Asset("ANIM", "anim/tentacle_arm_build.zip"),
+
     Asset("SOUND", "sound/tentacle.fsb"),
 }
 
@@ -77,7 +79,7 @@ local function fn(Sim)
 	inst.entity:AddAnimState()
     inst.AnimState:SetBank("tentacle_arm")
     inst.AnimState:SetScale(ARM_SCALE,ARM_SCALE)
-    inst.AnimState:SetBuild("tentacle_arm")
+    inst.AnimState:SetBuild("tentacle_arm_build")
     inst.AnimState:PlayAnimation("breach_pre")
  	inst.entity:AddSoundEmitter()
     -- inst.AnimState:SetMultColour(.2, 1, .2, 1.0)

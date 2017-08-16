@@ -115,7 +115,7 @@ function growfn(inst, reader)
             v.components.crop:DoGrow(TUNING.TOTAL_DAY_TIME*3)
         end
         
-        if v:HasTag("tree") and v.components.growable then
+        if v:HasTag("tree") and v.components.growable and not v:HasTag("stump") then
             v.components.growable:DoGrowth()
         end
     end

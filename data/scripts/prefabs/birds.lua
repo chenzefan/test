@@ -73,7 +73,7 @@ local function makebird(name, soundname)
     }
 
     local function OnTrapped(inst, data)
-        if data.trapper and data.trapper.settrapsymbols then
+        if data and data.trapper and data.trapper.settrapsymbols then
             data.trapper.settrapsymbols(name.."_build")
         end
     end

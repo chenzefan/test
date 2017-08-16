@@ -1,28 +1,27 @@
-require "screen"
-require "animbutton"
-require "spinner"
-require "textbutton"
-require "numericspinner"
+local Screen = require "widgets/screen"
+local AnimButton = require "widgets/animbutton"
+local Spinner = require "widgets/spinner"
+local ImageButton = require "widgets/imagebutton"
+local Text = require "widgets/text"
+local Image = require "widgets/image"
+local NumericSpinner = require "widgets/numericspinner"
+local Toggle = require "widgets/toggle"
+local Widget = require "widgets/widget"
+local UIAnim = require "widgets/uianim"
 require "screens/popupdialog"
-require "widgets/toggle"
 
-local spinner_atlas = "images/ui.xml"
-
-local spinner_images = {
-	arrow_normal = "spin_arrow.tex",
-	arrow_over = "spin_arrow_over.tex",
-	arrow_disabled = "spin_arrow_disabled.tex",
-	bgtexture = "spinner.tex",
-}
 
 local text_font = DEFAULTFONT--NUMBERFONT
-local spinnerFont = { font = text_font, size = 30 }
-local spinnerHeight = 64
 
 local display_rows = 5
 
 local DISABLE = 0
 local ENABLE = 1
+
+    
+local left_col =-RESOLUTION_X*.26
+local mid_col = RESOLUTION_X*.15
+local right_col = RESOLUTION_X*.41
 
 ModsScreen = Class(Screen, function(self, cb)
     Widget._ctor(self, "ModsScreen")
@@ -30,9 +29,21 @@ ModsScreen = Class(Screen, function(self, cb)
 
 	-- save current mod index before user configuration
 	KnownModIndex:CacheSaveData()
+	-- get the latest mod info
+	KnownModIndex:UpdateModInfo()
 
-	self.modnames = ModManager:GetModNames()
-	
+	self.modnames = KnownModIndex:GetModNames()
+	local function alphasort(moda, modb)
+		if not moda then return false end
+		if not modb then return true end
+		print("comparing "..moda.." and "..modb)
+		return string.lower(KnownModIndex:GetModFancyName(moda)) < string.lower(KnownModIndex:GetModFancyName(modb))
+	end
+	table.sort(self.modnames, alphasort)
+
+	self.infoprefabs = {}
+	self:LoadModInfoPrefabs(self.infoprefabs)
+
     self.bg = self:AddChild(Image("images/ui.xml", "bg_plain.tex"))
     self.bg:SetTint(BGCOLOURS.RED[1],BGCOLOURS.RED[2],BGCOLOURS.RED[3], 1)
 
@@ -46,14 +57,10 @@ ModsScreen = Class(Screen, function(self, cb)
     self.root:SetVAnchor(ANCHOR_MIDDLE)
     self.root:SetHAnchor(ANCHOR_MIDDLE)
     self.root:SetScaleMode(SCALEMODE_PROPORTIONAL)
-    
-    local left_col =-RESOLUTION_X*.26
-	local mid_col = RESOLUTION_X*.15
-    local right_col = RESOLUTION_X*.41
-    
+
     --menu buttons
     
-	self.applybutton = self.root:AddChild(AnimButton("button"))
+	self.applybutton = self.root:AddChild(ImageButton())
     self.applybutton:SetPosition(right_col, 60, 0)
     self.applybutton:SetText(STRINGS.UI.MODSSCREEN.APPLY)
     self.applybutton.text:SetColour(0,0,0,1)
@@ -61,7 +68,7 @@ ModsScreen = Class(Screen, function(self, cb)
     self.applybutton:SetFont(BUTTONFONT)
     self.applybutton:SetTextSize(40)    
     
-	self.morebutton = self.root:AddChild(AnimButton("button"))
+	self.morebutton = self.root:AddChild(ImageButton())
     self.morebutton:SetPosition(right_col, -50, 0)
     self.morebutton:SetText(STRINGS.UI.MODSSCREEN.MOREMODS)
     self.morebutton.text:SetColour(0,0,0,1)
@@ -69,7 +76,7 @@ ModsScreen = Class(Screen, function(self, cb)
     self.morebutton:SetFont(BUTTONFONT)
     self.morebutton:SetTextSize(40)
     
-	self.cancelbutton = self.root:AddChild(AnimButton("button"))
+	self.cancelbutton = self.root:AddChild(ImageButton())
     self.cancelbutton:SetPosition(right_col, -120, 0)
     self.cancelbutton:SetText(STRINGS.UI.MODSSCREEN.CANCEL)
     self.cancelbutton.text:SetColour(0,0,0,1)
@@ -78,11 +85,43 @@ ModsScreen = Class(Screen, function(self, cb)
     self.cancelbutton:SetTextSize(40)
 
 	-- mod details panel
+	self:CreateDetailPanel()
 
-	self.detailpanel = self.root:AddChild(Widget("detailpanel"))
-	self.detailpanel:SetPosition(mid_col,0,0)
-	self.detailpanelbg = self.detailpanel:AddChild(Image("images/fepanels.xml", "panel_mod2.tex"))
-	self.detailpanelbg:SetScale(1,1, 1)
+	self.option_offset = 0
+    self.optionspanel = self.root:AddChild(Widget("optionspanel"))
+    self.optionspanel:SetPosition(left_col,0,0)
+    self.optionspanelbg = self.optionspanel:AddChild(Image("images/fepanels.xml", "panel_mod1.tex"))
+
+	self.leftbutton = self.optionspanel:AddChild(AnimButton("scroll_arrow"))
+    self.leftbutton:SetPosition(0, 290, 0)
+	--self.leftbutton:SetScale(-1,1,1)
+	self.leftbutton:SetRotation(-90)
+    self.leftbutton:SetOnClick( function() self:Scroll(-display_rows) end)
+	
+	self.rightbutton = self.optionspanel:AddChild(AnimButton("scroll_arrow"))
+    self.rightbutton:SetPosition(0, -300, 0)
+	self.rightbutton:SetRotation(90)
+    self.rightbutton:SetOnClick( function() self:Scroll(display_rows) end)	
+
+	self.optionwidgets = {}
+	self:Scroll(0) -- resets the scroll arrows and populates the list
+
+	if #self.modnames > 0 then
+		self:ShowModDetails(1)
+	end
+
+	self:StartWorkshopUpdate()
+end)
+
+function ModsScreen:CreateDetailPanel()
+	if self.detailpanel then
+		self.detailpanel:Kill()
+	end
+
+    self.detailpanel = self.root:AddChild(Widget("detailpanel"))
+    self.detailpanel:SetPosition(mid_col,0,0)
+    self.detailpanelbg = self.detailpanel:AddChild(Image("images/fepanels.xml", "panel_mod2.tex"))
+    self.detailpanelbg:SetScale(1,1, 1)
 
 	if #self.modnames > 0 then
 		self.detailimage = self.detailpanel:AddChild(Image("images/ui.xml", "portrait_bg.tex"))
@@ -119,34 +158,23 @@ ModsScreen = Class(Screen, function(self, cb)
 		self.detailwarning:SetRegionSize( 140, 107 )
 		self.detailwarning:EnableWordWrap(true)
 		
-		self.modlinkbutton = self.detailpanel:AddChild(TextButton("modlinkbutton"))
+		self.modlinkbutton = self.detailpanel:AddChild(ImageButton("images/ui.xml", "blank.tex","blank.tex","blank.tex","blank.tex" ))
 		self.modlinkbutton:SetPosition(5, -89, 0)
 		self.modlinkbutton:SetText(STRINGS.UI.MODSSCREEN.MODLINK)
 		self.modlinkbutton:SetFont(BUTTONFONT)
 		self.modlinkbutton:SetTextSize(30)
-		self.modlinkbutton:SetColour(0.9,0.8,0.6,1)
-		self.modlinkbutton:SetOverColour(1,1,1,1)
+		self.modlinkbutton:SetTextColour(0.9,0.8,0.6,1)
+		self.modlinkbutton:SetTextFocusColour(1,1,1,1)
 		self.modlinkbutton:SetOnClick( function() self:ModLinkCurrent() end )
 		
-		local enablespinnerfont = {font = BUTTONFONT, size = 40}
 		local enableoptions = {{text="Disabled", data=DISABLE},{text="Enabled",data=ENABLE}}
-		self.enablespinner = self.detailpanel:AddChild(Spinner(enableoptions, 100, 60, enablespinnerfont, spinner_atlas, spinner_images))
+		self.enablespinner = self.detailpanel:AddChild(Spinner(enableoptions, 200, 60))
 		self.enablespinner:SetTextColour(0,0,0,1)
-		self.enablespinner:SetPosition(-80-self.enablespinner:GetWidth()/2, -150, 0)
+		self.enablespinner:SetPosition(-100, -150, 0)
 		self.enablespinner.OnChanged = function( _, data )
 			self:EnableCurrent(data)
 		end
 
-		--self.enablebutton = self.detailpanel:AddChild(AnimButton("button"))
-		--self.enablebutton:SetPosition(-80, -150, 0)
-		--self.enablebutton.text:SetColour(0,0,0,1)
-		--self.enablebutton:SetOnClick( function() self:EnableCurrent() end )
-		--self.enablebutton:SetFont(BUTTONFONT)
-		--self.enablebutton:SetTextSize(40)
-			
-		--add the custom options panel
-		
-		
 	else
 		self.detaildesc = self.detailpanel:AddChild(Text(BODYTEXTFONT, 25))
 		self.detaildesc:SetPosition(6, 18, 0)
@@ -154,40 +182,75 @@ ModsScreen = Class(Screen, function(self, cb)
 		self.detaildesc:EnableWordWrap(true)
 		self.detaildesc:SetString(STRINGS.UI.MODSSCREEN.NO_MODS)
 
-		self.modlinkbutton = self.detailpanel:AddChild(TextButton("modlinkbutton"))
+		self.modlinkbutton = self.detailpanel:AddChild(ImageButton("images/ui.xml", "blank.tex","blank.tex","blank.tex","blank.tex" ))
 		self.modlinkbutton:SetPosition(5, -89, 0)
 		self.modlinkbutton:SetFont(BUTTONFONT)
 		self.modlinkbutton:SetTextSize(30)
-		self.modlinkbutton:SetColour(0.9,0.8,0.6,1)
-		self.modlinkbutton:SetOverColour(1,1,1,1)
+		self.modlinkbutton:SetTextColour(0.9,0.8,0.6,1)
+		self.modlinkbutton:SetTextFocusColour(1,1,1,1)
 		self.modlinkbutton:SetText(STRINGS.UI.MODSSCREEN.NO_MODS_LINK)
 		self.modlinkbutton:SetOnClick( function() self:MoreMods() end )
 		
 	end
 
-	self.option_offset = 0
-	self.optionspanel = self.root:AddChild(Widget("optionspanel"))
-	self.optionspanel:SetPosition(left_col,0,0)
-	self.optionspanelbg = self.optionspanel:AddChild(Image("images/fepanels.xml", "panel_mod1.tex"))
+	-- Workshop blinker
 
-	self.leftbutton = self.optionspanel:AddChild(AnimButton("scroll_arrow"))
-	self.leftbutton:SetPosition(0, 290, 0)
-	--self.leftbutton:SetScale(-1,1,1)
-	self.leftbutton:SetRotation(-90)
-	self.leftbutton:SetOnClick( function() self:Scroll(-display_rows) end)
-	
-	self.rightbutton = self.optionspanel:AddChild(AnimButton("scroll_arrow"))
-	self.rightbutton:SetPosition(0, -300, 0)
-	self.rightbutton:SetRotation(90)
-	self.rightbutton:SetOnClick( function() self:Scroll(display_rows) end)	
+	self.workshopupdatenote = self.detailpanel:AddChild(Text(TITLEFONT, 40))
+	self.workshopupdatenote:SetHAlign(ANCHOR_MIDDLE)
+	self.workshopupdatenote:SetPosition(0, -270, 0)
+	self.workshopupdatenote:SetString("Updating Steam Workshop mods...")
+	self.workshopupdatenote:Hide()
 
-	self.optionwidgets = {}
-	self:Scroll(0) -- resets the scroll arrows and populates the list
+end
 
-	if #self.modnames > 0 then
-		self:ShowModDetails(1)
+-- Not currently used, for testing only.
+local function OnUpdateWorkshopModsComplete(success, msg)
+	print("OnUpdateWorkshopModsComplete", success, msg)
+
+	local status = TheSim:GetWorkshopUpdateStatus()
+	for k,v in pairs(status) do
+		print("-", k, v)
 	end
-end)
+
+	local modInfo = TheSim:GetWorkshopMods()
+	for i,v in ipairs(modInfo) do
+		print("   ", i)
+		for k,v in pairs(v) do
+			print("   ", k, v)
+		end
+	end
+end
+
+
+function ModsScreen:StartWorkshopUpdate()
+	if TheSim:UpdateWorkshopMods( function() self:WorkshopUpdateComplete() end ) then
+		self.updatetask = scheduler:ExecutePeriodic(0, self.ShowWorkshopStatus, nil, 0, self )
+		self.workshopupdatenote:Show()
+	end
+end
+
+function ModsScreen:WorkshopUpdateComplete(status, message) --bool, string
+	self.updatetask:Cancel()
+	self.updatetask = nil
+	self.workshopupdatenote:SetString("Workshop Mods Updated!")
+
+	KnownModIndex:UpdateModInfo()
+	self.modnames = KnownModIndex:GetModNames()
+
+	self:ReloadModInfoPrefabs()
+
+	self:CreateDetailPanel()
+	self:Scroll(0)
+end
+
+function ModsScreen:ShowWorkshopStatus()
+end
+
+function ModsScreen:OnControl(control, down)
+	if ModsScreen._base.OnControl(self, control, down) then return true end
+	
+	if not down and control == CONTROL_CANCEL then TheFrontEnd:PopScreen() return true end
+end
 
 function ModsScreen:RefreshOptions()
 
@@ -203,7 +266,7 @@ function ModsScreen:RefreshOptions()
 		local idx = self.option_offset+k
 
 		local modname = self.modnames[idx]
-		local modinfo = ModManager:GetModInfo(modname)
+		local modinfo = KnownModIndex:GetModInfo(modname)
 		
 		local opt = self.optionspanel:AddChild(Widget("option"))
 		
@@ -265,28 +328,31 @@ function ModsScreen:RefreshOptions()
 		
 		local spacing = 105
 		
-		opt:SetMouseOver(
+		
+		opt.OnGainFocus =
 			function()
 				TheFrontEnd:GetSound():PlaySound("dontstarve/HUD/click_mouseover")
 				opt:SetScale(1.1,1.1,1)
 				opt.bg:GetAnimState():PlayAnimation("over")
-			end)
+			end
 
-		opt:SetMouseOut(
+		opt.OnLoseFocus =
 			function()
 				opt:SetScale(1,1,1)
 				opt.bg:GetAnimState():PlayAnimation("anim")
-			end)
+			end
 			
-		opt:SetLeftMouseUp( function() self:ShowModDetails(idx) end )
-		
+		opt.OnControl =function(_, control, down) 
+				if Widget.OnControl(opt, control, down) then return true end
+				if control == CONTROL_ACCEPT and not down then self:ShowModDetails(idx) return true end 
+			end
+
 		opt:SetPosition(0, (display_rows-1)*spacing*.5 - (k-1)*spacing - 00, 0)
 		
 		table.insert(self.optionwidgets, opt)
 	end
-	
-	
 end
+
 
 function ModsScreen:Scroll(dir)
 	if (dir > 0 and (self.option_offset + display_rows) < #self.modnames) or
@@ -311,7 +377,7 @@ function ModsScreen:Scroll(dir)
 end
 
 function ModsScreen:GetBestModStatus(modname)
-	local modinfo = ModManager:GetModInfo(modname)
+	local modinfo = KnownModIndex:GetModInfo(modname)
 	if KnownModIndex:IsModEnabled(modname) then
 		if KnownModIndex:WasModEnabled(modname) then
 			return "WORKING_NORMALLY"
@@ -322,9 +388,9 @@ function ModsScreen:GetBestModStatus(modname)
 		if KnownModIndex:WasModEnabled(modname) then
 			return "WILL_DISABLE"
 		else
-			if ModManager:GetModInfo(modname).failed or KnownModIndex:IsModKnownBad(modname) then
+			if KnownModIndex:GetModInfo(modname).failed or KnownModIndex:IsModKnownBad(modname) then
 				return "DISABLED_ERROR"
-			elseif ModManager:GetModInfo(modname).old then
+			elseif KnownModIndex:GetModInfo(modname).old then
 				return "DISABLED_OLD"
 			else
 				return "DISABLED_MANUAL"
@@ -337,7 +403,7 @@ function ModsScreen:ShowModDetails(idx)
 	self.currentmod = idx
 
 	local modname = self.modnames[idx]
-	local modinfo = ModManager:GetModInfo(modname)
+	local modinfo = KnownModIndex:GetModInfo(modname)
 
 	if modinfo.icon and modinfo.icon_atlas then
 		self.detailimage:SetTexture("../mods/"..modname.."/"..modinfo.icon_atlas, modinfo.icon)
@@ -409,14 +475,14 @@ end
 
 function ModsScreen:ModLinkCurrent()
 	local modname = self.modnames[self.currentmod]
-	local thread = ModManager:GetModInfo(modname).forumthread
+	local thread = KnownModIndex:GetModInfo(modname).forumthread
 	
 	local url = ""
 	if thread then
-		url = "http://forums.kleientertainment.com/showthread.php?%s"
-		url = string.format(url, ModManager:GetModInfo(modname).forumthread)
+		url = "http://forums.kleientertainment.com/index.php?%s"
+		url = string.format(url, KnownModIndex:GetModInfo(modname).forumthread)
 	else
-		url = "http://forums.kleientertainment.com/forumdisplay.php?63-Don-t-Starve-Mods-and-tools"
+		url = "http://forums.kleientertainment.com/index.php?/forum/26-dont-starve-mods-and-tools/"
 	end
 	VisitURL(url)
 end
@@ -425,19 +491,53 @@ function ModsScreen:MoreMods()
 	VisitURL("http://forums.kleientertainment.com/downloads.php")
 end
 
-function ModsScreen:OnKeyUp( key )
-	if key == KEY_ESCAPE then
-		self:Cancel()
-	end
-end
-
 function ModsScreen:Cancel()
 	KnownModIndex:RestoreCachedSaveData()
+	self:UnloadModInfoPrefabs(self.infoprefabs)
 	self.cb(false)
 end
 
 function ModsScreen:Apply()
 	KnownModIndex:Save()
+	self:UnloadModInfoPrefabs(self.infoprefabs)
 	self.cb(true)
 end
 
+function ModsScreen:LoadModInfoPrefabs(prefabtable)
+	for i,modname in ipairs(KnownModIndex:GetModNames()) do
+		local info = KnownModIndex:GetModInfo(modname)
+		if info.icon_atlas and info.icon then
+			local modinfoassets = {
+				Asset("ATLAS", "../mods/"..modname.."/"..info.icon_atlas),
+				Asset("IMAGE", "../mods/"..modname.."/"..info.icon),
+			}
+			local prefab = Prefab("modbaseprefabs/MODSCREEN_"..modname, nil, modinfoassets, nil)
+			RegisterPrefabs( prefab )
+			table.insert(prefabtable, prefab.name)
+		end
+	end
+
+	print("Loading Mod Info Prefabs")
+	TheSim:ForceLoadPrefabs( prefabtable )
+end
+
+function ModsScreen:UnloadModInfoPrefabs(prefabtable)
+	print("Unloading Mod Info Prefabs")
+	TheSim:ForceUnloadPrefabs( prefabtable )
+	for k,v in pairs(prefabtable) do
+		prefabtable[k] = nil
+	end
+end
+
+function ModsScreen:ReloadModInfoPrefabs()
+	print("Reloading Mod Info Prefabs")
+	-- load before unload -- this prevents the refcounts of prefabs from going 1,
+	-- 0, 1 (which triggers a resource unload and crashes). Instead we load first,
+	-- so the refcount goes 1, 2, 1 for existing prefabs so everything stays the
+	-- same.
+	local oldprefabs = self.infoprefabs
+	local newprefabs = {}
+	self:LoadModInfoPrefabs(newprefabs)
+	self:UnloadModInfoPrefabs(oldprefabs)
+	self.infoprefabs = newprefabs
+end

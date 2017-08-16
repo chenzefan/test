@@ -373,28 +373,3 @@ function StopAllThreads()
     scheduler:KillAll()
 end
 
-
-local print_loggers = {}
-
-function addprintlogger( fn )
-    table.insert(print_loggers, fn)
-end
-
-global("CWD")  
-local dir = CWD or ""
-dir = string.gsub(dir, "\\", "/")
-local oldprint = print
-print = function(...)
-    local info = debug.getinfo(2, "Sl")
-    local source = info.source
-    if info.source and string.sub(info.source,1,1)=="@" then
-        source = source:sub(2)
-    end
-    
-    for i,v in ipairs(print_loggers) do
-        v(...)
-    end
-
-    local defline = string.format("%s(%d,1)", tostring(source), info.currentline)
-    oldprint(defline, ...)
-end

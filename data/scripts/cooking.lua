@@ -1,63 +1,71 @@
 require "tuning"
 
-local function AddIngredients(ingtable, tags, names, cancook, candry)
-	for k,v in pairs(names) do
-		ingtable[v] = { tags= {}}
+local cookerrecipes = {}
+function AddCookerRecipe(cooker, recipe)
+	if not cookerrecipes[cooker] then
+		cookerrecipes[cooker] = {}
+	end
+	cookerrecipes[cooker][recipe.name] = recipe
+end
+
+local ingredients = {}
+function AddIngredientValues(names, tags, cancook, candry)
+	for _,name in pairs(names) do
+		ingredients[name] = { tags= {}}
 
 		if cancook then
-			ingtable[v.."_cooked"] = {tags={}}
+			ingredients[name.."_cooked"] = {tags={}}
 		end
 
 		if candry then
-			ingtable[v.."_dried"] = {tags={}}
+			ingredients[name.."_dried"] = {tags={}}
 		end
 
-		for kk,vv in pairs(tags) do
-			ingtable[v].tags[kk] = vv
-			--print(v,kk,vv,ingtable[v].tags[kk])
+		for tagname,tagval in pairs(tags) do
+			ingredients[name].tags[tagname] = tagval
+			--print(name,tagname,tagval,ingtable[name].tags[tagname])
 
 			if cancook then
-				ingtable[v.."_cooked"].tags.precook = 1
-				ingtable[v.."_cooked"].tags[kk] = vv
+				ingredients[name.."_cooked"].tags.precook = 1
+				ingredients[name.."_cooked"].tags[tagname] = tagval
 			end
 			if candry then
-				ingtable[v.."_dried"].tags.dried = 1
-				ingtable[v.."_dried"].tags[kk] = vv
+				ingredients[name.."_dried"].tags.dried = 1
+				ingredients[name.."_dried"].tags[tagname] = tagval
 			end
 		end
 	end
 end
 
 
-local ingredients = {}
 local fruits = {"pomegranate", "dragonfruit", "cave_banana"}
-AddIngredients(ingredients, {fruit=1}, fruits, true)
+AddIngredientValues(fruits, {fruit=1}, true)
 
-AddIngredients(ingredients, {fruit=.5}, {"berries"}, true)
-AddIngredients(ingredients, {fruit=1, monster=1}, {"durian"}, true)
+AddIngredientValues({"berries"}, {fruit=.5}, true)
+AddIngredientValues({"durian"}, {fruit=1, monster=1}, true)
 
-AddIngredients(ingredients, {sweetener=1}, {"honey", "honeycomb"}, true)
+AddIngredientValues({"honey", "honeycomb"}, {sweetener=1}, true)
 
 local veggies = {"carrot", "corn", "pumpkin", "eggplant"}
-AddIngredients(ingredients, {veggie=1}, veggies, true)
+AddIngredientValues(veggies, {veggie=1}, true)
 
 local mushrooms = {"red_cap", "green_cap", "blue_cap"}
-AddIngredients(ingredients, {veggie=.5}, mushrooms, true)
+AddIngredientValues(mushrooms, {veggie=.5}, true)
 
-AddIngredients(ingredients, {meat=1}, {"meat"}, true, true)
-AddIngredients(ingredients, {meat=1, monster=1}, {"monstermeat"}, true, true)
-AddIngredients(ingredients, {meat=.5}, {"froglegs", "drumstick"}, true)
-AddIngredients(ingredients, {meat=.5}, {"smallmeat"}, true, true)
+AddIngredientValues({"meat"}, {meat=1}, true, true)
+AddIngredientValues({"monstermeat"}, {meat=1, monster=1}, true, true)
+AddIngredientValues({"froglegs", "drumstick"}, {meat=.5}, true)
+AddIngredientValues({"smallmeat"}, {meat=.5}, true, true)
 
-AddIngredients(ingredients, {meat=.5,fish=1}, {"fish"}, true)
+AddIngredientValues({"fish"}, {meat=.5,fish=1}, true)
 
-AddIngredients(ingredients, {veggie=1, magic=1}, {"mandrake"}, true)
-AddIngredients(ingredients, {egg=1}, {"egg"}, true)
-AddIngredients(ingredients, {egg=4}, {"tallbirdegg"}, true)
-AddIngredients(ingredients, {egg=1}, {"bird_egg"}, true)
-AddIngredients(ingredients, {decoration=2}, {"butterflywings"})
-AddIngredients(ingredients, {fat=1, dairy=1}, {"butter"})
-AddIngredients(ingredients, {inedible=1}, {"twigs"})
+AddIngredientValues({"mandrake"}, {veggie=1, magic=1}, true)
+AddIngredientValues({"egg"}, {egg=1}, true)
+AddIngredientValues({"tallbirdegg"}, {egg=4}, true)
+AddIngredientValues({"bird_egg"}, {egg=1}, true)
+AddIngredientValues({"butterflywings"}, {decoration=2})
+AddIngredientValues({"butter"}, {fat=1, dairy=1})
+AddIngredientValues({"twigs"}, {inedible=1})
 
 
 --our naming conventions aren't completely consistent, sadly
@@ -85,12 +93,8 @@ end
 
 
 local foods = require("preparedfoods")
-recipes =
-{
-	cookpot = {}
-}
-for k,v in pairs (foods) do
-	recipes.cookpot[v.name] = v
+for k,recipe in pairs (foods) do
+	AddCookerRecipe("cookpot", recipe)
 end
 
 local function GetIngredientValues(prefablist)
@@ -117,7 +121,7 @@ end
 
 function GetCandidateRecipes(cooker, ingdata)
 
-	local recipes = recipes[cooker] or {}
+	local recipes = cookerrecipes[cooker] or {}
 	local candidates = {}
 
 	--find all potentially valid recipes
@@ -212,5 +216,5 @@ end
 --TestRecipes("cookpot", {"tallbirdegg","meat","carrot","meat"})
 
 
-return { CalculateRecipe = CalculateRecipe, IsCookingIngredient = IsCookingIngredient, recipes = recipes}
+return { CalculateRecipe = CalculateRecipe, IsCookingIngredient = IsCookingIngredient, recipes = cookerrecipes, ingredients=ingredients}
 

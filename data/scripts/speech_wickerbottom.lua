@@ -13,6 +13,8 @@ return
     {
 
         SLURPER = "A classic example of symbiosis.",
+		SLURPER_PELT = "This must be useful for something.",
+		ARMORSLURPER = "A disgusting and magical garment.",
         ORANGEAMULET = "The gem fades with each use.",
         YELLOWSTAFF = "Luckily the star is a manageable size.",
         YELLOWGEM = "Perhaps it is similar to Citrine.",
@@ -31,6 +33,10 @@ return
         RESEARCHLAB4 = "I think the hat collects energy from the air.",
 
         ANCIENT_ALTAR = "A monument to some long dead god.",
+        ANCIENT_ALTAR_BROKEN = "Parts of this are missing.",
+        ANCIENT_STATUE = "This seems mystically aligned to the world.",
+        LICHEN = "A symbiot! A fungus and a phycobiontic bacteria.",
+		CUTLICHEN = "This won't last long.",
 
         CAVE_BANANA = "All of them are genetically identical.",
         CAVE_BANANA_COOKED = "Somewhat better.",
@@ -117,11 +123,11 @@ return
 		
 		WALL_WOOD_ITEM = "Deployable pickets.",
 		WALL_STONE_ITEM = "I'm not sure why I can carry so many of these.",
-		WALL_RUINS_ITEM = "I'm not sure why I can carry so many of these.",
+		WALL_RUINS_ITEM = "My pockets must be bigger on the inside.",
 		WALL_HAY_ITEM = "Hay bales.",
 		WALL_WOOD = "That offers some protection.",
 		WALL_STONE = "That is quite secure.",
-		WALL_RUINS = "That is quite secure.",
+		WALL_RUINS = "A very secure wall.",
 		WALL_HAY = "I don't trust that wall.",
         ADVENTURE_PORTAL = "That violates some pretty fundamental physical laws.",
 		
@@ -392,6 +398,12 @@ return
             PICKED = "I believe they shall grow back.",
             BURNING = "Combustion!",
         },
+        RELIC = 
+        {
+            GENERIC = "An artifact of this extinct civilization,",
+            BROKEN = "Just broken stone.",
+        },
+        RUBBLE = "Looks like a job for library paste!",
 
         PLANT_NORMAL = {
             GENERIC = "It's a... plant. Of some kind.",
@@ -603,7 +615,34 @@ return
 		    GENERIC = "Highly conductive!",
 		    CHARGED = "Radiant electrical energy!",
 		},
-    },
+ 
+        ARMORRUINS = "A hardy Thulecite armour.",
+        BISHOP_NIGHTMARE = "Such exhilaratingly complex technology.",
+        GREENAMULET = "I don't know what that is.", --Reduce cost of crafting
+        GREENGEM = "Chromium impurities have coloured this gem green.",
+        KNIGHT_NIGHTMARE = "It's nightmare fueled surroundings seem to have corrupted its programming.",
+        MINOTAUR = "Get away, you beast!",    --Monster in labyrinth
+        MULTITOOL_AXE_PICKAXE = "Quite functional, it operates as both an axe and a pickaxe.", --Works as axe and pickaxe
+        NIGHTMARELIGHT = "The ancients seem to have used nightmare fuel to power everything.",   --Lights that activate during nightmare.
+        NIGHTMARE_TIMEPIECE = --Keeps track of the nightmare cycle
+        {
+            WARN = "There are low, but increasing levels of vapours containing ectoplasmic residue.",  --Before nightmare
+            WAXING = "Levels of ectoplasmic residue seem to be increasing.", --Nightmare Phase first 33%
+            STEADY = "The levels of ectoplasmic residue seem to be at their peak.", --Nightmare 33% - 66%
+            WANING = "Levels of ectoplasmic residue are high but seem to be decreasing.", --Nightmare 66% +
+            DAWN = "There is very little ectoplasmic residue vapor.", --After nightmare
+            CALM = "The levels of ectoplasmic residue seem to be at their lowest.",  --calm phase
+            NOMAGIC = "There doesn't seem to be any ectoplasmic vapor around here.", --Place with no nightmare cycle.
+        },
+        ORANGESTAFF = "Handy over small distances.",   --Teleports player.
+        ROOK_NIGHTMARE = "It looks like it could break apart at any moment.",
+        RELIC = "A relic of an ancient civilization long dead the the ravages of time.",  --Fixed relic
+        RUINS_RUBBLE = "With a little elbow grease this could be put into working order.",   --Broken relic
+        RUINS_BAT = "I could hit things with this.",
+        SPIDER_DROPPER = "Ah, this species of arachnid has adapted to life on the cave ceiling.", --White spider that comes from the roof
+        THULECITE = "This seems to be an interesting, ectoplasmic residue-bearing variety of ziosite.",
+        YELLOWAMULET = "This amulet is glowing at the mid 530 nanometer wavelength.",    --Emits light, player walks faster.
+   },
 
     EAT_FOOD = 
     {

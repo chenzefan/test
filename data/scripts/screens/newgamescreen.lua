@@ -1,8 +1,12 @@
-require "screen"
-require "button"
-require "animbutton"
-require "image"
-require "uianim"
+local Screen = require "widgets/screen"
+local Button = require "widgets/button"
+local AnimButton = require "widgets/animbutton"
+local ImageButton = require "widgets/imagebutton"
+local Menu = require "widgets/menu"
+local Text = require "widgets/text"
+local Image = require "widgets/image"
+local UIAnim = require "widgets/uianim"
+local Widget = require "widgets/widget"
 require "os"
 require "screens/worldgenscreen"
 require "screens/customizationscreen"
@@ -21,7 +25,7 @@ NewGameScreen = Class(Screen, function(self, slotnum)
     self.root:SetScaleMode(SCALEMODE_PROPORTIONAL)
     self.bg = self.root:AddChild(Image("images/fepanels.xml", "panel_saveslots.tex"))
     
-	--[[self.cancelbutton = self.root:AddChild(AnimButton("button"))
+	--[[self.cancelbutton = self.root:AddChild(ImageButton())
 	self.cancelbutton:SetScale(.8,.8,.8)
     self.cancelbutton:SetText(STRINGS.UI.NEWGAMESCREEN.CANCEL)
     self.cancelbutton:SetOnClick( function() TheFrontEnd:PopScreen(self) end )
@@ -51,35 +55,33 @@ NewGameScreen = Class(Screen, function(self, slotnum)
 	local atlas = (table.contains(MODCHARACTERLIST, self.character) and "images/saveslot_portraits/"..self.character..".xml") or "images/saveslot_portraits.xml"
 	self.portrait:SetTexture(atlas, self.character..".tex")
 	self.portrait:SetPosition(0, 100, 0)
-    
+
     local menuitems = 
     {
-		{name = STRINGS.UI.NEWGAMESCREEN.CHANGECHARACTER, fn = function() self:ChangeCharacter() end},
-		{name = STRINGS.UI.NEWGAMESCREEN.CUSTOMIZE, fn = function() self:Customize() end},
-		{name = STRINGS.UI.NEWGAMESCREEN.START, fn = function() self:Start() end},
-		{name = STRINGS.UI.NEWGAMESCREEN.CANCEL, fn = function() TheFrontEnd:PopScreen(self) end},
-		
+		{text = STRINGS.UI.NEWGAMESCREEN.CHANGECHARACTER, cb = function() self:ChangeCharacter() end},
+		{text = STRINGS.UI.NEWGAMESCREEN.CUSTOMIZE, cb = function() self:Customize() end},
+		{text = STRINGS.UI.NEWGAMESCREEN.START, cb = function() self:Start() end},
+		{text = STRINGS.UI.NEWGAMESCREEN.CANCEL, cb = function() TheFrontEnd:PopScreen(self) end},
     }
-    
-    for k,v in pairs(menuitems) do
-    	local button = self.root:AddChild(AnimButton("button_long"))
-		--button:SetScale(.8,.8,.8)
-		button:SetText(v.name)
-		button:SetOnClick( v.fn )
-		button:SetFont(BUTTONFONT)
-		button:SetTextSize(40)
-		button.text:SetVAlign(ANCHOR_MIDDLE)
-		button.text:SetColour(0,0,0,1)
-		button:SetPosition( 0, 50 - k*65, 0)
-    end
+
+    self.menu = self.root:AddChild(Menu(menuitems, -70))
+	self.menu:SetPosition(0, 0, 0)
+
+	self.default_focus = self.menu
     
 end)
 
+function NewGameScreen:OnGainFocus()
+	NewGameScreen._base.OnGainFocus(self)
+	self.menu:SetFocus()
+end
 
-function NewGameScreen:OnKeyUp( key )
-	if key == KEY_ESCAPE then
-		TheFrontEnd:PopScreen(self)
-	end
+function NewGameScreen:OnControl(control, down)
+    if Screen.OnControl(self, control, down) then return true end
+    if not down and control == CONTROL_CANCEL then
+        TheFrontEnd:PopScreen(self)
+        return true
+    end
 end
 
 function NewGameScreen:Customize( )

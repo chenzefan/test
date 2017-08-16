@@ -1,8 +1,10 @@
-require "screen"
-require "button"
-require "animbutton"
-require "image"
-require "uianim"
+local Screen = require "widgets/screen"
+local Button = require "widgets/button"
+local AnimButton = require "widgets/animbutton"
+local Text = require "widgets/text"
+local Image = require "widgets/image"
+local UIAnim = require "widgets/uianim"
+local Widget = require "widgets/widget"
 
 local MIN_GEN_TIME = 9.5
 
@@ -102,7 +104,6 @@ WorldGenScreen = Class(Screen, function(self, profile, cb, world_gen_options)
 	end
 	
 	local moddata = {}
-	moddata.modnames = ModManager:GetModNames()
 	moddata.index = KnownModIndex:CacheSaveData()
 
     TheSim:GenerateNewWorld( json.encode(gen_parameters), json.encode(moddata), function(worlddata) 

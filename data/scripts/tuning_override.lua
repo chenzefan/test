@@ -267,15 +267,15 @@ local TUNING_OVERRIDES =
 							doit = 	function(data)
 										local ambient = GetWorld()
 										-- HACK HACK HACK
-										ambient.components.ambientsoundmixer:SetOverride(GROUND.ROAD, "VOID")
-										ambient.components.ambientsoundmixer:SetOverride(GROUND.ROCKY, "VOID")
-										ambient.components.ambientsoundmixer:SetOverride(GROUND.DIRT, "VOID")
-										ambient.components.ambientsoundmixer:SetOverride(GROUND.WOODFLOOR, "VOID")
-										ambient.components.ambientsoundmixer:SetOverride(GROUND.GRASS, "VOID")
-										ambient.components.ambientsoundmixer:SetOverride(GROUND.SAVANNA, "VOID")
-										ambient.components.ambientsoundmixer:SetOverride(GROUND.FOREST, "VOID")
-										ambient.components.ambientsoundmixer:SetOverride(GROUND.MARSH, "VOID")
-										ambient.components.ambientsoundmixer:SetOverride(GROUND.IMPASSABLE, "VOID")
+										ambient.components.ambientsoundmixer:SetOverride(GROUND.ROAD, data)
+										ambient.components.ambientsoundmixer:SetOverride(GROUND.ROCKY, data)
+										ambient.components.ambientsoundmixer:SetOverride(GROUND.DIRT, data)
+										ambient.components.ambientsoundmixer:SetOverride(GROUND.WOODFLOOR, data)
+										ambient.components.ambientsoundmixer:SetOverride(GROUND.GRASS, data)
+										ambient.components.ambientsoundmixer:SetOverride(GROUND.SAVANNA, data)
+										ambient.components.ambientsoundmixer:SetOverride(GROUND.FOREST, data)
+										ambient.components.ambientsoundmixer:SetOverride(GROUND.MARSH, data)
+										ambient.components.ambientsoundmixer:SetOverride(GROUND.IMPASSABLE, data)
 										ambient.components.ambientsoundmixer:UpdateAmbientGeoMix()
 									end,
 						}, 
@@ -303,6 +303,12 @@ local TUNING_OVERRIDES =
 											ambient.components.ambientsoundmixer:SetOverride(GROUND.UNDERROCK, "ROCKY")
 											ambient.components.ambientsoundmixer:SetOverride(GROUND.MUD, "ROCKY")
 											ambient.components.ambientsoundmixer:SetOverride(GROUND.UNDERGROUND, "ROCKY")
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.BRICK, "ROCKY")
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.BRICK_GLOW, "ROCKY")
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.TILES, "ROCKY")
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.TILES_GLOW, "ROCKY")
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.TRIM, "ROCKY")
+											ambient.components.ambientsoundmixer:SetOverride(GROUND.TRIM_GLOW, "ROCKY")
 										end
 
 										ambient.components.ambientsoundmixer:UpdateAmbientGeoMix()

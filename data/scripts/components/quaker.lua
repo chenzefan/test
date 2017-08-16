@@ -85,8 +85,6 @@ local debris =
 	{
 		"redgem",
 		"bluegem",
-		"orangegem",
-		"yellowgem",
 		"marble",
 	},
 }
@@ -300,7 +298,7 @@ local function grounddetection_update(inst)
 
 		local ents = TheSim:FindEntities(pt.x, 0, pt.z, 2)
 	    for k,v in pairs(ents) do
-	    	if v and v.components.combat then
+	    	if v and v.components.combat and not v:HasTag("smashable") then  -- quakes shouldn't break the set dressing
 	    		v.components.combat:GetAttacked(inst, 20, nil)
 	    	end
 	   	end

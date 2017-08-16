@@ -8,7 +8,7 @@ local FX =
 	    sound = nil,
 	    sounddelay = nil,
 	    tint = nil,
-	    tintalpha = nil,
+	    tintalpha = 0.5,
     },
 
     {
@@ -19,7 +19,7 @@ local FX =
 	    sound = nil,
 	    sounddelay = nil,
 	    tint = nil,
-	    tintalpha = nil,
+	    tintalpha = 0.5,
     },
 
     {
@@ -163,6 +163,28 @@ local FX =
 	    sounddelay = nil,
 	    tint = Vector3(181/255, 32/255, 32/255),
 	    tintalpha = nil,
+    },
+
+    {
+	    name = "statue_transition", 
+	    bank = "statue_ruins_fx", 
+	    build = "statue_ruins_fx", 
+	    anim = "transform_nightmare",
+	    sound = nil,
+	    sounddelay = nil,
+	    tint = nil,
+	    tintalpha = 0.6,
+    },
+
+    {
+	    name = "statue_transition_2", 
+	    bank = "die_fx", 
+	    build = "die", 
+	    anim = "small",
+	    sound = "dontstarve/common/deathpoof",
+	    sounddelay = nil,
+	    tint = Vector3(0,0,0),
+	    tintalpha = 0.6,
     },
 
 }

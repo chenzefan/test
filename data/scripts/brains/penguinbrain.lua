@@ -30,6 +30,10 @@ local PenguinBrain = Class(Brain, function(self, inst)
 end)
 
 local function AtRookery(inst)
+    if not inst then 
+        return false
+    end
+    
     local homePos = inst.components.knownlocations.GetLocation and inst.components.knownlocations:GetLocation("rookery")
 
     if homePos and inst:GetDistanceSqToPoint(homePos) > 100 then
@@ -203,11 +207,8 @@ local function LayEggAction(inst)
                                 inst.layingEgg = false
                                 nearest = GetClosestInstWithTag("scarytoprey", inst, TOOCLOSE) or GetPlayer()
 
-                                if PrepareForNight(inst) or
-                                   not AtRookery(inst) or
-                                   --(GetSeasonManager():IsWinter() and GetSeasonManager():GetCurrentTemperature() <= -15) and
-                                   nearest:GetDistanceSqToInst(inst) <= TOOCLOSE*TOOCLOSE then
-        dprint("\rDropeggfail:", nearest:GetDistanceSqToInst(inst) <= TOOCLOSE*TOOCLOSE, " :",PrepareForNight(inst)," :",AtRookery() )
+                                if PrepareForNight(inst) or not AtRookery(inst) or                                   
+                                nearest:GetDistanceSqToInst(inst) <= TOOCLOSE*TOOCLOSE then
                                    return
                                 end
 
@@ -229,11 +230,9 @@ local function LayEggAction(inst)
                                 inst.layingEgg = false
                                 nearest = GetClosestInstWithTag("scarytoprey", inst, TOOCLOSE) or GetPlayer()
 
-                                if PrepareForNight(inst) or
-                                   not AtRookery(inst) or
+                                if PrepareForNight(inst) or not AtRookery(inst) or
                                    (GetSeasonManager():IsWinter() and GetSeasonManager():GetCurrentTemperature() <= -15) and
                                    nearest:GetDistanceSqToInst(inst) <= TOOCLOSE*TOOCLOSE then
-        dprint("\rLayeggfail:", nearest:GetDistanceSqToInst(inst) <= TOOCLOSE*TOOCLOSE, " :",PrepareForNight(inst)," :",AtRookery() )
                                    return
                                 end
 
@@ -413,7 +412,7 @@ function PenguinBrain:OnStart()
                             GetWanderDistFn)),
 
         -- Penguins have leaders?
-        Follow(self.inst, function(inst) return inst.components.follower.leader end ,
+        Follow(self.inst, function(inst) return inst.components.follower and inst.components.follower.leader end ,
                     MIN_FOLLOW_DIST, TARGET_FOLLOW_DIST, MAX_FOLLOW_DIST),
 
         Wander( self.inst,
