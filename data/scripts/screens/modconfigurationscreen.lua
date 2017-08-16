@@ -37,7 +37,7 @@ local ModConfigurationScreen = Class(Screen, function(self, modname)
 	if self.config and type(self.config) == "table" then
 		for i,v in ipairs(self.config) do
 			-- Only show the option if it matches our format exactly
-			if v.name and v.options and (v.saved or v.default) then 
+			if v.name and v.options and (v.saved ~= nil or v.default ~= nil) then 
 				table.insert(options, {name = v.name, label = v.label, options = v.options, default = v.default, value = v.saved})
 			end
 		end
@@ -287,7 +287,7 @@ function ModConfigurationScreen:RefreshOptions()
 			local w = 220
 			local spinner = opt:AddChild(Spinner( spin_options, w, spin_height))
 			spinner:SetTextColour(0,0,0,1)
-			local default_value = options[idx].value or options[idx].default
+			local default_value = options[idx].value ~= nil and options[idx].value or options[idx].default
 			
 			spinner.OnChanged =
 				function( _, data )

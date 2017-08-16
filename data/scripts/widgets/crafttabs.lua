@@ -249,7 +249,7 @@ function CraftTabs:DoUpdateRecipes()
 	            
 	            valid_tabs[tab] = valid_tabs[tab] or can_see
 
-	            if buffered_build then
+	            if buffered_build and has_researched then
 					if tab then
 						tabs_to_alt_highlight[tab] = 1 + (tabs_to_alt_highlight[tab] or 0)
 					end

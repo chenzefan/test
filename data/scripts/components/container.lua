@@ -106,8 +106,8 @@ function Container:DestroyContents()
 	end
 end
 
-function Container:GiveItem(item, slot, src_pos, drop_on_fail)
-    drop_on_fail = drop_on_fail == nil and true or false
+function Container:GiveItem(item, slot, src_pos, drop_on_fail, skipsound)
+    drop_on_fail = drop_on_fail == nil and true or drop_on_fail
     --print("Container:GiveItem", item.prefab)
     if item and item.components.inventoryitem and self:CanTakeItemInSlot(item, slot) then
 		
@@ -117,7 +117,7 @@ function Container:GiveItem(item, slot, src_pos, drop_on_fail)
 				local other_item = self.slots[k]
 				if other_item and other_item.prefab == item.prefab and not other_item.components.stackable:IsFull() then
 					
-					if self.inst.components.inventoryitem and self.inst.components.inventoryitem.owner then
+					if self.inst.components.inventoryitem and self.inst.components.inventoryitem.owner and not skipsound then
 						self.inst.components.inventoryitem.owner:PushEvent("containergotitem", {item = item, src_pos = src_pos})
 					end
 					
@@ -157,7 +157,7 @@ function Container:GiveItem(item, slot, src_pos, drop_on_fail)
 			item.components.inventoryitem:OnPutInInventory(self.inst)
 			self.inst:PushEvent("itemget", {slot = in_slot, item = item, src_pos = src_pos})
 			
-			if self.inst.components.inventoryitem and self.inst.components.inventoryitem.owner then
+			if self.inst.components.inventoryitem and self.inst.components.inventoryitem.owner and not skipsound then
 				self.inst.components.inventoryitem.owner:PushEvent("containergotitem", {item = item, src_pos = src_pos})
 			end
 			

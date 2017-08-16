@@ -526,9 +526,8 @@ function Inventory:GiveActiveItem( inst )
 	
 end
 
-function Inventory:GiveItem( inst, slot, screen_src_pos )
-    --print("Inventory:GiveItem", inst, slot, screen_src_pos)
-    
+function Inventory:GiveItem( inst, slot, screen_src_pos, skipsound )
+    --print("Inventory:GiveItem", inst, slot, screen_src_pos)   
     if not inst.components.inventoryitem or not inst:IsValid() then
         return
     end
@@ -587,7 +586,7 @@ function Inventory:GiveItem( inst, slot, screen_src_pos )
     end
 
     if slot then
-		if new_item then
+		if new_item and not skipsound then
 			self.inst:PushEvent("gotnewitem", {item = inst, slot = slot})
 		end
 		

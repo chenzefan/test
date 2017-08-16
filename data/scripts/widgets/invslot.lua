@@ -66,10 +66,10 @@ function InvSlot:Click(stack_mod)
         if can_take_active_item then
 
             if active_item.components.stackable and active_item.components.stackable:StackSize() > 1 and (stack_mod or not container.acceptsstacks) then
-                container:GiveItem( active_item.components.stackable:Get(), slot_number)
+                container:GiveItem( active_item.components.stackable:Get(), slot_number, nil, true)
             else
                 inventory:RemoveItem(active_item, true)
-                container:GiveItem(active_item, slot_number)
+                container:GiveItem(active_item, slot_number, nil, true, true)
             end
             
             character.SoundEmitter:PlaySound("dontstarve/HUD/click_object")    
@@ -107,7 +107,7 @@ function InvSlot:Click(stack_mod)
                     inventory:RemoveItem(active_item, true)
                     container:RemoveItemBySlot(slot_number)
                     inventory:GiveActiveItem(container_item)
-                    container:GiveItem(active_item, slot_number)
+                    container:GiveItem(active_item, slot_number, nil, true, true)
                 end
             end
             
@@ -173,7 +173,7 @@ function InvSlot:TradeItem(stack_mod)
                 --and give it to the dest object
                 item.prevcontainer = nil
                 if not dest:GiveItem(item) then
-                    container:GiveItem(item, slot_number)
+                    container:GiveItem(item, slot_number, nil, true)
                 end
                 return
             end

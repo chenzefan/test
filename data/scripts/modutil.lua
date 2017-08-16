@@ -15,7 +15,7 @@ function GetModConfigData(optionname, modname)
 	if config and type(config) == "table" then
 		for i,v in pairs(config) do
 			if v.name == optionname then
-				return v.saved or v.default
+				return v.saved ~= nil and v.saved or v.default
 			end
 		end
 	end

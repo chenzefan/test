@@ -157,6 +157,7 @@ function CraftSlot:Refresh(recipename)
                 end
                 
                 self.fgimage:Show()
+                if not buffered then self.bgimage:SetTexture(self.atlas, "craft_slot.tex") end -- Make sure we clear out the place bg if it's a new tab
             end
         end
 
