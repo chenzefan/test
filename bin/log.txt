@@ -1,41 +1,46 @@
 Starting up
-Don't Starve: 71493
-Build Date: 2013-01-14_16-16-11
-THREAD - started 'GAClient' (3052)
+Don't Starve: 73920
+Build Date: 2013-03-01_20-16-52
+THREAD - started 'GAClient' (3848)
 HttpClient::ClientThread::Main()
 cGame::InitializeOnMainThread
 WindowManager::Initialize
 WM_SIZE
-WindowManager::SetFullscreen(0, 800, 600, 60)
-SystemEvent::Resize {800, 600}
-WindowManager::Resize [0]  {800, 600}
+RestoreWindowPosition
+   Saved Client Pos (623 x 73)
+   Adjusted Window Pos (615 x 43)
+EnsureWindowOnScreen
+   All good.
+GLInfo
+~~~~~~
+GL_MAX_TEXTURE_SIZE = 16384
+GL_MAX_TEXTURE_IMAGE_UNITS = 16
+GL_MAX_RENDERBUFFER_SIZE = 16384
+GL_MAX_VIEWPORT_DIMS = 16384, 16384
+GL_MAX_VARYING_VECTORS = 10
+GL_MAX_VERTEX_ATTRIBS = 16
+GL_MAX_VERTEX_UNIFORM_VECTORS = 254
+GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS = 4
+GL_MAX_FRAGMENT_UNIFORM_VECTORS = 221
 cDontStarveGame::DoGameSpecificInitialize()
 cGame::StartPlaying
 LOADING LUA
 DoLuaFile data/scripts/main.lua
 DoLuaFile loading buffer data/scripts/main.lua
-c:\jenkins\workspace\jobs\DontStarve_Release_Make_Steam_Package\workspace\data\scripts\main.lua(105,1)	running main.lua
+data\scripts\main1.lua(130,1)	running main.lua
 
 LOADING LUA SUCCESS
 Reset() returning
+WM_SIZE
+   SIZE_RESTORED
+G:/SteamLibrary/steamapps/common/dont_starve/data/scripts/screens/popupdialog.lua(35,1)	portrate_hack	wilson
+SimLuaProxy::QueryServer()
+/anon/new - POST/{"character":"wolfgang","name":"Test name","size":"small"}
+Could not preload undefined prefab turf_webbing
+G:/SteamLibrary/steamapps/common/dont_starve/data/scripts/components/hunter.lua(440,1)	The Hunt begins in	474
+G:/SteamLibrary/steamapps/common/dont_starve/data/scripts/components/hunter.lua(400,1)	The Hunt Begins!
+WM_SIZE
+   SIZE_RESTORED
+ SAVE SUCCESS: profile
 ORPHANED UNKNOWN RESOURCES:
-data/fonts/belisaplumilla100.zip - 1
-data/fonts/belisaplumilla50.zip - 1
-data/fonts/stint-ucr20.zip - 1
-data/fonts/buttonfont.zip - 1
-data/fonts/stint-ucr50.zip - 1
-data/fonts/opensans50.zip - 1
-ORPHANED UNKNOWN RESOURCES:
-data/shaders/blurv.ksh - 1
-data/shaders/postprocessbloom.ksh - 1
-data/shaders/blurh.ksh - 1
-data/shaders/postprocess.ksh - 1
-ORPHANED UNKNOWN RESOURCES:
-data/fonts/belisaplumilla100.zip - 1
-data/fonts/belisaplumilla50.zip - 1
-data/fonts/stint-ucr20.zip - 1
-data/fonts/buttonfont.zip - 1
-data/fonts/stint-ucr50.zip - 1
-data/fonts/opensans50.zip - 1
-HttpClient::ClientThread::Main() complete
-Shutting down
+data/images/square.tex - 2
