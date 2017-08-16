@@ -5,4 +5,3 @@
 --ModManager:AddMod("ExampleNewStructure")
 --ModManager:AddMod("newanimtest")
 --ModManager:AddMod("modlib")
-ModManager:AddMod("BackpackMod")
