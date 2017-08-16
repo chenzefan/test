@@ -126,6 +126,7 @@ local function fn()
     inst:AddComponent("cookable")
     inst.components.cookable.product = "acorn_cooked"
 
+    inst:AddTag("icebox_valid")
     inst:AddTag("cattoy")
     inst:AddComponent("tradable")
 

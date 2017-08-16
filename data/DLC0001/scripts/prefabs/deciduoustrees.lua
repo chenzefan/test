@@ -467,13 +467,14 @@ local function chop_down_tree(inst, chopper)
     MakeSmallBurnable(inst)
     inst:RemoveComponent("propagator")
     inst:RemoveComponent("workable")
-    inst:RemoveTag("shelter")
-    inst:RemoveTag("cattoyairborne")
+    while inst:HasTag("shelter") do inst:RemoveTag("shelter") end
+    while inst:HasTag("cattoyairborne") do inst:RemoveTag("cattoyairborne") end
     inst:AddTag("stump")
 
     if not inst.monster and inst.components.growable and inst.components.growable.stage == 3 and math.random() <= TUNING.DECID_TREE_MONSTER_CHANCE then
         local pt = inst:GetPosition()
         local ents = TheSim:FindEntities(pt.x, pt.y, pt.z, 30, {"birchnut"}, {"stump", "burnt", "FX", "NOCLICK","DECOR","INLIMBO"})
+        local max_monsters_to_spawn = math.random(3,4)
         for k,v in pairs(ents) do
             if v.monster_stop_task ~= nil then
                 v.monster_stop_task:Cancel()
@@ -484,7 +485,9 @@ local function chop_down_tree(inst, chopper)
                     v:StartMonster() 
                     v.monster_start_task = nil
                 end) 
+                max_monsters_to_spawn = max_monsters_to_spawn - 1
             end
+            if max_monsters_to_spawn <= 0 then break end
         end
     end
 
@@ -561,8 +564,8 @@ end
 
 local function onburntchanges(inst)
     inst:RemoveComponent("growable")
-    inst:RemoveTag("shelter")
-    inst:RemoveTag("cattoyairborne")
+    while inst:HasTag("shelter") do inst:RemoveTag("shelter") end
+    while inst:HasTag("cattoyairborne") do inst:RemoveTag("cattoyairborne") end
     inst:RemoveTag("dragonflybait")
 
     inst.components.lootdropper:SetLoot({})
@@ -910,8 +913,8 @@ local function onload(inst, data)
         if data.burnt then
             OnBurnt(inst, true)
         elseif data.stump then
-            inst:RemoveTag("shelter")
-            inst:RemoveTag("cattoyairborne")
+            while inst:HasTag("shelter") do inst:RemoveTag("shelter") end
+            while inst:HasTag("cattoyairborne") do inst:RemoveTag("cattoyairborne") end
             inst:RemoveComponent("burnable")
             if not inst:HasTag("stump") then inst:AddTag("stump") end
             if data.monster then

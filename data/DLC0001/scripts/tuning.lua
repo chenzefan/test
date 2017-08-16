@@ -136,6 +136,7 @@ function Tune(overrides)
 	    BEAVER_DAMAGE = wilson_attack*1.5,
 	    MULTITOOL_DAMAGE = wilson_attack*.9,
 	    RUINS_BAT_DAMAGE = wilson_attack * 1.75,
+	    NIGHTSTICK_DAMAGE = wilson_attack*.85, -- Due to the damage being electric, it will get multiplied by 1.5 against any mob
 
 		CANE_SPEED_MULT = 1.25,
 		PIGGYBACK_SPEED_MULT = 0.9,
@@ -299,6 +300,7 @@ function Tune(overrides)
 	    
 	    MARSHBUSH_DAMAGE = wilson_health*.02,
 	    CACTUS_DAMAGE = wilson_health*.04,
+	    CACTUS_FLOWER_CHANCE = 0.15,
 	    
 	    GHOST_SPEED = 2,
 	    GHOST_HEALTH = 200,
@@ -457,6 +459,9 @@ function Tune(overrides)
 	    DEERCLOPS_HEALTH = 2000,
 	    DEERCLOPS_DAMAGE = 150,
 	    DEERCLOPS_ATTACK_PERIOD = 3,
+	    DEERCLOPS_ATTACK_RANGE = 6,
+	    DEERCLOPS_AOE_RANGE = 6,
+	    DEERCLOPS_AOE_SCALE = 0.8,
 	    
 	    BIRD_SPAWN_MAX = 4,
 	    BIRD_SPAWN_DELAY = {min=5, max=15},
@@ -778,6 +783,8 @@ function Tune(overrides)
 	    TORCH_RAIN_RATE = 1.5,
 	    TORCH_FUEL = night_time*1.25,
 
+	    NIGHTSTICK_FUEL = night_time*6,
+
 	    MINERHAT_LIGHTTIME = (night_time+dusk_time)*2.6,
 	    LANTERN_LIGHTTIME = (night_time+dusk_time)*2.6,
 	    SPIDERHAT_PERISHTIME = 4*seg_time,
@@ -789,11 +796,14 @@ function Tune(overrides)
 	    UMBRELLA_PERISHTIME = total_day_time*6,
 	    EYEBRELLA_PERISHTIME = total_day_time*9,
 
+		STRAWHAT_PERISHTIME = total_day_time*5,
 		EARMUFF_PERISHTIME = total_day_time*5,
 		WINTERHAT_PERISHTIME = total_day_time*10,
 		BEEFALOHAT_PERISHTIME = total_day_time*10,
 		
 		TRUNKVEST_PERISHTIME = total_day_time*15,
+		REFLECTIVEVEST_PERISHTIME = total_day_time*10,
+		HAWAIIANSHIRT_PERISHTIME = total_day_time*10,
 		SWEATERVEST_PERISHTIME = total_day_time*10,
 		HUNGERBELT_PERISHTIME = total_day_time*8,
 		BEARGERVEST_PERISHTIME = total_day_time*7,
@@ -804,7 +814,7 @@ function Tune(overrides)
 		TOPHAT_PERISHTIME = total_day_time*8,
 
 		ICEHAT_PERISHTIME = total_day_time*4,
-		MOLEHAT_PERISHTIME = total_day_time*6,
+		MOLEHAT_PERISHTIME = total_day_time*2,
 		RAINHAT_PERISHTIME = total_day_time*10,
 		CATCOONHAT_PERISHTIME = total_day_time*10,
 	    
@@ -856,8 +866,8 @@ function Tune(overrides)
 	    ARMOR_FOOTBALLHAT = wilson_health*3,
 		ARMOR_FOOTBALLHAT_ABSORPTION = .8,
 
-		ARMORDRAGONFLY = wilson_health * 12,
-		ARMORDRAGONFLY_ABSORPTION = 0.9,
+		ARMORDRAGONFLY = wilson_health * 9,
+		ARMORDRAGONFLY_ABSORPTION = 0.7,
 		ARMORDRAGONFLY_FIRE_RESIST = 1,
 
 		ARMORBEARGER_SLOW_HUNGER = 0.75,
@@ -1031,6 +1041,7 @@ function Tune(overrides)
 		DAPPERNESS_TINY = 100/(day_time*15),
 		DAPPERNESS_SMALL = 100/(day_time*10),
 		DAPPERNESS_MED = 100/(day_time*6),
+		DAPPERNESS_MED_LARGE = 100/(day_time*4.5),
 		DAPPERNESS_LARGE = 100/(day_time*3),
 		DAPPERNESS_HUGE = 100/(day_time),
 
@@ -1070,6 +1081,7 @@ function Tune(overrides)
 		INSULATION_TINY = seg_time,
 		INSULATION_SMALL = seg_time*2,
 		INSULATION_MED = seg_time*4,
+		INSULATION_MED_LARGE = seg_time*6,
 		INSULATION_LARGE = seg_time*8,
 		INSULATION_PER_BEARD_BIT = seg_time*.5,
 		
@@ -1182,8 +1194,8 @@ function Tune(overrides)
 		MONKEY_MOVE_SPEED = 7,
 		MONKEY_NIGHTMARE_CHASE_DIST = 40,
 
-		MOOSE_HEALTH = 2000,
-		MOOSE_DAMAGE = 100,
+		MOOSE_HEALTH = 3000,
+		MOOSE_DAMAGE = 150,
 		MOOSE_ATTACK_PERIOD = 3,
 		MOOSE_ATTACK_RANGE = 5.5,
 		MOOSE_WALK_SPEED = 8,
@@ -1193,26 +1205,26 @@ function Tune(overrides)
 		MOOSE_EGG_HATCH_TIMER = total_day_time * 2,
 		MOOSE_EGG_DAMAGE = 10,
 
-		MOSSLING_HEALTH = 250,
+		MOSSLING_HEALTH = 350,
 		MOSSLING_DAMAGE = 50,
 		MOSSLING_ATTACK_PERIOD = 3,
 		MOSSLING_ATTACK_RANGE = 2,
 		MOSSLING_WALK_SPEED = 5,
 
-		DRAGONFLY_HEALTH = 2000,
-	    DRAGONFLY_DAMAGE = 75,
-	    DRAGONFLY_ATTACK_PERIOD = 3,
+		DRAGONFLY_HEALTH = 2750,
+	    DRAGONFLY_DAMAGE = 150,
+	    DRAGONFLY_ATTACK_PERIOD = 2.5,
 	    DRAGONFLY_SLEEP_WHEN_SATISFIED_TIME = .5 * total_day_time,
 	    DRAGONFLY_VOMIT_TARGETS_FOR_SATISFIED = 40,
 	    DRAGONFLY_ASH_EATEN_FOR_SATISFIED = 20,
 
-		BEARGER_HEALTH = 2000,
-		BEARGER_DAMAGE = 100,
+		BEARGER_HEALTH = 3000,
+		BEARGER_DAMAGE = 200,
 		BEARGER_ATTACK_PERIOD = 3,
-		BEARGER_MELEE_RANGE = 4,
-		BEARGER_ATTACK_RANGE = 16,
-		BEARGER_WALK_SPEED = 4,
-		BEARGER_WALK_SPEED_AGRO = 6,
+		BEARGER_MELEE_RANGE = 6,
+		BEARGER_ATTACK_RANGE = 6,
+		BEARGER_CALM_WALK_SPEED = 3,
+		BEARGER_ANGRY_WALK_SPEED = 6,
 		BEARGER_RUN_SPEED = 10,
 		BEARGER_DISGRUNTLE_TIME = 60,
 		BEARGER_CHARGE_INTERVAL = 10,
@@ -1303,11 +1315,11 @@ function Tune(overrides)
 		SHADOWWAXWELL_FUEL_COST = 2,
 
 		LIVINGTREE_CHANCE = 0.55,
-		DECID_TREE_MONSTER_CHANCE = .5,
+		DECID_TREE_MONSTER_CHANCE = .25,
 		DECID_MONSTER_TARGET_DIST = 7,
-		DECID_MONSTER_ATTACK_PERIOD = 1.5,
-		DECID_MONSTER_ROOT_ATTACK_RADIUS = 2,
-		DECID_MONSTER_DAMAGE = 40,
+		DECID_MONSTER_ATTACK_PERIOD = 2.2,
+		DECID_MONSTER_ROOT_ATTACK_RADIUS = 3.7,
+		DECID_MONSTER_DAMAGE = 30,
 		DECID_MONSTER_ADDITIONAL_LOOT_CHANCE = .2,
 		DECID_MONSTER_DURATION = total_day_time*.5,
 		MIN_TREE_DRAKES = 3,
@@ -1346,7 +1358,7 @@ function Tune(overrides)
 		CATCOON_LIFE = 150,
 		CATCOON_ATTACK_PERIOD = 2,
 		CATCOON_LOYALTY_MAXTIME = 2.5*total_day_time,
-	    CATCOON_LOYALTY_PER_ITEM = total_day_time/0.33,
+	    CATCOON_LOYALTY_PER_ITEM = total_day_time/0.1,
 	    CATCOON_MIN_HAIRBALL_TIME_FRIENDLY = .25 * total_day_time,
 	    CATCOON_MAX_HAIRBALL_TIME_FRIENDLY = total_day_time,
 	    CATCOON_MIN_HAIRBALL_TIME_BASE = .75 * total_day_time,
@@ -1381,7 +1393,16 @@ function Tune(overrides)
 
 	    FAN_COOLING = -50,
 
-	    SMOTHER_DAMAGE = wilson_health*.04,
+	    SMOTHER_DAMAGE = wilson_health*.1,
+
+	    TORNADO_WALK_SPEED = 25,
+	    TORNADO_DAMAGE = 7,
+	    TORNADO_LIFETIME = 5,
+	    TORNADOSTAFF_USES = 15,
+
+	    FEATHER_FAN_USES = 15,
+
+	    NO_BOSS_TIME = 20,
 	}
 end
 

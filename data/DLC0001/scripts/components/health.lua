@@ -63,7 +63,7 @@ end
 local FIRE_TIMEOUT = .5
 local FIRE_TIMESTART = 1.0
 
-function Health:DoFireDamage(amount, doer)
+function Health:DoFireDamage(amount, doer, instant)
 	if not self.invincible and self.fire_damage_scale > 0 then
 		if not self.takingfiredamage then
 			self.takingfiredamage = true
@@ -76,7 +76,7 @@ function Health:DoFireDamage(amount, doer)
 		local time = GetTime()
 		self.lastfiredamagetime = time
 		
-		if time - self.takingfiredamagestarttime > FIRE_TIMESTART and amount > 0 then
+		if (instant or time - self.takingfiredamagestarttime > FIRE_TIMESTART) and amount > 0 then
 			self:DoDelta(-amount*self.fire_damage_scale, false, "fire")
             self.inst:PushEvent("firedamage")		
 		end

@@ -100,26 +100,6 @@ local function OnGetItemFromPlayer(inst, giver, item)
             inst.components.sleeper:WakeUp()
         end
     end
-
-
-    -- WHATS GOING ON HERE (the below is the old version, though the i wear hats part is new)
-    -- if (item.components.edible.foodtype == "MEAT" or item.components.edible.foodtype == "HORRIBLE")
-    --        and inst.components.follower.leader
-    --        and inst.components.follower:GetLoyaltyPercent() > 0.9 then
-    --         return false
-    --     end
-        
-    --     if item.components.edible.foodtype == "VEGGIE" then
-    --         local last_eat_time = inst.components.eater:TimeSinceLastEating()
-    --         if last_eat_time and last_eat_time < TUNING.PIG_MIN_POOP_PERIOD then        
-    --             return false
-    --         end
-
-    --         if inst.components.inventory:Has(item.prefab, 1) then
-    --             return false
-    --         end
-    --     end
-
     
     --I wear hats
     if item.components.equippable and item.components.equippable.equipslot == EQUIPSLOTS.HEAD then

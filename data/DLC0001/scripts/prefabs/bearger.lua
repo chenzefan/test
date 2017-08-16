@@ -10,15 +10,27 @@ local prefabs =
 {
     "groundpound_fx",
     "groundpoundring_fx",
-    "beargervest",
+    "bearger_fur",
     "collapse_small",
 }
 
-local loot = {"meat", "meat", "meat", "meat", "meat", "meat", "meat", "meat", "beargervest"}
+SetSharedLootTable( 'bearger',
+{
+    {'meat',             1.00},
+    {'meat',             1.00},
+    {'meat',             1.00},
+    {'meat',             1.00},
+    {'meat',             1.00},
+    {'meat',             1.00},
+    {'meat',             1.00},
+    {'meat',             1.00},
+    {'bearger_fur',      1.00},
+})
+
 local BASE_TAGS = {"structure"}
 local SEE_STRUCTURE_DIST = 20
 
-local TARGET_DIST = 5
+local TARGET_DIST = 7.5
 
 local function LeaveWorld(inst)
     inst:Remove()
@@ -34,13 +46,11 @@ local function NearPlayerBase(inst)
 end
 
 local function CalcSanityAura(inst, observer)
-
     if inst.components.combat.target then
         return -TUNING.SANITYAURA_HUGE
     end
 
     return -TUNING.SANITYAURA_LARGE
-
 end
 
 local function RetargetFn(inst)
@@ -64,19 +74,19 @@ local function KeepTargetFn(inst, target)
 end
 
 local function OnEntitySleep(inst)
-    if not inst:NearPlayerBase() and inst.SeenBase and not inst.components.combat:TargetIs(GetPlayer()) 
+    if (not inst:NearPlayerBase() and inst.SeenBase and not inst.components.combat:TargetIs(GetPlayer())) 
         or inst.components.sleeper:IsAsleep() 
-        or not GetSeasonManager():IsAutumn() then
+        or inst.KilledPlayer then
         --Bearger has seen your base and been lured off! Despawn.
-        print("Despawning Bearger!")
+        --Or the bearger has killed you, you've been punished enough.
         LeaveWorld(inst)
-    elseif (not inst:NearPlayerBase() and not inst.SeenBase) or inst.components.combat:TargetIs(GetPlayer()) then
+    elseif (not inst:NearPlayerBase() and not inst.SeenBase) 
+        or (inst.components.combat:TargetIs(GetPlayer()) and not inst.KilledPlayer) then
         --Get back in there Bearger! You still have work to do.
-        print("Porting Bearger to Player!")
         local init_pos = inst:GetPosition()
         local player_pos = GetPlayer():GetPosition()
         local angle = GetPlayer():GetAngleToPoint(init_pos)
-        local offset = FindWalkableOffset(player_pos, angle*DEGREES, 30, 10)
+        local offset = FindWalkableOffset(player_pos, angle*DEGREES, 40, 10)
         local pos = player_pos + offset
         
         if pos and distsq(player_pos, init_pos) > 1600 then
@@ -96,14 +106,16 @@ local function OnSave(inst, data)
     data.CanGroundPound = inst.CanGroundPound
     data.num_food_cherrypicked = inst.num_food_cherrypicked
     data.num_good_food_eaten = inst.num_good_food_eaten
+    data.KilledPlayer = inst.KilledPlayer
 end
-        
+
 local function OnLoad(inst, data)
     if data then
         inst.SeenBase = data.SeenBase
         inst.CanGroundPound = data.CanGroundPound
         inst.num_food_cherrypicked = data.num_food_cherrypicked or 0
         inst.num_good_food_eaten = data.num_good_food_eaten or 0
+        inst.KilledPlayer = data.KilledPlayer or false
     end
 end
 
@@ -199,6 +211,34 @@ local function ShouldWake(inst)
     return wake
 end
 
+local function OnLostTarget(inst, data)
+    --Remove the listening set up on "OnCombatTarget"
+    if data.oldtarget and data.oldtarget.BEARGER_OnDropItemFn then
+        inst:RemoveEventCallback("dropitem", data.oldtarget.BEARGER_OnDropItemFn, data.oldtarget)
+    end
+end
+
+local function OnCombatTarget(inst, data)
+    --Listen for dropping of items... if it's food, maybe forgive your target?
+    if data.oldtarget then
+        OnLostTarget(inst, data)
+    end
+    if data.target then
+        inst.num_food_cherrypicked = TUNING.BEARGER_STOLEN_TARGETS_FOR_AGRO - 1
+        inst.components.locomotor.walkspeed = TUNING.BEARGER_ANGRY_WALK_SPEED
+        data.target.BEARGER_OnDropItemFn = function(target, info)
+            if inst.components.eater:CanEat(info.item) then
+                if info.item:HasTag("honeyed") or math.random() < 1 then
+                    inst.components.combat:SetTarget(nil)
+                end
+            end
+        end
+        inst:ListenForEvent("dropitem", data.target.BEARGER_OnDropItemFn, data.target)
+    else
+        inst.components.locomotor.walkspeed = TUNING.BEARGER_CALM_WALK_SPEED 
+    end
+end
+
 local function SetStandState(inst, state)
     --"quad" or "bi" state
     inst.StandState = string.lower(state)
@@ -206,6 +246,29 @@ end
 
 local function IsStandState(inst, state)
     return inst.StandState == string.lower(state)
+end
+
+local function OnKill(inst, data)
+    if data and data.victim == GetPlayer() then
+        inst.KilledPlayer = true
+    end
+end
+
+local function OnPlayerAction(inst, player, data)
+    local playerAction = data.action
+    local selfAction = inst:GetBufferedAction()
+    if not playerAction or not selfAction then return end --You're not doing anything so whatever.
+
+    if playerAction.target == selfAction.target then -- We got a problem bud.
+        
+        inst.num_food_cherrypicked = inst.num_food_cherrypicked + 1
+        if inst.num_food_cherrypicked < TUNING.BEARGER_STOLEN_TARGETS_FOR_AGRO then
+            inst.sg:GoToState("targetstolen")
+        else
+            inst.num_food_cherrypicked = TUNING.BEARGER_STOLEN_TARGETS_FOR_AGRO - 1
+            inst.components.combat:SuggestTarget(player)
+        end
+    end
 end
 
 local function fn(Sim)
@@ -266,17 +329,6 @@ local function fn(Sim)
         end 
     end)
 
-    inst:AddComponent("playerprox")
-    inst.last_growl_time = -TUNING.BEARGER_GROWL_INTERVAL
-    inst.components.playerprox:SetDist(10, 12)
-    inst.components.playerprox:SetOnPlayerNear(function(inst)
-        if inst.components.combat and not inst.components.combat.target and not inst.sg:HasStateTag("noproxgrowl") 
-        and ((GetTime() - inst.last_growl_time) > TUNING.BEARGER_GROWL_INTERVAL) then
-            inst.last_growl_time = GetTime()
-            inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/hurt")
-        end
-    end)
-    
     ------------------------------------------
  
     inst:AddComponent("sleeper")
@@ -287,7 +339,7 @@ local function fn(Sim)
     ------------------------------------------
 
     inst:AddComponent("lootdropper")
-    inst.components.lootdropper:SetLoot(loot)
+    inst.components.lootdropper:SetChanceLootTable("bearger")
     
     ------------------------------------------
 
@@ -301,6 +353,9 @@ local function fn(Sim)
     inst:AddComponent("inventory")
     inst:AddComponent("groundpounder")
     inst.components.groundpounder.destroyer = true
+    inst.components.groundpounder.damageRings = 3
+    inst.components.groundpounder.destructionRings = 4
+    inst.components.groundpounder.numRings = 5
     inst:AddComponent("timer")
     inst:AddComponent("eater")
     inst.components.eater.foodprefs = {"MEAT", "VEGGIE", "GENERIC"}
@@ -326,69 +381,75 @@ local function fn(Sim)
     inst.NearPlayerBase = NearPlayerBase
     inst.WorkEntities = WorkEntities
     inst.CanGroundPound = false
+    inst.KilledPlayer = false
 
     inst.num_good_food_eaten = 0
 
     inst.num_food_cherrypicked = 0
-    inst:ListenForEvent("harvestsomething", function(it, data) --Target got harvested, increase displeasure
-        local ba = inst:GetBufferedAction()
-        if ba and data.object == ba.target then
-            inst.num_food_cherrypicked = inst.num_food_cherrypicked + 1
-            if inst.num_food_cherrypicked < TUNING.BEARGER_STOLEN_TARGETS_FOR_AGRO then
-                inst.sg:GoToState("targetstolen")
-            else
-                inst.num_food_cherrypicked = 0
-                inst.components.combat:SuggestTarget(GetPlayer())
-            end
-        end
-    end, GetPlayer())
-    inst:ListenForEvent("picksomething", function(it, data) --Target got picked, increase displeasure
-        local ba = inst:GetBufferedAction()
-        if ba and data.object == ba.target then
-            inst.num_food_cherrypicked = inst.num_food_cherrypicked + 1
-            if inst.num_food_cherrypicked < TUNING.BEARGER_STOLEN_TARGETS_FOR_AGRO then
-                inst.sg:GoToState("targetstolen")
-            else
-                inst.num_food_cherrypicked = 0
-                inst.components.combat:SuggestTarget(GetPlayer())
-            end
-        end
-    end, GetPlayer())
-    inst:ListenForEvent("onpickup", function(it, data) --Target got picked up, increase displeasure
-        local ba = inst:GetBufferedAction()
-        if ba and data.item == ba.target then
-            inst.num_food_cherrypicked = inst.num_food_cherrypicked + 1
-            if inst.num_food_cherrypicked < TUNING.BEARGER_STOLEN_TARGETS_FOR_AGRO then
-                inst.sg:GoToState("targetstolen")
-            else
-                inst.num_food_cherrypicked = 0
-                inst.components.combat:SuggestTarget(GetPlayer())
-            end
-        end
-    end, GetPlayer())
-    inst:ListenForEvent("opencontainer", function(it, data) --Target container has been opened, prepare for anger
-        local ba = inst:GetBufferedAction()
-        if ba and data.container == ba.target then
-            inst.targcontainer = data.container 
-        end
-    end, GetPlayer())
-    inst:ListenForEvent("closecontainer", function(it, data) --Target container has been closed, we cool
-        local ba = inst:GetBufferedAction() -- This isn't perfect: closing any container will count, but it doesn't seem worth tracking that
-        if ba and data.container == ba.target then
-            inst.targcontainer = nil
-        end
-    end, GetPlayer())
-    inst:ListenForEvent("itemget", function(it, data) --Edible thing has been removed from target container, increase displeasure
-        if inst.targcontainer and data.item and inst.components.eater:CanEat(data.item) then
-            inst.num_food_cherrypicked = inst.num_food_cherrypicked + 1
-            if inst.num_food_cherrypicked < TUNING.BEARGER_STOLEN_TARGETS_FOR_AGRO then
-                inst.sg:GoToState("targetstolen")
-            else
-                inst.num_food_cherrypicked = 0
-                inst.components.combat:SuggestTarget(GetPlayer())
-            end
-        end
-    end, GetPlayer())  
+    -- inst:ListenForEvent("harvestsomething", function(it, data) --Target got harvested, increase displeasure
+    --     local ba = inst:GetBufferedAction()
+    --     if ba and data.object == ba.target then
+    --         inst.num_food_cherrypicked = inst.num_food_cherrypicked + 1
+    --         if inst.num_food_cherrypicked < TUNING.BEARGER_STOLEN_TARGETS_FOR_AGRO then
+    --             inst.sg:GoToState("targetstolen")
+    --         else
+    --             inst.num_food_cherrypicked = TUNING.BEARGER_STOLEN_TARGETS_FOR_AGRO - 1
+    --             inst.components.combat:SuggestTarget(GetPlayer())
+    --         end
+    --     end
+    -- end, GetPlayer())
+    -- inst:ListenForEvent("picksomething", function(it, data) --Target got picked, increase displeasure
+    --     local ba = inst:GetBufferedAction()
+    --     if ba and data.object == ba.target then
+    --         inst.num_food_cherrypicked = inst.num_food_cherrypicked + 1
+    --         if inst.num_food_cherrypicked < TUNING.BEARGER_STOLEN_TARGETS_FOR_AGRO then
+    --             inst.sg:GoToState("targetstolen")
+    --         else
+    --             inst.num_food_cherrypicked = TUNING.BEARGER_STOLEN_TARGETS_FOR_AGRO - 1
+    --             inst.components.combat:SuggestTarget(GetPlayer())
+    --         end
+    --     end
+    -- end, GetPlayer())
+    -- inst:ListenForEvent("onpickup", function(it, data) --Target got picked up, increase displeasure
+    --     local ba = inst:GetBufferedAction()
+    --     if ba and data.item == ba.target then
+    --         inst.num_food_cherrypicked = inst.num_food_cherrypicked + 1
+    --         if inst.num_food_cherrypicked < TUNING.BEARGER_STOLEN_TARGETS_FOR_AGRO then
+    --             inst.sg:GoToState("targetstolen")
+    --         else
+    --             inst.num_food_cherrypicked = TUNING.BEARGER_STOLEN_TARGETS_FOR_AGRO - 1
+    --             inst.components.combat:SuggestTarget(GetPlayer())
+    --         end
+    --     end
+    -- end, GetPlayer())
+    -- inst:ListenForEvent("opencontainer", function(it, data) --Target container has been opened, prepare for anger
+    --     local ba = inst:GetBufferedAction()
+    --     if ba and data.container == ba.target then
+    --         inst.targcontainer = data.container 
+    --     end
+    -- end, GetPlayer())
+    -- inst:ListenForEvent("closecontainer", function(it, data) --Target container has been closed, we cool
+    --     local ba = inst:GetBufferedAction() -- This isn't perfect: closing any container will count, but it doesn't seem worth tracking that
+    --     if ba and data.container == ba.target then
+    --         inst.targcontainer = nil
+    --     end
+    -- end, GetPlayer())
+    -- inst:ListenForEvent("itemget", function(it, data) --Edible thing has been removed from target container, increase displeasure
+    --     if inst.targcontainer and data.item and inst.components.eater:CanEat(data.item) then
+    --         inst.num_food_cherrypicked = inst.num_food_cherrypicked + 1
+    --         if inst.num_food_cherrypicked < TUNING.BEARGER_STOLEN_TARGETS_FOR_AGRO then
+    --             inst.sg:GoToState("targetstolen")
+    --         else
+    --             inst.num_food_cherrypicked = TUNING.BEARGER_STOLEN_TARGETS_FOR_AGRO - 1
+    --             inst.components.combat:SuggestTarget(GetPlayer())
+    --         end
+    --     end
+    -- end, GetPlayer())
+
+    inst:ListenForEvent("actionsuccess", function(player, data) OnPlayerAction(inst, player, data) end, GetPlayer())
+
+    inst:ListenForEvent("killed", OnKill)
+    inst:ListenForEvent("newcombattarget", OnCombatTarget)
 
     inst.OnSave = OnSave
     inst.OnLoad = OnLoad
@@ -396,7 +457,7 @@ local function fn(Sim)
     ------------------------------------------
 
     inst:AddComponent("locomotor")
-    inst.components.locomotor.walkspeed = TUNING.BEARGER_WALK_SPEED
+    inst.components.locomotor.walkspeed = TUNING.BEARGER_CALM_WALK_SPEED
     inst.components.locomotor.runspeed = TUNING.BEARGER_RUN_SPEED
     inst.components.locomotor:SetShouldRun(true)
 

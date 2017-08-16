@@ -3,6 +3,7 @@ local Eater = Class(function(self, inst)
     self.eater = false
     self.strongstomach = false
     self.foodprefs = { "GENERIC" }
+    self.ablefoods = { "MEAT", "VEGGIE", "INSECT", "SEEDS", "GENERIC" }
     self:SetOmnivore()
     self.oneatfn = nil
     self.lasteattime = nil
@@ -12,40 +13,56 @@ local Eater = Class(function(self, inst)
 end)
 
 
-function Eater:SetVegetarian()
+function Eater:SetVegetarian(human)
     self.foodprefs = { "VEGGIE" }
+    if human then
+        self.ablefoods = { "MEAT", "VEGGIE", "INSECT", "SEEDS", "GENERIC" }
+    else
+        self.ablefoods = { "VEGGIE" }
+    end
 end
 
-function Eater:SetCarnivore()
+function Eater:SetCarnivore(human)
     self.foodprefs = { "MEAT" }
+    if human then
+        self.ablefoods = { "MEAT", "VEGGIE", "INSECT", "SEEDS", "GENERIC" }
+    else
+        self.ablefoods = { "MEAT" }
+    end
 end
 
 function Eater:SetInsectivore()
     self.foodprefs = { "INSECT" }
+    self.ablefoods = { "INSECT" }
 end
 
 function Eater:SetBird()
     self.foodprefs = {"SEEDS"}
+    self.ablefoods = {"SEEDS"}
 end
 
 function Eater:SetBeaver()
     self.foodprefs = {"WOOD"}
+    self.ablefoods = {"WOOD"}
 end
 
-function Eater:SetElemental()
+function Eater:SetElemental(human)
     self.foodprefs = {"ELEMENTAL"}
+    if human then
+        self.ablefoods = { "MEAT", "VEGGIE", "INSECT", "SEEDS", "GENERIC", "ELEMENTAL" }
+    else
+        self.ablefoods = { "ELEMENTAL" }
+    end
 end
 
 function Eater:TimeSinceLastEating()
 	if self.lasteattime then
 		return GetTime() - self.lasteattime
 	end
-
-    return 0
 end
 
 function Eater:HasBeen(time)
-    return self:TimeSinceLastEating() >= time
+    return self.lasteattime and self:TimeSinceLastEating() >= time or true
 end
 
 function Eater:OnSave()
@@ -66,6 +83,7 @@ end
 
 function Eater:SetOmnivore()
     self.foodprefs = { "MEAT", "VEGGIE", "INSECT", "SEEDS", "GENERIC" }
+    self.ablefoods = { "MEAT", "VEGGIE", "INSECT", "SEEDS", "GENERIC" }
 end
 
 function Eater:SetOnEatFn(fn)
@@ -77,10 +95,12 @@ function Eater:SetCanEatTestFn(fn)
 end
 
 function Eater:DoFoodEffects(food)
-    -- returns true if food is monster meat & eater is not immune.
-    -- returns false if food is not monster meat or eater is immune 
     if food:HasTag("monstermeat") then
-        return not self.monsterimmune
+        if self.inst:HasTag("player") then
+            return not self.monsterimmune
+        else
+            return not self.strongstomach
+        end
     else
         return true
     end
@@ -90,7 +110,7 @@ function Eater:Eat( food )
     if self:CanEat(food) then
 		
         if self.inst.components.health then
-			if self:DoFoodEffects(food) and (food.components.edible.healthvalue > 0 or not self.strongstomach) then
+			if (food.components.edible.healthvalue < 0 and self:DoFoodEffects(food) or food.components.edible.healthvalue > 0) and self.inst.components.health then
 				self.inst.components.health:DoDelta(food.components.edible:GetHealth(self.inst), nil, food.prefab)
 			end
         end
@@ -99,7 +119,7 @@ function Eater:Eat( food )
             self.inst.components.hunger:DoDelta(food.components.edible:GetHunger(self.inst))
         end
         
-        if self:DoFoodEffects(food) and self.inst.components.sanity then
+        if (food.components.edible.sanityvalue < 0 and self:DoFoodEffects(food) or food.components.edible.sanityvalue > 0) and self.inst.components.sanity then
 			self.inst.components.sanity:DoDelta(food.components.edible:GetSanity(self.inst))
         end
         
@@ -139,6 +159,19 @@ function Eater:IsValidFood(food)
         return self:CanEat(food)
     else
         return true
+    end
+end
+
+function Eater:AbleToEat(inst)
+    if inst and inst.components.edible then
+        for k,v in pairs(self.ablefoods) do
+            if v == inst.components.edible.foodtype then
+                if self.caneattest then
+                    return self.caneattest(self.inst, inst)
+                end
+                return true
+            end
+        end
     end
 end
 

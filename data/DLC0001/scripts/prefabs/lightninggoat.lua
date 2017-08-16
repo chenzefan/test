@@ -10,7 +10,8 @@ local assets =
 local prefabs =
 {
     "meat",
-    "lightninggoathorn"
+    "lightninggoathorn",
+    "goatmilk"
 }
 
 SetSharedLootTable( 'lightninggoat',
@@ -18,7 +19,8 @@ SetSharedLootTable( 'lightninggoat',
     {'meat',             1.00},
     {'meat',             1.00},
     {'meat',             1.00},
-    {'lightninggoathorn',0.33},
+    {'lightninggoathorn',0.25},
+    {'goatmilk',         0.25},
 })
 
 local function RetargetFn(inst)

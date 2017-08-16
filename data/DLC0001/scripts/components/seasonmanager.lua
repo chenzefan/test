@@ -1,5 +1,10 @@
 local easing = require("easing")
 
+local SUMMER_BLOOM_BASE = 0.15   -- base amount of bloom applied during the day
+local SUMMER_BLOOM_TEMP_MODIFIER = 0.10 / TUNING.DAY_HEAT   -- amount that the daily temp. variation factors into the overall bloom
+local SUMMER_BLOOM_PERIOD_MIN = 5 -- min length of the bloom fluctuation period
+local SUMMER_BLOOM_PERIOD_MAX = 10 -- max length of the bloom fluctuation period
+
 local SeasonManager = Class(function(self, inst)
 	self.inst = inst
 	self.current_season = SEASONS.AUTUMN
@@ -85,6 +90,13 @@ local SeasonManager = Class(function(self, inst)
 	self:UpdateSegs()
 
 	self.initialevent = false
+	
+	self.bloom_time_current = 0
+	self.bloom_time_to_new_modifier = 0
+	self.bloom_modifier = 0
+	self.bloom_enabled = false
+	
+	self.inst:ListenForEvent( "daytime", function() self:OnDayTime() end )
 
 end)
 
@@ -669,8 +681,13 @@ function SeasonManager:OnLoad(data)
 		self.inst.SoundEmitter:PlaySound("dontstarve/rain/rainAMB", "rain")
 		self.inst:PushEvent("rainstart")
 	end
-
+	
 	self:UpdateSegs()
+	
+	if GetClock():IsDay() then
+	    self:OnDayTime()
+	end
+	
 end
 
 
@@ -1078,7 +1095,8 @@ function SeasonManager:OnUpdate( dt )
 		
 	local time_temp = 0
 	local normtime = GetClock():GetNormEraTime()
-	if GetClock():IsDay() then
+	local is_day = GetClock():IsDay()
+	if is_day then
 		time_temp = day_heat*math.sin(normtime*PI)
 	elseif GetClock():IsNight() then
 		time_temp = night_cold*math.sin(normtime*PI)
@@ -1143,24 +1161,24 @@ function SeasonManager:OnUpdate( dt )
 			self.rain.splashes_per_tick = 0
 		end
 		
-		-- #srosen Re-enable pollen so artists can iterate on it
-		-- if self.current_season == SEASONS.SUMMER then
-		-- 	if not self.pollen then
-		-- 		self.pollen = SpawnPrefab( "pollen" )
-		-- 		self.pollen.entity:SetParent( GetPlayer().entity )
-		-- 	end
-		-- 	if self.percent_season <= .2 then
-		-- 		local ramp = self.percent_season / .2
-		-- 		self.pollen.particles_per_tick = ramp * TUNING.POLLEN_PARTICLES
-		-- 	elseif self.percent_season >= .8 then
-		-- 		local ramp = (1 - self.percent_season) / .2
-		-- 		self.pollen.particles_per_tick = ramp * TUNING.POLLEN_PARTICLES
-		-- 	else
-		-- 		self.pollen.particles_per_tick = TUNING.POLLEN_PARTICLES
-		-- 	end
-		-- else
-		-- 	if self.pollen then self.pollen:Remove() end
-		-- end
+		--srosen Re-enable pollen so artists can iterate on it
+		if self.current_season == SEASONS.SUMMER then
+			if not self.pollen then
+		 		self.pollen = SpawnPrefab( "pollen" )
+		 		self.pollen.entity:SetParent( GetPlayer().entity )
+		 	end
+		 	if self.percent_season <= .2 then
+		 		local ramp = self.percent_season / .2
+		 		self.pollen.particles_per_tick = ramp * TUNING.POLLEN_PARTICLES
+		 	elseif self.percent_season >= .8 then
+		 		local ramp = (1 - self.percent_season) / .2
+		 		self.pollen.particles_per_tick = ramp * TUNING.POLLEN_PARTICLES
+		 	else
+		 		self.pollen.particles_per_tick = TUNING.POLLEN_PARTICLES
+		 	end
+		else
+		 	if self.pollen then self.pollen:Remove() end
+		end
 
 		if self.precipmode == "dynamic" then
 			self:UpdateDynamicPrecip(dt)
@@ -1254,8 +1272,8 @@ function SeasonManager:OnUpdate( dt )
 			end
 		end
 
-		-- If it's summer and hot enough, try to start a wildfire every so often (once per seg, currently)
 		if self.current_season == SEASONS.SUMMER then
+		    -- If it's summer and hot enough, try to start a wildfire every so often (once per seg, currently)
 			if self.current_temperature >= TUNING.WILDFIRE_THRESHOLD and not self:IsRaining() then
 				if self.wildfire_retry_time > 0 then
 					self.wildfire_retry_time = self.wildfire_retry_time - dt
@@ -1287,9 +1305,35 @@ function SeasonManager:OnUpdate( dt )
 			else
 				self.wildfire_retry_time = TUNING.WILDFIRE_RETRY_TIME
 			end
+				
+	        -- apply intensity modulation effect to the screen (summer only)
+            if self.bloom_enabled then
+	            self.bloom_time_current = self.bloom_time_current + dt	
+	            if self.bloom_time_to_new_modifier <= self.bloom_time_current then
+	                if is_day then
+	                    -- only start a new cycle is it's still daytime
+	                    local new_period = math.random(SUMMER_BLOOM_PERIOD_MIN, SUMMER_BLOOM_PERIOD_MAX)
+	                    self.bloom_modifier = 2.0 * math.pi / new_period
+	                    self.bloom_time_to_new_modifier = new_period
+	                    self.bloom_time_current = 0.0
+	                else
+	                    -- bloom is off during dusk and night
+	                    self.bloom_enabled = false
+	                    self.bloom_time_current = 0.0
+	                    self.bloom_time_to_new_modifier = 0.0
+	                    self.bloom_modifier = 0.0
+	                end
+	            end
+        	    
+	            -- This is essentially a sine wave [sin(x - pi/2) = 1 - cos(x)] with amplitude 0 - 1, shifted to the left so that the magnitude is zero at time zero
+	            -- The result is multiplied to a combination of a base intensity value and a time-of-day temperature dependant value
+	            -- Finally we add this to the original intensity (1.0) so that we're always increasing the total intensity
+	            local modifier = 1.0 + (1.0 - 0.5 * math.cos( self.bloom_time_current * self.bloom_modifier ) ) * (SUMMER_BLOOM_BASE + SUMMER_BLOOM_TEMP_MODIFIER * time_temp)
+	            PostProcessor:SetColourModifier(modifier)
+            end					
 		end
 	end
-
+        			
 	--Lastly, wither any plants that need withering (caves and overworld)
 	if self.current_season == SEASONS.SUMMER and self.current_temperature > TUNING.MIN_PLANT_WITHER_TEMP then
 		--Delay the wither message a bit so we're not sending this event every tick during summer
@@ -1519,6 +1563,10 @@ end
 
 function SeasonManager:LongUpdate(dt)
 	self:OnUpdate(dt)
+end
+
+function SeasonManager:OnDayTime()
+    self.bloom_enabled = true
 end
 
 return SeasonManager

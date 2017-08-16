@@ -15,27 +15,8 @@ ChaseAndRam = Class(BehaviourNode, function(self, inst, max_chase_time, give_up_
         self:OnAttackOther(data.target) 
     end
 
-    -- self.onattackstartfn =
-    --     function(inst, data)
-    --         local combat = self.inst.components.combat
-            
-    --         combat:ValidateTarget()
-            
-    --         if combat.target then
-    --             local hp = Point(combat.target.Transform:GetWorldPosition())
-    --             local pt = Point(self.inst.Transform:GetWorldPosition())
-    --             self.ram_angle = self.inst:GetAngleToPoint(hp)
-    --             self.ram_vector = (hp-pt):GetNormalized()
-    --             local goal = pt + (self.ram_vector*4)   -- keep running along old vector
-    --             --self.inst.components.locomotor:GoToPoint(goal, nil, true)
-    --             dprint("Getting New Attack Vector",self.ram_angle)
-    --         end
-    --     end
-
     self.inst:ListenForEvent("onattackother", self.onattackfn)
     self.inst:ListenForEvent("onmissother", self.onattackfn)
-
-    --self.inst:ListenForEvent("attackstart", self.onattackstartfn)
 end)
 
 
@@ -47,11 +28,9 @@ end
 function ChaseAndRam:OnStop()
     self.inst:RemoveEventCallback("onattackother", self.onattackfn)
     self.inst:RemoveEventCallback("onmissother", self.onattackfn)
-    --self.inst:RemoveEventCallback("attackstart", self.onattackstartfn)
 end
 
 function ChaseAndRam:OnAttackOther(target)
-    --print ("on attack other", target)
     self.numattacks = self.numattacks + 1
     self.startruntime = nil -- reset max chase time timer
 end
@@ -73,12 +52,9 @@ function ChaseAndRam:Visit()
             local pt = Point(self.inst.Transform:GetWorldPosition())
             self.ram_angle = self.inst:GetAngleToPoint(hp)
             self.ram_vector = (hp-pt):GetNormalized()
-
-            --self.inst:FacePoint(hp)
-
-            --print("Set self.ram_angle to: ", self.ram_angle)
-
+            self.inst:AddTag("ChaseAndRam")
         else
+            self.inst:RemoveTag("ChaseAndRam")
             self.status = FAILED
             self.ram_vector = nil
         end
@@ -90,20 +66,21 @@ function ChaseAndRam:Visit()
         local is_attacking = self.inst.sg:HasStateTag("attack")
         
         if not combat.target or not combat.target.entity:IsValid() then
-
             self.status = FAILED
             self.ram_vector = nil
             combat:SetTarget(nil)
             self.inst.components.locomotor:Stop()
+            self.inst:RemoveTag("ChaseAndRam")
+
             return
 
         elseif combat.target.components.health and combat.target.components.health:IsDead() then
-
             self.status = SUCCESS
             combat:SetTarget(nil)
             self.inst.components.locomotor:Stop()
+            self.inst:RemoveTag("ChaseAndRam")
+            
             return
-
         else
 
             local hp = combat.target:GetPosition()
@@ -111,29 +88,13 @@ function ChaseAndRam:Visit()
             local dsq = distsq(hp, pt) --Distance to target.
             local angle = math.abs(self.inst:GetAngleToPoint(hp)) --Angle to target.
 
-            -- if not self.ram_vector then
-            --     --print("Set self.ram_angle to: ", self.ram_angle)
-            -- end
-
             if self.inst.sg and self.inst.sg:HasStateTag("canrotate") then
                 --Line up charge here.
                 self.ram_angle = self.inst:GetAngleToPoint(hp)
                 self.ram_vector = (hp-pt):GetNormalized()
             end
 
-            -- if self.inst.components.debugger then
-            --     local offset = pt + (self.ram_vector * self.max_charge_dist)
-            --     local db = self.inst.components.debugger
-            --     db:SetOrigin("Ram", pt.x, pt.z)
-            --     db:SetTarget("Ram", offset.x, offset.z)
-            --     db:SetColour("Ram", 0, 1, 0, 1)
 
-            --     db:SetOrigin("Tar", pt.x, pt.z)
-            --     db:SetTarget("Tar", hp.x, hp.z)
-            --     db:SetColour("Tar", 1, 0, 0, 1)
-            -- end
-
-            --print("Angle to target: ", math.abs(angle - math.abs(self.ram_angle)))
 
             local r = self.inst.Physics:GetRadius() + combat.target.Physics:GetRadius() + .1
                         
@@ -149,11 +110,14 @@ function ChaseAndRam:Visit()
                     self.inst:FacePoint(hp)
                 end
                 self.inst.components.combat:ForceAttack()
+                self.inst:RemoveTag("ChaseAndRam")
+
             end
                 
 
             if (self.inst.sg and not self.inst.sg:HasStateTag("atk_pre")) and combat:TryAttack() then
                 -- If you're not still in the telegraphing stage then try to attack. 
+                self.inst:RemoveTag("ChaseAndRam")
             else
                 if not self.startruntime then
                     self.startruntime = GetTime()
@@ -164,8 +128,8 @@ function ChaseAndRam:Visit()
             
             if self.max_attacks and self.numattacks >= self.max_attacks then
                 self.status = SUCCESS
-                --self.inst.components.combat:SetTarget(nil)
                 self.inst.components.locomotor:Stop()
+                self.inst:RemoveTag("ChaseAndRam")
                 return
             end
             
@@ -173,9 +137,9 @@ function ChaseAndRam:Visit()
                 if distsq(self.startloc, self.inst:GetPosition()) >= self.max_charge_dist*self.max_charge_dist then
                     self.status = FAILED
                     self.ram_vector = nil
-                    --self.inst.components.combat:GiveUp()
                     self.inst.components.locomotor:Stop()
                     self.inst.components.combat:ForceAttack()
+                    self.inst:RemoveTag("ChaseAndRam")
                     return
                 end
             end
@@ -185,9 +149,9 @@ function ChaseAndRam:Visit()
                 if time_running > self.max_chase_time then
                     self.status = FAILED
                     self.ram_vector = nil
-                    --self.inst.components.combat:GiveUp()
                     self.inst.components.locomotor:Stop()
                     self.inst.components.combat:ForceAttack()
+                    self.inst:RemoveTag("ChaseAndRam")
                     return
                 end
             end

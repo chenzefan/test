@@ -1,4 +1,4 @@
-function MakePlacer(name, bank, build, anim, onground, snap, metersnap)
+function MakePlacer(name, bank, build, anim, onground, snap, metersnap, scale)
 	
 	local function fn(Sim)
 		local inst = CreateEntity()
@@ -14,6 +14,10 @@ function MakePlacer(name, bank, build, anim, onground, snap, metersnap)
 		inst.components.placer.snaptogrid = snap
 		inst.components.placer.snap_to_meters = metersnap
 		
+		if scale then
+			inst.Transform:SetScale(scale, scale, scale)
+		end
+
 		if onground then
 			inst.AnimState:SetOrientation( ANIM_ORIENTATION.OnGround )
 		end

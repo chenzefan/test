@@ -1,4 +1,4 @@
-ChaseAndAttack = Class(BehaviourNode, function(self, inst, max_chase_time, give_up_dist, max_attacks, findnewtargetfn)
+ChaseAndAttack = Class(BehaviourNode, function(self, inst, max_chase_time, give_up_dist, max_attacks, findnewtargetfn, walk)
     BehaviourNode._ctor(self, "ChaseAndAttack")
     self.inst = inst
     self.findnewtargetfn = findnewtargetfn
@@ -6,6 +6,7 @@ ChaseAndAttack = Class(BehaviourNode, function(self, inst, max_chase_time, give_
     self.give_up_dist = give_up_dist
     self.max_attacks = max_attacks
     self.numattacks = 0
+    self.walk = walk
     
     -- we need to store this function as a key to use to remove itself later
     self.onattackfn = function(inst, data)
@@ -78,7 +79,8 @@ function ChaseAndAttack:Visit()
             
             if (running and dsq > r*r) or (not running and dsq > combat:CalcAttackRangeSq() ) then
                 --self.inst.components.locomotor:RunInDirection(angle)
-                self.inst.components.locomotor:GoToPoint(hp, nil, true)
+                local shouldRun = not self.walk
+                self.inst.components.locomotor:GoToPoint(hp, nil, shouldRun)
             elseif not (self.inst.sg and self.inst.sg:HasStateTag("jumping")) then
                 self.inst.components.locomotor:Stop()
                 if self.inst.sg:HasStateTag("canrotate") then

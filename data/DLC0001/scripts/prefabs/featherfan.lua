@@ -11,6 +11,14 @@ local function OnUse(inst, target)
 		end
 		target.components.temperature:DoDelta(coolingAmount)
 	end
+	local pos = target:GetPosition()
+	local ents = TheSim:FindEntities(pos.x, pos.y, pos.z, 7, nil, {"FX", "NOCLICK","DECOR","INLIMBO"}, {"smolder", "fire"})
+	for i,v in pairs(ents) do
+		if v.components.burnable then 
+			-- Extinguish smoldering/fire and reset the propagator to a heat of .2
+			v.components.burnable:Extinguish(true, 0) 
+		end
+	end
 end
 
 local function CanUse(inst, target)
@@ -40,8 +48,8 @@ local function fn()
     inst.components.fan:SetOnUseFn(OnUse)
 
     inst:AddComponent("finiteuses")
-    inst.components.finiteuses:SetMaxUses(5)
-    inst.components.finiteuses:SetUses(5)
+    inst.components.finiteuses:SetMaxUses(TUNING.FEATHER_FAN_USES)
+    inst.components.finiteuses:SetUses(TUNING.FEATHER_FAN_USES)
     inst.components.finiteuses:SetOnFinished(OnFinished)
     inst.components.finiteuses:SetConsumption(ACTIONS.FAN, 1)
 

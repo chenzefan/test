@@ -9,11 +9,16 @@ local Clock = Class(function(self, inst)
     self.numcycles = 0
     self.lmax = 1
 
-    self.dayColour = Point(255/255, 230/255, 158/255)
-    self.duskColour = Point(100/255, 100/255, 100/255)
-    self.nightColour = Point(0/255, 0/255, 0/255)
-    self.fullMoonColour = Point(84/255,122/255,156/255)
-    self.caveColour = Point(0,0,0)
+    self.dayColour =         Point(255/255, 230/255, 158/255)
+    self.duskColour =        Point(100/255, 100/255, 100/255)
+    self.nightColour =       Point(0/255,   0/255,   0/255)
+    self.fullMoonColour =    Point(84/255,  122/255, 156/255)
+    self.caveColour =        Point(0/255,   0/255,   0/255)
+    self.dayNightVisionColour =         Point(200/255,  200/255, 200/255)
+    self.duskNightVisionColour =        Point(120/255,  120/255, 120/255)
+    self.nightNightVisionColour =       Point(200/255,  200/255, 200/255)
+    self.fullMoonNightVisionColour =    Point(200/255,  200/255, 200/255)
+    self.caveNightVisionColour =        Point(200/255,  200/255, 200/255)
 
     self.currentColour = self.dayColour
     self.lerpToColour = self.dayColour
@@ -32,6 +37,7 @@ local Clock = Class(function(self, inst)
 	self.inst:StartUpdatingComponent(self)	
 
     self.previous_phase = "night"
+    self.nightvision = false
 
     self:StartDay()
     
@@ -50,13 +56,16 @@ function Clock:OnSave()
     {
 		numcycles = self.numcycles,
 		phase = self.phase,
-		normeratime = self:GetNormEraTime()
+		normeratime = self:GetNormEraTime(),
+        nightvision = self.nightvision,
 	}
 end
 
 function Clock:OnLoad(data)
 	self.numcycles = data.numcycles or 0
-	if data.phase  == "night" then
+    if data.nightvision then
+        self:StartNightVision(true)
+	elseif data.phase  == "night" then
         self:StartNight(true)
 	elseif data.phase  == "dusk" then
         self:StartDusk(true)
@@ -140,6 +149,26 @@ function Clock:CurrentPhaseIsAlways()
     else
         return self:GetNightSegs() == 16
     end
+end
+
+function Clock:SetNightVision(on)
+    if on then
+        self.nightvision = true
+        self:StartNightVision()
+    else
+        self.nightvision = false
+        if self.phase == "day" then
+            self:StartDay(true, true)
+        elseif self.phase == "dusk" then
+            self:StartDusk(true, true)
+        else
+            self:StartNight(true, true)
+        end
+    end
+end
+
+function Clock:IsNightVision()
+    return self.nightvision
 end
 
 function Clock:IsDay()
@@ -287,20 +316,21 @@ function Clock:LongUpdate(dt)
 	
 	--fix the colour
 	self.lerptimeleft = 0
+    
 	if self:IsDay() then
-		self.currentColour = self.dayColour
+		self.currentColour = self:IsNightVision() and self.dayNightVisionColour or self.dayColour
 	elseif self:IsDusk() then
-		self.currentColour = self.duskColour
+        self.currentColour = self:IsNightVision() and self.duskNightVisionColour or self.duskColour
 	else
         if self:GetMoonPhase() == "full" then
-            self.currentColour = self.fullMoonColour
+            self.currentColour = self:IsNightVision() and self.fullMoonNightVisionColour or self.fullMoonColour
         else
-		  self.currentColour = self.nightColour
+		  self.currentColour = self:IsNightVision() and self.nightNightVisionColour or self.nightColour
         end
 	end
 	
     if GetWorld():IsCave() then
-        self.currentColour = self.caveColour
+        self.currentColour = self:IsNightVision() and self.caveNightVisionColour or self.caveColour
     end
     
 	local p = GetSeasonManager() and GetSeasonManager():GetWeatherLightPercent() or 1
@@ -334,7 +364,7 @@ function Clock:OnUpdate(dt)
         self.currentColour = Point(r,g,b)
 
         if GetWorld():IsCave() then
-            self.currentColour = self.caveColour
+            self.currentColour = self:IsNightVision() and self.caveNightVisionColour or self.caveColour
         end
 
         self.lerptimeleft = self.lerptimeleft - dt
@@ -356,14 +386,14 @@ function Clock:OnUpdate(dt)
             local col = nil
             if self:IsNight() then
                 if self:GetMoonPhase() == "full" then
-                    col = self.fullMoonColour
+                    col = self:IsNightVision() and self.fullMoonNightVisionColour or self.fullMoonColour
                 else
-                    col = self.nightColour
+                    col = self:IsNightVision() and self.nightNightVisionColour or self.nightColour
                 end
             elseif self:IsDusk() then
-                col = self.duskColour
+                col = self:IsNightVision() and self.duskNightVisionColour or self.duskColour
             else
-                col = self.dayColour
+                col = self:IsNightVision() and self.dayNightVisionColour or self.dayColour
             end
             self:LerpAmbientColour(col*.5, col, 1.5)
             self.lightning = false
@@ -387,7 +417,7 @@ function Clock:LerpAmbientColour(src, dest, time)
 	self.totallerptime = time
 
     if GetWorld():IsCave() then
-        dest = self.caveColour
+        dest = self:IsNightVision() and self.caveNightVisionColour or self.caveColour
     end
 
     if time == 0 then
@@ -438,61 +468,98 @@ function Clock:GetDuskTime()
 	return self.dusksegs*TUNING.SEG_TIME
 end
 
-
-function Clock:StartDay(instant)
-    self.timeLeftInEra = self:GetDayTime()
-    self.totalEraTime = self.timeLeftInEra
+function Clock:StartNightVision(instant)   
+    self.inst:PushEvent("nightvision")
     
-    self.phase = "day"
-    self.inst:PushEvent("daytime", {day=self.numcycles})
-    if self.daytime == 0 then
-    	self:NextPhase()    	
-    	return
+    local colour = nil
+    if GetWorld():IsCave() then
+        colour = self.caveNightVisionColour
+    elseif self.phase == "day" then
+        colour = self.dayNightVisionColour
+    elseif self.phase == "dusk" then
+        colour = self.duskNightVisionColour
+    else
+        colour = self.nightNightVisionColour
+    end
+    self:LerpAmbientColour(self.currentColour, colour or self.nightNightVisionColour, instant and 0 or 4)
+end
+
+function Clock:StartDay(instant, fromnightvision)
+    if not fromnightvision then
+        self.timeLeftInEra = self:GetDayTime()
+        self.totalEraTime = self.timeLeftInEra
+        
+        self.phase = "day"
+        self.inst:PushEvent("daytime", {day=self.numcycles})
+        if self.daytime == 0 then
+        	self:NextPhase()    	
+        	return
+        end
     end
     
-    if self.phase ~= self.previous_phase then
+    if self.phase ~= self.previous_phase or fromnightvision then
         self.previous_phase = self.phase
-    	self:LerpAmbientColour(self.currentColour, self.dayColour, instant and 0 or 4)
+        if not self:IsNightVision() then 
+            self:LerpAmbientColour(self.currentColour, self.dayColour, instant and 0 or 4) 
+        else
+            self:LerpAmbientColour(self.currentColour, self.dayNightVisionColour, instant and 0 or 4) 
+        end
 	end
 end
 
-function Clock:StartDusk(instant)
-    self.timeLeftInEra = self:GetDuskTime()    
-    self.totalEraTime = self.timeLeftInEra
-    
-    self.phase = "dusk"
-    if self.dusktime == 0 then
-    	self:NextPhase()
-    	return
+function Clock:StartDusk(instant, fromnightvision)
+    if not fromnightvision then
+        self.timeLeftInEra = self:GetDuskTime()    
+        self.totalEraTime = self.timeLeftInEra
+        
+        self.phase = "dusk"
+        if self.dusktime == 0 then
+        	self:NextPhase()
+        	return
+        end
     end
 
-    if self.phase ~= self.previous_phase then
+    if self.phase ~= self.previous_phase or fromnightvision then
         self.previous_phase = self.phase
-    	self:LerpAmbientColour(self.currentColour, self.duskColour, instant and 0 or 6)
+    	if not self:IsNightVision() then 
+            self:LerpAmbientColour(self.currentColour, self.duskColour, instant and 0 or 6) 
+        else
+            self:LerpAmbientColour(self.currentColour, self.duskNightVisionColour, instant and 0 or 6) 
+        end
     	self.inst:PushEvent("dusktime", {day=self.numcycles})
 	end
 end
 
-function Clock:StartNight(instant)
+function Clock:StartNight(instant, fromnightvision)
 
-    self.timeLeftInEra = self:GetNightTime()
-    self.totalEraTime = self.timeLeftInEra
+    if not fromnightvision then
+        self.timeLeftInEra = self:GetNightTime()
+        self.totalEraTime = self.timeLeftInEra
     
-    self.phase = "night"
-    self.inst:PushEvent("nighttime", {day=self.numcycles})
-    if self.nighttime == 0 then
-    	self:NextPhase()
-    	return
+        self.phase = "night"
+        self.inst:PushEvent("nighttime", {day=self.numcycles})
+        if self.nighttime == 0 then
+        	self:NextPhase()
+        	return
+        end
     end
     
-    if self.phase ~= self.previous_phase then
+    if self.phase ~= self.previous_phase or fromnightvision then
         self.previous_phase = self.phase
         
         if self:GetMoonPhase() == "full" then
-            self:LerpAmbientColour(self.currentColour, self.fullMoonColour, instant and 0 or 8)
+            if not self:IsNightVision() then 
+                self:LerpAmbientColour(self.currentColour, self.fullMoonColour, instant and 0 or 8) 
+            else
+                self:LerpAmbientColour(self.currentColour, self.fullMoonNightVisionColour, instant and 0 or 8) 
+            end
             self.inst:PushEvent("fullmoon")
         else
-            self:LerpAmbientColour(self.currentColour, self.nightColour, instant and 0 or 8)
+            if not self:IsNightVision() then 
+                self:LerpAmbientColour(self.currentColour, self.nightColour, instant and 0 or 8) 
+            else
+                self:LerpAmbientColour(self.currentColour, self.nightNightVisionColour, instant and 0 or 8) 
+            end
         end
 	end
 end

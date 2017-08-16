@@ -2,6 +2,7 @@ local assets=
 {
 	Asset("ANIM", "anim/mole_build.zip"),
 	Asset("ANIM", "anim/mole_basic.zip"),
+	Asset("SOUND", "sound/mole.fsb"),
 }
 
 
@@ -86,7 +87,7 @@ local function CanBeAttacked(inst)
 end
 
 local function displaynamefn(inst)
-    if inst.State == "under" then
+    if inst.State == "under" and not inst:HasTag("INLIMBO") then
         return STRINGS.NAMES.MOLE_UNDERGROUND
     else
         return STRINGS.NAMES.MOLE_ABOVEGROUND

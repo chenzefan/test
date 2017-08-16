@@ -242,7 +242,7 @@ function Burnable:SmotherSmolder(smotherer)
     elseif smotherer and smotherer.components.stackable then
         smotherer.components.stackable:Get(1):Remove()
     elseif smotherer and smotherer.components.health and smotherer.components.combat then
-        smotherer.components.combat:GetAttacked(self.inst, TUNING.SMOTHER_DAMAGE)
+        smotherer.components.health:DoFireDamage(TUNING.SMOTHER_DAMAGE, nil, true)
         smotherer:PushEvent("burnt")
     end
     self:StopSmoldering()

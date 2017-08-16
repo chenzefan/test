@@ -37,11 +37,6 @@ local function spawncondition_deerclops()
 	return snow_cover >= 0.2
 end
 
-local function validtimefn_deerclops()
-    -- prevents the deerclops from spawning if winter is set as starting season
-    return GetClock():GetNumCycles() > 10
-end
-
 local deerclops = 
 {
 	prefab = "deerclops",
@@ -53,7 +48,7 @@ local deerclops =
 	warnduration = 60,
 	onspawnfn = onspawn_deerclops,
 	spawnconditionfn = spawncondition_deerclops,
-    validtimefn = validtimefn_deerclops,
+    minspawnday = TUNING.NO_BOSS_TIME,
 }
 
 local bearger = 
@@ -64,7 +59,8 @@ local bearger =
 	playerstring = "ANNOUNCE_DEERCLOPS",
 	attacksperseason = 1,
 	warnsound = "dontstarve/creatures/deerclops/distant",
-	warnduration = 60,
+    warnduration = 60,
+    minspawnday = TUNING.NO_BOSS_TIME,
 }
 
 local function onspawn_moose(inst)
@@ -117,11 +113,6 @@ local function spawntime_moose()
 	return math.random(2, 4) * TUNING.TOTAL_DAY_TIME
 end
 
-local function validtimefn_moose()
-    -- prevents the moose from spawning if spring is set as starting season
-    return GetClock():GetNumCycles() > 10
-end
-
 local goosemoose = 
 {
 	prefab = "moose",
@@ -135,7 +126,7 @@ local goosemoose =
 	onspawnfn = onspawn_moose,
 	spawnposfn = spawnposfn_moose,
 	spawnconditionfn = spawnconditionfn_moose,
-    validtimefn = validtimefn_moose,
+    minspawnday = TUNING.NO_BOSS_TIME,
 }
 
 local dragonfly = 
@@ -146,7 +137,9 @@ local dragonfly =
     playerstring = "ANNOUNCE_DEERCLOPS",
     attacksperseason = 1,
     warnsound = "dontstarve/creatures/deerclops/distant",
-    warnduration = 60,  
+    warnduration = 60,
+    minspawnday = TUNING.NO_BOSS_TIME,
+    
 }
 
 return

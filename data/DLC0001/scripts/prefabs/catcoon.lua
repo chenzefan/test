@@ -3,6 +3,7 @@ local assets =
 	Asset("ANIM", "anim/catcoon_build.zip"),
 	Asset("ANIM", "anim/catcoon_basic.zip"),
 	Asset("ANIM", "anim/catcoon_actions.zip"),
+	Asset("SOUND", "sound/catcoon.fsb"),
 }
 
 local prefabs = 
@@ -13,8 +14,18 @@ local prefabs =
 	"tumbleweed",
 	"cutgrass",
 	"twigs",
-	"catcoonhat",
+	"berries",
+	"goldnugget",
+	"smallmeat",
+	"silk",
+	"coontail",
 }
+
+SetSharedLootTable( 'catcoon',
+{
+    {'meat',             1.00},
+    {'coontail',		 0.33},
+})
 
 local neutralGiftPrefabs =
 {
@@ -22,26 +33,28 @@ local neutralGiftPrefabs =
 		"spoiled_food",
 	},
 	{ --tier 2
-		"twigs",
 		"spoiled_food",
 	},
 	{ --tier 3
-		"cutgrass",
-		"twigs",
+		"spoiled_food",
 		"wetgoop",
 	},
 	{ --tier 4
-		"flint",
+		"wetgoop",
+		"wetgoop",
 		"cutgrass",
 		"twigs",
-		"rope",
+		"spoiled_food",
+		"spoiled_food",
 	},
 	{ --tier 5
-		"mole",
-		"rabbit",
+		"wetgoop",
+		"wetgoop",
+		"cutgrass",
+		"twigs",
+		"spoiled_food",
+		"spoiled_food",
 		"flint",
-		"tumbleweed",
-		"rope",
 	},
 }
 
@@ -49,28 +62,35 @@ local friendGiftPrefabs =
 {
 	{ --tier 1
 		"spoiled_food",
+		"berries",
 	},
 	{ --tier 2
 		"twigs",
+		"berries",
 		"spoiled_food",
 	},
 	{ --tier 3
-		"cutgrass",
 		"twigs",
-		"wetgoop",
+		"cutgrass",
+		"berries",
+		"flint",
 	},
 	{ --tier 4
 		"flint",
+		"smallmeat",
 		"cutgrass",
 		"twigs",
 		"rope",
+		"silk",
+		"rabbit",
 	},
 	{ --tier 5
 		"mole",
-		"rabbit",
-		"flint",
+		"smallmeat",
 		"tumbleweed",
 		"rope",
+		"goldnugget",
+		"silk",
 	},
 }
 
@@ -82,22 +102,40 @@ local function OnAttacked(inst, data)
 end
 
 local function KeepTargetFn(inst, target)
-    return (target
-    	and target.components.combat
-        and target.components.health
-        and not target.components.health:IsDead()
-        and not (inst.components.follower and inst.components.follower.leader == target))
+	if target:HasTag("catcoon") then
+		return (target
+	    	and target.components.combat
+	        and target.components.health
+	        and not target.components.health:IsDead()
+	        and not (inst.components.follower and target.components.follower and inst.components.follower.leader ~= nil and inst.components.follower.leader == target.components.follower.leader)
+	        and not (inst.components.follower and inst.components.follower.leader == target))
+	else
+	    return (target
+	    	and target.components.combat
+	        and target.components.health
+	        and not target.components.health:IsDead()
+	        and not (inst.components.follower and inst.components.follower.leader == target))
+	end
 end
 
 local function RetargetFn(inst)
     return FindEntity(inst, TUNING.CATCOON_TARGET_DIST,
         function(guy)
-            return 	((guy:HasTag("monster") or guy:HasTag("smallcreature")) and 
-            		guy.components.health and 
-            		not guy.components.health:IsDead() and 
-            		inst.components.combat:CanTarget(guy) and 
-            		not (inst.components.follower.leader ~= nil and guy:HasTag("abigail")))
-            	or 	guy:HasTag("cattoyairborne")
+        	if guy:HasTag("catcoon") then
+        		return 	not (inst.components.follower and guy.components.follower and inst.components.follower.leader ~= nil and inst.components.follower.leader == guy.components.follower.leader) and
+        				not (inst.components.follower and guy.components.follower and inst.components.follower.leader == nil and guy.components.follower.leader == nil) and
+        				guy.components.health and 
+	            		not guy.components.health:IsDead() and 
+	            		inst.components.combat:CanTarget(guy)
+        	else
+            	return 	((guy:HasTag("monster") or guy:HasTag("smallcreature")) and 
+	            		guy.components.health and 
+	            		not guy.components.health:IsDead() and 
+	            		inst.components.combat:CanTarget(guy) and 
+	            		not (inst.components.follower and inst.components.follower.leader ~= nil and guy:HasTag("abigail"))) and
+            			not (inst.components.follower and guy.components.follower and inst.components.follower.leader ~= nil and inst.components.follower.leader == guy.components.follower.leader)
+	            	or 	guy:HasTag("cattoyairborne")
+	        end
         end)
 end
 
@@ -127,6 +165,7 @@ local function PickRandomGift(inst, tier)
 end
 
 local function ShouldAcceptItem(inst, item)
+	if inst.components.health and inst.components.health:IsDead() then return false end
 	if item:HasTag("cattoy") or item:HasTag("catfood") or item:HasTag("cattoyairborne") then
 		return true
 	else
@@ -148,12 +187,15 @@ local function OnGetItemFromPlayer(inst, giver, item)
     	end
 		giver.components.leader:AddFollower(inst)
         inst.components.follower:AddLoyaltyTime(TUNING.CATCOON_LOYALTY_PER_ITEM)
-        inst:FacePoint(giver.Transform:GetWorldPosition())
-        inst.sg:GoToState("pawground")
+        if not inst.sg:HasStateTag("busy") then 
+        	inst:FacePoint(giver.Transform:GetWorldPosition())
+        	inst.sg:GoToState("pawground") 
+       	end
     end
     if inst.components.sleeper:IsAsleep() then
         inst.components.sleeper:WakeUp()
     end
+    item:Remove()
 end
 
 local function OnRefuseItem(inst, item)
@@ -197,8 +239,7 @@ local function fn()
     inst.components.combat.battlecryinterval = 20
 
 	inst:AddComponent("lootdropper")
-	inst.components.lootdropper:AddChanceLoot("catcoonhat", 0.33)
-	inst.components.lootdropper:AddChanceLoot("meat", 		1)
+    inst.components.lootdropper:SetChanceLootTable('catcoon') 
 	inst.PickRandomGift = PickRandomGift
 
 	inst:AddComponent("follower")

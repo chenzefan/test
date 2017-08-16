@@ -28,7 +28,10 @@ local medScale = 0.7
 local largeScale = 1.1
 
 local function onkill(inst, data)
-	if data.cause == inst.prefab and not data.inst:HasTag("prey") then
+	if data.cause == inst.prefab 
+		and not data.inst:HasTag("prey") 
+		and not data.inst:HasTag("veggie") 
+		and not data.inst:HasTag("structure") then
 		local delta = (data.inst.components.combat.defaultdamage) * 0.25
         inst.components.health:DoDelta(delta, false, "battleborn")
         inst.components.sanity:DoDelta(delta)
@@ -57,7 +60,7 @@ local function custom_init(inst)
 	inst.soundsname = "wathgrithr"
 	inst.talker_path_override = "dontstarve_DLC001/characters/"
 
-	inst.components.eater:SetCarnivore()
+	inst.components.eater:SetCarnivore(true)
 
 	inst.components.health:SetMaxHealth(TUNING.WATHGRITHR_HEALTH)
 	inst.components.hunger:SetMax(TUNING.WATHGRITHR_HUNGER)

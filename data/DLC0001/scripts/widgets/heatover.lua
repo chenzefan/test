@@ -89,7 +89,7 @@ function HeatOver:OnHeatChange()
 		self.effectFrequency_target = distortion_frequency[self.laststep]
 		local distortion_speed = 
 		{
-		    -- keep this value constant for now as both lerping and jumping it produce ugly artifacts 
+		    -- keep this value constant for now as both lerping and stepping it produce ugly artifacts 
 		    7, 7, 7, 7
 		}
 		self.effectSpeed = distortion_speed[self.laststep]

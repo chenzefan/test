@@ -103,6 +103,12 @@ local WorldGenScreen = Class(Screen, function(self, profile, cb, world_gen_optio
 		gen_parameters.profiledata = { unlocked_characters = {} }
 	end
 	
+	local DLCEnabledTable = {}
+	for i,v in pairs(DLC_LIST) do
+		DLCEnabledTable[i] = IsDLCEnabled( i )
+	end
+	gen_parameters.DLCEnabled = DLCEnabledTable
+
 	local moddata = {}
 	moddata.index = KnownModIndex:CacheSaveData()
 

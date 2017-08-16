@@ -56,7 +56,7 @@ local function itemtest(inst, item, slot)
 	item.prefab == "spoiled_food" or 
 	item.prefab == "heatrock" or 
 	item:HasTag("frozen") or
-	item:HasTag("foodclothing")
+	item:HasTag("icebox_valid")
 end
 
 		

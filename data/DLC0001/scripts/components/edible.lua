@@ -6,6 +6,7 @@ local Edible = Class(function(self, inst)
     self.foodtype = "GENERIC"
     self.oneaten = nil
     self.degrades_with_spoilage = true
+    self.temperaturedelta = 0
 
     self.inst:AddTag("edible")
     
@@ -78,11 +79,15 @@ function Edible:OnEaten(eater)
     if self.oneaten then
         self.oneaten(self.inst, eater)
     end
+    if self.temperaturedelta ~= 0 and eater and eater.components.temperature then
+        local temp = eater.components.temperature:GetCurrent()
+        eater.components.temperature:SetTemperature(temp + self.temperaturedelta)
+    end
     self.inst:PushEvent("oneaten", {eater = eater})
 end
 
 function Edible:CollectInventoryActions(doer, actions, right)
-    if doer.components.eater and doer.components.eater:IsValidFood(self.inst) then
+    if doer.components.eater and doer.components.eater:IsValidFood(self.inst) and doer.components.eater:AbleToEat(self.inst) then
         if not self.inst.components.equippable or right then
 			table.insert(actions, ACTIONS.EAT)
 		end

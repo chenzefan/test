@@ -47,6 +47,8 @@ local SLEEP_NEAR_HOME_DISTANCE = 10
 local SHARE_TARGET_DIST = 30
 local HOME_TELEPORT_DIST = 30
 
+local NO_TAGS = {"FX", "NOCLICK","DECOR","INLIMBO"}
+
 local function ShouldWakeUp(inst)
     return DefaultWakeTest(inst) or (inst.components.follower and inst.components.follower.leader and not inst.components.follower:IsNearLeader(WAKE_TO_FOLLOW_DISTANCE))
 end
@@ -260,6 +262,19 @@ local function fncold(Sim)
     inst.components.lootdropper:SetChanceLootTable('hound_cold')
 	
 	inst:ListenForEvent("death", function(inst)
+        if not inst.components.freezable then
+            MakeMediumFreezableCharacter(inst, "hound_body")
+        end
+        inst.components.freezable:SpawnShatterFX()
+        inst:RemoveComponent("freezable")
+        local x,y,z = inst.Transform:GetWorldPosition()
+        local ents = TheSim:FindEntities(x, y, z, 4, {"freezable"}, NO_TAGS) 
+        for i,v in pairs(ents) do
+            if v.components.freezable then
+                v.components.freezable:AddColdness(2)
+            end
+        end
+
 		inst.SoundEmitter:PlaySound("dontstarve/creatures/hound/icehound_explo", "explosion")
 	end)
 
@@ -276,7 +291,6 @@ local function fnfiredrop(Sim)
     inst.components.burnable:Ignite()
     return inst
 end
-
 
 return Prefab( "monsters/hound", fndefault, assets, prefabs),
 		Prefab( "monsters/firehound", fnfire, assets, prefabs),

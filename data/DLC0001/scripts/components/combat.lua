@@ -196,7 +196,6 @@ end
 function Combat:SetTarget(target)
     local new = target ~= self.target
     local player = GetPlayer()
-
     if new and (not target or self:IsValidTarget(target) ) and not (target and target.sg and target.sg:HasStateTag("hiding") and target:HasTag("player")) then
 
         if METRICS_ENABLED and self.target == player and new ~= player then
@@ -209,8 +208,9 @@ function Combat:SetTarget(target)
 			self.lasttargetGUID = nil
 		end
 		
+        local oldtarget = self.target
         self.target = target
-        self.inst:PushEvent("newcombattarget", {target=target})
+        self.inst:PushEvent("newcombattarget", {target=target, oldtarget=oldtarget})
 
         if METRICS_ENABLED and (player == target or target and target.components.follower and target.components.follower.leader == player) then
             FightStat_Targeted(self.inst)
@@ -735,16 +735,15 @@ function Combat:DoAttack(target_override, weapon, projectile, stimuli, instancem
             weapon.components.weapon:LaunchProjectile(self.inst, targ)
         else
             local mult = 1
-            if stimuli == "electric" then
+            if stimuli == "electric" or (weapon and weapon.components.weapon and weapon.components.weapon.stimuli == "electric") then
                 if not targ.components.inventory or (targ.components.inventory and not targ.components.inventory:IsInsulated()) then
                     mult = TUNING.ELECTRIC_DAMAGE_MULT
                     if targ.components.moisture then
                         mult = mult + (TUNING.ELECTRIC_WET_DAMAGE_MULT * targ.components.moisture:GetMoisturePercent())
-                    else
-                        --#srosen need proper check for non-player thing being wet
-                        if GetWorld() and GetWorld().components.moisturemanager and GetWorld().components.moisturemanager:IsEntityWet(targ) then
-                            mult = mult + TUNING.ELECTRIC_WET_DAMAGE_MULT
-                        end
+                    elseif targ.components.moisturelistener and targ.components.moisturelistener:IsWet() then
+                        mult = mult + TUNING.ELECTRIC_WET_DAMAGE_MULT 
+                    elseif GetWorld() and GetWorld().components.moisturemanager and GetWorld().components.moisturemanager:IsEntityWet(targ) then
+                        mult = mult + TUNING.ELECTRIC_WET_DAMAGE_MULT
                     end
                 end
             end

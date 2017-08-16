@@ -9,7 +9,7 @@ local assets =
 local prefabs =
 {
     "lavaspit",
-    "armordragonfly",
+    "dragon_scales",
     "firesplash_fx",
     "tauntfire_fx",
     "attackfire_fx",
@@ -18,7 +18,19 @@ local prefabs =
     "collapse_small",
 }
 
-local loot = {"meat", "meat", "meat", "meat", "meat", "meat", "meat", "meat", "armordragonfly"}
+SetSharedLootTable( 'dragonfly',
+{
+    {'meat',             1.00},
+    {'meat',             1.00},
+    {'meat',             1.00},
+    {'meat',             1.00},
+    {'meat',             1.00},
+    {'meat',             1.00},
+    {'meat',             1.00},
+    {'meat',             1.00},
+    {'dragon_scales',    1.00},
+})
+
 local BASE_TAGS = {"structure"}
 local SEE_STRUCTURE_DIST = 20
 
@@ -155,8 +167,10 @@ local function OnUnfreeze(inst)
 end
 
 local function ShouldSleep(inst)
-    if inst.num_targets_vomited >= TUNING.DRAGONFLY_VOMIT_TARGETS_FOR_SATISFIED and inst.arrivedatsleepdestination then
+    if ((inst.num_targets_vomited >= TUNING.DRAGONFLY_VOMIT_TARGETS_FOR_SATISFIED) or (inst.num_ashes_eaten >= TUNING.DRAGONFLY_ASH_EATEN_FOR_SATISFIED))
+    and inst.arrivedatsleepdestination then
         inst.num_targets_vomited = 0
+        inst.num_ashes_eaten = 0
         inst.sleep_time = GetTime()
         inst.arrivedatsleepdestination = false
         inst.components.locomotor.atdestfn = nil
@@ -298,7 +312,7 @@ local function fn(Sim)
     inst.playsleepsound = false
 
     inst:AddComponent("lootdropper")
-    inst.components.lootdropper:SetLoot(loot)
+    inst.components.lootdropper:SetChanceLootTable("dragonfly")
     
     inst:AddComponent("inspectable")
     inst.components.inspectable:RecordViews()

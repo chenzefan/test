@@ -86,7 +86,9 @@ local function MakeWorkable(inst, bool)
         inst.components.workable:SetOnFinishCallback(onhammered)
 
         inst.components.workable:SetOnWorkCallback(function(inst, worker) 
-            worker.components.combat:GetAttacked(inst, TUNING.MOOSE_EGG_DAMAGE, nil, "electric")
+            if worker.components.combat then
+                worker.components.combat:GetAttacked(inst, TUNING.MOOSE_EGG_DAMAGE, nil, "electric")
+            end
             if not inst.sg:HasStateTag("busy") then
                 inst.sg:GoToState("hit")
             end

@@ -37,11 +37,10 @@ local function fn()
     inst:AddComponent("inspectable")
     
     inst:AddComponent("inventoryitem")
-    inst.components.inventoryitem:ChangeImageName("armorbearger")
 
     inst:AddComponent("equippable")
     inst.components.equippable.equipslot = EQUIPSLOTS.BODY
-    inst.components.equippable.dapperness = TUNING.DAPPERNESS_SMALL
+    inst.components.equippable.dapperness = TUNING.DAPPERNESS_MED_LARGE
 
     inst:AddComponent("insulator")
     inst.components.insulator:SetInsulation(TUNING.INSULATION_LARGE)
@@ -50,6 +49,11 @@ local function fn()
     inst.components.fueled.fueltype = "USAGE"
     inst.components.fueled:InitializeFuelLevel(TUNING.BEARGERVEST_PERISHTIME)
     inst.components.fueled:SetDepletedFn(onperish)
+
+    -- Do something with fueled/ armor usage?
+    -- inst:AddComponent("armor")
+    -- inst.components.armor:InitCondition(TUNING.ARMOR_BEEHAT, TUNING.ARMOR_BEEHAT_ABSORPTION)
+    -- inst.components.armor:SetTags({"bee"})
     
     inst.components.equippable:SetOnEquip( onequip )
     inst.components.equippable:SetOnUnequip( onunequip )

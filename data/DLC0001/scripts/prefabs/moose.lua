@@ -10,11 +10,27 @@ local prefabs =
 {
     "mooseegg",
     "mossling",
+    "goose_feather",
 }
 
 local MOOSE_SCALE = 1.55
 
-local loot = {"meat", "meat", "meat", "meat", "meat", "meat", "meat", "meat", "featherfan"}
+SetSharedLootTable( 'moose',
+{
+    {'meat',             1.00},
+    {'meat',             1.00},
+    {'meat',             1.00},
+    {'meat',             1.00},
+    {'meat',             1.00},
+    {'meat',             1.00},
+    {'meat',             1.00},
+    {'meat',             1.00},
+    {'goose_feather',    1.00},
+    {'goose_feather',    1.00},
+    {'goose_feather',    1.00},
+    {'goose_feather',    0.33},
+    {'goose_feather',    0.33},
+})
 
 local BASE_TAGS = {"structure"}
 local SEE_STRUCTURE_DIST = 20
@@ -164,7 +180,7 @@ local function fn(Sim)
     ------------------------------------------
 
     inst:AddComponent("lootdropper")
-    inst.components.lootdropper:SetLoot(loot)
+    inst.components.lootdropper:SetChanceLootTable('moose')  
     
     ------------------------------------------
 

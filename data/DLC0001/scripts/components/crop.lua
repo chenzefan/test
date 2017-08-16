@@ -88,23 +88,23 @@ function Crop:Fertilize(fertilizer)
     if self.inst.components.burnable then
         self.inst.components.burnable:StopSmoldering()
     end
-	
-	if not (GetSeasonManager():IsWinter() and GetSeasonManager():GetCurrentTemperature() <= 0) then
-		self.growthpercent = self.growthpercent + fertilizer.components.fertilizer.fertilizervalue*self.rate
-		self.inst.AnimState:SetPercent("grow", self.growthpercent)
-		if self.growthpercent >=1 then
-			self.inst.AnimState:PlayAnimation("grow_pst")
-			self:Mature()
-			self.task:Cancel()
-			self.task = nil
-		end
+        
+    if not (GetSeasonManager():IsWinter() and GetSeasonManager():GetCurrentTemperature() <= 0) then
+        self.growthpercent = self.growthpercent + fertilizer.components.fertilizer.fertilizervalue*self.rate
+        self.inst.AnimState:SetPercent("grow", self.growthpercent)
+        if self.growthpercent >=1 then
+            self.inst.AnimState:PlayAnimation("grow_pst")
+            self:Mature()
+            self.task:Cancel()
+            self.task = nil
+        end
         if fertilizer.components.finiteuses then
             fertilizer.components.finiteuses:Use()
         else
             fertilizer.components.stackable:Get(1):Remove()
         end
-		return true
-	end    
+        return true
+    end    
 end
 
 function Crop:DoGrow(dt)

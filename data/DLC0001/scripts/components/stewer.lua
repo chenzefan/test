@@ -30,7 +30,7 @@ local function dostew(inst)
 		stewercmp.spoiltime = prep_perishtime * prod_spoil
 		stewercmp.spoiltargettime =  GetTime() + stewercmp.spoiltime
 		stewercmp.spoiltask = stewercmp.inst:DoTaskInTime(stewercmp.spoiltime, function(inst)
-			if inst.components.stewer.onspoil then
+			if inst.components.stewer and inst.components.stewer.onspoil then
 				inst.components.stewer.onspoil(inst)
 			end
 		end)
@@ -153,7 +153,7 @@ function Stewer:OnLoad(data)
 		self.spoiltargettime = data.spoiltime and GetTime() + data.spoiltime or nil
 		if self.spoiltargettime then
 			self.spoiltask = self.inst:DoTaskInTime(data.spoiltime, function(inst)
-				if inst.components.stewer.onspoil then
+				if inst.components.stewer and inst.components.stewer.onspoil then
 					inst.components.stewer.onspoil(inst)
 				end
 			end)
@@ -209,10 +209,16 @@ function Stewer:StopCooking(reason)
 		self.task:Cancel()
 		self.task = nil
 	end
+	if self.spoiltask then
+		self.spoiltask:Cancel()
+		self.spoiltask = nil
+	end
 	if self.product and reason and reason == "fire" then
 		local prod = SpawnPrefab(self.product)
-		prod.Transform:SetPosition(self.inst.Transform:GetWorldPosition())
-		prod:DoTaskInTime(0, function(prod) prod.Physics:Stop() end)
+		if prod then
+			prod.Transform:SetPosition(self.inst.Transform:GetWorldPosition())
+			prod:DoTaskInTime(0, function(prod) prod.Physics:Stop() end)
+		end
 	end
 	self.product = nil
 	self.targettime = nil

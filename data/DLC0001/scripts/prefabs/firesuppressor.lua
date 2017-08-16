@@ -1,6 +1,7 @@
 local assets = 
 {
 	Asset("ANIM", "anim/firefighter.zip"),
+	Asset("ANIM", "anim/firefighter_placement.zip"),
 	Asset("ANIM", "anim/firefighter_meter.zip"),
 
 }
@@ -333,4 +334,4 @@ end
 require "prefabutil"
 return Prefab("firesuppressor", fn, assets, prefabs), 
 Prefab("firesuppressorprojectile", projectile_fn, projectile_assets),
-MakePlacer( "common/firesuppressor_placer", "firefighter", "firefighter", "idle_off" )
+MakePlacer( "common/firesuppressor_placer", "firefighter_placement", "firefighter_placement", "idle", true, nil, nil, 1.55)

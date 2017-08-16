@@ -17,7 +17,7 @@ return {
 	ANNOUNCE_ADVENTUREFAIL = "Back to the Otherworld, victory shall be mine!",
 	ANNOUNCE_BEES = "Back wee speared creatures!",
 	ANNOUNCE_BOOMERANG = "Urg! I must master the curved weapon.",
-	ANNOUNCE_CHARLIE = "Show yourself!",
+	ANNOUNCE_CHARLIE = "给 我 现 身 ！ ",
 	ANNOUNCE_CHARLIE_ATTACK = "Coward!",
 	ANNOUNCE_COLD = "Brrr! Where are my furs!",
 	ANNOUNCE_HOT = "The hot sun tires me.",
@@ -176,7 +176,7 @@ return {
 		GEMSOCKET = 
 		{
 			VALID = "Ready!",
-			GEMS = "It's empty.",
+			GEMS = "它 是 空 的 ",
 		},
 		STAFFLIGHT = "Behold! A gift from Wotan!",
 	
@@ -196,15 +196,15 @@ return {
 		
 		COMPASS =
 		{
-			GENERIC="I can't get a reading.",
-			N = "North",
-			S = "South",
-			E = "East",
-			W = "West",
-			NE = "Northeast",
-			SE = "Southeast",
-			NW = "Northwest",
-			SW = "Southwest",
+			GENERIC="我 得 不 到 读 数 ",
+			N = "东 北 ",
+			S = "南 ",
+			E = "东 ",
+			W = "西 ",
+			NE = "东 北 east",
+			SE = "南 east",
+			NW = "东 北 west",
+			SW = "南 west",
 		},
 
 		NIGHTMARE_TIMEPIECE =
@@ -364,7 +364,7 @@ return {
 		BLUEGEM = "An icy blue sapphire.",
 		BLUEPRINT = "Oh, a map! No, wait. That's wrong.",
 		BLUE_CAP = "Hmm, a blue one.",
-		BLUE_CAP_COOKED = "I still don't want to eat it.",
+		BLUE_CAP_COOKED = "我 仍 然 不 想 吃 它 。",
 		BLUE_MUSHROOM =
 		{
 			GENERIC = "It's mold, really.",
@@ -372,7 +372,7 @@ return {
 			PICKED = "I hope it doesn't grow again.",
 		},
 		BOARDS = "Grandfather logs.",
-		BOAT = "Is that how I got here?",
+		BOAT = "我 就 是 那 样 到 这 里 来 的 吗 ？ ",
 		BONESHARD = "Bits of my enemies.",
 		BONESTEW = "Delicious!",
 		BUGNET = "To snatch insects from the air.",
@@ -463,10 +463,10 @@ return {
 		EYEBRELLA = "Don't get rain in your eye!",
 		DEPLETED_GRASS =
 		{
-			GENERIC = "It's probably a tuft of grass.",
+			GENERIC = "好 像 是 一 块 草 地 ",
 		},
-		DEVTOOL = "It smells of bacon!",
-		DEVTOOL_NODEV = "I'm not strong enough to wield it.",
+		DEVTOOL = "闻 起 来 像 培 根 一 样 ！ ",
+		DEVTOOL_NODEV = "我 还 不 够 强 壮 ， 无 法 挥 舞 它 。",
 		DIRTPILE = "A small hill of earth.",
 		DIVININGROD =
 		{
@@ -606,7 +606,7 @@ return {
 		GHOST = "A spirit trapped between worlds.",
 		GOLDENAXE = "A tool of gold!",
 		GOLDENPICKAXE = "Gold for gold.",
-		GOLDENPITCHFORK = "Why did I even make a pitchfork this fancy?",
+		GOLDENPITCHFORK = "我 干 嘛 把 干 草 叉 弄 这 么 花 哨 ？ ",
 		GOLDENSHOVEL = "Digging like a king!",
 		GOLDNUGGET = "I am pleased with this gold piece.",
 
@@ -722,7 +722,7 @@ return {
 			GENERIC = "A warrior tree.",
 		},
 		MAXWELL = "Arrg! Is that the antagonist to my saga?!",
-		MAXWELLHEAD = "I can see into his pores.",
+		MAXWELLHEAD = "我 可 以 看 穿 他 的 毛 孔 ",
 		MAXWELLLIGHT = "Dark magic lives here.",
 		MAXWELLLOCK = "Shall I unlock it?",
 		MAXWELLTHRONE = "I prefer to roam free, my unicorn and I.",
@@ -879,12 +879,12 @@ return {
 		RESEARCHLAB = 
 		{	
 			GENERIC = "I prefer battle to science.",
-			BURNT = "Ashes to ashes.",
+			BURNT = "尘 归 尘 ",
 		},
 		RESEARCHLAB2 = 
 		{
 			GENERIC = "Perhaps science can enhance my combat skills.",
-			BURNT = "Dust to dust.",
+			BURNT = "尘 归 尘 。",
 		},
 		RESEARCHLAB3 = 
 		{

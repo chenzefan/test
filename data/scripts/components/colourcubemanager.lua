@@ -59,7 +59,7 @@ local ColourCubeManager = Class(function(self, inst)
 
 end)
 
-function ColourCubeManager:StartBlend(time_to_take)
+function ColourCubeManager:StartBlend(time_to_take, cc)
 	
 	if self.override then
 		return

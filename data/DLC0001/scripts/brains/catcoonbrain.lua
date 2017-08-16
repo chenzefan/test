@@ -19,7 +19,7 @@ local MAX_CHASE_DIST = 10
 local AVOID_DIST = 3
 local AVOID_STOP = 10
 
-local NO_TAGS = {"FX", "NOCLICK", "DECOR","INLIMBO"}
+local NO_TAGS = {"FX", "NOCLICK", "DECOR","INLIMBO", "stump", "burnt"}
 local PLAY_TAGS = {"cattoy", "cattoyairborne", "catfood"}
 
 local function PlayAction(inst)
@@ -31,12 +31,16 @@ local function PlayAction(inst)
 
     if target and target:HasTag("cattoyairborne") and not (target.sg and (target.sg:HasStateTag("landing") or target.sg:HasStateTag("landed"))) then
         target:RemoveTag("cattoyairborne")
-        target:DoTaskInTime(30, function(targ) targ:AddTag("cattoyairborne") end)
+        target:DoTaskInTime(30, function(targ) 
+            if not targ:HasTag("cattoyairborne") and not targ:HasTag("stump") and not targ:HasTag("burnt") then 
+                targ:AddTag("cattoyairborne") 
+            end 
+        end)
         return BufferedAction(inst, target, ACTIONS.CATPLAYAIR)
     elseif target then
         local tag = target:HasTag("cattoy") and "cattoy" or "catfood"
         target:RemoveTag(tag)
-        target:DoTaskInTime(30, function(targ) targ:AddTag(tag) end)
+        target:DoTaskInTime(30, function(targ) if not targ:HasTag(tag) then targ:AddTag(tag) end end)
         return BufferedAction(inst, target, ACTIONS.CATPLAYGROUND)
     end
 end

@@ -945,6 +945,7 @@ function EntityScript:PerformBufferedAction()
         local success, reason = self.bufferedaction:Do()
 
         if  success then
+            self:PushEvent("actionsuccess", {action = self.bufferedaction})
             self.bufferedaction = nil   
             return true
         end
@@ -1201,7 +1202,6 @@ function EntityScript:GetPersistData()
         data.RuntimeComponents = {}
         for k,v in pairs(self.RuntimeComponents) do
             if v then
-                print("Saving ", v)
                 table.insert(data.RuntimeComponents, v)
             end
         end

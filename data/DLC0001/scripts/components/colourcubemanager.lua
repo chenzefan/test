@@ -143,18 +143,41 @@ function ColourCubeManager:GetDestColourCubes()
 	return cc, insanity_cc
 end
 
-function ColourCubeManager:SetOverrideColourCube(cc)
-	self.override = cc
-	
-	if self.override then
-		PostProcessor:SetColourCubeData( 0, cc, cc )
-		PostProcessor:SetColourCubeData( 1, cc, cc )
+function ColourCubeManager:SetOverrideColourCube(cc, blendtime)
+	if cc then
+		if blendtime then
+			self.total_transition_time = blendtime
+			self.transition_time_left = blendtime
+			
+			local old_cc = self.override or self.current_cc[0]
+			local old_sanity_cc = self.override or self.current_cc[1]
+
+			PostProcessor:SetColourCubeData( 0, old_cc, cc )
+			PostProcessor:SetColourCubeLerp( 0, 0 )
+			PostProcessor:SetColourCubeData( 1, old_sanity_cc, cc )
+		else
+			PostProcessor:SetColourCubeData( 0, cc, cc )
+			PostProcessor:SetColourCubeData( 1, cc, cc )
+		end
 	else
-		self.current_cc[0], self.current_cc[1] = self:GetDestColourCubes()
-		PostProcessor:SetColourCubeData( 0, self.current_cc[0], self.current_cc[0] )
-		PostProcessor:SetColourCubeData( 1, self.current_cc[1], self.current_cc[1] )
+		if blendtime then
+			self.total_transition_time = blendtime
+			self.transition_time_left = blendtime
+
+			local old_cc = self.override or self.current_cc[0]
+			local old_sanity_cc = self.override or self.current_cc[1]
+			self.current_cc[0], self.current_cc[1] = self:GetDestColourCubes()
+			PostProcessor:SetColourCubeData( 0, old_cc, self.current_cc[0] )
+			PostProcessor:SetColourCubeLerp( 0, 0 )
+			PostProcessor:SetColourCubeData( 1, old_sanity_cc, self.current_cc[1] )
+		else
+			self.current_cc[0], self.current_cc[1] = self:GetDestColourCubes()
+			PostProcessor:SetColourCubeData( 0, self.current_cc[0], self.current_cc[0] )
+			PostProcessor:SetColourCubeData( 1, self.current_cc[1], self.current_cc[1] )
+		end
 	end
 
+	self.override = cc
 end
 
 function ColourCubeManager:OnUpdate(dt)

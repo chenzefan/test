@@ -71,10 +71,16 @@ function Leader:AddFollower(follower)
 	end
 end
 
-function Leader:RemoveFollowersByTag(tag)
+function Leader:RemoveFollowersByTag(tag, validateremovefn)
     for k,v in pairs(self.followers) do
         if k:HasTag(tag) then
-            self:RemoveFollower(k)
+            if validateremovefn then
+                if validateremovefn(k) then
+                    self:RemoveFollower(k)
+                end
+            else
+                self:RemoveFollower(k)
+            end
         end
     end
 end
@@ -117,6 +123,7 @@ function Leader:LoadPostPass(newents, savedata)
         for k,v in pairs(savedata.followers) do
             local targ = newents[v]
             if targ and targ.entity.components.follower then
+                print(targ.entity)
                 self:AddFollower(targ.entity)
             end
         end

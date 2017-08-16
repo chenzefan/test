@@ -18,25 +18,23 @@ end
 local function onattackfn(inst)
     if inst.components.health and not inst.components.health:IsDead()
     and (inst.sg:HasStateTag("hit") or not inst.sg:HasStateTag("busy")) then
+        if not inst.CanGroundPound and not inst.components.timer:TimerExists("GroundPound") then
+            inst.components.timer:StartTimer("GroundPound", 10)
+        end
         -- Clear out the inventory if he got interrupted
         local target = inst.components.inventory:FindItem(function(item) return inst.components.eater:CanEat(item) end)
         while target do
             target:Remove()
             target = inst.components.inventory:FindItem(function(item) return inst.components.eater:CanEat(item) end)
         end
-        if inst.CanGroundPound then
+
+        if inst.sg:HasStateTag("running") then
             inst.sg:GoToState("pound")
         else
-            if not inst.components.timer:TimerExists("GroundPound") then
-                inst.components.timer:StartTimer("GroundPound", 10)
-            end
-            local tpos = Point(inst.components.combat.target.Transform:GetWorldPosition())
-            local pos = Point(inst.Transform:GetWorldPosition())
-            if distsq(tpos,pos) <= ((TUNING.BEARGER_MELEE_RANGE*1.3)*(TUNING.BEARGER_MELEE_RANGE*1.3)) then
+            if inst.CanGroundPound then
+                inst.sg:GoToState("pound")
+            else
                 inst.sg:GoToState("attack")
-            elseif inst.components.combat and inst.components.combat.laststartattacktime 
-            and ((GetTime() - inst.components.combat.laststartattacktime) >= TUNING.BEARGER_CHARGE_INTERVAL) then
-                inst.sg:GoToState("chargeattack")
             end
         end
     end
@@ -48,7 +46,7 @@ local function destroystuff(inst)
     local heading_angle = -(inst.Transform:GetRotation())
     for k,v in pairs(ents) do
         if v and v.components.workable and v.components.workable.workleft > 0 then
-            SpawnPrefab("collapse_small_fx").Transform:SetPosition(v:GetPosition():Get())        
+            SpawnPrefab("collapse_small").Transform:SetPosition(v:GetPosition():Get())        
             v.components.workable:Destroy(inst)
         end
     end
@@ -69,7 +67,7 @@ local actionhandlers =
 }
 local events=
 {
-    CommonHandlers.OnLocomote(false,true),
+    CommonHandlers.OnLocomote(true,true),
     CommonHandlers.OnSleep(),
     CommonHandlers.OnFreeze(),
     CommonHandlers.OnDeath(),
@@ -173,39 +171,31 @@ local states=
         
         onenter = function(inst)
             inst.Physics:Stop()
-            if inst.components.combat and inst.components.combat.target then
-                if inst:IsStandState("quad") then
-                    inst.AnimState:PlayAnimation("idle_loop", true)
-                else
-                    inst.AnimState:PlayAnimation("standing_idle", true)
-                end
-            else
-                if GoToStandState(inst, "quad") then
-                    inst.AnimState:PlayAnimation("idle_loop", true)
-                end
+            if GoToStandState(inst, "bi") then
+                inst.AnimState:PlayAnimation("idle_loop", true)
             end
         end,
 
         timeline=
         {
-            TimeEvent(14*FRAMES, function(inst) 
-                if inst:IsStandState("bi") and math.random() < .3 then
-                    -- Make sure he's not too noisy
-                    if ((GetTime() - inst.last_growl_time) > TUNING.BEARGER_GROWL_INTERVAL) then
-                        inst.last_growl_time = GetTime()
-                        inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/idle")
-                    end
-                end
-            end),
-            TimeEvent(22*FRAMES, function(inst)
-                if inst:IsStandState("quad") and math.random() < .3 then
-                    -- Make sure he's not too noisy
-                    if ((GetTime() - inst.last_growl_time) > TUNING.BEARGER_GROWL_INTERVAL) then
-                        inst.last_growl_time = GetTime()
-                        inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/idle")
-                    end
-                end
-            end),
+            -- TimeEvent(14*FRAMES, function(inst) 
+            --     if inst:IsStandState("bi") and math.random() < .3 then
+            --         -- Make sure he's not too noisy
+            --         if ((GetTime() - inst.last_growl_time) > TUNING.BEARGER_GROWL_INTERVAL) then
+            --             inst.last_growl_time = GetTime()
+            --             inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/idle")
+            --         end
+            --     end
+            -- end),
+            -- TimeEvent(22*FRAMES, function(inst)
+            --     if inst:IsStandState("quad") and math.random() < .3 then
+            --         -- Make sure he's not too noisy
+            --         if ((GetTime() - inst.last_growl_time) > TUNING.BEARGER_GROWL_INTERVAL) then
+            --             inst.last_growl_time = GetTime()
+            --             inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/idle")
+            --         end
+            --     end
+            -- end),
         },
     },
 
@@ -213,11 +203,11 @@ local states=
 
     State{
         name = "targetstolen",
-        tags = {"busy", "canrotate", "noproxgrowl"},
+        tags = {"busy", "canrotate"},
         
         onenter = function(inst)
             if GoToStandState(inst, "bi") then
-                inst.components.locomotor:StopMoving()
+                inst.Physics:Stop()
                 inst.AnimState:PlayAnimation("taunt")
             end
         end,
@@ -231,13 +221,13 @@ local states=
         
         events=
         {
-            EventHandler("animover", function(inst) inst.sg:GoToState("idle") end),
+            EventHandler("animover", function(inst) inst:ClearBufferedAction() inst.sg:GoToState("idle") end),
         },
     },
 
     State{
         name = "hit",
-        tags = {"hit", "busy", "noproxgrowl"},
+        tags = {"hit", "busy"},
         
         onenter = function(inst, cb)
             if inst.components.locomotor then
@@ -259,7 +249,7 @@ local states=
 
     State{
         name = "attack",
-        tags = {"attack", "busy", "canrotate", "noproxgrowl"},
+        tags = {"attack", "busy", "canrotate"},
         
         onenter = function(inst)
             if GoToStandState(inst, "bi") then
@@ -287,76 +277,8 @@ local states=
     },
 
     State{
-        name = "chargeattack",
-        tags = {"busy", "attack", "canrotate", "noproxgrowl"},
-        
-        onenter = function(inst)
-            if GoToStandState(inst, "bi") then
-                inst:FacePoint(inst.components.combat.target.Transform:GetWorldPosition())
-                inst.components.locomotor:StopMoving()
-                inst.AnimState:PlayAnimation("taunt")
-                inst.AnimState:PushAnimation("charge_pre", false)
-                inst.AnimState:PushAnimation("charge_roar_loop", false)
-                inst.AnimState:PushAnimation("charge_roar_loop", false)
-                inst.AnimState:PushAnimation("charge_pst", false)
-            end
-        end,
-
-        onupdate = function(inst)
-            if inst.charging then
-                inst.components.locomotor:RunForward()
-            else
-                inst.components.locomotor:StopMoving()
-            end
-        end,
-
-        onexit = function(inst)
-            inst.charging = false
-        end,
-        
-        timeline=
-        {
-            TimeEvent(8*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/taunt") end),
-            TimeEvent(9*FRAMES, function(inst) DoFootstep(inst) end),
-            TimeEvent(33*FRAMES, function(inst) 
-                inst.charging = true
-                inst.sg:AddStateTag("chargeattack") 
-                inst.sg:AddStateTag("running") 
-                DoFootstep(inst)
-                inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/swhoosh")
-            end),
-            TimeEvent(48*FRAMES, function(inst) 
-                DoFootstep(inst) 
-                inst.components.combat:DoAttack(nil, nil, nil, nil, .2) 
-                inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/swhoosh")
-            end),
-            TimeEvent(63*FRAMES, function(inst) 
-                DoFootstep(inst) 
-                inst.components.combat:DoAttack(nil, nil, nil, nil, .2) 
-                inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/swhoosh")
-            end),
-            TimeEvent(78*FRAMES, function(inst) 
-                DoFootstep(inst) 
-                inst.components.combat:DoAttack(nil, nil, nil, nil, .2) 
-                inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/swhoosh")
-            end),
-            TimeEvent(93*FRAMES, function(inst) 
-                DoFootstep(inst) 
-                inst.components.combat:DoAttack(nil, nil, nil, nil, .2) 
-                inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/swhoosh")
-            end),
-            TimeEvent(108*FRAMES, function(inst) inst.charging = false DoFootstep(inst) end),
-        },
-        
-        events=
-        {
-            EventHandler("animqueueover", function(inst) inst.sg:GoToState("idle") end),
-        },
-    },
-
-    State{
         name = "pound",
-        tags = {"attack", "busy", "canrotate", "noproxgrowl"},
+        tags = {"attack", "busy"},
         
         onenter = function(inst)
             if GoToStandState(inst, "bi") then
@@ -374,6 +296,9 @@ local states=
                 ShakeIfClose(inst)
                 inst.components.groundpounder:GroundPound()
                 inst.CanGroundPound = false
+                if not inst.components.timer:TimerExists("GroundPound") then
+                    inst.components.timer:StartTimer("GroundPound", 10)
+                end
                 inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/groundpound")
             end),
         },        
@@ -389,7 +314,7 @@ local states=
 
     State{
         name = "death",  
-        tags = {"busy", "noproxgrowl"},
+        tags = {"busy"},
         
         onenter = function(inst)
             if inst.components.locomotor then
@@ -544,18 +469,10 @@ local states=
             tags = {"moving", "canrotate"},
 
             onenter = function(inst) 
-                if inst.components.combat and inst.components.combat.target then
-                    if GoToStandState(inst, "bi") then
-                        inst.components.locomotor.walkspeed = TUNING.BEARGER_WALK_SPEED_AGRO
-                        inst.AnimState:PlayAnimation("charge_pre")
-                    end
-                else
-                    if GoToStandState(inst, "quad") then
-                        inst.components.locomotor.walkspeed = TUNING.BEARGER_WALK_SPEED
-                        inst.AnimState:PlayAnimation("walk_pre")
-                    end
+                local anim = inst.components.combat.target and "charge_pre" or "walk_pre"
+                if GoToStandState(inst, "bi") then
+                    inst.AnimState:PlayAnimation(anim)
                 end
-                --inst.components.locomotor:WalkForward()
             end,
 
             events =
@@ -564,20 +481,14 @@ local states=
             },
         },
         
-    State{
-            
+    State{            
             name = "walk",
             tags = {"moving", "canrotate"},
             
-            onenter = function(inst) 
-                if inst.components.combat and inst.components.combat.target then
-                    if GoToStandState(inst, "bi") then
-                        inst.AnimState:PlayAnimation("charge_loop")
-                    end
-                else
-                    if GoToStandState(inst, "quad") then
-                        inst.AnimState:PlayAnimation("walk_loop")
-                    end
+            onenter = function(inst)
+                local anim = inst.components.combat.target and "charge_loop" or "walk_loop"
+                if GoToStandState(inst, "bi") then
+                    inst.AnimState:PlayAnimation(anim)
                 end
                 inst.components.locomotor:WalkForward()
             end,
@@ -589,38 +500,39 @@ local states=
 
             timeline=
             {
-                TimeEvent(0*FRAMES, function(inst) DoFootstep(inst) end),
-                TimeEvent(16*FRAMES, function(inst) DoFootstep(inst) end),
+                TimeEvent(2*FRAMES, function(inst)
+                    if inst.components.combat.target then
+                        DoFootstep(inst) 
+                    end
+                end),
+                TimeEvent(18*FRAMES, function(inst)
+                    if inst.components.combat.target then
+                        DoFootstep(inst) 
+                    end
+                end),
+                TimeEvent(4*FRAMES, function(inst) 
+                    if not inst.components.combat.target then
+                        DoFootstep(inst) 
+                    end
+                end),
+                TimeEvent(30*FRAMES, function(inst) 
+                    if not inst.components.combat.target then
+                        DoFootstep(inst) 
+                    end
+                end),
             },
         },        
     
-    State{
-            
+    State{            
             name = "walk_stop",
             tags = {"canrotate"},
             
             onenter = function(inst) 
                 inst.components.locomotor:StopMoving()
+                local anim = inst.components.combat.target and "charge_pst" or "walk_pst"
                 DoFootstep(inst)
-
-                local should_softstop = false
-
-                if inst.components.combat and inst.components.combat.target then
-                    if GoToStandState(inst, "bi") then
-                        if should_softstop then
-                            inst.AnimState:PushAnimation("charge_pst")
-                        else
-                            inst.AnimState:PlayAnimation("charge_pst")
-                        end
-                    end
-                else
-                    if GoToStandState(inst, "quad") then
-                        if should_softstop then
-                            inst.AnimState:PushAnimation("walk_pst")
-                        else
-                            inst.AnimState:PlayAnimation("walk_pst")
-                        end
-                    end
+                if GoToStandState(inst, "bi") then
+                    inst.AnimState:PlayAnimation(anim)
                 end
             end,
 
@@ -630,82 +542,74 @@ local states=
             },
         },
 
-    -- State{
-    --         name = "run_start",
-    --         tags = {"moving", "canrotate", "running"},
+    State{
+            name = "run_start",
+            tags = {"moving", "running", "atk_pre", "canrotate"},
 
-    --         onenter = function(inst) 
-    --             if GoToStandState(inst, "bi") then
-    --                 inst.components.locomotor:RunForward()
-    --                 inst.AnimState:PlayAnimation("charge_pre")
-    --             end
-    --         end,
+            onenter = function(inst) 
+                if GoToStandState(inst, "bi") then
+                    inst.components.locomotor:RunForward()
+                    inst.AnimState:PlayAnimation("charge_pre")
+                end
+            end,
 
-    --         events =
-    --         {   
-    --             EventHandler("animqueueover", function(inst) inst.sg:GoToState("run") end ),        
-    --         },
-    --     },
+            events =
+            {   
+                EventHandler("animqueueover", function(inst) inst.sg:GoToState("run") end ),        
+            },
+        },
         
-    -- State{
+    State{
             
-    --         name = "run",
-    --         tags = {"moving", "canrotate", "running"},
+            name = "run",
+            tags = {"moving", "running", "canrotate"},
             
-    --         onenter = function(inst) 
-    --             inst.components.locomotor:RunForward()
-    --             local anim = "charge_loop"
-    --             if inst.components.combat.target and math.random() > 0.9 then
-    --                 anim = "charge_roar_loop"
-    --                 inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/taunt")
-    --             end
-    --             inst.AnimState:PlayAnimation(anim)
-    --         end,
+            onenter = function(inst) 
+                inst.components.locomotor:RunForward()
+                inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/taunt")
+                inst.AnimState:PlayAnimation("charge_roar_loop")
+            end,
 
-    --         timeline=
-    --         {
-    --             TimeEvent(4*FRAMES, function(inst)
-    --                 DoFootstep(inst)
-    --             end),
-    --             TimeEvent(5*FRAMES, function(inst)
-    --                 destroystuff(inst)
-    --             end),
-    --             TimeEvent(15*FRAMES, function(inst)
-    --                 destroystuff(inst)
-    --             end),
-    --             TimeEvent(17*FRAMES, function(inst)
-    --                 DoFootstep(inst)
-    --             end),
-    --         },   
+            timeline=
+            {
+                TimeEvent(3*FRAMES, function(inst)
+                    DoFootstep(inst)
+                    destroystuff(inst)
+                end),
+                TimeEvent(11*FRAMES, function(inst)
+                    DoFootstep(inst)
+                    destroystuff(inst)
+                end),
+            },   
 
-    --         events=
-    --         {   
-    --             EventHandler("animqueueover", function(inst) inst.sg:GoToState("run") end ),        
-    --         },
-    --     },        
+            events=
+            {   
+                EventHandler("animqueueover", function(inst) inst.sg:GoToState("run") end ),        
+            },
+        },        
     
-    -- State{
+    State{
             
-    --         name = "run_stop",
-    --         tags = {"canrotate"},
+            name = "run_stop",
+            tags = {"canrotate"},
             
-    --         onenter = function(inst) 
-    --             inst.components.locomotor:StopMoving()
-    --             local should_softstop = false
-    --             inst.AnimState:PlayAnimation("charge_pst")          
-    --         end,
+            onenter = function(inst) 
+                inst.components.locomotor:StopMoving()
+                local should_softstop = false
+                inst.AnimState:PlayAnimation("charge_pst")          
+            end,
 
-    --         events=
-    --         {   
-    --             EventHandler("animover", function(inst) inst.sg:GoToState("idle") end ),        
-    --         },
-    --     },
+            events=
+            {   
+                EventHandler("animover", function(inst) inst.sg:GoToState("idle") end ),        
+            },
+        },
 
 ------------------SLEEPING-----------------
 
         State{
             name = "sleep",
-            tags = {"busy", "sleeping", "noproxgrowl"},
+            tags = {"busy", "sleeping"},
             
             onenter = function(inst) 
                 inst.components.locomotor:StopMoving()
@@ -737,7 +641,7 @@ local states=
         State{
             
             name = "sleeping",
-            tags = {"busy", "sleeping", "noproxgrowl"},
+            tags = {"busy", "sleeping"},
             
             onenter = function(inst) 
                 inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/sleep")
@@ -772,7 +676,7 @@ local states=
 
             timeline=
             {
-                TimeEvent(27*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/hurt") end),
+                TimeEvent(27*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/taunt_short") end),
             },
         },      
 }

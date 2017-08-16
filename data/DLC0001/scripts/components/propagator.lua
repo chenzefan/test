@@ -124,7 +124,7 @@ function Propagator:OnUpdate(dt)
         end
     end
         
-    if not self.spreading and not (self.inst.components.heater and self.instcomponents.heater.iscooler) then
+    if not self.spreading and not (self.inst.components.heater and self.inst.components.heater.iscooler) then
         local pos = Vector3(self.inst.Transform:GetWorldPosition())
         local ents = TheSim:FindEntities(pos.x, pos.y, pos.z, self.propagaterange, {"frozen", "firemelt"})
         if #ents > 0 then

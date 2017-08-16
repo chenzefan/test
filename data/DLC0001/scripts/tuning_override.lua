@@ -50,10 +50,12 @@ local TUNING_OVERRIDES =
 										basehassler:OverrideAttacksPerSeason("DEERCLOPS", 1)
 										basehassler:OverrideAttackDuringOffSeason("DEERCLOPS", false)
 										basehassler:OverrideAttackChance("DEERCLOPS", 1.1)
+										basehassler:OverrideMinSpawnDay("DEERCLOPS", nil)
 									elseif difficulty == "always" then
 										basehassler:OverrideAttacksPerSeason("DEERCLOPS", 1)
 										basehassler:OverrideAttackDuringOffSeason("DEERCLOPS", true)
 										basehassler:OverrideAttackChance("DEERCLOPS", 1.1)
+										basehassler:OverrideMinSpawnDay("DEERCLOPS", nil)
 									end
 								end
 							end,
@@ -74,10 +76,12 @@ local TUNING_OVERRIDES =
 										basehassler:OverrideAttacksPerSeason("BEARGER", 1)
 										basehassler:OverrideAttackDuringOffSeason("BEARGER", false)
 										basehassler:OverrideAttackChance("BEARGER", 1.1)
+										basehassler:OverrideMinSpawnDay("BEARGER", nil)
 									elseif difficulty == "always" then
 										basehassler:OverrideAttacksPerSeason("BEARGER", 1)
 										basehassler:OverrideAttackDuringOffSeason("BEARGER", true)
 										basehassler:OverrideAttackChance("BEARGER", 1.1)
+										basehassler:OverrideMinSpawnDay("BEARGER", nil)
 									end
 								end
 							end,
@@ -98,10 +102,12 @@ local TUNING_OVERRIDES =
 										basehassler:OverrideAttacksPerSeason("GOOSEMOOSE", 1)
 										basehassler:OverrideAttackDuringOffSeason("GOOSEMOOSE", false)
 										basehassler:OverrideAttackChance("GOOSEMOOSE", 1.1)
+										basehassler:OverrideMinSpawnDay("GOOSEMOOSE", nil)
 									elseif difficulty == "always" then
 										basehassler:OverrideAttacksPerSeason("GOOSEMOOSE", 1)
 										basehassler:OverrideAttackDuringOffSeason("GOOSEMOOSE", true)
 										basehassler:OverrideAttackChance("GOOSEMOOSE", 1.1)
+										basehassler:OverrideMinSpawnDay("GOOSEMOOSE", nil)
 									end
 								end
 							end,
@@ -122,10 +128,12 @@ local TUNING_OVERRIDES =
 										basehassler:OverrideAttacksPerSeason("DRAGONFLY", 1)
 										basehassler:OverrideAttackDuringOffSeason("DRAGONFLY", false)
 										basehassler:OverrideAttackChance("DRAGONFLY", 1.1)
+										basehassler:OverrideMinSpawnDay("DRAGONFLY", nil)
 									elseif difficulty == "always" then
 										basehassler:OverrideAttacksPerSeason("DRAGONFLY", 1)
 										basehassler:OverrideAttackDuringOffSeason("DRAGONFLY", true)
 										basehassler:OverrideAttackChance("DRAGONFLY", 1.1)
+										basehassler:OverrideMinSpawnDay("DRAGONFLY", nil)
 									end
 								end
 							end,
@@ -145,8 +153,8 @@ local TUNING_OVERRIDES =
 					doit = 	function(difficulty)
 						local tuning_vars = {
 								["never"] =  {DECID_TREE_MONSTER_CHANCE = -1},
-								["rare"] = 	 {DECID_TREE_MONSTER_CHANCE = .25},
-								["often"] =  {DECID_TREE_MONSTER_CHANCE = .75},
+								["rare"] = 	 {DECID_TREE_MONSTER_CHANCE = .125},
+								["often"] =  {DECID_TREE_MONSTER_CHANCE = .5},
 								["always"] = {DECID_TREE_MONSTER_CHANCE = 1},
 							}
 						OverrideTuningVariables(tuning_vars[difficulty])

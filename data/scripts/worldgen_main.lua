@@ -44,8 +44,7 @@ end
 
 require("simutil")
 
--- THE FOLLOWING IS BROKEN - You cannot get to TheSim from world gen thread.
---require("dlcsupport")
+require("dlcsupport_worldgen")
 
 require("strict")
 require("debugprint")
@@ -618,6 +617,8 @@ local function LoadParametersAndGenerate(debug)
     if 	parameters.world_gen_choices == nil then
 		parameters.world_gen_choices = {}
     end
+	SetDLCEnabled(parameters.DLCEnabled)
+
 	return GenerateNew(debug, parameters)-- parameters.worldgen_type, parameters.level_type, parameters.current_level, parameters.world_gen_choices)
 end
 

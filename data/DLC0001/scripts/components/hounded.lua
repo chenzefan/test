@@ -46,7 +46,7 @@ function Hounded:SummonHound()
 		local prefab = "hound"
 		local special_hound_chance = self:GetSpecialHoundChance()
 		if math.random() < special_hound_chance then
-		    if GetSeasonManager():IsWinter() then
+		    if GetSeasonManager():IsWinter() or GetSeasonManager():IsSpring() then
 		        prefab = "icehound"
 		    else
 			    prefab = "firehound"

@@ -48,7 +48,7 @@ function BaseHassler:AddHassler(name, data)
 	t.spawnconditionsfn = data.spawnconditionsfn --Must return true for hassler to spawn
 	t.spawnposfn = data.spawnposfn --Custom spawn position logic
 	t.onspawnfn = data.onspawnfn --On spawn callback
-	t.validtimefn = data.validtimefn --If defined, is checked @ the "seasonChange" event. Must return true for hassler to become active. 
+	t.minspawnday = data.minspawnday
 	--
 
 	t.timer = 0
@@ -94,11 +94,10 @@ function BaseHassler:DoSeasonChange(data)
 	end
 	
 	for k,v in pairs(self.hasslers) do
-
 		local validtime = true
 
-		if v.validtimefn then
-			validtime = v.validtimefn()
+		if v.minspawnday then
+			validtime = GetClock():GetNumCycles() >= v.minspawnday
 		end
 
 		if (v.activeseason == currentseason or v.attackduringoffseason) and not v.done_for_season and validtime then
@@ -144,6 +143,11 @@ end
 function BaseHassler:OverrideAttackChance(name, chance)
 	local h = self.hasslers[name]
 	h.chance = chance
+end
+
+function BaseHassler:OverrideMinSpawnDay(name, day)
+	local h = self.hasslers[name]
+	h.minspawnday = day
 end
 
 ----STATE MANAGEMENT----

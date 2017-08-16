@@ -124,7 +124,7 @@ return {
 		EEL = "Fresh water-snake.",
 		EEL_COOKED = "We could slurp this down.",
 		UNAGI = "It was easy to make with all our arms.",
-		EYETURRET = "Stop looking at me!",
+		EYETURRET = "别 老 看 着 我 ！ ",
 		EYETURRET_ITEM = "Wakey wakey!",
 		MINOTAURHORN = "It's quite tender.",
 		MINOTAURCHEST = "What a big treasure box!",
@@ -197,15 +197,15 @@ return {
 		
 		COMPASS =
 		{
-			GENERIC="I can't get a reading.",
-			N = "North",
-			S = "South",
-			E = "East",
-			W = "West",
-			NE = "Northeast",
-			SE = "Southeast",
-			NW = "Northwest",
-			SW = "Southwest",
+			GENERIC="我 得 不 到 读 数 ",
+			N = "东 北 ",
+			S = "南 ",
+			E = "东 ",
+			W = "西 ",
+			NE = "东 北 east",
+			SE = "南 east",
+			NW = "东 北 west",
+			SW = "南 west",
 		},
 
 		NIGHTMARE_TIMEPIECE =
@@ -224,7 +224,7 @@ return {
 		BAT="Screechy mean guy!",
 		BATBAT = "Flap that bat like you were born to do it.",
 		BATWING="This thing drives me batty.",
-		BATWING_COOKED="Tastes like chicken.",
+		BATWING_COOKED="尝 起 来 像 鸡 肉 ",
 		BEDROLL_FURRY="I miss being able to properly feel a nice bedroll.",
 		BUNNYMAN="Hop along, bunny.",
 		FLOWER_CAVE="Oooh, a glowing ball of flower!",
@@ -480,7 +480,7 @@ return {
 		{
 			GENERIC = "It's a mystery.",
 			READY = "Looks like there's a hole for an oversized key.",
-			UNLOCKED = "It's ready to go.",
+			UNLOCKED = "已 经 准 备 好 出 发 了 。",
 		},
 		DIVININGRODSTART = "Radical rod!",
 		DRAGONFLY = "Oh don't you just drag on.",
@@ -633,7 +633,7 @@ return {
 		{
 			FROZEN = "It's cold to the touch.",
 			COLD = "It's getting chilly.",
-			GENERIC = "It's a rock.",
+			GENERIC = "这 是 一 块 石 头 ",
 			WARM = "It's getting hot!",
 			HOT = "It's hot to the touch!",
 		},
@@ -642,7 +642,7 @@ return {
 			GENERIC = "We could write on that if only we had a pen!",
 			BURNT = "The lettering burnt off.",
 		},
-		HONEY = "Sticky and sweet.",
+		HONEY = "又 甜 又 有 粘 性 。",
 		HONEYCOMB = "Honey pods!",
 		HORN = "If this makes the mating call we're in trouble.",
 		HOUND = "That's an angry puppy!",
@@ -785,7 +785,7 @@ return {
 		PIGHEAD = 
 		{	
 			GENERIC = "We just wanted to be friends.",
-			BURNT = "Gross.",
+			BURNT = "真 恶 心 ， 全 是 毛 发 ",
 		},
 		PIGHOUSE =
 		{
@@ -826,7 +826,7 @@ return {
 		POOP = "Doodoo.",
 		FERTILIZER = "I saw mum use this in her gardens.",
 		PUMPKIN = "That's a huge pumpkin!",
-		PUMPKINCOOKIE = "Yum!",
+		PUMPKINCOOKIE = "好 吃 ！ ",
 		PUMPKIN_COOKED = "It's all warm now.",
 		PUMPKIN_LANTERN = "Just like we used to make at home!",
 		PUMPKIN_SEEDS = "We could grow something with these.",
@@ -852,7 +852,7 @@ return {
 		RATATOUILLE = "We are accomplished chefs!",
 		RAZOR = "I watched my father use one of these.",
 		REDGEM = "It feels warm even on the coldest nights.",
-		RED_CAP = "It smells funny.",
+		RED_CAP = "闻 起 来 不 错 ",
 		RED_CAP_COOKED = "It smells better now.",
 		RED_MUSHROOM =
 		{
@@ -921,7 +921,7 @@ return {
 		ROCKS = "None of these look like they would skip well.",
         ROOK = "Who made these things!?",
 		ROPE = "We could tie stuff up with this.",
-		ROTTENEGG = "Ew!",
+		ROTTENEGG = "额 ！ 臭 死 了 ！ ",
 		SANITYROCK =
 		{
 			ACTIVE = "It's in our way.",
@@ -959,7 +959,7 @@ return {
 		SPIDERDEN = "Looks cozy in there.",
 		SPIDEREGGSACK = "A portable friendship pod!",
 		SPIDERGLAND = "This might sooth our cuts.",
-		SPIDERHAT = "What have I done?",
+		SPIDERHAT = "我 做 了 些 什 么 ？ ",
 		SPIDERQUEEN = "Mommy-Longlegs?",
 		SPIDER_WARRIOR =
 		{
@@ -976,7 +976,7 @@ return {
 		TAFFY = "We are accomplished chefs!",
 		TALLBIRD = "Look at those legs!",
 		TALLBIRDEGG = "Did I hear a meep?",
-		TALLBIRDEGG_COOKED = "Smells great!",
+		TALLBIRDEGG_COOKED = "闻 起 来 真 香 ！ ",
 		TALLBIRDEGG_CRACKED =
 		{
 			COLD = "It's shivering!",
@@ -1032,7 +1032,7 @@ return {
 		TENTACLESPIKE = "We could hit stuff with the pointy bits!",
 		TENTACLESPOTS = "Spotty!",
 		TENTACLE_PILLAR = "It's huge!",
-		TENTACLE_PILLAR_ARM = ".",
+		TENTACLE_PILLAR_ARM = "……",
 		TENTACLE_GARDEN = "It's huge!",
 		TOPHAT = "Like father used to wear.",
 		TORCH = "This should keep us safe.",
@@ -1125,11 +1125,11 @@ return {
 		LIVINGTREE = "Hello, Mr. Tree!",
 		ICESTAFF = "It makes me feel funny.",
 	},
-	DESCRIBE_GENERIC = "It's a... thing.",
-	DESCRIBE_TOODARK = "It's too dark to see!",
+	DESCRIBE_GENERIC = "它 是 某 种 ……东 西 ",
+	DESCRIBE_TOODARK = "太 暗 了 ， 看 不 清 ！ ",
 	DESCRIBE_SMOLDERING = "That thing is about to catch fire.",
 	EAT_FOOD =
 	{
-		TALLBIRDEGG_CRACKED = "Mmm. Beaky.",
+		TALLBIRDEGG_CRACKED = "嗯 ……扁 嘴 巴 ",
 	},
 }

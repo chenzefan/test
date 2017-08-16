@@ -108,6 +108,7 @@ local function MakePlayerCharacter(name, customprefabs, customassets, customfn, 
         Asset("ANIM", "anim/player_frozen.zip"),
         Asset("ANIM", "anim/player_shock.zip"),
         Asset("ANIM", "anim/shock_fx.zip"),
+        Asset("ANIM", "anim/player_tornado.zip"),
 
 		Asset("ANIM", "anim/shadow_hands.zip"),
 

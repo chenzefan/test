@@ -50,34 +50,31 @@ local states=
         tags = {"idle", "busy", "eat"},
         
         onenter = function(inst)
-            inst.Physics:Stop()
-            inst.AnimState:PlayAnimation("land")
-            inst.AnimState:PushAnimation("takeoff", false)
+            if inst.ashes then 
+                inst.Physics:Stop()
+                inst.AnimState:PlayAnimation("eat")
+                inst.last_spit_time = GetTime() -- treat this as a spit so he doesn't go directly to a spit
+                if inst.ashes then 
+                    inst.num_ashes_eaten = inst.num_ashes_eaten + (inst.ashes.components.stackable and inst.ashes.components.stackable:StackSize() or 1)
+                    inst.ashes:VacuumUp()
+                end
+            else
+                inst.sg:GoToState("idle")
+            end
+        end,
+
+        onexit = function(inst)
+            inst:ClearBufferedAction()
         end,
 
         events=
         {
-            EventHandler("animqueueover", function(inst) inst.sg:GoToState("idle") end),
+            EventHandler("animover", function(inst) inst.sg:GoToState("idle") end),
         },
 
         timeline=
         {
-            TimeEvent(14*FRAMES, function(inst) inst.SoundEmitter:KillSound("flying") end),
-            TimeEvent(16*FRAMES, function(inst) 
-                    inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/dragonfly/blink") 
-                    inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/dragonfly/land")
-            end),
-            TimeEvent(23*FRAMES, function(inst) 
-                if inst.ashes then
-                    inst.num_ashes_eaten = inst.num_ashes_eaten + (inst.ashes.components.stackable and inst.ashes.components.stackable:StackSize() or 1)
-                    inst.ashes:Remove() 
-                    inst.ashes = nil
-                    inst:ClearBufferedAction()
-                end
-            end),
-            TimeEvent(25*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/dragonfly/blink") end),
-            TimeEvent(29*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/dragonfly/fly", "flying") end),
-
+            TimeEvent(34*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/dragonfly/blink") end),
         },
     },
 

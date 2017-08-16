@@ -333,19 +333,11 @@ ACTIONS.FERTILIZE.fn = function(act)
         if act.target.components.crop:Fertilize(obj) then
 			return true
 		else
-            if obj.components.finiteuses then
-                obj.components.finiteuses:SetUses(obj.components.finiteuses:GetUses() + 1)
-            else
-                act.doer.components.inventory:GiveItem(obj)
-            end            
 			return false
 		end
     elseif act.target.components.grower and act.target.components.grower:IsEmpty() and act.invobject and act.invobject.components.fertilizer then
-		
         local obj = act.invobject
-
         act.target.components.grower:Fertilize(obj)
-
 	elseif act.target.components.pickable and act.target.components.pickable:CanBeFertilized() and act.invobject and act.invobject.components.fertilizer then
         local obj = act.invobject
         act.target.components.pickable:Fertilize(obj)
@@ -914,6 +906,14 @@ ACTIONS.TAKEITEM.fn = function(act)
     if act.target and act.target.components.shelf and act.target.components.shelf.cantakeitem then
         act.target.components.shelf:TakeItem(act.doer)
         return true
+    end
+end
+
+ACTIONS.CASTSPELL.strfn = function(act)
+    local targ = act.invobject
+    
+    if targ and targ.components.spellcaster then
+        return targ.components.spellcaster.actiontype
     end
 end
 

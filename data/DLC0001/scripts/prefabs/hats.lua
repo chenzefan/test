@@ -15,6 +15,15 @@ function MakeHat(name)
         table.insert(assets, Asset("ANIM", "anim/hat_miner_off.zip"))
     end
 
+    if name == "mole" then
+        table.insert(assets, Asset("IMAGE", "images/colour_cubes/mole_vision_on_cc.tex"))
+        table.insert(assets, Asset("IMAGE", "images/colour_cubes/mole_vision_off_cc.tex"))
+    end
+
+    local function generic_perish(inst)
+        inst:Remove()
+    end
+
     local function onequip(inst, owner, fname_override)
         local build = fname_override or fname
         owner.AnimState:OverrideSymbol("swap_hat", build, "swap_hat")
@@ -24,13 +33,13 @@ function MakeHat(name)
         owner.AnimState:Hide("HAIR")
         
         if owner:HasTag("player") then
-			owner.AnimState:Hide("HEAD")
-			owner.AnimState:Show("HEAD_HAIR")
-		end
+            owner.AnimState:Hide("HEAD")
+            owner.AnimState:Show("HEAD_HAIR")
+        end
         
-		if inst.components.fueled then
-			inst.components.fueled:StartConsuming()        
-		end
+        if inst.components.fueled then
+            inst.components.fueled:StartConsuming()        
+        end
     end
 
     local function onunequip(inst, owner)
@@ -39,14 +48,14 @@ function MakeHat(name)
         owner.AnimState:Show("HAIR_NOHAT")
         owner.AnimState:Show("HAIR")
 
-		if owner:HasTag("player") then
-	        owner.AnimState:Show("HEAD")
-			owner.AnimState:Hide("HEAD_HAIR")
-		end
+        if owner:HasTag("player") then
+            owner.AnimState:Show("HEAD")
+            owner.AnimState:Hide("HEAD_HAIR")
+        end
 
-		if inst.components.fueled then
-			inst.components.fueled:StopConsuming()        
-		end
+        if inst.components.fueled then
+            inst.components.fueled:StopConsuming()        
+        end
     end
     
     local function opentop_onequip(inst, owner)
@@ -59,9 +68,9 @@ function MakeHat(name)
         owner.AnimState:Show("HEAD")
         owner.AnimState:Hide("HEAD_HAIR")
 
-		if inst.components.fueled then
-			inst.components.fueled:StartConsuming()        
-		end
+        if inst.components.fueled then
+            inst.components.fueled:StartConsuming()        
+        end
     end
 
 
@@ -102,23 +111,25 @@ function MakeHat(name)
         inst.components.insulator:SetSummer()
         inst.components.insulator:SetInsulation(TUNING.INSULATION_SMALL)
 
+        inst:AddComponent("fueled")
+        inst.components.fueled.fueltype = "USAGE"
+        inst.components.fueled:InitializeFuelLevel(TUNING.STRAWHAT_PERISHTIME)
+        inst.components.fueled:SetDepletedFn(generic_perish)
+
         return inst
     end
 
     local function bee()
         local inst = simple()
-		inst:AddComponent("armor")
-		inst.components.armor:InitCondition(TUNING.ARMOR_BEEHAT, TUNING.ARMOR_BEEHAT_ABSORPTION)
-		inst.components.armor:SetTags({"bee"})
+        inst:AddComponent("armor")
+        inst.components.armor:InitCondition(TUNING.ARMOR_BEEHAT, TUNING.ARMOR_BEEHAT_ABSORPTION)
+        inst.components.armor:SetTags({"bee"})
         inst:AddComponent("waterproofer")
         inst.components.waterproofer:SetEffectiveness(TUNING.WATERPROOFNESS_SMALL)
-		return inst
+        return inst
     end
    
    
-    local function generic_perish(inst)
-        inst:Remove()
-    end
    
     local function earmuffs()
         local inst = simple()
@@ -408,14 +419,25 @@ function MakeHat(name)
             
             if not owner:HasTag("spiderwhisperer") then --Webber has to stay a monster.
                 owner:RemoveTag("monster")
+
+                for k,v in pairs(owner.components.leader.followers) do
+                    if k:HasTag("spider") and k.components.combat then
+                        k.components.combat:SuggestTarget(owner)
+                    end
+                end
+                owner.components.leader:RemoveFollowersByTag("spider")
+            else
+                owner.components.leader:RemoveFollowersByTag("spider", function(follower)
+                    if follower and follower.components.follower then
+                        if follower.components.follower:GetLoyaltyPercent() > 0 then
+                            return false
+                        else
+                            return true
+                        end
+                    end
+                end)
             end
 
-            for k,v in pairs(owner.components.leader.followers) do
-                if k:HasTag("spider") and k.components.combat then
-                    k.components.combat:SuggestTarget(owner)
-                end
-            end
-            owner.components.leader:RemoveFollowersByTag("spider")
         end
     end
     local function spider_update(inst)
@@ -622,14 +644,66 @@ function MakeHat(name)
         return inst
     end
 
+    local function mole_onequip(inst, owner)
+        --opentop_onequip(inst, owner)
+		onequip(inst, owner)
+        if GetClock() and GetWorld() and GetWorld().components.colourcubemanager then
+            GetClock():SetNightVision(true)
+            if GetClock():IsDay() and not GetWorld():IsCave() then
+                GetWorld().components.colourcubemanager:SetOverrideColourCube("images/colour_cubes/mole_vision_off_cc.tex", .25)
+            else -- Dusk and Night
+                GetWorld().components.colourcubemanager:SetOverrideColourCube("images/colour_cubes/mole_vision_on_cc.tex", .25)
+            end
+        end
+    end
+
+    local function mole_onunequip(inst, owner)
+        onunequip(inst, owner)
+        if GetClock() then
+            GetClock():SetNightVision(false)
+        end
+        if GetWorld() and GetWorld().components.colourcubemanager then
+            GetWorld().components.colourcubemanager:SetOverrideColourCube(nil, .5)
+        end
+    end
+
+    local function mole_perish(inst)
+        if inst.components.equippable and inst.components.equippable:IsEquipped() then
+            if GetClock() then
+                GetClock():SetNightVision(false)
+            end
+            if GetWorld() and GetWorld().components.colourcubemanager then
+                GetWorld().components.colourcubemanager:SetOverrideColourCube(nil, .5)
+            end
+        end
+        generic_perish(inst)
+    end
+
     local function mole()
         local inst = simple()
-        inst.components.equippable:SetOnEquip( opentop_onequip )
+        inst.components.equippable:SetOnEquip( mole_onequip )
+        inst.components.equippable:SetOnUnequip( mole_onunequip )
 
         inst:AddComponent("fueled")
         inst.components.fueled.fueltype = "USAGE"
         inst.components.fueled:InitializeFuelLevel(TUNING.MOLEHAT_PERISHTIME)
-        inst.components.fueled:SetDepletedFn(generic_perish)
+        inst.components.fueled:SetDepletedFn( mole_perish )
+
+        inst:ListenForEvent("daytime", function(it)
+            if inst.components.equippable and inst.components.equippable:IsEquipped() and not GetWorld():IsCave() then
+                GetWorld().components.colourcubemanager:SetOverrideColourCube("images/colour_cubes/mole_vision_off_cc.tex", 2)
+            end
+        end, GetWorld())
+        inst:ListenForEvent("dusktime", function(it)
+            if inst.components.equippable and inst.components.equippable:IsEquipped() then
+                GetWorld().components.colourcubemanager:SetOverrideColourCube("images/colour_cubes/mole_vision_on_cc.tex", 2)
+            end
+        end, GetWorld())
+        inst:ListenForEvent("nighttime", function(it)
+            if inst.components.equippable and inst.components.equippable:IsEquipped() then
+                GetWorld().components.colourcubemanager:SetOverrideColourCube("images/colour_cubes/mole_vision_on_cc.tex", 2)
+            end
+        end, GetWorld())
 
         return inst
     end
@@ -649,6 +723,66 @@ function MakeHat(name)
         return inst
     end
 
+    local function eyebrella_updatesound(inst)
+        local soundShouldPlay = GetSeasonManager():IsRaining() and inst.components.equippable:IsEquipped()
+        if soundShouldPlay ~= inst.SoundEmitter:PlayingSound("umbrellarainsound") then
+            if soundShouldPlay then
+                inst.SoundEmitter:PlaySound("dontstarve/rain/rain_on_umbrella", "umbrellarainsound") 
+            else
+                inst.SoundEmitter:KillSound("umbrellarainsound")
+            end
+        end
+    end  
+        
+    local function eyebrella_onequip(inst, owner) 
+        opentop_onequip(inst, owner)
+        eyebrella_updatesound(inst)
+        
+        owner.DynamicShadow:SetSize(2.2, 1.4)
+    end
+
+    local function eyebrella_onunequip(inst, owner) 
+        onunequip(inst, owner)
+        eyebrella_updatesound(inst)
+
+        owner.DynamicShadow:SetSize(1.3, 0.6)
+    end
+    
+    local function eyebrella_perish(inst)
+        inst.SoundEmitter:KillSound("umbrellarainsound")
+        owner.DynamicShadow:SetSize(1.3, 0.6)
+        generic_perish(inst)
+    end
+
+    local function eyebrella()
+        local inst = simple()
+
+        inst.entity:AddSoundEmitter()
+
+        inst:AddComponent("fueled")
+        inst.components.fueled.fueltype = "USAGE"
+        inst.components.fueled:InitializeFuelLevel(TUNING.EYEBRELLA_PERISHTIME)
+        inst.components.fueled:SetDepletedFn( eyebrella_perish )
+
+        inst.components.equippable:SetOnEquip( eyebrella_onequip )
+        inst.components.equippable:SetOnUnequip( eyebrella_onunequip )
+
+        inst:AddComponent("waterproofer")
+        inst.components.waterproofer:SetEffectiveness(TUNING.WATERPROOFNESS_ABSOLUTE)
+
+        inst:AddComponent("insulator")
+        inst.components.insulator:SetInsulation(TUNING.INSULATION_LARGE)
+        inst.components.insulator:SetSummer()
+        
+        inst.components.equippable.insulated = true
+
+
+        inst:ListenForEvent("rainstop", function() eyebrella_updatesound(inst) end, GetWorld()) 
+        inst:ListenForEvent("rainstart", function() eyebrella_updatesound(inst) end, GetWorld()) 
+
+        return inst
+    end
+
     local function catcoon()
         local inst = simple()
         inst:AddComponent("fueled")
@@ -660,7 +794,7 @@ function MakeHat(name)
         inst.components.waterproofer:SetEffectiveness(TUNING.WATERPROOFNESS_LARGE)
 
         inst:AddComponent("insulator")
-        inst.components.insulator:SetInsulation(TUNING.INSULATION_MED)
+        inst.components.insulator:SetInsulation(TUNING.INSULATION_MED_LARGE)
         inst.components.equippable.insulated = true
 
         return inst
@@ -684,7 +818,7 @@ function MakeHat(name)
 
         inst.components.equippable.dapperness = -TUNING.DAPPERNESS_SMALL
 
-        inst:AddTag("foodclothing")
+        inst:AddTag("icebox_valid")
 
         return inst
     end
@@ -738,6 +872,8 @@ function MakeHat(name)
         fn = catcoon
     elseif name == "watermelon" then
         fn = watermelon
+    elseif name == "eyebrella" then
+        fn = eyebrella
     end
 
 
@@ -764,4 +900,5 @@ return  MakeHat("straw"),
         MakeHat("mole", true),
         MakeHat("rain", true),
         MakeHat("catcoon", true),
-        MakeHat("watermelon", true)
+        MakeHat("watermelon", true),
+        MakeHat("eyebrella", true)

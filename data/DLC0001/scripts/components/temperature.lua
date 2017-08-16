@@ -278,7 +278,10 @@ function Temperature:OnUpdate(dt, applyhealthdelta)
 		end
 	end
 
-	if self.inst.components.inventoryitem and self.inst.components.inventoryitem.owner and self.inst.components.inventoryitem.owner:HasTag("fridge") then
+	if self.inst.components.inventoryitem and 
+		self.inst.components.inventoryitem.owner and 
+		self.inst.components.inventoryitem.owner:HasTag("fridge") and not
+		self.inst.components.inventoryitem.owner:HasTag("nocool") then --For icepack.
 		self.rate = -TUNING.WARM_DEGREES_PER_SEC
 	end
 		

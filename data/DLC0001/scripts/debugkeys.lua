@@ -242,14 +242,14 @@ end)
 
 AddGameDebugKey(KEY_F8, function()
     --Spawns a lot of prefabs around you in rings.
-    local items = {"birchnutdrake"} --Which items spawn. 
+    local items = {"grass"} --Which items spawn. 
     local player = GetPlayer()
     local pt = Vector3(player.Transform:GetWorldPosition())
-    local theta = math.random() * 2 * PI
-    local numrings = 1 --How many rings of stuff you spawn
+    local theta = math.random() * 2 * math.pi
+    local numrings = 12 --How many rings of stuff you spawn
     local radius = 4 --Initial distance from player
     local radius_step_distance = 1 --How much the radius increases per ring.
-    local itemdensity = .2 --(X items per unit)
+    local itemdensity = .5 --(X items per unit)
     local ground = GetWorld()
     
     local finalRad = (radius + (radius_step_distance * numrings))
@@ -627,7 +627,7 @@ AddGlobalDebugKey(KEY_PAUSE, function()
     return true
 end)
 
---[[AddGameDebugKey(KEY_H, function()
+AddGameDebugKey(KEY_H, function()
 	if TheInput:IsKeyDown(KEY_LCTRL) then
 		GetPlayer().HUD:Toggle()
 	end

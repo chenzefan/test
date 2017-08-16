@@ -74,8 +74,8 @@ local actionhandlers =
     ActionHandler(ACTIONS.FISH, "fishing_pre"),
         
 	ActionHandler(ACTIONS.FERTILIZE, "doshortaction"),
-    ActionHandler(ACTIONS.SMOTHER, "doshortaction"),
-    ActionHandler(ACTIONS.MANUALEXTINGUISH, "doshortaction"),
+    ActionHandler(ACTIONS.SMOTHER, "dolongaction"),
+    ActionHandler(ACTIONS.MANUALEXTINGUISH, "dolongaction"),
     ActionHandler(ACTIONS.RANGEDSMOTHER, "attack"),
 	ActionHandler(ACTIONS.TRAVEL, "doshortaction"),
     ActionHandler(ACTIONS.LIGHT, "give"),
@@ -179,7 +179,10 @@ local actionhandlers =
     end),
     ActionHandler(ACTIONS.JUMPIN, "jumpin"),
     ActionHandler(ACTIONS.DRY, "doshortaction"),
-    ActionHandler(ACTIONS.CASTSPELL, "castspell"),
+    ActionHandler(ACTIONS.CASTSPELL, 
+        function(inst, action) 
+            return action.invobject.components.spellcaster.castingstate or "castspell"
+        end),
     ActionHandler(ACTIONS.BLINK, "quicktele"),
     ActionHandler(ACTIONS.COMBINESTACK, "doshortaction"),
     ActionHandler(ACTIONS.BURY, "dolongaction"),
@@ -2825,6 +2828,37 @@ local states=
             end),
         },
     },
+
+
+
+    State{
+        name = "castspell_tornado",
+        tags = {"doing", "busy", "canrotate"},
+
+        onenter = function(inst)
+            inst.components.playercontroller:Enable(false)
+            inst.AnimState:PlayAnimation("atk") 
+            inst.components.locomotor:Stop()
+            --Spawn an effect on the player's location
+        end,
+
+        onexit = function(inst)
+            inst.components.playercontroller:Enable(true)
+        end,
+
+        timeline = 
+        {
+            TimeEvent(5*FRAMES, function(inst) inst:PerformBufferedAction() end),
+        },
+
+        events = {
+            EventHandler("animover", function(inst)
+                inst.sg:GoToState("idle") 
+            end ),
+        },
+
+    },
+
     
 }
 

@@ -23,7 +23,7 @@ local function fn(Sim)
 	inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM
 
     inst:AddComponent("fuel")
-    inst.components.fuel.fuelvalue = TUNING.MED_FUEL
+    inst.components.fuel.fuelvalue = TUNING.MED_LARGE_FUEL
     inst.components.fuel.fueltype = "CHEMICAL"
     
     inst:AddComponent("inspectable")

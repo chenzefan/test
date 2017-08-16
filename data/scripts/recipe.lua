@@ -22,7 +22,7 @@ Recipe = Class(function(self, name, ingredients, tab, level, placer, min_spacing
 
     self.image         = name .. ".tex"
     self.sortkey       = num
-    self.level         = level or 0
+    self.level         = level or {}
     self.level.ANCIENT = self.level.ANCIENT or 0
     self.level.MAGIC   = self.level.MAGIC or 0
     self.level.SCIENCE = self.level.SCIENCE or 0

@@ -41,6 +41,10 @@ local Freezable = Class(function(self, inst)
     self.fxlevel = 1
     self.fxdata = {}
     self.fxchildren = {}
+
+    if not self.inst:HasTag("freezable") then
+        self.inst:AddTag("freezable")
+    end
     
     self.inst:ListenForEvent("attacked", OnAttacked)
 end)

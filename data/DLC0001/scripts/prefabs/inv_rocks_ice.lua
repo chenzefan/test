@@ -34,13 +34,6 @@ local function onperish(inst)
     end
 end
 
-local function oneaten(inst, eater)
-    if eater and eater.components.temperature then
-        local temp = eater.components.temperature:GetCurrent()
-        eater.components.temperature:SetTemperature(temp - TUNING.ICE_EAT_TEMP_REDUCTION)
-    end
-end
-
 local function fn(Sim)
 	local inst = CreateEntity()
 	inst.entity:AddTransform()
@@ -57,8 +50,8 @@ local function fn(Sim)
     inst.components.edible.foodtype = "GENERIC"
     inst.components.edible.healthvalue = TUNING.HEALING_TINY/2
     inst.components.edible.hungervalue = TUNING.CALORIES_TINY/4
-    inst.components.edible:SetOnEatenFn(oneaten)
     inst.components.edible.degrades_with_spoilage = false
+    inst.components.edible.temperaturedelta = -TUNING.ICE_EAT_TEMP_REDUCTION
 
     inst:AddComponent("smotherer")
 
@@ -91,7 +84,7 @@ local function fn(Sim)
 
     inst:AddComponent("repairer")
     inst.components.repairer.repairmaterial = "ICE"
-    inst.components.repairer.perishrepairvalue = .1
+    inst.components.repairer.perishrepairvalue = .05
 
     inst:AddComponent("bait")
     inst:AddTag("molebait")

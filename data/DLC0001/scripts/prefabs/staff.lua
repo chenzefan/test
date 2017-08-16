@@ -10,6 +10,7 @@ local prefabs =
     "fire_projectile",
     "staffcastfx",
 	"stafflight",
+    "staff_tornado",
 }
 
 ---------RED STAFF---------
@@ -609,4 +610,3 @@ Prefab("common/inventory/telestaff", purple, assets, prefabs),
 Prefab("common/inventory/orangestaff", orange, assets, prefabs),
 Prefab("common/inventory/greenstaff", green, assets, prefabs),
 Prefab("common/inventory/yellowstaff", yellow, assets, prefabs)
-

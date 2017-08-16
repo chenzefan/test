@@ -197,6 +197,8 @@ local function raw(Sim)
     
     inst.components.perishable:SetPerishTime(TUNING.PERISH_FAST)
     
+    inst:AddTag("catfood")
+
     inst:AddComponent("cookable")
     inst.components.cookable.product = "cookedmeat"
     inst:AddComponent("dryable")
@@ -282,6 +284,8 @@ local function drumstick()
     inst.components.perishable:SetPerishTime(TUNING.PERISH_FAST)
     
     inst:AddTag("drumstick")
+    inst:AddTag("catfood")
+
     inst:AddComponent("cookable")
     inst.components.cookable.product = "drumstick_cooked"
     inst:AddComponent("dryable")
@@ -315,6 +319,8 @@ local function batwing()
     inst.components.edible.sanityvalue = -TUNING.SANITY_SMALL
     
     inst.components.perishable:SetPerishTime(TUNING.PERISH_FAST)
+
+    inst:AddTag("catfood")
 
     inst:AddComponent("dryable")
     inst.components.dryable:SetProduct("smallmeat_dried")

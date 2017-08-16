@@ -392,14 +392,17 @@ function Container:OnSave()
     local references = {}
     local refs = {}
     for k,v in pairs(self.slots) do
-        if v:IsValid() then --only save the valid items
+        if v.persists then --only save the valid items
 			data.items[k], refs = v:GetSaveRecord()
-            if refs then table.insert(references, v) end
-		end
+            if refs then
+                for k,v in pairs(refs) do
+                    table.insert(references, v)
+                end 
+            end
+        end
     end
-    
     return data, references
-end   
+end
 
 function Container:OnLoad(data, newents)
     if data.items then

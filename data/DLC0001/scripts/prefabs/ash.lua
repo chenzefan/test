@@ -39,6 +39,15 @@ local function PrepareBlowAway(inst)
 	inst.blowawaytask = inst:DoTaskInTime(25+math.random()*10, BlowAway)
 end
 
+local function VacuumUp(inst)
+	StopBlowAway(inst)
+    inst.persists = false
+    inst:RemoveComponent("inventoryitem")
+    inst:RemoveComponent("inspectable")
+	inst.AnimState:PlayAnimation("eaten")
+	inst:ListenForEvent("animover", function() inst:Remove() end)
+end
+
 local function fn(Sim)
 	local inst = CreateEntity()
 	inst.entity:AddTransform()
@@ -76,6 +85,8 @@ local function fn(Sim)
    
 	inst:ListenForEvent("ondropped",  PrepareBlowAway)
 	PrepareBlowAway(inst)
+
+	inst.VacuumUp = VacuumUp
 
     return inst
 end

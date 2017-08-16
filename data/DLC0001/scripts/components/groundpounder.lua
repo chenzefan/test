@@ -6,6 +6,8 @@ local GroundPounder = Class(function(self, inst)
     self.initialRadius = 1
     self.radiusStepDistance = 4
     self.pointDensity = .25
+    self.damageRings = 2
+    self.destructionRings = 3
     self.noTags = {"FX", "NOCLICK", "DECOR", "INLIMBO"}
     self.destroyer = false
     self.burner = false
@@ -84,7 +86,7 @@ function GroundPounder:GroundPound(pt)
 	local delay = 0
 	for i = 1, self.numRings do
 
-		self.inst:DoTaskInTime(delay, function() self:DestroyPoints(points[i], i <= 3, i <= 2) end)
+		self.inst:DoTaskInTime(delay, function() self:DestroyPoints(points[i], i <= self.destructionRings, i <= self.damageRings) end)
 		delay = delay + self.ringDelay
 	end
 end

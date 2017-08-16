@@ -10,9 +10,17 @@ local assets =
 local prefabs =
 {
     "mossling_spin_fx",
+    "goose_feather",
 }
 
-local loot = {"meat", "meat"}
+SetSharedLootTable( 'mossling',
+{
+    {'meat',             1.00},
+    {'meat',             1.00},
+    {'goose_feather',    1.00},
+    {'goose_feather',    1.00},
+    {'goose_feather',    0.33},
+})
 
 local BASE_TAGS = {"structure"}
 local SEE_STRUCTURE_DIST = 20
@@ -161,7 +169,7 @@ local function fn(Sim)
     ------------------------------------------
 
     inst:AddComponent("lootdropper")
-    inst.components.lootdropper:SetLoot(loot)
+    inst.components.lootdropper:SetChanceLootTable('mossling')    
     
     ------------------------------------------
 

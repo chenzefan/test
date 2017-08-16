@@ -175,6 +175,7 @@ local fn = function(inst)
 
 	inst.components.eater.ignoresspoilage = true
 	table.insert(inst.components.eater.foodprefs, "GEARS")
+	table.insert(inst.components.eater.ablefoods, "GEARS")
 	inst.components.eater:SetOnEatFn(oneat)
 	applyupgrades(inst)
 

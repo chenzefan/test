@@ -127,8 +127,8 @@ local function fn(Sim)
 	waves:SetWaveEffect( "shaders/waves.ksh" ) -- texture.ksh
 	--waves:SetWaveEffect( "shaders/texture.ksh" ) -- 
 	waves:SetWaveSize( 2048, 512 )
-    inst:AddComponent("clock")
 
+    inst:AddComponent("clock")
 	inst:AddComponent("seasonmanager")
     inst:AddComponent("flowerspawner")
     inst:AddComponent("lureplantspawner")
@@ -137,10 +137,8 @@ local function fn(Sim)
 	inst:AddComponent("hounded")
 	inst:AddComponent("hunter")
 	inst:AddComponent("worlddeciduoustreeupdater")
-
-
-	inst:AddComponent("basehassler")
 	
+	inst:AddComponent("basehassler")
 	local hasslers = require("basehasslers")
 	for k,v in pairs(hasslers) do
 		inst.components.basehassler:AddHassler(k, v)

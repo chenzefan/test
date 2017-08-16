@@ -100,6 +100,7 @@ local function MorphShadowChester(inst, dofx)
 
     inst.AnimState:SetBuild("chester_shadow_build")
     inst.ChesterState = "SHADOW"
+    inst.MiniMapEntity:SetIcon("chestershadow.png")
 end
 
 local function MorphSnowChester(inst, dofx)
@@ -112,6 +113,7 @@ local function MorphSnowChester(inst, dofx)
 
     inst.AnimState:SetBuild("chester_snow_build")
     inst.ChesterState = "SNOW"
+    inst.MiniMapEntity:SetIcon("chestersnow.png")
 end
 
 local function MorphNormalChester(inst, dofx)
@@ -124,6 +126,7 @@ local function MorphNormalChester(inst, dofx)
     end
 
     inst.ChesterState = "NORMAL"
+    inst.MiniMapEntity:SetIcon("chester.png")
 end
 
 local function CanMorph(inst)

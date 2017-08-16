@@ -201,7 +201,7 @@ local states=
 
     State{
         name = "hairball",
-        tags = {"busy"},
+        tags = {"busy", "hairball"},
         
         onenter = function(inst)
             inst.Physics:Stop()
@@ -241,7 +241,9 @@ local states=
             end),
             TimeEvent(140*FRAMES, function(inst)
                 if inst.hairballfollowup and inst.vomit and inst.vomit:IsValid() and inst:GetDistanceSqToInst(inst.vomit) <= 3 and math.random() <= .2 then
-                    inst.vomit:Remove()
+                    if not inst.vomit:HasTag("INLIMBO") then
+                        inst.vomit:Remove()
+                    end
                 end
             end),
         },

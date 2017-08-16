@@ -308,8 +308,8 @@ local states=
 
         timeline =
         {
-            TimeEvent(0*FRAMES, SpawnMoveFx),
-            TimeEvent(5*FRAMES, SpawnMoveFx),
+            TimeEvent(0*FRAMES,  SpawnMoveFx),
+            TimeEvent(5*FRAMES,  SpawnMoveFx),
             TimeEvent(10*FRAMES, SpawnMoveFx),
             TimeEvent(15*FRAMES, SpawnMoveFx),
             TimeEvent(20*FRAMES, SpawnMoveFx),

@@ -93,7 +93,7 @@ local function fn()
     inst.components.combat:SetAttackPeriod(TUNING.WARG_ATTACKPERIOD)
     inst.components.combat:SetRetargetFunction(1, RetargetFn)
     inst.components.combat:SetKeepTargetFunction(KeepTargetFn)
-    inst.components.combat:SetHurtSound("dontstarve_DLC001/creatures/lightninggoat/hurt")
+    inst.components.combat:SetHurtSound("dontstarve_DLC001/creatures/vargr/hit")
     inst:ListenForEvent("attacked", OnAttacked)
 
 	inst:AddComponent("health")

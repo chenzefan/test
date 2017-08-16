@@ -5,19 +5,21 @@ require "behaviours/doaction"
 require "behaviours/attackwall"
 require "behaviours/panic"
 require "behaviours/minperiod"
+require "behaviours/chaseandram"
 
 
 local TIME_BETWEEN_EATING = 3.5
 
-local MAX_CHASE_TIME = 60
-local MAX_CHASE_DIST = 500
+local MAX_CHASE_TIME = 10
+local GIVE_UP_DIST = 20
+local MAX_CHARGE_DIST = 60
 local SEE_FOOD_DIST = 15
 local SEE_STRUCTURE_DIST = 30
 
 local BASE_TAGS = {"structure"}
 local FOOD_TAGS = {"edible"}
 local STEAL_TAGS = {"structure"}
-local NO_TAGS = {"FX", "NOCLICK", "DECOR","INLIMBO"}
+local NO_TAGS = {"FX", "NOCLICK", "DECOR","INLIMBO", "burnt"}
 
 local VALID_FOODS = 
 {
@@ -119,7 +121,7 @@ local function StealFoodAction(inst) --Look for things to take food from (EatFoo
         --Beeboxes
         if not target then
             for k,item in pairs(ents) do
-                if item and item:HasTag("beebox") and item.components.harvestable:CanBeHarvested() then
+                if item and item:HasTag("beebox") and item.components.harvestable and item.components.harvestable:CanBeHarvested() then
                     target = item
                     break
                 end
@@ -134,7 +136,8 @@ local function StealFoodAction(inst) --Look for things to take food from (EatFoo
         --Fridges
         if not target then
             for k,item in pairs(ents) do
-                if item and item:HasTag("fridge") and not item.components.container:IsEmpty() then
+                if item and item:HasTag("fridge") and item.components.container and not item.components.container:IsEmpty()
+                and not (item.components.inventoryitem and item.components.inventoryitem:IsHeld()) then --For icepack.
                     -- Look only for honey things in the fridge on first pass
                     local foodstuffs = nil
                     if honeypass then
@@ -157,7 +160,7 @@ local function StealFoodAction(inst) --Look for things to take food from (EatFoo
         --Chests
         if not target then
             for k,item in pairs(ents) do
-                if item and item:HasTag("chest") and not item.components.container:IsEmpty() then
+                if item and item:HasTag("chest") and item.components.container and not item.components.container:IsEmpty() then
                     -- Look only for honey things in chests on first pass
                     local foodstuffs = nil
                     if honeypass then
@@ -179,7 +182,8 @@ local function StealFoodAction(inst) --Look for things to take food from (EatFoo
 
         if not target then
             for k,item in pairs(ents) do
-                if item and item:HasTag("backpack") and not 
+                if item and item:HasTag("backpack") and
+                    item.components.container and not 
                     item.components.container:IsEmpty() and not 
                     item.components.inventoryitem:IsHeld() then
                      -- Look only for honey things in the backpack on first pass
@@ -242,15 +246,23 @@ function BeargerBrain:OnStart()
     local root =
         PriorityNode(
         {
+            WhileNode(function() return self.inst.components.health.takingfiredamage end, "OnFire", Panic(self.inst)),
 
-            ChaseAndAttack(self.inst, MAX_CHASE_TIME, MAX_CHASE_DIST),
+            WhileNode(function() return self.inst.CanGroundPound and self.inst.components.combat.target and
+            (distsq(self.inst:GetPosition(), self.inst.components.combat.target:GetPosition()) > 10*10 or self.inst.sg:HasStateTag("running")) end, 
+                "Charge Behaviours", ChaseAndRam(self.inst, MAX_CHASE_TIME, GIVE_UP_DIST, MAX_CHARGE_DIST)),
+
+            ChaseAndAttack(self.inst, 20, 60, nil, nil, true),
 
             WhileNode(function() return ShouldEatFoodFn(self.inst) end, "At Base",
                 PriorityNode(
                 {
                     DoAction(self.inst, EatFoodAction),
                     DoAction(self.inst, StealFoodAction)
-                })),
+                })),            
+
+            DoAction(self.inst, EatFoodAction),
+            DoAction(self.inst, StealFoodAction),
 
             WhileNode(function() return ShouldFollowFn(self.inst) end, "Follow To Base",
                 PriorityNode(
@@ -259,12 +271,10 @@ function BeargerBrain:OnStart()
                     Follow(self.inst, function() return  GetPlayer() end, 0, 15, 20, false)
                 })),
 
-            DoAction(self.inst, EatFoodAction),
-            DoAction(self.inst, StealFoodAction),
+            StandStill(self.inst)
+            --Wander(self.inst, function() return self.inst:GetPosition() end, 5),
 
-            Wander(self.inst, function() return self.inst:GetPosition() end, 5),
-
-        },1)
+        }, .25)
     
     self.bt = BT(self.inst, root)
          

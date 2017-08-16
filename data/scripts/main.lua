@@ -9,7 +9,7 @@ SOUNDDEBUG_ENABLED = false
 MODS_ENABLED = PLATFORM ~= "PS4" and PLATFORM ~= "NACL"
 ACCOMPLISHMENTS_ENABLED = PLATFORM == "PS4"
 --DEBUG_MENU_ENABLED = false --BRANCH == "dev" or PLATFORM == "PS4"
-DEBUG_MENU_ENABLED = false --BRANCH == "dev" or PLATFORM == "PS4"
+DEBUG_MENU_ENABLED = true --BRANCH == "dev" or PLATFORM == "PS4"
 METRICS_ENABLED = PLATFORM ~= "PS4"
 
 --debug.setmetatable(nil, {__index = function() return nil end})  -- Makes  foo.bar.blat.um  return nil if table item not present   See Dave F or Brook for details

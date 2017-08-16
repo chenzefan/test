@@ -24,7 +24,7 @@ function Cookable:Cook(cooker, chef)
         end
         
         if prod then
-			if self.inst.components.perishable and prod.components.perishable then
+			if self.inst.components.perishable and prod.components.perishable and not self.inst:HasTag("smallcreature") then
 				
 				local new_percent = 1 - (1 - self.inst.components.perishable:GetPercent())*.5
 				prod.components.perishable:SetPercent(new_percent)

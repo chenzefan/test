@@ -14,6 +14,10 @@ local prefabs =
 	"deerclops_eyeball",
     "eyebrella",
     "collapse_small",
+    "icespike_fx_1",
+    "icespike_fx_2",
+    "icespike_fx_3",
+    "icespike_fx_4",
 }
 
 local TARGET_DIST = 30
@@ -109,7 +113,7 @@ local function oncollide(inst, other)
 
 end
 
-local loot = {"meat", "meat", "meat", "meat", "meat", "meat", "meat", "meat", "eyebrella"}
+local loot = {"meat", "meat", "meat", "meat", "meat", "meat", "meat", "meat", "deerclops_eyeball"}
 
 local function fn(Sim)
     
@@ -168,8 +172,8 @@ local function fn(Sim)
     inst:AddComponent("combat")
     inst.components.combat:SetDefaultDamage(TUNING.DEERCLOPS_DAMAGE)
     inst.components.combat.playerdamagepercent = .5
-    inst.components.combat:SetRange(8)
-    inst.components.combat:SetAreaDamage(6, 0.8)
+    inst.components.combat:SetRange(TUNING.DEERCLOPS_ATTACK_RANGE)
+    inst.components.combat:SetAreaDamage(TUNING.DEERCLOPS_AOE_RANGE, TUNING.DEERCLOPS_AOE_SCALE)
     inst.components.combat.hiteffectsymbol = "deerclops_body"
     inst.components.combat:SetAttackPeriod(TUNING.DEERCLOPS_ATTACK_PERIOD)
     inst.components.combat:SetRetargetFunction(3, RetargetFn)
@@ -182,7 +186,7 @@ local function fn(Sim)
     inst.components.sleeper:SetSleepTest(ShouldSleep)
     inst.components.sleeper:SetWakeTest(ShouldWake)
     
-    ------------------------------------------
+------------------------------------------
 
     inst:AddComponent("lootdropper")
     inst.components.lootdropper:SetLoot(loot)

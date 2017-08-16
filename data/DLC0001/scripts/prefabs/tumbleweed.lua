@@ -87,7 +87,9 @@ local function onpickup(inst, owner)
                 item.components.inventoryitem.ondropfn(item)
             end
             if inst.lootaggro[i] and item.components.combat and GetPlayer() then
-                item.components.combat:SuggestTarget(GetPlayer())
+                if not (GetPlayer():HasTag("spiderwhisperer") and item:HasTag("spider")) and not (GetPlayer():HasTag("monster") and item:HasTag("spider")) then
+                    item.components.combat:SuggestTarget(GetPlayer())
+                end
             end
     	end
     end
@@ -348,7 +350,7 @@ local function fn(Sim)
 
     inst:AddComponent("burnable")
     inst.components.burnable:SetFXLevel(2)
-    inst.components.burnable:AddBurnFX("character_fire", Vector3(0, 0, 1), "swap_fire")
+    inst.components.burnable:AddBurnFX("character_fire", Vector3(0, 0, 0), "swap_fire")
     inst.components.burnable.canlight = true
     inst.components.burnable:SetOnIgniteFn(function(inst) if inst.components.burnable then inst.components.burnable:Ignite() end end)
     inst.components.burnable:SetOnBurntFn(onburnt)

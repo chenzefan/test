@@ -11,17 +11,21 @@ local function DoDry(inst)
 
 	    dryer.spoiltargettime = GetTime() + TUNING.PERISH_PRESERVED
 	    dryer.spoiltask = inst:DoTaskInTime(TUNING.PERISH_PRESERVED, function(inst)
-	    	inst.components.dryer.product = nil
-	    	local spoiledfood = SpawnPrefab("spoiled_food")
-	    	spoiledfood.Transform:SetPosition(inst.Transform:GetWorldPosition())
-            if spoiledfood.components.moisturelistener then
-	            spoiledfood.components.moisturelistener.moisture = GetWorld().components.moisturemanager:GetWorldMoisture()
-	            spoiledfood.components.moisturelistener:DoUpdate()
-	        end
-	        inst.components.dryer.spoiltask = nil
-	        inst.components.dryer.spoiltargettime = nil
-	        if inst.components.dryer.onharvest then
-				inst.components.dryer.onharvest(inst)
+	    	if not inst:HasTag("burnt") then
+		    	local spoiledfood = SpawnPrefab("spoiled_food")
+		    	spoiledfood.Transform:SetPosition(inst.Transform:GetWorldPosition())
+	            if spoiledfood.components.moisturelistener then
+		            spoiledfood.components.moisturelistener.moisture = GetWorld().components.moisturemanager:GetWorldMoisture()
+		            spoiledfood.components.moisturelistener:DoUpdate()
+		        end
+		        if inst.components.dryer then
+		        	inst.components.dryer.product = nil
+			        inst.components.dryer.spoiltask = nil
+			        inst.components.dryer.spoiltargettime = nil
+			        if inst.components.dryer.onharvest then
+						inst.components.dryer.onharvest(inst)
+					end
+				end
 			end
 	    end)
     end
@@ -109,6 +113,10 @@ function Dryer:StopDrying(reason)
 	if self.task then
 		self.task:Cancel()
 		self.task = nil
+	end
+	if self.spoiltask then
+		self.spoiltask:Cancel()
+		self.spoiltask = nil
 	end
 	if self.product and reason and reason == "fire" then
 		local prod = SpawnPrefab(self.product)

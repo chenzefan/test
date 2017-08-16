@@ -27,6 +27,7 @@ local function MakePreparedFood(data)
 		inst.components.edible.hungervalue = data.hunger
 		inst.components.edible.foodtype = data.foodtype or "GENERIC"
 		inst.components.edible.sanityvalue = data.sanity or 0
+		inst.components.edible.temperaturedelta = data.temperature or 0
 
 		inst:AddComponent("inspectable")
 		inst.wet_prefix = data.wet_prefix

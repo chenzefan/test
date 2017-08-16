@@ -7,3 +7,4 @@ require "translator"
 --LanguageTranslator:LoadPOFile("scripts/languages/french.po", "fr")
 
 
+

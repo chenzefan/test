@@ -8,6 +8,7 @@ local Weapon = Class(function(self, inst)
     self.onprojectilelaunch = nil
     self.canattack = nil
     self.projectile = nil
+    self.stimuli = nil
 
     --Monkey uses these
     self.modes = 
@@ -41,6 +42,10 @@ end
 
 function Weapon:SetProjectile(projectile)
     self.projectile = projectile
+end
+
+function Weapon:SetElectric()
+    self.stimuli = "electric"
 end
 
 function Weapon:CanRangedAttack()

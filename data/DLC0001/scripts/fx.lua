@@ -312,6 +312,35 @@ local FX =
     				end,
     	dlc = true,
 	},
+    {
+	    name = "icespike_fx_1", 
+	    bank = "deerclops_icespike", 
+	    build = "deerclops_icespike", 
+	    anim = "spike1",
+	    dlc = true,
+    },
+    {
+	    name = "icespike_fx_2", 
+	    bank = "deerclops_icespike", 
+	    build = "deerclops_icespike", 
+	    anim = "spike2",
+	    dlc = true,
+    },
+    {
+	    name = "icespike_fx_3", 
+	    bank = "deerclops_icespike", 
+	    build = "deerclops_icespike", 
+	    anim = "spike3",
+	    dlc = true,
+    },
+    {
+	    name = "icespike_fx_4", 
+	    bank = "deerclops_icespike", 
+	    build = "deerclops_icespike", 
+	    anim = "spike4",
+	    dlc = true,
+    },
+
 }
 
 return FX

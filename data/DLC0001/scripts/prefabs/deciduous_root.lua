@@ -11,6 +11,8 @@ local function fn(Sim)
 	inst.entity:AddAnimState()
     inst.entity:AddPhysics()
     inst.Physics:SetCylinder(0.25,2)
+
+    inst.Transform:SetFourFaced()
     
     inst.AnimState:SetBank("tree_leaf_spike")
     inst.AnimState:SetBuild("tree_leaf_spike")
@@ -54,9 +56,11 @@ local function fn(Sim)
     inst.AnimState:PlayAnimation("ground_loop")
     inst.AnimState:PushAnimation("up", false)
     inst.AnimState:PushAnimation("idle", false)
+    inst.AnimState:PushAnimation("atk", false)
     inst.AnimState:PushAnimation("down", false)
 
-    inst:DoTaskInTime(35*FRAMES, function(inst) inst.components.combat:DoAttack() end)
+    inst:DoTaskInTime(29*FRAMES, function(inst) if inst.target then inst:FacePoint(inst.target.Transform:GetWorldPosition()) end end)
+    inst:DoTaskInTime(55*FRAMES, function(inst) inst.components.combat:DoAttack() end)
 
     inst:ListenForEvent("animqueueover", function(inst) inst:Remove() end)
 
