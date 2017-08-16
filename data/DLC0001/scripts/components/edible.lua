@@ -7,6 +7,7 @@ local Edible = Class(function(self, inst)
     self.oneaten = nil
     self.degrades_with_spoilage = true
     self.temperaturedelta = 0
+    self.temperatureduration = 0
 
     self.inst:AddTag("edible")
     
@@ -20,7 +21,7 @@ end)
 
 function Edible:GetSanity(eater)
 
-	local ignore_spoilage = not self.degrades_with_spoilage and ((eater and eater.components.eater and eater.components.eater.ignoresspoilage) or self.hungervalue < 0)
+	local ignore_spoilage = not self.degrades_with_spoilage or ((eater and eater.components.eater and eater.components.eater.ignoresspoilage) or self.hungervalue < 0)
 
 	if self.inst.components.perishable and not ignore_spoilage then
 		if self.inst.components.perishable:IsStale() then
@@ -38,7 +39,7 @@ end
 function Edible:GetHunger(eater)
 	local multiplier = 1
 	
-	local ignore_spoilage = not self.degrades_with_spoilage and ((eater and eater.components.eater and eater.components.eater.ignoresspoilage) or self.hungervalue < 0)
+	local ignore_spoilage = not self.degrades_with_spoilage or ((eater and eater.components.eater and eater.components.eater.ignoresspoilage) or self.hungervalue < 0)
 	
 	if self.inst.components.perishable and not ignore_spoilage then
 		if self.inst.components.perishable:IsStale() then
@@ -54,7 +55,7 @@ end
 function Edible:GetHealth(eater)
 	local multiplier = 1
 	
-	local ignore_spoilage = not self.degrades_with_spoilage and ((eater and eater.components.eater and eater.components.eater.ignoresspoilage) or self.hungervalue < 0)
+	local ignore_spoilage = not self.degrades_with_spoilage or ((eater and eater.components.eater and eater.components.eater.ignoresspoilage) or self.hungervalue < 0)
 	
 	if self.inst.components.perishable and not ignore_spoilage then
 		if self.inst.components.perishable:IsStale() then
@@ -79,10 +80,16 @@ function Edible:OnEaten(eater)
     if self.oneaten then
         self.oneaten(self.inst, eater)
     end
-    if self.temperaturedelta ~= 0 and eater and eater.components.temperature then
-        local temp = eater.components.temperature:GetCurrent()
-        eater.components.temperature:SetTemperature(temp + self.temperaturedelta)
+
+    -- Food is an implicit heater/cooler if it has temperature
+    if self.temperaturedelta ~= 0 and self.temperatureduration ~= 0 and eater and eater.components.temperature then
+        eater.recent_temperatured_food = self.temperaturedelta
+        if eater.food_temp_task then eater.food_temp_task:Cancel() end
+        eater.food_temp_task = eater:DoTaskInTime(self.temperatureduration, function(eater)
+        	eater.recent_temperatured_food = 0
+        end)
     end
+
     self.inst:PushEvent("oneaten", {eater = eater})
 end
 

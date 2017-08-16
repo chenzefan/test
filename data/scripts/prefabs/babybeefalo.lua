@@ -152,7 +152,7 @@ local function fn(Sim)
     inst.components.growable:SetStage(1)
     inst.components.growable:StartGrowing()
 
-    MakeMediumBurnableCharacter(inst, "beefalo_body")
+    MakeLargeBurnableCharacter(inst, "swap_fire")
 
     inst:AddComponent("locomotor") -- locomotor must be constructed before the stategraph
     inst.components.locomotor.walkspeed = 2

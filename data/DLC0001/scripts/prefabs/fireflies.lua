@@ -38,6 +38,7 @@ local function updatelight(inst)
 end
 
 local function ondropped(inst)
+    inst.components.inventoryitem.canbepickedup = false
     inst.components.workable:SetWorkLeft(1)
     fadein(inst)
     inst.lighton = true
@@ -94,6 +95,8 @@ local function fn(Sim)
     inst.components.workable:SetWorkLeft(1)
     inst.components.workable:SetOnFinishCallback(function(inst, worker)
         if worker.components.inventory then
+            inst.components.inventoryitem.canbepickedup = true
+            if inst.components.fader then inst.components.fader:StopAll() end
             worker.components.inventory:GiveItem(inst, nil, Vector3(TheSim:GetScreenPos(inst.Transform:GetWorldPosition())))
             fadeout(inst)
         end

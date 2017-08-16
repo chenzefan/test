@@ -261,15 +261,13 @@ local function create_common(Sim)
     inst.components.lootdropper:AddRandomLoot("spidergland", .5)
     inst.components.lootdropper.numrandomloot = 1
     
-    
-   
     ---------------------        
     MakeMediumBurnableCharacter(inst, "body")
     MakeMediumFreezableCharacter(inst, "body")
     inst.components.burnable.flammability = TUNING.SPIDER_FLAMMABILITY
     ---------------------       
     
-    
+
     ------------------
     inst:AddComponent("health")
 
@@ -310,7 +308,6 @@ local function create_common(Sim)
 
     ------------------
 
-    
 	inst:AddComponent("sanityaura")
     inst.components.sanityaura.aurafn = SanityAura
     

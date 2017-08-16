@@ -45,6 +45,7 @@ local function fn()
 
 
 	inst:AddComponent("burnable")
+	inst.components.burnable.canlight = false
 	inst.components.burnable:AddBurnFX("pigtorch_flame", Vector3(-5, 40, 0), "fire_marker")
     inst:ListenForEvent("onextinguish", onextinguish) --in case of creepy hands
 

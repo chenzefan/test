@@ -46,7 +46,7 @@ end
 
 local function EatFoodAction(inst)
 
-    local target = FindEntity(inst, SEE_FOOD_DIST, function(item) return inst.components.eater:CanEat(item) and item:IsOnValidGround() and item:GetTimeAlive() > 1.5 end)
+    local target = FindEntity(inst, SEE_FOOD_DIST, function(item) return inst.components.eater:CanEat(item) and item:IsOnValidGround() and item:GetTimeAlive() > TUNING.SPIDER_EAT_DELAY end)
     if target then
         return BufferedAction(inst, target, ACTIONS.EAT)
     end

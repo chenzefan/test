@@ -58,7 +58,7 @@ local function KeepTraderFn(inst, target)
 end
 
 local function ShouldRunAwayFromPlayer(inst, player)
-    return inst:HasTag("springbird") or not inst.components.follower.leader --#srosen REMOVED "inst:HasTag("teenbird") and " from return
+    return inst:HasTag("springbird") or not inst.components.follower.leader -- REMOVED "inst:HasTag("teenbird") and " from return
 end
 
 local function SpringMod(amt)

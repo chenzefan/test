@@ -140,14 +140,19 @@ local states=
             inst.Physics:Stop()
             inst.AnimState:PushAnimation("eat", false)
         end,
-        
+
         events =
         {
             EventHandler("animqueueover", function(inst) 
                 inst:PerformBufferedAction()  
                 inst.sg:GoToState("eat_pst") 
             end)
-        } 
+        },
+
+        timeline = 
+        {
+            TimeEvent(22*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mossling/chew") end),
+        },
     },
 
     State{
@@ -157,6 +162,7 @@ local states=
         onenter = function(inst)
             inst.Physics:Stop()
             inst.AnimState:PlayAnimation("eat_pst")
+            inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mossling/strain")
         end,
         
         timeline = {},
@@ -180,7 +186,12 @@ local states=
         
         timeline=
         {
-            TimeEvent(7*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mossling/taunt") end)
+            TimeEvent(5*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mossling/flap") end),
+            TimeEvent(7*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mossling/taunt") end),
+            TimeEvent(9*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mossling/flap") end),
+            TimeEvent(13*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mossling/flap") end),
+            TimeEvent(17*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mossling/flap") end),
+            TimeEvent(21*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mossling/flap") end),
         },
         
         events=
@@ -201,8 +212,13 @@ local states=
         
         timeline=
         {
+            TimeEvent(7*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mossling/flap") end),
             TimeEvent(10*FRAMES, function(inst) inst:PerformBufferedAction() end),
             TimeEvent(10*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mossling/honk") end),
+            TimeEvent(11*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mossling/flap") end),
+            TimeEvent(15*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mossling/flap") end),
+            TimeEvent(19*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mossling/flap") end),
+            TimeEvent(23*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mossling/flap") end),
         },
         
         events=
@@ -276,15 +292,19 @@ local states=
         tags = {"busy"},
 
         onenter = function(inst)
-
-
             inst.Physics:Stop()
             inst.AnimState:PlayAnimation("spin_pre")
+            inst.components.burnable:Extinguish()
         end,
 
         events = 
         {
             EventHandler("animover", function(inst) inst.sg:GoToState("spin_loop") end),
+        },
+
+        timeline =
+        {
+            TimeEvent(6*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mossling/attack") end),
         },
     },
 
@@ -302,7 +322,8 @@ local states=
 
             local fx = SpawnPrefab("mossling_spin_fx")
             fx.entity:SetParent(inst.entity)
-            fx.Transform:SetPosition(0,0.1,0)		
+            fx.Transform:SetPosition(0,0.1,0)
+            inst.components.burnable:Extinguish()		
         end,
 
         onupdate = function(inst)
@@ -363,7 +384,12 @@ local states=
 
         onenter = function(inst)
             inst.AnimState:PlayAnimation("spin_pst_loop", true)
+            inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mossling/dizzy", "dizzy")
             inst.sg:SetTimeout(math.random()*1+2)
+        end,
+
+        onexit = function(inst)
+            inst.SoundEmitter:KillSound("dizzy")
         end,
         
         timeline=
@@ -425,6 +451,10 @@ CommonStates.AddSleepStates(states,
     sleeptimeline = 
     {
         TimeEvent(25*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mossling/sleep") end)
+    },
+    waketimeline =
+    {
+        TimeEvent(10*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mossling/hatch") end)
     }
 })
     

@@ -11,13 +11,19 @@ local WereBeast = Class(function(self, inst)
     
     self.inst:ListenForEvent("nighttime", function(global, data)
 	    if GetClock():GetMoonPhase() == "full" and self.inst.entity:IsVisible() and not self:IsInWereState() then
-	        self.inst:DoTaskInTime(GetRandomWithVariance(1, 2), function() self:SetWere() end)
+	        self.inst:DoTaskInTime(GetRandomWithVariance(3, 2), function()
+		    	if GetClock():GetMoonPhase() ~= "full" or not
+					GetClock():IsNight() then
+					return
+				end 
+				self:SetWere() 
+			end)
 	    end
 	end, GetWorld())
 	
     self.inst:ListenForEvent("daytime", function(global, data)
         if self:IsInWereState() and self.inst.entity:IsVisible() then
-	        self.inst:DoTaskInTime(GetRandomWithVariance(1, 2), function() self:SetNormal() end)
+	        self.inst:DoTaskInTime(GetRandomWithVariance(3, 2), function() self:SetNormal() end)
 	    end
     end, GetWorld())
 end)
@@ -69,6 +75,9 @@ function WereBeast:ResetTriggers()
 end
 
 function WereBeast:SetWere(time)
+
+
+
 	if self.onsetwerefn then
 		self.onsetwerefn(self.inst)
 	end

@@ -68,7 +68,11 @@ local function custom_init(inst)
 	inst.components.combat.damagemultiplier = TUNING.WATHGRITHR_DAMAGE_MULT
 	inst.components.health:SetAbsorptionAmount(TUNING.WATHGRITHR_ABSORPTION)
 
-	inst.components.talker.font = TALKINGFONT_WATHGRITHR
+	if Profile:IsWathgrithrFontEnabled() then
+		inst.components.talker.font = TALKINGFONT_WATHGRITHR
+	else
+		inst.components.talker.font = TALKINGFONT
+	end
 
 	local spear_recipe = Recipe("spear_wathgrithr", {Ingredient("twigs", 2), Ingredient("flint", 2), Ingredient("goldnugget", 2)}, RECIPETABS.WAR, {SCIENCE = 0, MAGIC = 0, ANCIENT = 0}, nil, nil, nil, nil, true)
 	local helm_recipe = Recipe("wathgrithrhat", {Ingredient("goldnugget", 2), Ingredient("rocks", 2)}, RECIPETABS.WAR, {SCIENCE = 0, MAGIC = 0, ANCIENT = 0}, nil, nil, nil, nil, true)

@@ -23,10 +23,10 @@ STRINGS=
         woodie = "伍 迪",
         wickerbottom = "薇 克 巴 顿 小 姐",
         wx78 = "WX-78",
-        wes = "维 斯",
+        wes = "韦 斯",
         waxwell = "麦 斯 威 尔",
-        wathgrithr = "薇 斯 哥 德 尔",
-        webber = "维 伯",
+        wathgrithr = "薇 斯 尔 德",
+        webber = "韦 伯",
         unknown = "不 明 人 物",
     },
 
@@ -67,7 +67,7 @@ STRINGS=
         willow = "* 不 会 被 火 焰 伤 害 \n * 有 一 个 可 爱 的 打 火 机 \n * 紧 张 的 时 候 会 不 自 主 的 放 火",
         wendy = "* 受 到 她 双 胞 胎 姐 姐 的 环 绕 \n * 在 黑 暗 里 很 舒 服 \n * 力 气 比 较 小",
         wolfgang = "* 肚 子 饱 时 更 加 强 大 \n * 害 怕 黑 暗 和 怪 兽",
-        wx78 = "* 不 挑 食 \n * 闪 电 会 被 充 能 ， 下 雨 会 被 伤 害 \n * 可 以 用 齿 轮 升 级",
+        wx78 = "* 不 挑 食 \n * 闪 电 会 被 充 能 ， 遇 水 会 被 伤 害 \n * 可 以 用 齿 轮 升 级",
         wickerbottom = "* 知 道 很 多 事 情 \n * 自 己 发 行 了 书 籍 \n * 失 眠 症 患 者 ， 很 挑 剔 食 物",
         wes = "* 不 能 说 话 \n * 很 难 活 着 \n * 使 用 气 球 魔 法",
         waxwell = "* 衣 冠 楚 楚 但 很 脆 弱 \n * 能 分 裂 自 己 的 精 神 \n * 带 来 了 他 自 己 的 剑",
@@ -271,7 +271,7 @@ STRINGS=
         BALLOON = "气 球",    
         LIGHTER = "薇 洛 的 打 火 机",
         COMPASS = "指 南 针",
-        MUSHTREE_TALL = "蘑 菇 树",
+        MUSHTREE_TALL = "蓝 色 蘑 菇 树",
         MUSHTREE_MEDIUM = "红 蘑 菇",
         MUSHTREE_SMALL = "青 色 蘑 菇 树",
         SPIDER_HIDER="洞 穴 蜘 蛛",
@@ -358,6 +358,8 @@ STRINGS=
 
         TURF_CAVE = "鸟 粪 草 地",
         TURF_FUNGUS = "菌 类 草 地",
+		TURF_FUNGUS_RED = "菌 类 草 地",
+		TURF_FUNGUS_GREEN = "菌 类 草 地",
         TURF_SINKHOLE = "粘 滑 草 地",
         TURF_UNDERROCK = "洞 穴 石 地",
         TURF_MUD = "泥 泞 草 地",
@@ -470,7 +472,8 @@ STRINGS=
         INSANITYROCK = "方 尖 碑",
         SANITYROCK = "方 尖 碑",
         SKELETON = "骨 架",
-        PIGHEAD = "猪 人 头",
+        SKELETON_PLAYER = "骨 架",
+		PIGHEAD = "猪 人 头",
         MERMHEAD = "鱼 人 头",
 
         SAPLING = "树 苗",
@@ -524,7 +527,7 @@ STRINGS=
         SKULLCHEST = "骷 髅 箱",
         PANDORASCHEST = "装 饰 箱",
         MINOTAURCHEST = "大 豪 华 箱 子",
-        CHESTER = "切 斯 特 犬",
+        CHESTER = "切 斯 特",
         CHESTER_EYEBONE = "切 斯 特 眼 骨",
         BEDROLL_STRAW = "稻 草 卷",
         BEDROLL_FURRY = "毛 皮 铺 盖",
@@ -732,7 +735,7 @@ STRINGS=
         MAXWELLTHRONE = "噩 梦 王 座",
         MAXWELLLOCK = "噩 梦 锁 头",
 
-        LOCKEDWES = "维 斯",
+        LOCKEDWES = "韦 斯",
         TREASURECHEST_TRAP = "宝 箱 陷 阱",
         MEATRACK = "晒 肉 架",
         BANDAGE = "蜂 蜜 药 膏",
@@ -786,7 +789,7 @@ STRINGS=
         MULTITOOL_AXE_PICKAXE = "摘 / 斧 头",
         SLURPER_PELT = "啜 食 者 之 皮",
         THULECITE = "铥 矿",
-        ARMORRUINS = "铥 矿 墙 壁",
+        ARMORRUINS = "铥 矿 甲 胄",
         ARMORSLURPER = "饥 饿 腰 带",
         RUINS_BAT = "铥 矿 棒",
         LICHEN = "洞 穴 苔 藓",
@@ -834,29 +837,32 @@ STRINGS=
 
         UNKNOWN = "未 知",
 
-        BEARGER = "狗 熊",
+        BEARGER = "獾 熊",
         BEARGER_FUR = "厚 厚 的 毛",
         BIGFOOT = "巨 大 的 脚",
+	WATER = "短 路",
+	RAIN = "短 路",
 
-        SPEAR_WATHGRITHR = "薇 斯 哥 德 尔 之 矛",
-        WATHGRITHRHAT = "薇 斯 哥 德 尔 之 盔",
 
-        MOOSE1 = "慕 斯 鹅",
-        MOOSE2 = "肚 斯 鹿",
-        MOOSEEGG1 = "慕 斯 鹅 的 蛋",
-        MOOSEEGG2 = "肚 斯 鹿 的 蛋",
-        MOOSENEST1 = "慕 斯 鹅 的 巢",
-        MOOSENEST2 = "肚 斯 鹿 的 窝",
-        MOSSLING = "小 斯 儿",
+        SPEAR_WATHGRITHR = "战 争 之 矛",
+        WATHGRITHRHAT = "战 争 之 盔",
+
+        MOOSE1 = "麋 鹅",
+        MOOSE2 = "天 鹿",
+        MOOSEEGG1 = "麋 鹅 的 蛋",
+        MOOSEEGG2 = "天 鹿 的 蛋",
+        MOOSENEST1 = "麋 鹅 的 窝",
+        MOOSENEST2 = "天 鹿 的 巢",
+        MOSSLING = "小 鸭 子",
         GOOSE_FEATHER = "羽 绒",
         WINTEROMETER = "温 度 指 示 计",
-        BIRCHNUTDRAKE = "耙 耙 鸭",
+        BIRCHNUTDRAKE = "气 愤 的 桦 树 坚 果",
         DECIDUOUSTREE = "落 叶 桦 树",
         DECIDUOUS_ROOT = "气 愤 的 落 叶 桦 树", --This is never used in game: this is for morgue screen (deaths by root)
-        ACORN = "橡 果",
+        ACORN = "桦 树 坚 果",
         ACORN_SAPLING = "落 叶 桦 树 树 苗",
 
-        GLOMMER = "格 拉 伯 虫",
+        GLOMMER = "格 拉 伯",
         GLOMMERFLOWER = "格 拉 伯 的 花",
         GLOMMERWINGS = "格 拉 伯 的 翅 膀",
         GLOMMERFUEL = "格 拉 伯 的 粘 液",
@@ -866,7 +872,7 @@ STRINGS=
         CACTUS_MEAT = "仙 人 球 肉",
         CACTUS_FLOWER = "仙 人 掌 花",
         LIGHTNINGGOAT = "伏 特 羊",
-        GOATMILK = "电 牛 奶",
+        GOATMILK = "带 电 的 奶",
         BUZZARD = "秃 鹫",
 
         DRAGONFLY = "红 青 蜓",
@@ -890,25 +896,27 @@ STRINGS=
         FIRESUPPRESSOR = "火 焰 抑 制 器",
         CACTUS_MEAT_COOKED = "烤 仙 人 掌 片",
         ACORN_COOKED = "浆 烤 橡 果",
-        WEBBERSKULL = "维 伯 的 头 骨",
+        WEBBERSKULL = "韦 伯 的 头 骨",
 
         WATERMELON = "西 瓜",
         WATERMELON_COOKED = "岩 烤 西 瓜",
         WATERMELONHAT = "清 爽 西 瓜 帽",        
-        CATCOONHAT = "小 熊 猫 毛 帽",
-        CATCOON = "小 熊 猫",
-        COONTAIL = "小 熊 的 尾 巴",
+        CATCOONHAT = "浣 猫 帽",
+        CATCOON = "浣 猫",
+        COONTAIL = "小 猫 的 尾 巴",
         CATCOONDEN = "空 心 树 桩",
         BELL = "远 古 铃 铛",
 
-        WARG = "座 狼",
+        WARG = "主 狼",
 
-        BEARGERVEST = "狗 熊 毛 严 冬 背 心",
+        BEARGERVEST = "獾 熊 毛 严 冬 背 心",
         ARMORDRAGONFLY = "红 鳞 甲",
         STAFF_TORNADO = "气 象 魔 杖",
         TORNADO = "龙 卷 风",
         EYEBRELLAHAT = "眼 伞 帽",
         FEATHERFAN = "豪 华 羽 毛 扇",
+		
+		NOTE = "笔 记",
 
     },
 
@@ -1076,7 +1084,7 @@ STRINGS=
         SPEAR_WATHGRITHR = "黄 金 的 力 量 让 它 更 加 光 耀",
         WATHGRITHRHAT = "金 独 角 兽 守 护 着 你 的 生 命",
 
-        MOLEHAT = "授 予 佩 戴 者 5D 的 能 力",
+        MOLEHAT = "授 予 佩 戴 者 如 家 庭 影 院 般 的 感 官",
         ICEHAT = "科 学 ， 就 是 石 头",
         TRANSISTOR = "科 技 别 缠 着 我 ！ 噗 兹 ！",
         
@@ -1639,8 +1647,8 @@ STRINGS.UI =
             },
         },
 
-        THANKYOU = "感 谢 ！",
-        EXTRA_THANKS = "阿 斐 · 卢 浦 \n 金 · 柯 \n 柯 尔 特 · 麦 克 拉 斯",
+        THANKYOU = "特 别 感 谢 ！",
+        EXTRA_THANKS = "奥 福 尔 · 卢 浦 \n 金 · 柯 \n 柯 尔 特 · 麦 克 拉 斯",
         EXTRA_THANKS_2 = "彼 得 · 威 科 夫 \n 马 修 · 尼 克 森 \n 安 娜 · 思 薇",
         SONY_THANKS = "肖 恩 · 贝 滕 豪 森 \n 亚 当 · 博 伊 斯 \n 布 瑞 恩 · 席 尔 瓦 \n 尼 克 · 苏 特 纳",
         
@@ -1664,9 +1672,9 @@ STRINGS.UI =
                 "莉 莉 托 恩 · 卡 特 丽",
             }           
         },
-        THANKS = "特 别 感 谢 所 有 参 加 \" 抢 先 体 验 测 试 版 \" 这 个 挑 战 的 支 持 者 们 。 \n 其 中 有 着 数 不 胜 数 的 名 字 —— 我 们 的 优 秀 版 主 ，精 彩 的 艺 术 家 ， 音 乐 家 ， 装 饰 彩 带 。 \n 您 的 鼓 励 ， 热 情 和 支 持 ， 令 这 个 游 戏 达 到 极 致 。 \n 饥 荒 能 成 为 一 个 真 正 的 好 游 戏 的 功 劳 完 全 归 功 于 大 家 与 您 。 \n \n 特 别 感 谢 ：白 羊 枫 欣 \n 此 版 本 汉 化 : Bubble · 刺 刺 ",
+        THANKS = "特 别 感 谢 所 有 参 加 \" 抢 先 体 验 测 试 版 \" 这 个 挑 战 的 支 持 者 们 。 \n 其 中 有 着 数 不 胜 数 的 名 字 —— 我 们 的 优 秀 版 主 ，精 彩 的 艺 术 家 ， 音 乐 家 ， 装 饰 彩 带 。 \n 您 的 鼓 励 ， 热 情 和 支 持 ， 令 这 个 游 戏 达 到 极 致 。 \n 饥 荒 能 成 为 一 个 真 正 的 好 游 戏 的 功 劳 完 全 归 功 于 大 家 与 您 。 \n \n 特 别 感 谢 ： 白 羊 枫 欣 \n 此 版 本 汉 化 ： Bubble · 刺 刺 ",
 
-        FMOD = "FMOD 声 音 系 统 ，\n Firelight-Technologies 版权所有",
+        FMOD = "FMOD 声 音 系 统 ，\n Firelight-Technologies 版 权 所 有",
 
         FACEBOOK = "Facebooks",
         TWITTER = "Twitters",
@@ -1798,7 +1806,8 @@ STRINGS.UI =
         YES = "是",
         NO = "否 ",
         CHEATS = "作 弊 码 ",
-        PLAY = "开 始 游 戏",
+        BROADCASTING = "广 播",
+		PLAY = "开 始 游 戏",
         RATE = "给 该 游 戏 打 分 ",
         ACCOUNTINFO = "账 户 信 息 ",
         VISITFORUM = "访 问 论 坛 ",
@@ -1821,7 +1830,7 @@ STRINGS.UI =
 
         FRESHBUILD = "新 建 ！ ",
         LASTBUILDDAYS = "上 一 次 更 新 在 %d 天 前",
-        NEXTBUILDIMMINENT = "下 一 次 更 新 即 将 到 来 ！ ",
+        NEXTBUILDIMMINENT = "更 新 即 将 到 来 ！ ",
         NEXTUPDATEDAYS = "下 次 升 级 ： %d 天 后 ",
         
         MOTDTITLE = "Mod 制 作 挑 战 赛 ",
@@ -1832,7 +1841,7 @@ STRINGS.UI =
         LOGOUT = "注 销 ",
         CREDITS = "制 作 组 ",
         UPDATENAME = "麦 斯 威 尔 ，一 切 都 好 ",
-        DLC_UPDATENAME = "美 宴 与 铸 造",
+        DLC_UPDATENAME = "哪 里 有 威 尔 逊 ……",
         CONTROLS = "控 制 ",
 
         PLAY_ON_STEAM = "在 STEAM 平 台 上 进 行 游 戏 ",
@@ -1890,6 +1899,42 @@ STRINGS.UI =
         HUNGRY = "饥 饿",
         STARVING = "快 饿 死",
     },
+	
+        BROADCASTING=
+    {
+        YES = "是",
+        NO = "否",
+        ACCEPT = "接 受",
+        CANCEL = "取 消",
+        APPLY = "应 用",
+        BACKTITLE = "还 原 更 改 ？",
+        BACKBODY = "你 确 认 要 丢 弃 你 所 做 的 更 改？",
+        ACCEPTTITLE = "接 受 更 改",
+        ACCEPTBODY = "你 确 认 要 接 受 这 些 更 改 ？",
+        ACCEPTGRAPHICSTITLE = "接 受 更 改",
+        ACCEPTGRAPHICSBODY = "你 确 认 要 接 受 这 些 更 改 ？",
+        REVERT = "还 原 更 改",
+        CLOSE = "关 闭",
+        
+        BROADCASTINGENABLED = "启 用 广 播",
+        FRAMERATE = "帧 速 率",
+        BANDWIDTH = "比 特 率",
+        AUDIO = "音 效",
+        SYSTEMSOUND = "系 统 音 效",
+        MICROPHONE = "麦 克 风",
+        SMOOTHSCALING = "平 滑 缩 放",
+        WEBCAM = "启 用 摄 像 头",
+        WEBCAMALPHA = "摄 像 头 Alpha 值",
+        TWITCHCHAT = "发 布 到 Twitch",
+        LOGIN = "登 入",
+        LOGOUT = "登 出",
+        SIGNUP = "注 册",
+        FORGET= "忘 记 账 号",
+		VIEWSTREAM= "查 看 录 像",
+		STARTSTREAM= "开 始 录 像",
+		STOPSTREAM= "结 束 录 像",
+
+    },
     
     OPTIONS=
     {
@@ -1908,6 +1953,7 @@ STRINGS.UI =
         CLOSE = "关 闭",
         BLOOM = "进 阶 渲 染",
         DISTORTION = "失 真 特 效",
+		SCREENSHAKE = "屏 幕 晃 动",
         FULLSCREEN = "全 屏 ",
         DISPLAY = "显 示 ",
         RESOLUTION = "分 辨 率 ",
@@ -1921,6 +1967,7 @@ STRINGS.UI =
         AMBIENT = "环 境 音 效 ",
         HUDSIZE = "图 标 大 小 ",
         VIBRATION = "震 动 ",
+		WATHGRITHRFONT = "薇 斯 尔 德 字 体",
         DISPLAY_AREA_LABEL = "显 示 区 域 ",
         DISPLAY_AREA_BUTTON = "调 整 ",
         -- INPUTFREQENCY = "Input Frequency(hz):",
@@ -1960,14 +2007,14 @@ STRINGS.UI =
         WILL_DISABLE = "Mod 将 被 禁 用.",
         DISABLED_MANUAL = "已 禁 用",
         DISABLED_ERROR = "上 次 启 动 时 崩 溃 ， 自 动 被 禁 用 ",
-        DISABLED_OLD = "Mod 是 之 前 的 ， 自 动 被 禁 用",
+        DISABLED_OLD = "Mod 适 用 于 旧 版 ， 自 动 被 禁 用",
         STATUS = {
             WORKING_NORMALLY = "启 用 ",
             WILL_ENABLE = "要 启 用 的 ",
             WILL_DISABLE = "要 禁 用 的 ",
             DISABLED_MANUAL = "关 闭 ",
             DISABLED_ERROR = "崩 溃 了 ！",
-            DISABLED_OLD = "之 前 的 ！",
+            DISABLED_OLD = "适 用 于 旧 版 ！",
         },
         NO_MODS = "你 没 有 安 装 任 何 Mod， 但 是 你 可 以 在 Klei 论 坛 上 下 载 一 些 ",
         NO_MODS_LINK = "带 我 去 Mod 页 ！ ",
@@ -2001,6 +2048,9 @@ STRINGS.UI =
         CUSTOM = "（ 自 定 义 ）",
         BACKTITLE = "放 弃 更 改",
         BACKBODY = "放 弃 对 世 界 生 成 的 选 项 更 改 ？",
+		INVALIDSEASONCOMBO_TITLE = "所 有 季 节 被 禁 用",
+		INVALIDSEASONCOMBO_BODY = "所 有 的 季 节 都 设 置 成 了  \" 无 \" 。 \n 开 启 至 少 一 个 季 节 才 可 以 继 续 游 戏 。 \n 除 非 你 真 的 想 要 无 法 游 戏 ？",
+		OKAY = "好 的",
 
         PRESETLEVELS = {
                 "默 认", 
@@ -2038,6 +2088,10 @@ STRINGS.UI =
         START = "开 始",
         DLCON = "启 用 《 巨 人 的 统 治 》 资 料 片",
         DLCOFF = "停 用 《 巨 人 的 统 治 》 资 料 片",
+		ROG_WARNING_TITLE = "公 告 ： 《 巨 人 的 统 治 》 已 启 用",
+		ROG_WARNING_BODY = "《 饥 荒 ： 巨 人 的 统 治 》 是 对 于 经 验 丰 富 的 饥 荒 玩 家 的 扩 充  。 你 可 以 在 开 始 游 戏 界 面 中 点 击 \" R o f G \" 关 闭 这 个 扩 充 。 \n \n 继 续 启 用 《 巨 人 的 统 治 》  ？",
+		YES = "是",
+		NO = "否",
     },
 
     SLOTDETAILSSCREEN =
@@ -2150,6 +2204,7 @@ STRINGS.UI =
             "放 大 地 图 ",
             "缩 小 地 图 ",
             "调 试 菜 单",
+			"广 播 切 换"
         },
 
         DEVICE_TITLE = "控 制",
@@ -2563,11 +2618,13 @@ STRINGS.UI =
         CHOICEMISC = "世 界",   
                 
         DAY = "白 天",
-        NIGHT = "黄 昏",
-        DUSK = "黑 夜",
+        NIGHT = "黑 夜",
+        DUSK = "黄 昏",
         
-        SLIDESHORT = "短 ",
+        SLIDEVERYSHORT = "很 短",
+		SLIDESHORT = "短 ",
         SLIDELONG = "长 ",
+		SLIDEVERYLONG = "很 长",
         SLIDEALL = "仅 有 ",
         
         SLIDEDEFAULT = "默 认 ",
@@ -2587,6 +2644,7 @@ STRINGS.UI =
         WINTER = "冬 天",
         SPRING = "春 天",
         AUTUMN = "秋 天",
+		RANDOM = "随 机",
         BOTH = "两 个 ",
         ALLSEASONS = "全 季 节",
         CLASSIC = "秋 天 ， 冬 天",

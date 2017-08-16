@@ -134,6 +134,10 @@ end
 
 local function onoccupied(inst, bird)
 
+	if bird.components.perishable then
+		bird.components.perishable:StopPerishing()
+	end
+
     inst:AddComponent("sleeper")
     inst.components.sleeper:SetSleepTest(ShouldSleep)
     inst.components.sleeper:SetWakeTest(ShouldWake)

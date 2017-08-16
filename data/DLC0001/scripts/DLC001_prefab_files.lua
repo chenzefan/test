@@ -32,6 +32,7 @@ local PREFABFILES = {
   "boards",
   "boneshard",
   "brokenwalls",
+  "bunnyman",
   "butterfly",
   "butterflywings",
   "buzzard",
@@ -157,9 +158,11 @@ local PREFABFILES = {
   "nightsword",
   "nitre",
   "onemanband",
+  "panflute",
   "papyrus",
   "penguin",
   "penguin_ice",
+  "perd",
   "petals",
   "petals_evil",
   "piggyback",
@@ -254,6 +257,7 @@ local PREFABFILES = {
   "wolfgang",
   "woodie",
   "world",
+  "wormlight",
   "wx78" 
 }
 

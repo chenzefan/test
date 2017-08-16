@@ -100,7 +100,9 @@ function FollowCamera:SetDistance(dist)
 end
 
 function FollowCamera:Shake(type, duration, speed, scale)
-    self.shake = CameraShake(type, duration, speed, scale)
+    if Profile:IsScreenShakeEnabled() then
+        self.shake = CameraShake(type, duration, speed, scale)
+    end
 end
 
 function FollowCamera:SetTarget(inst)

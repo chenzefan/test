@@ -102,8 +102,10 @@ local function fn()
 	inst:AddComponent("lootdropper")
     inst.components.lootdropper:SetChanceLootTable('warg') 
 
+    inst:AddComponent("sleeper")
+
 	MakeLargeFreezableCharacter(inst)
-	MakeLargeBurnable(inst)
+	MakeLargeBurnableCharacter(inst, "swap_fire")
 
 	inst:SetStateGraph("SGwarg")
 	inst:SetBrain(require("brains/wargbrain"))

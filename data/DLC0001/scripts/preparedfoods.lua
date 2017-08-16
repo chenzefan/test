@@ -60,7 +60,8 @@ local foods=
 		hunger = TUNING.CALORIES_LARGE,
 		perishtime = TUNING.PERISH_SLOW,
 		sanity = TUNING.SANITY_TINY,
-		temperature = 5,
+		temperature = TUNING.HOT_FOOD_BONUS_TEMP,
+		temperatureduration = TUNING.FOOD_TEMP_BRIEF,
 		cooktime = 2,
 	},
 	
@@ -99,7 +100,8 @@ local foods=
 		hunger = TUNING.CALORIES_HUGE,
 		perishtime = TUNING.PERISH_SLOW,
 		sanity = TUNING.SANITY_TINY,
-		temperature = 5,
+		temperature = TUNING.HOT_FOOD_BONUS_TEMP,
+		temperatureduration = TUNING.FOOD_TEMP_AVERAGE,
 		cooktime = 2,
 		tags = {"honeyed"}
 	},
@@ -113,7 +115,8 @@ local foods=
 		hunger = TUNING.CALORIES_HUGE,
 		perishtime = TUNING.PERISH_SLOW,
 		sanity = TUNING.SANITY_TINY,
-		temperature = 10,
+		temperature = TUNING.HOT_FOOD_BONUS_TEMP,
+		temperatureduration = TUNING.FOOD_TEMP_AVERAGE,
 		cooktime = 2,
 	},
 	kabobs =
@@ -169,7 +172,8 @@ local foods=
 		hunger = TUNING.CALORIES_LARGE*4,
 		perishtime = TUNING.PERISH_MED,
 		sanity = TUNING.SANITY_TINY,
-		temperature = 25,
+		temperature = TUNING.HOT_FOOD_BONUS_TEMP,
+		temperatureduration = TUNING.FOOD_TEMP_LONG,
 		cooktime = .75,
 	},
 	perogies =
@@ -192,6 +196,8 @@ local foods=
 		hunger = TUNING.CALORIES_HUGE,
 		perishtime = TUNING.PERISH_FAST,
 		sanity = TUNING.SANITY_TINY,
+		temperature = TUNING.HOT_FOOD_BONUS_TEMP,
+		temperatureduration = TUNING.FOOD_TEMP_AVERAGE,
 		cooktime = 3,
 	},
 	ratatouille =
@@ -226,6 +232,8 @@ local foods=
 		hunger = TUNING.CALORIES_MED,
 		perishtime = TUNING.PERISH_FAST,
 		sanity = TUNING.SANITY_TINY,
+		temperature = TUNING.COLD_FOOD_BONUS_TEMP,
+		temperatureduration = TUNING.FOOD_TEMP_BRIEF,
 		cooktime = .5,
 	},
 	fishtacos =
@@ -303,7 +311,7 @@ local foods=
 
 	flowersalad =
 	{
-		test = function(cooker, names, tags) return names.cactusflower and tags.veggie and tags.veggie >= 2 and not tags.meat and not tags.inedible and not tags.egg and not tags.sweetener and not tags.fruit end,
+		test = function(cooker, names, tags) return names.cactus_flower and tags.veggie and tags.veggie >= 2 and not tags.meat and not tags.inedible and not tags.egg and not tags.sweetener and not tags.fruit end,
 		priority = 10,
 		foodtype = "VEGGIE",
 		health = TUNING.HEALING_LARGE,
@@ -319,10 +327,11 @@ local foods=
 		priority = 10,
 		foodtype = "VEGGIE",
 		health = 0,
-		hunger = TUNING.CALORIES_MEDSMALL,
+		hunger = TUNING.CALORIES_MED,
 		perishtime = TUNING.PERISH_SUPERFAST,
-		sanity = TUNING.SANITY_LARGE,
-		temperature = -20,
+		sanity = TUNING.SANITY_HUGE,
+		temperature = TUNING.COLD_FOOD_BONUS_TEMP,
+		temperatureduration = TUNING.FOOD_TEMP_LONG,
 		cooktime = .5,
 	},	
 
@@ -335,7 +344,8 @@ local foods=
 		hunger = TUNING.CALORIES_SMALL,
 		perishtime = TUNING.PERISH_SUPERFAST,
 		sanity = TUNING.SANITY_MEDLARGE,
-		temperature = -20,
+		temperature = TUNING.COLD_FOOD_BONUS_TEMP,
+		temperatureduration = TUNING.FOOD_TEMP_AVERAGE,
 		cooktime = .5,
 	},	
 
@@ -360,7 +370,8 @@ local foods=
 		hunger = TUNING.CALORIES_LARGE,
 		perishtime = TUNING.PERISH_MED,
 		sanity = 0,
-		temperature = 20,
+		temperature = TUNING.HOT_FOOD_BONUS_TEMP,
+		temperatureduration = TUNING.FOOD_TEMP_LONG,
 		cooktime = .5,
 	},	
 

@@ -130,6 +130,7 @@ local function fn(Sim)
 
     inst:AddComponent("clock")
 	inst:AddComponent("seasonmanager")
+	inst:DoTaskInTime(0, function(inst) inst.components.seasonmanager:SetOverworld() end)
     inst:AddComponent("flowerspawner")
     inst:AddComponent("lureplantspawner")
     inst:AddComponent("birdspawner")

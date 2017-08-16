@@ -319,7 +319,7 @@ local function fn()
     inst.OnEntitySleep = OnEntitySleep
     inst.OnEntityWake = OnEntityWake
 
-    MakeLargeBurnable(inst)
+    MakeMediumBurnableCharacter(inst, "bulb_leaf")
     MakeLargePropagator(inst)
     inst:AddTag("wildfirestarter_highprio")
 

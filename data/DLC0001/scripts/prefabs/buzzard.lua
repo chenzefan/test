@@ -39,6 +39,11 @@ end
 local function OnLoad(inst, data)
 
 end
+
+local function canbeattacked(inst, attacked)
+    return not inst.sg:HasStateTag("flying")
+end
+
     
 local function fn(Sim)
     local inst = CreateEntity()
@@ -58,6 +63,7 @@ local function fn(Sim)
     ------------------------------------------
 
     inst:AddTag("buzzard")
+    inst:AddTag("animal")
     inst:AddTag("scarytoprey")
 
     ------------------------------------------
@@ -74,7 +80,7 @@ local function fn(Sim)
     inst.components.combat:SetAttackPeriod(TUNING.BUZZARD_ATTACK_PERIOD)
     inst.components.combat:SetKeepTargetFunction(KeepTargetFn)
     inst.components.combat:SetHurtSound("dontstarve_DLC001/creatures/buzzard/hurt")
-    
+    inst.components.combat.canbeattackedfn = canbeattacked
     ------------------------------------------
 
     inst:AddComponent("eater")

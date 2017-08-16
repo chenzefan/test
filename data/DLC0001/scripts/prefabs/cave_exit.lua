@@ -38,7 +38,6 @@ local function OnActivate(inst)
 
 		local cave_num =  SaveGameIndex:GetCurrentCaveNum()
 		if level == 1 then
-			GetSeasonManager():SetOverworld()
 			SaveGameIndex:SaveCurrent(function() SaveGameIndex:LeaveCave(onsaved) end, "ascend", cave_num)
 		else
 			-- Ascend

@@ -44,7 +44,7 @@ local function auratest(inst, target)
         if target.components.follower and target.components.follower.leader == leader then return false end
     end
 
-    return target:HasTag("monster") or target:HasTag("prey")
+    return (target:HasTag("monster") or target:HasTag("prey")) and inst.components.combat:CanTarget(target)
 end
 
 local function updatedamage(inst)

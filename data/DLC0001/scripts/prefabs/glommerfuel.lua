@@ -10,6 +10,8 @@ local function fn()
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
 
+	MakeInventoryPhysics(inst)
+
 	anim:SetBank("glommer_fuel")
 	anim:SetBuild("glommer_fuel")
 	anim:PlayAnimation("idle")

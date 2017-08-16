@@ -93,11 +93,11 @@ function Update( dt )
 			v(dt)
 		end
         TheSim:ProfilerPop()
-
 		TheSim:ProfilerPush("updating components")
         for k,v in pairs(UpdatingEnts) do
 			--TheSim:ProfilerPush(v.prefab)
             if v.updatecomponents then
+
                 for cmp in pairs(v.updatecomponents) do
                     --TheSim:ProfilerPush(v:GetComponentName(cmp))
                     if cmp.OnUpdate then
@@ -113,6 +113,12 @@ function Update( dt )
 			UpdatingEnts[k] = v
 	    end
 	    NewUpdatingEnts = {}
+
+        for k,v in pairs(StopUpdatingEnts) do
+			UpdatingEnts[k] = nil            
+        end
+        StopUpdatingEnts = {}
+        
         TheSim:ProfilerPop()
         
 

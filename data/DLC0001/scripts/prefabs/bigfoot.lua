@@ -22,6 +22,7 @@ local function DoStep(inst)
 	inst.components.groundpounder:GroundPound()
 	inst:SpawnPrint()
 	inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/glommer/foot_ground")
+	GetWorld():PushEvent("bigfootstep")
 end
 
 local function roundToNearest(numToRound, multiple)

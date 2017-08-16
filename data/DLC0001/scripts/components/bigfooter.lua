@@ -23,8 +23,8 @@ local BigFooter = Class(function(self, inst)
 	
 	self.stepNum = -4
 
-	self.stepDistance = 30
-	self.numWarnings = 6
+	self.stepDistance = 25
+	self.numWarnings = 3
 	self.footOffset = 15 -- Foot offset must be zero @ targetPos
 end)
 
@@ -125,10 +125,19 @@ function BigFooter:GetFootPos()
 end
 
 function BigFooter:SummonFoot(pos)
-	self:SetTravelDirection()
-	self.targetPos = pos
-	self.stepNum = -self.numWarnings
-	self.inst:StartUpdatingComponent(self)
+	local world = GetWorld()
+	if world:IsCave() then
+		if world.components.quaker then
+			world:DoTaskInTime(2, function(world)
+				world.components.quaker:ForceQuake(5)
+			end)
+		end
+	else
+		self:SetTravelDirection()
+		self.targetPos = pos
+		self.stepNum = -self.numWarnings
+		self.inst:StartUpdatingComponent(self)
+	end
 end
 
 function BigFooter:Reset()

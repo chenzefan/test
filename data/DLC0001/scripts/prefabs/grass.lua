@@ -35,10 +35,6 @@ local function onregenfn(inst)
 	inst.AnimState:PushAnimation("idle", true)
 end
 
-local function makefullfn(inst)
-	inst.AnimState:PlayAnimation("idle", true)
-end
-
 local function makeemptyfn(inst)
 	if inst.components.pickable and inst.components.pickable.withered then
 		inst.AnimState:PlayAnimation("dead_to_empty")
@@ -100,7 +96,6 @@ local function makefn(stage)
 		inst.components.pickable.onpickedfn = onpickedfn
 		inst.components.pickable.makeemptyfn = makeemptyfn
 		inst.components.pickable.makebarrenfn = makebarrenfn
-		inst.components.pickable.makefullfn = makefullfn
 		inst.components.pickable.max_cycles = 20
 		inst.components.pickable.cycles_left = 20   
 		inst.components.pickable.ontransplantfn = ontransplantfn

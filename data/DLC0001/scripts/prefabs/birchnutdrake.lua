@@ -113,12 +113,15 @@ local function fn()
 	inst.components.burnable:SetBurnTime(10)
 	inst.components.health.fire_damage_scale = 2
 	inst:ListenForEvent("death", function(inst)
-		inst:DoTaskInTime(.5, function(inst)
-			if inst.components.burnable and inst.components.burnable:IsBurning() then
-				inst.components.burnable:Extinguish()
-			end
-		end)
+		if inst.components.burnable and inst.components.burnable:IsBurning() then
+			inst:DoTaskInTime(.5, function(inst)
+				if inst.components.burnable and inst.components.burnable:IsBurning() then
+					inst.components.burnable:Extinguish()
+				end
+			end)
+		end
 	end)
+    inst.components.propagator.flashpoint = 5 + math.random()*3
 	MakeSmallFreezableCharacter(inst)
 
 	inst.Exit = Exit

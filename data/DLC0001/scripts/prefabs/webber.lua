@@ -31,7 +31,6 @@ local function custom_init(inst)
 	inst.components.locomotor.triggerscreep = false
 
 	inst.components.eater.monsterimmune = true
-	inst.components.eater:SetCanEatHorrible()
 
 	inst.components.health:SetMaxHealth(TUNING.WEBBER_HEALTH)
 	inst.components.hunger:SetMax(TUNING.WEBBER_HUNGER)
@@ -42,6 +41,7 @@ local function custom_init(inst)
 	STRINGS.RECIPE_DESC.SPIDEREGGSACK = "Get a little help from your friends."
 
     inst:AddComponent("beard")
+    inst.components.beard.insulation_factor = TUNING.WEBBER_BEARD_INSULATION_FACTOR
     inst.components.beard.onreset = function()
         inst.AnimState:ClearOverrideSymbol("beard")
     end

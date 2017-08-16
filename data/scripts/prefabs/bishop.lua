@@ -1,7 +1,7 @@
 local assets=
 {
 	Asset("ANIM", "anim/bishop.zip"),
-	--Asset("ANIM", "anim/bishop_build.zip"),
+	Asset("ANIM", "anim/bishop_build.zip"),
 	Asset("ANIM", "anim/bishop_nightmare.zip"),
 	Asset("SOUND", "sound/chess.fsb"),
 }
@@ -143,7 +143,7 @@ local function MakeBishop(nightmare)
         inst.kind = ""
         inst.soundpath   = "dontstarve/creatures/bishop/"
         inst.effortsound = "dontstarve/creatures/bishop/idle"
-        anim:SetBuild("bishop")
+        anim:SetBuild("bishop_build")
     end
     
     inst:AddComponent("locomotor")
@@ -187,7 +187,7 @@ local function MakeBishop(nightmare)
 
     inst:AddComponent("follower")
     
-    MakeMediumBurnableCharacter(inst, "waist")
+    MakeMediumBurnableCharacter(inst, "swap_fire")
     MakeMediumFreezableCharacter(inst, "waist")
 
     inst:ListenForEvent("attacked", OnAttacked)

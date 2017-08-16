@@ -189,7 +189,7 @@ end
 
 function Sanity:GetMoistureDelta()
 	local m = self.inst.components.moisture
-	return easing.inSine(m:GetMoisture(), 0, -TUNING.MOISTURE_SANITY_PENALTY_MAX, m.moistureclamp.max)
+	return easing.inSine(m:GetMoisture(), 0, TUNING.MOISTURE_SANITY_PENALTY_MAX, m.moistureclamp.max)
 end
 
 function Sanity:Recalc(dt)

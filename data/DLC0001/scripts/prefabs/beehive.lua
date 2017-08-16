@@ -98,6 +98,7 @@ local function fn(Sim)
 
     inst:AddTag("structure")
 	inst:AddTag("hive")
+    inst:AddTag("beehive")
     
     -------------------
 	inst:AddComponent("health")

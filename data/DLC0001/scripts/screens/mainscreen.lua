@@ -22,6 +22,7 @@ local Countdown = require "widgets/countdown"
 
 local ControlsScreen = require "screens/controlsscreen"
 local OptionsScreen = require "screens/optionsscreen"
+local BroadcastingOptionsScreen = require "screens/broadcastingoptionsscreen"
 
 local rcol = RESOLUTION_X/2 -200
 local lcol = -RESOLUTION_X/2 +200
@@ -41,7 +42,7 @@ end)
 
 
 function MainScreen:DoInit( )
-	STATS_ENABLE = false
+	STATS_ENABLE = true
 	TheFrontEnd:GetGraphicsOptions():DisableStencil()
 	TheFrontEnd:GetGraphicsOptions():DisableLightMapComponent()
 	
@@ -68,9 +69,9 @@ function MainScreen:DoInit( )
     self.fixed_root:SetHAnchor(ANCHOR_MIDDLE)
     self.fixed_root:SetScaleMode(SCALEMODE_PROPORTIONAL)
     
-    self.countdown = self.fixed_root:AddChild(Countdown())
-    self.countdown:SetScale(1)
-    self.countdown:SetPosition(-575, -330, 0)
+    -- self.countdown = self.fixed_root:AddChild(Countdown())
+    -- self.countdown:SetScale(1)
+    -- self.countdown:SetPosition(-575, -330, 0)
 
 	--RIGHT COLUMN
 
@@ -144,11 +145,11 @@ function MainScreen:DoInit( )
 	self.motd.motdtext:EnableWordWrap(true)   
     
 
-    -- self.wilson = self.left_col:AddChild(UIAnim())
-    -- self.wilson:GetAnimState():SetBank("corner_dude")
-    -- self.wilson:GetAnimState():SetBuild("corner_dude")
-    -- self.wilson:GetAnimState():PlayAnimation("idle", true)
-    -- self.wilson:SetPosition(0,-370,0)
+    self.wilson = self.left_col:AddChild(UIAnim())
+    self.wilson:GetAnimState():SetBank("corner_dude")
+    self.wilson:GetAnimState():SetBuild("corner_dude")
+    self.wilson:GetAnimState():PlayAnimation("idle", true)
+    self.wilson:SetPosition(0,-370,0)
 
 
 	local function KickOffScreecherMod()
@@ -239,7 +240,7 @@ function MainScreen:OnRawKey( key, down )
 				local function onsaved()
 				    StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = 1})
 				end
-				SaveGameIndex:StartSurvivalMode(1, "wilson", {}, onsaved, ALL_DLC_TABLE)
+				SaveGameIndex:StartSurvivalMode(1, "random", {}, onsaved, ALL_DLC_TABLE)
 			else
     			StartNextInstance({reset_action=RESET_ACTION.LOAD_SLOT, save_slot = 1})
     		end
@@ -304,6 +305,10 @@ end
 
 function MainScreen:Settings()
 	TheFrontEnd:PushScreen(OptionsScreen(false))
+end
+
+function MainScreen:BroadcastingMenu()
+	TheFrontEnd:PushScreen(BroadcastingOptionsScreen())
 end
 
 function MainScreen:OnControlsButton()
@@ -372,6 +377,10 @@ function MainScreen:DoOptionsMenu()
 	
 	if BRANCH ~= "release" then
 		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.CHEATS, cb= function() self:CheatMenu() end})
+	end
+	
+	if PLATFORM == "WIN32_STEAM" or PLATFORM == "WIN32" then
+		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.BROADCASTING, cb= function() self:BroadcastingMenu() end})
 	end
 	
 	table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.CANCEL, cb= function() self:MainMenu() end})

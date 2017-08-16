@@ -28,11 +28,11 @@ end
 
 FONTS = {
 	{ filename = "fonts/talkingfont"..font_posfix..".zip", alias = "talkingfont" },
-	{ filename = "fonts/talkingfont_wathgrithr.zip", alias = "talkingfont_wathgrithr" },
-	{ filename = "fonts/stint-ucr50"..font_posfix..".zip", alias = "stint-ucr" },
-	{ filename = "fonts/stint-ucr20"..font_posfix..".zip", alias = "stint-small" },
-	{ filename = "fonts/opensans50"..font_posfix..".zip", alias = "opensans" },
-	{ filename = "fonts/belisaplumilla50"..font_posfix..".zip", alias = "bp50" },
-	{ filename = "fonts/belisaplumilla100"..font_posfix..".zip", alias = "bp100" },	
-	{ filename = "fonts/buttonfont"..font_posfix..".zip", alias = "buttonfont" },	
+	{ filename = "fonts/talkingfont.zip", alias = "talkingfont_wathgrithr" },
+	{ filename = "fonts/talkingfont"..font_posfix..".zip", alias = "stint-ucr" },
+	{ filename = "fonts/talkingfont"..font_posfix..".zip", alias = "stint-small" },
+	{ filename = "fonts/talkingfont_wathgrithr"..font_posfix..".zip", alias = "opensans" },
+	{ filename = "fonts/talkingfont"..font_posfix..".zip", alias = "bp50" },
+	{ filename = "fonts/talkingfont"..font_posfix..".zip", alias = "bp100" },	
+	{ filename = "fonts/talkingfont_wathgrithr"..font_posfix..".zip", alias = "buttonfont" },	
 }

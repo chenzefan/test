@@ -52,6 +52,7 @@ local function OnCookedFn(inst)
 end
 
 local function onpickup(inst)
+    inst:PushEvent("ontrapped")
     inst.SoundEmitter:KillSound("stunned")
     if inst.stunnedkillsleepsfxtask then inst.stunnedkillsleepsfxtask:Cancel() inst.stunnedkillsleepsfxtask = nil end
     if inst.stunnedsleepsfxtask then inst.stunnedsleepsfxtask:Cancel() inst.stunnedsleepsfxtask = nil end
@@ -107,6 +108,14 @@ local function ondrop(inst)
     inst.sg:GoToState("stunned", true)
 end
 
+local function OnSleep(inst)
+    inst.SoundEmitter:KillAllSounds()
+end
+
+local function OnRemove(inst)
+    inst.SoundEmitter:KillAllSounds()
+end
+
 
 local function fn(Sim)
 	local inst = CreateEntity()
@@ -149,6 +158,7 @@ local function fn(Sim)
     inst:AddComponent("health")
     inst.components.health:SetMaxHealth(TUNING.MOLE_HEALTH)
     inst.components.health.murdersound = "dontstarve_DLC001/creatures/mole/death"
+    inst.components.health.fire_damage_scale = 0
     
     inst:AddComponent("combat")
     inst.components.combat.canbeattackedfn = CanBeAttacked
@@ -194,14 +204,16 @@ local function fn(Sim)
     inst.SetState = SetState
     inst.IsState = IsState
     
-    MakeSmallBurnableCharacter(inst, "mole")
+    -- MakeSmallBurnableCharacter(inst, "mole")
     MakeTinyFreezableCharacter(inst, "chest")
-    inst.components.burnable:MakeNotWildfireStarter()
+    -- inst.components.burnable:MakeNotWildfireStarter()
 	    
     inst.OnSave = OnSave     
     inst.OnLoad = OnLoad
- --    inst.OnEntityWake = OnWake
-	-- inst.OnEntitySleep = OnSleep    
+    -- inst.OnEntityWake = OnWake
+	inst.OnEntitySleep = OnSleep    
+    inst.OnRemoveEntity = OnRemove
+    inst:ListenForEvent("enterlimbo", OnRemove)
     
     inst:ListenForEvent("attacked", OnAttacked)
     inst:ListenForEvent("onwenthome", OnWentHome)

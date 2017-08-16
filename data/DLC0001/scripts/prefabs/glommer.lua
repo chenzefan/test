@@ -29,7 +29,9 @@ end
 
 local function ShouldSleep(inst)
     --print(inst, "ShouldSleep", DefaultSleepTest(inst), not inst.sg:HasStateTag("open"), inst.components.follower:IsNearLeader(SLEEP_NEAR_LEADER_DISTANCE))
-    return DefaultSleepTest(inst) and inst.components.follower:IsNearLeader(SLEEP_NEAR_LEADER_DISTANCE) and not GetWorld().components.clock:GetMoonPhase() == "full"
+    return DefaultSleepTest(inst) 
+    and inst.components.follower:IsNearLeader(SLEEP_NEAR_LEADER_DISTANCE) 
+    and GetWorld().components.clock:GetMoonPhase() ~= "full"
 end
 
 local function CalcSanityAura(inst, observer)
@@ -83,6 +85,7 @@ local function fn()
     inst:AddTag("companion")
 	inst:AddTag("glommer")
 	inst:AddTag("flying")
+    inst:AddTag("cattoyairborne")
 	
 	inst:AddComponent("inspectable")
 	inst:AddComponent("follower")

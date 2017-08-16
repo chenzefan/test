@@ -112,10 +112,10 @@ local function fn(Sim)
                 RemovePhysicsColliders(inst)             
                 local ash = SpawnPrefab("ash")
                 ash.Transform:SetPosition(inst.Transform:GetWorldPosition())
-                if math.random() < .5 then
-                    local gold = SpawnPrefab("goldnugget")
-                    gold.Transform:SetPosition(inst.Transform:GetWorldPosition())
-                end
+                -- if math.random() < .5 then
+                --     local gold = SpawnPrefab("goldnugget")
+                --     gold.Transform:SetPosition(inst.Transform:GetWorldPosition())
+                -- end
                 inst.components.fueled.accepting = false
                 destroy(inst)
             else

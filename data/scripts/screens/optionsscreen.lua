@@ -125,10 +125,15 @@ local OptionsScreen = Class(Screen, function(self, in_game)
 		bloom = graphicsOptions:IsBloomEnabled(),
 		smalltextures = graphicsOptions:IsSmallTexturesMode(),
 		distortion = graphicsOptions:IsDistortionEnabled(),
+		screenshake = Profile:IsScreenShakeEnabled(),
 		hudSize = Profile:GetHUDSize(),
 		netbookmode = TheSim:IsNetbookMode(),
 		vibration = Profile:GetVibrationEnabled()
 	}
+
+	if IsDLCInstalled(REIGN_OF_GIANTS) then
+		self.options.wathgrithrfont = Profile:IsWathgrithrFontEnabled()
+	end
 
 	--[[if PLATFORM == "WIN32_STEAM" and not self.in_game then
 		self.options.steamcloud = TheSim:GetSetting("STEAM", "DISABLECLOUD") ~= "true"
@@ -146,7 +151,13 @@ local OptionsScreen = Class(Screen, function(self, in_game)
 	
 	
 	self.bg = self:AddChild(Image("images/ui.xml", "bg_plain.tex"))
-    self.bg:SetTint(BGCOLOURS.RED[1],BGCOLOURS.RED[2],BGCOLOURS.RED[3], 1)
+
+    if IsDLCEnabled(REIGN_OF_GIANTS) then
+    	self.bg:SetTint(BGCOLOURS.PURPLE[1],BGCOLOURS.PURPLE[2],BGCOLOURS.PURPLE[3], 1)
+    else
+   	self.bg:SetTint(BGCOLOURS.RED[1],BGCOLOURS.RED[2],BGCOLOURS.RED[3], 1)
+    end
+    
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
     self.bg:SetHRegPoint(ANCHOR_MIDDLE)
     self.bg:SetVAnchor(ANCHOR_MIDDLE)
@@ -166,12 +177,19 @@ local OptionsScreen = Class(Screen, function(self, in_game)
 	
 
 	self.menu = self.root:AddChild(Menu(nil, -80, false))
-	self.menu:SetPosition(260, -260 ,0)
+	if IsDLCInstalled(REIGN_OF_GIANTS) then
+		self.menu:SetPosition(260, -250 ,0)
+	else
+		-- self.menu:SetPosition(260, -260 ,0)
+		self.menu:SetPosition(260, -220 ,0)
+	end
 	self.menu:SetScale(.8)
 
 	self.grid = self.root:AddChild(Grid())
-	self.grid:InitSize(2, 7, 400, -70)
-	self.grid:SetPosition(-250, 175, 0)
+	-- self.grid:InitSize(2, 7, 400, -70)
+	self.grid:InitSize(2, 8, 400, -63)
+	-- self.grid:SetPosition(-250, 175, 0)
+	self.grid:SetPosition(-250, 195, 0)
 	self:DoInit()
 	self:InitializeSpinners()
 
@@ -263,6 +281,8 @@ function OptionsScreen:Save(cb)
 	Profile:SetVolume( self.options.ambientvolume, self.options.fxvolume, self.options.musicvolume )
 	Profile:SetBloomEnabled( self.options.bloom )
 	Profile:SetDistortionEnabled( self.options.distortion )
+	Profile:SetScreenShakeEnabled( self.options.screenshake )
+	if IsDLCInstalled(REIGN_OF_GIANTS) then Profile:SetWathgrithrFontEnabled( self.options.wathgrithrfont ) end
 	Profile:SetHUDSize( self.options.hudSize )
 	Profile:SetVibrationEnabled( self.options.vibration )
 	
@@ -386,6 +406,8 @@ function OptionsScreen:Apply( )
 	gopts:SetBloomEnabled( self.working.bloom )
 	gopts:SetDistortionEnabled( self.working.distortion )
 	gopts:SetSmallTexturesMode( self.working.smalltextures )
+	Profile:SetScreenShakeEnabled( self.working.screenshake )
+	if IsDLCInstalled(REIGN_OF_GIANTS) then Profile:SetWathgrithrFontEnabled( self.working.wathgrithrfont ) end
 	TheSim:SetNetbookMode(self.working.netbookmode)
 end
 
@@ -532,6 +554,14 @@ function OptionsScreen:DoInit()
 			self:UpdateMenu()
 		end
 
+	self.screenshakeSpinner = Spinner( enableDisableOptions )
+	self.screenshakeSpinner.OnChanged =
+		function( _, data )
+			this.working.screenshake = data
+			--this:Apply()
+			self:UpdateMenu()
+		end
+
 	self.fxVolume = NumericSpinner( 0, 10 )
 	self.fxVolume.OnChanged =
 		function( _, data )
@@ -571,6 +601,16 @@ function OptionsScreen:DoInit()
 			--this:Apply()
 			self:UpdateMenu()
 		end
+
+	if IsDLCInstalled(REIGN_OF_GIANTS) then
+		self.wathgrithrfontSpinner = Spinner( enableDisableOptions )
+		self.wathgrithrfontSpinner.OnChanged =
+			function( _, data )
+				this.working.wathgrithrfont = data
+				--this:Apply()
+				self:UpdateMenu()
+			end
+	end
 		
 	local left_spinners = {}
 	local right_spinners = {}
@@ -578,6 +618,7 @@ function OptionsScreen:DoInit()
 	if show_graphics then
 		table.insert( left_spinners, { STRINGS.UI.OPTIONS.BLOOM, self.bloomSpinner } )
 		table.insert( left_spinners, { STRINGS.UI.OPTIONS.DISTORTION, self.distortionSpinner } )
+		table.insert( left_spinners, { STRINGS.UI.OPTIONS.SCREENSHAKE, self.screenshakeSpinner } )
 		table.insert( left_spinners, { STRINGS.UI.OPTIONS.FULLSCREEN, self.fullscreenSpinner } )
 		table.insert( left_spinners, { STRINGS.UI.OPTIONS.DISPLAY, self.displaySpinner } )
 		table.insert( left_spinners, { STRINGS.UI.OPTIONS.RESOLUTION, self.resolutionSpinner } )
@@ -590,20 +631,28 @@ function OptionsScreen:DoInit()
 		table.insert( right_spinners, { STRINGS.UI.OPTIONS.HUDSIZE, self.hudSize} )
 		table.insert( right_spinners, { STRINGS.UI.OPTIONS.NETBOOKMODE, self.netbookModeSpinner} )
 		table.insert( right_spinners, { STRINGS.UI.OPTIONS.VIBRATION, self.vibrationSpinner} )
+		if IsDLCInstalled(REIGN_OF_GIANTS) then
+			table.insert( right_spinners, { STRINGS.UI.OPTIONS.WATHGRITHRFONT, self.wathgrithrfontSpinner} )
+		end
 
 	else
 		table.insert( left_spinners, { STRINGS.UI.OPTIONS.BLOOM, self.bloomSpinner } )
 		table.insert( left_spinners, { STRINGS.UI.OPTIONS.DISTORTION, self.distortionSpinner } )
+		table.insert( left_spinners, { STRINGS.UI.OPTIONS.SCREENSHAKE, self.screenshakeSpinner } )
 
 		table.insert( right_spinners, { STRINGS.UI.OPTIONS.FX, self.fxVolume } )
 		table.insert( right_spinners, { STRINGS.UI.OPTIONS.MUSIC, self.musicVolume } )
 		table.insert( right_spinners, { STRINGS.UI.OPTIONS.AMBIENT, self.ambientVolume } )
 		table.insert( right_spinners, { STRINGS.UI.OPTIONS.HUDSIZE, self.hudSize} )
 		table.insert( right_spinners, { STRINGS.UI.OPTIONS.VIBRATION, self.vibrationSpinner} )
+		if IsDLCInstalled(REIGN_OF_GIANTS) then
+			table.insert( right_spinners, { STRINGS.UI.OPTIONS.WATHGRITHRFONT, self.wathgrithrfontSpinner} )
+		end
 	end
 
 
-	self.grid:InitSize(2, 7, 400, -70)
+	--self.grid:InitSize(2, 7, 400, -70)
+	self.grid:InitSize(2, 8, 400, -63)
 
 	for k,v in ipairs(left_spinners) do
 		self.grid:AddItem(self:CreateSpinnerGroup(v[1], v[2]), 1, k)	
@@ -640,6 +689,7 @@ function OptionsScreen:InitializeSpinners()
 	
 	self.bloomSpinner:SetSelectedIndex( EnabledOptionsIndex( self.working.bloom ) )
 	self.distortionSpinner:SetSelectedIndex( EnabledOptionsIndex( self.working.distortion ) )
+	self.screenshakeSpinner:SetSelectedIndex( EnabledOptionsIndex( self.working.screenshake ) )
 
 	local spinners = { fxvolume = self.fxVolume, musicvolume = self.musicVolume, ambientvolume = self.ambientVolume }
 	for key, spinner in pairs( spinners ) do
@@ -649,6 +699,7 @@ function OptionsScreen:InitializeSpinners()
 	
 	self.hudSize:SetSelectedIndex( self.working.hudSize or 5)
 	self.vibrationSpinner:SetSelectedIndex( EnabledOptionsIndex( self.working.vibration ) )
+	if IsDLCInstalled(REIGN_OF_GIANTS) then self.wathgrithrfontSpinner:SetSelectedIndex( EnabledOptionsIndex( self.working.wathgrithrfont ) ) end
 end
 
 function OptionsScreen:UpdateDisplaySpinner()

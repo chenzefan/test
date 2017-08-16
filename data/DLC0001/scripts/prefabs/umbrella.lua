@@ -63,6 +63,7 @@ local function common_fn(Sim)
     MakeInventoryPhysics(inst)
 
     inst:AddTag("nopunch")
+    inst:AddTag("umbrella")
     
     inst:AddComponent("waterproofer")
     inst:AddComponent("inspectable")

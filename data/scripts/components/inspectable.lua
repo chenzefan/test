@@ -54,7 +54,14 @@ function Inspectable:GetStatus(viewer)
 end
 
 function Inspectable:GetDescription(viewer)
-    local desc = self.description
+    local desc =  nil
+
+    if type(self.description) == "function" then
+        desc = self.description(self.inst, viewer)
+    else
+        desc = self.description
+    end
+    
     if desc == nil then
         desc = GetDescription(string.upper(viewer.prefab), self.inst, self:GetStatus(viewer))
     end

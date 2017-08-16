@@ -9,6 +9,8 @@ local Equippable = Class(function(self, inst)
     self.dapperness = 0
     self.dapperfn = nil
     self.insulated = false
+    self.equippedmoisture = 0
+    self.maxequippedmoisture = 0
 end)
 
 function Equippable:IsInsulated() -- from electricity, not temperature
@@ -87,6 +89,10 @@ function Equippable:GetDapperness(owner)
     end
 
     return dapperness
+end
+
+function Equippable:GetEquippedMoisture()
+    return {moisture = self.equippedmoisture, max = self.maxequippedmoisture}
 end
 
 return Equippable

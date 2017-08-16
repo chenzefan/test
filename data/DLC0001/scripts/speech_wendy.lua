@@ -1,6 +1,4 @@
 return {
-
-
 	ACTIONFAIL_GENERIC = "我 做 什 么 事 都 不 对 ",
 	ANNOUNCE_ADVENTUREFAIL = "并 不 似 所 有 的 死 亡 都 是 相 似 的",
 	ANNOUNCE_BOOMERANG = "哦 ！ 这 就 是 报 应",
@@ -16,6 +14,7 @@ return {
 		PAINFUL = "那 不 能 吃",
 		SPOILED = "那 食 物 快 要 腐 烂 了",
 		STALE = "不 新 鲜 ？ ",
+		INVALID = "不 能 那 样 做",
 	},
 	ANNOUNCE_ENTER_DARK = "黑 暗 已 经 吞 噬 了 我",
 	ANNOUNCE_ENTER_LIGHT = "那 儿 有 亮 光 ！",
@@ -38,6 +37,27 @@ return {
 	ANNOUNCE_ACCOMPLISHMENT_DONE = "这 会 被 人 遗 忘 的 ， 迟 早 有 一 天 的",
 	ANNOUNCE_INSUFFICIENTFERTILIZER = "它 可 以 用 得 更 多 一 些",
 	ANNOUNCE_LIGHTNING_DAMAGE_AVOIDED = "如 此 接 近 死 亡 ， 可 又 那 么 遥 远",
+	ANNOUNCE_BEES = "蜜 蜂 ！ 可 能 我 对 它 有 些 过 敏 ！",
+	ANNOUNCE_DEERCLOPS = "这 可  能 是 坏 的",
+	ANNOUNCE_FREEDOM = "自 由 。 太 好 了",
+	ANNOUNCE_HIGHRESEARCH = "我 目 睹 了 虚 无 ， 和 它 黑 暗 的 深 处",
+	ANNOUNCE_LOWRESEARCH = "我 目 睹 了 虚 无 ， 和 它 黑 暗 的 深 处",
+	ANNOUNCE_MOSQUITOS = "蚊 子 ！ 会 吸 走 我 所 有 的 血 ！",
+	ANNOUNCE_NODANGERSLEEP = "我 不 能 睡 着 ， 这 里 的 死 亡 正 准 备 拥 抱 我",
+	ANNOUNCE_NODAYSLEEP = "太 阳 叨 扰 着 我 ， 让 我 无 法 睡 着",
+	ANNOUNCE_NODAYSLEEP_CAVE = "我 还 不 累 呢",
+	ANNOUNCE_NOSLEEPONFIRE = "会 有 一 段 很 长 的 路 要 走 了",
+	ANNOUNCE_NODANGERSIESTA = "我 不 能 午 睡 。 死 亡 正 在 接 近",
+	ANNOUNCE_NONIGHTSIESTA = "我 真 的 更 愿 意 在 帐 篷 里",
+	ANNOUNCE_NONIGHTSIESTA_CAVE = "我 真 的 更 愿 意 在 帐 篷 里",
+	ANNOUNCE_NOHUNGERSIESTA = "我 的 胃 是 空 的 就 好 像 是 我 的 心 ， 我 睡 不 着",
+	ANNOUNCE_SHELTER = "大 自 然 终 究 会 是 好 的",
+	ANNOUNCE_BURNT = "嗷 ！ 地 狱 的 火 ！",
+	ANNOUNCE_TOOL_SLIP = "哦 ， 好 吧 ， 我 并 不 会 永 远 都 需 要 它",
+	ANNOUNCE_DAMP = "潮 湿 随 着 忧 伤",
+	ANNOUNCE_WET = "也 许 大 雨 能 填 补 我 心 上 的 空 洞",
+	ANNOUNCE_WETTER = "永 恒 的 大 雨 ， 永 恒 的 悲 伤",
+	ANNOUNCE_SOAKED = "水 的 启 示 录",
 	BATTLECRY =
 	{
 		GENERIC = "死 亡 最 终 会 找 到 你 ！",
@@ -52,6 +72,254 @@ return {
 	},
 	DESCRIBE =
 	{
+		GLOMMER = "嗯 ， 难 道 你 不 是 一 个 开 心 的 小 绒 球 呢。 直 到 死 亡",
+        GLOMMERFLOWER = "花 卉 之 夜",
+        GLOMMERWINGS = "就 连 它 的 翅 膀 也 是 小 巧 欢 快 的",
+        GLOMMERFUEL = "绒 球 的 便 便",
+        BELL = "悄 然 离 世 的 铃 声",
+        STATUEGLOMMER = 
+        {	
+        	GENERIC = "那 是 什 么 ？ ！",
+        	EMPTY = "我 杀 了 它",
+    	},
+		WEBBERSKULL = "他 这 样 更 好",
+		MOLE =
+		{
+			UNDERGROUND = "住 在 这 里 ，远 离 这 恐 怖 的 世 界",
+			ABOVEGROUND = "你 应 该 回 到 它 黑 暗 的 地 方",
+		},
+		MOLEHILL = "下 降， 下 降， 下 降 到 最 深 处",
+		MOLEHAT = "原 来 这 就 是 它 们 看 到 的 样 子",
+		NIGHTSTICK = "危 险 的 黑 暗 ",
+		RABBITHOUSE=
+		{
+			GENERIC = "它 跟 看 上 去 不 一 样 ， 不 能 吃 的",
+			BURNT = "它 并 没 有 变 熟",
+		},
+		TURF_DECIDUOUS = "一 些 土 地",
+		TURF_SANDY = "一 些 土 地",
+		TURF_BADLANDS = "一 些 土 地",
+		BEARGER = "它 可 能 打 我 一 拳 。 我 想 可 能 如 此",
+		BEARGERVEST = "死 亡 环 绕 着 我 。 嗯 ， 还 有 我 的 身 体",
+		ICEPACK = "它 的 隔 离 不 会 把 我 与 恐 怖 的 世 界 隔 离 开",
+		BEARGER_FUR = "它 闻 起 来 像 是 死 亡",
+		BIGFOOT = "末 日 的 预 兆",
+		BONESHARD = "令 人 窒 息 的 危 险",
+		BUZZARD = "我 听 说 它 们 吃 死 人",
+		CACTUS = 
+		{
+			GENERIC = "伸 着 刀 子",
+			PICKED = "夷 为 平 地",
+		},
+		CACTUS_MEAT_COOKED = "我 剥 去 了 所 有 尖 刺",
+		CACTUS_MEAT = "它 仍 然 是 危 险 的",
+		CACTUS_FLOWER = "连 刀 子 厂 也 会 有 花 ， 嗯 ",
+		COLDFIRE =
+		{
+			EMBERS = "黑 暗 在 逼 近",
+			GENERIC = "我 必 须 熬 过 今 晚 ！",
+			HIGH = "冰 冻 的 地 狱 ！",
+			LOW = "黑 暗 来 袭",
+			NORMAL = "这 是 一 个 奇 怪 的 火 灾",
+			OUT = "那 不 是 个 好 兆 头",
+		},
+		CATCOON = "我 不 知 道 它 也 有 一 个 孪 生 姐 妹",
+		CATCOONDEN = 
+		{
+			GENERIC = "我 可 以 曲 卷 起 身 子 然 后 死 在 那 里",
+			EMPTY = "所 有 的 猫 都 死 掉 了",
+		},
+		CATCOONHAT = "没 什 么 比 在 我 头 上 的 死 帽 子 更 臭 了",
+		COOKPOT =
+		{
+			COOKING_LONG = "无 论 是 什 么 在 进 入 之 前 都 还 没 有 死 亡",
+			COOKING_SHORT = "它 需 要 煮",
+			DONE = "最 终 ， 食 物",
+			EMPTY = "空 如 我 的 灵 魂",
+			BURNT = "烧 的 干 净",
+		},
+		EYEBRELLAHAT =	"这 是 个 有 弹 性 的 眼 睛",
+		ARMORDRAGONFLY = "我 喜 欢 由 内 而 外 的 穿 上 它",
+		DRAGON_SCALES = "痛 苦 的 鳞 片",
+		DRAGONFLYCHEST = "热 箱 子",
+		DECIDUOUSTREE = 
+		{
+			BURNING = "它 在 熊 熊 燃 烧",
+			BURNT = "疲 惫 不 堪",
+			CHOPPED = "一 切 都 死 了",
+			GENERIC = "这 棵 树 真 奇 怪 。 我 敢 打 赌 ， 它 喜 欢 万 圣 节",
+			POISON = "特 怪 异 ！",
+		},
+		ACORN_COOKED = "烤 熟 的 死 亡",
+		BIRCHNUTDRAKE = "小 球 战 士 ！",
+		FARMPLOT =
+		{
+			GENERIC = "我 该 种 什 么 种 子 ？",
+			GROWING = "枝 繁 叶 茂 的 卷 须 盘 绕 在 淤 泥 堆 上",
+			NEEDSFERTILIZER = "这 片 土 地 冰 凉 寒 冷 ， 没 有 生 命 力",
+			BURNT = "充 满 着 烧 焦 和 死 亡 的 气 息",
+		},
+		COLDFIREPIT =
+		{
+			EMBERS = "黑 暗 在 逼 近",
+			GENERIC = "我 必 须 熬 过 今 晚 ！",
+			HIGH = "冰 冻 的 地 狱 ！",
+			LOW = "黑 暗 来 袭",
+			NORMAL = "这 是 一 个 奇 怪 的 火 灾",
+			OUT = "那 不 是 个 好 兆 头",
+		},
+		FIRESUPPRESSOR = 
+		{	
+			ON = "我 不 知 道 你 为 什 么 烦 恼 。 我 们 所 有 人 都 会 走 向 火 焰 的 灭 亡",
+			OFF = "安 静 得 像 一 具 尸 体",
+			LOWFUEL = "它 运 行 在 烟 雾 里",
+		},
+		ICEHAT = "保 持 冷 静 的 头 脑",
+		LIGHTNINGGOAT = 
+		{
+			GENERIC = "看 看 那 些 蹄 子",
+			CHARGED = "呀 ！",
+		},
+		LIGHTNINGGOATHORN = "一 个 奇 怪 的 曲 卷 着 的 角",
+		GOATMILK = "我 想 它 是 凝 固 的",
+		MEATRACK =
+		{
+			DONE = "旱 季 结 束 了",
+			DRYING = "它 在 干 燥 的 狂 风 中 摇 曳",
+			DRYINGINRAIN = "这 些 雨 源 于 持 续 的 干 燥",
+			GENERIC = "能 让 我 挂 肉 的 地 方",
+			BURNT = "它 是 干 燥 的 ， 直 到 永 远",
+		},
+		MERMHEAD = 
+		{
+			GENERIC = "一 点 尊 严 都 没 有",
+			BURNT = "不 知 为 什 么 ， 它 找 到 了 一 条 更 低 沉 的 路",
+		},
+		MERMHOUSE = 
+		{
+			GENERIC = "它 与 时 间 流 逝 了",
+			BURNT = "火 焰 甚 至 让 它 进 一 步 解 散",
+		},
+		FLOWERSALAD = "嗯 ， 更 多 的 花",
+        ICECREAM = "冰 淇 淋 永 远 无 法 取 代 阿 比 盖 尔",
+        WATERMELONICLE = "停 滞 住 的 瓜",
+        TRAILMIX = "可 怜 的 营 养",
+        HOTCHILI = "烧 着 我 的 内 心",
+        GUACAMOLE = "只 是 有 些 可 怕 。 我 喜 欢 它",
+		MOOSE = "它 令 人 憎 恨",
+		MOOSEEGG = "不 知 道 还 会 有 这 样 的 事 情 发 生",
+		MOSSLING = "新 的 生 活 ， 新 的 生 命 ， 所 有 人 都 需 要 做 的 最 后 一 件 事",
+		FEATHERFAN = "这 会 吹 走 不 少 的 草 稿",
+		GOOSE_FEATHER = "拨 动 着 它 感 觉 就 好 像 是 我 与 阿 比 盖 尔 从 前 的 时 候",
+		STAFF_TORNADO = "一 些 从 这 里 出 去 的 天 气",
+		PIGHEAD = 
+		{	
+			GENERIC = "杀 了 那 猪 猡 。放 他 的 血",
+			BURNT = "它 被 烧 毁 了",
+		},
+		PIGHOUSE =
+		{
+			FULL = "我 希 望 他 过 得 愉 快",
+			GENERIC = "至 少 他 们 很 舒 服",
+			LIGHTSOUT = "现 在 我 彻 底 孤 独 了",
+			BURNT = "没 有 什 么 是 永 恒 的",
+		},
+		FERTILIZER = "一 桶 污 垢",
+		RAINOMETER = 
+		{	
+			GENERIC = "它 测 量 云 层 ， 我 喜 欢 它 的 阴 沉",
+			BURNT = "这 是 不 是 意 味 着 温 度 也 一 起 死 掉了 ？",
+		},
+		RAINCOAT = "我 喜 欢 与 阿 比 盖 尔 一 起 在 水 坑 里 跳 跃",
+		RAINHAT = "多 么 有 趣 的 是 如 果 雨 不 会 把 你 弄 湿 ？",
+		RESEARCHLAB = 
+		{	
+			GENERIC = "我 会 学 到 无 法 形 容 的 事 情",
+			BURNT = "它 被 无 法 形 容 般 的 烧 毁 了",
+		},
+		RESEARCHLAB2 = 
+		{
+			GENERIC = "我 会 学 到 无 法 形 容 的 事 情",
+			BURNT = "它 被 无 法 形 容 般 的 烧 毁 了",
+		},
+		RESEARCHLAB3 = 
+		{
+			GENERIC = "我 会 学 到 无 法 形 容 的 事 情",
+			BURNT = "它 被 无 法 形 容 般 的 烧 毁 了",
+		},
+		RESEARCHLAB4 = 
+		{
+			GENERIC = "这 是 疯 狂 的 一 步",
+			BURNT = "疯 狂 带 给 了 火",
+		},
+		RESURRECTIONSTATUE = 
+		{
+			GENERIC = "我 只 是 把 事 情 延 迟 了",
+			BURNT = "我 很 高 兴 安 全 的 保 障 已 经 一 去 不 复 返 了",
+		},
+		ROCK_ICE = 
+		{
+			GENERIC = "一 大 块 冰 冷 的 ， 无 情 的 冰",
+			MELTED = "一 个 冰 冷 的 大 型 游 泳 池 ， 融 化 了 的 冰",
+		},
+		ROCK_ICE_MELTED = "一 个 冰 冷 的 大 型 游 泳 池 ， 融 化 了 的 冰",
+		ICE = "破 碎 的 就 像 是 我 的 心",
+        REFLECTIVEVEST = "一 切 都 成 了 这 个 背 心",
+		HAWAIIANSHIRT = "他 们 把 鲜 花 穿 在 了 每 一 天 里",
+		TENT = 
+		{
+			GENERIC = "睡 眠 是 死 亡 的 前 兆",
+			BURNT = "地 狱 之 火 的 憧 憬",
+		},
+		SIESTAHUT = 
+		{
+			GENERIC = "午 睡 是 死 亡 的 前 兆",
+			BURNT = "地 狱 之 火 的 憧 憬",
+		},
+		TRANSISTOR = "电 器 ， 你 气 什 么 ？",
+		TREASURECHEST = 
+		{
+			GENERIC = "因 为 它 影 响 着 我 的 收 益 ",
+			BURNT = "它 甚 至 不 能 保 留 着 灰 烬",
+		},
+		TUMBLEWEED = "孤 独 和 滚 动 中 生 活",
+		GRASS_UMBRELLA = "太 阳 落 下 山",
+		UNIMPLEMENTED = "它 不 能 这 样 ， 就 像 是 生 活",
+		WALL_HAY = 
+		{	
+			GENERIC = "仅 仅 是 防 御 的 建 议",
+			BURNT = "防 御 下 降 了",
+		},
+		WALL_WOOD = 
+		{
+			GENERIC = "现 在 我 能 够 延 迟 必 然 发 生 的",
+			BURNT = "结 果 不 可 避 免 ",
+		},
+		WARG = "一 个 真 正 的 邪 恶 堡 垒",
+		WATERMELON = "它 的 很 多 都 是 水 份。 有 什 么 了 不 起 的 ？",
+		WATERMELON_COOKED = "现 在 它 充 满 着 温 暖 的 水 分",
+		WATERMELONHAT = "它 黏 在 了 我 的 头 上 ， 好 恶 心 呀",
+		WINTEROMETER = 
+		{
+			GENERIC = "我 怎 么 感 觉 它 正 在 算 计 我 的 死 期 ？",
+			BURNT = "这 是 不 是 意 味 着 我 有 一 天 也 会 死 在 这 里 ？",
+		},
+		HOMESIGN = 
+		{
+			GENERIC = "已 标 记 ， 不 过 是 暂 时 的",
+			BURNT = "短 暂 的 ， 确 实 的",
+		},
+		BEEBOX =
+		{
+			GENERIC = "他 们 得 去 劳 动 ， 那 样 我 才 能 有 东 西 偷",
+			READY = "他 们 这 次 收 获 颇 丰 ",
+			FULLHONEY = "他 们 这 次 收 获 颇 丰 ",
+			NOHONEY = "工 作 ， 蜜 蜂 ！",
+			SOMEHONEY = "辛 劳 中",
+			BURNT = "燃 烧 的 蜂 蜜",
+		},
+		LIVINGTREE = "它 可 以 永 远 不 死 ？",
+		ICESTAFF = "冻 结 的 棍 子",
 		WORMLIGHT = "从 那 里 传 来 一 阵 轻 微 的 嗡 嗡 声",
 		WORM =
 		{
@@ -117,7 +385,6 @@ return {
 			GEMS = "它 看 起 来 很 空",
 		},
 		STAFFLIGHT = "我 几 乎 可 以 做 出 一 个 小 恒 星 系 了",
-		RESEARCHLAB4 = "这 是 疯 狂 的 一 步",
 		
 		ABIGAIL_FLOWER = 
 		{ 
@@ -166,7 +433,6 @@ return {
 		MUSHTREE_TALL  ="这 些 都 是 一 些 奇 怪 的 树",
 		MUSHTREE_MEDIUM="就 像 一 顶 破 草 帽",
 		MUSHTREE_SMALL ="这 里 面 是 不 是 有 着 小 石 像 鬼 ？",
-		RABBITHOUSE="它 跟 看 上 去 不 一 样 ， 不 能 吃 的",
 		SLURTLE="它 是 无 脑 地 在 追 逐 着 石 头",
 		SLURTLE_SHELLPIECES="蠕 虫 梦 想 的 碎 片",
 		SLURTLEHAT="我 觉 得 它 也 就 能 帮 我 像 帮 之 前 的 主 人 那 么 多",
@@ -223,6 +489,7 @@ return {
 		ASH =
 		{
 			GENERIC = "所 有 这 些 离 开 以 后 留 下 了 一 个 美 丽 的 火 焰",
+			REMAINS_GLOMMERFLOWER = "当 我 传 送 的 时 候 ，花 被 火 焰 吞 噬 了 ！",
 			REMAINS_EYE_BONE = "当 我 传 送 的 时 候 ，眼 骨 被 火 焰 吞 噬 了 ！",
 			REMAINS_THINGIE = "在 这 个 被 烧 毁 前 它 曾 经 是 某 样 东 西 ……",
 		},
@@ -238,11 +505,6 @@ return {
 		{
 			GENERIC = "我 要 避 开 毒 刺",
 			HELD = "撑 着 点 ， 小 家 伙 ",
-		},
-		BEEBOX =
-		{
-			GENERIC = "他 们 得 去 劳 动 ， 那 样 我 才 能 有 东 西 偷",
-			READY = "他 们 这 次 收 获 颇 丰 ",
 		},
 		BEEFALO =
 		{
@@ -280,6 +542,7 @@ return {
 		BLOWDART_FIRE = "我 该 烧 掉 整 个 世 界 吗 ？",
 		BLUEGEM = "蓝 得 像 ……呃 ……一 只 悲 伤 的 小 鸟 ？",
 		BLUEPRINT =  "不 管 是 谁 ， 都 可 能 挂 了",
+		BELL_BLUEPRINT = "画 出 这 个 的 人 大 概 已 经 死 掉 了 ",
 		BLUE_CAP = "保 持 一 致 单 调 的 真 菌 ",
 		BLUE_CAP_COOKED = "全 部 都 是 有 韧 性 的",
 		BLUE_MUSHROOM =
@@ -385,13 +648,6 @@ return {
 		EGGPLANT = "长 得 和 茄 子 一 样 。 差 不 多",
 		EGGPLANT_COOKED = "烹 饪 让 着 茄 子 不 再 那 么 致 命",
 		EGGPLANT_SEEDS = "一 个 茄 子 种 子",
-		DECIDUOUSTREE = 
-		{
-			BURNING = "它 在 熊 熊 燃 烧",
-			BURNT = "疲 惫 不 堪",
-			CHOPPED = "一 切 都 死 了",
-			GENERIC = "大 自 然 真 是 无 聊",
-		},
 		ACORN = 
 		{
 		    GENERIC = "伴 随 渺 小 生 命 的 往 往 是 脆 弱 的 死 亡",
@@ -412,12 +668,6 @@ return {
 			GENERIC = "这 是 生 命 的 循 环",
 		},
 		EYEPLANT = "它 们 会 遵 从 他 们 主 人 的 任 何 想 法",
-		FARMPLOT =
-		{
-			GENERIC = "我 该 种 什 么 种 子 ？",
-			GROWING = "枝 繁 叶 茂 的 卷 须 盘 绕 在 淤 泥 堆 上",
-			NEEDSFERTILIZER = "这 片 土 地 冰 凉 寒 冷 ， 没 有 生 命 力",
-		},
 		FEATHERHAT = "嘎 嘎 叫",
 		FEATHER_CROW = "乌 鸦 的 羽 毛 ， 黑 如 永 恒 黑 暗",
 		FEATHER_ROBIN = "一 只 红 鸟 的 羽 毛 ， 好 似 血 般 鲜 红",
@@ -429,15 +679,6 @@ return {
 			HELD = "从 我 的 口 袋 中 洒 向 外 界 的 微 弱 灯 光",
 		},
 		FIREHOUND = "他 性 情 如 火",
-		FIREPIT =
-		{
-			EMBERS = "黑 暗 在 逼 近",
-			GENERIC = "我 必 须 熬 过 今 晚 ！",
-			HIGH = "地 狱 般 的 景 象",
-			LOW = "黑 暗 来 袭",
-			NORMAL = "有 火 光 ",
-			OUT = "那 不 是 个 好 兆 头",
-		},
 		FIRESTAFF = "我 可 以 让 世 界  设 置 成 着 火！",
 		FISH = "它 为 了 生 活 拼 命 的 扑 腾 。 可 怜 的 傻 瓜",
 		FISHINGROD = "有 了 这 个 ， 我 就 可 以 给 鱼 儿 们 挪 窝 到 自 己 宝 贵 的 安 全 池 塘",
@@ -495,7 +736,6 @@ return {
 			WARM = "不 冷 不 热 ， 毫 无 生 气 ， 好 像 是 其 它 每 一 块 石 头",
 			HOT = "火 光 越 亮 ， 烧 得 越 快",
 		},
-		HOMESIGN = "已 标 记 ， 不 过 是 暂 时 的",
 		HONEY = "甜 蜜 而 短 暂 的 一 餐 ",
 		HONEYCOMB = "凌 乱 的 蜂 箱 碎 片",
 		HONEYHAM = "香 甜 酱 汁 与 生 物 的 甜 蜜 拥 抱",
@@ -568,17 +808,8 @@ return {
 		MAXWELLTHRONE = "跟 我 期 望 的 可 不 太 一 样",
 		MEAT = "依 旧 血 腥",
 		MEATBALLS = "揉 成 团 的 肉 。 多 么 激 动 人 心",
-		MEATRACK =
-		{
-			DONE = "旱 季 结 束 了",
-			DRYING = "它 在 干 燥 的 狂 风 中 摇 曳",
-			DRYINGINRAIN = "这 些 雨 源 于 持 续 的 干 燥",
-			GENERIC = "能 让 我 挂 肉 的 地 方",
-		},
 		MEAT_DRIED = "肉 变 干 了 ， 更 美 味 了",
 		MERM = "可 怕 的 沼 泽 怪 物 ！",
-		MERMHEAD = "一 点 尊 严 都 没 有",
-		MERMHOUSE = "他 被 时 间 流 逝 摧 毁 了",
 		MINERHAT = "开 启 了 免 提 的 灯 光 ！",
 		MONSTERMEAT = "邪 恶 在 那 里 面 蔓 延",
 		MONSTERMEAT_DRIED = "肉 变 干 了 ， 味 道 很 奇 怪",
@@ -608,13 +839,6 @@ return {
 		PETALS_EVIL = "我 用 灵 魂 给 他 们 着 色",
 		PICKAXE = "那 样 我 或 许 会 洞 穿 地 球",
 		PIGGYBACK = "它 们 在 死 后 更 有 用",
-		PIGHEAD = "杀 了 那 猪 猡 。放 他 的 血",
-		PIGHOUSE =
-		{
-			FULL = "我 希 望 他 过 得 愉 快",
-			GENERIC = "至 少 他 们 很 舒 服",
-			LIGHTSOUT = "现 在 我 彻 底 孤 独 了",
-		},
 		PIGKING = "趁 你 还 有 能 力 ， 疯 狂 一 把 ， 阁 下",
 		PIGMAN =
 		{
@@ -662,7 +886,6 @@ return {
 			GENERIC = "我 太 大 了 进 不 去 那 里",
 			SPRING = "它 关 闭 了 。 没 有 什 么 可 以 下 去 了 ， 现 在",
 		},
-		RAINOMETER = "它 测 量 云 层 ， 我 喜 欢 它 的 阴 沉",
 		RATATOUILLE = "一 大 堆 煮 熟 的 蔬 菜 。 看 起 来 真 有 趣",
 		RAZOR = "仅 仅 用 于 剃 毛",
 		REDGEM = "红 得 像 我 的 鲜 血 ",
@@ -686,10 +909,6 @@ return {
             BROKEN = "石 头 的 碎 块",
         },
         RUINS_RUBBLE = "一 堆 破 碎 的 梦",
-		RESEARCHLAB = "我 会 学 到 无 法 形 容 的 事 情",
-		RESEARCHLAB2 = "我 会 学 到 无 法 形 容 的 事 情",
-		RESEARCHLAB3 = "我 会 学 到 无 法 形 容 的 事 情",
-		RESURRECTIONSTATUE = "我 只 是 把 事 情 延 迟 了",
 		RESURRECTIONSTONE = "一 个 无 足 轻 重 的 守 卫",
 		ROBIN =
 		{
@@ -711,7 +930,7 @@ return {
 		},
 		ROCK = "不 过 这 不 是 永 恒 的",
 		ROCKS = "一 些 小 岩 石",
-        ROOK = "是 碉 堡 还 是 城 堡 ？",
+        ROOK = "这 是 碉 堡 还 是 城 堡 ？",
 		ROPE = "离 开 这 地 方 很 容 易",
 		ROTTENEGG = "万 物 皆 如 此",
 		SANITYROCK =
@@ -801,7 +1020,6 @@ return {
 		TELEPORTATO_CRANK = "看 起 来 很 复 杂 ",
 		TELEPORTATO_POTATO = "真 是 个 可 怕 的 产 物",
 		TELEPORTATO_RING = "它 不 够 锋 利 ",
-		TENT = "睡 眠 是 死 亡 的 前 兆 ",
 		TENTACLE = "瘦 长 而 危 险 ！",
 		TENTACLESPOTS = "最 好 别 提 这 些 事",
 		TENTACLESPIKE = "机 敏 ， 狡 猾 ， 还 很 危 险 ",
@@ -813,7 +1031,6 @@ return {
 		TRAP = "某 些 小 草 变 得 致 命 了",
 		TRAP_TEETH = "来 自 地 下 的 卑 劣 意 外 ",
 		TRAP_TEETH_MAXWELL = "我 至 少 可 预 料 到 死 亡",
-		TREASURECHEST = "因 为 它 影 响 着 我 的 收 益 ",
 		TRINKET_1 = "完 美 的 残 缺",
 		TRINKET_10 = "另 一 张 需 要 食 物 的 嘴",
 		TRINKET_11 = "幸 运 的 机 器 人 ， 它 从 未 有 过 灵 魂",
@@ -835,13 +1052,11 @@ return {
 		TWIGS = "还 没 长 成 就 被 拔 了",
 		UMBRELLA = "嚎 啕 大 哭",
 		WAFFLES = "他 们 是 绝 对 的 华 夫 饼",
-		WALL_HAY = "仅 仅 是 防 御 的 建 议",
 		WALL_HAY_ITEM = "他 们 的 防 御 能 力 有 限",
 		WALL_STONE = "在 里 面 又 有 什 么 来 保 护 我 呢 ？",
 		WALL_STONE_ITEM = "这 不 能 防 御 内 心 的 恶 魔",
 		WALL_RUINS = "这 东 西 也 没 有 保 护 古 代 人 ， 不 是 吗 ！",
 		WALL_RUINS_ITEM = "这 些 石 头 闹 鬼 了 ？",
-		WALL_WOOD = "现 在 我 能 够 延 迟 必 然 发 生 的 ",
 		WALL_WOOD_ITEM = "捆 绑 的 圆 木 ",
 		WALRUS = "一 个 属 于 海 洋 的 老 人 家 ",
 		WALRUSHAT = "这 背 后 隐 藏 了 什 么 样 狂 热 的 想 法 ？",
@@ -854,7 +1069,6 @@ return {
 		WASPHIVE = "他 们 躲 在 憎 恨 的 堡 垒 里",
 		WETGOOP = "悲 惨 的 一 团 糟 ， 就 像 是 生 活",
 		WINTERHAT = "这 有 助 于 延 缓 寒 冷 的 渗 入",
-		WINTEROMETER = "我 怎 么 感 觉 它 正 在 算 计 我 的 死 期 ？",
 		WORMHOLE =
 		{
 			GENERIC = "生 命 不 会 总 是 有 意 义" ,

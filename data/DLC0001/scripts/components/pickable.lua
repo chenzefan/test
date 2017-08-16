@@ -3,6 +3,7 @@ local Pickable = Class(function(self, inst)
     self.canbepicked = nil
     self.hasbeenpicked = nil
     self.regentime = nil
+    self.baseregentime = nil
     self.product = nil
     self.onregenfn = nil
     self.onpickedfn = nil
@@ -207,6 +208,7 @@ function Pickable:SetUp(product, regen, number)
     self.canbepicked = true
     self.hasbeenpicked = false
     self.product = product
+    self.baseregentime = regen
     self.regentime = regen
     self.numtoharvest = number or 1
 end
@@ -310,6 +312,7 @@ function Pickable:OnLoad(data)
 		if self.makefullfn then
 			self.makefullfn(self.inst)
 		end
+		self.canbepicked = true
 		self.hasbeenpicked = false
 	end
     
@@ -406,8 +409,8 @@ function Pickable:MakeEmpty()
     self.canbepicked = false
     
 	if not self.paused then
-		if self.regentime then
-			local time = self.regentime
+		if self.baseregentime then
+			local time = self.baseregentime
 			
 			if self.getregentimefn then
 				time = self.getregentimefn(self.inst)
@@ -495,8 +498,8 @@ function Pickable:Pick(picker)
         self.canbepicked = false
         self.hasbeenpicked = true
         
-        if not self.paused and not self.withered and self.regentime and (self.cycles_left == nil or self.cycles_left > 0) then
-        	if GetSeasonManager():IsSpring() then self.regentime = self.regentime * TUNING.SPRING_GROWTH_MODIFIER end
+        if not self.paused and not self.withered and self.baseregentime and (self.cycles_left == nil or self.cycles_left > 0) then
+        	if GetSeasonManager():IsSpring() then self.regentime = self.baseregentime * TUNING.SPRING_GROWTH_MODIFIER end
 			self.task = self.inst:DoTaskInTime(self.regentime, OnRegen, "regen")
 			self.targettime = GetTime() + self.regentime
 		end

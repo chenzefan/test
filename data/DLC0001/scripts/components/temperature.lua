@@ -11,7 +11,7 @@ local Temperature = Class(function(self, inst)
 	self.hurtrate = TUNING.WILSON_HEALTH / TUNING.FREEZING_KILL_TIME
 	self.inherentinsulation = 0
 	self.inherentsummerinsulation = 0
-	self.shelterinsulation = TUNING.INSULATION_SMALL
+	self.shelterinsulation = TUNING.INSULATION_MED_LARGE
 
 	--At max moisture, the player will feel cooler than at minimum
 	self.maxmoisturepenalty = TUNING.MOISTURE_TEMP_PENALTY
@@ -134,8 +134,9 @@ function Temperature:GetInsulation()
 	end
 	
 	if self.inst.components.beard then
-		--Beards are always winterInsulation
+		--Beards help winterInsulation but hurt summerInsulation
 		winterInsulation = winterInsulation + self.inst.components.beard:GetInsulation()
+		summerInsulation = summerInsulation - self.inst.components.beard:GetInsulation()
 	end
 
 	if GetWorld():IsCave() then
@@ -149,6 +150,8 @@ function Temperature:GetInsulation()
 		summerInsulation = summerInsulation + TUNING.NIGHT_INSULATION_BONUS
 	end
 
+	if winterInsulation < 0 then winterInsulation = 0 end
+	if summerInsulation < 0 then summerInsulation = 0 end
 	return winterInsulation, summerInsulation
 end
 
@@ -173,7 +176,7 @@ function Temperature:OnUpdate(dt, applyhealthdelta)
     local last = self.current
 
     local seasonmgr = GetSeasonManager()
-	local ambient_delta = seasonmgr and (seasonmgr:GetCurrentTemperature() - self.current) or 30
+	local ambient_delta = ((seasonmgr and seasonmgr:GetCurrentTemperature() or TUNING.STARTING_TEMP) - self.current) or 0
 
 	ambient_delta = ambient_delta - self:GetMoisturePenalty()
 
@@ -206,6 +209,15 @@ function Temperature:OnUpdate(dt, applyhealthdelta)
 				end
 			end
 		end
+		-- Recently eaten temperatured food is inherently equipped heat/cold
+		if self.inst.recent_temperatured_food and self.inst.recent_temperatured_food ~= 0 then
+			ambient_delta = ambient_delta + self.inst.recent_temperatured_food
+		end
+	end
+
+	-- If very hot (basically only when have overheating screen effect showing) and under shelter, cool slightly
+    if self.current > TUNING.TREE_SHADE_COOLING_THRESHOLD and self.sheltered then
+		ambient_delta = ambient_delta - (self.current - TUNING.TREE_SHADE_COOLER)
 	end
 
 	--now figure out the temperature where we are standing
@@ -215,6 +227,8 @@ function Temperature:OnUpdate(dt, applyhealthdelta)
 	local ZERO_DISTSQ = ZERO_DISTANCE*ZERO_DISTANCE
 
 	local ents = TheSim:FindEntities(x,y,z, ZERO_DISTANCE, {"HASHEATER"})
+	local area_heat = 0
+	local num_area_heat_sources = 0
     for k,v in pairs(ents) do 
 		if v.components.heater and v ~= self.inst and not v:IsInLimbo() then
 			local heat = v.components.heater:GetHeat(self.inst)
@@ -229,15 +243,20 @@ function Temperature:OnUpdate(dt, applyhealthdelta)
 
 			if heat*heatfactor > self.current then
 				if heat > 0 then
-					ambient_delta = ambient_delta + (heat*heatfactor - self.current)
+					area_heat = area_heat + (heat*heatfactor - self.current)
+					num_area_heat_sources = num_area_heat_sources + 1
 				end
 			elseif heat*heatfactor < self.current then
 				if heat < 0 then
-					ambient_delta = ambient_delta - (self.current - heat*heatfactor)
+					area_heat = area_heat - (self.current - heat*heatfactor)
+					num_area_heat_sources = num_area_heat_sources + 1
 				end
 			end
 		end
     end	
+    if num_area_heat_sources > 0 then
+    	ambient_delta = ambient_delta + (area_heat / num_area_heat_sources)
+    end
 	
 	local winterInsulation, summerInsulation = self:GetInsulation()
 
@@ -247,7 +266,6 @@ function Temperature:OnUpdate(dt, applyhealthdelta)
 	local overheatTime = TUNING.SEG_TIME + summerInsulation 
 	-- local freeze_or_overheat_time = TUNING.SEG_TIME + total_insulation
 
-	local seasonmgr = GetSeasonManager()
 	if seasonmgr then
 		if self:IsCooling() and self:IsCool() then
 			if seasonmgr:GetCurrentTemperature() >= TUNING.STARTING_TEMP then --cooling down, obj is cold, world is hot
@@ -281,8 +299,12 @@ function Temperature:OnUpdate(dt, applyhealthdelta)
 	if self.inst.components.inventoryitem and 
 		self.inst.components.inventoryitem.owner and 
 		self.inst.components.inventoryitem.owner:HasTag("fridge") and not
-		self.inst.components.inventoryitem.owner:HasTag("nocool") then --For icepack.
+		self.inst.components.inventoryitem.owner:HasTag("nocool") and --For icepack.
+		self.current > 0 then -- Don't cool it below freezing
 		self.rate = -TUNING.WARM_DEGREES_PER_SEC
+		if self.inst.components.inventoryitem.owner:HasTag("lowcool") then
+			self.rate = self.rate * .5
+		end
 	end
 		
 	-- --Always get "slowest" rate. Max when cooling, Min when warming.

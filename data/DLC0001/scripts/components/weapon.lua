@@ -125,6 +125,7 @@ function Weapon:CollectEquippedActions(doer, target, actions)
     elseif doer.components.combat
        and self.inst:HasTag("rangedlighter")
        and target.components.burnable
+       and target.components.burnable.canlight
        and not target.components.burnable:IsBurning() 
        and not target:HasTag("burnt") then
         table.insert(actions, ACTIONS.RANGEDLIGHT)

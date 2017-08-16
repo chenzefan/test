@@ -36,7 +36,7 @@ local function TakeBaitAction(inst)
         return
     end
 
-    local target = FindEntity(inst, SEE_BAIT_DIST, function(item) return item:HasTag("molebait") and item.components.bait and not (item.components.inventoryitem and item.components.inventoryitem:IsHeld()) end)
+    local target = FindEntity(inst, SEE_BAIT_DIST, function(item) return item:HasTag("molebait") and (item.components.bait or item:HasTag("bell")) and not (item.components.inventoryitem and item.components.inventoryitem:IsHeld()) end)
     if target and not target.selectedasmoletarget then
         target.selectedasmoletarget = true
         target:DoTaskInTime(5, function(target) target.selectedasmoletarget = false end)
@@ -68,6 +68,8 @@ function MoleBrain:OnStart()
         EventNode(self.inst, "gohome", 
             DoAction(self.inst, GoHomeAction, "go home", false)),
         DoAction(self.inst, TakeBaitAction, "take bait", false),
+        WhileNode(function() return clock and clock:IsDay() end, "IsDay",
+            DoAction(self.inst, GoHomeAction, "go home", false )),
         Wander(self.inst, function() return self.inst.components.knownlocations:GetLocation("home") end, MAX_WANDER_DIST),
     }, .25)
     self.bt = BT(self.inst, root)

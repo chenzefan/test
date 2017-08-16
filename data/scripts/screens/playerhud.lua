@@ -6,6 +6,7 @@ local Widget = require "widgets/widget"
 local IceOver = require "widgets/iceover"
 local FireOver = require "widgets/fireover"
 local BloodOver = require "widgets/bloodover"
+
 local easing = require("easing")
 
 local ConsoleScreen = require "screens/consolescreen"
@@ -52,7 +53,7 @@ function PlayerHud:CreateOverlays(owner)
     self.clouds:GetAnimState():PlayAnimation("idle", true)
     self.clouds:GetAnimState():SetMultColour(1,1,1,0)
     self.clouds:Hide()
-
+	
 end
 
 function PlayerHud:OnLoseFocus()

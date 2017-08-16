@@ -112,10 +112,6 @@ local function getregentimefn(inst)
 	
 end
 
-local function onregenfn(inst)
-	inst.AnimState:PlayAnimation(pickanim(inst))
-end
-
 local function makefullfn(inst)
 	inst.AnimState:PlayAnimation(pickanim(inst))
 end
@@ -173,7 +169,6 @@ local function createbush(bushname)
 		    inst.components.pickable:SetUp("berries", TUNING.BERRY_REGROW_TIME)
 
 			inst.components.pickable.getregentimefn = getregentimefn
-			inst.components.pickable.onregenfn = onregenfn
 			inst.components.pickable.onpickedfn = onpickedfn
 		    inst.components.pickable.makeemptyfn = makeemptyfn
 		    inst.components.pickable.makebarrenfn = makebarrenfn

@@ -245,7 +245,6 @@ local function SeasonChanges(inst)
             inst.hibernatetask = inst:DoTaskInTime(TUNING.LUREPLANT_HIBERNATE_TIME, WakeUp)
         end
     end
-
 end
 
 
@@ -286,6 +285,7 @@ local function fn()
     inst.components.shelf.ontakeitemfn = OnPicked
 
     inst:AddComponent("inventory")
+    inst.components.inventory.nosteal = true
 
     inst:AddComponent("eater")
     inst.components.eater:SetCarnivore()
@@ -319,7 +319,7 @@ local function fn()
     inst.OnEntitySleep = OnEntitySleep
     inst.OnEntityWake = OnEntityWake
 
-    MakeLargeBurnable(inst)
+    MakeMediumBurnableCharacter(inst, "bulb_leaf")
     MakeLargePropagator(inst)
 
     inst.OnLoad = OnLoad
@@ -328,7 +328,7 @@ local function fn()
     inst.OnLongUpdate = OnLongUpdate
 
     inst.lurefn = SelectLure
-    inst:DoPeriodicTask(2,CollectItems) -- Always do this.
+    inst:DoPeriodicTask(2, CollectItems) -- Always do this.
     TryRevealBait(inst)
 
     inst.ListenForWinter = inst:DoPeriodicTask(30, SeasonChanges)

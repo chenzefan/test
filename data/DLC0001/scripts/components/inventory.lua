@@ -387,6 +387,19 @@ function Inventory:DropItem(item, wholestack, randomdir, pos)
     return dropped
 end
 
+function Inventory:GetEquippedMoistureRate()
+    local moisture = 0
+    local max = 0
+    for k,v in pairs(self.equipslots) do
+        if v and v.components.equippable then
+            local data = v.components.equippable:GetEquippedMoisture()
+            moisture = moisture + data.moisture
+            max = max + data.max
+        end
+    end
+    return moisture, max
+end
+
 function Inventory:GetWaterproofness()
     local waterproofness = 0
     for k,v in pairs(self.equipslots) do
@@ -715,7 +728,7 @@ function Inventory:RemoveItem(item, wholestack)
 
     local dec_stack = not wholestack and item and item.components.stackable and item.components.stackable:IsStack() and item.components.stackable:StackSize() > 1
 	
-	local prevslot = item.components.inventoryitem:GetSlotNum()
+	local prevslot = item.components.inventoryitem and item.components.inventoryitem:GetSlotNum() or nil
 
     if dec_stack then
         local dec = item.components.stackable:Get()

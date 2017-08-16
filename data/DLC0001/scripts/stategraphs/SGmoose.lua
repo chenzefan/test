@@ -133,7 +133,8 @@ local states=
 
         timeline = 
         {
-            TimeEvent(11*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/preen") end)
+            TimeEvent(11*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/preen") end),
+            TimeEvent(14*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/preen_feathers") end),
         },
     },
 
@@ -143,6 +144,7 @@ local states=
         
         onenter = function(inst) 
             inst.AnimState:PlayAnimation("hop")
+            PlayFootstep(inst)
             inst.components.locomotor:WalkForward()
             inst.sg:SetTimeout(math.random()+.5)
         end,
@@ -156,7 +158,7 @@ local states=
         timeline=
         {        
             TimeEvent(1*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/attack") end),
-            TimeEvent(8*FRAMES, function(inst) 
+            TimeEvent(9*FRAMES, function(inst) 
                 inst.Physics:Stop()
                 ShakeIfClose(inst)
                 inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/dragonfly/land")
@@ -245,9 +247,13 @@ local states=
         
         timeline=
         {
-            TimeEvent(11*FRAMES, function(inst)
-                inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/taunt")
-            end),
+            TimeEvent(9*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/flap") end),
+            TimeEvent(11*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/taunt") end),
+            TimeEvent(13*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/flap") end),
+            TimeEvent(17*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/flap") end),
+            TimeEvent(21*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/flap") end),
+            TimeEvent(27*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/flap") end),
+            TimeEvent(37*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/flap") end),
         },
         
         events=
@@ -339,11 +345,18 @@ local states=
 
         timeline =
         {
+            TimeEvent(2*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/flap") end),
+            TimeEvent(10*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/flap") end),
+            TimeEvent(11*FRAMES, function(inst) 
+                PlayFootstep(inst) 
+                inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/swhoosh")
+            end),
             TimeEvent(12*FRAMES, function(inst) 
                 inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/honk")
                 GetPlayer().components.playercontroller:ShakeCamera(inst, "FULL", 0.75, 0.01, 2, SHAKE_DIST)
             end),
             TimeEvent(15*FRAMES, function(inst) DisarmTarget(inst, inst.components.combat.target) end),
+            TimeEvent(29*FRAMES, function(inst) PlayFootstep(inst) end),
         },     
 
         events=
@@ -367,6 +380,8 @@ local states=
 
         timeline =
         {
+            TimeEvent(2*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/flap") end),
+            TimeEvent(10*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/flap") end),
             TimeEvent(12*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/honk") end),
 
             TimeEvent(15*FRAMES, function(inst) GetSeasonManager():ForcePrecip() end),
@@ -414,6 +429,8 @@ local states=
                 inst.Physics:SetMotorVelOverride(sp*math.cos(angle), 0, sp*math.sin(angle))
             end),
 
+            TimeEvent(28*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/flap") end),
+
             TimeEvent(30*FRAMES, function(inst)
                 inst.sg.statemem.mooseEgg = SpawnPrefab("mooseegg")     
                 inst.components.entitytracker:TrackEntity("egg", inst.sg.statemem.mooseEgg)
@@ -422,6 +439,8 @@ local states=
                     inst.sg.statemem.mooseEgg.Transform:SetPosition(inst.sg.statemem.eggPosition:Get()) 
                 end
             end),
+
+            TimeEvent(35*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/flap") end),
 
             TimeEvent(37.33*FRAMES, function(inst)   
                 inst.Physics:ClearMotorVelOverride()              
@@ -474,6 +493,9 @@ CommonStates.AddCombatStates(states,
 {
     attacktimeline = 
     {
+        TimeEvent(0*FRAMES, function(inst) PlayFootstep(inst) end),
+        TimeEvent(13*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/swhoosh") end),
+        TimeEvent(19*FRAMES, function(inst) PlayFootstep(inst) end),
         TimeEvent(20*FRAMES, function(inst)
             if not inst.components.timer:TimerExists("DisarmCooldown") then
                 inst.components.timer:StartTimer("DisarmCooldown", 10)

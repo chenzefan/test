@@ -71,9 +71,9 @@ return {
 	ANNOUNCE_TOOL_SLIP = "狡 猾 的 家 伙 ！",
 	ANNOUNCE_LIGHTNING_DAMAGE_AVOIDED = "我 乘 着 一 道 闪 电",
 
-	ANNOUNCE_DAMP = "诸 神 在 为 我 落 泪",
-	ANNOUNCE_WET = "下 雨 是 不 是 也 是 在 洗 澡 呢 ？",
-	ANNOUNCE_WETTER = "时 间 向 潮 湿 寻 求 宽 恕",
+	ANNOUNCE_DAMP = "与 光 滑 的 战 斗",
+	ANNOUNCE_WET = "我 是 潮 湿 战 士",
+	ANNOUNCE_WETTER = "这 是 不 是 也 算 是 洗 澡 ？",
 	ANNOUNCE_SOAKED = "我 就 快 溺 水 了 ！",
 	
 	BATTLECRY =
@@ -95,17 +95,17 @@ return {
 	DESCRIBE =
 	{		
 		GLOMMER = "宏 伟 的 落 地 花 生",
-        GLOMMERGLAND = "森 林 的 奇 观",
+        GLOMMERFLOWER = "森 林 的 奇 观",
         GLOMMERWINGS = "喔 ， 看 看 花 生 留 给 了 我 什 么",
         GLOMMERFUEL = "这 个 污 液 可 能 有 用",
-        BELL = "你 可 以 听 听 我 的 铃 铛",
+        BELL = "我 更 喜 欢 一 枚 战 争 戒 指",
         STATUEGLOMMER = 
         {	
         	GENERIC = "一 个 用 于 膜 拜 的 奇 怪 神 像",
         	EMPTY = "它 不 是 很 尊 重 我",
         },
 
-		WEBBERSKULL = "他 应 该 得 到 真 正 的 安 息",
+		WEBBERSKULL = "他 很 勇 敢 ，的 他 的 葬 礼 并 不 会 让 他 变 成 维 京 勇 士",
 		WORMLIGHT = "会 发 光 的 宝 藏 ， 我 无 法 抗 拒 ！",
 		WORM =
 		{
@@ -119,6 +119,7 @@ return {
 			ABOVEGROUND = "他 不 会 放 弃",
 		},
 		MOLEHILL = "有 什 么 东 西 生 活 在 那 里",
+		MOLEHAT = "我 利 用 着 动 物 的 每 一 个 部 分",
 
 		EEL = "美 味 的 粘 粘 的 鱼",
 		EEL_COOKED = "炒 鳗 鱼 ！",
@@ -152,6 +153,7 @@ return {
 		MINOTAUR = "哪 有 奇 迹 ！ 让 我 们 来 决 斗",
 		SPIDER_DROPPER = "你 如 此 的 卑 鄙 ！",
 		NIGHTMARELIGHT = "它 利 用 下 方 的 黑 暗 力 量",
+		NIGHTSTICK = "不 愧 是 雷 神 托 尔 的 武 器",
 		GREENGEM = "祖 母 绿",
 		RELIC = "旧 了 点 的 住 宅",
 		RUINS_RUBBLE = "我 的 方 法 很 多 ， 我 可 以 修 复 它",
@@ -297,6 +299,7 @@ return {
 		ASH =
 		{
 			GENERIC = "火 焰 的 遗 体",
+			REMAINS_GLOMMERFLOWER = "花 朵 必 须 留 在 它 的 家 园",
 			REMAINS_EYE_BONE = "眼 骨 无 法 来 到 这 个 世 界",
 			REMAINS_THINGIE = "它 燃 烧 了 。 它 走 了",
 		},
@@ -311,6 +314,8 @@ return {
 		BEDROLL_STRAW = "我 午 休 的 工 具",
 		BEARGER = "野 兽 或 是 狂 战士 ？",
 		BEARGERVEST = "我 是 狂 战 士 ！",
+		ICEPACK = "野 兽 的 背 包",
+		BEARGER_FUR = "它 英 勇 的 作 战 ， 但 是 我 要 下 了 它 的 皮",
 		BEE =
 		{
 			GENERIC = "蜜 的 战 士 ！ 我 不 知 道 我 是 否 会 喜 欢 他 们",
@@ -363,6 +368,7 @@ return {
 		BLUEAMULET = "寒 冷 的 首 饰",
 		BLUEGEM = "一 个 冰 冷 的 蓝 色 宝 石",
 		BLUEPRINT = "哦 ， 地 图 ！ 不 ， 等 等 。 这 是 错 的",
+		BELL_BLUEPRINT = "哦 ， 地 图 ！ 不 ， 等 等 。 这 是 错 的",
 		BLUE_CAP = "嗯 ， 蓝 色",
 		BLUE_CAP_COOKED = "我 仍 然 不 想 吃 它 ",
 		BLUE_MUSHROOM =
@@ -393,6 +399,7 @@ return {
 		},
 		CACTUS_MEAT_COOKED = "烤 好 的 肉 植 物",
 		CACTUS_MEAT = "带 剑 的 肉 植 物",
+		CACTUS_FLOWER = "深 色 的 美 丽",
 		COLDFIRE =
 		{
 			EMBERS = "火 焰 快 逝 去 了",
@@ -405,10 +412,10 @@ return {
 		CAMPFIRE =
 		{
 			EMBERS = "火 焰 快 逝 去 了",
-			GENERIC = "温 暖 的 火 焰 ， 温 暖 的 薇 斯 尔",
+			GENERIC = "温 暖 的 火 焰 ， 温 暖 的 薇 斯 尔 德",
 			HIGH = "火 怒 吼 ！",
 			LOW = "火 在 慢 慢 凋 零",
-			NORMAL = "温 暖 的 火 焰 ， 温 暖 的 薇 斯 尔",
+			NORMAL = "温 暖 的 火 焰 ， 温 暖 的 薇 斯 尔 德",
 			OUT = "和 光 一 起 闪 烁 消 失",
 		},
 		CANE = "开 启 快 走",
@@ -460,7 +467,7 @@ return {
 		DEADLYFEAST = "一 道 最 强 力 的 菜",
 		DEERCLOPS = "光 芒 会 照 耀 我 的 矛 并 戳 向 你 的 眼 球 ！",
 		DEERCLOPS_EYEBALL = "嗯 ， 我 会 吃 吗 ？",
-		EYEBRELLA = "不 要 让 雨 水 弄 湿 你 的 眼 睛 ！",
+		EYEBRELLAHAT = "不 要 让 雨 水 弄 湿 你 的 眼 睛 ！",
 		DEPLETED_GRASS =
 		{
 			GENERIC = "好 像 是 一 块 草 地 ",
@@ -485,6 +492,8 @@ return {
 		DIVININGRODSTART = "这 个 神 秘 的 剑 很 重 要",
 		DRAGONFLY = "啊 ， 龙 ！ 我 们 终 于 见 面 了 ！",
 		ARMORDRAGONFLY = "用 于 战 斗 的 优 秀 的 盔 甲",
+		DRAGON_SCALES = "神秘的鳞片",
+		DRAGONFLYCHEST = "这 个 箱 子 对 得 起 我 的 武 器",
 		LAVASPIT = 
 		{
 			HOT = "你 的 火 池 不 是 我 的 对 手 ！",
@@ -558,10 +567,10 @@ return {
 		FIREPIT =
 		{
 			EMBERS = "火 焰 快 逝 去 了",
-			GENERIC = "温 暖 的 火 焰 ， 温 暖 的 薇 斯 尔",
+			GENERIC = "温 暖 的 火 焰 ， 温 暖 的 薇 斯 尔 德",
 			HIGH = "火 怒 吼 ！",
 			LOW = "火 在 慢 慢 凋 零",
-			NORMAL = "温 暖 的 火 焰 ， 温 暖 的 薇 斯 尔",
+			NORMAL = "温 暖 的 火 焰 ， 温 暖 的 薇 斯 尔 德",
 			OUT = "和 光 一 起 闪 烁 消 失",
 		},
 		COLDFIREPIT =
@@ -573,7 +582,7 @@ return {
 			NORMAL = "冰 冷 的 舒 适",
 			OUT = "和 光 一 起 闪 烁 消 失",
 		},
-		FIRESTAFF = "薇 斯 尔 ！ 火 焰 战 士 ！",
+		FIRESTAFF = "薇 斯 尔 德 ！ 火 焰 战 士 ！",
 		FIRESUPPRESSOR = 
 		{	
 			ON = "弹 射 器 参 与 战 斗 ！",
@@ -685,6 +694,7 @@ return {
 			CHARGED = "闪 电 使 你 成 为 一 个 独 角 兽 战 士 ！",
 		},
 		LIGHTNINGGOATHORN = "这 可 能 会 造 成 长 久 的 打 击",
+		GOATMILK = "这 是 个 强 力 的 奶",
 		LITTLE_WALRUS = "邪 恶 小 牙 象",
 		LIVINGLOG = "燃 烧 的 魔 法 似 乎 是 种 浪 费",
 		LOCKEDWES = "我 会 救 你 沉 默 的 人 ！",
@@ -752,12 +762,20 @@ return {
 		MONKEY = "我 不 相 信 他",
 		MONKEYBARREL = "什 么 叫 候 群 ？",
 		MONSTERLASAGNA = "怪 物 煲",
+		FLOWERSALAD = "叶 子 中 的 动 物",
+        ICECREAM = "它 弄 疼 了 我 的 牙 齿",
+        WATERMELONICLE = "你 欺 骗 我 不 了 我 ， 躲 在 插 入 冰 冻 中 的 水 果",
+        TRAILMIX = "坚 果 肉 不 是 真 的 肉",
+        HOTCHILI = "测 试 我 的 意 志 力",
+        GUACAMOLE = "耶 ， 奶 油 ！",
 		MONSTERMEAT = "黑 暗 的 怪 兽 肉",
 		MONSTERMEAT_DRIED = "干 了",
 		MOOSE = "我 希 望 我 能 够 乘 骑 着 它 参 加 战 斗",
 		MOOSEEGG = "有 什 么 东 西 在 里 边 跳 动",
 		MOSSLING = "你 并 没 有 足 够 大 到 成 为 一 匹 骏 马",
 		FEATHERFAN = "军 营 中 精 华 品 ， 在 旅 途 中",
+		GOOSE_FEATHER = "一 个 盾 牌 少 女 应 该 享 有 柔 软 的 深 色 床 铺",
+		STAFF_TORNADO = "痛 苦 的 风 暴",
 		MOSQUITO =
 		{
 			GENERIC = "唉 ！ 这 些 东 西 是 最 没 用 的 ！",
@@ -949,7 +967,8 @@ return {
 		SEWING_KIT = "我 不 是 裁 缝 ， 但 有 时 需 要 修 理",
 		SHOVEL = "我 喜 欢 船 葬 ， 但 它 可 能 也 会 有 些 用 处",
 		SILK = "很 有 用 的 丝 线 与 过 去 胜 利 的 回 忆",
-		SKELETON = "高 枕 无 忧 的 英 灵 神 殿",
+		SKELETON = "高 枕 无 忧 的 躺 在 英 灵 神 殿",
+		SKELETON_PLAYER = "这 场 战 斗 还 没 有 结 束",
 		SKULLCHEST = "啊 ， 那 一 场 很 好 的 战 斗",
 		SMALLBIRD =
 		{
@@ -973,7 +992,7 @@ return {
 		SPIDERQUEEN = "最 后 ， 一 个 对 于 我 能 力 的 真 正 考 验",
 		SPIDER_WARRIOR =
 		{
-			DEAD = "薇 斯 尔 再 次 胜 利 ！",
+			DEAD = "薇 斯 尔 德 再 次 胜 利 ！",
 			GENERIC = "蜘 蛛 冠 军 。 战 斗 ！",
 			SLEEPING = "攻 击 一 个 睡 觉 的 敌 人 是 懦 弱 的",
 		},
@@ -985,6 +1004,8 @@ return {
 		STUFFEDEGGPLANT = "填 上 蔬 菜 也 不 会 让 它 变 成 肉",
 		SUNKBOAT = "难 怪 它 沉 没 了 。 它 不 是 一 艘 长 船",
 		SWEATERVEST = "这 是 个 漂 亮 的 背 心 ， 但 它 没 有 提 供 任 何 保 护",
+		REFLECTIVEVEST = "哈 ！ 阳 光 无 法 穿 透 这 名 战 士",
+		HAWAIIANSHIRT = "碎 花 不 会 让 长 矛 停 止",
 		TAFFY = "常 常 听 说 太 妃 糖 的 传 奇 ",
 		TALLBIRD = "可 怕 的 鸟 ！ 但 我 不 怕",
 		TALLBIRDEGG = "它 会 成 长 为 一 个 强 大 的 敌 人",

@@ -62,7 +62,6 @@ end
 
 function MoistureMeter:OnGainFocus()
 	MoistureMeter._base:OnGainFocus(self)
-	print("ON GAIN FOCUS")
 	self.num:Show()
 end
 

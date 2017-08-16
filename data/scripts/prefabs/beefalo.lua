@@ -181,7 +181,7 @@ local function fn(Sim)
     inst.components.periodicspawner:SetMinimumSpacing(8)
     inst.components.periodicspawner:Start()
 
-    MakeLargeBurnableCharacter(inst, "beefalo_body")
+    MakeLargeBurnableCharacter(inst, "swap_fire")
     MakeLargeFreezableCharacter(inst, "beefalo_body")
     
     inst:AddComponent("locomotor") -- locomotor must be constructed before the stategraph

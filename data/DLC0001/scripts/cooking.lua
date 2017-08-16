@@ -72,7 +72,7 @@ AddIngredientValues({"ice"}, {frozen=1})
 AddIngredientValues({"mole"}, {meat=.5})
 AddIngredientValues({"cactus_meat"}, {veggie=1}, true)
 AddIngredientValues({"watermelon"}, {fruit=1}, true)
-AddIngredientValues({"cactusflower"}, {veggie=.5})
+AddIngredientValues({"cactus_flower"}, {veggie=.5})
 AddIngredientValues({"acorn_cooked"}, {seed=1})
 AddIngredientValues({"goatmilk"}, {dairy=1})
 -- AddIngredientValues({"seeds"}, {seed=1}, true)
@@ -137,7 +137,6 @@ function GetCandidateRecipes(cooker, ingdata)
 	--find all potentially valid recipes
 	for k,v in pairs(recipes) do
 		if v.test(cooker, ingdata.names, ingdata.tags) then
-			print(k)
 			table.insert(candidates, v)
 		end
 	end

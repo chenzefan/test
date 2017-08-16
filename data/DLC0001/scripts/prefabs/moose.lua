@@ -11,6 +11,7 @@ local prefabs =
     "mooseegg",
     "mossling",
     "goose_feather",
+    "drumstick",
 }
 
 local MOOSE_SCALE = 1.55
@@ -23,8 +24,8 @@ SetSharedLootTable( 'moose',
     {'meat',             1.00},
     {'meat',             1.00},
     {'meat',             1.00},
-    {'meat',             1.00},
-    {'meat',             1.00},
+    {'drumstick',        1.00},
+    {'drumstick',        1.00},
     {'goose_feather',    1.00},
     {'goose_feather',    1.00},
     {'goose_feather',    1.00},
@@ -148,6 +149,7 @@ local function fn(Sim)
 
     inst:AddTag("moose")
     inst:AddTag("epic")
+    inst:AddTag("animal")
     inst:AddTag("scarytoprey")
     inst:AddTag("largecreature")
 
@@ -215,7 +217,7 @@ local function fn(Sim)
 
     ------------------------------------------
 
-    MakeLargeBurnableCharacter(inst, "goosemoose_body")
+    MakeLargeBurnableCharacter(inst, "swap_fire")
     MakeHugeFreezableCharacter(inst, "goosemoose_body")
 
     inst:ListenForEvent("timerdone", ontimerdone)

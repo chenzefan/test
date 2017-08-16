@@ -86,6 +86,9 @@ local kbcontrols = {
     CONTROL_OPEN_DEBUG_CONSOLE,
     CONTROL_TOGGLE_LOG,
     CONTROL_TOGGLE_DEBUGRENDER,
+    
+	--broadcasting
+	CONTROL_TOGGLE_BROADCASTING,
 }
 
 local controllercontrols = {    
@@ -159,7 +162,12 @@ local ControlsScreen = Class(Screen, function(self, in_game)
 	}
 	
 	self.bg = self:AddChild(Image("images/ui.xml", "bg_plain.tex"))
-    self.bg:SetTint(BGCOLOURS.RED[1],BGCOLOURS.RED[2],BGCOLOURS.RED[3], 1)
+	
+    if IsDLCEnabled(REIGN_OF_GIANTS) then
+    	self.bg:SetTint(BGCOLOURS.PURPLE[1],BGCOLOURS.PURPLE[2],BGCOLOURS.PURPLE[3], 1)
+    else
+        self.bg:SetTint(BGCOLOURS.RED[1],BGCOLOURS.RED[2],BGCOLOURS.RED[3], 1)
+    end
 
     self.bg:SetVRegPoint(ANCHOR_MIDDLE)
     self.bg:SetHRegPoint(ANCHOR_MIDDLE)

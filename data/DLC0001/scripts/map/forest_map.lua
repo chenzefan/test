@@ -57,8 +57,8 @@ local MULTIPLY = {
 		["never"] = 0,
 		["rare"] = 0.5,
 		["default"] = 1,
-		["often"] = 1.33,
-		["mostly"] = 1.67,
+		["often"] = 1.5,
+		["mostly"] = 1.67, -- Not sure this is getting used...?
 		["always"] = 2,		
 	}
 
@@ -74,9 +74,8 @@ local TRANSLATE_TO_PREFABS = {
 		["ponds"] = 			{"pond", "pond_mos"},
 		["bees"] = 				{"beehive", "bee"},
 		["grass"] = 			{"grass"},
-		["rock"] = 				{"rock1", "rock2", "rock_flintless"}, 
+		["rock"] = 				{"rocks", "rock1", "rock2", "rock_flintless"}, 
 		["rock_ice"] = 			{"rock_ice"}, 
-		["rocks"] = 			{"rocks"}, 
 		["sapling"] = 			{"sapling"},
 		["reeds"] = 			{"reeds"},	
 		["trees"] = 			{"evergreen", "evergreen_sparse", "deciduoustree"},	
@@ -91,7 +90,7 @@ local TRANSLATE_TO_PREFABS = {
 		["cactus"] = 			{"cactus"},
 		["lightninggoat"] = 	{"lightninggoat"},
 		["catcoon"] = 			{"catcoonden"},
-		["merm"] = 				{"merm"},
+		["merm"] = 				{"mermhouse"},
 		["buzzard"] = 			{"buzzardspawner"},
 		["mushroom"] =			{"red_mushroom", "green_mushroom", "blue_mushroom"},
 		["marshbush"] = 		{"marsh_bush"},
@@ -378,6 +377,18 @@ local function GenerateVoro(prefab, map_width, map_height, tasks, world_gen_choi
 				save.map.persistdata.seasonmanager = {}
 			end
 
+			if season == "random" then
+				local rand = math.random(1,4)
+				if rand == 1 then
+					season = "summer"
+				elseif rand == 2 then
+					season = "winter"
+				elseif rand == 3 then
+					season = "autumn"
+				else
+					season = "spring"
+				end
+			end
 			save.map.persistdata.seasonmanager.current_season = season
 			if season == "winter" then
 				save.map.persistdata.seasonmanager.ground_snow_level = 1

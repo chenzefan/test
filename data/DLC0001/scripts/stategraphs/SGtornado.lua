@@ -2,21 +2,48 @@ require("stategraphs/commonstates")
 
 local events=
 {
-    EventHandler("locomote", function(inst)
+
+
+	EventHandler("locomote", function(inst)
         local is_moving = inst.sg:HasStateTag("moving")
+        local is_running = inst.sg:HasStateTag("running")
         local is_idling = inst.sg:HasStateTag("idle")
         
         local should_move = inst.components.locomotor:WantsToMoveForward()
+        local should_run = inst.components.locomotor:WantsToRun()
         if is_moving and not should_move then
-            inst.sg:GoToState("walk_stop")
-        elseif (is_idling and should_move) then
-        	if inst.sg:HasStateTag("empty") then
-        		inst.sg:GoToState("spawn")
-        	else
-            	inst.sg:GoToState("walk_start")
+            if is_running then
+                inst.sg:GoToState("run_stop")
+            else
+                inst.sg:GoToState("walk_stop")
+            end
+        elseif (is_idling and should_move) or (is_moving and should_move and is_running ~= should_run) then
+            if should_run then
+            	if inst.sg:HasStateTag("empty") then
+            		inst.sg:GoToState("spawn")
+            	else
+                	inst.sg:GoToState("run_start")
+            	end
+            else
+                inst.sg:GoToState("walk_start")
             end
         end
     end)
+    -- EventHandler("locomote", function(inst)
+    --     local is_moving = inst.sg:HasStateTag("moving")
+    --     local is_idling = inst.sg:HasStateTag("idle")
+        
+    --     local should_move = inst.components.locomotor:WantsToMoveForward()
+    --     if is_moving and not should_move then
+    --         inst.sg:GoToState("walk_stop")
+    --     elseif (is_idling and should_move) then
+    --     	if inst.sg:HasStateTag("empty") then
+    --     		inst.sg:GoToState("spawn")
+    --     	else
+    --         	inst.sg:GoToState("walk_start")
+    --         end
+    --     end
+    -- end)
 }
 
 local function destroystuff(inst)
@@ -75,11 +102,11 @@ local states=
 		tags = {"moving", "canrotate"},
 
 		onenter = function(inst)
-            inst.components.locomotor:WalkForward()
+            inst.components.locomotor:RunForward()
 			inst.AnimState:PlayAnimation("tornado_pre")
 		end,
 
-		events = 
+		events =
 		{
 			EventHandler("animover", function(inst) 
 				inst.sg:GoToState("walk") 
@@ -147,6 +174,68 @@ local states=
 		onenter = function(inst)
 			inst.sg:GoToState("idle")
 		end,
+	},
+
+   State{
+        name = "run_start",
+        tags = {"moving", "running", "canrotate"},
+        
+        onenter = function(inst) 
+            inst.components.locomotor:RunForward()
+            inst.AnimState:PushAnimation("tornado_loop", false)
+        end,
+
+		timeline =
+		{
+			TimeEvent(5*FRAMES, destroystuff),
+		},
+
+        events=
+        {   
+            EventHandler("animqueueover", function(inst) inst.sg:GoToState("run") end ),        
+        },            
+    },
+    
+
+    State{            
+        name = "run",
+        tags = {"moving", "running", "canrotate"},
+        
+        onenter = function(inst) 
+            inst.components.locomotor:RunForward()
+            inst.AnimState:PushAnimation("tornado_loop", false)
+        end,
+
+		timeline =
+		{
+			TimeEvent(5*FRAMES, destroystuff),
+		},
+        
+        events=
+        {   
+            EventHandler("animqueueover", function(inst) inst.sg:GoToState("run") end ),        
+        }, 
+    },
+        
+	State{
+    
+        name = "run_stop",
+        tags = {"idle"},
+        
+        onenter = function(inst) 
+            inst.components.locomotor:StopMoving()
+            inst.AnimState:PushAnimation("tornado_loop", false)
+        end,
+        
+		timeline =
+		{
+			TimeEvent(5*FRAMES, destroystuff),
+		},
+
+        events=
+        {   
+            EventHandler("animqueueover", function(inst) inst.sg:GoToState("idle") end ),        
+        },
 	},
 
 }

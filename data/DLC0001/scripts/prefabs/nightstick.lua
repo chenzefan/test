@@ -17,9 +17,8 @@ local function onequip(inst, owner)
     owner.AnimState:Show("ARM_carry") 
     owner.AnimState:Hide("ARM_normal") 
     
-    inst.SoundEmitter:PlaySound("dontstarve/wilson/torch_LP", "torch")
-    inst.SoundEmitter:PlaySound("dontstarve/wilson/torch_swing")
-    inst.SoundEmitter:SetParameter( "torch", "intensity", 1 )
+    inst.SoundEmitter:PlaySound("dontstarve_DLC001/common/morningstar", "torch")
+--    inst.SoundEmitter:SetParameter( "torch", "intensity", 1 )
 
     inst.fire = SpawnPrefab( "nightstickfire" )
     local follower = inst.fire.entity:AddFollower()
@@ -42,7 +41,6 @@ local function onunequip(inst,owner)
     owner.AnimState:Hide("ARM_carry") 
     owner.AnimState:Show("ARM_normal")
     inst.SoundEmitter:KillSound("torch")
-    inst.SoundEmitter:PlaySound("dontstarve/common/fireOut")        
 end
 
 
@@ -62,6 +60,7 @@ local function fn(Sim)
         inst.fire:OnAttack()
     end)
     inst.components.weapon:SetElectric()
+    
     
     -- inst.components.weapon:SetAttackCallback(
     --     function(attacker, target)

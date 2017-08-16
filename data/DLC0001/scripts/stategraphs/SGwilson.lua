@@ -245,7 +245,8 @@ local events=
                     
                     if inst.prefab ~= "wes" then
                         local sound_name = inst.soundsname or inst.prefab
-                        local sound_event = "dontstarve/characters/"..sound_name.."/hurt"
+                        local path = inst.talker_path_override or "dontstarve/characters/"
+                        local sound_event = path..sound_name.."/hurt"
                         inst.SoundEmitter:PlaySound(inst.hurtsoundoverride or sound_event)
                     end
                     return
@@ -505,6 +506,12 @@ local states=
             if inst.prefab ~= "wx78" then
                 inst.Light:Enable(true)
             end
+            if inst.prefab ~= "wes" then
+                local sound_name = inst.soundsname or inst.prefab
+                local path = inst.talker_path_override or "dontstarve/characters/"
+                local sound_event = path..sound_name.."/hurt"
+                inst.SoundEmitter:PlaySound(inst.hurtsoundoverride or sound_event)
+            end
         end,
 
         onexit = function(inst)
@@ -672,6 +679,7 @@ local states=
         
         onenter = function(inst)
             inst.components.locomotor:Stop()
+            inst.last_death_position = inst:GetPosition()
             inst.AnimState:Hide("swap_arm_carry")
             inst.AnimState:PlayAnimation("death")
         end,
@@ -753,11 +761,11 @@ local states=
         
 
 			
-			if inst.components.temperature:GetCurrent() < 5 then
+			if inst.components.temperature:GetCurrent() < 10 then
 				inst.AnimState:PlayAnimation("idle_shiver_pre")
 				inst.AnimState:PushAnimation("idle_shiver_loop")
 				inst.AnimState:PushAnimation("idle_shiver_pst", false)
-            elseif inst.components.temperature:GetCurrent() > 65 then
+            elseif inst.components.temperature:GetCurrent() > 60 then
                 --plug in overheats once they're done
                 inst.AnimState:PlayAnimation("idle_hot_pre")
                 inst.AnimState:PushAnimation("idle_hot_loop")
@@ -2328,7 +2336,12 @@ local states=
 			end
 		
 	
-			local danger = FindEntity(inst, 10, function(target) return target:HasTag("monster") or target.components.combat and target.components.combat.target == inst end)
+			local danger = FindEntity(inst, 10, function(target) 
+                return (target:HasTag("monster") and not target:HasTag("player") and not inst:HasTag("spiderwhisperer"))
+                    or (target:HasTag("monster") and not target:HasTag("player") and inst:HasTag("spiderwhisperer") and not target:HasTag("spider"))
+                    or (target:HasTag("pig") and not target:HasTag("player") and inst:HasTag("spiderwhisperer"))
+                    or (target.components.combat and target.components.combat.target == inst) end)
+
             local hounded = GetWorld().components.hounded
 
 			if hounded and (hounded.warning or hounded.timetoattack <= 0) then

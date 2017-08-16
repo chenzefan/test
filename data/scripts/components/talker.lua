@@ -11,6 +11,8 @@ local Talker = Class(function(self, inst)
     self.inst = inst
     self.task = nil
     self.ignoring = false
+
+    self.special_speech = false
 end)
 
 function Talker:IgnoreAll()
@@ -70,6 +72,10 @@ function Talker:ShutUp()
     end
 end
 
+function Talker:SetSpecialSpeechFn(fn)
+    if fn then self.specialspeechfn = fn end
+    self.special_speech = true
+end
 
 function Talker:Say(script, time, noanim)
     if self.inst.components.health and  self.inst.components.health:IsDead() then
@@ -82,6 +88,14 @@ function Talker:Say(script, time, noanim)
     
     if self.ignoring then
         return
+    end
+
+    if self.special_speech then
+        if self.specialspeechfn then
+            script = self.specialspeechfn(self.inst.prefab)
+        else
+            script = GetSpecialCharacterString(self.inst.prefab)
+        end
     end
     
 	if self.ontalk then

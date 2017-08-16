@@ -115,16 +115,11 @@ AddGlobalDebugKey(KEY_R, function()
 end)
 
 AddGameDebugKey(KEY_F2, function()
-    GetWorld().components.bigfooter:SummonFoot(GetPlayer():GetPosition())
+    c_gonext"cave_exit"   
 end)
 
 AddGameDebugKey(KEY_F3, function()
-    local goose = c_spawn("moose")
-    local pos = goose:GetPosition()
-    pos.y = 30
-    goose.Transform:SetPosition(pos:Get())
-    goose.sg:GoToState("glide")
-    goose.components.timer:StartTimer("WantsToLayEgg", 2)    
+    c_gonext"cave_entrance"   
 end)
 
 AddGameDebugKey(KEY_R, function()
@@ -246,10 +241,10 @@ AddGameDebugKey(KEY_F8, function()
     local player = GetPlayer()
     local pt = Vector3(player.Transform:GetWorldPosition())
     local theta = math.random() * 2 * math.pi
-    local numrings = 12 --How many rings of stuff you spawn
+    local numrings = 8 --How many rings of stuff you spawn
     local radius = 4 --Initial distance from player
     local radius_step_distance = 1 --How much the radius increases per ring.
-    local itemdensity = .5 --(X items per unit)
+    local itemdensity = 1 --(X items per unit)
     local ground = GetWorld()
     
     local finalRad = (radius + (radius_step_distance * numrings))

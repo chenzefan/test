@@ -22,15 +22,11 @@ local InventoryItem = Class(function(self, inst)
 
     -- Trappable?
     self.trappable = true
-    self.inst:DoTaskInTime(0, function(inst)
-        if self.canbepickedup and not self.inst.components.waterproofer then
+    if self.canbepickedup and not self.inst.components.waterproofer then
+        if not self.inst.components.moisturelistener then 
             self.inst:AddComponent("moisturelistener")
-            
-            if GetWorld() then
-                GetWorld().components.inventorymoisture:TrackItem(self.inst)
-            end
         end
-    end)
+    end
 end)
 
 function InventoryItem:GetDebugString()

@@ -4,7 +4,8 @@ local Leader = Class(function(self, inst)
     self.numfollowers = 0
     
     self.inst:ListenForEvent("newcombattarget", function(inst, data) self:OnNewTarget(data.target) end)
-    self.inst:ListenForEvent("attacked", function(inst, data) self:OnAttacked(data.attacker) end)    
+    self.inst:ListenForEvent("attacked", function(inst, data) self:OnAttacked(data.attacker) end)   
+    self.inst:ListenForEvent("death", function(inst) self:RemoveAllFollowers() end)
 end)
 
 function Leader:IsFollower(guy)
@@ -123,7 +124,6 @@ function Leader:LoadPostPass(newents, savedata)
         for k,v in pairs(savedata.followers) do
             local targ = newents[v]
             if targ and targ.entity.components.follower then
-                print(targ.entity)
                 self:AddFollower(targ.entity)
             end
         end

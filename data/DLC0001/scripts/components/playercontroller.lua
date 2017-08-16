@@ -730,7 +730,7 @@ function PlayerController:UpdateControllerAttackTarget(dt)
 				
 				local score = (1 + dot)* (1 / math.max(min_rad*min_rad, dsq))
 
-				if (v.components.follower and v.components.follower.leader == self.inst) or v.prefab == "chester" then
+				if (v.components.follower and v.components.follower.leader == self.inst) or self.inst.components.combat:IsAlly(v) then
 					score = score * .25
 				elseif v:HasTag("monster") then
 					score = score * 4

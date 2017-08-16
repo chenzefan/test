@@ -46,7 +46,8 @@ local DynamicMusic = Class(function(self, inst)
     self.inst:ListenForEvent( "dusktime", function(it, data) 
             
             if self.enabled and 
-                not self.playing_danger then
+                not self.playing_danger and
+                data.newdusk then
                 self:StopPlayingBusy()
                 self.inst.SoundEmitter:PlaySound( "dontstarve/music/music_dusk_stinger")
             end

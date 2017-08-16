@@ -20,7 +20,9 @@ local Moisture = Class(function(self, inst)
 
     self.delta = 0
 
-    self.sheltered = true
+    self.sheltered = false
+    self.new_sheltered = false
+    self.prev_sheltered = false
 
 	self.inst:StartUpdatingComponent(self)
 
@@ -31,17 +33,33 @@ function Moisture:CheckForShelter()
 	local x,y,z = self.inst.Transform:GetWorldPosition()
 	local ents = TheSim:FindEntities(x,y,z, 3, {"shelter"}, {"FX", "NOCLICK", "DECOR", "INLIMBO"})
 	if #ents > 0 then
-		self.sheltered = true
-		self.inst:PushEvent("sheltered")
-		if (not self.lastannouncetime or (GetTime() - self.lastannouncetime > TUNING.TOTAL_DAY_TIME)) and
-			GetSeasonManager() and (GetSeasonManager():IsRaining() or GetSeasonManager():GetCurrentTemperature() >= TUNING.OVERHEAT_TEMP - 5) then
-			self.inst.components.talker:Say(GetString(self.inst.prefab, "ANNOUNCE_SHELTER"))
-			self.lastannouncetime = GetTime()
+		-- Check if have been sheltered before we set sheltered/prev_sheltered to true so that we are only doing the announce after having been under shelter for a couple updates
+		if self.new_sheltered and self.prev_sheltered then
+			self.sheltered = true
+			self.inst:PushEvent("sheltered") -- Set sheltered to true in temperature
+			if (not self.lastannouncetime or (GetTime() - self.lastannouncetime > TUNING.TOTAL_DAY_TIME)) and
+				GetSeasonManager() and (GetSeasonManager():IsRaining() or GetSeasonManager():GetCurrentTemperature() >= TUNING.OVERHEAT_TEMP - 5) then
+				self.inst.components.talker:Say(GetString(self.inst.prefab, "ANNOUNCE_SHELTER"))
+				self.lastannouncetime = GetTime()
+			end
 		end
+		if self.new_sheltered then self.prev_sheltered = true end -- Have we been sheltered for an update?
+		self.new_sheltered = true
 	else
 		self.sheltered = false
+		self.prev_sheltered = false
+		self.new_sheltered = false
 		self.inst:PushEvent("unsheltered")
 	end
+
+	local soundShouldPlay = GetSeasonManager() and GetSeasonManager():IsRaining() and self.sheltered
+    if soundShouldPlay ~= self.inst.SoundEmitter:PlayingSound("treerainsound") then
+        if soundShouldPlay then
+		    self.inst.SoundEmitter:PlaySound("dontstarve_DLC001/common/rain_on_tree", "treerainsound") 
+        else
+		    self.inst.SoundEmitter:KillSound("treerainsound")
+		end
+    end
 end
 
 function Moisture:GetDebugString()
@@ -133,6 +151,20 @@ function Moisture:GetMoistureRate()
 	return rate
 end
 
+function Moisture:GetEquippedMoistureRate()
+	local rate = 0
+	local max = 0
+
+	if self.inst.components.inventory then
+		rate, max = self.inst.components.inventory:GetEquippedMoistureRate()
+	end
+
+	if rate > 0 and self.moisture >= max then
+		rate = rate * 0.01
+	end
+	return rate
+end
+
 function Moisture:GetDryingRate()
 
 	local temp = self.inst.components.temperature
@@ -173,13 +205,11 @@ function Moisture:GetDryingRate()
 	--Look @ player temp too
 
 	rate = rate + easing.linear(sm:GetCurrentTemperature(), self.minDryingRate, self.maxDryingRate, self.optimalDryingTemp)
-
-
 	rate = rate + easing.inExpo(self:GetMoisture() , 0, 1, self.moistureclamp.max)
-
 	rate = math.clamp(rate, 0, self.maxDryingRate + self.maxPlayerTempDrying)
 
-	if self:GetMoistureRate() > 0 then
+
+	if self:GetMoistureRate() + self:GetEquippedMoistureRate() > 0 then
 		rate = 0
 	end
 
@@ -191,9 +221,10 @@ function Moisture:GetDelta()
 end
 
 function Moisture:OnUpdate(dt)
-	local moisture_rate = self:GetMoistureRate()
+	local moisture_rate = self:GetMoistureRate() + self:GetEquippedMoistureRate()
 	local drying_rate = -self:GetDryingRate()
 	self.delta = (moisture_rate + drying_rate)
+	if math.abs(self.delta) <= 0.01 then self.delta = 0 end
 	self:DoDelta(self.delta * dt)
 end
 

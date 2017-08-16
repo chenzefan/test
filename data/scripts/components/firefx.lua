@@ -38,10 +38,10 @@ end
 
 function FireFX:UpdateRadius()
     local lowval_r = 0
-    local highval_r = self.levels[self.level].radius
+    local highval_r = (self.levels and self.levels[self.level] and self.levels[self.level].radius) and self.levels[self.level].radius or 1
 	
-    if self.level > 1 then
-        lowval_r = self.levels[self.level-1].radius
+    if self.level and self.level > 1 then
+        lowval_r = (self.levels and self.levels[self.level-1] and self.levels[self.level-1].radius) and self.levels[self.level-1].radius or 1
     end
 	self.current_radius = self.percent*(highval_r-lowval_r)+lowval_r
 	

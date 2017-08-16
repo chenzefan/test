@@ -54,6 +54,7 @@ local function CalcSanityAura(inst, observer)
 end
 
 local function RetargetFn(inst)
+    if inst.components.sleeper and inst.components.sleeper:IsAsleep() then return end
     if inst.last_eat_time and (GetTime() - inst.last_eat_time) > TUNING.BEARGER_DISGRUNTLE_TIME then
         return FindEntity(inst, TARGET_DIST*5, function(guy) 
             return inst.components.combat:CanTarget(guy)
@@ -61,10 +62,10 @@ local function RetargetFn(inst)
                and not guy:HasTag("smallcreature")
         end)
     else
-        return FindEntity(inst, TARGET_DIST, function(guy) 
+        return FindEntity(inst, TARGET_DIST, function(guy)
             return inst.components.combat:CanTarget(guy)
-               and not guy:HasTag("prey")
-               and not guy:HasTag("smallcreature")
+                and not guy:HasTag("prey")
+                and not guy:HasTag("smallcreature")
         end)
     end
 end
@@ -74,11 +75,13 @@ local function KeepTargetFn(inst, target)
 end
 
 local function OnEntitySleep(inst)
-    if (not inst:NearPlayerBase() and inst.SeenBase and not inst.components.combat:TargetIs(GetPlayer())) 
+    if ((not inst:NearPlayerBase() and inst.SeenBase and not inst.components.combat:TargetIs(GetPlayer())) 
         or inst.components.sleeper:IsAsleep() 
-        or inst.KilledPlayer then
+        or inst.KilledPlayer)
+        and not NearPlayerBase(inst) then
         --Bearger has seen your base and been lured off! Despawn.
         --Or the bearger has killed you, you've been punished enough.
+        --Only applies if not currently at base
         LeaveWorld(inst)
     elseif (not inst:NearPlayerBase() and not inst.SeenBase) 
         or (inst.components.combat:TargetIs(GetPlayer()) and not inst.KilledPlayer) then
@@ -149,7 +152,7 @@ local function WorkEntities(inst)
     local dir = Vector3(math.cos(heading_angle*DEGREES),0, math.sin(heading_angle*DEGREES))
 
     for k,v in pairs(ents) do
-        if v and v.components.workable then
+        if v and v.components.workable and not v:HasTag("insect") then
             local hp = v:GetPosition()
             local offset = (hp - pt):GetNormalized()     
             local dot = offset:Dot(dir)
@@ -371,7 +374,7 @@ local function fn(Sim)
 
     ------------------------------------------
 
-    MakeLargeBurnableCharacter(inst, "bearger_body")
+    MakeLargeBurnableCharacter(inst, "swap_fire")
     MakeHugeFreezableCharacter(inst, "bearger_body")
 
     SetStandState(inst, "QUAD")--SetStandState(inst, "BI")

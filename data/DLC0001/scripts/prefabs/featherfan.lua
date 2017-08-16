@@ -9,7 +9,8 @@ local function OnUse(inst, target)
 		if target.components.temperature:GetCurrent() + coolingAmount <= 0 then
 			coolingAmount = -target.components.temperature:GetCurrent() + 5
 		end
-		target.components.temperature:DoDelta(coolingAmount)
+		target.components.temperature:SetTemperature(target.components.temperature:GetCurrent() + coolingAmount)
+		--target.components.temperature:DoDelta(coolingAmount)
 	end
 	local pos = target:GetPosition()
 	local ents = TheSim:FindEntities(pos.x, pos.y, pos.z, 7, nil, {"FX", "NOCLICK","DECOR","INLIMBO"}, {"smolder", "fire"})
@@ -34,6 +35,7 @@ local function fn()
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
 	inst.entity:AddSoundEmitter()
+	MakeInventoryPhysics(inst)
 
 	inst.AnimState:SetBank("fan")
 	inst.AnimState:SetBuild("fan")

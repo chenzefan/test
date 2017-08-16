@@ -184,7 +184,6 @@ function SpawnSaveRecord(saved, newents)
 				inst.components.scenariorunner:SetScript(saved.scenario)
 			end
 		end
-
         inst:SetPersistData(saved.data, newents)
 
     else
@@ -792,6 +791,16 @@ function DisplayError(error)
                 20
                 ))
     end
+end
+
+function OnMessageReceived( username, message )
+	local player = GetPlayer()
+	if player ~= nil then
+		local hud = player.HUD
+		if hud ~= nil and hud.controls ~= nil then
+			hud.controls:OnMessageReceived( username, message )
+		end
+	end
 end
 
 function SetPauseFromCode(pause)

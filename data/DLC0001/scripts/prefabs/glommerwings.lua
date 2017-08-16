@@ -9,6 +9,7 @@ local function fn()
 	local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
+	MakeInventoryPhysics(inst)
 
 	anim:SetBank("glommer_wings")
 	anim:SetBuild("glommer_wings")
@@ -16,6 +17,12 @@ local function fn()
 
 	inst:AddComponent("inspectable")
 	inst:AddComponent("inventoryitem")
+
+	inst:AddComponent("fuel")
+    inst.components.fuel.fuelvalue = TUNING.MED_LARGE_FUEL
+    MakeSmallBurnable(inst, TUNING.SMALL_BURNTIME)
+    MakeSmallPropagator(inst)
+    inst.components.burnable:MakeDragonflyBait(3)
 
 	return inst
 end

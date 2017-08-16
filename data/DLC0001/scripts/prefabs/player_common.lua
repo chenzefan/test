@@ -243,7 +243,12 @@ local function MakePlayerCharacter(name, customprefabs, customassets, customfn, 
         -------
         
         inst:AddComponent("kramped")
+
         inst:AddComponent("talker")
+        -- Reset overrides just in case
+        inst.hurtsoundoverride = nil
+        inst.talker_path_override = nil
+
         inst:AddComponent("trader")
         inst:AddComponent("wisecracker")
         inst:AddComponent("distancetracker")
@@ -307,6 +312,7 @@ local function MakePlayerCharacter(name, customprefabs, customassets, customfn, 
         end
 
         MakeHugeFreezableCharacter(inst)
+        inst.components.freezable:SetDefaultWearOffTime(TUNING.PLAYER_FREEZE_WEAR_OFF_TIME)
 
 
         -------

@@ -22,6 +22,7 @@ local fn = function(inst)
 	inst.components.hunger:SetRate(TUNING.WILSON_HUNGER_RATE*1.25)
 	inst.components.sanity:SetMax(TUNING.WILSON_SANITY*.75)
 	inst.components.inventory:GuaranteeItems(start_inv)
+	inst.components.talker.special_speech = true
 end
 
 

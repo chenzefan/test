@@ -53,6 +53,7 @@ local states=
             if inst.ashes then 
                 inst.Physics:Stop()
                 inst.AnimState:PlayAnimation("eat")
+                inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/dragonfly/suckup")
                 inst.last_spit_time = GetTime() -- treat this as a spit so he doesn't go directly to a spit
                 if inst.ashes then 
                     inst.num_ashes_eaten = inst.num_ashes_eaten + (inst.ashes.components.stackable and inst.ashes.components.stackable:StackSize() or 1)
@@ -74,6 +75,9 @@ local states=
 
         timeline=
         {
+            TimeEvent(16*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/dragonfly/chew") end),
+            TimeEvent(22*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/dragonfly/chew") end),
+            TimeEvent(31*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/dragonfly/chew") end),
             TimeEvent(34*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/dragonfly/blink") end),
         },
     },
@@ -144,7 +148,8 @@ local states=
             inst.components.locomotor:StopMoving()
             inst.Physics:Stop()
             inst.AnimState:PlayAnimation("taunt_pre")
-            inst.last_target_spit_time = nil
+            inst.last_target_spit_time = nil -- Aggro, no longer care about spit timing
+            inst.last_spit_time = nil -- Aggro, no longer care about spit timing
         end,
         
         events=
@@ -239,6 +244,7 @@ local states=
             inst.Physics:Stop()
             inst.AnimState:PlayAnimation("flame_off")
             inst.last_target_spit_time = GetTime() -- Fake this as a target spit to make him not re-aggro immediately
+            inst.last_spit_time = GetTime() -- Fake this as a target spit to make him not re-aggro immediately
         end,
         
         events=
@@ -364,7 +370,7 @@ local states=
             onenter = function(inst)
                 if inst.fire_build then
                     inst.AnimState:PlayAnimation("walk_angry_pre")
-                    if math.random() < .5 then inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/dragonfly/angry") end
+                    inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/dragonfly/angry")
                 else
                     inst.AnimState:PlayAnimation("walk_pre")
                 end
@@ -392,6 +398,7 @@ local states=
                 inst.components.locomotor:WalkForward()
                 if inst.fire_build then
                     inst.AnimState:PlayAnimation("walk_angry")
+                    if math.random() < .5 then inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/dragonfly/angry") end
                 else
                     inst.AnimState:PlayAnimation("walk")
                 end
@@ -448,6 +455,8 @@ local states=
                 if inst.components.locomotor then
                     inst.components.locomotor:StopMoving()
                 end
+                inst.last_target_spit_time = nil -- Unset spit timers so he doesn't aggro while sleeping
+                inst.last_spit_time = nil -- Unset spit timers so he doesn't aggro while sleeping
                 inst.AnimState:PlayAnimation("land")
                 inst.AnimState:PushAnimation("land_idle", false)
                 inst.AnimState:PushAnimation("takeoff", false)
@@ -469,7 +478,6 @@ local states=
                     if inst.fire_build then
                         inst.SoundEmitter:KillSound("fireflying")
                         local firefx = SpawnPrefab("firesplash_fx")
-                        inst.last_target_spit_time = GetTime() -- Fake this as a target spit to make him not re-aggro immediately
                         firefx.Transform:SetPosition(inst.Transform:GetWorldPosition())
                         inst.flame_on = false
                         inst.Light:Enable(false)
@@ -522,6 +530,7 @@ local states=
                 inst.components.locomotor:StopMoving()
                 inst.AnimState:PlayAnimation("sleep_pst")
                 inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/dragonfly/wake")
+                inst.last_spit_time = GetTime() -- Fake this as a spit to make him not re-aggro immediately
                 inst.last_target_spit_time = GetTime() -- Fake this as a target spit to make him not re-aggro immediately
                 if inst.components.sleeper and inst.components.sleeper:IsAsleep() then
                     inst.components.sleeper:WakeUp()

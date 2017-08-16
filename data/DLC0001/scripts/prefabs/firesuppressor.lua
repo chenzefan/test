@@ -18,14 +18,18 @@ local prefabs =
 	"collapse_small",
 }
 
+
+local YESTAGS = {"burnable"}
+local NOTAGS = {"FX", "NOCLICK", "DECOR", "INLIMBO"}
+
 local function LaunchProjectile(inst, targetpos)
-	if not inst.canFire then return end
+	--if not inst.canFire then return end
 	local projectile = SpawnPrefab("firesuppressorprojectile")
 	projectile.owner = inst
 	projectile.Transform:SetPosition(inst:GetPosition():Get())
 	projectile.components.complexprojectile:Launch(targetpos)
-	inst.canFire = false
-	inst.components.timer:StartTimer("Reload", TUNING.FIRESUPPRESSOR_RELOAD_TIME)
+	--inst.canFire = false
+	--inst.components.timer:StartTimer("Reload", TUNING.FIRESUPPRESSOR_RELOAD_TIME)
 end
 
 local function OnFindFire(inst, firePos)
@@ -61,7 +65,7 @@ local function TurnOn(inst, instant)
 end
 
 local function OnFuelEmpty(inst)
-	TurnOff(inst)
+	inst.components.machine:TurnOff()
 end
 
 local function OnFuelSectionChange(old, new, inst)
@@ -142,20 +146,7 @@ local function onhit(inst, worker)
 	end
 end
 
-local function onsave(inst, data)
-	if inst:HasTag("burnt") or inst:HasTag("fire") then
-        data.burnt = true
-    end
-    data.on = inst.on
-end
 
-local function onload(inst, data)
-	if data and data.burnt and inst.components.burnable and inst.components.burnable.onburnt then
-        inst.components.burnable.onburnt(inst)
-    end
-    inst.on = data.on and data.on or false
-    if inst.on then TurnOn(inst, true) else TurnOff(inst, true) end
-end
 
 local function getstatus(inst, viewer)
 	if inst.on then
@@ -171,6 +162,94 @@ end
 
 local function OnEntitySleep(inst)
     inst.SoundEmitter:KillSound("firesuppressor_idle")
+end
+
+local function HitPlants(inst, dist, noextinguish)
+	
+	local protector = inst.owner or inst
+	dist = dist or 4
+
+	local x,y,z = inst:GetPosition():Get()
+
+	local ents = TheSim:FindEntities(x,y,z, dist, YESTAGS, NOTAGS)
+
+	for k,v in pairs(ents) do
+		if v then
+			if v.makewitherabletask then
+				v.makewitherabletask:Cancel()
+				v.makewitherabletask = nil
+				table.insert(protector.protected_plants, v)
+				v:AddTag("protected")
+				if v.components.pickable then
+					v.UnprotectPlant = function(v)
+						protector:UnprotectPlant(v)
+					end
+					protector:ListenForEvent("picked", v.UnprotectPlant, v)
+				end
+				if v.components.crop then
+					v.components.crop.protected = true
+				elseif v.components.pickable then
+					v.components.pickable.protected = true
+				end
+			elseif v.components.crop and v.components.crop.witherable then
+				v.components.crop.protected = true
+				table.insert(protector.protected_plants, v)
+				v:AddTag("protected")
+			elseif v.components.pickable and v.components.pickable.witherable then
+				v.components.pickable.protected = true
+				if v.components.pickable.withered or v.components.pickable.shouldwither then
+					v.components.pickable:MakeEmpty()
+		    		v.components.pickable.withered = false
+		    		v.components.pickable.shouldwither = false
+		    		v:RemoveTag("withered")
+				end
+				table.insert(protector.protected_plants, v)
+				v:AddTag("protected")
+				v.UnprotectPlant = function(v)
+					protector:UnprotectPlant(v)
+				end
+				protector:ListenForEvent("picked", v.UnprotectPlant, v)
+			end
+
+			if not noextinguish then
+				if v.components.burnable then
+					if v.components.burnable:IsBurning() then
+						v.components.burnable:Extinguish(true, TUNING.FIRESUPPRESSOR_EXTINGUISH_HEAT_PERCENT)
+					elseif v.components.burnable:IsSmoldering() then
+						v.components.burnable:Extinguish(true)
+					end
+				end
+				if v.components.freezable then
+					v.components.freezable:AddColdness(2) 
+				end
+				if v.components.temperature then
+					local temp = v.components.temperature:GetCurrent()
+	        		v.components.temperature:SetTemperature(temp - TUNING.FIRE_SUPPRESSOR_TEMP_REDUCTION)
+				end
+			end
+		end
+	end
+end
+
+local function onsave(inst, data)
+	if inst:HasTag("burnt") or inst:HasTag("fire") then
+        data.burnt = true
+    end
+    data.on = inst.on
+end
+
+local function onload(inst, data)
+	if data and data.burnt and inst.components.burnable and inst.components.burnable.onburnt then
+        inst.components.burnable.onburnt(inst)
+    end
+    inst.on = data.on and data.on or false
+    if inst.on then TurnOn(inst, true) else TurnOff(inst, true) end
+end
+
+local function OnLoadPostPass(inst, data)
+	if not inst.components.fueled:IsEmpty() then
+		HitPlants(inst, TUNING.FIRE_DETECTOR_RANGE, true)
+	end
 end
 
 local function fn()
@@ -217,7 +296,7 @@ local function fn()
 	
 	inst:AddComponent("timer")
     inst:ListenForEvent("timerdone", ontimerdone)
-	inst.canFire = true
+	--inst.canFire = true
 
 	inst:AddComponent("lootdropper")
 	inst:AddComponent("workable")
@@ -231,75 +310,17 @@ local function fn()
 
 	inst.OnSave = onsave 
     inst.OnLoad = onload
+    inst.OnLoadPostPass = OnLoadPostPass
     inst.OnEntitySleep = OnEntitySleep
 
 	return inst
 end
 
-local YESTAGS = {"burnable"}
-local NOTAGS = {"FX", "NOCLICK", "DECOR","INLIMBO", "protected"}
 
-local function OnHit(inst)
+local function OnHit(inst, dist)
 	inst.SoundEmitter:PlaySound("dontstarve_DLC001/common/firesupressor_impact")
-	SpawnPrefab("splash_snow_fx").Transform:SetPosition(inst:GetPosition():Get())
-	local x,y,z = inst:GetPosition():Get()
-
-	local ents = TheSim:FindEntities(x,y,z, 4, YESTAGS, NOTAGS)
-
-	for k,v in pairs(ents) do
-		if v then
-			if v.makewitherabletask then
-				v.makewitherabletask:Cancel()
-				v.makewitherabletask = nil
-				table.insert(inst.owner.protected_plants, v)
-				v:AddTag("protected")
-				if v.components.pickable then
-					v.UnprotectPlant = function(v)
-						inst.owner:UnprotectPlant(v)
-					end
-					inst.owner:ListenForEvent("picked", v.UnprotectPlant, v)
-				end
-				if v.components.crop then
-					v.components.crop.protected = true
-				elseif v.components.pickable then
-					v.components.pickable.protected = true
-				end
-			elseif v.components.crop and v.components.crop.witherable then
-				v.components.crop.protected = true
-				table.insert(inst.owner.protected_plants, v)
-				v:AddTag("protected")
-			elseif v.components.pickable and v.components.pickable.witherable then
-				v.components.pickable.protected = true
-				if v.components.pickable.withered or v.components.pickable.shouldwither then
-					v.components.pickable:MakeEmpty()
-		    		v.components.pickable.withered = false
-		    		v.components.pickable.shouldwither = false
-		    		v:RemoveTag("withered")
-				end
-				table.insert(inst.owner.protected_plants, v)
-				v:AddTag("protected")
-				v.UnprotectPlant = function(v)
-					inst.owner:UnprotectPlant(v)
-				end
-				inst.owner:ListenForEvent("picked", v.UnprotectPlant, v)
-			end
-			if v.components.burnable then
-				if v.components.burnable:IsBurning() then
-					v.components.burnable:Extinguish(true, TUNING.FIRESUPPRESSOR_EXTINGUISH_HEAT_PERCENT)
-				elseif v.components.burnable:IsSmoldering() then
-					v.components.burnable:Extinguish(true)
-				end
-			end
-			if v.components.freezable then
-				v.components.freezable:AddColdness(2) 
-			end
-			if v.components.temperature then
-				local temp = v.components.temperature:GetCurrent()
-        		v.components.temperature:SetTemperature(temp - TUNING.FIRE_SUPPRESSOR_TEMP_REDUCTION)
-			end
-		end
-	end
-
+	SpawnPrefab("splash_snow_fx").Transform:SetPosition(inst:GetPosition():Get())	
+	HitPlants(inst)
 	inst:Remove()
 end
 

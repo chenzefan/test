@@ -6,7 +6,7 @@ local FrogRain = Class(function(self, inst)
     self.frogcap = TUNING.FROG_RAIN_MAX
     self.spawntime = TUNING.FROG_RAIN_DELAY
 	self.local_rain_max = TUNING.FROG_RAIN_LOCAL_MAX
-	self.shouldspawn = true
+	self.shouldspawn = false
 	self.rolled = false
 
 	inst:ListenForEvent("rainstart", function() self.local_rain_max = math.random(10, TUNING.FROG_RAIN_LOCAL_MAX) end)
@@ -164,7 +164,7 @@ function FrogRain:OnUpdate( dt )
 						self.rolled = true
 					end
 
-					if GetSeasonManager():GetPrecipitationRate() > TUNING.SURVIVAL_FROG_RAIN_PRECIPITATION and self.shouldspawn then
+					if self.shouldspawn and GetSeasonManager():GetPrecipitationRate() > TUNING.SURVIVAL_FROG_RAIN_PRECIPITATION then
 						local char_pos = Vector3(maincharacter.Transform:GetWorldPosition())
 						local spawn_point = self:GetSpawnPoint(char_pos)
 						local nearbyfrogs = TheSim:FindEntities(char_pos.x, char_pos.y, char_pos.z, TUNING.FROG_RAIN_MAX_RADIUS, {"frog"})

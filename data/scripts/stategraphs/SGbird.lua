@@ -6,6 +6,8 @@ local actionhandlers =
     ActionHandler(ACTIONS.GOHOME, "flyaway"),
 }
 
+
+
 local events=
 {
     EventHandler("gotosleep", function(inst)
@@ -222,8 +224,7 @@ local states=
             if inst.components.periodicspawner and math.random() <= TUNING.CROW_LEAVINGS_CHANCE then
                 inst.components.periodicspawner:TrySpawn()
             end
-
-            
+           
             if inst.sg.statemem.vert then
                 inst.AnimState:PlayAnimation("takeoff_vertical_pre")
             else

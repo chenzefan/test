@@ -159,7 +159,7 @@ local function fn(Sim)
     inst.components.sanityaura.aurafn = CalcSanityAura
 
 
-    MakeLargeBurnableCharacter(inst, "deerclops_body")
+    MakeLargeBurnableCharacter(inst, "swap_fire")
     MakeHugeFreezableCharacter(inst, "deerclops_body")
     inst.components.freezable:SetResistance(6)
 

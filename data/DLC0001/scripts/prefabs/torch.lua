@@ -10,7 +10,6 @@ local prefabs =
 	"torchfire",
 }    
 
-
 local function onequip(inst, owner) 
     --owner.components.combat.damage = TUNING.PICK_DAMAGE 
     inst.components.burnable:Ignite()
@@ -96,6 +95,7 @@ local function fn(Sim)
     inst.components.burnable.canlight = false
     inst.components.burnable.fxprefab = nil
     --inst.components.burnable:AddFXOffset(Vector3(0,1.5,-.01))
+    ----------------------------------------
     
     -----------------------------------
     
@@ -133,7 +133,7 @@ local function fn(Sim)
     inst.components.fueled:InitializeFuelLevel(TUNING.TORCH_FUEL)
     inst.components.fueled:SetDepletedFn(function(inst) inst:Remove() end)
     
-    return inst
-end
+    return inst   
+end   
 
 return Prefab( "common/inventory/torch", fn, assets, prefabs) 

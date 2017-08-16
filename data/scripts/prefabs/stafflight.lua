@@ -7,7 +7,7 @@ local assets =
 
 local function kill_light(inst)
     inst.AnimState:PlayAnimation("disappear")
-    inst:DoTaskInTime(0.6, function() inst:Remove() end)    
+    inst:DoTaskInTime(0.6, function() inst.SoundEmitter:KillAllSounds() inst:Remove() end)    
 end
 
 local function resumestar(inst, time)
@@ -79,7 +79,7 @@ local function fn(Sim)
     light:Enable(false)
 
     inst.SoundEmitter:PlaySound("dontstarve/common/staff_star_create")
-    inst.SoundEmitter:PlaySound("dontstarve/common/staff_star_LP")    
+    inst.SoundEmitter:PlaySound("dontstarve/common/staff_star_LP", "loop")    
 
     inst:AddComponent("sanityaura")
     inst.components.sanityaura.aura = TUNING.SANITYAURA_SMALL

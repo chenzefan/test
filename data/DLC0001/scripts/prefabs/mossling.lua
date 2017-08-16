@@ -11,12 +11,13 @@ local prefabs =
 {
     "mossling_spin_fx",
     "goose_feather",
+    "drumstick",
 }
 
 SetSharedLootTable( 'mossling',
 {
     {'meat',             1.00},
-    {'meat',             1.00},
+    {'drumstick',        1.00},
     {'goose_feather',    1.00},
     {'goose_feather',    1.00},
     {'goose_feather',    0.33},
@@ -138,6 +139,7 @@ local function fn(Sim)
     ------------------------------------------
 
     inst:AddTag("mossling")
+    inst:AddTag("animal")
 
     ------------------
     
@@ -197,7 +199,7 @@ local function fn(Sim)
 
     ------------------------------------------
 
-    MakeLargeBurnableCharacter(inst, "mossling_body")
+    MakeMediumBurnableCharacter(inst, "swap_fire")
     inst.components.burnable.lightningimmune = true
     MakeHugeFreezableCharacter(inst, "mossling_body")
 

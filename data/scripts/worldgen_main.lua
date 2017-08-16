@@ -44,8 +44,6 @@ end
 
 require("simutil")
 
-require("dlcsupport_worldgen")
-
 require("strict")
 require("debugprint")
 
@@ -65,6 +63,7 @@ require("prefabs")
 require("profiler")
 require("dumper")
 
+require("dlcsupport_worldgen")
 require("mods")
 require("modindex")
 

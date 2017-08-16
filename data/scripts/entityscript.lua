@@ -196,11 +196,10 @@ function EntityScript:StartUpdatingComponent(cmp)
     self.updatecomponents[cmp] = cmpname or "component"
 end
 
-function EntityScript:StopUpdatingComponent(cmp)
-    
-    if self.updatecomponents then
+function EntityScript:StopUpdatingComponent(cmp)   
+    if self.updatecomponents then   
         self.updatecomponents[cmp] = nil
-
+        
         local num = 0
         for k,v in pairs(self.updatecomponents) do
             num = num + 1
@@ -208,14 +207,12 @@ function EntityScript:StopUpdatingComponent(cmp)
         end
         
         if num == 0 then
+            StopUpdatingEnts[self.GUID] = self
             self.updatecomponents = nil
-            UpdatingEnts[self.GUID] = nil
-            NewUpdatingEnts[self.GUID] = nil
             num_updating_ents = num_updating_ents - 1
         end
     end
 end
-
 
 function EntityScript:StartWallUpdatingComponent(cmp)
     

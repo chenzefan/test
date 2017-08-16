@@ -16,12 +16,20 @@ local function shine(inst)
     inst.task = inst:DoTaskInTime(4+math.random()*5, function() shine(inst) end)
 end
 
+local function OnPutInInv(inst, owner)
+    if owner.prefab == "mole" then
+        inst.SoundEmitter:PlaySound("dontstarve_DLC001/common/glommer_bell")
+        OnPlayed(inst, owner)
+        if inst.components.finiteuses then inst.components.finiteuses:Use() end
+    end
+end
 
 local function fn()
 	local inst = CreateEntity()
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
 	inst.entity:AddSoundEmitter()
+    MakeInventoryPhysics(inst)
 
 	inst.AnimState:SetBank("bell")
 	inst.AnimState:SetBuild("bell")
@@ -31,6 +39,13 @@ local function fn()
     inst:AddComponent("inspectable")
 
     inst:AddComponent("inventoryitem")
+    inst:AddTag("molebait")
+    inst:ListenForEvent( "onstolen", function(inst, data) 
+        if data.thief.components.inventory then
+            data.thief.components.inventory:GiveItem(inst)
+        end 
+    end)
+    inst.components.inventoryitem:SetOnPutInInventoryFn(OnPutInInv)
     
     inst:AddComponent("instrument")
     inst.components.instrument.onplayed = OnPlayed

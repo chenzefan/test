@@ -2,8 +2,6 @@ require("stategraphs/commonstates")
 
 --hiss_pre, vomit, swipe_pre
 
-local MAX_RETCHES = 5
-
 local actionhandlers = 
 {
     ActionHandler(ACTIONS.GOHOME, "gohome"),
@@ -190,7 +188,10 @@ local states=
         events =
         {
             EventHandler("animover", function(inst) 
-                if inst.numretches >= MAX_RETCHES or math.random() < (.8/inst.numretches) then
+                local MAX_RETCHES = (inst.components.follower and inst.components.follower.leader) and #inst.friendGiftPrefabs or #inst.neutralGiftPrefabs
+                local rand = math.random()
+                print(inst.numretches, .8/inst.numretches, rand)
+                if inst.numretches >= MAX_RETCHES or rand < (.8/inst.numretches) then
                     inst.sg:GoToState("hairball")
                 else
                     inst.sg:GoToState("hairball_hack_loop")
@@ -222,7 +223,7 @@ local states=
             TimeEvent(37*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/catcoon/hairball_vomit") end),
             TimeEvent(46*FRAMES, function(inst) 
                 inst.vomit = SpawnPrefab(inst:PickRandomGift(inst.numretches))
-                if inst.vomit.components.inventoryitem and inst.vomit.components.inventoryitem.ondropfn then
+                if inst.vomit and inst.vomit.components.inventoryitem and inst.vomit.components.inventoryitem.ondropfn then
                     inst.vomit.components.inventoryitem.ondropfn(inst.vomit)
                 end
                 local downvec = TheCamera:GetDownVec()
@@ -240,7 +241,7 @@ local states=
                 end
             end),
             TimeEvent(140*FRAMES, function(inst)
-                if inst.hairballfollowup and inst.vomit and inst.vomit:IsValid() and inst:GetDistanceSqToInst(inst.vomit) <= 3 and math.random() <= .2 then
+                if inst.hairballfollowup and inst.vomit and inst.vomit:IsValid() and inst:GetDistanceSqToInst(inst.vomit) <= 3 and math.random() <= (TUNING.CATCOON_PICKUP_ITEM_CHANCE / 3) then
                     if not inst.vomit:HasTag("INLIMBO") then
                         inst.vomit:Remove()
                     end
@@ -402,7 +403,14 @@ local states=
         timeline =
         {
             TimeEvent(5*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/catcoon/attack") end),
-            TimeEvent(6*FRAMES, function(inst) inst.Physics:SetMotorVelOverride(12,0,0) end),
+            TimeEvent(6*FRAMES, function(inst) 
+                inst.Physics:SetMotorVelOverride(12,0,0) 
+                -- When the catcoon jumps, check if the target is a bird. If so, roll a chance for the bird to fly away
+                local isbird = inst.components.combat and inst.components.combat.target and inst.components.combat.target:HasTag("bird")
+                if isbird and math.random() > TUNING.CATCOON_ATTACK_CONNECT_CHANCE then
+                    inst.components.combat.target:PushEvent("threatnear")
+                end
+            end),
             TimeEvent(14*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/catcoon/jump") end),
             TimeEvent(19*FRAMES, function(inst) inst.components.combat:DoAttack() end),
             TimeEvent(20*FRAMES,
@@ -448,10 +456,10 @@ local states=
             TimeEvent(25*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/catcoon/pounce") end),
             TimeEvent(26*FRAMES, function(inst) inst.Physics:SetMotorVelOverride(7,0,0) end),
             TimeEvent(31*FRAMES, function(inst) 
-                if inst.target and (inst.target.prefab == "balloon" or inst.target:HasTag("bird")) and math.random() < .5 then
+                if inst.target and (inst.target.prefab == "balloon" or inst.target:HasTag("bird")) and math.random() < (TUNING.CATCOON_ATTACK_CONNECT_CHANCE * 2) then
                     inst.components.combat:DoAttack()
                     inst.hiss = true
-                elseif inst.target and inst.target:IsValid() and math.random() <= .33 and inst:GetDistanceSqToInst(inst.target) <= 3 then
+                elseif inst.target and inst.target:IsValid() and math.random() <= (TUNING.CATCOON_ATTACK_CONNECT_CHANCE * 1.5) and inst:GetDistanceSqToInst(inst.target) <= 3 then
                     inst.components.combat:DoAttack()
                 end
             end),

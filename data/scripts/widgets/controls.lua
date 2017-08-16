@@ -17,6 +17,7 @@ local UIClock = require "widgets/uiclock"
 local MapScreen = require "screens/mapscreen"
 local FollowText = require "widgets/followtext"
 local StatusDisplays = require "widgets/statusdisplays"
+local ChatQueue = require "widgets/chatqueue"
 
 local easing = require("easing")
 
@@ -71,7 +72,14 @@ local Controls = Class(Widget, function(self, owner)
     self.status:SetPosition(0,-110,0)
     
     self.clock = self.sidepanel:AddChild(UIClock(self.owner))
-    
+
+    local broadcasting_options = TheFrontEnd:GetBroadcastingOptions()
+    if broadcasting_options ~= nil and broadcasting_options:SupportedByPlatform() then
+        if broadcasting_options:IsInitialized() and broadcasting_options:GetBroadcastingEnabled() and broadcasting_options:GetVisibleChatEnabled() then
+            self.chatqueue = self.sidepanel:AddChild(ChatQueue(self.owner))
+        end
+    end
+	
     if GetWorld() and GetWorld():IsCave() then
     	self.clock:Hide()
     	self.status:SetPosition(-10,-20,0)
@@ -113,6 +121,15 @@ local Controls = Class(Widget, function(self, owner)
 
 	self:StartUpdating()
 end)
+
+function Controls:OnMessageReceived( username, message )
+    local player = GetPlayer()
+    if player ~= nil then
+        if self.chatqueue ~= nil and ( PLATFORM == "WIN32_STEAM" or PLATFORM == "WIN32") then
+            self.chatqueue:OnMessageReceived(username,message)
+        end
+    end
+end
 
 function Controls:ShowStatusNumbers()
 	self.status.brain.num:Show()

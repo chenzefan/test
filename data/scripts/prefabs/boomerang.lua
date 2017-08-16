@@ -51,8 +51,10 @@ end
 
 local function ReturnToOwner(inst, owner)
     if owner and not (inst.components.finiteuses and inst.components.finiteuses:GetUses() < 1) then
-        owner.SoundEmitter:PlaySound("dontstarve/wilson/boomerang_return")
-        inst.components.projectile:Throw(owner, owner)
+        inst:DoTaskInTime(0, function()
+            owner.SoundEmitter:PlaySound("dontstarve/wilson/boomerang_return")
+            inst.components.projectile:Throw(owner, owner)
+        end)
     end
 end
 

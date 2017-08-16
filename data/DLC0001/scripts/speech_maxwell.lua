@@ -17,16 +17,16 @@ return {
     LICHEN = "一 种 生 长 缓 慢 的 洞 穴 植 物 ",
 	ANNOUNCE_NOSLEEPONFIRE = "也 许 不 是 最 好 的 主 意",
     ANNOUNCE_NODANGERSIESTA = "他 们 紧 跟 着 我 ！",
-	ANNOUNCE_NONIGHTSIESTA = "睡 眠 时 间 ， 不 是 午 休 时 间.",
-	ANNOUNCE_NONIGHTSIESTA_CAVE = "这 有 些 毛 骨 悚 然.",
+	ANNOUNCE_NONIGHTSIESTA = "睡 眠 时 间 ， 不 是 午 休 时 间",
+	ANNOUNCE_NONIGHTSIESTA_CAVE = "这 有 些 毛 骨 悚 然",
 	ANNOUNCE_NOHUNGERSIESTA = "传 统 上 ， 午 睡 时 吃 饭 ， 而 不 是 在 午 睡 后",
 	ANNOUNCE_SHELTER = "保 护 我 ， 树 ！",
 	ANNOUNCE_BURNT = "它 在 燃 烧 ！",
 	ANNOUNCE_TOOL_SLIP = "滑 走 了",
-	ANNOUNCE_DAMP = "又 下 雨 了 。 很 大",
-	ANNOUNCE_WET = "噼 里 啪 啦 ， 噼 里 啪 啦",
+	ANNOUNCE_DAMP = "潮 湿 并 不 是 适 合 绅 士",
+	ANNOUNCE_WET = "一 件 好 的 西 装 并 不 能 用 水 洗 ，你 知 道 吧 ？",
 	ANNOUNCE_WETTER = "我 不 认 为 我 永 远 都 会 是 干 燥",
-	ANNOUNCE_SOAKED = "我 身 上 的 水 比 雨 多",
+	ANNOUNCE_SOAKED = "身 上 的 水 比 雨 更 多",
 	ANNOUNCE_ADVENTUREFAIL = "所 有 人 中 只 有 我 能 做 这 件 事 ",
 	ANNOUNCE_BEES = "杀 了 我 也 不 会 让 你 的 蜂 蜜 回 来 的 ！ ",
 	ANNOUNCE_BOOMERANG = "嗷 ！ 太 笨 了 ！ ",
@@ -35,7 +35,7 @@ return {
 	ANNOUNCE_COLD = "我 的 心 都 变 冷 了 ",
 	ANNOUNCE_HOT = "我 的 心 脏 受 不 了 热 ！",
 	ANNOUNCE_CRAFTING_FAIL = "呃 …… 我 不 能 那 样 做 ",
-	ANNOUNCE_DEERCLOPS = "我 听 到 巨 鹿 的 脚 步 声 了 ",
+	ANNOUNCE_DEERCLOPS = "我 听 到 他 们 的 其 中 一 个 来 了 ",
 	ANNOUNCE_DUSK = "很 快 就 要 天 黑 了 。查 理 该 醒 了 ",
 	ANNOUNCE_EAT =
 	{
@@ -93,7 +93,7 @@ return {
 		DESCRIBE =
 	{
 		GLOMMER = "一 个 飞 行 的 粘 液 化 工 厂",
-        GLOMMERGLAND = "花 的 力 量",
+        GLOMMERFLOWER = "花 的 力 量",
         GLOMMERWINGS = "他 们 黏 黏 的",
         GLOMMERFUEL = "嗯 ， 很 有 秩 序",
         BELL = "更 多 的 铃 铛",
@@ -105,11 +105,11 @@ return {
 		WEBBERSKULL = "不 要 觉 得 你 能 够 轻 易 逃 脱",
 		MOLE =
 		{
-			UNDERGROUND = "站 出 来 打 ！",
-			ABOVEGROUND = "这 就 是 精 神",
+			UNDERGROUND = "你 拾 起 了 哪 些 我 放 下 的 ？ 你 挖 走 了 什 么 我 埋 葬 的 ？",
+			ABOVEGROUND = "我 就 当 他 承 认 了",
 		},
 		MOLEHILL = "深 洞 ， 我 来 找 你 了",
-		MOLEHAT = "难 怪 他 们 能 挖 几 个 小 时.",
+		MOLEHAT = "难 怪 他 们 能 挖 几 个 小 时",
 		NIGHTSTICK = "早 上 好",
 		RABBITHOUSE=
 		{
@@ -118,7 +118,7 @@ return {
 		},
 		TURF_DECIDUOUS = "草 坪",
 		TURF_SANDY = "草 坪",
-		TURF_BADLANDS = "草 坪.",
+		TURF_BADLANDS = "草 坪",
 		BEARGER = "带 走 你 任 何 想 要 的 东 西",
 		BEARGERVEST = "看 看 我 的 背 心",
 		ICEPACK = "里 边 就 像 是 在 冬 眠",
@@ -133,7 +133,7 @@ return {
 		},
 		CACTUS_MEAT_COOKED = "可 实 用 的 仙 人 掌",
 		CACTUS_MEAT = "把 它 放 入 我 的 嘴 中 会 是 不 明 智 的",
-		CACTUSFLOWER = "这 部 分 的 仙 人 掌 总 会 是 好 的",
+		CACTUS_FLOWER = "这 部 分 的 仙 人 掌 总 会 是 好 的",
 		COLDFIRE =
 		{
 			EMBERS = "就 要 失 去 它 了",
@@ -171,7 +171,7 @@ return {
 			GENERIC = "我 听 说 这 些 被 描 述 为 “ 枝 繁 叶 茂 ”",
 		},
 		ACORN_COOKED = "放 在 火 上 的",
-		BIRCHNUTDRAKE = "有 脚 的 栓 ， 多 么 可 怕 ！",
+		BIRCHNUTDRAKE = "有 脚 的 坚 果 ， 多 么 可 怕 ！",
 		FARMPLOT =
 		{
 			GENERIC = "我 看 起 来 像 个 农 民 吗 ？",
@@ -223,7 +223,7 @@ return {
 		FLOWERSALAD = "善 良 的 绿 叶",
         ICECREAM = "冰 激 凌 圣 代 ， 冰 激 凌 圣 代 ， 冰 激 凌 圣 代 ！",
 		WATERMELONICLE = "又 冰 又 甜 的 西 瓜",
-        TRAILMIX = "坚 果 和 浆 果 。 没 有 栓.",
+        TRAILMIX = "坚 果 和 浆 果 。 没 有 坚 果",
         HOTCHILI = "太 热 了 ！",
         GUACAMOLE = "搭 配 出 的 混 合 鳄",
 		MOOSE = "这 一 定 是 来 自 北 方 的 ， 无 论 它 是 什 么",
@@ -284,7 +284,7 @@ return {
 		},
 		ROCK_ICE_MELTED = "只 是 个 水 坑",
 		ICE = "宝 宝 冰 川",
-        REFLECTIVEVEST = "有 礼 又 安 全.",
+        REFLECTIVEVEST = "有 礼 又 安 全",
 		HAWAIIANSHIRT = "所 有 中 最 休 闲 的 衣 服",
 		TENT = 
 		{
@@ -465,6 +465,7 @@ return {
 		ASH =
 		{
 			GENERIC = "一 点 粉 末 ， 有 毁 灭 的 味 道 ",
+			REMAINS_GLOMMERFLOWER = "还 会 有 另 一 个 格 拉 伯 的",
 			REMAINS_EYE_BONE = "别 担 心 ， 还 会 有 更 多 的 切 斯 特 的 ",
 			REMAINS_THINGIE = "那 肯 定 有 个 完 美 的 科 学 解 释 ",
 		},
@@ -527,6 +528,7 @@ return {
 		BLUEAMULET = "它 已 经 结 冰 了 ",
 		BLUEGEM = "蓝 色 就 会 带 来 冰 ",
 		BLUEPRINT = "我 知 道 的 ， 只 是 现 在 忘 了 ",
+		BELL_BLUEPRINT = "我 知 道 的 ， 只 是 现 在 忘 了 ",
 		BLUE_CAP = "什 么 地 方 出 问 题 了 ？ ",
 		BLUE_CAP_COOKED = "鲜 味 ！ ",
 		BLUE_MUSHROOM =
@@ -734,7 +736,11 @@ return {
 			HOT = "太 烫 了 ， 拿 不 稳 ",
 		},
 		HOME = "没 有 什 么 地 方 和 它 相 似 ",
-		HOMESIGN = "上 面 写 着 ……什 么 都 没 写 ",
+		HOMESIGN =
+		{
+			GENERIC = "上 面 写 着 …… 什 么 都 没 写 ",
+			BURNT = "莫 名 其 妙 的 ， 它 想 说 的 更 少 了",
+		},
 		HONEY = "又 甜 又 有 粘 性 ",
 		HONEYCOMB = "全 是 蜜 蜂 卵 ",
 		HONEYHAM = "赞 美 厨 师 ！ ",
@@ -960,7 +966,8 @@ return {
 		SEWING_KIT = "良 好 并 且 高 尚 的 努 力 ",
 		SHOVEL = "这 可 是 真 正 的 先 进 科 技 ",
 		SILK = "暂 不 管 它 由 什 么 制 成 ， 起 码 可 以 做 成 不 错 的 衣 服 ",
-		SKELETON = "哈 ！ 我 想 起 来 那 个 了 ",
+		SKELETON = "哈 ！ 我 想 起 了 这 个 家 伙 ",
+		SKELETON_PLAYER = "主 人 成 为 了 学 生",
 		SKULLCHEST = "那 是 个 时 髦 的 箱 子 ",
 		SMALLBIRD =
 		{

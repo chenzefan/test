@@ -148,11 +148,7 @@ function Burnable:StartWildfire()
                 self.inst:AddChild(self.smoke)
             end
             self.smoke.Transform:SetPosition(0,0,0)
-            if self.inst.components.inspectable then
-                self.inst.components.inspectable:SetSmoldering()
-            end
         end
-        --#srosen SET STATE TO dead/withered
         print("Starting a wildfire with "..self.inst.prefab)
         self.smolder_task = self.inst:DoTaskInTime(math.random(TUNING.MIN_SMOLDER_TIME, TUNING.MAX_SMOLDER_TIME), function()
             if self.inst then self:Ignite() end
@@ -352,6 +348,7 @@ function Burnable:SpawnFX(immediate)
 	    for k,v in pairs(self.fxdata) do
 			local fx = SpawnPrefab(v.prefab)
 			if fx then
+                fx.Transform:SetScale(self.inst.Transform:GetScale())
 				if v.follow then
 					local follower = fx.entity:AddFollower()
 					follower:FollowSymbol( self.inst.GUID, v.follow, v.x,v.y,v.z)

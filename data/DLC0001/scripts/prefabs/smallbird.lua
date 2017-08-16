@@ -139,7 +139,7 @@ end
 
 local function OnNewTarget(inst, data)
     --print("teenbird - OnNewTarget", data.target, inst.components.follower.leader)
-    if data.target and data.target == inst.components.follower.leader then--:HasTag("player") then --#srosen CHECK THIS WORKS WITH MAMA BIRDS, ELSE REVERT TO HASTAG
+    if data.target and data.target == inst.components.follower.leader then--old implementation was ":HasTag("player") then "
         -- combat component will restore target to player, give them the benefit of the doubt and use peck instead of attack to begin with
         SetTeenAttackPeck(inst)
     else

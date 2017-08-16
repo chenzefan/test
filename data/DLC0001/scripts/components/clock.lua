@@ -63,15 +63,17 @@ end
 
 function Clock:OnLoad(data)
 	self.numcycles = data.numcycles or 0
-    if data.nightvision then
-        self:StartNightVision(true)
-	elseif data.phase  == "night" then
+    if data.phase  == "night" then
         self:StartNight(true)
 	elseif data.phase  == "dusk" then
         self:StartDusk(true)
     else 
 		self:StartDay(true)
 	end
+
+    if data.nightvision then
+        self:StartNightVision(true)
+    end
 
 	local normeratime = data.normeratime or 0
 	self:SetNormEraTime(normeratime)
@@ -385,7 +387,7 @@ function Clock:OnUpdate(dt)
         else
             local col = nil
             if self:IsNight() then
-                if self:GetMoonPhase() == "full" then
+                if self:GetMoonPhase() == "full" and not GetWorld():IsCave() then
                     col = self:IsNightVision() and self.fullMoonNightVisionColour or self.fullMoonColour
                 else
                     col = self:IsNightVision() and self.nightNightVisionColour or self.nightColour
@@ -526,7 +528,9 @@ function Clock:StartDusk(instant, fromnightvision)
         else
             self:LerpAmbientColour(self.currentColour, self.duskNightVisionColour, instant and 0 or 6) 
         end
-    	self.inst:PushEvent("dusktime", {day=self.numcycles})
+
+        local new = not fromnightvision
+    	self.inst:PushEvent("dusktime", {day=self.numcycles, newdusk=new})
 	end
 end
 
@@ -547,7 +551,7 @@ function Clock:StartNight(instant, fromnightvision)
     if self.phase ~= self.previous_phase or fromnightvision then
         self.previous_phase = self.phase
         
-        if self:GetMoonPhase() == "full" then
+        if self:GetMoonPhase() == "full" and not GetWorld():IsCave() then
             if not self:IsNightVision() then 
                 self:LerpAmbientColour(self.currentColour, self.fullMoonColour, instant and 0 or 8) 
             else

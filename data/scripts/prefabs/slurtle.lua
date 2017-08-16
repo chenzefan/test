@@ -18,6 +18,7 @@ SetSharedLootTable( 'slurtle',
 {
     {'slurtleslime',  1.0},
     {'slurtleslime',  1.0},
+    {'slurtle_shellpieces',  1.0},
     {'slurtlehat',    0.1},
 })
 
@@ -25,6 +26,7 @@ SetSharedLootTable( 'snurtle',
 {
     {'slurtleslime',      1.0},
     {'slurtleslime',      1.0},
+    {'slurtle_shellpieces',  1.0},
     {'armorsnurtleshell', 0.75},
 })
 
@@ -162,15 +164,14 @@ local function makeslurtle()
     local brain = require "brains/slurtlebrain"
     inst:SetBrain(brain)
 
-    inst.components.lootdropper:SetChanceLootTable('slurtle')
-    inst.components.lootdropper:AddIfNotChanceLoot("slurtle_shellpieces")
-
     inst.components.locomotor.walkspeed = TUNING.SLURTLE_WALK_SPEED
     inst.components.explosive.explosivedamage = TUNING.SLURTLE_EXPLODE_DAMAGE
     inst.components.health:SetMaxHealth(TUNING.SLURTLE_HEALTH)
     inst.components.combat:SetRange(TUNING.SLURTLE_ATTACK_DIST)
     inst.components.combat:SetDefaultDamage(TUNING.SLURTLE_DAMAGE)
     inst.components.combat:SetAttackPeriod(TUNING.SLURTLE_ATTACK_PERIOD)
+
+    inst.components.lootdropper:SetChanceLootTable('slurtle')
 
     inst:ListenForEvent("attacked", Slurtle_OnAttacked)
 
@@ -188,13 +189,12 @@ local function makesnurtle()
     inst:AddTag("animal")
     local brain = require "brains/slurtlesnailbrain"
     inst:SetBrain(brain)
-    
-    inst.components.lootdropper:SetChanceLootTable('snurtle')
-    inst.components.lootdropper:AddIfNotChanceLoot("slurtle_shellpieces")
 
     inst.components.locomotor.walkspeed = TUNING.SNURTLE_WALK_SPEED
     inst.components.explosive.explosivedamage = TUNING.SNURTLE_EXPLODE_DAMAGE
     inst.components.health:SetMaxHealth(TUNING.SNURTLE_HEALTH)
+
+    inst.components.lootdropper:SetChanceLootTable('snurtle')
 
     inst:ListenForEvent("attacked", Snurtle_OnAttacked)
 

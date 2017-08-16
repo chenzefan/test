@@ -53,8 +53,8 @@ VEGGIES =
 	cactus_meat = MakeVegStats(0, TUNING.CALORIES_SMALL, -TUNING.HEALING_SMALL, TUNING.PERISH_MED, -TUNING.SANITY_TINY,
 								  TUNING.CALORIES_SMALL, TUNING.HEALING_TINY, TUNING.PERISH_MED, TUNING.SANITY_MED),
 
-	watermelon = MakeVegStats(UNCOMMON, TUNING.CALORIES_SMALL, TUNING.HEALING_TINY, TUNING.PERISH_MED, TUNING.SANITY_TINY,
-							  TUNING.CALORIES_SMALL, TUNING.HEALING_TINY, TUNING.PERISH_MED, TUNING.SANITY_TINY)
+	watermelon = MakeVegStats(UNCOMMON, TUNING.CALORIES_SMALL, TUNING.HEALING_SMALL, TUNING.PERISH_FAST, TUNING.SANITY_TINY,
+							  TUNING.CALORIES_SMALL, TUNING.HEALING_TINY, TUNING.PERISH_SUPERFAST, TUNING.SANITY_TINY*1.5)
 }
 
 local function MakeVeggie(name, has_seeds)
@@ -152,6 +152,12 @@ local function MakeVeggie(name, has_seeds)
 		local is_big = name == "pumpkin" or name == "eggplant" or name == "durian" or name == "watermelon"
 		if not is_big then
 			inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM
+		end
+
+		local is_cooler = name == "watermelon"
+		if is_cooler then
+			inst.components.edible.temperaturedelta = TUNING.COLD_FOOD_BONUS_TEMP
+    		inst.components.edible.temperatureduration = TUNING.FOOD_TEMP_BRIEF
 		end
 
 		inst:AddComponent("inspectable")

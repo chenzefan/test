@@ -188,10 +188,6 @@ function SaveIndex:SetSaveSeasonData()
 		seasondata["winterenabled"] = seasonmgr.winterenabled
 		seasondata["springenabled"] = seasonmgr.springenabled
 		seasondata["summerenabled"] = seasonmgr.summerenabled
-		seasondata["autumnsegs"] = seasonmgr.autumnsegs
-		seasondata["wintersegs"] = seasonmgr.wintersegs
-		seasondata["springsegs"] = seasonmgr.springsegs
-		seasondata["summersegs"] = seasonmgr.summersegs
 		seasondata["initialevent"] = seasonmgr.initialevent
 	end
 
@@ -214,10 +210,6 @@ function SaveIndex:LoadSavedSeasonData()
 		seasonmgr.winterenabled = seasondata["winterenabled"]
 		seasonmgr.springenabled = seasondata["springenabled"]
 		seasonmgr.summerenabled = seasondata["summerenabled"]
-		seasonmgr.autumnsegs = seasondata["autumnsegs"]
-		seasonmgr.wintersegs = seasondata["wintersegs"]
-		seasonmgr.springsegs = seasondata["springsegs"]
-		seasonmgr.summersegs = seasondata["summersegs"]
 		seasonmgr.initialevent = seasondata["initialevent"]
 	end
 	self.data.slots[self.current_slot].seasondata = nil
@@ -603,7 +595,7 @@ function SaveIndex:SaveCurrent(onsavedcb, direction, cave_num)
 end
 
 function SaveIndex:GetSlotDLC(slot)
-	local dlc = self.data.slots[slot or self.current_slot].dlc --#srosen need to make .dlc a table everywhere for using the dlc index sys
+	local dlc = self.data.slots[slot or self.current_slot].dlc 
 	if not dlc then dlc = NO_DLC_TABLE end
 	return dlc
 end
@@ -671,12 +663,22 @@ function SaveIndex:GetOrCreateSlot(saveslot)
 	return self.data.slots[saveslot]
 end
 
+function SaveIndex:PickRandomCharacter()
+	local characters = GetActiveCharacterList()
+	if not characters then return "wilson" end
+	return characters[math.random(#characters)]
+end
 
 --call after you have worldgen data to initialize a new survival save slot
 function SaveIndex:StartSurvivalMode(saveslot, character, customoptions, onsavedcb, dlc)
 	self.current_slot = saveslot
 --	local data = self:GetModeData(saveslot, "survival")
 	local slot = self:GetOrCreateSlot(saveslot)
+
+	if character == "random" then
+		character = SaveIndex:PickRandomCharacter()
+	end
+
 	slot.character = character
 	slot.current_mode = "survival"
 	slot.save_id = self:GenerateSaveID(self.current_slot)

@@ -16,6 +16,8 @@ local function fn()
     inst:AddComponent("inspectable")    
     inst:AddComponent("inventoryitem")
     inst:AddComponent("stackable")
+
+    inst:AddTag("cattoy")
         
 	return inst
 end

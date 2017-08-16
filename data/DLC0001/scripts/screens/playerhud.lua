@@ -7,6 +7,7 @@ local IceOver = require "widgets/iceover"
 local FireOver = require "widgets/fireover"
 local BloodOver = require "widgets/bloodover"
 local HeatOver = require "widgets/heatover"
+
 local easing = require("easing")
 
 local ConsoleScreen = require "screens/consolescreen"
@@ -20,7 +21,6 @@ local PlayerHud = Class(Screen, function(self)
 
     self.under_root = self:AddChild(Widget("under_root"))
     self.root = self:AddChild(Widget("root"))
-
 end)
 
 function PlayerHud:CreateOverlays(owner)

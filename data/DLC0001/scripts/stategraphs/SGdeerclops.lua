@@ -131,6 +131,7 @@ CommonStates.AddCombatStates(states,
         TimeEvent(0*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve/creatures/deerclops/attack") end),
         TimeEvent(29*FRAMES, function(inst) SpawnIceFx(inst, inst.components.combat.target) end),
         TimeEvent(35*FRAMES, function(inst)            
+            inst.SoundEmitter:PlaySound("dontstarve/creatures/deerclops/ice_large")            
             inst.SoundEmitter:PlaySound("dontstarve/creatures/deerclops/swipe")
             inst.components.combat:DoAttack(inst.sg.statemem.target)
             if inst.bufferedaction and inst.bufferedaction.action == ACTIONS.HAMMER then

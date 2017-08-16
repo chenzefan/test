@@ -1,7 +1,7 @@
 local assets=
 {
-	Asset("ANIM", "anim/ham_bat.zip"),
-	Asset("ANIM", "anim/swap_ham_bat.zip"),
+    Asset("ANIM", "anim/ham_bat.zip"),
+    Asset("ANIM", "anim/swap_ham_bat.zip"),
 }
 
 
@@ -18,9 +18,9 @@ end
 
 
 local function fn(Sim)
-	local inst = CreateEntity()
-	local trans = inst.entity:AddTransform()
-	local anim = inst.entity:AddAnimState()
+    local inst = CreateEntity()
+    local trans = inst.entity:AddTransform()
+    local anim = inst.entity:AddAnimState()
     MakeInventoryPhysics(inst)
     
     anim:SetBank("ham_bat")
@@ -41,10 +41,10 @@ local function fn(Sim)
     
     inst:AddTag("show_spoilage")
 
-	inst:AddComponent("perishable")
-	inst.components.perishable:SetPerishTime(TUNING.PERISH_MED)
-	inst.components.perishable:StartPerishing()
-	inst.components.perishable.onperishreplacement = "spoiled_food"
+    inst:AddComponent("perishable")
+    inst.components.perishable:SetPerishTime(TUNING.PERISH_MED)
+    inst.components.perishable:StartPerishing()
+    inst.components.perishable.onperishreplacement = "spoiled_food"
 
     inst:AddComponent("inspectable")
     

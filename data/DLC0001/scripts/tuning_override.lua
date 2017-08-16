@@ -152,10 +152,10 @@ local TUNING_OVERRIDES =
 	["deciduousmonster"] = 	{
 					doit = 	function(difficulty)
 						local tuning_vars = {
-								["never"] =  {DECID_TREE_MONSTER_CHANCE = -1},
-								["rare"] = 	 {DECID_TREE_MONSTER_CHANCE = .125},
-								["often"] =  {DECID_TREE_MONSTER_CHANCE = .5},
-								["always"] = {DECID_TREE_MONSTER_CHANCE = 1},
+								["never"] =  {DECID_MONSTER_MIN_DAY = 9999, DECID_MONSTER_SPAWN_CHANCE_BASE = -1, DECID_MONSTER_SPAWN_CHANCE_LOW = -1, DECID_MONSTER_SPAWN_CHANCE_MED = -1, DECID_MONSTER_SPAWN_CHANCE_HIGH = -1},
+								["rare"] = 	 {DECID_MONSTER_MIN_DAY = 5, DECID_MONSTER_SPAWN_CHANCE_BASE = .015, DECID_MONSTER_SPAWN_CHANCE_LOW = .04, DECID_MONSTER_SPAWN_CHANCE_MED = .075, DECID_MONSTER_SPAWN_CHANCE_HIGH = .167},
+								["often"] =  {DECID_MONSTER_MIN_DAY = 2, DECID_MONSTER_SPAWN_CHANCE_BASE = .07, DECID_MONSTER_SPAWN_CHANCE_LOW = .15, DECID_MONSTER_SPAWN_CHANCE_MED = .33, DECID_MONSTER_SPAWN_CHANCE_HIGH = .5},
+								["always"] = {DECID_MONSTER_MIN_DAY = 1, DECID_MONSTER_SPAWN_CHANCE_BASE = .2, DECID_MONSTER_SPAWN_CHANCE_LOW = .33, DECID_MONSTER_SPAWN_CHANCE_MED = .5, DECID_MONSTER_SPAWN_CHANCE_HIGH = .67},
 							}
 						OverrideTuningVariables(tuning_vars[difficulty])
 					end,
@@ -288,48 +288,156 @@ local TUNING_OVERRIDES =
 					doit =  function(data)
 						local lookup = { 
 							["onlyday"]={
-									autumn={day=16,  dusk=0, night=0},
+									day = 3, dusk = 0, night = 0
+									-- autumn={day=16,  dusk=0, night=0},
 								},
 							["onlydusk"]={
-									autumn={day=0,  dusk=16, night=0},
+									day = 0, dusk = 3, night = 0
+									-- autumn={day=0,  dusk=16, night=0},
 								},
 							["onlynight"]={
-									autumn={day=0,  dusk=0,  night=16},
+									day = 0, dusk = 0, night = 3
+									-- autumn={day=0,  dusk=0,  night=16},
 								},
 							["default"]={
-									autumn={day=8,  dusk=4,  night=4},
-									winter={day=5,  dusk=5,  night=6},
-									spring={day=4,  dusk=8,  night=4},
-									summer={day=10, dusk=3,  night=3},
+									day = 1, dusk = 1, night = 1
+									-- autumn={day=8,  dusk=6,  night=2},
+									-- winter={day=5,  dusk=5,  night=6},
+									-- spring={day=5,  dusk=8,  night=3},
+									-- summer={day=11, dusk=1,  night=4},
 								},
 							["longday"]={
-									autumn={day=12, dusk=2,  night=2},
-									winter={day=9,  dusk=3,  night=4},
-									spring={day=8,  dusk=6,  night=2},
-									summer={day=14, dusk=1,  night=1},
+									day = 1.6, dusk = 0.7, night = 0.7
+									-- autumn={day=11, dusk=3,  night=2},
+									-- winter={day=8,  dusk=4,  night=4},
+									-- spring={day=8,  dusk=6,  night=2},
+									-- summer={day=14, dusk=1,  night=1},
 								},
 							["longdusk"]={
-									autumn={day=6,  dusk=8,  night=2},
-									winter={day=3,  dusk=9,  night=4},
-									spring={day=2,  dusk=12, night=2},
-									summer={day=8,  dusk=7,  night=1},
+									day = 0.7, dusk = 1.6, night = 0.7
+									-- autumn={day=5,  dusk=9,  night=2},
+									-- winter={day=4,  dusk=8,  night=4},
+									-- spring={day=3,  dusk=11, night=2},
+									-- summer={day=8,  dusk=4,  night=4},
 								},
 							["longnight"]={
-									autumn={day=6,  dusk=2,  night=8},
-									winter={day=3,  dusk=3,  night=10},
-									spring={day=2,  dusk=6,  night=8},
-									summer={day=8,  dusk=1,  night=7},
+									day = 0.7, dusk = 0.7, night = 1.6
+									-- autumn={day=6,  dusk=5,  night=5},
+									-- winter={day=4,  dusk=3,  night=9},
+									-- spring={day=4,  dusk=6,  night=6},
+									-- summer={day=8,  dusk=1,  night=7},
+								},
+							["noday"]={ 
+									day = 0, dusk = 1.5, night = 1.5
+									-- autumn={day=0,  dusk=12, night=4},
+									-- winter={day=0,  dusk=10, night=6},
+									-- spring={day=8,  dusk=11, night=5},
+									-- summer={day=0,  dusk=14, night=2},
+								},
+							["nodusk"]={
+									day = 1.5, dusk = 0, night = 1.5
+									-- autumn={day=11, dusk=0,  night=5},
+									-- winter={day=9,  dusk=0,  night=7},
+									-- spring={day=11, dusk=0,  night=5},
+									-- summer={day=13, dusk=0,  night=3},
+								},
+							["nonight"]={
+									day = 1.5, dusk = 1.5, night = 0
+									-- autumn={day=11, dusk=5,  night=0},
+									-- winter={day=10, dusk=6,  night=0},
+									-- spring={day=9,  dusk=7,  night=0},
+									-- summer={day=14, dusk=2,  night=0},
 								}
 						}
+
+						local override = lookup[data]
 						
-						local autumnsegs = lookup[data].autumn
-						local wintersegs = lookup[data].winter or autumnsegs
-						local springsegs = lookup[data].spring or autumnsegs
-						local summersegs = lookup[data].summer or autumnsegs
+						-- local autumnsegs = lookup[data].autumn
+						-- local wintersegs = lookup[data].winter or autumnsegs
+						-- local springsegs = lookup[data].spring or autumnsegs
+						-- local summersegs = lookup[data].summer or autumnsegs
 						if GetSeasonManager() then
-							GetSeasonManager():SetSegs(autumnsegs, wintersegs, springsegs, summersegs)
+							--GetSeasonManager():SetSegs(autumnsegs, wintersegs, springsegs, summersegs)
+							GetSeasonManager():SetModifer(override)
+							GetSeasonManager():UpdateSegs()
 						end
-						GetClock():SetSegs(autumnsegs.day, autumnsegs.dusk, autumnsegs.night)
+						--GetClock():SetSegs(autumnsegs.day, autumnsegs.dusk, autumnsegs.night)
+					end
+				},
+	["autumn"] = {
+					doit = function(difficulty)
+						local seasonmgr = GetSeasonManager()
+						if not seasonmgr then return end
+						if difficulty == "noseason" then
+							seasonmgr:SetAutumnLength(0)
+						elseif difficulty == "veryshortseason" then
+							seasonmgr:SetAutumnLength(TUNING.SEASON_LENGTH_FRIENDLY_VERYSHORT)
+						elseif difficulty == "shortseason" then
+							seasonmgr:SetAutumnLength(TUNING.SEASON_LENGTH_FRIENDLY_SHORT)
+						elseif difficulty == "longseason" then
+							seasonmgr:SetAutumnLength(TUNING.SEASON_LENGTH_FRIENDLY_LONG)
+						elseif difficulty == "verylongseason" then
+							seasonmgr:SetAutumnLength(TUNING.SEASON_LENGTH_FRIENDLY_VERYLONG)
+						else
+							seasonmgr:SetAutumnLength(TUNING.SEASON_LENGTH_FRIENDLY_DEFAULT)
+						end
+					end
+				},
+	["winter"] = {
+					doit = function(difficulty)
+						local seasonmgr = GetSeasonManager()
+						if not seasonmgr then return end
+						if difficulty == "noseason" then
+							seasonmgr:SetWinterLength(0)
+						elseif difficulty == "veryshortseason" then
+							seasonmgr:SetWinterLength(TUNING.SEASON_LENGTH_HARSH_VERYSHORT)
+						elseif difficulty == "shortseason" then
+							seasonmgr:SetWinterLength(TUNING.SEASON_LENGTH_HARSH_SHORT)
+						elseif difficulty == "longseason" then
+							seasonmgr:SetWinterLength(TUNING.SEASON_LENGTH_HARSH_LONG)
+						elseif difficulty == "verylongseason" then
+							seasonmgr:SetWinterLength(TUNING.SEASON_LENGTH_HARSH_VERYLONG)
+						else
+							seasonmgr:SetWinterLength(TUNING.SEASON_LENGTH_HARSH_DEFAULT)
+						end
+					end
+				},
+	["spring"] = {
+					doit = function(difficulty)
+						local seasonmgr = GetSeasonManager()
+						if not seasonmgr then return end
+						if difficulty == "noseason" then
+							seasonmgr:SetSpringLength(0)
+						elseif difficulty == "veryshortseason" then
+							seasonmgr:SetSpringLength(TUNING.SEASON_LENGTH_FRIENDLY_VERYSHORT)
+						elseif difficulty == "shortseason" then
+							seasonmgr:SetSpringLength(TUNING.SEASON_LENGTH_FRIENDLY_SHORT)
+						elseif difficulty == "longseason" then
+							seasonmgr:SetSpringLength(TUNING.SEASON_LENGTH_FRIENDLY_LONG)
+						elseif difficulty == "verylongseason" then
+							seasonmgr:SetSpringLength(TUNING.SEASON_LENGTH_FRIENDLY_VERYLONG)
+						else
+							seasonmgr:SetSpringLength(TUNING.SEASON_LENGTH_FRIENDLY_DEFAULT)
+						end
+					end
+				},
+	["summer"] = {
+					doit = function(difficulty)
+						local seasonmgr = GetSeasonManager()
+						if not GetSeasonManager() then return end
+						if difficulty == "noseason" then
+							seasonmgr:SetSummerLength(0)
+						elseif difficulty == "veryshortseason" then
+							seasonmgr:SetSummerLength(TUNING.SEASON_LENGTH_HARSH_VERYSHORT)
+						elseif difficulty == "shortseason" then
+							seasonmgr:SetSummerLength(TUNING.SEASON_LENGTH_HARSH_SHORT)
+						elseif difficulty == "longseason" then
+							seasonmgr:SetSummerLength(TUNING.SEASON_LENGTH_HARSH_LONG)
+						elseif difficulty == "verylongseason" then
+							seasonmgr:SetSummerLength(TUNING.SEASON_LENGTH_HARSH_VERYLONG)
+						else
+							seasonmgr:SetSummerLength(TUNING.SEASON_LENGTH_HARSH_DEFAULT)
+						end
 					end
 				},
 	["season_mode"] = 	{
@@ -370,7 +478,7 @@ local TUNING_OVERRIDES =
 							--print("SET SEASON ["..difficulty.."]")
 						end
 					},
-	["season"] = 	{ --#srosen this is only called by the RAINY (A Cold Reception) adventure level. I left everything intact but changed code refs to summer to ref to autumn
+	["season"] = 	{ --this is only called by the RAINY (A Cold Reception) adventure level. I left everything intact but changed code refs to summer to ref to autumn
 					doit = 	function(difficulty)
 					
 							if not GetSeasonManager() then
@@ -436,6 +544,21 @@ local TUNING_OVERRIDES =
 							elseif data == "spring" then
 								GetSeasonManager():StartSpring(true)
 								GetSeasonManager().ground_snow_level = 0
+							elseif data == "random" then
+								local rand = math.random(1,4)
+								if rand == 1 then
+									GetSeasonManager():StartSummer()
+									GetSeasonManager().ground_snow_level = 0
+								elseif rand == 2 then
+									GetSeasonManager():StartWinter()
+									GetSeasonManager().ground_snow_level = 1
+								elseif rand == 3 then
+									GetSeasonManager():StartAutumn()
+									GetSeasonManager().ground_snow_level = 0
+								else
+									GetSeasonManager():StartSpring(true)
+									GetSeasonManager().ground_snow_level = 0
+								end
 							end
 						end
 					},
@@ -482,7 +605,7 @@ local TUNING_OVERRIDES =
 						OverrideTuningVariables(tuning_vars[difficulty])
 					end
 					},
-	["smoke"] = {
+	["wildfires"] = {
 					doit = 	function(difficulty)
 						local tuning_vars = {
 							["never"] = {WILDFIRE_CHANCE = -1},

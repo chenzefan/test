@@ -84,7 +84,7 @@ function SlotDetailsScreen:BuildMenu()
     {
 		{name = STRINGS.UI.SLOTDETAILSSCREEN.CONTINUE, fn = function() self:Continue() end, offset = Vector3(0,20,0)},
 		{name = STRINGS.UI.SLOTDETAILSSCREEN.DELETE, fn = function() self:Delete() end},
-		{name = STRINGS.UI.SLOTDETAILSSCREEN.CANCEL, fn = function() TheFrontEnd:PopScreen(self) end},
+		{name = STRINGS.UI.SLOTDETAILSSCREEN.CANCEL, fn = function() EnableAllDLC() TheFrontEnd:PopScreen(self) end},
 	}
 
 	if mode == "adventure" then
@@ -133,6 +133,7 @@ function SlotDetailsScreen:Delete()
 		{
 			text=STRINGS.UI.MAINSCREEN.DELETE, 
 			cb = function()
+				EnableAllDLC()
 				TheFrontEnd:PopScreen()
 				SaveGameIndex:DeleteSlot(self.saveslot, function() TheFrontEnd:PopScreen() end)
 			end

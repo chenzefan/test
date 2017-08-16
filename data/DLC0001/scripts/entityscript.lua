@@ -178,7 +178,6 @@ end
 
 
 function EntityScript:StartUpdatingComponent(cmp)
-    
     if not self.updatecomponents then
         self.updatecomponents = {}
         NewUpdatingEnts[self.GUID] = self
@@ -196,11 +195,10 @@ function EntityScript:StartUpdatingComponent(cmp)
     self.updatecomponents[cmp] = cmpname or "component"
 end
 
-function EntityScript:StopUpdatingComponent(cmp)
-    
-    if self.updatecomponents then
+function EntityScript:StopUpdatingComponent(cmp)   
+    if self.updatecomponents then   
         self.updatecomponents[cmp] = nil
-
+        
         local num = 0
         for k,v in pairs(self.updatecomponents) do
             num = num + 1
@@ -208,9 +206,8 @@ function EntityScript:StopUpdatingComponent(cmp)
         end
         
         if num == 0 then
+            StopUpdatingEnts[self.GUID] = self
             self.updatecomponents = nil
-            UpdatingEnts[self.GUID] = nil
-            NewUpdatingEnts[self.GUID] = nil
             num_updating_ents = num_updating_ents - 1
         end
     end
@@ -1237,6 +1234,7 @@ function EntityScript:SetPersistData(data, newents)
             self:AddComponentAtRuntime(v)
         end
     end	
+
 	if self.OnPreLoad then
 		self:OnPreLoad(data, newents)
 	end
@@ -1253,6 +1251,7 @@ function EntityScript:SetPersistData(data, newents)
     if self.OnLoad then
         self:OnLoad(data, newents)
     end
+
 end
 
 function EntityScript:GetAdjective()

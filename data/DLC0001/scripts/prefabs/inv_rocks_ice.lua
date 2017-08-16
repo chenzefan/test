@@ -25,7 +25,6 @@ local function onperish(inst)
         end
         inst:Remove()
     elseif inst.components.inventoryitem:GetContainer() then
-        --#srosen maybe make other things in container wet
         inst:Remove()
     else
         inst.components.inventoryitem.canbepickedup = false
@@ -51,7 +50,8 @@ local function fn(Sim)
     inst.components.edible.healthvalue = TUNING.HEALING_TINY/2
     inst.components.edible.hungervalue = TUNING.CALORIES_TINY/4
     inst.components.edible.degrades_with_spoilage = false
-    inst.components.edible.temperaturedelta = -TUNING.ICE_EAT_TEMP_REDUCTION
+    inst.components.edible.temperaturedelta = TUNING.COLD_FOOD_BONUS_TEMP
+    inst.components.edible.temperatureduration = TUNING.FOOD_TEMP_BRIEF * 1.5
 
     inst:AddComponent("smotherer")
 

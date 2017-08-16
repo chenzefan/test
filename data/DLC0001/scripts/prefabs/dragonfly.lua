@@ -61,7 +61,9 @@ end
 
 local function RetargetFn(inst)
     if inst:GetTimeAlive() < 5 then return end
-    if inst.spit_interval and inst.last_target_spit_time and (GetTime() - inst.last_target_spit_time) > (inst.spit_interval * 1.5)  then
+    if inst.components.sleeper and inst.components.sleeper:IsAsleep() then return end
+    if inst.spit_interval and inst.last_target_spit_time and (GetTime() - inst.last_target_spit_time) > (inst.spit_interval * 1.5) 
+    and inst.last_spit_time and (GetTime() - inst.last_spit_time) > (inst.spit_interval * 1.5) then
         return FindEntity(inst, 7*TARGET_DIST, function(guy) 
             return inst.components.combat:CanTarget(guy)
                and not guy:HasTag("prey")
@@ -81,13 +83,16 @@ local function KeepTargetFn(inst, target)
 end
 
 local function OnEntitySleep(inst)
-    if (not inst:NearPlayerBase() and inst.SeenBase and not inst.components.combat:TargetIs(GetPlayer()))
+    if ((not inst:NearPlayerBase() and inst.SeenBase and not inst.components.combat:TargetIs(GetPlayer()))
         or inst.components.sleeper:IsAsleep() 
-        or not GetSeasonManager():IsSummer() then
+        or inst.KilledPlayer)
+        and not NearPlayerBase(inst) then
         --Dragonfly has seen your base and been lured off! Despawn.
-        print("Despawning Dragonfly!")
+        --Or the dragonfly has killed you, you've been punished enough.
+        --Only applies if not currently at a base
         LeaveWorld(inst)
-    elseif (not inst:NearPlayerBase() and not inst.SeenBase) or inst.components.combat:TargetIs(GetPlayer()) then
+    elseif (not inst:NearPlayerBase() and not inst.SeenBase) 
+        or (inst.components.combat:TargetIs(GetPlayer()) and not inst.KilledPlayer) then
         --Get back in there Dragonfly! You still have work to do.
         print("Porting Dragonfly to Player!")
         local init_pos = inst:GetPosition()
@@ -111,12 +116,14 @@ end
 local function OnSave(inst, data)
     data.SeenBase = inst.SeenBase
     data.vomits = inst.num_targets_vomited
+    data.KilledPlayer = inst.KilledPlayer
 end
         
 local function OnLoad(inst, data)
     if data then
         inst.SeenBase = data.SeenBase
         inst.num_targets_vomited = data.vomits
+        inst.KilledPlayer = data.KilledPlayer or false
     end
 end
 
@@ -144,6 +151,7 @@ local function SetFlameOn(inst, flameon, newtarget, freeze)
 end
 
 local function OnAttacked(inst, data)
+    inst:ClearBufferedAction()
     inst.components.combat:SetTarget(data.attacker)
 end
 
@@ -218,6 +226,17 @@ local function OnRemove(inst)
     inst.SoundEmitter:KillSound("fireflying")
 end
 
+local function OnKill(inst, data)
+    if inst.components.combat and data and data.victim == inst.components.combat.target then
+        inst.components.combat.target = nil
+        inst.last_kill_time = GetTime()
+    end 
+
+    if data and data.victim == GetPlayer() then
+        inst.KilledPlayer = true
+    end
+end
+
 local function fn(Sim)
     local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
@@ -276,12 +295,8 @@ local function fn(Sim)
     inst.components.combat.battlecryenabled = false
     inst.components.combat:SetHurtSound("dontstarve_DLC001/creatures/dragonfly/hurt")
     inst.flame_on = false
-    inst:ListenForEvent("killed", function(inst, data)
-        if inst.components.combat and data and data.victim == inst.components.combat.target then
-            inst.components.combat.target = nil
-            inst.last_kill_time = GetTime()
-        end 
-    end)
+    inst.KilledPlayer = false
+    inst:ListenForEvent("killed", OnKill)
     inst:ListenForEvent("losttarget", function(inst) 
         SetFlameOn(inst, false)
     end)

@@ -436,7 +436,7 @@ function MakeHat(name)
         inst:AddComponent("fueled")
         inst.components.fueled.fueltype = "USAGE"
         inst.components.fueled:InitializeFuelLevel(TUNING.TOPHAT_PERISHTIME)
-        inst.components.fueled:SetDepletedFn(spider_perish)
+        inst.components.fueled:SetDepletedFn(generic_perish)
 		return inst
 	end
 	

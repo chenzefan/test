@@ -45,8 +45,9 @@ local function create()
     inst.components.fueled:SetDepletedFn(onperish)
 
     inst:AddComponent("insulator")
-    inst.components.insulator:SetInsulation(TUNING.INSULATION_LARGE)
+    inst.components.insulator:SetInsulation(TUNING.INSULATION_MED)
     inst.components.insulator:SetSummer()
+
 
     inst:AddComponent("waterproofer")
     inst.components.waterproofer:SetEffectiveness(TUNING.WATERPROOFNESS_SMALL)

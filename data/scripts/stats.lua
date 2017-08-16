@@ -126,6 +126,7 @@ end
 
 --- GAME Stats and details to be sent to server on game complete ---
 ProfileStats = {}
+MainMenuStats = {}
 
 function SuUsed(item,value)
     GameStats.super = true
@@ -463,4 +464,48 @@ function GetTestGroup()
 
 	local groupid = id%2 -- group 0 must always be default, because GetSteamIDNumber returns 0 for non-steam users
 	return groupid
+end
+
+
+function MainMenuStatsAdd(item, value)
+    if value == nil then
+        value = 1
+    end
+
+    if MainMenuStats[item] then
+    	MainMenuStats[item] = MainMenuStats[item] + value
+    else
+    	MainMenuStats[item] = value
+    end
+end
+
+function GetMainMenuStats(wipe)
+	if GetTableSize(MainMenuStats) == 0 then
+		return json.encode( {} )
+	end
+
+	wipe = wipe or false
+	local jsonstats = ''
+	local sendstats = BuildContextTable()
+
+	sendstats.stats = MainMenuStats
+	dprint("_________________++++++ Sending Accumulated main menu stats...\n")
+	ddump(sendstats)
+
+	jsonstats = json.encode( sendstats )
+
+	if wipe then
+		MainMenuStats = {}
+    end
+
+    return jsonstats
+end
+
+function SendMainMenuStats()
+	if not STATS_ENABLE then
+		return
+	end
+   
+	local stats = GetMainMenuStats(true)
+	TheSim:SendProfileStats(stats)
 end

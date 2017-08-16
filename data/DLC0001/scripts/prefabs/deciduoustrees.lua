@@ -274,12 +274,12 @@ local function GrowLeavesFn(inst, monster, monsterout)
 
     inst.leaf_state = inst.target_leaf_state
     if inst.leaf_state == "barren" then
-        inst.AnimState:ClearOverrideSymbol("mouseover")
+        inst.AnimState:Hide("mouseover")
     else
         if inst.build == "barren" then
             inst.build = (inst.leaf_state == "normal") and "normal" or "red"
         end
-        inst.AnimState:OverrideSymbol("mouseover", GetBuild(inst).leavesbuild, "mouseover")
+        inst.AnimState:Show("mouseover")
     end
 
     if not monster and not monsterout then Sway(inst) end
@@ -338,7 +338,7 @@ local function OnChangeLeaves(inst, monster, monsterout)
     if GetBuild(inst).shelter then
         if not inst:HasTag("shelter") then inst:AddTag("shelter") end
     else
-        inst:RemoveTag("shelter")
+        while inst:HasTag("shelter") do inst:RemoveTag("shelter") end
     end
 end
 
@@ -455,7 +455,7 @@ end
 
 local function dig_up_stump(inst, chopper)
     inst:Remove()
-    if inst.monster then
+    if inst.monster and math.random() < .33 then
         inst.components.lootdropper:SpawnLootPrefab("livinglog")
     else
         inst.components.lootdropper:SpawnLootPrefab("log")
@@ -471,23 +471,40 @@ local function chop_down_tree(inst, chopper)
     while inst:HasTag("cattoyairborne") do inst:RemoveTag("cattoyairborne") end
     inst:AddTag("stump")
 
-    if not inst.monster and inst.components.growable and inst.components.growable.stage == 3 and math.random() <= TUNING.DECID_TREE_MONSTER_CHANCE then
-        local pt = inst:GetPosition()
-        local ents = TheSim:FindEntities(pt.x, pt.y, pt.z, 30, {"birchnut"}, {"stump", "burnt", "FX", "NOCLICK","DECOR","INLIMBO"})
-        local max_monsters_to_spawn = math.random(3,4)
-        for k,v in pairs(ents) do
-            if v.monster_stop_task ~= nil then
-                v.monster_stop_task:Cancel()
-                v.monster_stop_task = nil
+    if inst.monster_start_task then
+        inst.monster_start_task:Cancel()
+        inst.monster_start_task = nil
+    end
+    if inst.monster_stop_task then
+        inst.monster_stop_task:Cancel()
+        inst.monster_stop_task = nil
+    end
+
+    local days_survived = GetClock().numcycles
+    if not inst.monster and inst.leaf_state ~= "barren" and inst.components.growable and inst.components.growable.stage == 3 and days_survived >= TUNING.DECID_MONSTER_MIN_DAY then
+        local chance = TUNING.DECID_MONSTER_SPAWN_CHANCE_BASE
+        local thresh_chance = { TUNING.DECID_MONSTER_SPAWN_CHANCE_LOW, TUNING.DECID_MONSTER_SPAWN_CHANCE_MED, TUNING.DECID_MONSTER_SPAWN_CHANCE_HIGH }
+        for k,v in ipairs(TUNING.DECID_MONSTER_DAY_THRESHOLDS) do
+            if days_survived >= v then
+                chance = thresh_chance[k]
+            else
+                break
             end
-            if not v:HasTag("fire") and not v:HasTag("stump") and not v:HasTag("burnt") then
-                v.monster_start_task = v:DoTaskInTime(math.random(1,4), function(v) 
-                    v:StartMonster() 
-                    v.monster_start_task = nil
-                end) 
-                max_monsters_to_spawn = max_monsters_to_spawn - 1
+        end
+        if math.random() <= chance then
+            local pt = inst:GetPosition()
+            local ents = TheSim:FindEntities(pt.x, pt.y, pt.z, 30, {"birchnut"}, {"stump", "burnt", "monster", "FX", "NOCLICK", "DECOR", "INLIMBO"})
+            local max_monsters_to_spawn = math.random(3,4)
+            for k,v in pairs(ents) do
+                if not v:HasTag("fire") and not v:HasTag("stump") and not v:HasTag("burnt") and v.leaf_state ~= "barren" and not v.monster and not v.monster_start_task and not v.monster_stop_task then
+                    v.monster_start_task = v:DoTaskInTime(math.random(1,4), function(v) 
+                        v:StartMonster() 
+                        v.monster_start_task = nil
+                    end) 
+                    max_monsters_to_spawn = max_monsters_to_spawn - 1
+                end
+                if max_monsters_to_spawn <= 0 then break end
             end
-            if max_monsters_to_spawn <= 0 then break end
         end
     end
 
@@ -518,9 +535,15 @@ local function chop_down_tree(inst, chopper)
 
     if he_right then
         inst.AnimState:PlayAnimation(inst.anims.fallleft)
+        if inst.components.growable and inst.components.growable.stage == 3 and inst.leaf_state == "colorful" then
+            inst.components.lootdropper:SpawnLootPrefab("acorn", pt - TheCamera:GetRightVec())
+        end
         inst.components.lootdropper:DropLoot(pt - TheCamera:GetRightVec())
     else
         inst.AnimState:PlayAnimation(inst.anims.fallright)
+        if inst.components.growable and inst.components.growable.stage == 3 and inst.leaf_state == "colorful" then
+            inst.components.lootdropper:SpawnLootPrefab("acorn", pt - TheCamera:GetRightVec())
+        end
         inst.components.lootdropper:DropLoot(pt + TheCamera:GetRightVec())
     end
 
@@ -567,6 +590,15 @@ local function onburntchanges(inst)
     while inst:HasTag("shelter") do inst:RemoveTag("shelter") end
     while inst:HasTag("cattoyairborne") do inst:RemoveTag("cattoyairborne") end
     inst:RemoveTag("dragonflybait")
+
+    if inst.monster_start_task then
+        inst.monster_start_task:Cancel()
+        inst.monster_start_task = nil
+    end
+    if inst.monster_stop_task then
+        inst.monster_stop_task:Cancel()
+        inst.monster_stop_task = nil
+    end
 
     inst.components.lootdropper:SetLoot({})
     if GetBuild(inst).drop_acorns then
@@ -702,49 +734,6 @@ local function inspect_tree(inst)
     end
 end
 
-local function OnEntitySleep(inst)
-    inst:RemoveComponent("burnable")
-    inst:RemoveComponent("propagator")
-    inst:RemoveComponent("inspectable")
-    inst:RemoveComponent("deciduoustreeupdater")
-end
-
-local function OnEntityWake(inst)
-
-    if not inst:HasTag("burnt") and not inst:HasTag("fire") and not inst:HasTag("stump") then
-        if not inst.components.burnable then
-            MakeLargeBurnable(inst)
-            inst.components.burnable:SetFXLevel(5)
-            inst.components.burnable:SetOnBurntFn(tree_burnt)
-            inst.components.burnable.extinguishimmediately = false
-            inst.components.burnable.onignite = function(inst) 
-                if inst.monster and not inst:HasTag("stump") then 
-                    inst.sg:GoToState("burning_pre") 
-                end 
-            end
-            inst.components.burnable.onextinguish = function(inst) 
-                if inst.monster and not inst:HasTag("stump") then
-                    inst.sg:GoToState("gnash_idle")
-                end
-            end
-        end
-
-        if not inst.components.propagator then
-            MakeLargePropagator(inst)
-        end
-
-        if not inst.components.deciduoustreeupdater then
-            inst:AddComponent("deciduoustreeupdater")
-        end
-    end
-
-    if not inst.components.inspectable then
-        inst:AddComponent("inspectable")
-        inst.components.inspectable.getstatus = inspect_tree
-    end
-
-end
-
 local function StartMonster(inst, force, starttimeoffset)
     -- Become a monster. Requires tree to have leaves and be medium size (it will grow to large size when become monster)
     if force or (inst.anims == normal_anims and inst.leaf_state ~= "barren") then
@@ -766,6 +755,9 @@ local function StartMonster(inst, force, starttimeoffset)
         end
 
         inst:DoTaskInTime(26*FRAMES, function(inst)
+            if inst.components.workable then
+               inst.components.workable:SetWorkLeft(TUNING.DECIDUOUS_CHOPS_MONSTER)
+            end
             inst.AnimState:SetBank("tree_leaf_monster")
             inst.AnimState:PlayAnimation("transform_in")
             inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/decidous/transform_in")
@@ -789,6 +781,8 @@ local function StopMonster(inst)
     -- Return to normal tree behavior (also grow from tall to short)
     if inst.monster then
         inst.monster = false
+        inst.monster_start_time = nil
+        inst.monster_duration = nil
         if inst.components.deciduoustreeupdater then inst.components.deciduoustreeupdater:StopMonster() end
         inst:RemoveComponent("combat")
         inst:RemoveComponent("deciduoustreeupdater")
@@ -823,6 +817,67 @@ local function StopMonster(inst)
             end)
         end)
     end
+end
+
+local function OnEntitySleep(inst)
+    inst:RemoveComponent("burnable")
+    inst:RemoveComponent("propagator")
+    inst:RemoveComponent("inspectable")
+    inst:RemoveComponent("deciduoustreeupdater")
+end
+
+local function OnEntityWake(inst)
+
+    if not inst:HasTag("burnt") and not inst:HasTag("fire") and not inst:HasTag("stump") then
+        if not inst.components.burnable then
+            MakeLargeBurnable(inst)
+            inst.components.burnable:SetFXLevel(5)
+            inst.components.burnable:SetOnBurntFn(tree_burnt)
+            inst.components.burnable.extinguishimmediately = false
+            inst.components.burnable.onignite = function(inst) 
+                if inst.monster and not inst:HasTag("stump") then 
+                    inst.sg:GoToState("burning_pre") 
+                end 
+                if inst.components.deciduoustreeupdater then
+                    inst.components.deciduoustreeupdater:SpawnIgniteWave()
+                end
+            end
+            inst.components.burnable.onextinguish = function(inst) 
+                if inst.monster and not inst:HasTag("stump") then
+                    inst.sg:GoToState("gnash_idle")
+                end
+            end
+        end
+
+        if not inst.components.propagator then
+            MakeLargePropagator(inst)
+        end
+
+        if not inst.components.deciduoustreeupdater then
+            inst:AddComponent("deciduoustreeupdater")
+        end
+    end
+
+    if inst.monster and inst.monster_start_time and inst.monster_duration and ((GetTime() - inst.monster_start_time) > inst.monster_duration) then
+        if not inst:HasTag("burnt") and not inst:HasTag("fire") and not inst:HasTag("stump") then
+            StopMonster(inst)
+        else
+            inst.monster = false
+            inst.monster_start_time = nil
+            inst.monster_duration = nil
+            if inst.components.deciduoustreeupdater then 
+                inst.components.deciduoustreeupdater:StopMonster() 
+                inst:RemoveComponent("deciduoustreeupdater")
+            end
+            if inst.components.combat then inst:RemoveComponent("combat") end
+        end
+    end
+
+    if not inst.components.inspectable then
+        inst:AddComponent("inspectable")
+        inst.components.inspectable.getstatus = inspect_tree
+    end
+
 end
 
 local function onsave(inst, data)
@@ -945,6 +1000,12 @@ local function onload(inst, data)
         if inst.build ~= "normal" or inst.leaf_state ~= inst.target_leaf_state then
             OnChangeLeaves(inst)
         else
+            if inst.build == "barren" then
+                while inst:HasTag("shelter") do inst:RemoveTag("shelter") end
+                inst.AnimState:Hide("mouseover")
+            else
+                inst.AnimState:Show("mouseover")
+            end
             Sway(inst)
         end
     end
@@ -993,6 +1054,9 @@ local function makefn(build, stage, data)
             if inst.monster and not inst:HasTag("stump") then 
                 inst.sg:GoToState("burning_pre") 
             end 
+            if inst.components.deciduoustreeupdater then
+                inst.components.deciduoustreeupdater:SpawnIgniteWave()
+            end
         end
         inst.components.burnable.onextinguish = function(inst) 
             if inst.monster and not inst:HasTag("stump") then
@@ -1045,17 +1109,31 @@ local function makefn(build, stage, data)
         inst.growfromseed = handler_growfromseed
 
         inst:ListenForEvent("daycomplete", function(it, data) 
+            if inst.leaveschangetask ~= nil then return end
             local seasonmgr = GetSeasonManager()
+            local targetSeason = nil
             if seasonmgr and seasonmgr:GetPercentSeason() >= .90 then
-                local season = seasonmgr:GetSeason()
-                if season == SEASONS.AUTUMN then                  
-                    OnSeasonChange(inst, SEASONS.WINTER)
-                elseif season == SEASONS.WINTER then                  
-                    OnSeasonChange(inst, SEASONS.SPRING)
-                elseif season == SEASONS.SPRING then                  
-                    OnSeasonChange(inst, SEASONS.SUMMER)
-                elseif season == SEASONS.SUMMER then                  
-                    OnSeasonChange(inst, SEASONS.AUTUMN)
+                local nextSeason = {
+                    [SEASONS.AUTUMN] = SEASONS.WINTER, [SEASONS.WINTER] = SEASONS.SPRING,
+                    [SEASONS.SPRING] = SEASONS.SUMMER, [SEASONS.SUMMER] = SEASONS.AUTUMN,
+                }
+                targetSeason = nextSeason[seasonmgr:GetSeason()]
+                
+                if targetSeason then
+                    if seasonmgr:GetSeasonIsEnabled(targetSeason) then
+                        OnSeasonChange(inst, targetSeason)
+                    else
+                        targetSeason = nextSeason[targetSeason]
+                        local numchecks = 0
+                        while not seasonmgr:GetSeasonIsEnabled(targetSeason) do
+                            targetSeason = nextSeason[targetSeason]
+                            numchecks = numchecks + 1
+                            if numchecks > 4 then break end
+                        end
+                        if seasonmgr:GetSeasonIsEnabled(targetSeason) and targetSeason ~= seasonmgr:GetSeason() then
+                            OnSeasonChange(inst, targetSeason)    
+                        end
+                    end                        
                 end
             end
         end, GetWorld())

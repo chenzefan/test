@@ -200,6 +200,12 @@ local states=
                 inst.sg:GoToState("idle", "jump_pst")
             end
         end,
+
+        onexit = function(inst)
+            local pt = inst:GetPosition()
+            pt.y = 0
+            inst.Transform:SetPosition(pt:Get())
+        end,
     },    
     
    

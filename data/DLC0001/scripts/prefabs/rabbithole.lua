@@ -125,13 +125,13 @@ local function fn(Sim)
 		inst:DoTaskInTime(.1, function(inst) SetNormalMode(inst, true) end)
 	end
 	inst:ListenForEvent( "rainstart", function(it, data)
-		if GetSeasonManager() and GetSeasonManager():IsSpring() then
+		if GetSeasonManager() and GetSeasonManager():IsSpring() and not inst.spring then
 			inst.springtask = inst:DoTaskInTime(math.random(3,20), SetSpringMode)
 		end
 	end, GetWorld())
 
 	inst:ListenForEvent("seasonChange", function(it, data)
-		if data.season ~= SEASONS.SPRING then
+		if data.season ~= SEASONS.SPRING and inst.spring then
 			inst.normaltask = inst:DoTaskInTime(math.random(TUNING.MIN_RABBIT_HOLE_TRANSITION_TIME, TUNING.MAX_RABBIT_HOLE_TRANSITION_TIME), SetNormalMode)
 		end
 	end, GetWorld())

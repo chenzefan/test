@@ -12,7 +12,9 @@ PlayerProfile = Class(function(self)
         -- Controlls should be a seperate file
         controls = {},
         starts = 0,
-        saw_display_adjustment_popup = false
+        saw_display_adjustment_popup = false,
+        device_caps_a = 0,
+        device_caps_b = 20,
     }
 
   	--we should migrate the non-gameplay stuff to a separate file, so that we can save them whenever we want
@@ -38,6 +40,8 @@ function PlayerProfile:Reset()
 	self.persistdata.unlocked_characters = {}
 	self.persistdata.characterinthrone = "waxwell"
     self.persistdata.saw_display_adjustment_popup = false
+    self.persistdata.device_caps_a = 0
+    self.persistdata.device_caps_b = 20
 	
  	if not USE_SETTINGS_FILE then
         self.persistdata.volume_ambient = 7
@@ -59,6 +63,8 @@ function PlayerProfile:SoftReset()
 	self.persistdata.unlocked_characters = {}
 	self.persistdata.characterinthrone = "waxwell"
     self.persistdata.saw_display_adjustment_popup = false
+    self.persistdata.device_caps_a = 0
+    self.persistdata.device_caps_b = 20
 	
  	if not USE_SETTINGS_FILE then
         self.persistdata.volume_ambient = 7
@@ -155,6 +161,73 @@ function PlayerProfile:GetDistortionEnabled()
 		return TheSim:GetSetting("graphics", "distortion") == "true"
 	else
 		return self:GetValue("distortion")
+	end
+end
+
+function PlayerProfile:SetScreenShakeEnabled(enabled)
+ 	if USE_SETTINGS_FILE then
+		TheSim:SetSetting("graphics", "screenshake", tostring(enabled)) 
+	else
+		self:SetValue("screenshake", enabled)
+		self.dirty = true
+	end
+end
+
+function PlayerProfile:IsScreenShakeEnabled()
+ 	if USE_SETTINGS_FILE then
+ 		if TheSim:GetSetting("graphics", "screenshake") ~= nil then
+			return TheSim:GetSetting("graphics", "screenshake") == "true"
+		else
+			return true -- Default to true this value hasn't been created yet
+		end
+	else
+		if self:GetValue("screenshake") ~= nil then
+			return self:GetValue("screenshake")
+		else
+			return true -- Default to true this value hasn't been created yet
+		end
+	end
+end
+
+function PlayerProfile:SetWathgrithrFontEnabled(enabled)
+ 	if USE_SETTINGS_FILE then
+		TheSim:SetSetting("misc", "wathgrithrfont", tostring(enabled)) 
+	else
+		self:SetValue("wathgrithrfont", enabled)
+		self.dirty = true
+	end
+end
+
+function PlayerProfile:IsWathgrithrFontEnabled()
+ 	if USE_SETTINGS_FILE then
+ 		if TheSim:GetSetting("misc", "wathgrithrfont") ~= nil then
+			return TheSim:GetSetting("misc", "wathgrithrfont") == "true"
+		else
+			return true -- Default to true this value hasn't been created yet
+		end
+	else
+		if self:GetValue("wathgrithrfont") ~= nil then
+			return self:GetValue("wathgrithrfont")
+		else
+			return true -- Default to true this value hasn't been created yet
+		end
+	end
+end
+
+function PlayerProfile:SetHaveWarnedDifficultyRoG()
+	if USE_SETTINGS_FILE then
+		TheSim:SetSetting("misc", "warneddifficultyrog", "true") 
+	else
+		self:SetValue("warneddifficultyrog", true)
+		self.dirty = true
+	end
+end
+
+function PlayerProfile:HaveWarnedDifficultyRoG()
+	if USE_SETTINGS_FILE then
+		return TheSim:GetSetting("misc", "warneddifficultyrog") == "true"
+	else
+		return self:GetValue("warneddifficultyrog")
 	end
 end
 
@@ -433,6 +506,14 @@ function PlayerProfile:Set(str, callback)
 			end
 	        TheInputProxy:LoadControls(entry.guid, entry.data, enabled)
 	    end
+	    
+		if nil == self.persistdata.device_caps_a then
+            self.persistdata.device_caps_a = 0
+            self.persistdata.device_caps_b = 20
+		end
+		
+		self.persistdata.device_caps_a, self.persistdata.device_caps_b = TheSim:UpdateDeviceCaps(self.persistdata.device_caps_a, self.persistdata.device_caps_b)
+        self.dirty = true
 
 		if callback then
 			callback(true)

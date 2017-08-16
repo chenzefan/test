@@ -14,6 +14,13 @@ else
 	MainScreen = require "screens/mainscreen"
 end	
 
+-- Always on broadcasting widget
+BroadcastingWidget = require "widgets/broadcastingwidget"
+if PLATFORM == "WIN32_STEAM" or PLATFORM == "WIN32" then
+	global_broadcastnig_widget = BroadcastingWidget()
+	global_broadcastnig_widget:SetHAnchor(ANCHOR_LEFT)
+	global_broadcastnig_widget:SetVAnchor(ANCHOR_TOP)
+end
 
 local DeathScreen = require "screens/deathscreen"
 local PopupDialogScreen = require "screens/popupdialog"
@@ -805,6 +812,7 @@ function DoInitGame(playercharacter, savedata, profile, next_world_playerdata, f
     end
 	
 	if not TheFrontEnd:IsDisplayingError() then
+
 		local hud = PlayerHud()
 		TheFrontEnd:PushScreen(hud)
 		hud:SetMainCharacter(wilson)

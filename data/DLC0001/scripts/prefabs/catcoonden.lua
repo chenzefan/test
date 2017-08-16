@@ -33,7 +33,6 @@ local function onhammered(inst)
     if inst.components.childspawner then
         inst.components.childspawner:ReleaseAllChildren()
     end
-    inst.AnimState:PlayAnimation("dead", false)
     inst.components.lootdropper:DropLoot(Vector3(inst.Transform:GetWorldPosition()))
     SpawnPrefab("collapse_small").Transform:SetPosition(inst.Transform:GetWorldPosition())
     inst.SoundEmitter:PlaySound("dontstarve/common/destroy_wood")
@@ -41,12 +40,18 @@ local function onhammered(inst)
 end
 
 local function onhit(inst)
-    inst.AnimState:PlayAnimation("hit", false)
+    if not inst.playing_dead_anim then
+        inst.AnimState:PlayAnimation("hit", false)
+    end
 end
 
 local function OnEntityWake(inst)
     if inst.components.childspawner then
         inst.components.childspawner:StartSpawning()
+    end
+    if inst.lives_left <= 0 then
+        inst.playing_dead_anim = true
+        inst.AnimState:PlayAnimation("dead", true)
     end
 end
 
@@ -69,6 +74,8 @@ local function onload(inst, data)
             inst.components.childspawner:StopRegen()
             inst.components.childspawner:StopSpawning()
             inst:RemoveComponent("childspawner")
+            inst.playing_dead_anim = true
+            inst.AnimState:PlayAnimation("dead", true)
         end
     end
 end

@@ -114,7 +114,7 @@ end
 
 local function KeepChoppingAction(inst)
     local keep_chop = inst.components.follower.leader and inst.components.follower.leader:GetDistanceSqToInst(inst) <= KEEP_CHOPPING_DIST*KEEP_CHOPPING_DIST
-    local target = FindEntity(inst, SEE_TREE_DIST/3, function(item) --#srosen decid trees at 1/3 range. Maybe increase?
+    local target = FindEntity(inst, SEE_TREE_DIST/3, function(item)
         return item.prefab == "deciduoustree" and item.monster and item.components.workable and item.components.workable.action == ACTIONS.CHOP 
     end)    
     if inst.tree_target ~= nil then target = inst.tree_target end
@@ -124,7 +124,7 @@ end
 
 local function StartChoppingCondition(inst)
     local start_chop = inst.components.follower.leader and inst.components.follower.leader.sg and inst.components.follower.leader.sg:HasStateTag("chopping")
-    local target = FindEntity(inst, SEE_TREE_DIST/3, function(item) --#srosen decid trees at 1/3 range. Maybe increase?
+    local target = FindEntity(inst, SEE_TREE_DIST/3, function(item) 
         return item.prefab == "deciduoustree" and item.monster and item.components.workable and item.components.workable.action == ACTIONS.CHOP 
     end)
     if inst.tree_target ~= nil then target = inst.tree_target end
@@ -136,7 +136,7 @@ end
 local function FindTreeToChopAction(inst)
     local target = FindEntity(inst, SEE_TREE_DIST, function(item) return item.components.workable and item.components.workable.action == ACTIONS.CHOP end)
     if target then
-        local decid_monst_target = FindEntity(inst, SEE_TREE_DIST/3, function(item) --#srosen decid trees at 1/3 range. Maybe increase?
+        local decid_monst_target = FindEntity(inst, SEE_TREE_DIST/3, function(item)
             return item.prefab == "deciduoustree" and item.monster and item.components.workable and item.components.workable.action == ACTIONS.CHOP 
         end)
         if decid_monst_target ~= nil then 

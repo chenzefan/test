@@ -43,7 +43,7 @@ local function create()
     inst:AddTag("show_spoilage")
 
     inst:AddComponent("insulator")
-    inst.components.insulator:SetInsulation(TUNING.INSULATION_MED)
+    inst.components.insulator:SetInsulation(TUNING.INSULATION_LARGE)
     inst.components.insulator:SetSummer()
     
 	return inst

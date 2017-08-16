@@ -510,7 +510,7 @@ function SeasonManager:DoLightningStrike(pos)
 	lightning.Transform:SetPosition(pos:Get())
 
     if rod then
-        rod:PushEvent("lightningstrike") --#srosen: this will make all rods that are awake react. Needs to be DoStrike like for player.
+        rod:PushEvent("lightningstrike") 
     else
         if player then
         	player:PushEvent("lightningstrike")

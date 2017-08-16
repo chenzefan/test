@@ -1,6 +1,4 @@
 local cooking = require("cooking")
-local preppedfoods = require("preparedfoods")
-
 
 local Stewer = Class(function(self, inst)
     self.inst = inst
@@ -25,7 +23,7 @@ local function dostew(inst)
 	end
 
 	if stewercmp.product ~= nil then 
-		local prep_perishtime = (preppedfoods[stewercmp.product] and preppedfoods[stewercmp.product].perishtime) and preppedfoods[stewercmp.product].perishtime or 1
+		local prep_perishtime = (cooking.recipes and cooking.recipes[inst.prefab] and cooking.recipes[inst.prefab][stewercmp.product] and cooking.recipes[inst.prefab][stewercmp.product].perishtime) and cooking.recipes[inst.prefab][stewercmp.product].perishtime or TUNING.PERISH_SUPERFAST
 		local prod_spoil = stewercmp.product_spoilage or 1
 		stewercmp.spoiltime = prep_perishtime * prod_spoil
 		stewercmp.spoiltargettime =  GetTime() + stewercmp.spoiltime

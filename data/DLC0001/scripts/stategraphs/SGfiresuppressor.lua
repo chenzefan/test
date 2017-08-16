@@ -5,8 +5,12 @@ local actionhandlers = {}
 local events = 
 {
     EventHandler("putoutfire", function(inst, data) 
-        if inst.canFire and inst.components.machine:IsOn() and not inst.sg:HasStateTag("busy") then
-            inst.sg:GoToState("shoot", {firePos = data.firePos})
+        if inst.components.machine:IsOn() then
+            if inst.sg:HasStateTag("idle") then
+                inst.sg:GoToState("spin_up", {firePos = data.firePos})
+            elseif inst.sg:HasStateTag("shooting") then
+                inst.sg:GoToState("shoot", {firePos = data.firePos})
+            end
         end
     end)
 }
@@ -79,14 +83,27 @@ local states =
         end,
     },
 
-    State{  
-        name = "shoot",
+    State {
+        name = "spin_up",
         tags = {"busy"},
 
         onenter = function(inst, data)
             inst.AnimState:PlayAnimation("launch_pre")
-            inst.AnimState:PushAnimation("launch")
-            inst.AnimState:PushAnimation("launch_pst", false)
+            inst.sg.statemem.data = data
+        end,
+
+        events = 
+        {
+            EventHandler("animover", function(inst) inst.sg:GoToState("shoot", inst.sg.statemem.data) end)
+        },
+    },
+
+    State{  
+        name = "shoot",
+        tags = {"busy", "shooting"},
+
+        onenter = function(inst, data)
+            inst.AnimState:PlayAnimation("launch")
             inst.sg.statemem.firePos = data.firePos
             inst.SoundEmitter:PlaySound("dontstarve_DLC001/common/firesupressor_spin")
             --Play some sound 
@@ -94,16 +111,35 @@ local states =
 
         timeline = 
         {
-            TimeEvent(25*FRAMES, function(inst) 
+            TimeEvent(6*FRAMES, function(inst) 
                 inst.SoundEmitter:PlaySound("dontstarve_DLC001/common/firesupressor_shoot")
-                inst:LaunchProjectile(inst.sg.statemem.firePos) end)
+                inst:LaunchProjectile(inst.sg.statemem.firePos) 
+            end),
+            TimeEvent(8*FRAMES, function(inst)
+                inst.components.firedetector:LookForFiresAndFirestarters()
+            end)
         },
 
         events = 
         {
-            EventHandler("animqueueover", function(inst) inst.sg:GoToState("idle_on") end)
+            EventHandler("animover", function(inst) inst.sg:GoToState("spin_down") end)
         },
     },
+
+    State {
+        name = "spin_down",
+        tags = {"busy"},
+
+        onenter = function(inst, data)
+            inst.AnimState:PlayAnimation("launch_pst")
+        end,
+
+        events = 
+        {
+            EventHandler("animover", function(inst) inst.sg:GoToState("idle_on") end)
+        },
+    },
+
 
     State{  
         name = "place",

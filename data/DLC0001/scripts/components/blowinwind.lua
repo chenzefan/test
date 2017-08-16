@@ -102,7 +102,12 @@ function BlowInWind:OnUpdate(dt)
 	if self.velocity:Length() > 1 then self.velocity = self.velocity:GetNormalized() end
 
 	-- Map velocity magnitudes to a useful range of walkspeeds
-	self.speed = Remap(self.velocity:Length(), 0, 1, 0, self.averageSpeed) --maybe only if changing dir??
+	local curr_speed = self.averageSpeed
+	local player = GetPlayer()
+	if player and player.components.locomotor then
+		curr_speed = (player.components.locomotor:GetRunSpeed() + TUNING.WILSON_WALK_SPEED) / 2
+	end
+	self.speed = Remap(self.velocity:Length(), 0, 1, 0, curr_speed) --maybe only if changing dir??
 
 	-- Do some variation on the speed if velocity is a reasonable amount
 	if self.velocity:Length() >= .5 then
@@ -119,7 +124,7 @@ function BlowInWind:OnUpdate(dt)
 	-- Change the sound parameter if there is one
 	if self.soundName and self.soundParameter and self.inst.SoundEmitter then
 		-- Might just be able to use self.velocity:Length() here?
-		self.soundspeed = Remap(self.speed, 0, self.averageSpeed*self.maxSpeedMult, 0, 1)
+		self.soundspeed = Remap(self.speed, 0, curr_speed*self.maxSpeedMult, 0, 1)
 		self.inst.SoundEmitter:SetParameter(self.soundName, self.soundParameter, self.soundspeed)
 	end
 

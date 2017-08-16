@@ -615,9 +615,24 @@ function CustomizationScreen:OnControl(control, down)
 
 end
 
+function CustomizationScreen:VerifyValidSeasonSettings()
+	local autumn = self:GetValueForOption("autumn")
+	local winter = self:GetValueForOption("winter")
+	local spring = self:GetValueForOption("spring")
+	local summer = self:GetValueForOption("summer")
+	if autumn == "noseason" and winter == "noseason" and spring == "noseason" and summer == "noseason" then
+		return false
+	end
+	return true
+end
 
 function CustomizationScreen:Apply()
-	self.cb(self.options)
+	if self:VerifyValidSeasonSettings() then
+		self.cb(self.options)
+	else
+		TheFrontEnd:PushScreen(PopupDialogScreen(STRINGS.UI.CUSTOMIZATIONSCREEN.INVALIDSEASONCOMBO_TITLE, STRINGS.UI.CUSTOMIZATIONSCREEN.INVALIDSEASONCOMBO_BODY, 
+					{{text=STRINGS.UI.CUSTOMIZATIONSCREEN.OKAY, cb = function() TheFrontEnd:PopScreen() end}}))
+	end
 end
 
 function CustomizationScreen:GetHelpText()

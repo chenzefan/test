@@ -23,8 +23,8 @@ return {
    	ANNOUNCE_TOOL_SLIP = "错 误 ： 工 具 柄 受 损",
    	ANNOUNCE_DAMP = "警 告 ： 湿 度 指 数 升 高",
    	ANNOUNCE_WET = "警 告 ： 湿 度 指 数 达 到 危 险 水 平 。 需 要 排 水",
-   	ANNOUNCE_WETTER = "警 告 ： 错 误 ： 湿  等 ",
-   	ANNOUNCE_SOAKED = "警 警 警 告 警 告 ： 湿 度 度 等 等 级 达 到 咋 难 水 平",
+   	ANNOUNCE_WETTER = "警 告 错 误 ： 湿 度 等 ",
+   	ANNOUNCE_SOAKED = "错 误 ： 错 误 错 误 ： 丝 度 度 等 等 级 达 到 咋 难 水 平",
 	ACTIONFAIL_GENERIC = "当 前 内 容 无 法 操 作 ",
 	ANNOUNCE_CHARGE = "**系 统 过 载 **",
 	ANNOUNCE_DISCHARGE = "系 统 正 常 ",
@@ -89,7 +89,7 @@ return {
 	DESCRIBE =
 	{
         GLOMMER = "有 知 觉 版 本 的 石 昆 虫",
-		GLOMMERGLAND = "特 别 坚 硬 的 花",
+		GLOMMERFLOWER = "特 别 坚 硬 的 花",
 		GLOMMERWINGS = "特 别 坚 硬 的 翅 膀",
 		GLOMMERFUEL = "无 法 确 定 泥 的 来 源",
         BELL = "叮 叮 叮",
@@ -129,7 +129,7 @@ return {
   		},
   		CACTUS_MEAT_COOKED = "保 护 屏 障 移 除",
   		CACTUS_MEAT = "保 护 屏 障 依 然 存 在",
-  		CACTUSFLOWER = "保 护 屏 障 的 原 因",
+  		CACTUS_FLOWER = "保 护 屏 障 的 原 因",
   		COLDFIRE =
   		{
   		EMBERS = "警 告 ： 火 焰 等 级 达 到 临 界 值",
@@ -275,8 +275,8 @@ return {
   		},
   		ROCK_ICE = 
   		{
-  			GENERIC = "我 不 喜 欢 这 带 水 的 岩 石",
-  			MELTED = "含 水 岩 石 是 无 用 的 配 置",
+  			GENERIC = "我 需 要 一 艘 破 冰 船",
+  			MELTED = "水 是 无 用 的 配 置",
   		},
   		ROCK_ICE_MELTED = "含 水 岩 石 是 无 用 的 配 置",
   		ICE = "至 少 是 固 态 水",
@@ -450,7 +450,8 @@ return {
 		ASH =
 		{
 			GENERIC = "输 出 自 火 焰 程 式",
-			REMAINS_EYE_BONE = "输 出 自 量 子 传 送 程 式",
+			REMAINS_GLOMMERFLOWER = "花 卉 输 出 自 量 子 传 送 程 式",
+			REMAINS_EYE_BONE = "眼 骨 输 出 自 量 子 传 送 程 式",
 			REMAINS_THINGIE = "输 出 自 火 焰 程 式 。 输 入 未 确 定",
 		},
 		AXE = "砍 倒 有 生 命 物 质 的 工 具 ",
@@ -476,6 +477,7 @@ return {
 			GENERIC = "加 倍 努 力 吧 ， 蜜 蜂 们 ",
 			NOHONEY = "未 发 现 蜂 蜜 ",
 			SOMEHONEY = "蜂 蜜 含 量 低 ",
+			BURNT = "生 命 迹 象 为 零",
 		},
 		BEEFALO =
 		{
@@ -514,7 +516,8 @@ return {
 		BLOWDART_PIPE = "提 升 尖 锐 物 品 的 危 险 速 度",
 		BLUEAMULET = "这 东 西 可 以 当 做 很 好 的 散 热 器 ",
 		BLUEGEM = "有 点 冷 ",
-		BLUEPRINT = "知 识 正 等 待 吸 收 ",
+		BLUEPRINT = "等 待 分 析 的 知 识 ",
+		BELL_BLUEPRINT = "等 待 的 知 识",
 		BLUE_CAP = "药 用 菌 ",
 		BLUE_CAP_COOKED = "改 良 的 菌 类 ",
 		BLUE_MUSHROOM =
@@ -707,7 +710,11 @@ return {
 			HOT = "温 度 已 达 上 限 ",
 		},
 		HOME = "那 是 谁 写 的 ？ ",
-		HOMESIGN = "你 的 位 置 ",
+		HOMESIGN = 
+		{
+			GENERIC = "你 在 这 里",
+			BURNT = "你 在 火 里",
+		},
 		HONEY = "这 对 我 的 齿 轮 来 说 是 很 好 的 润 滑 剂 ",
 		HONEYCOMB = "一 个 存 储 蜜 蜂 的 单 元 ",
 		HONEYHAM = "已 升 级 的 食 材 ",
@@ -933,6 +940,7 @@ return {
 		SHOVEL = "它 有 很 多 用 途 ",
 		SILK = "蜘 蛛 内 脏 ",
 		SKELETON = "哈 ， 它 死 了 ， 典 型 的 人 类 错 误 ",
+		SKELETON_PLAYER = "不 懂 计 算",
 		SKULLCHEST = "这 让 我 发 笑 ",
 		SMALLBIRD =
 		{

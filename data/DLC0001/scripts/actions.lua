@@ -937,7 +937,8 @@ end
 ACTIONS.COMBINESTACK.fn = function(act)
     local target = act.target
     local invobj = act.invobject
-    if invobj and target and invobj.prefab == target.prefab and target.components.stackable and not target.components.stackable:IsFull() then
+    if invobj and target and invobj.prefab == target.prefab and target.components.stackable and not target.components.stackable:IsFull()
+    and target.components.inventoryitem.canbepickedup then
         target.components.stackable:Put(invobj)
         return true
     end 
@@ -983,10 +984,14 @@ end
 
 ACTIONS.CATPLAYGROUND.fn = function(act)
     if act.doer and act.doer.prefab == "catcoon" then
-        if act.target and math.random() < .25 then
-            if act.target.components.health and act.target.components.combat and act.target.components.combat:CanBeAttacked(act.doer) then
-                act.target.components.health:Kill()
-            else
+        if act.target then
+            if math.random() < TUNING.CATCOON_ATTACK_CONNECT_CHANCE and act.target.components.health and act.target.components.health.maxhealth <= TUNING.PENGUIN_HEALTH and -- Only bother attacking if it's a penguin or weaker
+            act.target.components.combat and act.target.components.combat:CanBeAttacked(act.doer) and
+            not (act.doer.components.follower and act.target.components.follower and act.doer.components.follower.leader ~= nil and act.doer.components.follower.leader == act.target.components.follower.leader) and
+            not (act.doer.components.follower and act.target.components.follower and act.doer.components.follower.leader ~= nil and act.target.components.follower.leader and act.target.components.follower.leader.components.inventoryitem and act.target.components.follower.leader.components.inventoryitem.owner and act.doer.components.follower.leader == act.target.components.follower.leader.components.inventoryitem.owner) and
+            act.target ~= GetPlayer() then
+                act.doer.components.combat:DoAttack(act.target, nil, nil, nil, 2) --2*25 dmg
+            elseif math.random() < TUNING.CATCOON_PICKUP_ITEM_CHANCE and act.target.components.inventoryitem and act.target.components.inventoryitem.canbepickedup then
                 act.target:Remove()
             end
         end
@@ -996,10 +1001,14 @@ end
 
 ACTIONS.CATPLAYAIR.fn = function(act)
     if act.doer and act.doer.prefab == "catcoon" then
-        if act.target and act.target.components.health and math.random() < .25 and
-        act.target.components.combat and act.target.components.combat:CanBeAttacked(act.doer) then
-            act.target.components.health:Kill()
+        if act.target and math.random() < TUNING.CATCOON_ATTACK_CONNECT_CHANCE and 
+        act.target.components.health and act.target.components.health.maxhealth <= TUNING.PENGUIN_HEALTH and -- Only bother attacking if it's a penguin or weaker
+        act.target.components.combat and act.target.components.combat:CanBeAttacked(act.doer) and
+        not (act.doer.components.follower and act.target.components.follower and act.doer.components.follower.leader ~= nil and act.doer.components.follower.leader == act.target.components.follower.leader) and
+        not (act.doer.components.follower and act.target.components.follower and act.doer.components.follower.leader ~= nil and act.target.components.follower.leader and act.target.components.follower.leader.components.inventoryitem and act.target.components.follower.leader.components.inventoryitem.owner and act.doer.components.follower.leader == act.target.components.follower.leader.components.inventoryitem.owner) then
+            act.doer.components.combat:DoAttack(act.target, nil, nil, nil, 2) --2*25 dmg
         end
+        act.doer.last_play_air_time = GetTime()
         return true
     end
 end

@@ -27,6 +27,12 @@ local function OnLoseChild(inst, child)
         end
     end
 
+    inst:AddComponent("fuel")
+    inst.components.fuel.fuelvalue = TUNING.MED_LARGE_FUEL
+    MakeSmallBurnable(inst, TUNING.SMALL_BURNTIME)
+    MakeSmallPropagator(inst)
+    inst.components.burnable:MakeDragonflyBait(3)
+
 end
 
 local function IsActive(inst)
@@ -58,6 +64,7 @@ local function fn(Sim)
     inst.AnimState:PlayAnimation("idle")
 
     inst:AddTag("glommerflower")
+    inst:AddTag("nonpotatable")
 
     inst:AddComponent("leader")
     inst.components.leader.onremovefollower = OnLoseChild

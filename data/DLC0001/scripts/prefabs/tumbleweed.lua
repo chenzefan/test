@@ -61,12 +61,44 @@ local function onplayerprox(inst)
     end
 end
 
+local function CheckGround(inst)
+    if not inst:IsOnValidGround() then
+        local fx = SpawnPrefab("splash_ocean")
+        local pos = inst:GetPosition()
+        fx.Transform:SetPosition(pos.x, pos.y, pos.z)
+        -- Shut down all the possible tasks
+        if inst.bouncepretask then
+            inst.bouncepretask:Cancel()
+            inst.bouncepretask = nil
+        end
+        if inst.bouncetask then
+            inst.bouncetask:Cancel()
+            inst.bouncetask = nil
+        end
+        if inst.restartmovementtask then
+            inst.restartmovementtask:Cancel()
+            inst.restartmovementtask = nil
+        end
+        if inst.bouncepst1 then
+            inst.bouncepst1:Cancel()
+            inst.bouncepst1 = nil
+        end
+        if inst.bouncepst2 then
+            inst.bouncepst2:Cancel()
+            inst.bouncepst2 = nil
+        end
+        -- And remove the tumbleweed
+        inst:Remove()
+    end
+end
+
 local function startmoving(inst)
     inst.AnimState:PushAnimation("move_loop", true)
     inst.bouncepretask = inst:DoTaskInTime(10*FRAMES, function(inst)
         inst.SoundEmitter:PlaySound("dontstarve_DLC001/common/tumbleweed_bounce")
         inst.bouncetask = inst:DoPeriodicTask(24*FRAMES, function(inst)
             inst.SoundEmitter:PlaySound("dontstarve_DLC001/common/tumbleweed_bounce")
+            CheckGround(inst)
         end)
     end)
     inst.components.blowinwind:Start()
@@ -263,6 +295,7 @@ local function fn(Sim)
         inst.SoundEmitter:PlaySound("dontstarve_DLC001/common/tumbleweed_bounce")
         inst.bouncetask = inst:DoPeriodicTask(24*FRAMES, function(inst)
             inst.SoundEmitter:PlaySound("dontstarve_DLC001/common/tumbleweed_bounce")
+            CheckGround(inst)
         end)
     end)
 
@@ -350,7 +383,7 @@ local function fn(Sim)
 
     inst:AddComponent("burnable")
     inst.components.burnable:SetFXLevel(2)
-    inst.components.burnable:AddBurnFX("character_fire", Vector3(0, 0, 0), "swap_fire")
+    inst.components.burnable:AddBurnFX("character_fire", Vector3(.1, 0, .1), "swap_fire")
     inst.components.burnable.canlight = true
     inst.components.burnable:SetOnIgniteFn(function(inst) if inst.components.burnable then inst.components.burnable:Ignite() end end)
     inst.components.burnable:SetOnBurntFn(onburnt)

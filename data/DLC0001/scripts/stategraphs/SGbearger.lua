@@ -18,14 +18,20 @@ end
 local function onattackfn(inst)
     if inst.components.health and not inst.components.health:IsDead()
     and (inst.sg:HasStateTag("hit") or not inst.sg:HasStateTag("busy")) then
-        if not inst.CanGroundPound and not inst.components.timer:TimerExists("GroundPound") then
-            inst.components.timer:StartTimer("GroundPound", 10)
-        end
         -- Clear out the inventory if he got interrupted
         local target = inst.components.inventory:FindItem(function(item) return inst.components.eater:CanEat(item) end)
         while target do
             target:Remove()
             target = inst.components.inventory:FindItem(function(item) return inst.components.eater:CanEat(item) end)
+        end
+
+        if inst.components.combat and inst.components.combat.target and inst.components.combat.target:HasTag("beehive") then
+            inst.sg:GoToState("attack")
+            return
+        end
+
+        if not inst.CanGroundPound and not inst.components.timer:TimerExists("GroundPound") then
+            inst.components.timer:StartTimer("GroundPound", 10)
         end
 
         if inst.sg:HasStateTag("running") then
@@ -45,7 +51,7 @@ local function destroystuff(inst)
     local ents = TheSim:FindEntities(pt.x, pt.y, pt.z, 5)
     local heading_angle = -(inst.Transform:GetRotation())
     for k,v in pairs(ents) do
-        if v and v.components.workable and v.components.workable.workleft > 0 then
+        if v and v.components.workable and v.components.workable.workleft > 0 and v.components.workable.action ~= ACTIONS.NET then
             SpawnPrefab("collapse_small").Transform:SetPosition(v:GetPosition():Get())        
             v.components.workable:Destroy(inst)
         end
@@ -367,6 +373,7 @@ local states=
                 inst.last_eat_time = GetTime()
                 inst.brain:ForceUpdate()
             end),
+            TimeEvent(14*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/gulp") end),
         },
 
         events =
@@ -394,8 +401,9 @@ local states=
         
         timeline=
         {
-            TimeEvent(5*FRAMES, function(inst) end),
-            TimeEvent(16*FRAMES, function(inst) end),
+            TimeEvent(3*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/chew") end),
+            TimeEvent(14*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/chew") end),
+            TimeEvent(23*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/chew") end),
         },
         
         ontimeout = function(inst)
@@ -469,7 +477,7 @@ local states=
             tags = {"moving", "canrotate"},
 
             onenter = function(inst) 
-                local anim = inst.components.combat.target and "charge_pre" or "walk_pre"
+                local anim = (inst.components.combat.target and not inst.components.combat.target:HasTag("beehive")) and "charge_pre" or "walk_pre"
                 if GoToStandState(inst, "bi") then
                     inst.AnimState:PlayAnimation(anim)
                 end
@@ -486,11 +494,14 @@ local states=
             tags = {"moving", "canrotate"},
             
             onenter = function(inst)
-                local anim = inst.components.combat.target and "charge_loop" or "walk_loop"
+                local anim = (inst.components.combat.target and not inst.components.combat.target:HasTag("beehive")) and "charge_loop" or "walk_loop"
                 if GoToStandState(inst, "bi") then
                     inst.AnimState:PlayAnimation(anim)
                 end
                 inst.components.locomotor:WalkForward()
+                if inst.components.combat and inst.components.combat.target and math.random() < .5 then
+                    inst:DoTaskInTime(math.random(13)*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/grrrr") end)
+                end
             end,
 
             events=
@@ -529,7 +540,7 @@ local states=
             
             onenter = function(inst) 
                 inst.components.locomotor:StopMoving()
-                local anim = inst.components.combat.target and "charge_pst" or "walk_pst"
+                local anim = (inst.components.combat.target and not inst.components.combat.target:HasTag("beehive")) and "charge_pst" or "walk_pst"
                 DoFootstep(inst)
                 if GoToStandState(inst, "bi") then
                     inst.AnimState:PlayAnimation(anim)
@@ -549,6 +560,7 @@ local states=
             onenter = function(inst) 
                 if GoToStandState(inst, "bi") then
                     inst.components.locomotor:RunForward()
+                    inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/taunt", "taunt")
                     inst.AnimState:PlayAnimation("charge_pre")
                 end
             end,
@@ -566,7 +578,7 @@ local states=
             
             onenter = function(inst) 
                 inst.components.locomotor:RunForward()
-                inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/taunt")
+                if not inst.SoundEmitter:PlayingSound("taunt") then inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/bearger/taunt", "taunt") end
                 inst.AnimState:PlayAnimation("charge_roar_loop")
             end,
 
@@ -613,6 +625,7 @@ local states=
             
             onenter = function(inst) 
                 inst.components.locomotor:StopMoving()
+                inst.last_eat_time = nil -- Unset eat timer
                 if inst:IsStandState("quad") then
                     inst.AnimState:PushAnimation("sleep_pre", false)
                 else
@@ -661,6 +674,7 @@ local states=
             tags = {"busy", "waking"},
             
             onenter = function(inst) 
+                inst.last_eat_time = GetTime() -- Fake this as eating so he doesn't aggro immediately
                 inst.components.locomotor:StopMoving()
                 inst.AnimState:PlayAnimation("sleep_pst")
                 if inst.components.sleeper and inst.components.sleeper:IsAsleep() then

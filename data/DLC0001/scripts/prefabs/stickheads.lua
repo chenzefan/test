@@ -31,6 +31,9 @@ local function OnFinish(inst)
 	end
 	SpawnPrefab("collapse_small").Transform:SetPosition(inst.Transform:GetWorldPosition())
 	inst.SoundEmitter:PlaySound("dontstarve/common/destroy_wood")
+	if GetClock() and GetClock():GetMoonPhase() == "full" and GetClock():IsNight() then
+		inst.components.lootdropper:SpawnLootPrefab("nightmarefuel")
+	end
 	inst.components.lootdropper:DropLoot()
 	inst:Remove()
 end

@@ -122,12 +122,12 @@ local function onsleep(inst, sleeper)
 			sleeper.components.health:DoDelta(TUNING.HEALING_HUGE, false, "tent", true)
 		end
 		
-		if sleeper.components.temperature then
-			if sleeper.components.temperature.current < TUNING.TARGET_SLEEP_TEMP then
-				sleeper.components.temperature:SetTemperature(TUNING.TARGET_SLEEP_TEMP)
-			elseif sleeper.components.temperature.current > TUNING.TARGET_SLEEP_TEMP * 1.5 then
-				sleeper.components.temperature:SetTemperature(sleeper.components.temperature.current + (TUNING.TARGET_SLEEP_TEMP * .5))
-			end
+		if sleeper.components.temperature and sleeper.components.temperature.current < TUNING.TARGET_SLEEP_TEMP then
+			sleeper.components.temperature:SetTemperature(TUNING.TARGET_SLEEP_TEMP)
+		end
+
+		if sleeper.components.moisture and sleeper.components.moisture:GetMoisture() > 0 then
+			sleeper.components.moisture.moisture = 0
 		end
 		
 		

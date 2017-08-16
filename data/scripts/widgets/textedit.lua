@@ -142,4 +142,14 @@ function TextEdit:SetCharacterFilter(validchars)
 	self.validchars = validchars
 end
 
+-- Unlike GetString() which returns the string stored in the displayed text widget
+-- GetLineEditString will return the 'intended' string, even if the display is nulled out (for passwords)
+function TextEdit:GetLineEditString()
+	return self.inst.TextEditWidget:GetString()
+end
+
+function TextEdit:SetPassword(to)
+	self.inst.TextEditWidget:SetPassword(to)
+end
+
 return TextEdit

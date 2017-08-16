@@ -254,6 +254,11 @@ function CreateStringsPOTv2(filename, root, tbl_dta, tbl_lkp)
 end
 
 
+-- *** INSTRUCTIONS ***
+-- To generate strings for the main game: 
+-- 1. Open cmd and navigate to the DontStarve\data\scripts folder
+-- 2. Enter "..\..\tools\LUA\lua.exe createstringspo.lua" (without quotes) into the cmd line and press return
+
 --Only run if this is not the released game version
 --if BRANCH == "release" then
 

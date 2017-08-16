@@ -55,10 +55,6 @@ function GetGenderStrings(charactername)
     end
 end
 
-function NumInRange(num, min, max)
-    return (num <= max) and (num > min)
-end
-
 function GetSpecialCharacterString(character)
     character = string.lower(character)
     if character == "wilton" then

@@ -28,7 +28,7 @@ local Wisecracker = Class(function(self, inst)
         
         
     inst:ListenForEvent( "dusktime", function(it, data) 
-            if it:IsCave() then
+            if it:IsCave() or not data.newdusk then
                 return 
             end
             inst.components.talker:Say(GetString(inst.prefab, "ANNOUNCE_DUSK"))

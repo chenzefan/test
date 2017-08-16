@@ -58,7 +58,7 @@ return {
 	ANNOUNCE_PECKED = "哎 ！ 停 下 ！",
 	ANNOUNCE_QUAKE = "这 听 起 来 可 不 太 好",
 	ANNOUNCE_RESEARCH = "永 远 别 停 止 学 习 ！",
-	ANNOUNCE_SHELTER = "谢 谢 这 个 保 护 ， 树 ！",
+	ANNOUNCE_SHELTER = "感 谢 对 于 这 些 分 子 的 保 护 ， 树 ！",
 	ANNOUNCE_THORNS = "噢 ！ ",
 	ANNOUNCE_BURNT = "哎 呀 ！ 这 可 真 热 ！",
 	ANNOUNCE_TORCH_OUT = "我 的 火 炬 刚 烧 尽 了 ！",
@@ -72,10 +72,10 @@ return {
 	ANNOUNCE_TOOL_SLIP = "哇 ， 这 个 工 具 很 滑",
 	ANNOUNCE_LIGHTNING_DAMAGE_AVOIDED = "从 那 可 怕 闪 电 中 得 到 些 安 全",
 
-	ANNOUNCE_DAMP = "雨 呦 ， 雨 呦 ， 走 开 呦",
-	ANNOUNCE_WET = "有 点 湿 了",
-	ANNOUNCE_WETTER = "我 得 从 雨 中 离 开 ！",
-	ANNOUNCE_SOAKED = "我 被 淋 得 湿 透 ！",
+	ANNOUNCE_DAMP = "喔 ， 一 氧 化 二 氢",
+	ANNOUNCE_WET = "我 的 衣 服 有 些 湿 透 了",
+	ANNOUNCE_WETTER = "水 得 用 种 方 法 弄 干 ！",
+	ANNOUNCE_SOAKED = "我 已 经 达 到 我 的 饱 和 点",
 	
 	BATTLECRY =
 	{
@@ -96,7 +96,7 @@ return {
 	DESCRIBE =
 	{
         GLOMMER = "真 可 爱 ， 总 是 用 同 样 的 方 式",
-        GLOMMERGLAND = "花 瓣 微 微 泛 着 光",
+        GLOMMERFLOWER = "花 瓣 微 微 泛 着 光",
         GLOMMERWINGS = "把 这 个 放 在 头 上 真 好 ！",
         GLOMMERFUEL = "这 种 黏 性 物 质 气 味 是 臭 的",
         BELL = "叮 铃 铃",
@@ -106,7 +106,7 @@ return {
         	EMPTY = "我 把 它 弄 坏 了 。 为 了 科 学",
     	},
 
-		WEBBERSKULL = "可 怜 的 家 伙 ， 我 应 该 把 他 埋 葬 让 他 安 息",
+		WEBBERSKULL = "可 怜 的 小 家 伙 ， 他 应 该 得 到 一 个 适 当 的 葬 礼",
 		WORMLIGHT = "看 起 来 很 美 味",
 		WORM =
 		{
@@ -278,6 +278,10 @@ return {
 		TURF_SINKHOLE="又 是 一 种 新 地 形",
 		TURF_UNDERROCK="又 是 一 种 新 地 形",
 		TURF_MUD="又 是 一 种 新 地 形",
+		
+		TURF_DECIDUOUS = "又 是 一 种 新 地 形",
+		TURD_SANDY = "又 是 一 种 新 地 形",
+		TURF_BADLANDS = "又 是 一 种 新 地 形",
 
 		POWCAKE = "我 不 认 为 自 己 饿 到 想 吃 下 它",
         CAVE_ENTRANCE = 
@@ -300,6 +304,7 @@ return {
 		ASH =
 		{
 			GENERIC = "火 灾 后 就 剩 下 那 些 了",
+			REMAINS_GLOMMERFLOWER = "当 我 传 送 的 时 候 ，花 被 火 焰 吞 噬 了 ！",
 			REMAINS_EYE_BONE = "当 我 传 送 的 时 候 ，眼 骨 被 火 焰 吞 噬 了 ！",
 			REMAINS_THINGIE = "在 这 个 被 烧 毁 前 它 曾 经 是 某 样 东 西 ……",
 		},
@@ -367,7 +372,8 @@ return {
 		BLOWDART_PIPE = "一 个 我 生 日 蛋 糕 的 很 好 做 法 ！",
 		BLUEAMULET = "像 冰 一 样 冷 ！",
 		BLUEGEM = "它 闪 着 冰 冷 能 量 的 光",
-		BLUEPRINT = "它 挺 科 学 ！",
+		BLUEPRINT = "这 就 是 科 学 ！",
+		BELL_BLUEPRINT = "这 就 是 科 学 ！",
 		BLUE_CAP = "它 很 古 怪 ， 还 有 黏 性",
 		BLUE_CAP_COOKED = "现 在 不 同 了 ……",
 		BLUE_MUSHROOM =
@@ -398,6 +404,7 @@ return {
 		},
 		CACTUS_MEAT_COOKED = "酱 烤 沙 漠 果",
 		CACTUS_MEAT = "目 前 还 有 一 些 刺 在 我 和 我 的美 味 餐 点 之 间",
+		CACTUS_FLOWER = "带 刺 植 物 上 的 可 爱 的 花",
 		COLDFIRE =
 		{
 			EMBERS = "在 火 熄 灭 之 前 我 得 加 点 东 西",
@@ -424,10 +431,11 @@ return {
 			EMPTY = "它 的  主 人 已 经 不 在 这 里 了",
 		},
 		CATCOONHAT = "耳 朵 帽 ！",
-		CARROT = "呸。这是所有蔬菜。",
+		CARROT = "呸。这是所有蔬菜",
 		CARROT_COOKED = "这 东 西 黏 糊 糊 的",
 		CARROT_PLANTED = "地 球 在 创 造 植 物 幼 苗",
 		CARROT_SEEDS = "这 是 一 粒 种 子",
+		WATERMELON_SEEDS = "这 是 一 粒 种 子",
 		CAVE_FERN = "这 是 个 蕨 类 植 物",
 		CHARCOAL = "又 小 又 黑 ， 闻 起 来 像 烧 焦 的 木 头",
         CHESSJUNK1 = "一 堆 棋 子",
@@ -475,7 +483,7 @@ return {
 		DIRTPILE = "这 是 一 堆 污 泥 ……还 是 ？",
 		DIVININGROD =
 		{
-			COLD = "信 号 很 模 糊 。",
+			COLD = "信 号 很 模 糊 ",
 			GENERIC = "看 起 来 像 一 种 制 导 装 置",
 			HOT = "我 控 制 不 住 这 东 西 了 ！",
 			WARM = "我 正 在 向 正 确 的 方 向 走 呢",
@@ -519,7 +527,7 @@ return {
 			BURNING = "多 么 浪 费 木 材",
 			BURNT = "我 感 觉 我 本 可 以 制 止 它 的",
 			CHOPPED = "接 招 ， 大 自 然 ！",
-			POISON = "它 看 起 来 有 着 不 开 心 的 事 情",
+			POISON = "它 看 起 来 并 不 喜 欢 我 偷 它 的 坚 果 ！",
 			GENERIC = "它 长 满 了 叶 子 。 在 大 部 分 时 间 里",
 		},
 		ACORN = 
@@ -966,6 +974,7 @@ return {
 		SHOVEL = "地 下 有 很 多 事 发 生 ",
 		SILK = "它 来 自 蜘 蛛 的 屁 股",
 		SKELETON = "还 好 是 他 不 是 我",
+		SKELETON_PLAYER = "至 少 它 比 …… 等 我 一 分 钟 ！",
 		SKULLCHEST = "我 不 确 定 我 想 不 想 打 开 它",
 		SMALLBIRD =
 		{
@@ -1001,7 +1010,7 @@ return {
 		STUFFEDEGGPLANT = "我 自 己 煮 的 ！",
 		SUNKBOAT = "在 那 儿 它 对 我 来 说 没 什 么 用 处 ！",
 		SWEATERVEST = "这 件 背 心 可 以 让 其 它 华 丽 丽 衣 服 都 统 统 滚 掉",
-		REFLECTIVEVEST = "全 部 反 射 回 去 ， 坏 太 阳 ！",
+		REFLECTIVEVEST = "深 度 保 护 ， 坏 太 阳 ！",
 		HAWAIIANSHIRT = "这 不 是 在 安 全 的 实 验 室 ！",
 		TAFFY = "我 自 己 煮 的 ！",
 		TALLBIRD = "那 是 一 只 高 大 的 鸟 ！",

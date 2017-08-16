@@ -21,17 +21,28 @@ local function Update(inst, dt)
 		local owner = inst.components.inventoryitem and inst.components.inventoryitem.owner or nil
 		if owner then
 			if owner:HasTag("fridge") then
-				if inst:HasTag("frozen") then
+				if inst:HasTag("frozen") and not owner:HasTag("nocool") and not owner:HasTag("lowcool") then
 					modifier = TUNING.PERISH_COLD_FROZEN_MULT
 				else
 					modifier = TUNING.PERISH_FRIDGE_MULT 
 				end
-			
 			elseif owner:HasTag("spoiler") then
 				modifier = TUNING.PERISH_GROUND_MULT 
 			end
 		else
-			modifier = TUNING.PERISH_GROUND_MULT 
+			modifier = TUNING.PERISH_GROUND_MULT
+		end
+
+		-- Cool off hot foods over time (faster if in a fridge)
+		if inst.components.edible and inst.components.edible.temperaturedelta and inst.components.edible.temperaturedelta > 0 then
+			if owner and owner:HasTag("fridge") then
+				if not owner:HasTag("nocool") then
+					inst.components.edible.temperatureduration = inst.components.edible.temperatureduration - 1
+				end
+			elseif GetSeasonManager() and GetSeasonManager():GetCurrentTemperature() < TUNING.OVERHEAT_TEMP - 5 then
+				inst.components.edible.temperatureduration = inst.components.edible.temperatureduration - .25
+			end
+			if inst.components.edible.temperatureduration < 0 then inst.components.edible.temperatureduration = 0 end
 		end
 
 		local mm = GetWorld().components.moisturemanager

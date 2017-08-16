@@ -231,6 +231,7 @@ end
 function Combat:IsValidTarget(target)
     if target 
        and target.components.burnable
+       and target.components.burnable.canlight
        and not target.components.burnable:IsBurning() 
        and not target:HasTag("burnt")
        and self:GetWeapon() and self:GetWeapon():HasTag("rangedlighter") then
@@ -694,7 +695,7 @@ function Combat:CanHitTarget(targ, weapon)
       and self:GetWeapon() and self:GetWeapon():HasTag("extinguisher") then
         specialcase_target = true
     end
-    if not specialcase_target and targ and targ.components.burnable and not targ.components.burnable:IsBurning() and not targ:HasTag("burnt")
+    if not specialcase_target and targ and targ.components.burnable and targ.components.burnable.canlight and not targ.components.burnable:IsBurning() and not targ:HasTag("burnt")
       and self:GetWeapon() and self:GetWeapon():HasTag("rangedlighter") then
         specialcase_target = true
     end
@@ -736,7 +737,7 @@ function Combat:DoAttack(target_override, weapon, projectile, stimuli, instancem
         else
             local mult = 1
             if stimuli == "electric" or (weapon and weapon.components.weapon and weapon.components.weapon.stimuli == "electric") then
-                if not targ.components.inventory or (targ.components.inventory and not targ.components.inventory:IsInsulated()) then
+                if not targ:HasTag("electricdamageimmune") and (not targ.components.inventory or (targ.components.inventory and not targ.components.inventory:IsInsulated())) then
                     mult = TUNING.ELECTRIC_DAMAGE_MULT
                     if targ.components.moisture then
                         mult = mult + (TUNING.ELECTRIC_WET_DAMAGE_MULT * targ.components.moisture:GetMoisturePercent())

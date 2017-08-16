@@ -234,7 +234,7 @@ local function MakeRook(nightmare)
     
     inst:DoTaskInTime(2*FRAMES, function() inst.components.knownlocations:RememberLocation("home", Vector3(inst.Transform:GetWorldPosition()) ) end)
 
-    MakeMediumBurnableCharacter(inst, "spring")
+    MakeLargeBurnableCharacter(inst, "swap_fire")
     MakeMediumFreezableCharacter(inst, "spring")
     
     inst:ListenForEvent("attacked", OnAttacked)

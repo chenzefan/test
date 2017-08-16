@@ -20,7 +20,7 @@ local events=
     CommonHandlers.OnFreeze(),
     EventHandler("attacked", function(inst, data) 
         if data and data.weapon and data.weapon:HasTag("hammer") then
-            inst.components.inventory:DropEverything(false, true) --#srosen we might want this to be a chance to drop the things the mole collected
+            inst.components.inventory:DropEverything(false, true) 
             if inst.components.health and not inst.components.health:IsDead() then
                 inst.sg:GoToState("stunned", false)
             end
@@ -120,7 +120,9 @@ local states=
                 inst:DoTaskInTime(3*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mole/emerge_voice") end)
                 inst:DoTaskInTime(26*FRAMES, function(inst)
                     if inst.State == "above" then
-                        inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mole/sniff", "sniff")
+                        if not inst.SoundEmitter:PlayingSound("sniff") then
+                            inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mole/sniff", "sniff")
+                        end
                     end
                 end)
                 inst:DoTaskInTime(77*FRAMES, function(inst)
@@ -131,7 +133,9 @@ local states=
             else
                 inst:DoTaskInTime(1*FRAMES, function(inst)
                     if inst.State == "above" then
-                        inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mole/sniff", "sniff")
+                        if not inst.SoundEmitter:PlayingSound("sniff") then
+                            inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mole/sniff", "sniff")
+                        end
                     end
                 end)
                 inst:DoTaskInTime(52*FRAMES, function(inst)
@@ -168,7 +172,9 @@ local states=
             TimeEvent(12*FRAMES, function(inst) inst:PerformBufferedAction() end),
             TimeEvent(27*FRAMES, function(inst)
                 if inst.State == "above" then
-                    inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mole/sniff", "sniff")
+                    if not inst.SoundEmitter:PlayingSound("sniff") then
+                        inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mole/sniff", "sniff")
+                    end
                 end
             end),
             TimeEvent(78*FRAMES, function(inst)
@@ -197,9 +203,9 @@ local states=
         {
             EventHandler("animover", function(inst) 
                 inst:SetState("under")
-                if inst.components.burnable:IsBurning() then
-                    inst.components.burnable:Extinguish()
-                end           
+                -- if inst.components.burnable:IsBurning() then
+                --     inst.components.burnable:Extinguish()
+                -- end           
                 inst.last_above_time = GetTime()
                 inst.sg:GoToState("idle") 
             end)
@@ -222,15 +228,16 @@ local states=
         onenter = function(inst)
             inst.Physics:Stop()
             inst.AnimState:PlayAnimation("exit")
+            -- if inst.components.burnable:IsBurning() then
+            --     inst.components.burnable:Extinguish()
+            -- end
         end,
 
         events =
         {
             EventHandler("animover", function(inst) 
                 inst:SetState("under")
-                if inst.components.burnable:IsBurning() then
-                    inst.components.burnable:Extinguish()
-                end
+
                 inst.last_above_time = GetTime()
                 inst.sg:GoToState("idle") 
             end)
@@ -272,7 +279,9 @@ local states=
         {
             TimeEvent(1*FRAMES, function(inst)
                 if inst.State == "above" then
-                    inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mole/sniff", "sniff")
+                    if not inst.SoundEmitter:PlayingSound("sniff") then
+                        inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mole/sniff", "sniff")
+                    end
                 end
             end),
             TimeEvent(52*FRAMES, function(inst)
@@ -289,7 +298,9 @@ local states=
 
         onenter = function(inst)
             inst.AnimState:PlayAnimation("walk_pre")
-            inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mole/move", "move")
+            if not inst.SoundEmitter:PlayingSound("move") then
+                inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mole/move", "move")
+            end
             inst.components.locomotor:WalkForward()
         end,
 
@@ -350,13 +361,12 @@ local states=
 
         onenter = function(inst, playanim)
             inst.Physics:Stop()
-            inst.AnimState:PlayAnimation("walk_pre")
-            inst.AnimState:PushAnimation("walk_loop", true)
+            inst.AnimState:PlayAnimation("idle")
             inst:PerformBufferedAction()
         end,
         events=
         {
-            EventHandler("animqueueover", function (inst, data) 
+            EventHandler("animover", function (inst, data) 
                 inst.sg:GoToState("idle")
             end),
         }
@@ -399,9 +409,42 @@ local states=
             inst.Physics:Stop()
             RemovePhysicsColliders(inst)        
             inst.components.lootdropper:DropLoot(Vector3(inst.Transform:GetWorldPosition()))     
-            inst.components.inventory:DropEverything(false, true) --#srosen we might want this to be a chance to drop the things the mole collected       
+            inst.components.inventory:DropEverything(false, true) 
         end,
-    },    
+    },  
+
+    State{
+        name = "fall",
+        tags = {"busy"},
+        onenter = function(inst)
+            inst.Physics:SetDamping(0)
+            inst.Physics:SetMotorVel(0,-20+math.random()*10,0)
+            inst.AnimState:PlayAnimation("stunned_loop", true)
+        end,
+        
+        onupdate = function(inst)
+            local pt = Point(inst.Transform:GetWorldPosition())
+            if pt.y < 2 then
+                inst.Physics:SetMotorVel(0,0,0)
+            end
+            
+            if pt.y <= .1 then
+                pt.y = 0
+
+                inst.Physics:Stop()
+                inst.Physics:SetDamping(5)
+                inst.Physics:Teleport(pt.x,pt.y,pt.z)
+                inst:SetState("above")
+                inst.sg:GoToState("stunned", true)
+            end
+        end,
+
+        onexit = function(inst)
+            local pt = inst:GetPosition()
+            pt.y = 0
+            inst.Transform:SetPosition(pt:Get())
+        end,
+    },      
     
     State{
         name = "stunned",
@@ -410,12 +453,18 @@ local states=
         onenter = function(inst, skippre) 
             inst:ClearBufferedAction()
             inst.SoundEmitter:KillSound("sniff")
-            inst.components.inventory:DropEverything(false, true) --#srosen we might want this to be a chance to drop the things the mole collected       
+            inst.components.inventory:DropEverything(false, true) 
             inst.Physics:Stop()
             if skippre then
                 inst.AnimState:PlayAnimation("stunned_loop", true)
-                inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mole/sleep", "stunned")
-                inst.stunnedsleepsfxtask = inst:DoPeriodicTask(23*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mole/sleep", "stunned") end)
+                if not inst.SoundEmitter:PlayingSound("stunned") then
+                    inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mole/sleep", "stunned")
+                end
+                inst.stunnedsleepsfxtask = inst:DoPeriodicTask(23*FRAMES, function(inst) 
+                    if not inst.SoundEmitter:PlayingSound("stunned") then
+                        inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mole/sleep", "stunned") 
+                    end
+                end)
                 inst:DoTaskInTime(11*FRAMES, function(inst) 
                     inst.SoundEmitter:KillSound("stunned") 
                     inst.stunnedkillsleepsfxtask = inst:DoPeriodicTask(23*FRAMES, function(inst) inst.SoundEmitter:KillSound("stunned") end)
@@ -425,8 +474,14 @@ local states=
                 inst.AnimState:PlayAnimation("stunned_pre", false)
                 inst.AnimState:PushAnimation("stunned_loop", true)
                 inst:DoTaskInTime(18*FRAMES, function(inst)
-                    inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mole/sleep", "stunned")
-                    inst.stunnedsleepsfxtask = inst:DoPeriodicTask(23*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mole/sleep", "stunned") end)
+                    if not inst.SoundEmitter:PlayingSound("stunned") then
+                        inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mole/sleep", "stunned")
+                    end
+                    inst.stunnedsleepsfxtask = inst:DoPeriodicTask(23*FRAMES, function(inst) 
+                        if not inst.SoundEmitter:PlayingSound("stunned") then
+                            inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mole/sleep", "stunned") 
+                        end
+                    end)
                     inst:DoTaskInTime(11*FRAMES, function(inst) 
                         inst.SoundEmitter:KillSound("stunned") 
                         inst.stunnedkillsleepsfxtask = inst:DoPeriodicTask(23*FRAMES, function(inst) inst.SoundEmitter:KillSound("stunned") end)
@@ -526,7 +581,9 @@ local states=
         timeline =
         {
             TimeEvent(27*FRAMES, function(inst)
-                inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mole/sleep", "sleep")
+                if not inst.SoundEmitter:PlayingSound("sleep") then
+                    inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/mole/sleep", "sleep")
+                end
             end),
             TimeEvent(42*FRAMES, function(inst)
                 inst.SoundEmitter:KillSound("sleep")

@@ -22,7 +22,7 @@ return {
 	ANNOUNCE_COLD = "哦 …… 蜘 蛛 的 头 发 不 是 很 温 暖",
 	ANNOUNCE_HOT = "太 热 了 ！",
 	ANNOUNCE_CRAFTING_FAIL = "我 们 遗 漏 了 什 么",
-	ANNOUNCE_DEERCLOPS = "听 起 来 像 是 一 个 大 家 伙",
+	ANNOUNCE_DEERCLOPS = "听 起 来 像 是 一 个 长 大 了 的 小 气 鬼",
 	ANNOUNCE_DUSK = "快 到 睡 觉 的 时 候 了",
 	ANNOUNCE_EAT =
 	{
@@ -96,7 +96,7 @@ return {
 	DESCRIBE =
 	{
         GLOMMER = "漂 亮 的 眼 睛",
-        GLOMMERGLAND = "它 的 气 味 不 是 很 好",
+        GLOMMERFLOWER = "它 的 气 味 不 是 很 好",
         GLOMMERWINGS = "我 希 望 我 至 少 也 可 以 有 翅 膀 。 叹 息",
         GLOMMERFUEL = "真 恶 心 ！",
         BELL = "正 是 响 铃 铛 的 时 候",
@@ -120,6 +120,7 @@ return {
 			ABOVEGROUND = "你 好 ， 小 家 伙",
 		},
 		MOLEHILL = "隐 藏 的 洞 穴",
+		MOLEHAT = "我 能 看 到 很 远 很 远",
 
 		EEL = "淡 水 蛇",
 		EEL_COOKED = "我 们 可 以 喝 下 去",
@@ -153,6 +154,7 @@ return {
 		MINOTAUR = "角 在 他 的 眉 间",
 		SPIDER_DROPPER = "我 们 的 朋 友 住 在 那 里",
 		NIGHTMARELIGHT = "不 是 我 的 小 夜 灯",
+		NIGHTSTICK = "小 夜 灯 ， 夜 中 亮 ！",
 		GREENGEM = "我 绝 对 羡 慕",
 		RELIC = "让 我 想 起 了 我 的 家 ， 如 果 我 一 直 生 活 在 以 前 的 时 候",
 		RUINS_RUBBLE = "我 们 可 以 修 复 它 ！",
@@ -298,6 +300,7 @@ return {
 		ASH =
 		{
 			GENERIC = "时 髦 的 恐 怖",
+			REMAINS_GLOMMERFLOWER = "花 失 败 了",
 			REMAINS_EYE_BONE = "眼 骨 没 有 在 旅 行 中 幸 存",
 			REMAINS_THINGIE = "不 管 它 是 什 么 ， 它 回 到 了 土 上",
 		},
@@ -310,6 +313,8 @@ return {
 		BEARDHAIR = "另 一 个 世 界 里 ， 我 可 能 已 经 长 大 了",
 		BEARGER = "逃 之 夭 夭 ！",
 		BEARGERVEST = "我 们 是 永 远 恐 怖 的 蜘 蛛",
+		ICEPACK = "我 能 背 起 这 个 包 ！",
+		BEARGER_FUR = "它 是 多 么 的 厚 ！",
 		BEDROLL_STRAW = "霉 味 ， 但 可 以 放 松",
 		BEE =
 		{
@@ -362,7 +367,8 @@ return {
 		BLOWDART_PIPE = "同 吹 泡 泡",
 		BLUEAMULET = "我 想 这 是 很 好 的",
 		BLUEGEM = "寒 冷 的 闪 闪 发 光",
-		BLUEPRINT = "“按 照 说 明 ， ” 妈 妈 常 说",
+		BLUEPRINT = "“遵 循 说 明 ， ” 妈 妈 常 说",
+		BELL_BLUEPRINT = "“遵 循 说 明 ， ” 妈 妈 常 说",
 		BLUE_CAP = "你 一 定 是 疯 了 ……",
 		BLUE_CAP_COOKED = "好 消 息 是 我 们 还 很 健 康",
 		BLUE_MUSHROOM =
@@ -393,6 +399,7 @@ return {
 		},
 		CACTUS_MEAT_COOKED = "取 走 了 ， 像 是 监 狱 那 一 些 ！",
 		CACTUS_MEAT = "还 是 不 够 的 ， 对 吧 ？",
+		CACTUS_FLOWER = "这 部 分 是 好 的",
 		COLDFIRE =
 		{
 			EMBERS = "我 们 应 该 在 火 焰 熄 灭 之 前 放 些 东 西 进 去",
@@ -485,6 +492,8 @@ return {
 		DIVININGRODSTART = "激 进 的 棒 ！",
 		DRAGONFLY = "哦 ， 你 不 只 是 个 青",
 		ARMORDRAGONFLY = "一 个 生 物 的 外 壳",
+		DRAGON_SCALES = "他 们 并 没 有 多 少 鳞 片",
+		DRAGONFLYCHEST = "它 看 起 来 就 像 是 我 以 前 的 玩 具 箱 ！",
 		LAVASPIT = 
 		{
 			HOT = "对 于 我 们 来 说 太 热 了 ！",
@@ -683,6 +692,7 @@ return {
 			CHARGED = "它 在 发 光",
 		},
 		LIGHTNINGGOATHORN = "这 也 许 可 以 成 为 一 个 好 武 器",
+		GOATMILK = "一 杯 牛 奶 和 所 有 的 晚 餐",		
 		LITTLE_WALRUS = "他 在 他 的 眼 中 充 满 了 愤 怒",
 		LIVINGLOG = "这 个 木 头 有 一 张 脸",
 		LOCKEDWES = "你 好 ？ 你 能 听 到 我 吗 ？",
@@ -751,12 +761,20 @@ return {
 
 		MONKEYBARREL = "你 听 到 什 么 了 吗 ？",
 		MONSTERLASAGNA = "我 们 多 才 多 艺 的 厨 师 ！",
+		FLOWERSALAD = "每 天 五 份",
+        ICECREAM = "我 们 梦 寐 以 求 的 冰 激 凌",
+        WATERMELONICLE = "只 是 炎 热 夏 天 的 一 些 事 情",
+        TRAILMIX = "松 脆 并 且 健 康",
+        HOTCHILI = "味 觉 炸 弹 ！",
+        GUACAMOLE = "天 啊 ， 这 才 是 美 味 ！",
 		MONSTERMEAT = "闻 起 来 很 臭",
 		MONSTERMEAT_DRIED = "真 的 很 耐 嚼",
 		MOOSE = "她 看 起 来 一 点 也 不 高 兴 见 到 我 们",
 		MOOSEEGG = "这 将 是 一 份 巨 大 的 早 餐 ！",
 		MOSSLING = "饥 饿 的 小 家 伙",
 		FEATHERFAN = "巨 大 的 事 情 ！",
+		GOOSE_FEATHER = "痒 痒 的 折 磨",
+		STAFF_TORNADO = "我 们 会 愤 怒 ， 我 们 会 喷 云 吐 雾",
 		MOSQUITO =
 		{
 			GENERIC = "嘘 ！",
@@ -940,6 +958,7 @@ return {
 		SHOVEL = "也 许 我 们 可 以 挖 个 隧 道 离 开 ？",
 		SILK = "它 是 如 此 的 柔 滑 ！",
 		SKELETON = "你 好 ？ 你 还 好 吗 ？",
+		SKELETON_PLAYER = "呃 ， 蜘 蛛 的 部 分 去 哪 里 了 ？",
 		SKULLCHEST = "谁 知 到 会 有 什 么 躲 在 这 里 ！",
 		SMALLBIRD =
 		{
@@ -973,6 +992,8 @@ return {
 		STRAWHAT = "这 也 许 可 以 挡 住 我 们 眼 睛 上 的 太 阳",
 		STUFFEDEGGPLANT = "我 们 是 多 才 多 艺 的 厨 师 !",
 		SWEATERVEST = "它 穿 上 去 真 痒 ， 同 时 真 有 趣",
+		REFLECTIVEVEST = "安 全 第 一 ！",
+		HAWAIIANSHIRT = "爷 爷 的 风 格 ， 绝 对 的",
 		TAFFY = "我 们 是 多 才 多 艺 的 厨 师 ！",
 		TALLBIRD = "看 看 那 些 腿 ！",
 		TALLBIRDEGG = "我 刚 才 是 不 是 听 到 了 “ 咪 噗 ” 叫 声 ？",

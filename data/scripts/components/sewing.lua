@@ -26,7 +26,7 @@ end
 function Sewing:CollectUseActions(doer, target, actions, right)
 
 	--this... should be redone without using the fueled component... it's kind of weird.
-    if target.components.fueled and target.components.fueled.fueltype == "USAGE" and target.components.fueled:GetPercent() < 1 then
+    if not target:HasTag("no_sewing") and target.components.fueled and target.components.fueled.fueltype == "USAGE" and target.components.fueled:GetPercent() < 1 then
         table.insert(actions, ACTIONS.SEW)
     end
 end

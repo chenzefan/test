@@ -52,6 +52,17 @@ local function OnAttacked(inst, data)
     inst.components.combat:SetTarget(data.attacker)
     inst.components.combat:ShareTarget(data.attacker, SHARE_TARGET_DIST, function(dude) return dude.prefab == "spiderqueen" and not dude.components.health:IsDead() end, 2)
 end
+
+
+local function SanityAura(inst, observer)
+
+    if observer.prefab == "webber" then
+        return 0
+    end
+
+    return -TUNING.SANITYAURA_HUGE
+
+end
     
 local function fn(Sim)
 	local inst = CreateEntity()
@@ -108,7 +119,7 @@ local function fn(Sim)
     ------------------
 
 	inst:AddComponent("sanityaura")
-    inst.components.sanityaura.aura = -TUNING.SANITYAURA_HUGE
+    inst.components.sanityaura.aurafn = SanityAura
 
    
     ------------------

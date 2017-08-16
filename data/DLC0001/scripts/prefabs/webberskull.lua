@@ -88,6 +88,7 @@ local function fn()
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
 	local snd = inst.entity:AddSoundEmitter()
+	MakeInventoryPhysics(inst)
 
 	anim:SetBank("skulls")
 	anim:SetBuild("skulls")

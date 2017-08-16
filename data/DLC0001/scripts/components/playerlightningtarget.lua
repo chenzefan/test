@@ -6,13 +6,12 @@ local DefaultOnStrike = function(inst)
         end
 
         if not protected then
-            local mult = 1 + (TUNING.ELECTRIC_WET_DAMAGE_MULT * inst.components.moisture:GetMoisturePercent())
-            local damage = -TUNING.LIGHTNING_DAMAGE * mult
-            local healthpct = inst.components.health.currenthealth / inst.components.health.maxhealth
-            damage = damage * healthpct
-            if damage >= inst.components.health.currenthealth - 5 then
-                damage = inst.components.health.currenthealth - 5
-            end
+            local mult = TUNING.ELECTRIC_WET_DAMAGE_MULT * inst.components.moisture:GetMoisturePercent()
+            local damage = -(TUNING.LIGHTNING_DAMAGE + (mult * TUNING.LIGHTNING_DAMAGE))
+            -- Magic hit point stuff that isn't being used right now
+            -- if damage >= inst.components.health.currenthealth - 5 and inst.components.health.currenthealth > 10 then
+            --     damage = inst.components.health.currenthealth - 5
+            -- end
 
             inst.components.health:DoDelta(damage, false, "lightning")
             inst.sg:GoToState("electrocute")

@@ -67,4 +67,10 @@ local function fn()
 	return inst
 end
 
-return Prefab("common/objects/skeleton", fn, assets, prefabs) 
+local function playerskel()
+	local inst = fn()
+	return inst
+end
+
+return Prefab("common/objects/skeleton", fn, assets, prefabs),
+	Prefab("common/objects/skeleton_player", playerskel, assets, prefabs)

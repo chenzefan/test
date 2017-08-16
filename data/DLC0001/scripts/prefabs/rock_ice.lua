@@ -67,6 +67,9 @@ local function SetStage(inst, stage, source)
 			inst.AnimState:Hide("rock")
 			target_workleft = -1
 			inst.MiniMapEntity:SetEnabled(false)
+			if GetSeasonManager().ground_snow_level >= SNOW_THRESH then
+				inst.AnimState:Hide("snow")
+			end
 			RemovePhysicsColliders(inst)
 		end
 	elseif stage == "short" then
@@ -87,6 +90,9 @@ local function SetStage(inst, stage, source)
 			inst.stage = "short" 
 			target_workleft = TUNING.ICE_MINE*(1/3)
 			inst.MiniMapEntity:SetEnabled(true)
+			if GetSeasonManager().ground_snow_level >= SNOW_THRESH then
+				inst.AnimState:Show("snow")
+			end
 			ChangeToObstaclePhysics(inst)
 		end
 	elseif stage == "medium" then
@@ -143,7 +149,7 @@ local function TryStageChange(inst)
 
 	local seasonmgr = GetSeasonManager()
 	if seasonmgr then
-		local pct = seasonmgr:GetPercentSeason() --#srosen this might need more fudging around to make look good and feel natural
+		local pct = seasonmgr:GetPercentSeason() 
 		if seasonmgr:IsSpring() then
 			if pct < inst.threshold1 then
 				SetStage(inst, "tall", "melt")
@@ -205,7 +211,7 @@ local function baserock_fn(Sim)
 			if workleft <= 0 then
 				inst.SoundEmitter:PlaySound("dontstarve_DLC001/common/iceboulder_smash")
 				inst.components.lootdropper:DropLoot(pt)
-				inst:Remove() --#srosen we might want to turn it into a puddle that will refreeze come winter. if so, needs some love.
+				inst:Remove() 
 			else
 				if workleft <= TUNING.ICE_MINE*(1/3) then
 					SetStage(inst, "short", "work")

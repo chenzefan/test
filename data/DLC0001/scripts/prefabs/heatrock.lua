@@ -5,11 +5,14 @@ local assets=
 
 
 local function HeatFn(inst, observer)
+	local owner = inst.components.inventoryitem and inst.components.inventoryitem.owner
+	if owner and owner.components.temperature then
+		return (inst.components.temperature:GetCurrent() - owner.components.temperature:GetCurrent()) * TUNING.HEAT_ROCK_CARRIED_BONUS_HEAT_FACTOR
+	end
+
 	local seasonmgr = GetSeasonManager()
 	if seasonmgr then
-		local delta = math.abs(seasonmgr:GetCurrentTemperature() - inst.components.temperature:GetCurrent())
-		local sign = (seasonmgr:GetCurrentTemperature() > inst.components.temperature:GetCurrent()) and -1 or 1
-		return delta * sign
+		return inst.components.temperature:GetCurrent() - seasonmgr:GetCurrentTemperature() / TUNING.HEAT_ROCK_CARRIED_BONUS_HEAT_FACTOR
 	end
 end
 
@@ -27,8 +30,8 @@ end
 
 -- These represent the boundaries between the images
 local base_temperature_thresholds = { 5, 20, 50, 65 }--{ 0, 25, 40, 50 } was original
-local winter_temperature_thresholds = { -5, 5, 15, 40 }
-local summer_temperature_thresholds = { 30, 55, 65, 75 }
+local winter_temperature_thresholds = { -5, 12, 20, 35 }
+local summer_temperature_thresholds = { 35, 50, 58, 75 }
 
 local function GetCurrentTemperatureThresholds(inst)
 	local seasonmgr = GetSeasonManager()
@@ -50,10 +53,6 @@ local function GetRangeForTemperature(inst, temp)
 		end
 	end
 
-	if mintemp and inst.components.temperature then
-		--inst.components.temperature.mintemp = mintemp
-	end
-
 	return range
 end
 
@@ -63,10 +62,10 @@ local function UpdateImages(inst, range)
 	inst.components.inventoryitem:ChangeImageName("heat_rock"..tostring(range))
 	if range == 5 then
 		inst.AnimState:SetBloomEffectHandle( "shaders/anim.ksh" )
-		inst.Light:Enable(true)
+		-- inst.Light:Enable(true)
 	else
 		inst.AnimState:ClearBloomEffectHandle()
-		inst.Light:Enable(false)
+		-- inst.Light:Enable(false)
 	end
 end
 
@@ -79,7 +78,7 @@ local function AdjustLighting(inst)
 end
 
 local function TemperatureChange(inst, data)
-	AdjustLighting(inst)
+	-- AdjustLighting(inst)
 	local range = GetRangeForTemperature(inst, inst.components.temperature.current)
 	if range ~= inst.currentTempRange then
 		UpdateImages(inst, range)
@@ -115,13 +114,13 @@ local function fn(Sim)
 	inst.components.heater.heatfn = HeatFn
 	inst.components.heater.carriedheatfn = HeatFn
 	
-    inst.entity:AddLight()
-	inst.Light:SetRadius(.6)
-    inst.Light:SetFalloff(1)
-    inst.Light:SetIntensity(.5)
-    inst.Light:SetColour(235/255,165/255,12/255)
-	inst.Light:Enable(false)
-	inst.Light:SetDisableOnSceneRemoval(false)
+ --    inst.entity:AddLight()
+	-- inst.Light:SetRadius(.6)
+ --    inst.Light:SetFalloff(1)
+ --    inst.Light:SetIntensity(.5)
+ --    inst.Light:SetColour(235/255,165/255,12/255)
+	-- inst.Light:Enable(false)
+	-- inst.Light:SetDisableOnSceneRemoval(false)
 
 	inst:ListenForEvent("seasonChange", function(it, data)
 		if data.season == SEASONS.SUMMER then
@@ -136,11 +135,11 @@ local function fn(Sim)
 	UpdateImages(inst, inst.currentTempRange)
 
 	-- InventoryItems automatically enable their lights when dropped, so we need to counteract that
-	inst:ListenForEvent("ondropped", function(inst)
-		if inst.currentTempRange ~= 5 then
-			inst.Light:Enable(false)
-		end
-	end)
+	-- inst:ListenForEvent("ondropped", function(inst)
+	-- 	if inst.currentTempRange ~= 5 then
+	-- 		inst.Light:Enable(false)
+	-- 	end
+	-- end)
 
 	return inst
 end

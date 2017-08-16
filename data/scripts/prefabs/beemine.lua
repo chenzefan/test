@@ -74,7 +74,9 @@ local function SetInactive(inst)
 end
 
 local function OnDropped(inst)
-	inst.components.mine:Deactivate()
+	if inst.components.mine then
+		inst.components.mine:Deactivate()
+	end
 end
 
 local function ondeploy(inst, pt, deployer)

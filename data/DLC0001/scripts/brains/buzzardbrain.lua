@@ -54,9 +54,9 @@ local function DealWithThreat(inst)
     if hasFood then
         local threat = FindEntity(inst, 7.5, nil, nil, {'notarget'}, {'player', 'monster', 'scarytoprey'})
         if threat and not inst.components.combat:TargetIs(threat) then
-            inst.components.combat:SetTarget(threat)
             inst.components.locomotor:Stop()
             inst:ClearBufferedAction()
+            inst.components.combat:SetTarget(threat)
         end
     else
         inst.shouldGoAway = true       

@@ -59,8 +59,17 @@ local function fn(Sim)
     inst.AnimState:PushAnimation("atk", false)
     inst.AnimState:PushAnimation("down", false)
 
-    inst:DoTaskInTime(29*FRAMES, function(inst) if inst.target then inst:FacePoint(inst.target.Transform:GetWorldPosition()) end end)
+    inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/decidous/whip_move", "rumble")
+    inst:DoTaskInTime(29*FRAMES, function(inst) 
+        inst.SoundEmitter:KillSound("rumble")
+        inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/decidous/whip_pop")
+        if inst.target then 
+            inst:FacePoint(inst.target.Transform:GetWorldPosition()) 
+        end 
+    end)
+    inst:DoTaskInTime(50*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/decidous/whip") end)
     inst:DoTaskInTime(55*FRAMES, function(inst) inst.components.combat:DoAttack() end)
+    inst:DoTaskInTime(59*FRAMES, function(inst) inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/decidous/whip") end)
 
     inst:ListenForEvent("animqueueover", function(inst) inst:Remove() end)
 

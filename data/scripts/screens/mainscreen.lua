@@ -21,6 +21,9 @@ local MovieDialog = require "screens/moviedialog"
 
 local ControlsScreen = require "screens/controlsscreen"
 local OptionsScreen = require "screens/optionsscreen"
+local BroadcastingOptionsScreen = require "screens/broadcastingoptionsscreen"
+
+local RoGUpgrade = require "widgets/rogupgrade"
 
 local rcol = RESOLUTION_X/2 -200
 local lcol = -RESOLUTION_X/2 +200
@@ -40,7 +43,7 @@ end)
 
 
 function MainScreen:DoInit( )
-	STATS_ENABLE = false
+	STATS_ENABLE = true
 	TheFrontEnd:GetGraphicsOptions():DisableStencil()
 	TheFrontEnd:GetGraphicsOptions():DisableLightMapComponent()
 	
@@ -67,6 +70,11 @@ function MainScreen:DoInit( )
     self.fixed_root:SetVAnchor(ANCHOR_MIDDLE)
     self.fixed_root:SetHAnchor(ANCHOR_MIDDLE)
     self.fixed_root:SetScaleMode(SCALEMODE_PROPORTIONAL)
+
+ 	self.RoGUpgrade = self.fixed_root:AddChild(RoGUpgrade())
+    self.RoGUpgrade:SetScale(.9)
+    self.RoGUpgrade:SetPosition(-435, -185, 0)
+
 
 	--RIGHT COLUMN
 
@@ -140,11 +148,11 @@ function MainScreen:DoInit( )
 	self.motd.motdtext:EnableWordWrap(true)   
     
 
-    self.wilson = self.left_col:AddChild(UIAnim())
-    self.wilson:GetAnimState():SetBank("corner_dude")
-    self.wilson:GetAnimState():SetBuild("corner_dude")
-    self.wilson:GetAnimState():PlayAnimation("idle", true)
-    self.wilson:SetPosition(0,-370,0)
+    -- self.wilson = self.left_col:AddChild(UIAnim())
+    -- self.wilson:GetAnimState():SetBank("corner_dude")
+    -- self.wilson:GetAnimState():SetBuild("corner_dude")
+    -- self.wilson:GetAnimState():PlayAnimation("idle", true)
+    -- self.wilson:SetPosition(0,-370,0)
 
 
 	local function KickOffScreecherMod()
@@ -302,6 +310,10 @@ function MainScreen:Settings()
 	TheFrontEnd:PushScreen(OptionsScreen(false))
 end
 
+function MainScreen:BroadcastingMenu()
+	TheFrontEnd:PushScreen(BroadcastingOptionsScreen())
+end
+
 function MainScreen:OnControlsButton()
 	TheFrontEnd:PushScreen(ControlsScreen())
 end
@@ -369,7 +381,11 @@ function MainScreen:DoOptionsMenu()
 	if BRANCH ~= "release" then
 		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.CHEATS, cb= function() self:CheatMenu() end})
 	end
-	
+		
+	if PLATFORM == "WIN32_STEAM" or PLATFORM == "WIN32" then
+		table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.BROADCASTING, cb= function() self:BroadcastingMenu() end})
+	end
+		
 	table.insert( menu_items, {text=STRINGS.UI.MAINSCREEN.CANCEL, cb= function() self:MainMenu() end})
 	self:ShowMenu(menu_items)
 end

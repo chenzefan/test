@@ -18,6 +18,7 @@ end
 
 local function plant(inst, growtime)
     inst:RemoveComponent("inventoryitem")
+    RemovePhysicsColliders(inst)
     inst.AnimState:PlayAnimation("idle_planted")
     inst.SoundEmitter:PlaySound("dontstarve/wilson/plant_tree")
     inst.growtime = GetTime() + growtime

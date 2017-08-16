@@ -5,6 +5,10 @@ local SUMMER_BLOOM_TEMP_MODIFIER = 0.10 / TUNING.DAY_HEAT   -- amount that the d
 local SUMMER_BLOOM_PERIOD_MIN = 5 -- min length of the bloom fluctuation period
 local SUMMER_BLOOM_PERIOD_MAX = 10 -- max length of the bloom fluctuation period
 
+local function IsCaves() 
+	return GetWorld():IsCave()
+end
+
 local SeasonManager = Class(function(self, inst)
 	self.inst = inst
 	self.current_season = SEASONS.AUTUMN
@@ -23,20 +27,30 @@ local SeasonManager = Class(function(self, inst)
 	self.wither_delay = math.random(30,60)
 	self.rejuvenate_delay = math.random(30,60)
 
-	self.autumnsegs = {day=8,  dusk=4,  night=4}
-	self.wintersegs = {day=6,  dusk=5,  night=5}
-	self.springsegs = {day=8,  dusk=4,  night=4}
-	self.summersegs = {day=11, dusk=3,  night=2}
+	self.autumnsegs = {day=8,  dusk=6,  night=2}
+	self.wintersegs = {day=5,  dusk=5,  night=6}
+	self.springsegs = {day=5,  dusk=8,  night=3}
+	self.summersegs = {day=11, dusk=1,  night=4}
+
+	self.seasonfns =
+	{
+		spring = self.StartSpring,
+		autumn = self.StartAutumn,
+		winter = self.StartWinter,
+		summer = self.StartSummer,
+	}
+
+	self.segmod = {day = 1, dusk = 1, night = 1}
 
 	self.nextlightningtime = 5
 	self.lightningdelays = {min=nil, max=nil}
 	self.lightningmode = "rain"
 
 	self.seasonmode = "cycle"
-	self.winterlength = TUNING.WINTER_LENGTH
-	self.autumnlength = TUNING.AUTUMN_LENGTH
-	self.springlength = TUNING.SPRING_LENGTH
-	self.summerlength = TUNING.SUMMER_LENGTH
+	self.winterlength = TUNING.SEASON_LENGTH_HARSH_DEFAULT
+	self.autumnlength = TUNING.SEASON_LENGTH_FRIENDLY_DEFAULT
+	self.springlength = TUNING.SEASON_LENGTH_FRIENDLY_DEFAULT
+	self.summerlength = TUNING.SEASON_LENGTH_HARSH_DEFAULT
 	self.incaves = false
 	self.winterenabled = true
 	self.autumnenabled = true
@@ -62,17 +76,17 @@ local SeasonManager = Class(function(self, inst)
 		["set_sfx/set_ambience"] = winterfreq,
 	}
 
-	self.summerfreq = {500, 750, 1000, 1250, 1500}
+	self.summerfreq = {100, 250, 500, 750, 1000}
 	self.summerdsp =
 	{
-		["set_music"] = 2000,
-		["set_ambience"] = self.summerfreq[1],
-		--["set_sfx/HUD"] = summerfreq,
-		--["set_sfx/movement"] = summerfreq,
-		--["set_sfx/creature"] = summerfreq,
+		["set_music"] = 500,
+		-- ["set_ambience"] = self.summerfreq[1],
+		-- ["set_sfx/HUD"] = self.summerfreq[1],
+		["set_sfx/movement"] = self.summerfreq[1],
+		["set_sfx/creature"] = self.summerfreq[1],
 		["set_sfx/player"] = self.summerfreq[1],
 		["set_sfx/sfx"] = self.summerfreq[1],
-		["set_sfx/voice"] = self.summerfreq[1],
+		-- ["set_sfx/voice"] = self.summerfreq[1],
 		["set_sfx/set_ambience"] = self.summerfreq[1],
 	}
 
@@ -101,19 +115,35 @@ local SeasonManager = Class(function(self, inst)
 end)
 
 function SeasonManager:SetCaves()
-	self.incaves = true
-	if self.current_season == SEASONS.SPRING then
-		self:StartCavesRain()
+	if IsCaves() then
+		self.incaves = true
+		if self.current_season == SEASONS.SPRING then
+			self:StartCavesRain()
+		else
+			self:StopCavesRain()
+		end
 	else
 		self:StopCavesRain()
+		self.incaves = false
+		self:SetAppropriateDSP()
+		-- self.inst:PushEvent( "seasonChange", {season = self.current_season} )
 	end
 end
 
 function SeasonManager:SetOverworld()
-	self.incaves = false
-	self:SetAppropriateDSP()
-	self:StopCavesRain()
-	self.inst:PushEvent( "seasonChange", {season = self.current_season} )
+	if IsCaves() then
+		self.incaves = true
+		if self.current_season == SEASONS.SPRING then
+			self:StartCavesRain()
+		else
+			self:StopCavesRain()
+		end
+	else
+		self:StopCavesRain()
+		self.incaves = false
+		self:SetAppropriateDSP()
+		--self.inst:PushEvent( "seasonChange", {season = self.current_season} )
+	end
 end
 
 function SeasonManager:SetMoiustureMult(mult)
@@ -328,12 +358,39 @@ function SeasonManager:OnDayComplete()
 	end
 end
 
+function SeasonManager:SetModifer(mod)
+	self.segmod = mod
+end
+
+function SeasonManager:ModifySegs(segs)
+	local importance = {"day", "night", "dusk"}
+	table.sort(importance, function(a,b) return self.segmod[a] < self.segmod[b] end)
+
+	for k,v in pairs(segs) do
+		segs[k] = math.ceil(math.clamp(v * self.segmod[k], 0, 14))
+	end
+	local total = segs.day + segs.dusk + segs.night
+
+	while total ~= 16 do
+		for i = 1, #importance do
+			total = segs.day + segs.dusk + segs.night
+			if total == 16 then
+				break
+			elseif total > 16 and segs[importance[i]] > 1 then
+				segs[importance[i]] = segs[importance[i]] - 1
+			elseif total < 16  and segs[importance[i]] > 0 then
+				segs[importance[i]] = segs[importance[i]] + 1
+			end
+		end
+		print(total)
+	end
+	return segs
+end
+
 function SeasonManager:UpdateSegs()
 	local p = math.sin(PI*self.percent_season)*.5
-	local daysegs = 0
-	local dusksegs = 0
-	local nightsegs = 0
-
+	local segs = {day = 0, dusk = 0, night = 0}
+	
 	if self.seasonmode == "cycle" then
 		local nextSeason = { [SEASONS.SPRING] = SEASONS.SUMMER, [SEASONS.SUMMER] = SEASONS.AUTUMN, [SEASONS.AUTUMN] = SEASONS.WINTER, [SEASONS.WINTER] = SEASONS.SPRING }
 		local prevSeason = { [SEASONS.SPRING] = SEASONS.WINTER, [SEASONS.SUMMER] = SEASONS.SPRING, [SEASONS.AUTUMN] = SEASONS.SUMMER, [SEASONS.WINTER] = SEASONS.AUTUMN }
@@ -346,33 +403,32 @@ function SeasonManager:UpdateSegs()
 		while (self:GetSeasonLength(pSeason) <= 0 or self:GetSeasonIsEnabled(pSeason) == false) do
 			pSeason = prevSeason[pSeason]
 		end
-
-		daysegs, nightsegs = self:GetDayNightSegs(self.current_season, pSeason, nSeason, self.percent_season, false)
+		segs.day, segs.night = self:GetDayNightSegs(self.current_season, pSeason, nSeason, self.percent_season, false)
 	elseif self.seasonmode == "endlesswinter" then
-		p = self:IsAutumn() and p + .5 or .5 - p
-		daysegs, nightsegs = self:GetDayNightSegs(SEASONS.WINTER, SEASONS.AUTUMN, nil, p, true) --#srosen This was self.percent_season before? Not sure why...
-	elseif self.seasonmode == "endlessspring" then		
-		p = self:IsWinter() and p + .5 or .5 - p		
-		daysegs, nightsegs = self:GetDayNightSegs(SEASONS.SPRING, SEASONS.WINTER, nil, p, true)
+		segs = self.wintersegs
+	elseif self.seasonmode == "endlessspring" then
+		segs = self.springsegs
 	elseif self.seasonmode == "endlesssummer" then
-		p = self:IsSpring() and p + .5 or .5 - p
-		daysegs, nightsegs = self:GetDayNightSegs(SEASONS.SUMMER, SEASONS.SPRING, nil, p, true)
+		segs = self.summersegs
 	elseif self.seasonmode == "endlessautumn" then
-		p = self:IsSummer() and p + .5 or .5 - p
-		daysegs, nightsegs = self:GetDayNightSegs(SEASONS.AUTUMN, SEASONS.SUMMER, nil, p, true)
+		segs = self.autumnsegs
 	else
 		if self:IsWinter() then
-			daysegs, nightsegs = self.wintersegs.day, self.wintersegs.night
+			segs.day, segs.night = self.wintersegs.day, self.wintersegs.night
 		elseif self:IsSpring() then
-			daysegs, nightsegs = self.springsegs.day, self.springsegs.night
+			segs.day, segs.night = self.springsegs.day, self.springsegs.night
 		elseif self:IsSummer() then
-			daysegs, nightsegs = self.summersegs.day, self.summersegs.night
+			segs.day, segs.night = self.summersegs.day, self.summersegs.night
 		else
-			daysegs, nightsegs = self.autumnsegs.day, self.autumnsegs.night
+			segs.day, segs.night = self.autumnsegs.day, self.autumnsegs.night
 		end
 	end
-	dusksegs = 16 - daysegs - nightsegs
-	GetClock():SetSegs(daysegs, dusksegs, nightsegs)
+	
+	segs.dusk = 16 - segs.day - segs.night
+	
+	self:ModifySegs(segs)
+
+	GetClock():SetSegs(segs.day, segs.dusk, segs.night)
 end
 
 function SeasonManager:GetDayNightSegs(currSeason, prevSeason, nextSeason, pct, endlessSeason)
@@ -406,9 +462,11 @@ function SeasonManager:GetDayNightSegs(currSeason, prevSeason, nextSeason, pct, 
 			local nightsegsdelta = seasonsegs[nextSeason].night - seasonsegs[currSeason].night
 			daysegs =   math.floor(.5 + (((pct-.5) *   daysegsdelta) + seasonsegs[currSeason].day))
 			nightsegs = math.floor(.5 + (((pct-.5) * nightsegsdelta) + seasonsegs[currSeason].night))
+
+			print(daysegsdelta, nightsegsdelta)
+
 		end
 	end
-	print(self.current_season..":"..pct.." day:"..daysegs.." night:"..nightsegs.." dusk:"..(16-daysegs-nightsegs))
 	return daysegs, nightsegs
 end
 
@@ -447,6 +505,59 @@ function SeasonManager:SetSeasonsEnabled(autumn, winter, spring, summer)
 	self:UpdateSegs()
 end
 
+function SeasonManager:SetAutumnLength(len)
+	self.autumnlength = self.autumnenabled and len or 0
+	if self.autumnlength <= 0 then self.autumnenabled = false end
+	local seasonsadvanced = 0
+	while self:GetSeasonLength() == 0 and seasonsadvanced < 4 do
+		self:Advance(true)
+		seasonsadvanced = seasonsadvanced + 1
+	end
+	local per = self:GetPercentSeason()
+	self:SetPercentSeason(per)
+	self:UpdateSegs()
+end
+
+function SeasonManager:SetWinterLength(len)
+	self.winterlength = self.winterenabled and len or 0
+	if self.winterlength <= 0 then self.winterenabled = false end
+	local seasonsadvanced = 0
+	while self:GetSeasonLength() == 0 and seasonsadvanced < 4 do
+		self:Advance(true)
+		seasonsadvanced = seasonsadvanced + 1
+	end
+	local per = self:GetPercentSeason()
+	self:SetPercentSeason(per)
+	self:UpdateSegs()
+end
+
+function SeasonManager:SetSpringLength(len)
+	self.springlength = self.springenabled and len or 0
+	if self.springlength <= 0 then self.springenabled = false end
+	local seasonsadvanced = 0
+	while self:GetSeasonLength() == 0 and seasonsadvanced < 4 do
+		self:Advance(true)
+		seasonsadvanced = seasonsadvanced + 1
+	end
+	local per = self:GetPercentSeason()
+	self:SetPercentSeason(per)
+	self:UpdateSegs()
+end
+
+function SeasonManager:SetSummerLength(len)
+	self.summerlength = self.summerenabled and len or 0
+	if self.summerlength <= 0 then self.summerenabled = false end
+	local seasonsadvanced = 0
+	while self:GetSeasonLength() == 0 and seasonsadvanced < 4 do
+		self:Advance(true)
+		seasonsadvanced = seasonsadvanced + 1
+	end
+	local per = self:GetPercentSeason()
+	self:SetPercentSeason(per)
+	self:UpdateSegs()
+	print(self.summerenabled, self.summerlength)
+end
+
 function SeasonManager:GetSeasonIsEnabled(season)
 	local enabled = {
 		[SEASONS.AUTUMN] = self.autumnenabled, [SEASONS.WINTER] = self.winterenabled,
@@ -468,10 +579,10 @@ function SeasonManager:GetSeasonLength(season)
 end
 
 function SeasonManager:SetSegs(autumn, winter, spring, summer)
-	self.autumnsegs = autumn
-	self.wintersegs = winter
-	self.springsegs = spring
-	self.summersegs = summer
+	self.autumnsegs = autumn or self.autumnsegs
+	self.wintersegs = winter or self.wintersegs
+	self.springsegs = spring or self.springsegs
+	self.summersegs = summer or self.summersegs
 	self:UpdateSegs()
 end
 
@@ -496,7 +607,7 @@ end
 function SeasonManager:ApplySummerDSP(time_to_take, level)
 	local lvl = level or 1
 	for i,j in pairs(self.summerdsp) do
-		j = self.summerfreq[lvl]
+		self.summerdsp[i] = self.summerfreq[lvl]
 	end
 	for k,v in pairs(self.summerdsp) do
 		TheMixer:SetHighPassFilter(k, v, time_to_take)
@@ -591,7 +702,6 @@ function SeasonManager:OnSave()
 		noise_time = self.noise_time,
 		percent_season = self.percent_season,
 		current_season = self.current_season,
-		incaves = self.incaves,
 		ground_snow_level = self.ground_snow_level,
 		atmo_moisture = self.atmo_moisture,
 		moisture_limit = self.moisture_limit,
@@ -609,11 +719,8 @@ function SeasonManager:OnSave()
 		winterenabled = self.winterenabled,
 		springenabled = self.springenabled,
 		summerenabled = self.summerenabled,
-		autumnsegs = self.autumnsegs,
-		wintersegs = self.wintersegs,
-		springsegs = self.springsegs,
-		summersegs = self.summersegs,
 		event = self.initialevent,
+		segmod = self.segmod
 	}
 end
 
@@ -641,7 +748,6 @@ function SeasonManager:OnLoad(data)
 	self.noise_time = data.noise_time or self.noise_time
 	self.percent_season = data.percent_season or self.percent_season
 	self.current_season = data.current_season or self.current_season
-	self.incaves = data.incaves or self.incaves
 	self.ground_snow_level = data.ground_snow_level or self.ground_snow_level
 	self.atmo_moisture = data.atmo_moisture or self.atmo_moisture
 	self.moisture_limit = data.moisture_limit or self.moisture_limit
@@ -659,22 +765,19 @@ function SeasonManager:OnLoad(data)
 	self.winterenabled = data.winterenabled or self.winterenabled
 	self.springenabled = data.springenabled or self.springenabled
 	self.summerenabled = data.summerenabled or self.summerenabled
-	self.autumnsegs = data.autumnsegs or self.autumnsegs
-	self.wintersegs = data.wintersegs or self.wintersegs
-	self.springsegs = data.springsegs or self.springsegs
-	self.summersegs = data.summersegs or self.summersegs
+	self.segmod = data.segmod or self.segmod
 	self.initialevent = data.event or true
 	
 	self.inst:PushEvent("snowcoverchange", {snow = self.ground_snow_level})
 	if self:IsWinter() then
 		self:ApplyWinterDSP(0)
-		self.inst:PushEvent( "seasonChange", {season = self.current_season} )		
+		self.inst:PushEvent( "seasonChange", {season = self.current_season} )
 	elseif self:IsSummer() then
 		self:ApplySummerDSP(0)
-		self.inst:PushEvent( "seasonChange", {season = self.current_season} )		
+		self.inst:PushEvent( "seasonChange", {season = self.current_season} )
 	else
 		self:ClearDSP(0)
-		self.inst:PushEvent( "seasonChange", {season = self.current_season} )		
+		self.inst:PushEvent( "seasonChange", {season = self.current_season} )
 	end
 	
 	if self.precip and self.preciptype == "rain" then
@@ -715,7 +818,7 @@ function SeasonManager:GetWeatherLightPercent()
 
 	local dyn_range = .5
 	
-	if self:IsWinter() then --#srosen this probably needs tuning (values are basically arbitrary)
+	if self:IsWinter() then 
 		dyn_range = GetClock():IsDay() and .05 or 0
 	elseif self:IsSpring() then
 		dyn_range = GetClock():IsDay() and .4 or .25
@@ -742,6 +845,7 @@ function SeasonManager:GetWeatherLightPercent()
 end
 
 function SeasonManager:StartCavesRain()
+	if self.precipmode == "never" then return end
 	
 	self.precip = true
 	
@@ -753,6 +857,7 @@ function SeasonManager:StartCavesRain()
 	end
 	self.rain = SpawnPrefab( "rain" )
 	self.rain.entity:SetParent( GetPlayer().entity )
+	self.rain.Transform:SetPosition(0,0,0)
 	self.rain.particles_per_tick = (5 + self.peak_precip_intensity * 25) * self.precip_rate
 	self.rain.splashes_per_tick = 1 + 2*self.peak_precip_intensity * self.precip_rate
 	self.preciptype = "rain"
@@ -878,7 +983,7 @@ function SeasonManager:StartPrecip()
 end
 
 function SeasonManager:StopCavesRain()
-	if self.precip and self.incaves then
+	if self.precip then--and self.incaves then
 
 		if self.rain then
 			self.rain.particles_per_tick = 0
@@ -1034,11 +1139,16 @@ function SeasonManager:GetPOP()
 end
 
 
+
 function SeasonManager:OnUpdate( dt )	
 	--print ("time to pass:", dt)
 
 	if self.target_season then
-		self.current_season = self.target_season
+		if self.current_season ~= self.target_season then
+			local fn = self.seasonfns[self.target_season]
+			fn(self)
+		end
+
 		if self.current_season == SEASONS.SPRING and self.incaves then
 			self:StartCavesRain()
 		else
@@ -1113,8 +1223,17 @@ function SeasonManager:OnUpdate( dt )
 	-- A bunch of stuff specific to not being in the caves (precipitation + wildfires, mostly)
 	if not self.incaves then
 	    if self.precip and self.preciptype == "rain" then
-		    self.inst.SoundEmitter:SetParameter("rain", "intensity", self.precip_rate)
-		    if (self.precip_rate % 0.1) < 0.001 then
+	    	local precip_rate = self.precip_rate
+	    	if GetPlayer() and GetPlayer().components.moisture and GetPlayer().components.moisture.sheltered then
+	    		precip_rate = precip_rate - .4
+	    	elseif GetPlayer() and GetPlayer().components.inventory 
+	    	and GetPlayer().components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS) 
+	    	and GetPlayer().components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS):HasTag("umbrella") then
+	    		precip_rate = precip_rate - .4
+	    	end
+	    	if precip_rate < 0 then precip_rate = 0 end
+		    self.inst.SoundEmitter:SetParameter("rain", "intensity", precip_rate)
+		    if (precip_rate % 0.1) < 0.001 then
 		    	if GetWorld() and GetWorld().components.ambientsoundmixer then
 		    		GetWorld().components.ambientsoundmixer:SetRainChanged()
 		    	end
@@ -1280,9 +1399,9 @@ function SeasonManager:OnUpdate( dt )
 					if self.wildfire_retry_time <= 0 then
 						if math.random() <= TUNING.WILDFIRE_CHANCE then
 							local x, y, z = GetPlayer().Transform:GetWorldPosition()
-							local firestarters = TheSim:FindEntities(x, y, z, 25, {"wildfirestarter_highprio"}, {"protected", "burnt"})
+							local firestarters = TheSim:FindEntities(x, y, z, 25, {"wildfirestarter_highprio"}, {"protected", "burnt", "NOCLICK", "INLIMBO"})
 							if #firestarters == 0 then
-								firestarters = TheSim:FindEntities(x, y, z, 25, {"wildfirestarter"}, {"protected", "burnt"})
+								firestarters = TheSim:FindEntities(x, y, z, 25, {"wildfirestarter"}, {"protected", "burnt", "NOCLICK", "INLIMBO"})
 							end
 							if #firestarters > 0 then
 								local origin = firestarters[math.random(1, #firestarters)]
@@ -1420,11 +1539,11 @@ function SeasonManager:StartSpring(first)
 	end
 
 	if self.springlength > 0 then
-		if not self.incaves then
+		if self.incaves then
+			self:StartCavesRain()
+		else
 			self.inst:DoTaskInTime(0, function() self.inst:PushEvent( "seasonChange", {season = self.current_season} ) end)
 			self:ClearDSP(5)
-		else
-			self:StartCavesRain()
 		end
 		self:UpdateSegs()
 

@@ -21,7 +21,6 @@ end
 local function OnEmpty(inst)
     inst:Remove()
 end
-
    
 local function fn(Sim)
 	local inst = CreateEntity()
@@ -42,6 +41,7 @@ local function fn(Sim)
     inst.components.periodicspawner:SetSpawnTestFn(CanSpawn)
     inst.components.periodicspawner:SetDensityInRange(20, 6)
     inst.components.periodicspawner:SetOnlySpawnOffscreen(true)
+    inst.components.periodicspawner:Start()
     
     return inst
 end

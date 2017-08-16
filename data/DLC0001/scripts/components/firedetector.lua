@@ -11,11 +11,20 @@ local FireDetector = Class(function(self, inst)
 		{"wildfirestarter"},
 		{"burnable"},
 	}
-	self.NOTAGS = {"FX", "NOCLICK", "DECOR","INLIMBO", "protected"}
+	self.NOTAGS = {"FX", "NOCLICK", "DECOR","INLIMBO"}
 
 	self.onfindfire = nil
 
+	self.detectedItems = {}
 end)
+
+function FireDetector:AddDetectedItem(item)
+	if self.detectedItems[item] then
+		return
+	end
+	self.detectedItems[item] = item
+	self.inst:DoTaskInTime(2, function(inst) self.detectedItems[item] = nil end)
+end
 
 function FireDetector:Activate()
 	self.detectTask = self.inst:DoPeriodicTask(self.detectPeriod, function() self:LookForFiresAndFirestarters() end)
@@ -32,9 +41,10 @@ function FireDetector:SetOnFindFireFn(fn)
 	self.onfindfire = fn
 end
 
-function FireDetector:OnFindFire(firepos)
+function FireDetector:OnFindFire(fire)
+	self:AddDetectedItem(fire)
 	if self.onfindfire then
-		self.onfindfire(self.inst, firepos)
+		self.onfindfire(self.inst, fire:GetPosition())
 	end
 end
 
@@ -44,9 +54,21 @@ function FireDetector:LookForFiresAndFirestarters()
 	local ents = {}
 	while priority <= #self.YESTAGS and #ents == 0 do
 		ents = TheSim:FindEntities(x,y,z, self.range, self.YESTAGS[priority], self.NOTAGS)
+		if #ents > 0 then
+			local toRemove = {}
+			for k,v in pairs(ents) do
+				if self.detectedItems[v] then
+					table.insert(toRemove, k)
+				end
+			end
+			toRemove = table.reverse(toRemove)
+			for k,v in pairs(toRemove) do
+				table.remove(ents, v)
+			end
+			--dumptable(ents)
+		end
 		priority = priority + 1
 	end
-
 	if #ents > 0 then
 		for k,v in pairs(ents) do
 			if v and (v.makewitherabletask or (v.components.pickable and v.components.pickable.witherable) or (v.components.crop and v.components.crop.witherable)) then
@@ -58,13 +80,15 @@ function FireDetector:LookForFiresAndFirestarters()
 							break
 						end
 					end
-					if not found then self:OnFindFire(v:GetPosition()) end
+					if not found then self:OnFindFire(v) break end
 				else
-					self:OnFindFire(v:GetPosition())
+					self:OnFindFire(v)
+					break
 				end
 			end
 			if v and v.components.burnable and (v.components.burnable:IsBurning() or v.components.burnable:IsSmoldering()) then
-				self:OnFindFire(v:GetPosition())
+				self:OnFindFire(v)
+				break
 			end
 		end
 	end

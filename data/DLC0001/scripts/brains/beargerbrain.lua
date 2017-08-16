@@ -50,7 +50,8 @@ local function EatFoodAction(inst)  --Look for food to eat
     local target = nil
     local action = nil
 
-    if inst.sg:HasStateTag("busy") and not
+    -- If we don't check that the target is not a beehive, we will keep doing targeting stuff while there's precious honey on the ground
+    if inst.sg:HasStateTag("busy") and (inst.components.combat and inst.components.combat.target and not inst.components.combat.target:HasTag("beehive")) and not
     inst.sg:HasStateTag("wantstoeat") then
         return
     end
@@ -227,6 +228,13 @@ local function StealFoodAction(inst) --Look for things to take food from (EatFoo
     end
 end
 
+local function AttackHiveAction(inst)
+    local hive = FindEntity(inst, SEE_STRUCTURE_DIST, function(guy) 
+            return inst.components.combat:CanTarget(guy)
+               and guy:HasTag("beehive") end)
+    if hive then return BufferedAction(inst, hive, ACTIONS.ATTACK) end
+end
+
 local function ShouldFollowFn(inst)
     return not inst.NearPlayerBase(inst) and not inst.SeenBase
 end
@@ -248,7 +256,7 @@ function BeargerBrain:OnStart()
         {
             WhileNode(function() return self.inst.components.health.takingfiredamage end, "OnFire", Panic(self.inst)),
 
-            WhileNode(function() return self.inst.CanGroundPound and self.inst.components.combat.target and
+            WhileNode(function() return self.inst.CanGroundPound and self.inst.components.combat.target and not self.inst.components.combat.target:HasTag("beehive") and 
             (distsq(self.inst:GetPosition(), self.inst.components.combat.target:GetPosition()) > 10*10 or self.inst.sg:HasStateTag("running")) end, 
                 "Charge Behaviours", ChaseAndRam(self.inst, MAX_CHASE_TIME, GIVE_UP_DIST, MAX_CHARGE_DIST)),
 
@@ -258,11 +266,12 @@ function BeargerBrain:OnStart()
                 PriorityNode(
                 {
                     DoAction(self.inst, EatFoodAction),
-                    DoAction(self.inst, StealFoodAction)
+                    DoAction(self.inst, StealFoodAction),
                 })),            
 
             DoAction(self.inst, EatFoodAction),
             DoAction(self.inst, StealFoodAction),
+            DoAction(self.inst, AttackHiveAction),
 
             WhileNode(function() return ShouldFollowFn(self.inst) end, "Follow To Base",
                 PriorityNode(

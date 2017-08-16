@@ -15,7 +15,18 @@ return {
 	ANNOUNCE_WIMPYTONORMAL="沃 尔 夫 冈 更 好",
 	ANNOUNCE_MIGHTYTONORMAL="我 又 需 要 填 饱 我 的 肚 子 了",
 
-
+	ANNOUNCE_NOSLEEPONFIRE = "现 在 睡 觉 太 热 了",
+	ANNOUNCE_NODANGERSIESTA = "沃 尔 夫 冈 喜 欢 先 打 再 睡 觉",
+	ANNOUNCE_NONIGHTSIESTA = "沃 尔 夫 冈 有 夜 间 不 午 睡 的 原 则",
+	ANNOUNCE_NONIGHTSIESTA_CAVE = "沃 尔 夫 冈 觉 得 紧 张 ， 很 紧 张 ， 很 需 要 放 松",
+	ANNOUNCE_NOHUNGERSIESTA = "沃 尔 夫 冈 会 在 进 餐 后 午 睡",
+	ANNOUNCE_SHELTER = "沃 尔 夫 冈 隐 藏 在 树 下",
+	ANNOUNCE_BURNT = "这 不 公 平 ！",
+	ANNOUNCE_TOOL_SLIP = "它 滑 走 了 ！",
+	ANNOUNCE_DAMP = "雨 水 时 间",
+	ANNOUNCE_WET = "沃 尔 夫 冈 并 不 喜 欢 洗 澡 的 时 间",
+	ANNOUNCE_WETTER = "这就像坐在池塘",
+	ANNOUNCE_SOAKED = "沃 尔 夫 冈 现 在 也 许 也 是 水 做 的",	
 	ANNOUNCE_ADVENTUREFAIL = "下 次 我 会 聪 明 点 的 ！",
 	ANNOUNCE_BOOMERANG = "呃 ！ 你 为 何 要 伤 害 我 ， 混 蛋 ？",
 	ANNOUNCE_CHARLIE = "给 我 现 身 ！",
@@ -54,7 +65,7 @@ return {
     ANNOUNCE_THORNS = "太 尖 这 不 公 平！",
     ANNOUNCE_NODAYSLEEP_CAVE = "一 个 令 人 毛 骨 悚 然 的 山 洞",
     ANNOUNCE_BEES = "蜜 蜂 ！ 讨 厌 的 会 蜇 人 的 虫 子 ！",
-    ANNOUNCE_KNOCKEDOUT = "呃 ， 沃 尔 夫 冈 被 击 中 了 头 部",
+    ANNOUNCE_KNOCKEDOUT = "呃 ， 我 一 定 是 碰 到 了 头",
     ANNOUNCE_LOWRESEARCH = "细 小 的 信 息",
     ANNOUNCE_DEERCLOPS = "听 起 来 像 非 常 强 壮 的 人 来 了",
     ANNOUNCE_MOSQUITOS = "沃 尔 夫 王 需 要 血 液 ， 走 开 可 怕 的 吸 血 虫！",
@@ -82,6 +93,254 @@ return {
 	},
 	DESCRIBE =
 	{
+		GLOMMER = "你 为 什 么 跟 着 我， 奇 怪 的 虫 ？",
+        GLOMMERFLOWER = "靓 丽 的 花",
+        GLOMMERWINGS = "小 的 像 仙 女 的 翅 膀",
+        GLOMMERFUEL = "奇 怪 虫 子 的 奇 怪 臭 臭",
+        BELL = "铃 铛 发 出 美 妙 的 声 音",
+        STATUEGLOMMER = 
+        {	
+        	GENERIC = "为 什 么 它 不 会 飞 ？",
+        	EMPTY = "摧 毁 ！",
+    	},
+		WEBBERSKULL = "我 打 下 的 头 骨 ！",
+		MOLE =
+		{
+			UNDERGROUND = "留 下 地 下 的 什 么 地 方 ， 沃 尔 夫 冈 就 会 让 你 安 全",
+			ABOVEGROUND = "现 在 你 会 明 白 沃 尔 夫 冈 的 实 力 ！",
+		},
+		MOLEHILL = "鼹 鼠 洞",
+		MOLEHAT = "鼹 鼠 皮 肤 很 有 弹 性",
+		NIGHTSTICK = "沃 尔 夫 冈 像 拳 头 一 样 好",
+		RABBITHOUSE=
+		{
+			GENERIC = "我 听 见 里 面 传 来 了 些 细 微 的 声 音",
+			BURNT = "关 门 大 吉",
+		},
+		TURF_DECIDUOUS = "一 些 石 头",
+		TURF_SANDY = "一 些 石 头",
+		TURF_BADLANDS = "一 些 石 头",
+		BEARGER = "沃 尔 夫 冈  不 想 揍 大 熊",
+		BEARGERVEST = "大 熊 衬 衣",
+		ICEPACK = "毛 茸 茸 的 包",
+		BEARGER_FUR = "就 像 是 沃 尔 夫 冈 的 胸 毛",
+		BIGFOOT = "脚 如 此 大 ！",
+		BONESHARD = "沃 尔 夫 冈 把 它 击 碎 成 更 小 的 骨 头 ！",
+		BUZZARD = "继 续",
+		CACTUS = 
+		{
+			GENERIC = "沃 尔 夫 冈 不 喜 欢 尖 锐 的 植 物",
+			PICKED = "哈 ！ 是 平 坦 的 植 物",
+		},
+		CACTUS_MEAT_COOKED = "现在安全了",
+		CACTUS_MEAT = "有 着 尖 刺 的 植 物 肉",
+		CACTUS_FLOWER = "并 不 值 得",
+		COLDFIRE =
+		{
+			EMBERS = "黑 暗 来 了 ！",
+			GENERIC = "晚 安 黑 暗 的 年 代 ！",
+			HIGH = "火 太 大 了 ！",
+			LOW = "这 火 还 不 够 冷",
+			NORMAL = "火 真 好 ！",
+			OUT = "啊 哦 。 它 熄 灭 了",
+		},
+		CATCOON = "沃 尔 夫 冈 不 相 信 它",
+		CATCOONDEN = 
+		{
+			GENERIC = "可 疑 的 树 桩",
+			EMPTY = "树 桩 空 了 ， 沃 尔 夫 冈 舒 服 多 了",
+		},
+		CATCOONHAT = "现 在 沃 尔 夫 冈 不 相 信 自 己",
+		COOKPOT =
+		{
+			COOKING_LONG = "这 可 能 要 很 长 的 时 间",
+			COOKING_SHORT = "马 上 就 能 吃 了 ！",
+			DONE = "进 餐 时 间 ！",
+			EMPTY = "空 荡 的 锅 让 沃 尔 夫 冈 想 起 空 荡 的 胃",
+			BURNT = "锅 死 掉 了",
+		},
+		EYEBRELLAHAT =	"总 是 仰 视",
+		ARMORDRAGONFLY = "沃尔夫冈不需要保护",
+		DRAGON_SCALES = "发 光 的 鳞 片",
+		DRAGONFLYCHEST = "箱 子 不 怕火 焰",
+		DECIDUOUSTREE = 
+		{
+			BURNING = "我 弄 坏 了 它",
+			BURNT = "现 在 有 一 点 坏",
+			CHOPPED = "哈 ！ 我 赢 了 ！",
+			GENERIC = "你 好 ， 树 ！",
+			POISON = "愤 怒 的 大 树",
+		},
+		ACORN_COOKED = "沃 尔 夫 冈 烤 出 来 的 树 坚 果",
+		BIRCHNUTDRAKE = "愤 怒 的 小 坚 果",
+		FARMPLOT =
+		{
+			GENERIC = "我 会 在 这 里 种 植 强 壮 的 农 作 物 ！",
+			GROWING = "伙 计 们 ， 快 快 长 大 ！ 长 大 吧 ",
+			NEEDSFERTILIZER = "灰 尘 不 够 养 分 种 植 植 物",
+			BURNT = "没 有 长 得 更 好",
+		},
+		COLDFIREPIT =
+		{
+			EMBERS = "黑 暗 来 了 ！",
+			GENERIC = "晚 安 黑 暗 的 时 代 ！",
+			HIGH = "火 太 大 了 ！",
+			LOW = "这 火 还 不 够 冷",
+			NORMAL = "火 真 好 ！",
+			OUT = "啊 哦 。 它 熄 灭 了",
+		},
+		FIRESUPPRESSOR = 
+		{	
+			ON = "我 能 扔 的 更好 ",
+			OFF = "机 器 知 道 沃 尔 夫 冈 更 强",
+			LOWFUEL = "你 饿 了 ， 机 器 ？ ",
+		},
+		ICEHAT = "为 什 么 头 上 要 放 大 冰 块 ？",
+		LIGHTNINGGOAT = 
+		{
+			GENERIC = "你 好 ， 山 羊",
+			CHARGED = "耀 眼 的 山 羊",
+		},
+		LIGHTNINGGOATHORN = "小 型 避 雷 骨",
+		GOATMILK = "鲜 奶 为 了 肌 肉 ！",
+		MEATRACK =
+		{
+			DONE = "妙 极 ， 多 肉 的 皮 革 ！",
+			DRYING = "烘 干 肉 类 ！ 烘 干 ！",
+			DRYINGINRAIN = "走 开 ， 雨 ！ 肉 是 干 燥 的 ！",
+			GENERIC = "我 可 以 把 肉 弄 干 ！",
+			BURNT = "现 在 变 得 不 能 把 肉 弄 干 了",
+		},
+		MERMHEAD = 
+		{
+			GENERIC = "多 么 帅 气 的 恶 魔 啊 ！",
+			BURNT = "没 有 那 么 好 看 了",
+		},
+		MERMHOUSE = 
+		{
+			GENERIC = "这 屋 子 强 度 不 够",
+			BURNT = "房 子 的 强 度 真 的 不 够",
+		},
+		FLOWERSALAD = "不 是 菠 菜 ， 但 可 能 仍 然 有 用 ！",
+        ICECREAM = "嗯 ， 毕 竟 是 星 期 天",
+        WATERMELONICLE = "哈 ！ 棒 子 上 的 西 瓜",
+        TRAILMIX = "浆 果 和 坚 果 ， 浆 果 和 坚 果 ！",
+        HOTCHILI = "哈 哈 ， 沃 尔 夫 冈 眼 里 没 有 辣 ！",
+        GUACAMOLE = "沃 尔 夫 冈 不 绿 色 蘑 菇",
+		MOOSE = "很 奇 怪 的 生 物",
+		MOOSEEGG = "够 全 家 吃 的 早 餐 ！",
+		MOSSLING = "嗯 ， 依 然 是 早 餐 ， 我 想",
+		FEATHERFAN = "哈 ！ 和 头 一 样 大",
+		GOOSE_FEATHER = "咯 吱 咯 吱 咯 吱 ！",
+		STAFF_TORNADO = "旋 转 旋 转 ！",
+		PIGHEAD = 
+		{	
+			GENERIC = "为 何 闷 闷 不 乐 ？",
+			BURNT = "为 什 么 没 有 脸 面 ？",
+		},
+		PIGHOUSE =
+		{
+			FULL = "嘿 ！出 来 ， 猪 头 人 ！",
+			GENERIC = "门 太 小 了",
+			LIGHTSOUT = "他 去 哪 了？",
+			BURNT = "猪 头 人 的 家 已 经 远 去 了",
+		},
+		FERTILIZER = "桶 里 载 满 了 臭味",
+		RAINOMETER = 
+		{	
+			GENERIC = "水 花 ！ 四 溅 ！",
+			BURNT = "噼 啪 ！",
+		},
+		RAINCOAT = "不 错 的 干 燥",
+		RAINHAT = "就 像 是 水 都 挡 在 了 鼹 鼠 的 背 上",
+		RESEARCHLAB = 
+		{	
+			GENERIC = "我 不 确 定 我 对 科 学 …… 的 感 觉",
+			BURNT = "毕 竟 科 学 并 没 有 那 么 强",
+		},
+		RESEARCHLAB2 = 
+		{
+			GENERIC = "我 不 确 定 我 对 科 学 …… 的 感 觉",
+			BURNT = "毕 竟 科 学 并 没 有 那 么 强",
+		},
+		RESEARCHLAB3 = 
+		{
+			GENERIC = "沃 尔 夫 冈 都 做 了 什 么 ？",
+			BURNT = "好 吧 ， 这 结 束 了",
+		},
+		RESEARCHLAB4 = 
+		{
+			GENERIC = "帽 子 不 只 是 为 了 脑 袋",
+			BURNT = "帽 子 也 是 为 了 燃 烧",
+		},
+		RESURRECTIONSTATUE = 
+		{
+			GENERIC = "我 可 不 想 死",
+			BURNT = "他 比 沃 尔 夫 冈 的 现 实 生 活 更 好",
+		},
+		ROCK_ICE = 
+		{
+			GENERIC = "水 做 的 岩 石",
+			MELTED = "我 无 法 握 住 水",
+		},
+		ROCK_ICE_MELTED = "我 无 法 握 住 水",
+		ICE = "很 好 的 清 爽 饮 料",
+        REFLECTIVEVEST = "背 心 的 背 心",
+		HAWAIIANSHIRT = "度 假 衬 衣",
+		TENT = 
+		{
+			GENERIC = "终 于 可 以 好 好 睡 会 了",
+			BURNT = "没 剩 下 什 么 ， 没  法 再 睡 了",
+		},
+		SIESTAHUT = 
+		{
+			GENERIC = "午 睡 的 地 方",
+			BURNT = "午 睡 的 地 方 消 失 了",
+		},
+		TRANSISTOR = "科 学 豆",
+		TREASURECHEST = 
+		{
+			GENERIC = "我 在 那 里 放 了 东 西 ！",
+			BURNT = "没 什 么 还 会 留 在 里 边",
+		},
+		TUMBLEWEED = "快 滚 回 来 球 ！",
+		GRASS_UMBRELLA = "我不喜欢小雨伞",
+		UNIMPLEMENTED = "我 不 相 信 未 完 成 的 什 么",
+		WALL_HAY = 
+		{	
+			GENERIC = "墙 是 由 草 建 成 的 ！",
+			BURNT = "草 烧 着 了 ！",
+		},
+		WALL_WOOD = 
+		{
+			GENERIC = "你 好 ， 尖 棍 ！",
+			BURNT = "再 见 ， 尖 尖 的 棍 子 ！",
+		},
+		WARG = "大 狗 狗 ！",
+		WATERMELON = "这 么 多 的 种 子",
+		WATERMELON_COOKED = "我 烤 了 西 瓜 的 种 子",
+		WATERMELONHAT = "为 什 么 不 变 成 西 瓜 头 ！ 哈 哈 ！",
+		WINTEROMETER = 
+		{
+			GENERIC = "冷 上 去 ！ 红 下 来 ！",
+			BURNT = "火 焰 上 去 ！ 温 度 计 下 来 ！",
+		},
+		HOMESIGN = 
+		{
+			GENERIC = "没 空 看 标 志 ！",
+			BURNT = "标 志 看 不 清",
+		},
+		BEEBOX =
+		{
+			GENERIC = "蜜 蜂 ！ ",
+			READY = "准 备 丰 收 ！",
+			FULLHONEY = "准 备 丰 收 ！",
+			NOHONEY = "它 没 有 蜂 蜜",
+			SOMEHONEY = "蜜 蜂 在 忙 碌",
+			BURNT = "蜜 蜂 在 燃 烧",
+		},
+		LIVINGTREE = "我 不 喜 欢 树 的 眼 睛",
+		ICESTAFF = "磨 锋 利",
 		WORMLIGHT = "漂 亮 的 光",
 		WORM =
 		{
@@ -119,7 +378,6 @@ return {
 			GEMS = "是 空 的",
 		},
 		STAFFLIGHT = "碰 到 的 话 会 很 疼 ！",
-		RESEARCHLAB4 = "帽 子 不 只 是 为 了 脑 袋",
 
         ANCIENT_ALTAR =
         {
@@ -163,7 +421,6 @@ return {
 		MUSHTREE_TALL  ="大 蘑 菇 树 就 是 很 大",
 		MUSHTREE_MEDIUM="大 蘑 菇 树 真 大",
 		MUSHTREE_SMALL ="大 蘑 菇",
-		RABBITHOUSE="我 听 见 里 面 传 来 了 些 细 的 声 音",
 		SLURTLE="哈 ！ 你 真 慢 ！",
 		SLURTLE_SHELLPIECES="坏 掉 了",
 		SLURTLEHAT="让 我 的 脑 袋 很 安 全",
@@ -220,7 +477,8 @@ return {
 		ASH =
 		{
 			GENERIC = "这 骨 架 来 源 于 火 灾",
-			REMAINS_EYE_BONE = "烧 着 的 一 片 眼 骨 我 眼 前 闪 过 ！",
+			REMAINS_GLOMMERFLOWER = "烧 着 的 花 我 眼 前 闪 过 ！ ",
+			REMAINS_EYE_BONE = "烧 着 的 眼 骨 我 眼 前 闪 过 ！",
 			REMAINS_THINGIE = "烧 着 的 一 些 什 么 东 西， 现 在 已 经 走 了 ……",
 		},
 		AXE = "砍 ！",
@@ -235,11 +493,6 @@ return {
 		{
 			GENERIC = "又 胖 又 怒 的 样 子",
 			HELD = "在 我 的 袋 子 里 很 安 全",
-		},
-		BEEBOX =
-		{
-			GENERIC = "蜜 蜂 ！ ",
-			READY = "准 备 丰 收 ！",
 		},
 		BEEFALO =
 		{
@@ -277,7 +530,8 @@ return {
 		BLOWDART_SLEEP = "瞄 向 不 睡 觉 的 敌 人",
 		BLOWDART_PIPE = "这 镖 可 以 让 敌 人 痛 苦",
 		BLUEGEM = "漂 亮 的 岩 石",
-		BLUEPRINT = "漂 亮 的 画",
+		BLUEPRINT = "漂 亮 的 画 ！",
+		BELL_BLUEPRINT = "漂 亮 的 画 ！",
 		BLUE_CAP = "我 想 这 适 合 我",
 		BLUE_CAP_COOKED = "是 不 一 样 的 ",
 		BLUE_MUSHROOM =
@@ -326,13 +580,6 @@ return {
 		COOKEDMEAT = "我 善 于 烤 肉 ！",
 		COOKEDMONSTERMEAT = "我 还 是 不 想 吃 ",
 		COOKEDSMALLMEAT = "做 好 之 后 就 更 小 了 ！",
-		COOKPOT =
-		{
-			COOKING_LONG = "这 可 能 要 很 长 的 时 间",
-			COOKING_SHORT = "马 上 就 能 吃 了 ！",
-			DONE = "进 餐 时 间 ！",
-			EMPTY = "空 荡 的 锅 让 沃 尔 夫 冈 想 起 空 荡 的 胃",
-		},
 		CORN = "是 玉 米 。 还 会 是 什 么 ？",
 		CORN_COOKED = "嘭 ！ 嘭 ！ 嘭 ！ 哈 哈 ， 这 玉 米 真 好 笑",
 		CORN_SEEDS = "这 种 子 用 来 种 玉 米",
@@ -392,13 +639,6 @@ return {
 		EGGPLANT_COOKED = "竟 然 没 有 蛋 黄 ！ 蛋 黄 是 最 好 的 部 分 ！",
 		EGGPLANT_SEEDS = "小 小 的 假 蛋 种 子",
 		STUFFEDEGGPLANT = "我 做 的 蛋 黄 在 其 它 食 物 里",
-		EVERGREEN =
-		{
-			BURNING = "我 打 破 了 它",
-			BURNT = "它 现 在 又 小 又 破 了",
-			CHOPPED = "哈 ！ 我 胜 利 了 ！",
-			GENERIC = "你 好 啊 ， 树 ！",
-		},
 		ACORN = 
 		{
 		    GENERIC = "我 可 以 用 我 的 手 捏 碎 这 些 树 的 种 子 ！",
@@ -419,12 +659,6 @@ return {
 			GENERIC = "开 心 点 ， 树 ！",
 		},
 		EYEPLANT = "他 们 不 像 看 起 来 那 样",
-		FARMPLOT =
-		{
-			GENERIC = "我 会 在 这 里 种 植 强 壮 的 农 作 物 ！",
-			GROWING = "伙 计 们 ， 快 快 长 大 ！ 长 大 吧 ！",
-			NEEDSFERTILIZER = "灰 尘 不 够 养 分 种 植 植 物",
-		},
 		FEATHERHAT = "真 是 个 愚 蠢 的 羽 毛 帽 子 。 沃 尔 夫 冈 现 在 又 成 鸟 了 ？",
 		FEATHER_CROW = "是 黑 色 的 鸟 的 羽 毛",
 		FEATHER_ROBIN = "是 红 色 的 鸟 的 羽毛",
@@ -502,7 +736,6 @@ return {
 			WARM = "一 个 温 度 正 好 合 适 的 石 头",
 			HOT = "有 足 够 的 热 量 带 给 沃 尔 夫 冈 ！",
 		},
-		HOMESIGN = "没 空 看 标 志 ！",
 		HONEY = "太 妙 了 ！",
 		HONEYCOMB = "蜜 蜂 曾 生 活 在 里 面",
 		HONEYHAM = "甜 的 大 肉 块 就 是 好 肉 块",
@@ -576,17 +809,8 @@ return {
 		MAXWELLTHRONE = "恐 怖 的 椅 子 ！",
 		MEAT = "吃 肉 让 我 更 强 壮 ！",
 		MEATBALLS = "肉 球 让 我 更 强 壮 ！",
-		MEATRACK =
-		{
-			DONE = "妙 极 ， 多 肉 的 皮 革 ！",
-			DRYING = "烘 干 肉 类 ！ 烘 干 ！",
-			DRYINGINRAIN = "走 开 ， 雨 ！ 肉 是 干 燥 的 ！",
-			GENERIC = "我 可 以 把 肉 弄 干 ！",
-		},
 		MEAT_DRIED = "看 上 去 像 皮 革 ， 吃 起 来 像 肉",
 		MERM = "是 鱼 人 ！",
-		MERMHEAD = "多 么 帅 气 的 恶 魔 啊 ！",
-		MERMHOUSE = "这 屋 子 强 度 不 够",
 		MONSTERLASAGNA = "味 道 像 夹 杂 着 毛 和 肉 做 的",
 		MONSTERMEAT = "这 看 起 来 不 像 是 食 物",
 		MONSTERMEAT_DRIED = "看 上 去 像 皮 革 ， 吃 起 来 像 皮 革",
@@ -616,13 +840,6 @@ return {
 		PETALS_EVIL = "他 们 让 我 很 恼 火",
 		PICKAXE = "挖 ！",
 		PIGGYBACK = "难 闻 的 袋 子 ！",
-		PIGHEAD = "为 何 闷 闷 不 乐 ？",
-		PIGHOUSE =
-		{
-			FULL = "嘿 ！出 来 ， 猪 头 人 ！",
-			GENERIC = "门 太 小 了",
-			LIGHTSOUT = "他 去 哪 了？",
-		},
 		PIGKING = "哈 ！ 这 人 真 不 错 ！",
 		PIGMAN =
 		{
@@ -670,7 +887,6 @@ return {
 			GENERIC = "你 躲 不 掉 的 ， 你 这 到 嘴 的 肥 肉 ！",
 			SPRING = "兔 子 正 在 兔 子 洞 里 边 忙 着",
 		},
-		RAINOMETER = "水 花 ！ 四 溅 ！",
 		RATATOUILLE = "是 食 物 。 排 好 的",
 		RAZOR = "我 的 皮 肤 硬 的 毛 都 长 不 出 来",
 		REDGEM = "漂 亮 的 岩 石 ",
@@ -694,10 +910,6 @@ return {
             BROKEN = "全 部 砸 碎 ！",
         },
         RUBBLE = "破 房 子 的 东 西",
-		RESEARCHLAB = "我 不 确 定 我 对 科 学 …… 的 感 觉",
-		RESEARCHLAB2 = "我 不 确 定 我 对 科 学 …… 的 感 觉",
-		RESEARCHLAB3 = "沃 尔 夫 冈 都 做 了 什 么 ？",
-		RESURRECTIONSTATUE = "我 可 不 想 死",
 		RESURRECTIONSTONE = "在 石 头 上 跳 起 舞 吧 ！",
 		ROBIN =
 		{
@@ -740,6 +952,7 @@ return {
 		SHOVEL = "都 是 土 ！",
 		SILK = "太 奇 特 了",
 		SKELETON = "肌 肉 不 够 ",
+		SKELETON_PLAYER = "所 有 的 肌 肉 都 去 哪 了 ？",
 		SKULLCHEST = "这 个 男 人 有 个 大 脑 袋 ！",
 		SMALLBIRD =
 		{
@@ -808,7 +1021,6 @@ return {
 		TELEPORTATO_CRANK = "金 属 制 品 很 柔 韧 ！",
 		TELEPORTATO_POTATO = "哈 哈 ！ 哈 哈 ！ 好 丑 的 土 豆 ！",
 		TELEPORTATO_RING = "我 会 弯 成 完 整 的 圆 圈 ！",
-		TENT = "终 于 可 以 好 好 睡 会 了",
 		TENTACLE = "瘦 骨 嶙 峋 的 怪 兽 ！",
 		TENTACLESPOTS = "呸 ！ 真 黏 啊 ！",
         TENTACLESPIKE = "很 适 合 刺 入 ！",
@@ -821,7 +1033,6 @@ return {
 		TRAP = "没 有 陷 阱 能 干 掉 我 ！",
 		TRAP_TEETH = "它 从 下 面 咬 了 我 一 口 ！",
 		TRAP_TEETH_MAXWELL = "不 管 是 谁 拿 了 这 个 都 是 坏 蛋 ！",
-		TREASURECHEST = "我 在 那 里 放 了 东 西 ！",
 		TRINKET_1 = "要 我 说 就 是 垃 圾 ",
 		TRINKET_10 = "要 我 说 就 是 垃 圾 ",
 		TRINKET_11 = "要 我 说 就 是 垃 圾 ",
@@ -843,14 +1054,12 @@ return {
 		TWIGS = "弱 渣 ！ 我 能 干 掉 他 们 ！",
 		UMBRELLA = "大 雨 打 湿 了 我 的 皮 肤",
 		WAFFLES = "为 什 么 面 包 有 洞 ？",
-		WALL_HAY = "墙 是 由 草 建 成 的 ！",
 		WALL_HAY_ITEM = "杂 乱 的 稻 草 ！",
 		WALL_STONE = "墙 和 我 一 样 强 壮！",
 		WALL_STONE_ITEM = "一 堆 石 头 ！",
 		WALL_RUINS = "老 墙 很 结 实 ！",
 		WALL_RUINS_ITEM = "一 堆 老 松 石 ！",
-		WALL_WOOD = "你 好 ， 尖 棍 ！",
-		WALL_WOOD_ITEM = "冰 淇 淋 棒 ！",
+		WALL_WOOD_ITEM = "尖 棍 ！",
 		WALRUS = "海 象 爸 爸 ！",
 		WALRUSHAT = "我 有 海 牛 爸 爸 的 帽 子 ！",
 		WALRUS_CAMP =
@@ -862,7 +1071,6 @@ return {
 		WASPHIVE = "心 里 不 愿 ， 但 身 体 却 不 由 自 主 ！",
 		WETGOOP = "沃 尔 夫 冈 毁 灭 了 食 物 ！",
 		WINTERHAT = "它 让 耳 朵 快 乐 的 生 活 在 冬 天 里",
-		WINTEROMETER = "冷 上 去 ！ 红 下 来 ！",
 		WORMHOLE =
 		{
 			GENERIC = "像 是 高 枕 无 忧 一 样 ， 生 长 在 地 面 上",
@@ -893,7 +1101,7 @@ return {
         RUINS_RUBBLE = "我 会 更 彻 底 地 摧 毁 它",  
         RUINS_BAT = "令 人 毛 骨 悚 然",
         RUINSHAT = "王 者 的 帽 子",
-        SPIDER_DROPPER = "悬 挂 在 上 面 的 可 怕 的 蜘 蛛 。", 
+        SPIDER_DROPPER = "悬 挂 在 上 面 的 可 怕 的 蜘 蛛 ", 
         THULECITE = "令 人 毛 骨 悚 然 ",
         YELLOWAMULET = "发 出 黄 光",    
 		ACCOMPLISHMENT_SHRINE = "我 会 打 败 你 ， 这 个 小 方 向 ！",                

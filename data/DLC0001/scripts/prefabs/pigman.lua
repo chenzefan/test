@@ -67,7 +67,7 @@ local function ShouldAcceptItem(inst, item)
             return false
         end
         
-        if item.components.edible.foodtype == "VEGGIE" then
+        if (item.components.edible.foodtype == "VEGGIE" or item.components.edible.foodtype == "RAW") then
 			local last_eat_time = inst.components.eater:TimeSinceLastEating()
 			if last_eat_time and last_eat_time < TUNING.PIG_MIN_POOP_PERIOD then        
 				return false
@@ -437,6 +437,8 @@ local function common()
     inst:AddComponent("eater")
     inst.components.eater:SetOmnivore()
 	inst.components.eater:SetCanEatHorrible()
+    table.insert(inst.components.eater.foodprefs, "RAW")
+    table.insert(inst.components.eater.ablefoods, "RAW")
     inst.components.eater.strongstomach = true -- can eat monster meat!
     inst.components.eater:SetOnEatFn(OnEat)
     ------------------------------------------
@@ -453,6 +455,12 @@ local function common()
 	inst:AddComponent("werebeast")
 	inst.components.werebeast:SetOnWereFn(SetWerePig)
 	inst.components.werebeast:SetTriggerLimit(4)
+
+    inst:ListenForEvent("exitlimbo", function(inst)
+        if GetClock() and GetClock():GetMoonPhase() == "full" and GetClock():IsNight() and inst.entity:IsVisible() and not inst.components.werebeast:IsInWereState() then
+            inst.components.werebeast:SetWere()
+        end
+    end)
 	
     ------------------------------------------
     inst:AddComponent("follower")

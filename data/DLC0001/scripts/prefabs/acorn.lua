@@ -24,9 +24,13 @@ end
 
 local function plant(inst, growtime)
     inst:RemoveComponent("inventoryitem")
+    RemovePhysicsColliders(inst)
     inst.AnimState:PlayAnimation("idle_planted")
     inst.SoundEmitter:PlaySound("dontstarve/wilson/plant_tree")
     inst.growtime = GetTime() + growtime
+    if inst.components.edible then
+        inst:RemoveComponent("edible")
+    end
     print ("PLANT", growtime)
     -- Pacify a nearby monster tree
     local ent = FindEntity(inst, 30, nil, {"birchnut", "monster"}, {"stump", "burnt", "FX", "NOCLICK","DECOR","INLIMBO"})
@@ -61,6 +65,14 @@ local function stopgrowing(inst)
         inst.growtask = nil
     end
     inst.growtime = nil
+end
+
+local function restartgrowing(inst)
+    if inst and not inst.growtask then
+        local growtime = GetRandomWithVariance(TUNING.ACORN_GROWTIME.base, TUNING.ACORN_GROWTIME.random)
+        inst.growtime = GetTime() + growtime
+        inst.growtask = inst:DoTaskInTime(growtime, growtree)
+    end
 end
 
 
@@ -136,6 +148,11 @@ local function fn()
     inst.components.perishable.onperishreplacement = "spoiled_food"
     inst:AddTag("show_spoilage")
 
+    inst:AddComponent("edible")
+    inst.components.edible.hungervalue = TUNING.CALORIES_TINY
+    inst.components.edible.healthvalue = TUNING.HEALING_TINY
+    inst.components.edible.foodtype = "RAW"
+
     inst:AddComponent("stackable")
 	inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM
 
@@ -144,6 +161,7 @@ local function fn()
     
 	MakeSmallBurnable(inst, TUNING.SMALL_BURNTIME)
 	inst:ListenForEvent("onignite", stopgrowing)
+    inst:ListenForEvent("onextinguish", restartgrowing)
     MakeSmallPropagator(inst)
     inst.components.burnable:MakeDragonflyBait(3)
     

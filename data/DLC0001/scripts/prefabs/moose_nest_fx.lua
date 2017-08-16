@@ -7,10 +7,13 @@ local function fn()
 	local inst = CreateEntity()
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
+	inst.entity:AddSoundEmitter()
 
 	inst.AnimState:SetBank("goosemoose_nest_fx")
 	inst.AnimState:SetBuild("goosemoose_nest_fx")
 	inst.AnimState:PlayAnimation("idle")
+
+	inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/egg_electric")
 
 	inst.AnimState:SetBloomEffectHandle("shaders/anim.ksh")
 	inst.persists = false

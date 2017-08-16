@@ -17,8 +17,10 @@ local MoistureListener = Class(function(self, inst)
 
 	self.lastUpdate = GetTime() or 0
 
-	self.wetnessThreshold = 70
-	self.drynessThreshold = 20
+	self.wetnessThreshold = TUNING.MOISTURE_WET_THRESHOLD
+	self.drynessThreshold = TUNING.MOISTURE_DRY_THRESHOLD
+	
+	self.inst:DoTaskInTime(0, function() GetWorld().components.inventorymoisture:TrackItem(self.inst) end)
 end)
 
 function MoistureListener:OnSave()
@@ -52,8 +54,9 @@ function MoistureListener:GetMoisture()
 end
 
 function MoistureListener:GetTargetMoisture()
-	if not GetWorld().components.seasonmanager:IsRaining() or not 
-		self.inst.components.inventoryitem then
+	if (not GetWorld().components.seasonmanager:IsRaining() and not 
+	(self.inst.components.inventoryitem and self.inst.components.inventoryitem.owner)) or not 
+	self.inst.components.inventoryitem then
 		return 0
 	end
 	local owner = self.inst.components.inventoryitem.owner

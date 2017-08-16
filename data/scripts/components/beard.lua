@@ -21,7 +21,7 @@ local Beard = Class(function(self, inst)
 end)
 
 function Beard:GetInsulation()
-	return self.bits * TUNING.INSULATION_PER_BEARD_BIT
+    return self.bits * TUNING.INSULATION_PER_BEARD_BIT
 end
 
 function Beard:ShouldTryToShave(who, whithwhat)

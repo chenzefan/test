@@ -37,9 +37,8 @@ function DeciduousTreeUpdater:StartMonster(starttime)
 		self.monster = true
 		self.time_to_passive_drake = 1
 		self.num_passive_drakes = 0
-		print(starttime)
-		self.monster_start_time = starttime or GetTime()
-		self.monster_duration = GetRandomWithVariance(TUNING.DECID_MONSTER_DURATION, .33*TUNING.DECID_MONSTER_DURATION)
+		self.inst.monster_start_time = starttime or GetTime()
+		self.inst.monster_duration = GetRandomWithVariance(TUNING.DECID_MONSTER_DURATION, .33*TUNING.DECID_MONSTER_DURATION)
     	self.monsterFreq = .5 + math.random()
     	self.monsterTime = self.monsterFreq
     	self.inst:AddTag("monster")
@@ -127,13 +126,14 @@ function DeciduousTreeUpdater:OnUpdate(dt)
 		return
 	end
 
-	if self.monster and self.monster_start_time and ((GetTime() - self.monster_start_time) > self.monster_duration) then
+	if self.monster and self.inst.monster_start_time and ((GetTime() - self.inst.monster_start_time) > self.inst.monster_duration) then
+		self.monster = false
     	if self.inst.monster_start_task ~= nil then
             self.inst.monster_start_task:Cancel()
             self.inst.monster_start_task = nil
         end
         if self.inst.monster and not self.inst:HasTag("fire") and not self.inst:HasTag("stump") and not self.inst:HasTag("burnt") then
-            if not self.inst.monster_stop_task then
+            if not self.inst.monster_stop_task or self.inst.monster_stop_task == nil then
 	            self.inst.monster_stop_task = self.inst:DoTaskInTime(math.random(0,2), function(inst) 
 	                inst:StopMonster() 
 	                inst.monster_stop_task = nil
@@ -159,7 +159,12 @@ function DeciduousTreeUpdater:OnUpdate(dt)
     			passdrake.range = TUNING.DECID_MONSTER_TARGET_DIST * 4
     			passdrake:DoTaskInTime(0, function(passdrake)
     				if passdrake.components.combat then
-        				passdrake.components.combat:SuggestTarget(GetPlayer())
+    					local targ = FindEntity(passdrake, TUNING.DECID_MONSTER_TARGET_DIST * 4, function(guy)
+				            return passdrake.components.combat and passdrake.components.combat:CanTarget(guy) and 
+				            	not guy:HasTag("flying") and (not guy.sg or (guy.sg and not guy.sg:HasStateTag("flying"))) and
+				            	not guy:HasTag("birchnutdrake") and not guy:HasTag("wall")
+				        end)
+        				passdrake.components.combat:SuggestTarget(targ)
     				end
     			end)
     			self.passive_drakes_spawned = self.passive_drakes_spawned + 1
@@ -208,7 +213,7 @@ function DeciduousTreeUpdater:OnUpdate(dt)
 	            	self.sectorsize = 360 / self.numdrakes
 	            	self.drakespawntask = self.inst:DoPeriodicTask(6*FRAMES, function(inst)
 	            		local dtu = inst.components.deciduoustreeupdater
-	            		if dtu and dtu.numdrakes <= 0 then
+	            		if dtu and dtu.numdrakes <= 0 and dtu.drakespawntask then
 	            			dtu.drakespawntask:Cancel()
 	            			dtu.drakespawntask = nil
 	            		elseif dtu then
@@ -239,6 +244,35 @@ function DeciduousTreeUpdater:OnUpdate(dt)
 	        self.last_monster_target = self.monster_target
 	        self.monsterTime = self.monsterFreq
 	    end
+	end
+end
+
+function DeciduousTreeUpdater:SpawnIgniteWave()
+	if self.monster then
+    	self.ignitenumdrakes = math.random(TUNING.MIN_TREE_DRAKES, TUNING.MAX_TREE_DRAKES)
+    	self.ignitesectorsize = 360 / self.ignitenumdrakes
+    	self.ignitedrakespawntask = self.inst:DoPeriodicTask(6*FRAMES, function(inst)
+    		local dtu = inst.components.deciduoustreeupdater
+    		if dtu and dtu.ignitenumdrakes <= 0 and dtu.ignitedrakespawntask then
+    			dtu.ignitedrakespawntask:Cancel()
+    			dtu.ignitedrakespawntask = nil
+    		elseif dtu then
+    			local drake = SpawnPrefab("birchnutdrake")
+    			local minang = (dtu.ignitesectorsize * (dtu.ignitenumdrakes - 1)) >= 0 and (dtu.ignitesectorsize * (dtu.ignitenumdrakes - 1)) or 0
+    			local maxang = (dtu.ignitesectorsize * dtu.ignitenumdrakes) <= 360 and (dtu.ignitesectorsize * dtu.ignitenumdrakes) or 360
+                local drakeangle = math.random(minang, maxang)
+    			local offset = FindWalkableOffset(inst:GetPosition(), drakeangle*DEGREES, math.random(2,TUNING.DECID_MONSTER_TARGET_DIST), 30, false, false)
+    			local x,y,z = inst.Transform:GetWorldPosition()
+    			drake.Transform:SetPosition(x + offset.x, y + offset.y, z + offset.z)
+    			drake.target = dtu.monster_target and dtu.monster_target or dtu.last_monster_target
+    			drake:DoTaskInTime(0, function(drake)
+    				if drake.components.combat then
+        				drake.components.combat:SuggestTarget(drake.target and drake.target or GetPlayer())
+    				end
+    			end)
+    			dtu.ignitenumdrakes = dtu.ignitenumdrakes - 1
+    		end
+    	end)
 	end
 end
 

@@ -58,13 +58,15 @@ local bearger =
 	attackduringoffseason = false,
 	playerstring = "ANNOUNCE_DEERCLOPS",
 	attacksperseason = 1,
-	warnsound = "dontstarve/creatures/deerclops/distant",
+	warnsound = "dontstarve_DLC001/creatures/bearger/distant",
     warnduration = 60,
     minspawnday = TUNING.NO_BOSS_TIME,
 }
 
 local function onspawn_moose(inst)
-	inst.components.timer:StartTimer("WantsToLayEgg", (TUNING.TOTAL_DAY_TIME*3) * math.random())
+    GetPlayer().components.talker:Say(GetString(GetPlayer().prefab, "ANNOUNCE_DEERCLOPS"))    
+    inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/moose/distant")
+	inst.components.timer:StartTimer("WantsToLayEgg", TUNING.TOTAL_DAY_TIME + (TUNING.TOTAL_DAY_TIME * math.random()))
 end
 
 local NO_TAGS = {"FX", "NOCLICK","DECOR","INLIMBO"}
@@ -72,10 +74,8 @@ local BASE_TAGS = {"structure"}
 
 local function spawnconditionfn_moose()
     local pt = GetPlayer():GetPosition()
-    local ents = TheSim:FindEntities(pt.x, pt.y, pt.z, 30, BASE_TAGS, NO_TAGS) 
-    if #ents >= 3 then
-        return pt
-    end
+    local ents = TheSim:FindEntities(pt.x, pt.y, pt.z, 30, BASE_TAGS, NO_TAGS)
+    return #ents >= 3
 end
 
 local function spawnposfn_moose(inst)
@@ -89,16 +89,16 @@ local function spawnposfn_moose(inst)
         end
         return positions
     end
-    local basepos = spawnconditionfn_moose()
+    local playerpos = GetPlayer():GetPosition()
     local spots = {}
-    if basepos then
+    if playerpos then
         local offsets = base_offsets()
         local ground = GetWorld()
         for k,v in pairs(offsets) do
-            local try_pos = basepos + (v * 30)
+            local try_pos = playerpos + (v * 30)
             if not (ground.Map and ground.Map:GetTileAtPoint(try_pos.x, try_pos.y, try_pos.z) == GROUND.IMPASSABLE or ground.Map:GetTileAtPoint(try_pos.x, try_pos.y, try_pos.z) > GROUND.UNDERGROUND ) and 
             #TheSim:FindEntities(try_pos.x, try_pos.y, try_pos.z, 10) <= 0 and
-            ground.Pathfinder:IsClear(basepos.x, basepos.y, basepos.z, try_pos.x, try_pos.y, try_pos.z, {ignorewalls = true}) then
+            ground.Pathfinder:IsClear(playerpos.x, playerpos.y, playerpos.z, try_pos.x, try_pos.y, try_pos.z, {ignorewalls = true}) then
                 table.insert(spots, try_pos)
             end 
         end
@@ -109,8 +109,7 @@ local function spawnposfn_moose(inst)
 end
 
 local function spawntime_moose()
-	--Should spawn within ~3 days
-	return math.random(2, 4) * TUNING.TOTAL_DAY_TIME
+	return TUNING.TOTAL_DAY_TIME + (math.random() * TUNING.TOTAL_DAY_TIME * 2)
 end
 
 local goosemoose = 
@@ -118,14 +117,14 @@ local goosemoose =
 	prefab = "moose",
 	activeseason =  SEASONS.SPRING,
 	attackduringoffseason = false,
-	playerstring = "ANNOUNCE_DEERCLOPS",
+	--playerstring = "ANNOUNCE_DEERCLOPS",
 	attacksperseason = 1,
-	warnsound = "dontstarve/creatures/deerclops/distant",
-	warnduration = 60,
+	--warnsound = "dontstarve/creatures/deerclops/distant",
+	warnduration = 0,
 	spawntimefn = spawntime_moose,
 	onspawnfn = onspawn_moose,
 	spawnposfn = spawnposfn_moose,
-	spawnconditionfn = spawnconditionfn_moose,
+	spawnconditionsfn = spawnconditionfn_moose,
     minspawnday = TUNING.NO_BOSS_TIME,
 }
 
@@ -136,10 +135,9 @@ local dragonfly =
     attackduringoffseason = false,
     playerstring = "ANNOUNCE_DEERCLOPS",
     attacksperseason = 1,
-    warnsound = "dontstarve/creatures/deerclops/distant",
+    warnsound = "dontstarve_DLC001/creatures/dragonfly/distant",
     warnduration = 60,
-    minspawnday = TUNING.NO_BOSS_TIME,
-    
+    minspawnday = TUNING.NO_BOSS_TIME,    
 }
 
 return

@@ -162,7 +162,7 @@ local function SetShort(inst)
     if inst.components.workable then
 	    inst.components.workable:SetWorkLeft(TUNING.EVERGREEN_CHOPS_SMALL)
 	end
-    if inst:HasTag("shelter") then inst:RemoveTag("shelter") end
+    -- if inst:HasTag("shelter") then inst:RemoveTag("shelter") end
 		    
     inst.components.lootdropper:SetLoot(GetBuild(inst).short_loot)
     Sway(inst)
@@ -180,7 +180,7 @@ local function SetNormal(inst)
     if inst.components.workable then
 	    inst.components.workable:SetWorkLeft(TUNING.EVERGREEN_CHOPS_NORMAL)
 	end
-    if inst:HasTag("shelter") then inst:RemoveTag("shelter") end
+    -- if inst:HasTag("shelter") then inst:RemoveTag("shelter") end
 	
     inst.components.lootdropper:SetLoot(GetBuild(inst).normal_loot)
     Sway(inst)
@@ -197,7 +197,7 @@ local function SetTall(inst)
 	if inst.components.workable then
 		inst.components.workable:SetWorkLeft(TUNING.EVERGREEN_CHOPS_TALL)
 	end
-    inst:AddTag("shelter")
+    -- inst:AddTag("shelter")
 	
     inst.components.lootdropper:SetLoot(GetBuild(inst).tall_loot)
     Sway(inst)
@@ -499,6 +499,7 @@ local function makefn(build, stage, data)
        
         inst:AddTag("tree")
         inst:AddTag("workable")
+        inst:AddTag("shelter")
         
         inst.build = build
         anim:SetBuild(GetBuild(inst).file)

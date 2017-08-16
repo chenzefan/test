@@ -103,7 +103,9 @@ local function ConvertStaticLayoutToLayout(layoutsrc, additionalProps)
 
 				end
 
-				table.insert(layout.layout[obj.type], {x=x, y=y, properties=properties, width=width, height=height})				
+				if not properties.chance or math.random() < properties.chance then
+					table.insert(layout.layout[obj.type], {x=x, y=y, properties=properties, width=width, height=height})				
+				end
 			
 			end
 

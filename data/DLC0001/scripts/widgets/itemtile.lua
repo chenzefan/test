@@ -95,7 +95,7 @@ local ItemTile = Class(Widget, function(self, invitem)
             end, invitem)
 
     self.inst:ListenForEvent("itemwet", function()
-        if self:IsWet() then
+        if GetPlayer().components.inventory:GetActiveItem() ~= invitem then
             self.wetness:Show()
         end
     end, invitem)
@@ -103,12 +103,6 @@ local ItemTile = Class(Widget, function(self, invitem)
     self.inst:ListenForEvent("itemdry", function() 
         self.wetness:Hide()
     end, invitem)
-
-    self.inst:ListenForEvent("worldwet", function() 
-        if self:IsWet() then
-            self.wetness:Show()
-        end
-    end, GetWorld())
 
     if invitem.components.fueled then
         self:SetPercent(invitem.components.fueled:GetPercent())

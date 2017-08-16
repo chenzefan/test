@@ -83,11 +83,14 @@ local function fn(Sim)
     inst:AddComponent("clock")
     inst:AddComponent("quaker")
 	inst:AddComponent("seasonmanager")
+    inst:DoTaskInTime(0, function(inst) inst.components.seasonmanager:SetCaves() end)
 	inst:AddComponent("colourcubemanager")
 
 	inst:AddComponent("periodicthreat")
 	local threats = require("periodicthreats")
 	inst.components.periodicthreat:AddThreat("WORM", threats["WORM"])
+
+    inst:AddComponent("bigfooter")
 	
 	--add waves
 	--local waves = inst.entity:AddWaveComponent()

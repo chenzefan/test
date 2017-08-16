@@ -67,10 +67,11 @@ end
 
 local function ReturnChildren(inst)
 	for k,child in pairs(inst.components.childspawner.childrenoutside) do
-		if child.components.homeseeker then
-			child.components.homeseeker:GoHome()
+		child.components.health:Kill()
+
+		if child:IsAsleep() then
+			child:Remove()
 		end
-		child:PushEvent("gohome")
 	end
 end
 

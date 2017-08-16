@@ -318,12 +318,15 @@ local FX =
 	    build = "deerclops_icespike", 
 	    anim = "spike1",
 	    dlc = true,
+	    sound = "dontstarve/creatures/deerclops/ice_small",
+	    
     },
     {
 	    name = "icespike_fx_2", 
 	    bank = "deerclops_icespike", 
 	    build = "deerclops_icespike", 
 	    anim = "spike2",
+	    sound = "dontstarve/creatures/deerclops/ice_small",
 	    dlc = true,
     },
     {
@@ -331,6 +334,7 @@ local FX =
 	    bank = "deerclops_icespike", 
 	    build = "deerclops_icespike", 
 	    anim = "spike3",
+	    sound = "dontstarve/creatures/deerclops/ice_small",
 	    dlc = true,
     },
     {
@@ -338,6 +342,7 @@ local FX =
 	    bank = "deerclops_icespike", 
 	    build = "deerclops_icespike", 
 	    anim = "spike4",
+	    sound = "dontstarve/creatures/deerclops/ice_small",
 	    dlc = true,
     },
 

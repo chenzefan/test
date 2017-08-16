@@ -217,6 +217,8 @@ local function fn(Sim)
 	inst.components.childspawner:SetMaxChildren(6)
 	inst.components.childspawner.childname = "bat"
 
+	inst.no_wet_prefix = true
+
     Close(inst)
 	inst.OnSave = onsave
 	inst.OnLoad = onload

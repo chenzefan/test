@@ -15,7 +15,10 @@ local function getspawnlocation(inst, target)
 end
 
 local function cantornado(staff, caster, target, pos)
-    return target and (target.components.health or target.components.workable)
+    return target and (
+        (target.components.health and target.components.combat and caster.components.combat:CanTarget(target)) 
+        or target.components.workable
+        )
 end
 
 local function spawntornado(staff, target, pos)
@@ -93,7 +96,7 @@ local function tornado_fn()
 	anim:PlayAnimation("tornado_pre")
 	anim:PushAnimation("tornado_loop")
 
-    sound:PlaySound("dontstarve_DLC001/creatures/mossling/spin", "spinLoop")
+    sound:PlaySound("dontstarve_DLC001/common/tornado", "spinLoop")
 
 	inst:DoTaskInTime(TUNING.TORNADO_LIFETIME, function() inst.sg:GoToState("despawn") end)
 
@@ -103,7 +106,8 @@ local function tornado_fn()
 	inst:AddComponent("knownlocations")
 
 	inst:AddComponent("locomotor")
-    inst.components.locomotor.walkspeed = TUNING.TORNADO_WALK_SPEED
+    inst.components.locomotor.walkspeed = TUNING.TORNADO_WALK_SPEED * 0.33
+    inst.components.locomotor.runspeed = TUNING.TORNADO_WALK_SPEED
 
     inst:SetStateGraph("SGtornado")
     inst:SetBrain(require "brains/tornadobrain")

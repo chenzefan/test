@@ -482,7 +482,7 @@ function MakeHat(name)
         inst:AddComponent("fueled")
         inst.components.fueled.fueltype = "USAGE"
         inst.components.fueled:InitializeFuelLevel(TUNING.TOPHAT_PERISHTIME)
-        inst.components.fueled:SetDepletedFn(spider_perish)
+        inst.components.fueled:SetDepletedFn(generic_perish)
 
         inst:AddComponent("waterproofer")
         inst.components.waterproofer:SetEffectiveness(TUNING.WATERPROOFNESS_SMALL)
@@ -620,6 +620,12 @@ function MakeHat(name)
         inst.components.heater.equippedheat = TUNING.ICEHAT_COOLER
 
         inst.components.equippable.walkspeedmult = 0.9
+        inst.components.equippable.equippedmoisture = 1
+        inst.components.equippable.maxequippedmoisture = 49 -- Meter reading rounds up, so set 1 below
+
+        inst:AddComponent("insulator")
+        inst.components.insulator:SetInsulation(TUNING.INSULATION_LARGE)
+        inst.components.insulator:SetSummer()
 
         inst:AddComponent("perishable")
         inst.components.perishable:SetPerishTime(TUNING.PERISH_FASTISH)
@@ -647,7 +653,7 @@ function MakeHat(name)
     local function mole_onequip(inst, owner)
 		onequip(inst, owner)
         if owner ~= GetPlayer() then return end
-        --opentop_onequip(inst, owner)
+        owner.SoundEmitter:PlaySound("dontstarve_DLC001/common/moggles_on")
         if GetClock() and GetWorld() and GetWorld().components.colourcubemanager then
             GetClock():SetNightVision(true)
             if GetClock():IsDay() and not GetWorld():IsCave() then
@@ -661,6 +667,7 @@ function MakeHat(name)
     local function mole_onunequip(inst, owner)
         onunequip(inst, owner)
         if owner ~= GetPlayer() then return end
+        owner.SoundEmitter:PlaySound("dontstarve_DLC001/common/moggles_off")
         if GetClock() then
             GetClock():SetNightVision(false)
         end
@@ -687,21 +694,26 @@ function MakeHat(name)
         inst.components.equippable:SetOnUnequip( mole_onunequip )
 
         inst:AddComponent("fueled")
-        inst.components.fueled.fueltype = "USAGE"
+        inst.components.fueled.fueltype = "MOLEHAT"
         inst.components.fueled:InitializeFuelLevel(TUNING.MOLEHAT_PERISHTIME)
         inst.components.fueled:SetDepletedFn( mole_perish )
+        inst.components.fueled.accepting = true
+        inst:AddTag("no_sewing")
 
         inst:ListenForEvent("daytime", function(it)
+            if GetWorld():IsCave() then return end
             if inst.components.equippable and inst.components.equippable:IsEquipped() and inst.components.inventoryitem:GetGrandOwner() == GetPlayer() and not GetWorld():IsCave() then
                 GetWorld().components.colourcubemanager:SetOverrideColourCube("images/colour_cubes/mole_vision_off_cc.tex", 2)
             end
         end, GetWorld())
         inst:ListenForEvent("dusktime", function(it)
+            if GetWorld():IsCave() then return end
             if inst.components.equippable and inst.components.equippable:IsEquipped() and inst.components.inventoryitem:GetGrandOwner() == GetPlayer() then
                 GetWorld().components.colourcubemanager:SetOverrideColourCube("images/colour_cubes/mole_vision_on_cc.tex", 2)
             end
         end, GetWorld())
         inst:ListenForEvent("nighttime", function(it)
+            if GetWorld():IsCave() then return end
             if inst.components.equippable and inst.components.equippable:IsEquipped() and inst.components.inventoryitem:GetGrandOwner() == GetPlayer() then
                 GetWorld().components.colourcubemanager:SetOverrideColourCube("images/colour_cubes/mole_vision_on_cc.tex", 2)
             end
@@ -752,7 +764,9 @@ function MakeHat(name)
     
     local function eyebrella_perish(inst)
         inst.SoundEmitter:KillSound("umbrellarainsound")
-        owner.DynamicShadow:SetSize(1.3, 0.6)
+        if inst.components.inventoryitem and inst.components.inventoryitem.owner then
+            inst.components.inventoryitem.owner.DynamicShadow:SetSize(1.3, 0.6)
+        end
         generic_perish(inst)
     end
 
@@ -792,12 +806,10 @@ function MakeHat(name)
         inst.components.fueled:InitializeFuelLevel(TUNING.CATCOONHAT_PERISHTIME)
         inst.components.fueled:SetDepletedFn(generic_perish)
 
-        inst:AddComponent("waterproofer")
-        inst.components.waterproofer:SetEffectiveness(TUNING.WATERPROOFNESS_LARGE)
+        inst.components.equippable.dapperness = TUNING.DAPPERNESS_MED
 
         inst:AddComponent("insulator")
-        inst.components.insulator:SetInsulation(TUNING.INSULATION_MED_LARGE)
-        inst.components.equippable.insulated = true
+        inst.components.insulator:SetInsulation(TUNING.INSULATION_SMALL)
 
         return inst
     end
@@ -808,6 +820,13 @@ function MakeHat(name)
         inst:AddComponent("heater")
         inst.components.heater.iscooler = true
         inst.components.heater.equippedheat = TUNING.WATERMELON_COOLER
+
+        inst.components.equippable.equippedmoisture = 0.5
+        inst.components.equippable.maxequippedmoisture = 32 -- Meter reading rounds up, so set 1 below
+
+        inst:AddComponent("insulator")
+        inst.components.insulator:SetInsulation(TUNING.INSULATION_MED)
+        inst.components.insulator:SetSummer()
 
         inst:AddComponent("perishable")
         inst.components.perishable:SetPerishTime(TUNING.PERISH_SUPERFAST)

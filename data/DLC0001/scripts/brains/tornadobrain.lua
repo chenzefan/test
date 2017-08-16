@@ -17,7 +17,7 @@ function TornadoBrain:OnStart()
     local root = 
     PriorityNode(
     {
-        Leash(self.inst, function() return self.inst.components.knownlocations:GetLocation("target") end, 3, 1),
+        Leash(self.inst, function() return self.inst.components.knownlocations:GetLocation("target") end, 3, 1, true),
         Wander(self.inst, function() return self.inst.components.knownlocations:GetLocation("target") end, 2, wanderTimes),
     }, .25)
     self.bt = BT(self.inst, root)

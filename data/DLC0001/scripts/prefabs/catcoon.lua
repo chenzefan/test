@@ -19,6 +19,41 @@ local prefabs =
 	"smallmeat",
 	"silk",
 	"coontail",
+	"rocks",
+	"bee",
+	"mosquito",
+	"cutreeds",
+	"tentaclespots",
+	"beefalowool",
+	"feather_robin",
+	"feather_robin_winter",
+	"feather_crow",
+	"boneshard",
+	"red_cap",
+	"blue_cap",
+	"green_cap",
+	"carrot_seeds",
+	"corn_seeds",
+	"pumpkin_seeds",
+	"eggplant_seeds",
+	"durian_seeds",
+	"pomegranate_seeds",
+	"dragonfruit_seeds",
+	"watermelon_seeds",
+	"butterfly",
+	"robin",
+	"robin_winter",
+	"crow",
+	"fish",
+	"transistor",
+	"froglegs",
+	"batwing",
+	"petals",
+	"petals_evil",
+	"ash",
+	"acorn",
+	"pinecone",
+	"ice",
 }
 
 SetSharedLootTable( 'catcoon',
@@ -30,67 +65,105 @@ SetSharedLootTable( 'catcoon',
 local neutralGiftPrefabs =
 {
 	{ --tier 1
-		"spoiled_food",
+		"wetgoop",
 	},
 	{ --tier 2
 		"spoiled_food",
+		"wetgoop",
 	},
 	{ --tier 3
+		"cutgrass",
 		"spoiled_food",
-		"wetgoop",
 	},
 	{ --tier 4
-		"wetgoop",
-		"wetgoop",
 		"cutgrass",
-		"twigs",
-		"spoiled_food",
 		"spoiled_food",
 	},
 	{ --tier 5
-		"wetgoop",
-		"wetgoop",
 		"cutgrass",
-		"twigs",
-		"spoiled_food",
-		"spoiled_food",
-		"flint",
+		"rocks",
+		"petals_evil",
 	},
+	{ --tier 6
+		"rocks",
+		"flint",
+		"petals",
+	},
+	{ --tier 7
+		"ice",
+		"flint",
+		"pinecone",
+	},
+	{ --tier 8
+		"flint",
+		"pinecone",
+		"feather_robin",
+	},
+	{ --tier 9
+		"mole",
+		"acorn",
+	}
 }
 
 local friendGiftPrefabs =
 {
-	{ --tier 1
-		"spoiled_food",
-		"berries",
+	{ -- tier 1 (basic seeds)
+		"carrot_seeds",
+		"corn_seeds",
 	},
-	{ --tier 2
-		"twigs",
-		"berries",
-		"spoiled_food",
-	},
-	{ --tier 3
-		"twigs",
+	{ -- tier 2 (basic, generic stuff)
+		"flint",
 		"cutgrass",
-		"berries",
-		"flint",
+		"twigs",
+		"rocks",
+		"ash",
+		"pinecone",
+		"petals",
+		"petals_evil",
 	},
-	{ --tier 4
-		"flint",
+	{ -- tier 3 (non-food animal bits)
+		"feather_robin",
+		"feather_robin_winter",
+		"feather_crow",
+		"boneshard",
+	},
+	{ -- tier 4 (better seeds)
+		"pumpkin_seeds",
+		"eggplant_seeds",
+		"durian_seeds",
+		"pomegranate_seeds",
+		"dragonfruit_seeds",
+		"watermelon_seeds",
+	},
+	{ --tier 5 (food)
+		"ice",
+		"batwing",
+		"acorn",
+		"berries",
 		"smallmeat",
-		"cutgrass",
-		"twigs",
-		"rope",
-		"silk",
-		"rabbit",
+		"red_cap",
+		"blue_cap",
+		"green_cap",
+		"fish",
+		"froglegs",
 	},
-	{ --tier 5
+	{ --tier 6 (live animals + tumbleweed)
 		"mole",
-		"smallmeat",
+		"rabbit",
+		"bee",
+		"butterfly",
+		"robin",
+		"robin_winter",
+		"crow",
 		"tumbleweed",
-		"rope",
+	},
+	{ -- tier 7 (good generic stuff)
 		"goldnugget",
 		"silk",
+		"cutreeds",
+		"tentaclespots",
+		"beefalowool",
+		"transistor",
 	},
 }
 
@@ -133,8 +206,11 @@ local function RetargetFn(inst)
 	            		not guy.components.health:IsDead() and 
 	            		inst.components.combat:CanTarget(guy) and 
 	            		not (inst.components.follower and inst.components.follower.leader ~= nil and guy:HasTag("abigail"))) and
-            			not (inst.components.follower and guy.components.follower and inst.components.follower.leader ~= nil and inst.components.follower.leader == guy.components.follower.leader)
-	            	or 	guy:HasTag("cattoyairborne")
+            			not (inst.components.follower and guy.components.follower and inst.components.follower.leader ~= nil and inst.components.follower.leader == guy.components.follower.leader) and
+            			not (inst.components.follower and guy.components.follower and inst.components.follower.leader ~= nil and guy.components.follower.leader and guy.components.follower.leader.components.inventoryitem and guy.components.follower.leader.components.inventoryitem.owner and inst.components.follower.leader == guy.components.follower.leader.components.inventoryitem.owner)
+	            	or 	(guy:HasTag("cattoyairborne") and 
+	            		not (inst.components.follower and guy.components.follower and inst.components.follower.leader ~= nil and inst.components.follower.leader == guy.components.follower.leader) and 
+	            		not (inst.components.follower and guy.components.follower and inst.components.follower.leader ~= nil and guy.components.follower.leader and guy.components.follower.leader.components.inventoryitem and guy.components.follower.leader.components.inventoryitem.owner and inst.components.follower.leader == guy.components.follower.leader.components.inventoryitem.owner)) 
 	        end
         end)
 end
@@ -160,8 +236,7 @@ end
 
 local function PickRandomGift(inst, tier)
 	return (inst.components.follower and inst.components.follower.leader) and 
-		GetRandomItem(friendGiftPrefabs[tier]) or 
-		GetRandomItem(neutralGiftPrefabs[tier])
+		GetRandomItem(friendGiftPrefabs[tier]) or GetRandomItem(neutralGiftPrefabs[tier])
 end
 
 local function ShouldAcceptItem(inst, item)
@@ -174,26 +249,22 @@ local function ShouldAcceptItem(inst, item)
 end
 
 local function OnGetItemFromPlayer(inst, giver, item)
+	if inst.components.sleeper:IsAsleep() then
+        inst.components.sleeper:WakeUp()
+    end
     if inst.components.combat.target and inst.components.combat.target == giver then
         inst.components.combat:SetTarget(nil)
         inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/catcoon/pickup")
     elseif giver.components.leader then
     	inst.SoundEmitter:PlaySound("dontstarve/common/makeFriend")
-    	if inst.components.follower and inst.components.follower.leader then -- Just adding loyalty, lower interval.
-    		inst.hairball_friend_interval = inst.hairball_friend_interval / 2
-    	else -- Just started following. Should hack soon.
-    		inst.last_hairball_time = GetTime()
-    		inst.hairball_friend_interval = math.random(2,6)
-    	end
+    	inst.last_hairball_time = GetTime()
+    	inst.hairball_friend_interval = math.random(2,4) -- Jumpstart the hairball timer (slot machine time!)
 		giver.components.leader:AddFollower(inst)
         inst.components.follower:AddLoyaltyTime(TUNING.CATCOON_LOYALTY_PER_ITEM)
         if not inst.sg:HasStateTag("busy") then 
         	inst:FacePoint(giver.Transform:GetWorldPosition())
         	inst.sg:GoToState("pawground") 
        	end
-    end
-    if inst.components.sleeper:IsAsleep() then
-        inst.components.sleeper:WakeUp()
     end
     item:Remove()
 end
@@ -202,6 +273,8 @@ local function OnRefuseItem(inst, item)
 	inst.SoundEmitter:PlaySound("dontstarve_DLC001/creatures/catcoon/hiss_pre")
 	if inst.components.sleeper:IsAsleep() then
         inst.components.sleeper:WakeUp()
+    -- elseif not inst.sg:HasStateTag("busy") then 
+    -- 	inst.sg:GoToState("hiss")
     end
 end
 
@@ -221,6 +294,7 @@ local function fn()
 	anim:PlayAnimation("idle_loop")
 
 	inst:AddTag("smallcreature")
+	inst:AddTag("animal")
 	inst:AddTag("catcoon")
 
 	inst:AddComponent("inspectable")
@@ -240,7 +314,6 @@ local function fn()
 
 	inst:AddComponent("lootdropper")
     inst.components.lootdropper:SetChanceLootTable('catcoon') 
-	inst.PickRandomGift = PickRandomGift
 
 	inst:AddComponent("follower")
     inst.components.follower.maxfollowtime = TUNING.CATCOON_LOYALTY_MAXTIME
@@ -290,6 +363,8 @@ local function fn()
 	inst:SetBrain(brain)
 	inst:SetStateGraph("SGcatcoon")
 
+	inst.neutralGiftPrefabs = neutralGiftPrefabs
+	inst.friendGiftPrefabs = friendGiftPrefabs
 	inst.PickRandomGift = PickRandomGift
 
 	return inst

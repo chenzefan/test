@@ -3,7 +3,11 @@ require("stategraphs/commonstates")
 local actionhandlers = 
 {
     ActionHandler(ACTIONS.EAT, "eat"),
-    ActionHandler(ACTIONS.GOHOME, "flyaway"),
+    ActionHandler(ACTIONS.GOHOME, function(inst)
+        if inst.components.health and not inst.components.health:IsDead() then
+            inst.sg:GoToState("flyaway")
+        end
+    end),
 }
 
 local events=

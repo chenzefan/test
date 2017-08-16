@@ -31,7 +31,9 @@ end
 
 local function ShouldSleep(inst)
     --print(inst, "ShouldSleep", DefaultSleepTest(inst), not inst.sg:HasStateTag("open"), inst.components.follower:IsNearLeader(SLEEP_NEAR_LEADER_DISTANCE))
-    return DefaultSleepTest(inst) and not inst.sg:HasStateTag("open") and inst.components.follower:IsNearLeader(SLEEP_NEAR_LEADER_DISTANCE) and not GetWorld().components.clock:GetMoonPhase() == "full"
+    return DefaultSleepTest(inst) and not inst.sg:HasStateTag("open") 
+    and inst.components.follower:IsNearLeader(SLEEP_NEAR_LEADER_DISTANCE) 
+    and GetWorld().components.clock:GetMoonPhase() ~= "full"
 end
 
 
@@ -105,6 +107,7 @@ end
 
 local function MorphSnowChester(inst, dofx)
     inst:AddTag("fridge")
+    inst:AddTag("lowcool")
 
     local leader = inst.components.follower.leader
     if leader then
@@ -118,6 +121,8 @@ end
 
 local function MorphNormalChester(inst, dofx)
     inst:RemoveTag("fridge")
+    inst:RemoveTag("lowcool")
+    inst:RemoveTag("spoiler")
     inst.AnimState:SetBuild("chester_build")
 
     local leader = inst.components.follower.leader    
@@ -217,6 +222,7 @@ local function create_chester()
     inst:AddTag("scarytoprey")
     inst:AddTag("chester")
     inst:AddTag("notraptrigger")
+    inst:AddTag("cattoy")
 
     inst.entity:AddTransform()
 

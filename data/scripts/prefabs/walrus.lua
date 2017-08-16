@@ -151,7 +151,7 @@ local function create()
     
     inst:AddComponent("inspectable")
     
-    MakeMediumBurnableCharacter(inst, "pig_torso")
+    MakeMediumBurnableCharacter(inst, "swap_fire")
     MakeMediumFreezableCharacter(inst, "pig_torso")
    
     inst:AddComponent("leader")

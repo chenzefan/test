@@ -17,17 +17,17 @@ local function dig_up(inst, chopper)
 	if inst.components.spawner:IsOccupied() then
 		inst.components.spawner:ReleaseChild()
 	end
-	if inst.components.spawner.child then
+	if inst.components.spawner.child and not inst.components.spawner.child:HasTag("INLIMBO") then
 		inst.components.spawner.child:PushEvent("molehilldug")
 	end
 	inst.components.lootdropper:DropLoot()
-	inst.components.inventory:DropEverything(false, true) --#srosen we might want this to be a chance to drop the things the mole collected
+	inst.components.inventory:DropEverything(false, true)
 	inst:Remove()
 end
 
 local function startspawning(inst)
-    if inst.components.spawner then
-        inst.components.spawner:SpawnWithDelay(60 + math.random(120) )
+    if inst.components.spawner and not inst.components.spawner:IsSpawnPending() then
+        inst.components.spawner:SpawnWithDelay(5 + math.random(15))
     end
 end
 
@@ -38,7 +38,9 @@ local function stopspawning(inst)
 end
 
 local function onoccupied(inst)
-    startspawning(inst)
+	if not GetClock():IsDay() then
+        startspawning(inst)
+    end
 end
 
 local function confignewhome(inst, data)
@@ -84,8 +86,8 @@ local function fn(Sim)
     inst.components.workable:SetOnFinishCallback(dig_up)
     inst.components.workable:SetWorkLeft(1)
     
-	-- inst:ListenForEvent( "dusktime", function() stopspawning(inst) end, GetWorld())
-	-- inst:ListenForEvent( "daytime", function() startspawning(inst) end, GetWorld())
+	inst:ListenForEvent( "daytime", function() stopspawning(inst) end, GetWorld())
+	inst:ListenForEvent( "dusktime", function() startspawning(inst) end, GetWorld())
 
 	inst.OnSave = function(inst, data)
         

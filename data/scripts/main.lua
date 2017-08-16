@@ -180,6 +180,10 @@ Ents = {}
 AwakeEnts = {}
 UpdatingEnts = {}
 NewUpdatingEnts = {}
+StopUpdatingEnts = {}
+
+StopUpdatingComponents = {}
+
 WallUpdatingEnts = {}
 NewWallUpdatingEnts = {}
 num_updating_ents = 0

@@ -67,6 +67,7 @@ local function makebird(name, soundname)
         "smallmeat",
         "cookedsmallmeat",
         "feather_"..name,
+        "note",
     }
 
     local sounds = 

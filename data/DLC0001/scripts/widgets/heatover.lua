@@ -43,20 +43,30 @@ function HeatOver:OnHeatChange()
 		
 	local all_up_thresh = {65, 70, 75, 80}
 	
-	local freeze_sounds = 
+	local heat_sounds = 
 	{
 		"dontstarve_DLC001/common/HUD_hot_level1",
 		"dontstarve_DLC001/common/HUD_hot_level2",
 		"dontstarve_DLC001/common/HUD_hot_level3",
 		"dontstarve_DLC001/common/HUD_hot_level4",
 	}
+	local heat_sounds_names =
+	{
+		"HUD_hot_level1",
+		"HUD_hot_level2",
+		"HUD_hot_level3",
+		"HUD_hot_level4",
+	}
 	--local all_down_thresh = {8, 3, -2, -7}
 	
 	local up_thresh = all_up_thresh[self.laststep+1]
 	local down_thresh = all_up_thresh[self.laststep]
 
-	if up_thresh and temp > up_thresh and self.laststep < num_steps and (temp > 70 or GetSeasonManager():IsSummer()) then
-		TheFrontEnd:GetSound():PlaySound(freeze_sounds[self.laststep+1])
+	if up_thresh and temp > up_thresh and self.laststep < num_steps and (temp >= 65 or GetSeasonManager():IsSummer()) then
+		 -- Check if the sound is playing so it doesn't get spammed when temp dances back and forth across the threshold
+		if not TheFrontEnd:GetSound():PlayingSound(heat_sounds_names[self.laststep+1]) then
+			TheFrontEnd:GetSound():PlaySound(heat_sounds[self.laststep+1], heat_sounds_names[self.laststep+1])
+		end
 		self.laststep = self.laststep + 1
 		if GetSeasonManager() and GetSeasonManager():IsSummer() then
 			GetSeasonManager():ApplySummerDSP(.5, self.laststep+1)

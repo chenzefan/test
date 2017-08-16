@@ -58,10 +58,6 @@ function Inspectable:GetStatus(viewer)
     return status
 end
 
-function Inspectable:SetSmoldering()
-    self.smoldering = true
-end
-
 function Inspectable:GetDescription(viewer)
     local desc = nil
     if type(self.description) == "function" then
@@ -78,7 +74,7 @@ function Inspectable:GetDescription(viewer)
         desc = GetString(viewer.prefab, "DESCRIBE_TOODARK")
     end
 
-    if self.smoldering then
+    if self.inst.components.burnable and self.inst.components.burnable:IsSmoldering() then
         desc = GetString(viewer.prefab, "DESCRIBE_SMOLDERING")
     end
         

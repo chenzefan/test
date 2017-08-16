@@ -112,7 +112,7 @@ function ColourCubeManager:GetDestColourCubes()
 		if GetWorld().components.clock:IsDusk() then
 			time_idx = "DUSK"
 		elseif GetWorld().components.clock:IsNight() then
-			if GetWorld().components.clock:GetMoonPhase() == "full" then
+			if GetWorld().components.clock:GetMoonPhase() == "full" and not GetWorld():IsCave() then
 				time_idx = "FULL_MOON"
 			else
 				time_idx = "NIGHT"

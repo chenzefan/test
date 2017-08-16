@@ -20,7 +20,15 @@ SetSharedLootTable( 'lightninggoat',
     {'meat',             1.00},
     {'meat',             1.00},
     {'lightninggoathorn',0.25},
-    {'goatmilk',         0.25},
+})
+
+SetSharedLootTable( 'chargedlightninggoat',
+{
+    {'meat',             1.00},
+    {'meat',             1.00},
+    {'meat',             1.00},
+    {'lightninggoathorn',0.25},
+    {'goatmilk',         1.00},  
 })
 
 local function RetargetFn(inst)
@@ -44,23 +52,9 @@ local function KeepTargetFn(inst, target)
     return true
 end
 
-local function OnAttacked(inst, data)
-    inst.components.combat:SetTarget(data.attacker)
-
-    if inst.charged then
-        if data.attacker.components.health then
-            if (data.weapon == nil or (not data.weapon:HasTag("projectile") and data.weapon.projectile == nil)) 
-            and (data.attacker ~= GetPlayer() or (data.attacker == GetPlayer() and not GetPlayer().components.inventory:IsInsulated())) then
-                data.attacker.components.health:DoDelta(-TUNING.LIGHTNING_GOAT_DAMAGE)
-                if data.attacker == GetPlayer() then
-                    data.attacker.sg:GoToState("electrocute")
-                end
-            end
-        end
-    end
-end
-
 local function discharge(inst)
+    inst:RemoveTag("charged")
+    inst.components.lootdropper:SetChanceLootTable('lightninggoat') 
     inst.sg:GoToState("discharge")
     inst.AnimState:ClearBloomEffectHandle()
     inst.charged = false
@@ -69,6 +63,8 @@ local function discharge(inst)
 end
 
 local function setcharged(inst, instant)
+    inst:AddTag("charged")
+    inst.components.lootdropper:SetChanceLootTable('chargedlightninggoat') 
     inst.AnimState:SetBuild("lightning_goat_shocked_build")
     inst.AnimState:Show("fx") 
     if not instant then
@@ -86,6 +82,31 @@ local function setcharged(inst, instant)
             end
         end
     end, GetWorld())
+end
+
+local function OnAttacked(inst, data)
+    inst.components.combat:SetTarget(data.attacker)
+
+    if inst.charged then
+        if data.attacker.components.health then
+            if (data.weapon == nil or (not data.weapon:HasTag("projectile") and data.weapon.projectile == nil)) 
+            and (data.attacker ~= GetPlayer() or (data.attacker == GetPlayer() and not GetPlayer().components.inventory:IsInsulated())) then
+                data.attacker.components.health:DoDelta(-TUNING.LIGHTNING_GOAT_DAMAGE)
+                if data.attacker == GetPlayer() then
+                    data.attacker.sg:GoToState("electrocute")
+                end
+            end
+        end
+    end
+
+    if not inst.charged and data and data.weapon and data.weapon.components.weapon and data.weapon.components.weapon.stimuli == "electric" then
+        setcharged(inst)
+    end
+
+    local attacker = data and data.attacker
+    inst.components.combat:SetTarget(attacker)
+    inst.components.combat:ShareTarget(attacker, 20, function(dude) return dude:HasTag("lightninggoat") and dude:HasTag("charged") end, 3) 
+
 end
 
 local function onlightning(inst, data)
@@ -135,6 +156,7 @@ local function fn(Sim)
     ------------------------------------------
 
     inst:AddTag("lightninggoat")
+    inst:AddTag("animal")
     inst:AddTag("lightningrod")
     local light = inst.entity:AddLight()
     inst.Light:Enable(false)
@@ -158,7 +180,6 @@ local function fn(Sim)
     inst.components.combat:SetRetargetFunction(1, RetargetFn)
     inst.components.combat:SetKeepTargetFunction(KeepTargetFn)
     inst.components.combat:SetHurtSound("dontstarve_DLC001/creatures/lightninggoat/hurt")
-    
     ------------------------------------------
  
     inst:AddComponent("sleeper")
@@ -191,6 +212,7 @@ local function fn(Sim)
 
     inst:ListenForEvent("lightningstrike", function(inst, data) onlightning(inst, data) end)
     inst.lightningpriority = 10
+    inst.setcharged = setcharged
 
     inst.OnSave = OnSave
     inst.OnLoad = OnLoad

@@ -112,6 +112,7 @@ FrontEnd = Class(function(self, name)
 	self.gameinterface = CreateEntity()
 	self.gameinterface.entity:AddSoundEmitter()
 	self.gameinterface.entity:AddGraphicsOptions()
+	self.gameinterface.entity:AddBroadcastingOptions()
 
 	TheInput:AddKeyHandler(function(key, down) self:OnRawKey(key, down) end )
 	TheInput:AddTextInputHandler(function(text) self:OnTextInput(text) end )
@@ -338,6 +339,10 @@ end
 
 function FrontEnd:GetGraphicsOptions()
 	return self.gameinterface.GraphicsOptions
+end
+
+function FrontEnd:GetBroadcastingOptions()
+	return self.gameinterface.BroadcastingOptions
 end
 
 function FrontEnd:SetFadeLevel(alpha)

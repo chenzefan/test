@@ -23,6 +23,7 @@ function BaseHassler:GetDebugString()
 		for k,v in pairs(self.hasslers) do
 			str = str..string.format("	--"..k..": %s\n", self:GetHasslerState(k) or "NIL")
 			if self:GetHasslerState(k) ~= "DORMANT" then
+				str = str..string.format("		--Number of Spawn Attempts: %i / %i \n", self.hasslers[k].numspawnattempts or 0, self.hasslers[k].spawnconditionoverride)
 				str = str..string.format("		--Attacks Left: %i \n", self.hasslers[k].attacks_left or 0)
 				str = str..string.format("		--Time to State Advance: %i \n", self.hasslers[k].timer or 0)
 				str = str..string.format("		--Done For Season: %s \n", tostring(self.hasslers[k].done_for_season) or "NIL")
@@ -46,6 +47,7 @@ function BaseHassler:AddHassler(name, data)
 	--Custom functions, not required.
 	t.spawntimefn = data.spawntimefn --Custom spawn time logic
 	t.spawnconditionsfn = data.spawnconditionsfn --Must return true for hassler to spawn
+	t.spawnconditionoverride = data.spawnconditionoverride or 5 --Number of attempts until hassler just spawns.
 	t.spawnposfn = data.spawnposfn --Custom spawn position logic
 	t.onspawnfn = data.onspawnfn --On spawn callback
 	t.minspawnday = data.minspawnday
@@ -58,6 +60,7 @@ function BaseHassler:AddHassler(name, data)
 	t.time_between_attacks = nil
 	t.done_for_season = false
 	t.HASSLER_STATE = "DORMANT"
+	t.numspawnattempts = 0
 
 	self.hasslers[name] = t
 
@@ -250,7 +253,8 @@ function BaseHassler:PlayWarningSound(name)
 end
 
 function BaseHassler:PlayerAnnounce(name)
-	--print("PLAYER_ANNOUNCE ", name)
+	local h = self.hasslers[name]
+	GetPlayer().components.talker:Say(GetString(GetPlayer().prefab, h.playerstring))	
 end
 
 function BaseHassler:SkipHasslerSpawn(name)
@@ -274,24 +278,27 @@ function BaseHassler:SpawnHassler(name)
 		conditionsmet = h.spawnconditionsfn(self.inst)
 	end
 
-	if not conditionsmet then
+	if not conditionsmet and h.numspawnattempts < h.spawnconditionoverride then
+		h.numspawnattempts = h.numspawnattempts + 1
 		return false
 	end
 
 	local pos = self:GetSpawnLocation(name)
 
-	if not pos then
+	if not pos then		
 		return false
 	end
 
 	local hassler = SpawnPrefab(h.prefab)
 	hassler.Transform:SetPosition(pos:Get())
 
+
 	if h.onspawnfn then
 		h.onspawnfn(hassler)
 	end
 
 	h.attacks_left = h.attacks_left - 1
+	h.numspawnattempts = 0
 
 	if h.attacks_left <= 0 then
 		h.done_for_season = true
@@ -317,13 +324,13 @@ function BaseHassler:OnUpdate(dt)
 			h.timer = math.max(0, h.timer - dt)
 			h.playerannounce_timer = math.max(0, h.playerannounce_timer - dt)
 
-			if h.warnsound_timer <= 0 then
+			if h.warnsound_timer <= 0 and h.warnsound then
 				self:PlayWarningSound(k)
 				h.warnsound_timer = h.warnduration/6
 				--Reset warnsound timer
 			end
 
-			if h.playerannounce_timer <= 0 then
+			if h.playerannounce_timer <= 0 and h.playerstring then
 				self:PlayerAnnounce(k)
 				h.playerannounce_timer = h.warnduration/3
 			end
@@ -367,6 +374,8 @@ function BaseHassler:OnSave()
 		t.attacksperseason = v.attacksperseason
 		t.attackduringoffseason = v.attackduringoffseason
 		t.chance = v.chance
+		t.numspawnattempts = v.numspawnattempts
+		t.spawnconditionoverride = v.spawnconditionoverride
 
 		data.hasslers[k] = t
 	end
@@ -392,6 +401,8 @@ function BaseHassler:OnLoad(data)
 			h.attacksperseason = v.attacksperseason
 			h.attackduringoffseason = v.attackduringoffseason
 			h.chance = v.chance
+			h.numspawnattempts = v.numspawnattempts or 0
+			h.spawnconditionoverride = v.spawnconditionoverride or 5
 
 			self:SetHasslerState(k, v.HASSLER_STATE)
 			--print(k, "Setting Hassler State: OnLoad -", v.HASSLER_STATE)

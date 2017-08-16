@@ -66,11 +66,9 @@ local function onwere(child)
 end
 
 local function onnormal(child)
-    if not inst:HasTag("burnt") then
-        if child.parent then
-            child.parent.SoundEmitter:KillSound("pigsound")
-            child.parent.SoundEmitter:PlaySound("dontstarve/pig/pig_in_hut", "pigsound")
-        end
+    if child.parent and not child.parent:HasTag("burnt") then
+        child.parent.SoundEmitter:KillSound("pigsound")
+        child.parent.SoundEmitter:PlaySound("dontstarve/pig/pig_in_hut", "pigsound")
     end
 end
 

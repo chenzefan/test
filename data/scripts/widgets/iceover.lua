@@ -39,14 +39,22 @@ function IceOver:OnIceChange()
 		"dontstarve/winter/freeze_3rd",
 		"dontstarve/winter/freeze_4th",
 	}
+	local freeze_sounds_names =
+	{
+		"freeze_1st",
+		"freeze_2nd",
+		"freeze_3rd",
+		"freeze_4th",
+	}
 	--local all_down_thresh = {8, 3, -2, -7}
 	
 	local up_thresh = all_up_thresh[self.laststep+1]
 	local down_thresh = all_up_thresh[self.laststep]
 
-	
-	if up_thresh and temp < up_thresh and self.laststep < num_steps and (temp < 0 or GetSeasonManager():IsWinter()) then
-		TheFrontEnd:GetSound():PlaySound(freeze_sounds[self.laststep+1])
+	if up_thresh and temp < up_thresh and self.laststep < num_steps and (temp <= 5 or GetSeasonManager():IsWinter()) then
+		if not TheFrontEnd:GetSound():PlayingSound(freeze_sounds_names[self.laststep+1]) then
+			TheFrontEnd:GetSound():PlaySound(freeze_sounds[self.laststep+1], freeze_sounds_names[self.laststep+1])
+		end
 		self.laststep = self.laststep + 1
 	elseif down_thresh and temp > down_thresh and self.laststep > 0 then
 		self.laststep = self.laststep - 1

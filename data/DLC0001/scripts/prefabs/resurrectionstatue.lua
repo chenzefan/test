@@ -24,6 +24,10 @@ local function onhammered(inst, worker)
 		SpawnPrefab("collapse_big").Transform:SetPosition(inst.Transform:GetWorldPosition())
 	end
 	inst.SoundEmitter:PlaySound("dontstarve/common/destroy_wood")
+
+	-- Remove from save index
+	SaveGameIndex:DeregisterResurrector(inst)
+
 	if inst.components.resurrector then 
 		inst.components.resurrector.penalty = 0 
 		if not inst.components.resurrector.used then
@@ -33,9 +37,6 @@ local function onhammered(inst, worker)
 			end
 		end
 	end
-
-	-- Remove from save index
-	SaveGameIndex:DeregisterResurrector(inst)
 	
 	inst:Remove()
 end
@@ -241,7 +242,7 @@ local function fn(Sim)
 
 	inst.OnSave = onsave 
     inst.OnLoad = onload
-	
+   
     return inst
 end
 

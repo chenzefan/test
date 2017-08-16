@@ -13,6 +13,9 @@ require "os"
 local WorldGenScreen = require "screens/worldgenscreen"
 local CustomizationScreen = require "screens/customizationscreen"
 local CharacterSelectScreen = require "screens/characterselectscreen"
+local BigPopupDialogScreen = require "screens/bigpopupdialog"
+
+local REIGN_OF_GIANTS_DIFFICULTY_WARNING_XP_THRESHOLD = 20*32 --20 xp per day, 32 days
 
 local NewGameScreen = Class(Screen, function(self, slotnum)
 	Screen._ctor(self, "LoadGameScreen")
@@ -153,12 +156,29 @@ function NewGameScreen:Start()
 		return dlc
 	end
 
-	if self.prevworldcustom ~= self.RoG then
-		self.customoptions = self.prevcustomoptions
-	end
+	local xp = PlayerProfile():GetXP()
+	if IsDLCInstalled(REIGN_OF_GIANTS) and self.RoG and xp <= REIGN_OF_GIANTS_DIFFICULTY_WARNING_XP_THRESHOLD and not PlayerProfile():HaveWarnedDifficultyRoG() then
+		TheFrontEnd:PushScreen(BigPopupDialogScreen(STRINGS.UI.NEWGAMESCREEN.ROG_WARNING_TITLE, STRINGS.UI.NEWGAMESCREEN.ROG_WARNING_BODY, 
+			{{text=STRINGS.UI.NEWGAMESCREEN.YES, 
+				cb = function() 
+					PlayerProfile():SetHaveWarnedDifficultyRoG()
+					TheFrontEnd:PopScreen()
+					self:Start()
+				end},
+			{text=STRINGS.UI.NEWGAMESCREEN.NO, 
+				cb = function() 
+					TheFrontEnd:PopScreen() 
+				end}  
+			})
+		)
+	else
+		if self.prevworldcustom ~= self.RoG then
+			self.customoptions = self.prevcustomoptions
+		end
 
-	self.root:Disable()
-	TheFrontEnd:Fade(false, 1, function() SaveGameIndex:StartSurvivalMode(self.saveslot, self.character, self.customoptions, onsaved, GetEnabledDLCs()) end )
+		self.root:Disable()
+		TheFrontEnd:Fade(false, 1, function() SaveGameIndex:StartSurvivalMode(self.saveslot, self.character, self.customoptions, onsaved, GetEnabledDLCs()) end )
+	end
 end
 
 

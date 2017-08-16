@@ -82,7 +82,7 @@ end
 local function sleepattack(inst, attacker, target)
     if target.components.sleeper and not (inst.components.freezable and inst.components.freezable:IsFrozen() ) then
         target.SoundEmitter:PlaySound("dontstarve/wilson/blowdart_impact_sleep")
-        target.components.sleeper:AddSleepiness(1, 15)
+        target.components.sleeper:AddSleepiness(1, 15, inst)
         if target.components.combat then
             target.components.combat:SuggestTarget(attacker)
         end

@@ -149,17 +149,26 @@ local function dorainsparks(inst, dt)
 
 	local mitigates_rain = inst.components.inventory:IsWaterproof()
 	
-    if GetSeasonManager() and GetSeasonManager():IsRaining() and not mitigates_rain then
+    if (GetSeasonManager() and GetSeasonManager():IsRaining() and not mitigates_rain) or
+    	(inst.components.moisture and inst.components.moisture:GetMoisture() > 0) then
     	inst.spark_time = inst.spark_time - dt
 
     	if inst.spark_time <= 0 then
     		
     		--GetClock():DoLightningLighting()
     		inst.spark_time = 3+math.random()*2
-    		local waterproofmult = inst.components.inventory and (1 - inst.components.inventory:GetWaterproofness()) or 1
-    		inst.components.health:DoDelta(-.5 * waterproofmult, false, "rain")
-			local pos = Vector3(inst.Transform:GetWorldPosition())
-			pos.y = pos.y + 1 + math.random()*1.5
+
+    		local pos = Vector3(inst.Transform:GetWorldPosition())
+    		if GetSeasonManager():IsRaining() then
+	    		local waterproofmult = inst.components.inventory and (1 - inst.components.inventory:GetWaterproofness()) or 1
+	    		local damage = math.min(-.25, -.5 * waterproofmult)
+	    		inst.components.health:DoDelta(damage, false, "rain")
+				pos.y = pos.y + 1 + math.random()*1.5
+	    	else
+	    		inst.components.health:DoDelta(-.5, false, "water")
+				pos.y = pos.y + .25 + math.random()*2
+	    	end
+			
 			local spark = SpawnPrefab("sparks")
 			spark.Transform:SetPosition(pos:Get())
 			
@@ -181,6 +190,7 @@ local fn = function(inst)
 
 	inst.components.playerlightningtarget:SetHitChance(1)
 	inst.components.playerlightningtarget:SetOnStrikeFn(onlightingstrike)
+	inst:AddTag("electricdamageimmune") --This is for combat, not lightning strikes
 
     inst.Light:Enable(false)
 	inst.Light:SetRadius(2)
