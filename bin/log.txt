@@ -1,7 +1,7 @@
 Starting up
-Don't Starve: 70495
-Build Date: 2012-12-11_23-09-06
-THREAD - started 'GAClient' (4744)
+Don't Starve: 70776
+Build Date: 2012-12-19_09-13-38
+THREAD - started 'GAClient' (4248)
 HttpClient::ClientThread::Main()
 cGame::InitializeOnMainThread
 WindowManager::Initialize
@@ -18,5 +18,56 @@ c:\jenkins\workspace\jobs\DontStarve_Release_Make_Steam_Package\workspace\data\s
 
 LOADING LUA SUCCESS
 Reset() returning
+SimLuaProxy::QueryServer()
+/anon/new - POST/{"character":"wilson","name":"Test name","size":"small"}
+BLAAAAH 
+ SAVE SUCCESS: latest
+SendProfileStats::{"stats":{"collect_cutgrass":2,"collect_twigs":1,"time_played":12633}}
+c:\jenkins\workspace\jobs\DontStarve_Release_Make_Steam_Package\workspace\data\scripts\main.lua(514,1)	Saved	latest	nil
+ReleaseAll
+ReleaseAll Finished
+cGame::StartPlaying
+LOADING LUA
+DoLuaFile data/scripts/main.lua
+DoLuaFile loading buffer data/scripts/main.lua
+c:\jenkins\workspace\jobs\DontStarve_Release_Make_Steam_Package\workspace\data\scripts\main.lua(105,1)	running main.lua
+
+LOADING LUA SUCCESS
+Reset() returning
+ORPHANED UNKNOWN RESOURCES:
+data/fonts/belisaplumilla100.zip - 2
+data/fonts/belisaplumilla50.zip - 2
+data/fonts/stint-ucr20.zip - 2
+data/fonts/buttonfont.zip - 2
+data/fonts/stint-ucr50.zip - 2
+data/fonts/opensans50.zip - 2
+ORPHANED UNKNOWN RESOURCES:
+data/shaders/blurv.ksh - 1
+data/shaders/postprocessbloom.ksh - 1
+data/shaders/blurh.ksh - 1
+data/shaders/minimap.ksh - 1
+data/shaders/postprocess.ksh - 1
+Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
+Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
+Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
+Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
+Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
+Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
+Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
+Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
+Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
+Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
+Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
+Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
+Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
+Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
+Orphaned unnamed resource. This resource must have used Add( resource ) to insert itself into the manager
+ORPHANED UNKNOWN RESOURCES:
+data/fonts/belisaplumilla100.zip - 1
+data/fonts/belisaplumilla50.zip - 1
+data/fonts/stint-ucr20.zip - 1
+data/fonts/buttonfont.zip - 1
+data/fonts/stint-ucr50.zip - 1
+data/fonts/opensans50.zip - 1
 HttpClient::ClientThread::Main() complete
 Shutting down
